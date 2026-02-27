@@ -30,6 +30,8 @@ import (
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc/codes"
+	grpcStatus "google.golang.org/grpc/status"
 )
 
 type sessionDataCtx struct {
@@ -52,6 +54,19 @@ type Session struct {
 	options        SessionOptions
 	ctx            context.Context
 	cancel         context.CancelFunc
+	unavailable    atomic.Bool // set when connection errors detected
+}
+
+func isSessionConnError(err error) bool {
+	s, ok := grpcStatus.FromError(err)
+	if !ok {
+		return false
+	}
+	switch s.Code() {
+	case codes.Unavailable, codes.DeadlineExceeded:
+		return true
+	}
+	return false
 }
 
 // process
@@ -65,21 +80,38 @@ func (c *Session) process(sessionChan chan sessionDataCtx) {
 				return
 			}
 
+			if c.unavailable.Load() {
+				logx.Errorf("session(%s) unavailable, dropping push", c.serverId)
+				continue
+			}
+
 			switch r := sessionData.updates.(type) {
 			case *session.TLSessionPushSessionUpdatesData:
 				_, err = c.client.SessionPushSessionUpdatesData(sessionData.ctx, r)
 				if err != nil {
-					logx.Errorf("c.client.PushSessionUpdates(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
+					logx.Errorf("c.client.PushSessionUpdates(%s, %v, reply) serverId:%s error(%v)", r, c.serverId, c.serverId, err)
+					if isSessionConnError(err) {
+						c.unavailable.Store(true)
+						logx.Errorf("session(%s) marked unavailable due to conn error", c.serverId)
+					}
 				}
 			case *session.TLSessionPushUpdatesData:
 				_, err = c.client.SessionPushUpdatesData(sessionData.ctx, r)
 				if err != nil {
-					logx.Errorf("c.client.PushUpdates(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
+					logx.Errorf("c.client.PushUpdates(%s, %v, reply) serverId:%s error(%v)", r, c.serverId, c.serverId, err)
+					if isSessionConnError(err) {
+						c.unavailable.Store(true)
+						logx.Errorf("session(%s) marked unavailable due to conn error", c.serverId)
+					}
 				}
 			case *session.TLSessionPushRpcResultData:
 				_, err = c.client.SessionPushRpcResultData(sessionData.ctx, r)
 				if err != nil {
-					logx.Errorf("c.client.PushRpcResult(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
+					logx.Errorf("c.client.PushRpcResult(%s, %v, reply) serverId:%s error(%v)", r, c.serverId, c.serverId, err)
+					if isSessionConnError(err) {
+						c.unavailable.Store(true)
+						logx.Errorf("session(%s) marked unavailable due to conn error", c.serverId)
+					}
 				}
 			default:
 				logx.Errorf("invalid type: %#v", r)
@@ -116,18 +148,27 @@ func (c *Session) Close() (err error) {
 }
 
 func (c *Session) PushUpdates(ctx context.Context, msg *session.TLSessionPushUpdatesData) (err error) {
+	if c.unavailable.Load() {
+		return fmt.Errorf("session(%s) unavailable", c.serverId)
+	}
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
 	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
 }
 
 func (c *Session) PushSessionUpdates(ctx context.Context, msg *session.TLSessionPushSessionUpdatesData) (err error) {
+	if c.unavailable.Load() {
+		return fmt.Errorf("session(%s) unavailable", c.serverId)
+	}
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
 	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
 }
 
 func (c *Session) PushRpcResult(ctx context.Context, msg *session.TLSessionPushRpcResultData) (err error) {
+	if c.unavailable.Load() {
+		return fmt.Errorf("session(%s) unavailable", c.serverId)
+	}
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
 	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
@@ -199,30 +240,30 @@ func (d *Dao) watch(c zrpc.RpcClientConf) {
 
 func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushUpdatesData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// log.Info("push updates to serverId: (%s, %s)", serverId, msg)
 		return c.PushUpdates(ctx, msg)
 	} else {
-		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
-		return fmt.Errorf("not found k: %s", serverId)
+		logx.WithContext(ctx).Errorf("PushUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+			serverId, msg.PermAuthKeyId)
+		return fmt.Errorf("stale gateway %s", serverId)
 	}
 }
 
 func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushSessionUpdatesData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// logx.Info("push session updates to serverId: (%s, %s)", serverId, msg)
 		return c.PushSessionUpdates(ctx, msg)
 	} else {
-		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
-		return fmt.Errorf("not found k: %s", serverId)
+		logx.WithContext(ctx).Errorf("PushSessionUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+			serverId, msg.PermAuthKeyId)
+		return fmt.Errorf("stale gateway %s", serverId)
 	}
 }
 
 func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *session.TLSessionPushRpcResultData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// log.Debugf("push rpc result to serverId: (%s, %s)", serverId, msg)
 		return c.PushRpcResult(ctx, msg)
 	} else {
-		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
-		return fmt.Errorf("not found k: %s", serverId)
+		logx.WithContext(ctx).Errorf("PushRpcResultToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+			serverId, msg.PermAuthKeyId)
+		return fmt.Errorf("stale gateway %s", serverId)
 	}
 }
