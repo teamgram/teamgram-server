@@ -11,6 +11,7 @@ package server
 
 import (
 	"flag"
+	"time"
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/config"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/server/grpc"
@@ -25,6 +26,7 @@ var configFile = flag.String("f", "etc/session.yaml", "the config file")
 
 type Server struct {
 	grpcSrv *zrpc.RpcServer
+	svcCtx  *svc.ServiceContext
 }
 
 func New() *Server {
@@ -37,8 +39,8 @@ func (s *Server) Initialize() error {
 
 	logx.Infov(c)
 
-	ctx := svc.NewServiceContext(c)
-	s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
+	s.svcCtx = svc.NewServiceContext(c)
+	s.grpcSrv = grpc.New(s.svcCtx, c.RpcServerConf)
 
 	go func() {
 		s.grpcSrv.Start()
@@ -50,5 +52,9 @@ func (s *Server) RunLoop() {
 }
 
 func (s *Server) Destroy() {
+	// 优雅排空：先等待进行中的 RPC 请求处理完毕（最多 30s），再停止 gRPC 服务
+	logx.Infof("session server destroying, draining auth wrappers...")
+	s.svcCtx.MainAuthMgr.Drain(30 * time.Second)
+
 	s.grpcSrv.Stop()
 }

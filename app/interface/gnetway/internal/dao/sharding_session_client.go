@@ -8,6 +8,7 @@ package dao
 
 import (
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
@@ -119,6 +120,20 @@ func (sess *ShardingSessionClient) InvokeByKey(key string, cb func(client sessio
 		return nil
 	}
 
+	// redirect 错误：session 告知正确节点，直接重路由
+	if target, ok := parseRedirectError(err); ok {
+		logx.Infof("session node %s redirected to %s for key %s", node, target, key)
+
+		sess.mu.RLock()
+		redirectCli, ok := sess.sessions[target]
+		sess.mu.RUnlock()
+
+		if ok {
+			return cb(redirectCli)
+		}
+		// 目标节点不在已知列表中，按连接错误处理走 fallback
+	}
+
 	// 非连接错误直接返回
 	if !isConnError(err) {
 		return err
@@ -147,6 +162,27 @@ func (sess *ShardingSessionClient) InvokeByKey(key string, cb func(client sessio
 	}
 
 	return cb(newCli)
+}
+
+// parseRedirectError 解析 session 返回的 redirect 错误，提取目标节点地址
+// 错误格式：gRPC code 700, message "REDIRECT_TO_{server_addr}"
+func parseRedirectError(err error) (string, bool) {
+	s, ok := status.FromError(err)
+	if !ok {
+		return "", false
+	}
+	if s.Code() != codes.Code(700) {
+		return "", false
+	}
+	msg := s.Message()
+	const prefix = "REDIRECT_TO_"
+	if strings.HasPrefix(msg, prefix) {
+		target := msg[len(prefix):]
+		if target != "" {
+			return target, true
+		}
+	}
+	return "", false
 }
 
 // isConnError 判断是否为连接级错误（节点不可达）

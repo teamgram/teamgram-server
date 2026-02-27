@@ -10,6 +10,7 @@ import (
 	"context"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
@@ -84,5 +85,49 @@ func (m *MainAuthWrapperManager) OnShardingCB(sharding *dao.RpcShardingManager, 
 			delete(m.authMgr, k)
 			v.Stop()
 		}
+	}
+}
+
+// Drain 优雅排空所有会话。等待所有 MainAuthWrapper 的 runLoop 退出，
+// 或超时后强制停止。用于 session 服务优雅退出。
+func (m *MainAuthWrapperManager) Drain(timeout time.Duration) {
+	m.mu.Lock()
+	wrappers := make([]*MainAuthWrapper, 0, len(m.authMgr))
+	for k, v := range m.authMgr {
+		// 清理 status 中的 Gateway
+		if v.AuthUserId > 0 {
+			_, _ = m.Dao.StatusClient.StatusSetSessionOffline(
+				context.Background(),
+				&status.TLStatusSetSessionOffline{
+					UserId:    v.AuthUserId,
+					AuthKeyId: k,
+				})
+		}
+		wrappers = append(wrappers, v)
+	}
+	m.authMgr = make(map[int64]*MainAuthWrapper)
+	m.mu.Unlock()
+
+	logx.Infof("Drain: stopping %d auth wrappers, timeout %v", len(wrappers), timeout)
+
+	// 通知所有 wrapper 停止
+	for _, w := range wrappers {
+		w.Stop()
+	}
+
+	// 等待所有 wrapper 的 runLoop 退出（通过 finish.Wait）
+	done := make(chan struct{})
+	go func() {
+		for _, w := range wrappers {
+			w.finish.Wait()
+		}
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		logx.Infof("Drain: all %d auth wrappers stopped gracefully", len(wrappers))
+	case <-time.After(timeout):
+		logx.Errorf("Drain: timeout after %v, %d auth wrappers may not have stopped", timeout, len(wrappers))
 	}
 }

@@ -8,6 +8,7 @@ package sess
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"reflect"
@@ -27,6 +28,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/syncx"
 	"github.com/zeromicro/go-zero/core/threading"
+)
+
+var (
+	// ErrDataChannelFull sessionDataChan 缓冲满时返回此错误，让调用方感知背压
+	ErrDataChannelFull = errors.New("session data channel is full")
 )
 
 type SessionList struct {
@@ -123,8 +129,8 @@ func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client
 		nextPushId:           0,
 		nextNotifyId:         math.MaxInt32,
 		closeChan:            make(chan struct{}),
-		sessionDataChan:      make(chan interface{}, 1024),
-		rpcDataChan:          make(chan interface{}, 1024),
+		sessionDataChan:      make(chan interface{}, 4096),
+		rpcDataChan:          make(chan interface{}, 4096),
 		rpcQueue:             queue2.NewSyncQueue(),
 		finish:               sync.WaitGroup{},
 		running:              syncx.NewAtomicBool(),
@@ -701,10 +707,11 @@ func (m *MainAuthWrapper) SessionClientNew(ctx context.Context, kType int, kId i
 
 	select {
 	case m.sessionDataChan <- cData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SessionClientNew (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SessionDataArrived(ctx context.Context, kType int, kId int64, gatewayId, clientIp string, sessionId, salt int64, buf []byte) error {
@@ -723,10 +730,11 @@ func (m *MainAuthWrapper) SessionDataArrived(ctx context.Context, kType int, kId
 
 	select {
 	case m.sessionDataChan <- sData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SessionDataArrived (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SessionHttpDataArrived(ctx context.Context, kType int, kId int64, gatewayId, clientIp string, sessionId, salt int64, buf []byte, resChan chan interface{}) error {
@@ -746,10 +754,11 @@ func (m *MainAuthWrapper) SessionHttpDataArrived(ctx context.Context, kType int,
 
 	select {
 	case m.sessionDataChan <- sData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SessionHttpDataArrived (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SessionClientClosed(ctx context.Context, kType int, kId int64, gatewayId string, sessionId int64) error {
@@ -766,10 +775,11 @@ func (m *MainAuthWrapper) SessionClientClosed(ctx context.Context, kType int, kI
 
 	select {
 	case m.sessionDataChan <- cData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SessionClientClosed (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SyncRpcResultDataArrived(ctx context.Context, kId int64, sessionId, clientMsgId int64, data []byte) error {
@@ -786,10 +796,11 @@ func (m *MainAuthWrapper) SyncRpcResultDataArrived(ctx context.Context, kId int6
 
 	select {
 	case m.sessionDataChan <- rData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SyncRpcResultDataArrived (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SyncSessionDataArrived(ctx context.Context, kId int64, sessionId int64, updates *mtproto.Updates) error {
@@ -805,10 +816,11 @@ func (m *MainAuthWrapper) SyncSessionDataArrived(ctx context.Context, kId int64,
 
 	select {
 	case m.sessionDataChan <- sData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SyncSessionDataArrived (authKeyId:%d, sessionId:%d)", kId, sessionId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) SyncDataArrived(ctx context.Context, needAndroidPush bool, updates *mtproto.Updates) error {
@@ -822,10 +834,11 @@ func (m *MainAuthWrapper) SyncDataArrived(ctx context.Context, needAndroidPush b
 
 	select {
 	case m.sessionDataChan <- sData:
+		return nil
 	default:
+		logx.WithContext(ctx).Errorf("sessionDataChan full, dropping SyncDataArrived (authKeyId:%d)", m.authKeyId)
+		return ErrDataChannelFull
 	}
-
-	return nil
 }
 
 func (m *MainAuthWrapper) onSessionNew(ctx context.Context, connMsg *connData) {
