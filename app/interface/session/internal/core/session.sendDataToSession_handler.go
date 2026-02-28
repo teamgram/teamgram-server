@@ -42,6 +42,12 @@ func (c *SessionCore) SessionSendDataToSession(in *session.TLSessionSendDataToSe
 		return nil, err
 	}
 
+	// ConnType == 1 signals a new session: create session before sending data,
+	// merging what was previously two separate RPCs (CreateSession + SendData).
+	if data.ConnType == 1 {
+		_ = mainAuth.SessionClientNew(c.ctx, int(data.KeyType), data.AuthKeyId, data.ServerId, data.SessionId)
+	}
+
 	_ = mainAuth.SessionDataArrived(
 		c.ctx,
 		int(data.KeyType),

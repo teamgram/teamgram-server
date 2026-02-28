@@ -37,31 +37,32 @@ import (
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/timex"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/proto"
 )
 
 func (s *Server) asyncRunIfError(connId int64, msgId int64, execb func() error, retcb func(c gnet.Conn, msgId int64, err error)) {
-	_ = s.pool.Submit(func() {
+	if err := s.pool.Submit(func() {
 		if err := execb(); err != nil {
 			s.eng.Trigger(connId, func(c gnet.Conn) {
 				retcb(c, msgId, err)
 			})
-		} else {
-			// do nothing
 		}
-	})
+	}); err != nil {
+		logx.Errorf("asyncRunIfError - pool.Submit error: %v, connId: %d", err, connId)
+	}
 }
 
 func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c gnet.Conn)) {
-	_ = s.pool.Submit(func() {
+	if err := s.pool.Submit(func() {
 		if err := execb(); err == nil {
 			s.eng.Trigger(connId, func(c gnet.Conn) {
 				retcb(c)
 			})
-		} else {
-			// do nothing
 		}
-	})
+	}); err != nil {
+		logx.Errorf("asyncRun - pool.Submit error: %v, connId: %d", err, connId)
+	}
 }
 
 func (s *Server) asyncRun2(
@@ -71,12 +72,14 @@ func (s *Server) asyncRun2(
 	mmsg []byte,
 	execb func(kId int64, mmsg []byte) (interface{}, error),
 	retcb func(c gnet.Conn, needAck bool, mmsg []byte, in interface{}, err error)) {
-	_ = s.pool.Submit(func() {
+	if err := s.pool.Submit(func() {
 		r, err := execb(kId, mmsg)
 		s.eng.Trigger(connId, func(c gnet.Conn) {
 			retcb(c, needAck, mmsg, r, err)
 		})
-	})
+	}); err != nil {
+		logx.Errorf("asyncRun2 - pool.Submit error: %v, connId: %d, keyId: %d", err, connId, kId)
+	}
 }
 
 // OnBoot fires when the engine is ready for accepting connections.
@@ -141,11 +144,13 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 		return
 	}
 
-	_ = s.pool.Submit(func() {
+	if err := s.pool.Submit(func() {
 		_ = s.svcCtx.ShardingSessionClient.InvokeByKey(
 			strconv.FormatInt(ctx.authKey.PermAuthKeyId(), 10),
 			func(client sessionclient.SessionClient) (err error) {
-				_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
+				closeCtx, span := otel.Tracer("gnetway").Start(context.Background(), "SessionCloseSession")
+				defer span.End()
+				_, err = client.SessionCloseSession(closeCtx, &session.TLSessionCloseSession{
 					Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
 						ServerId:      s.svcCtx.GatewayId,
 						AuthKeyId:     ctx.authKey.AuthKeyId(),
@@ -160,7 +165,9 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 				}
 				return
 			})
-	})
+	}); err != nil {
+		logx.Errorf("OnClose - pool.Submit error: %v, authKeyId: %d", err, ctx.authKey.AuthKeyId())
+	}
 
 	return
 }
@@ -305,6 +312,11 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		// check sessionId??
 	}
 
+	var connType int32
+	if isNew && s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
+		connType = 1 // signal session side to create session
+	}
+
 	s.asyncRunIfError(
 		c.ConnId(),
 		msgId,
@@ -316,27 +328,12 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 			return s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
 				strconv.FormatInt(permAuthKeyId, 10),
 				func(client sessionclient.SessionClient) (err error) {
-					if isNew {
-						if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
-							_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
-								Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-									ServerId:      s.svcCtx.GatewayId,
-									AuthKeyId:     authKey.AuthKeyId(),
-									KeyType:       int32(authKey.AuthKeyType()),
-									PermAuthKeyId: permAuthKeyId,
-									SessionId:     sessionId,
-									ClientIp:      clientIp,
-								}).To_SessionClientEvent(),
-							})
-							if err != nil {
-								logx.Errorf("client.SessionCreateSession - error: %v", err)
-							}
-						}
-					}
-
-					_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
+					ctx2, span := otel.Tracer("gnetway").Start(context.Background(), "SessionSendDataToSession")
+					defer span.End()
+					_, err = client.SessionSendDataToSession(ctx2, &session.TLSessionSendDataToSession{
 						Data: &session.SessionClientData{
 							ServerId:      s.svcCtx.GatewayId,
+							ConnType:      connType,
 							AuthKeyId:     authKey.AuthKeyId(),
 							KeyType:       int32(authKey.AuthKeyType()),
 							PermAuthKeyId: permAuthKeyId,
@@ -431,10 +428,12 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 						key3 *mtproto.AuthKeyInfo
 					)
 
+					queryCtx, span := otel.Tracer("gnetway").Start(context.Background(), "SessionQueryAuthKey")
+					defer span.End()
 					err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
 						strconv.FormatInt(authKeyId2, 10),
 						func(client sessionclient.SessionClient) (err error) {
-							key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+							key3, err = client.SessionQueryAuthKey(queryCtx, &session.TLSessionQueryAuthKey{
 								AuthKeyId: authKeyId2,
 							})
 							return

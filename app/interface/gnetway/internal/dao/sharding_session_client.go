@@ -19,8 +19,13 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stringx"
 	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+)
+
+const (
+	maxNodeFailures = 3 // consecutive failures before removing node from ring
 )
 
 var (
@@ -28,16 +33,18 @@ var (
 )
 
 type ShardingSessionClient struct {
-	mu         sync.RWMutex
-	gatewayId  string
-	dispatcher *hash.ConsistentHash
-	sessions   map[string]sessionclient.SessionClient
+	mu           sync.RWMutex
+	gatewayId    string
+	dispatcher   *hash.ConsistentHash
+	sessions     map[string]sessionclient.SessionClient
+	failCounters map[string]int
 }
 
 func NewShardingSessionClient(c config.Config) *ShardingSessionClient {
 	sess := &ShardingSessionClient{
-		dispatcher: hash.NewConsistentHash(),
-		sessions:   make(map[string]sessionclient.SessionClient),
+		dispatcher:   hash.NewConsistentHash(),
+		sessions:     make(map[string]sessionclient.SessionClient),
+		failCounters: make(map[string]int),
 	}
 	sess.watch(c.Session)
 
@@ -45,7 +52,11 @@ func NewShardingSessionClient(c config.Config) *ShardingSessionClient {
 }
 
 func (sess *ShardingSessionClient) watch(c zrpc.RpcClientConf) {
-	sub, _ := discov.NewSubscriber(c.Etcd.Hosts, c.Etcd.Key)
+	sub, err := discov.NewSubscriber(c.Etcd.Hosts, c.Etcd.Key)
+	if err != nil {
+		logx.Errorf("watchSession NewSubscriber(%+v) error: %v", c.Etcd, err)
+		return
+	}
 	update := func() {
 		var (
 			addClis    []string
@@ -63,10 +74,14 @@ func (sess *ShardingSessionClient) watch(c zrpc.RpcClientConf) {
 				continue
 			}
 			c.Endpoints = []string{v}
-			cli, err := zrpc.NewClient(c)
+			cli, err := zrpc.NewClient(
+				c,
+				zrpc.WithDialOption(grpc.WithReadBufferSize(16*1024*1024)),
+				zrpc.WithDialOption(grpc.WithWriteBufferSize(16*1024*1024)),
+			)
 			if err != nil {
-				logx.Error("watchComet NewClient(%+v) error(%v)", values, err)
-				return
+				logx.Errorf("watchSession NewClient(%v) error: %v", v, err)
+				continue
 			}
 			sessionCli := sessionclient.NewSessionClient(cli)
 			sessions[v] = sessionCli
@@ -86,6 +101,7 @@ func (sess *ShardingSessionClient) watch(c zrpc.RpcClientConf) {
 
 		for _, n := range removeClis {
 			sess.dispatcher.Remove(n)
+			delete(sess.failCounters, n)
 		}
 
 		sess.sessions = sessions
@@ -117,6 +133,10 @@ func (sess *ShardingSessionClient) InvokeByKey(key string, cb func(client sessio
 
 	err := cb(cli)
 	if err == nil {
+		// reset failure counter on success
+		sess.mu.Lock()
+		delete(sess.failCounters, node)
+		sess.mu.Unlock()
 		return nil
 	}
 
@@ -139,12 +159,18 @@ func (sess *ShardingSessionClient) InvokeByKey(key string, cb func(client sessio
 		return err
 	}
 
-	// 连接错误：从哈希环移除故障节点，重试到新节点
-	logx.Errorf("session node %s unreachable, removing from ring and retrying", node)
-
+	// 连接错误：增加失败计数，达到阈值才从哈希环移除
 	sess.mu.Lock()
-	sess.dispatcher.Remove(node)
-	delete(sess.sessions, node)
+	sess.failCounters[node]++
+	failCount := sess.failCounters[node]
+	if failCount >= maxNodeFailures {
+		logx.Errorf("session node %s unreachable (%d consecutive failures), removing from ring", node, failCount)
+		sess.dispatcher.Remove(node)
+		delete(sess.sessions, node)
+		delete(sess.failCounters, node)
+	} else {
+		logx.Errorf("session node %s connection error (%d/%d), retrying on another node", node, failCount, maxNodeFailures)
+	}
 	sess.mu.Unlock()
 
 	sess.mu.RLock()

@@ -11,6 +11,7 @@ package dao
 
 import (
 	"context"
+	"sync"
 
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/marmota/pkg/net/ip"
@@ -29,6 +30,7 @@ type Dao struct {
 	authsession_client.AuthsessionClient
 	status_client.StatusClient
 	*bff_proxy_client.BFFProxyClient
+	gateMu       sync.RWMutex
 	eGateServers map[string]*Gateway
 	MyServerId   string
 	*RpcShardingManager

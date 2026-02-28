@@ -16,16 +16,14 @@
 package gnet
 
 import (
-	"container/list"
 	"sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type sessionData struct {
-	sessionId  int64
-	connIdList *list.List
-	// pendingHttpDataList *list.List
+	sessionId int64
+	connIds   map[int64]struct{}
 }
 
 type authSession struct {
@@ -54,37 +52,23 @@ func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64
 	defer m.rw.Unlock()
 
 	if v, ok := m.sessions[authKey.AuthKeyId()]; ok {
-		var (
-			// sIdx     = -1
-			cExisted = false
-		)
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
-					cExisted = true
-					break
-				}
-			}
-			if !cExisted {
-				v2.connIdList.PushBack(connId)
+			if _, exists := v2.connIds[connId]; !exists {
+				v2.connIds[connId] = struct{}{}
 			}
 		} else {
 			s := sessionData{
-				sessionId:  sessionId,
-				connIdList: list.New(),
-				// pendingHttpDataList: list.New(),
+				sessionId: sessionId,
+				connIds:   map[int64]struct{}{connId: {}},
 			}
-			s.connIdList.PushBack(connId)
 			v.sessionList[sessionId] = s
 			bNew = true
 		}
 	} else {
 		s := sessionData{
-			sessionId:  sessionId,
-			connIdList: list.New(),
-			// pendingHttpDataList: list.New(),
+			sessionId: sessionId,
+			connIds:   map[int64]struct{}{connId: {}},
 		}
-		s.connIdList.PushBack(connId)
 
 		m.sessions[authKey.AuthKeyId()] = &authSession{
 			authKey: authKey,
@@ -108,13 +92,8 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 
 	if v, ok := m.sessions[authKeyId]; ok {
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
-					v2.connIdList.Remove(e)
-					break
-				}
-			}
-			if v2.connIdList.Len() == 0 {
+			delete(v2.connIds, connId)
+			if len(v2.connIds) == 0 {
 				delete(v.sessionList, sessionId)
 				bDeleted = true
 			}
@@ -133,9 +112,9 @@ func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) (*au
 
 	if v, ok := m.sessions[authKeyId]; ok {
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			connIdList := make([]int64, 0, v2.connIdList.Len())
-			for e := v2.connIdList.Back(); e != nil; e = e.Prev() {
-				connIdList = append(connIdList, e.Value.(int64))
+			connIdList := make([]int64, 0, len(v2.connIds))
+			for id := range v2.connIds {
+				connIdList = append(connIdList, id)
 			}
 			return v.authKey, connIdList
 		}
