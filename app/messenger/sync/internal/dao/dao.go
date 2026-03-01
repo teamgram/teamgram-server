@@ -26,10 +26,11 @@ import (
 
 type Dao struct {
 	*Mysql
-	kv             kv.Store
-	conf           *config.Config
-	mu             sync.RWMutex
-	sessionServers map[string]*Session
+	kv               kv.Store
+	conf             *config.Config
+	mu               sync.RWMutex
+	sessionServers   map[string]SessionPusher
+	useStreamSession bool
 	idgen_client.IDGenClient2
 	status_client.StatusClient
 	chat_client.ChatClient
@@ -39,13 +40,14 @@ type Dao struct {
 func New(c config.Config) *Dao {
 	db := sqlx.NewMySQL(&c.Mysql)
 	d := &Dao{
-		Mysql:          newMysqlDao(db),
-		kv:             kv.NewStore(c.KV),
-		conf:           &c,
-		sessionServers: make(map[string]*Session),
-		IDGenClient2:   idgen_client.NewIDGenClient2(zrpc.MustNewClient(c.IdgenClient)),
-		StatusClient:   status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
-		ChatClient:     chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+		Mysql:            newMysqlDao(db),
+		kv:               kv.NewStore(c.KV),
+		conf:             &c,
+		sessionServers:   make(map[string]SessionPusher),
+		useStreamSession: c.UseStreamSession,
+		IDGenClient2:     idgen_client.NewIDGenClient2(zrpc.MustNewClient(c.IdgenClient)),
+		StatusClient:     status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
+		ChatClient:       chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
 	}
 	if c.PushClient != nil {
 		d.PushClient = sync_client.NewSyncMqClient(kafka.MustKafkaProducer(c.PushClient))

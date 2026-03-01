@@ -35,14 +35,15 @@ type Routine struct {
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql         sqlx.Config
-	Cache         cache.CacheConf
-	KV            kv.KvConf
-	Routine       Routine
-	SyncConsumer  kafka.KafkaConsumerConf
-	SessionClient zrpc.RpcClientConf
-	IdgenClient   zrpc.RpcClientConf
-	StatusClient  zrpc.RpcClientConf
-	ChatClient    zrpc.RpcClientConf
-	PushClient    *kafka.KafkaProducerConf `json:",optional"`
+	Mysql            sqlx.Config
+	Cache            cache.CacheConf
+	KV               kv.KvConf
+	Routine          Routine
+	SyncConsumer     kafka.KafkaConsumerConf
+	SessionClient    zrpc.RpcClientConf
+	IdgenClient      zrpc.RpcClientConf
+	StatusClient     zrpc.RpcClientConf
+	ChatClient       zrpc.RpcClientConf
+	PushClient       *kafka.KafkaProducerConf `json:",optional"`
+	UseStreamSession bool                     `json:",default=false"`
 }
