@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package session;
+
+option go_package = "github.com/teamgram/teamgram-server/app/interface/session/session";
+
+import "session.tl.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.sync.proto";
+
+// Envelope message: union of all gnetway→session message types
+message SessionStreamRequest {
+  string request_id = 1;
+  oneof payload {
+    TL_session_sendDataToSession      send_data = 10;
+    TL_session_createSession          create_session = 11;
+    TL_session_closeSession           close_session = 12;
+    TL_session_queryAuthKey           query_auth_key = 13;
+    TL_session_setAuthKey             set_auth_key = 14;
+    TL_session_pushUpdatesData        push_updates = 15;
+    TL_session_pushSessionUpdatesData push_session_updates = 16;
+    TL_session_pushRpcResultData      push_rpc_result = 17;
+  }
+}
+
+message SessionStreamResponse {
+  string request_id = 1;
+  oneof payload {
+    SessionStreamAck    ack = 10;
+    SessionStreamError  error = 11;
+    mtproto.AuthKeyInfo auth_key = 12;
+  }
+}
+
+message SessionStreamAck {
+  bool success = 1;
+}
+
+message SessionStreamError {
+  int32 code = 1;
+  string message = 2;
+}
+
+service RPCSessionStream {
+  rpc SessionDataStream(stream SessionStreamRequest) returns (stream SessionStreamResponse) {}
+}

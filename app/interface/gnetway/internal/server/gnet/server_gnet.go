@@ -23,14 +23,12 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/pp"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/ws"
-	"github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/gobwas/ws/wsutil"
@@ -145,26 +143,21 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	}
 
 	if err := s.pool.Submit(func() {
-		_ = s.svcCtx.ShardingSessionClient.InvokeByKey(
-			strconv.FormatInt(ctx.authKey.PermAuthKeyId(), 10),
-			func(client sessionclient.SessionClient) (err error) {
-				closeCtx, span := otel.Tracer("gnetway").Start(context.Background(), "SessionCloseSession")
-				defer span.End()
-				_, err = client.SessionCloseSession(closeCtx, &session.TLSessionCloseSession{
-					Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-						ServerId:      s.svcCtx.GatewayId,
-						AuthKeyId:     ctx.authKey.AuthKeyId(),
-						KeyType:       int32(ctx.authKey.AuthKeyType()),
-						PermAuthKeyId: ctx.authKey.PermAuthKeyId(),
-						SessionId:     ctx.sessionId,
-						ClientIp:      ctx.clientIp,
-					}).To_SessionClientEvent(),
-				})
-				if err != nil {
-					logx.Errorf("client.SessionCloseSession - error: %v", err)
-				}
-				return
-			})
+		closeCtx, span := otel.Tracer("gnetway").Start(context.Background(), "SessionCloseSession")
+		defer span.End()
+		err := s.svcCtx.Dao.SessionDispatcher.CloseSession(closeCtx, ctx.authKey.PermAuthKeyId(), &session.TLSessionCloseSession{
+			Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+				ServerId:      s.svcCtx.GatewayId,
+				AuthKeyId:     ctx.authKey.AuthKeyId(),
+				KeyType:       int32(ctx.authKey.AuthKeyType()),
+				PermAuthKeyId: ctx.authKey.PermAuthKeyId(),
+				SessionId:     ctx.sessionId,
+				ClientIp:      ctx.clientIp,
+			}).To_SessionClientEvent(),
+		})
+		if err != nil {
+			logx.Errorf("client.SessionCloseSession - error: %v", err)
+		}
 	}); err != nil {
 		logx.Errorf("OnClose - pool.Submit error: %v, authKeyId: %d", err, ctx.authKey.AuthKeyId())
 	}
@@ -325,30 +318,25 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				logx.WithDuration(timex.Since(since)).Infof("onEncryptedMessage: %s", c)
 			}()
 
-			return s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-				strconv.FormatInt(permAuthKeyId, 10),
-				func(client sessionclient.SessionClient) (err error) {
-					ctx2, span := otel.Tracer("gnetway").Start(context.Background(), "SessionSendDataToSession")
-					defer span.End()
-					_, err = client.SessionSendDataToSession(ctx2, &session.TLSessionSendDataToSession{
-						Data: &session.SessionClientData{
-							ServerId:      s.svcCtx.GatewayId,
-							ConnType:      connType,
-							AuthKeyId:     authKey.AuthKeyId(),
-							KeyType:       int32(authKey.AuthKeyType()),
-							PermAuthKeyId: permAuthKeyId,
-							SessionId:     sessionId,
-							Salt:          salt,
-							Payload:       mtpRwaData[16:],
-							ClientIp:      clientIp,
-						},
-					})
-					if err != nil {
-						logx.Errorf("session.sendDataToSession - error: %v", err)
-					}
-
-					return
-				})
+			ctx2, span := otel.Tracer("gnetway").Start(context.Background(), "SessionSendDataToSession")
+			defer span.End()
+			err := s.svcCtx.Dao.SessionDispatcher.SendData(ctx2, permAuthKeyId, &session.TLSessionSendDataToSession{
+				Data: &session.SessionClientData{
+					ServerId:      s.svcCtx.GatewayId,
+					ConnType:      connType,
+					AuthKeyId:     authKey.AuthKeyId(),
+					KeyType:       int32(authKey.AuthKeyType()),
+					PermAuthKeyId: permAuthKeyId,
+					SessionId:     sessionId,
+					Salt:          salt,
+					Payload:       mtpRwaData[16:],
+					ClientIp:      clientIp,
+				},
+			})
+			if err != nil {
+				logx.Errorf("session.sendDataToSession - error: %v", err)
+			}
+			return err
 		},
 		func(c gnet.Conn, msgId int64, err error) {
 			if isBindTempAuthKey && errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
@@ -424,20 +412,11 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 				needAck,
 				msg2Clone,
 				func(authKeyId2 int64, mmsg []byte) (interface{}, error) {
-					var (
-						key3 *mtproto.AuthKeyInfo
-					)
-
 					queryCtx, span := otel.Tracer("gnetway").Start(context.Background(), "SessionQueryAuthKey")
 					defer span.End()
-					err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-						strconv.FormatInt(authKeyId2, 10),
-						func(client sessionclient.SessionClient) (err error) {
-							key3, err = client.SessionQueryAuthKey(queryCtx, &session.TLSessionQueryAuthKey{
-								AuthKeyId: authKeyId2,
-							})
-							return
-						})
+					key3, err2 := s.svcCtx.Dao.SessionDispatcher.QueryAuthKey(queryCtx, authKeyId2, &session.TLSessionQueryAuthKey{
+						AuthKeyId: authKeyId2,
+					})
 					if err2 != nil {
 						logx.Errorf("conn(%s) sessionQueryAuthKey - error: %v", c, err2)
 						return nil, err2

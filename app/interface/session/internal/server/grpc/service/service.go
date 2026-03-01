@@ -16,12 +16,14 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/svc"
+	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Service struct {
 	svcCtx *svc.ServiceContext
+	session.UnimplementedRPCSessionStreamServer
 }
 
 func (s *Service) GetServiceContext() *svc.ServiceContext {

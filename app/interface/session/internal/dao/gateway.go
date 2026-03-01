@@ -76,12 +76,18 @@ func (d *Dao) watchGateway(c zrpc.RpcClientConf) {
 }
 
 func (d *Dao) SendDataToGateway(ctx context.Context, gatewayId string, authKeyId, salt, sessionId int64, msg *mtproto.TLMessageRawData) (bool, error) {
+	payload := SerializeToBuffer2(salt, sessionId, msg)
+
+	if d.UseStreamGateway && d.streamingGateway != nil {
+		return d.streamingGateway.SendDataToGateway(gatewayId, authKeyId, sessionId, payload)
+	}
+
 	d.gateMu.RLock()
 	c, ok := d.eGateServers[gatewayId]
 	d.gateMu.RUnlock()
 
 	if ok {
-		return c.SendDataToGate(ctx, authKeyId, sessionId, SerializeToBuffer2(salt, sessionId, msg))
+		return c.SendDataToGate(ctx, authKeyId, sessionId, payload)
 	} else {
 		logx.WithContext(ctx).Errorf("not found k: %s", gatewayId)
 		return false, fmt.Errorf("not found k: %s", gatewayId)

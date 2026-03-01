@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package gateway;
+
+option go_package = "github.com/teamgram/teamgram-server/app/interface/gnetway/gateway";
+
+import "gateway.tl.proto";
+
+message GatewayStreamRequest {
+  string request_id = 1;
+  TL_gateway_sendDataToGateway send_data = 10;
+}
+
+message GatewayStreamResponse {
+  string request_id = 1;
+  bool success = 2;
+}
+
+service RPCGatewayStream {
+  rpc GatewayDataStream(stream GatewayStreamRequest) returns (stream GatewayStreamResponse) {}
+}

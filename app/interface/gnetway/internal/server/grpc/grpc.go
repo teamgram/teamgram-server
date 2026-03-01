@@ -22,7 +22,9 @@ import (
 // New new a grpc server.
 func New(svcCtx *svc.ServiceContext, c zrpc.RpcServerConf, srv gateway.RPCGatewayServer) *zrpc.RpcServer {
 	s, err := zrpc.NewServer(c, func(grpcServer *grpc.Server) {
-		gateway.RegisterRPCGatewayServer(grpcServer, service.New(svcCtx, srv))
+		svc := service.New(svcCtx, srv)
+		gateway.RegisterRPCGatewayServer(grpcServer, svc)
+		gateway.RegisterRPCGatewayStreamServer(grpcServer, svc)
 	})
 	s.AddOptions(
 		grpc.WriteBufferSize(16*1024*1024),

@@ -18,6 +18,7 @@ import (
 type Service struct {
 	svcCtx *svc.ServiceContext
 	gateway.RPCGatewayServer
+	gateway.UnimplementedRPCGatewayStreamServer
 }
 
 func New(ctx *svc.ServiceContext, srv gateway.RPCGatewayServer) *Service {

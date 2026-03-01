@@ -12,10 +12,20 @@ import (
 
 type Dao struct {
 	*ShardingSessionClient
+	SessionDispatcher SessionDispatcher
 }
 
 func New(c config.Config) *Dao {
-	return &Dao{
-		ShardingSessionClient: NewShardingSessionClient(c),
+	shardingClient := NewShardingSessionClient(c)
+	d := &Dao{
+		ShardingSessionClient: shardingClient,
 	}
+
+	if c.UseStreamSession {
+		d.SessionDispatcher = NewStreamingSessionDispatcher(c)
+	} else {
+		d.SessionDispatcher = NewUnarySessionDispatcher(shardingClient)
+	}
+
+	return d
 }

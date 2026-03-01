@@ -17,10 +17,11 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	AuthSession     zrpc.RpcClientConf
-	StatusClient    zrpc.RpcClientConf
-	GatewayClient   zrpc.RpcClientConf
-	BFFProxyClients conf.BFFProxyClients
+	AuthSession      zrpc.RpcClientConf
+	StatusClient     zrpc.RpcClientConf
+	GatewayClient    zrpc.RpcClientConf
+	BFFProxyClients  conf.BFFProxyClients
+	UseStreamGateway bool `json:",default=false"`
 }
 
 // Routine routine.

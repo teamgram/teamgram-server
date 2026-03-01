@@ -16,9 +16,10 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	RSAKey  []RSAKey
-	Gnetway *GnetwayConfig
-	Session zrpc.RpcClientConf
+	RSAKey           []RSAKey
+	Gnetway          *GnetwayConfig
+	Session          zrpc.RpcClientConf
+	UseStreamSession bool `json:",default=false"`
 }
 
 type RSAKey struct {
