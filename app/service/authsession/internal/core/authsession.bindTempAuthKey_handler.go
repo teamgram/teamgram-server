@@ -123,15 +123,18 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	// 8+8+8+8
 
 	//// 2. 反序列化出pqInnerData
-	dbuf := mtproto.NewDecodeBuf(innerData[32:])
+	dbuf := mtproto.GetDecodeBuf(innerData[32:])
 	o := dbuf.Object()
 	if dbuf.GetError() != nil {
+		mtproto.PutDecodeBuf(dbuf)
 		c.Logger.Errorf("auth.bindTempAuthKey - error: %v", dbuf.GetError())
 		return nil, mtproto.ErrEncryptedMessageInvalid
 	} else if bindAuthKeyInner, ok := o.(*mtproto.TLBindAuthKeyInner); !ok {
+		mtproto.PutDecodeBuf(dbuf)
 		c.Logger.Errorf("auth.bindTempAuthKey - invalid innerData")
 		return nil, mtproto.ErrEncryptedMessageInvalid
 	} else {
+		mtproto.PutDecodeBuf(dbuf)
 		// bind_auth_key_inner#75a3f765 nonce:long temp_auth_key_id:long perm_auth_key_id:long temp_session_id:long expires_at:int = BindAuthKeyInner;
 		// bind
 		c.Logger.Infof("auth.bindTempAuthKey - bind_auth_key_inner: %s", bindAuthKeyInner)

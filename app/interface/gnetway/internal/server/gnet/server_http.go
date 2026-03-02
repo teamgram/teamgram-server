@@ -109,9 +109,11 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		x := mtproto.NewEncodeBuf(512)
+		x := mtproto.GetEncodeBuf()
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		_, _ = c.Write(httpcodec.FormatResponse(x.GetBuf()))
+		payload := append([]byte(nil), x.GetBuf()...)
+		mtproto.PutEncodeBuf(x)
+		_, _ = c.Write(httpcodec.FormatResponse(payload))
 		ctx.httpCodec.Reset()
 
 	case *mtproto.TLReqPqMulti:
@@ -127,9 +129,11 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		x := mtproto.NewEncodeBuf(512)
+		x := mtproto.GetEncodeBuf()
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		_, _ = c.Write(httpcodec.FormatResponse(x.GetBuf()))
+		payload := append([]byte(nil), x.GetBuf()...)
+		mtproto.PutEncodeBuf(x)
+		_, _ = c.Write(httpcodec.FormatResponse(payload))
 		ctx.httpCodec.Reset()
 
 	case *mtproto.TLReq_DHParams:
@@ -148,9 +152,11 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 					logx.Errorf("conn(%s) HTTP onReqDHParams error: %v", c, err)
 					_, _ = c.Write(httpcodec.FormatResponse(nil))
 				} else {
-					xr := mtproto.NewEncodeBuf(512)
+					xr := mtproto.GetEncodeBuf()
 					serializeToBuffer(xr, mtproto.GenerateMessageId(), serverDHParams)
-					_, _ = c.Write(httpcodec.FormatResponse(xr.GetBuf()))
+					reply := append([]byte(nil), xr.GetBuf()...)
+					mtproto.PutEncodeBuf(xr)
+					_, _ = c.Write(httpcodec.FormatResponse(reply))
 				}
 				if ctx2, _ := c.Context().(*connContext); ctx2 != nil {
 					ctx2.httpCodec.Reset()
@@ -177,9 +183,11 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 				if dhGen == nil {
 					_, _ = c.Write(httpcodec.FormatResponse(nil))
 				} else {
-					xr := mtproto.NewEncodeBuf(512)
+					xr := mtproto.GetEncodeBuf()
 					serializeToBuffer(xr, mtproto.GenerateMessageId(), dhGen)
-					_, _ = c.Write(httpcodec.FormatResponse(xr.GetBuf()))
+					reply := append([]byte(nil), xr.GetBuf()...)
+					mtproto.PutEncodeBuf(xr)
+					_, _ = c.Write(httpcodec.FormatResponse(reply))
 				}
 				if ctx2, _ := c.Context().(*connContext); ctx2 != nil {
 					ctx2.httpCodec.Reset()
@@ -306,13 +314,15 @@ func (s *Server) doHttpEncryptedMessage(ctx *connContext, c gnet.Conn, authKey *
 		}
 
 		msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(rV.Payload)
-		x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+		x := mtproto.GetEncodeBuf()
 		x.Long(authKey.AuthKeyId())
 		x.Bytes(msgKey)
 		x.Bytes(mtpRawData)
+		resp := append([]byte(nil), x.GetBuf()...)
+		mtproto.PutEncodeBuf(x)
 
 		s.eng.Trigger(connId, func(c gnet.Conn) {
-			_, _ = c.Write(httpcodec.FormatResponse(x.GetBuf()))
+			_, _ = c.Write(httpcodec.FormatResponse(resp))
 			if ctx2, _ := c.Context().(*connContext); ctx2 != nil {
 				ctx2.httpCodec.Reset()
 			}
@@ -369,11 +379,13 @@ func (s *Server) httpOnReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLRe
 		paddedDataWithHash[i], paddedDataWithHash[j] = paddedDataWithHash[j], paddedDataWithHash[i]
 	}
 
-	dbuf := mtproto.NewDecodeBuf(paddedDataWithHash)
+	dbuf := mtproto.GetDecodeBuf(paddedDataWithHash)
 	o := dbuf.Object()
 	if dbuf.GetError() != nil {
+		mtproto.PutDecodeBuf(dbuf)
 		return nil, fmt.Errorf("decode P_Q_inner_data error")
 	}
+	mtproto.PutDecodeBuf(dbuf)
 
 	var (
 		pqInnerData   *mtproto.P_QInnerData
@@ -432,9 +444,10 @@ func (s *Server) httpOnReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLRe
 		ServerTime:  int32(s.CachedNow()),
 	}}
 
-	x := mtproto.NewEncodeBuf(512)
+	x := mtproto.GetEncodeBuf()
 	serverDHInnerData.Encode(x, 0)
-	serverDHInnerDataBuf := x.GetBuf()
+	serverDHInnerDataBuf := append([]byte(nil), x.GetBuf()...)
+	mtproto.PutEncodeBuf(x)
 
 	tmpAesKeyAndIV := make([]byte, 64)
 	var shaBuf [64]byte
@@ -510,13 +523,15 @@ func (s *Server) httpOnSetClientDHParams(ctx *HandshakeStateCtx, request *mtprot
 		return nil
 	}
 
-	dBuf := mtproto.NewDecodeBuf(decryptedData[20:])
+	dBuf := mtproto.GetDecodeBuf(decryptedData[20:])
 	clientDHInnerData := mtproto.MakeTLClient_DHInnerData(nil)
 	clientDHInnerData.Data2.Constructor = mtproto.TLConstructor(dBuf.Int())
 	if err := clientDHInnerData.Decode(dBuf); err != nil {
+		mtproto.PutDecodeBuf(dBuf)
 		logx.Errorf("HTTP set_client_DH_params: decode error: %v", err)
 		return nil
 	}
+	mtproto.PutDecodeBuf(dBuf)
 
 	if !bytes.Equal(clientDHInnerData.GetNonce(), ctx.Nonce) ||
 		!bytes.Equal(clientDHInnerData.GetServerNonce(), ctx.ServerNonce) {

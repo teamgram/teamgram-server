@@ -41,7 +41,8 @@ func nextMessageId(isRpc bool) int64 {
 }
 
 func parseFromIncomingMessage(b []byte) (msgId int64, obj mtproto.TLObject, err error) {
-	dBuf := mtproto.NewDecodeBuf(b)
+	dBuf := mtproto.GetDecodeBuf(b)
+	defer mtproto.PutDecodeBuf(dBuf)
 
 	msgId = dBuf.Long()
 	_ = dBuf.Int()
@@ -68,13 +69,15 @@ func serializeToBuffer(x *mtproto.EncodeBuf, msgId int64, obj mtproto.TLObject) 
 }
 
 func serializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessage2) []byte {
-	x := mtproto.NewEncodeBuf(512)
+	x := mtproto.GetEncodeBuf()
+	defer mtproto.PutEncodeBuf(x)
 
 	x.Long(salt)
 	x.Long(sessionId)
 	msg2.Encode(x, 0)
 
-	return x.GetBuf()
+	buf := append([]byte(nil), x.GetBuf()...)
+	return buf
 }
 
 const (
@@ -83,10 +86,12 @@ const (
 
 var (
 	kMsgContainerBuf = func() []byte {
-		x := mtproto.NewEncodeBuf(8)
+		x := mtproto.GetEncodeBuf()
 		x.Int(int32(mtproto.CRC32_msg_container))
 		x.Int(0)
-		return x.GetBuf()
+		buf := append([]byte(nil), x.GetBuf()...)
+		mtproto.PutEncodeBuf(x)
+		return buf
 	}()
 )
 
@@ -135,29 +140,45 @@ func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
 	case *mtproto.TLMsgNewDetailedInfo: // 都有可能
 		return nil
 	case *mtproto.TLInvokeWithLayer:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeAfterMsg:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeAfterMsgs:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeWithoutUpdates:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeWithMessagesRange:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeWithTakeout:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInvokeWithBusinessConnection:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLInitConnection:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
+		dBuf := mtproto.GetDecodeBuf(r.Query)
+		obj := dBuf.Object()
+		mtproto.PutDecodeBuf(dBuf)
+		return getRpcMethod(obj)
 	case *mtproto.TLGzipPacked:
 		return r.Obj
 	default:
@@ -172,7 +193,10 @@ func tryGetUnknownTLObject(b []byte) (rList []mtproto.TLObject) {
 		msgs []*mtproto.TLMessage2
 	)
 
-	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	dBuf := mtproto.GetDecodeBuf(b)
+	defer mtproto.PutDecodeBuf(dBuf)
+
+	err = msg.Decode(dBuf)
 	if err != nil {
 		return
 	}
@@ -200,7 +224,10 @@ func tryGetPermAuthKeyId(b []byte) int64 {
 		msgs []*mtproto.TLMessage2
 	)
 
-	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	dBuf := mtproto.GetDecodeBuf(b)
+	defer mtproto.PutDecodeBuf(dBuf)
+
+	err = msg.Decode(dBuf)
 	if err != nil {
 		return 0
 	}

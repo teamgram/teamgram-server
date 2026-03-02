@@ -361,11 +361,13 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				})
 
 				msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(payload)
-				x2 := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+				x2 := mtproto.GetEncodeBuf()
 				x2.Long(authKey.AuthKeyId())
 				x2.Bytes(msgKey)
 				x2.Bytes(mtpRawData)
-				_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{Payload: x2.GetBuf()})
+				buf := append([]byte(nil), x2.GetBuf()...)
+				mtproto.PutEncodeBuf(x2)
+				_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{Payload: buf})
 
 				return nil
 			default:
@@ -438,11 +440,13 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 					}})
 
 				msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(payload)
-				x2 := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+				x2 := mtproto.GetEncodeBuf()
 				x2.Long(authKey.AuthKeyId())
 				x2.Bytes(msgKey)
 				x2.Bytes(mtpRawData)
-				_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{Payload: x2.GetBuf()})
+				buf := append([]byte(nil), x2.GetBuf()...)
+				mtproto.PutEncodeBuf(x2)
+				_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{Payload: buf})
 			}
 		})
 

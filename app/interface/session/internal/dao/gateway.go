@@ -18,7 +18,7 @@ import (
 )
 
 func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) []byte {
-	x := mtproto.NewEncodeBuf(32 + len(msg2.Body))
+	x := mtproto.GetEncodeBuf()
 
 	x.Long(salt)
 	x.Long(sessionId)
@@ -27,7 +27,10 @@ func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) [
 	x.Int(msg2.Bytes)
 	x.Bytes(msg2.Body)
 
-	return x.GetBuf()
+	buf := append([]byte(nil), x.GetBuf()...)
+	mtproto.PutEncodeBuf(x)
+
+	return buf
 }
 
 func (d *Dao) watchGateway(c zrpc.RpcClientConf) {

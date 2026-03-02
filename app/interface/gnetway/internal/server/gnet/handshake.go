@@ -207,7 +207,8 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg []byte) (interface{}, error) {
 		return nil, err
 	}
 
-	x := mtproto.NewEncodeBuf(512)
+	x := mtproto.GetEncodeBuf()
+	defer mtproto.PutEncodeBuf(x)
 
 	switch request := obj.(type) {
 	case *mtproto.TLReqPq:
@@ -225,8 +226,9 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg []byte) (interface{}, error) {
 		})
 
 		_ = serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
+		payload := append([]byte(nil), x.GetBuf()...)
 		return &mtproto.MTPRawMessage{
-			Payload: x.GetBuf(),
+			Payload: payload,
 		}, nil
 	case *mtproto.TLReqPqMulti:
 		resPQ, err := s.onReqPqMulti(c, request)
@@ -244,8 +246,9 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg []byte) (interface{}, error) {
 
 		logx.Infof("req_pq_multi: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce), hex.EncodeToString(resPQ.Nonce))
 		_ = serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
+		payload := append([]byte(nil), x.GetBuf()...)
 		return &mtproto.MTPRawMessage{
-			Payload: x.GetBuf(),
+			Payload: payload,
 		}, nil
 	case *mtproto.TLReq_DHParams:
 		if ctx == nil {
@@ -510,13 +513,15 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			//}
 
 			// 2. 反序列化出pqInnerData
-			dbuf := mtproto.NewDecodeBuf(paddedDataWithHash)
+			dbuf := mtproto.GetDecodeBuf(paddedDataWithHash)
 			o := dbuf.Object()
 			if dbuf.GetError() != nil {
+				mtproto.PutDecodeBuf(dbuf)
 				err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
 				logx.Error(err.Error())
 				return err
 			}
+			mtproto.PutDecodeBuf(dbuf)
 
 			var pqInnerData *mtproto.P_QInnerData
 			// TODO(@benqi):
@@ -602,9 +607,10 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 				ServerTime:  int32(time.Now().Unix()),
 			}}
 
-			x := mtproto.NewEncodeBuf(512)
+			x := mtproto.GetEncodeBuf()
 			serverDHInnerData.Encode(x, 0)
-			serverDHInnerDataBuf := x.GetBuf()
+			serverDHInnerDataBuf := append([]byte(nil), x.GetBuf()...)
+			mtproto.PutEncodeBuf(x)
 			// server_DHInnerData_buf_sha1 := sha1.Sum(server_DHInnerData_buf)
 
 			// 创建aes和iv key
@@ -661,10 +667,12 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			ctx.P = P
 			ctx.State = STATE_DH_params_res
 
-			x := mtproto.NewEncodeBuf(512)
+			x := mtproto.GetEncodeBuf()
 			_ = serializeToBuffer(x, mtproto.GenerateMessageId(), serverDHParams)
+			payload := append([]byte(nil), x.GetBuf()...)
+			mtproto.PutEncodeBuf(x)
 			_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
-				Payload: x.GetBuf(),
+				Payload: payload,
 			})
 			logx.WithDuration(timex.Since(since2)).Infof("_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{")
 		})
@@ -726,10 +734,11 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	logx.WithDuration(timex.Since(since)).Infof("decryptedData, err := d.Decrypt(bEncryptedData): %s", c)
 
 	// TODO(@benqi): 检查签名是否合法
-	dBuf := mtproto.NewDecodeBuf(decryptedData[20:])
+	dBuf := mtproto.GetDecodeBuf(decryptedData[20:])
 	clientDHInnerData := mtproto.MakeTLClient_DHInnerData(nil)
 	clientDHInnerData.Data2.Constructor = mtproto.TLConstructor(dBuf.Int())
 	err = clientDHInnerData.Decode(dBuf)
+	mtproto.PutDecodeBuf(dBuf)
 	if err != nil {
 		logx.Errorf("onSetClientDHParams conn(%s) - TLClient_DHInnerData decode error: %s", c, err)
 		return nil, err
@@ -812,10 +821,12 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 		func(c gnet.Conn) {
 			ctx.State = STATE_dh_gen_res
 
-			x := mtproto.NewEncodeBuf(512)
+			x := mtproto.GetEncodeBuf()
 			serializeToBuffer(x, mtproto.GenerateMessageId(), dhGen)
+			payload := append([]byte(nil), x.GetBuf()...)
+			mtproto.PutEncodeBuf(x)
 			UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
-				Payload: x.GetBuf(),
+				Payload: payload,
 			})
 		})
 

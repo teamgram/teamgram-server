@@ -873,7 +873,9 @@ func (m *MainAuthWrapper) onSessionData(ctx context.Context, sessionMsg *session
 	}
 
 	message2 := new(mtproto.TLMessage2)
-	err := message2.Decode(mtproto.NewDecodeBuf(sessionMsg.buf))
+	dBuf := mtproto.GetDecodeBuf(sessionMsg.buf)
+	err := message2.Decode(dBuf)
+	mtproto.PutDecodeBuf(dBuf)
 	if err != nil {
 		// TODO(@benqi): close frontend conn??
 		logx.WithContext(ctx).Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, m, sessionMsg.gatewayId)
