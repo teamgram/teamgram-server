@@ -231,8 +231,8 @@ github.com/teamgram/gnet/v2 v2.9.1-teamgram h1:C/5fSDyK+HgiTLeTn58h1EhYy9pGMRU1x
 github.com/teamgram/gnet/v2 v2.9.1-teamgram/go.mod h1:WQTxDWYuQ/hz3eccH0FN32IVuvZ19HewEWx0l62fx7E=
 github.com/teamgram/go-zero v1.10.0-teamgram h1:Fut0XmoCFDShNQU97yolMbk+kBYkexI7DbR+xBcXfVc=
 github.com/teamgram/go-zero v1.10.0-teamgram/go.mod h1:vAAg4mrqpKtZ/h5ZZefQjdP1oaG4L1AR6s8iFusJxus=
-github.com/teamgram/marmota v0.1.23 h1:cmuFeXZLWGE8Mtf/MMjb3FV5PMTQKCDMmaR+4dyA+RE=
-github.com/teamgram/marmota v0.1.23/go.mod h1:dWwXdo3dxlr2pgKJxnG7NwR/j5245OzfyiQOgdso420=
+github.com/teamgram/marmota v0.1.24 h1:sRvych4lNxlpyXaX514OhTTL4fL7WL88e0k+TBrK7i8=
+github.com/teamgram/marmota v0.1.24/go.mod h1:dWwXdo3dxlr2pgKJxnG7NwR/j5245OzfyiQOgdso420=
 github.com/teamgram/proto v0.222.3 h1:AWaYpaYI2NcJnVw3JTSbheAVCKrCtykAWsSxpkgzSSg=
 github.com/teamgram/proto v0.222.3/go.mod h1:a/ovyAetA0gyRu/3A8y5JJQUePOEbrx2bOF/fIRQUB4=
 github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df h1:lL/Oy/WWGQJ7cly/i0z/ALOprHiHRI+KjSoZLVmTwp8=
