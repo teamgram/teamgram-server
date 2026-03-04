@@ -83,6 +83,8 @@ func readV2Header(buf []byte, r io.Reader) (*Header, error) {
 
 		// Translate the addresses according to the family
 		switch buf[13] {
+		case 0x00: // AF_UNSPEC / UNSPEC: no address, TLVs only (if any)
+			// leave offset at 0 so that any trailing data is exposed as RawTLVs below
 		case 0x11, 0x12: // IPV4 (TCP/UDP)
 			if len(tr) < ipv4AddressLen {
 				return nil, fmt.Errorf("expected %d bytes for IPV4 address", ipv4AddressLen)
@@ -125,6 +127,9 @@ func readV2Header(buf []byte, r io.Reader) (*Header, error) {
 		case 0x31, 0x32: // UNIX (STREAM/DGRAM)
 			// Not implemented by haproxy and I see no need to implement it here, patches welcome!
 			return &h, errors.New("Received UNIX socket proxy command, Currently not supported")
+		default:
+			// Unknown or unsupported family/proto combination
+			return nil, fmt.Errorf("unsupported protocol family '%X'", buf[13])
 		}
 	default:
 		// Per spec, receivers must reject unsupported commands
