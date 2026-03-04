@@ -70,15 +70,15 @@ func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt
 
 	valid := false
 
-	if salt == c.sessList.cacheSalt.GetSalt() {
+	// 当前 salt 完全匹配，直接视为合法。
+	if c.sessList.cacheSalt != nil && salt == c.sessList.cacheSalt.GetSalt() {
 		valid = true
-	} else {
-		if c.sessList.cacheSalt != nil {
-			if salt == c.sessList.cacheSalt.GetSalt() {
-				date := int32(time.Now().Unix())
-				if c.sessList.cacheSalt.GetValidUntil()+300 >= date {
-					valid = true
-				}
+	} else if c.sessList.cacheLastSalt != nil {
+		// 旧 salt 在 valid_until + 300s 宽限期内仍然接受，符合 MTProto 规范。
+		if salt == c.sessList.cacheLastSalt.GetSalt() {
+			date := int32(time.Now().Unix())
+			if c.sessList.cacheLastSalt.GetValidUntil()+300 >= date {
+				valid = true
 			}
 		}
 	}

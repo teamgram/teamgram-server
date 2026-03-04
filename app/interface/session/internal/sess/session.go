@@ -264,19 +264,18 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	// check onNewSessionCreated
+	// firstMsgId 应该是本 session 收到的最早一条消息的 msg_id。
 	minMsgId := msg.MsgId
 	for _, m2 := range msgs {
-		if minMsgId < m2.MsgId {
+		if m2.MsgId < minMsgId {
 			minMsgId = m2.MsgId
 		}
 	}
 
-	if c.sessionState == kSessionStateNew || minMsgId < c.firstMsgId {
+	if c.sessionState == kSessionStateNew || c.firstMsgId == 0 || minMsgId < c.firstMsgId {
 		logx.WithContext(ctx).Infof("onNewSessionCreated - %#v, c: %s", msgs, c)
 		c.onNewSessionCreated(ctx, gatewayId, minMsgId)
-		if c.firstMsgId != 0 {
-			c.firstMsgId = minMsgId
-		}
+		c.firstMsgId = minMsgId
 		c.sessionState = kSessionStateCreated
 	}
 
