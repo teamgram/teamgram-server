@@ -19,53 +19,53 @@
 package core
 
 import (
+	"time"
+
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
 // SessionSendHttpDataToSession
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (c *SessionCore) SessionSendHttpDataToSession(in *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
-	//var (
-	//	data = in.GetClient()
-	//)
-	//
-	//if data == nil {
-	//	err := mtproto.ErrInputRequestInvalid
-	//	c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
-	//	return nil, err
-	//}
-	//
-	//mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
-	//if err != nil {
-	//	c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
-	//	return nil, err
-	//}
-	//
-	//chData := make(chan interface{})
-	//mainAuth.SessionHttpDataArrived(
-	//	c.ctx,
-	//	int(data.KeyType),
-	//	data.AuthKeyId,
-	//	data.ServerId,
-	//	data.ClientIp,
-	//	data.SessionId,
-	//	data.Salt,
-	//	data.Payload,
-	//	chData)
-	//
-	//timer := time.NewTimer(time.Second * 7)
-	//select {
-	//case cData := <-chData:
-	//	return &session.HttpSessionData{
-	//		Payload: cData.([]byte),
-	//	}, nil
-	//case <-timer.C:
-	//	c.Logger.Errorf("chData timeout...")
-	//}
+	data := in.GetClient()
+	if data == nil {
+		err := mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+		return nil, err
+	}
 
-	c.Logger.Errorf("session.sendHttpDataToSession - error: not implement")
+	mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+		return nil, err
+	}
 
-	return &session.HttpSessionData{
-		Payload: []byte{},
-	}, nil
+	chData := make(chan interface{})
+	mainAuth.SessionHttpDataArrived(
+		c.ctx,
+		int(data.KeyType),
+		data.AuthKeyId,
+		data.ServerId,
+		data.ClientIp,
+		data.SessionId,
+		data.Salt,
+		data.Payload,
+		chData)
+
+	timer := time.NewTimer(7 * time.Second)
+	defer timer.Stop()
+
+	select {
+	case cData := <-chData:
+		payload, _ := cData.([]byte)
+		return &session.HttpSessionData{
+			Payload: payload,
+		}, nil
+	case <-timer.C:
+		c.Logger.Errorf("session.sendHttpDataToSession - chData timeout...")
+		return &session.HttpSessionData{
+			Payload: []byte{},
+		}, nil
+	}
 }

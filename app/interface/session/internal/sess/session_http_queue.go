@@ -40,7 +40,8 @@ func newHttpRequestQueue() *httpRequestQueue {
 
 func (q *httpRequestQueue) Push(resChan chan interface{}) {
 	q.q.PushBack(&httpReqItem{
-		expireTime: time.Now().Unix() + 3,
+		// Default max_wait is 25000 ms in MTProto; use 25s here.
+		expireTime: time.Now().Unix() + 25,
 		resChan:    resChan,
 	})
 }

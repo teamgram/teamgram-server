@@ -121,8 +121,8 @@ type session struct {
 	pushQueue       *sessionPushQueue
 	sessList        *SessionList
 	canSync         bool
-	// isHttp       bool
-	// httpQueue    *httpRequestQueue
+	isHttp          bool
+	httpQueue       *httpRequestQueue
 }
 
 func newSession(sessionId int64, sessList *SessionList) *session {
@@ -143,8 +143,8 @@ func newSession(sessionId int64, sessList *SessionList) *session {
 		pushQueue:       newSessionPushQueue(),
 		sessList:        sessList,
 		canSync:         false,
-		// isHttp:       false,
-		// httpQueue:    newHttpRequestQueue(),
+		isHttp:          false,
+		httpQueue:       newHttpRequestQueue(),
 	}
 
 	return sess
@@ -415,15 +415,17 @@ func (c *session) onTimer(ctx context.Context) bool {
 			})
 	}
 
-	//httpTimeOutList := c.httpQueue.PopTimeoutList()
-	//if len(httpTimeOutList) > 0 {
-	//	logx.WithContext(ctx).Infof("timeoutList: %d", len(httpTimeOutList))
-	//}
-	//for _, ch := range httpTimeOutList {
-	//	c.sendHttpDirectToGateway(ctx, ch, false, emptyMsgContainer, func(sentRaw *mtproto.TLMessageRawData) {
-	//		//
-	//	})
-	//}
+	if c.isHttp && c.httpQueue != nil {
+		httpTimeOutList := c.httpQueue.PopTimeoutList()
+		if len(httpTimeOutList) > 0 {
+			logx.WithContext(ctx).Infof("http timeout list size: %d", len(httpTimeOutList))
+		}
+		for _, ch := range httpTimeOutList {
+			_, _ = c.sendHttpDirectToGateway(ctx, ch, false, emptyMsgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+				// nothing to do
+			})
+		}
+	}
 
 	if c.connState == kStateOnline {
 		if date >= c.closeDate {
@@ -581,25 +583,23 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 		err error
 	)
 
-	//if !c.isHttp {
-	rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
-		ctx,
-		gatewayId,
-		c.sessList.authId,
-		salt,
-		c.sessionId,
-		rawMsg)
-	//} else {
-	//	if ch := c.httpQueue.Pop(); ch != nil {
-	//		rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
-	//			ctx,
-	//			ch,
-	//			c.sessList.authId,
-	//			salt,
-	//			c.sessionId,
-	//			rawMsg)
-	//	}
-	//}
+	if !c.isHttp {
+		rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
+			ctx,
+			gatewayId,
+			c.sessList.authId,
+			salt,
+			c.sessionId,
+			rawMsg)
+	} else if ch := c.httpQueue.Pop(); ch != nil {
+		rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
+			ctx,
+			ch,
+			c.sessList.authId,
+			salt,
+			c.sessionId,
+			rawMsg)
+	}
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("sendToClient - %v", err)
@@ -624,25 +624,23 @@ func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, 
 		err error
 	)
 
-	//if !c.isHttp {
-	rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
-		ctx,
-		gatewayId,
-		c.sessList.authId,
-		salt,
-		c.sessionId,
-		raw)
-	//} else {
-	//	if ch := c.httpQueue.Pop(); ch != nil {
-	//		rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
-	//			ctx,
-	//			ch,
-	//			c.sessList.authId,
-	//			salt,
-	//			c.sessionId,
-	//			raw)
-	//	}
-	//}
+	if !c.isHttp {
+		rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
+			ctx,
+			gatewayId,
+			c.sessList.authId,
+			salt,
+			c.sessionId,
+			raw)
+	} else if ch := c.httpQueue.Pop(); ch != nil {
+		rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
+			ctx,
+			ch,
+			c.sessList.authId,
+			salt,
+			c.sessionId,
+			raw)
+	}
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("sess: %s >>> sendRawDirectToGateway - %v", c, err)
