@@ -67,4 +67,12 @@ var (
 		Help:      "Total number of quick ACK responses sent.",
 		Labels:    []string{},
 	})
+
+	metricCodecDecodeError = metric.NewCounterVec(&metric.CounterVecOpts{
+		Namespace: namespace,
+		Subsystem: "codec",
+		Name:      "decode_errors_total",
+		Help:      "Total number of MTProto codec decode errors, labeled by transport and reason.",
+		Labels:    []string{"proto", "reason"}, // proto: tcp, websocket; reason: bad_magic, bad_len, bad_crc, bad_seq, decrypt, transport_unsupported, unexpected_eof, other
+	})
 )

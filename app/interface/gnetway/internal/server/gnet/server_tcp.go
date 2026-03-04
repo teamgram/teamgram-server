@@ -33,11 +33,13 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 		ctx.codec, err = codec.CreateCodec(c)
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
+				metricCodecDecodeError.Inc("tcp", classifyCodecError(err))
 				return gnet.None
-			} else {
-				logx.Errorf("conn(%s) create codec error: %v", c, err)
-				return gnet.Close
 			}
+
+			metricCodecDecodeError.Inc("tcp", classifyCodecError(err))
+			logx.Errorf("conn(%s) create codec error: %v", c, err)
+			return gnet.Close
 		}
 	}
 
@@ -45,11 +47,13 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 		needAck, frame, err := ctx.codec.Decode(c)
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
+				metricCodecDecodeError.Inc("tcp", classifyCodecError(err))
 				return gnet.None
-			} else {
-				logx.Errorf("conn(%s) frame is error: %v", c, err)
-				action = gnet.Close
 			}
+
+			metricCodecDecodeError.Inc("tcp", classifyCodecError(err))
+			logx.Errorf("conn(%s) frame is error: %v", c, err)
+			action = gnet.Close
 			return
 		} else if frame == nil {
 			logx.Debugf("conn(%s) frame is nil", c)

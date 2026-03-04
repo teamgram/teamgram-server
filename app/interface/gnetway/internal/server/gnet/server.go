@@ -23,6 +23,7 @@ import (
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/codec"
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/panjf2000/gnet/v2/pkg/logging"
@@ -83,6 +84,28 @@ func New(svcCtx *svc.ServiceContext, c config.Config) *Server {
 		s.Serve()
 	}()
 	return s
+}
+
+// classifyCodecError maps codec errors to a stable reason label for metrics.
+func classifyCodecError(err error) string {
+	switch {
+	case errors.Is(err, codec.ErrProtoBadMagic):
+		return "bad_magic"
+	case errors.Is(err, codec.ErrProtoBadLength):
+		return "bad_len"
+	case errors.Is(err, codec.ErrProtoBadCRC):
+		return "bad_crc"
+	case errors.Is(err, codec.ErrProtoBadSeq):
+		return "bad_seq"
+	case errors.Is(err, codec.ErrProtoDecrypt):
+		return "decrypt"
+	case errors.Is(err, codec.ErrTransportNotSupported):
+		return "transport_unsupported"
+	case errors.Is(err, codec.ErrUnexpectedEOF):
+		return "unexpected_eof"
+	default:
+		return "other"
+	}
 }
 
 func (s *Server) Close() {

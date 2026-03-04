@@ -43,8 +43,11 @@ func (s *Server) onWebsocketData(ctx *connContext, c gnet.Conn) (action gnet.Act
 			ctx.codec, err = codec.CreateCodec(&ctx.wsCodec.Conn)
 			if err != nil {
 				if errors.Is(err, codec.ErrUnexpectedEOF) {
+					metricCodecDecodeError.Inc("websocket", classifyCodecError(err))
 					return gnet.None
 				}
+
+				metricCodecDecodeError.Inc("websocket", classifyCodecError(err))
 				logx.Errorf("conn(%s) create codec error: %v", c, err)
 				return gnet.Close
 			}
@@ -52,6 +55,12 @@ func (s *Server) onWebsocketData(ctx *connContext, c gnet.Conn) (action gnet.Act
 
 		needAck, frame, err := ctx.codec.Decode(&ws.Conn)
 		if err != nil {
+			if errors.Is(err, codec.ErrUnexpectedEOF) {
+				metricCodecDecodeError.Inc("websocket", classifyCodecError(err))
+				return gnet.None
+			}
+
+			metricCodecDecodeError.Inc("websocket", classifyCodecError(err))
 			logx.Errorf("conn(%s) frame is error: %v", c, err)
 			action = gnet.Close
 			return
