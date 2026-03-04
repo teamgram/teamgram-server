@@ -228,6 +228,7 @@ type sessionInboundQueue struct {
 	minMsgId   int64
 	maxMsgId   int64
 	msgIds     *list.List
+	index      map[int64]*list.Element
 }
 
 func newSessionInboundQueue() *sessionInboundQueue {
@@ -236,11 +237,14 @@ func newSessionInboundQueue() *sessionInboundQueue {
 	q.firstMsgId = 0
 	q.minMsgId = 0
 	q.maxMsgId = 0
+	q.index = make(map[int64]*list.Element)
 	return q
 }
 
 func (q *sessionInboundQueue) AddMsgId(msgId int64) (r *inboxMsg) {
-	// TODO(@benqi): resize 100
+	if elem, ok := q.index[msgId]; ok {
+		return elem.Value.(*inboxMsg)
+	}
 
 	if msgId < q.minMsgId {
 		q.minMsgId = msgId
@@ -252,17 +256,18 @@ func (q *sessionInboundQueue) AddMsgId(msgId int64) (r *inboxMsg) {
 	for e := q.msgIds.Front(); e != nil; e = e.Next() {
 		if e.Value.(*inboxMsg).msgId > msgId {
 			r = newInboxMsg(msgId)
-			q.msgIds.InsertBefore(r, e)
-			return
+			elem := q.msgIds.InsertBefore(r, e)
+			q.index[msgId] = elem
+			return r
 		} else if e.Value.(*inboxMsg).msgId == msgId {
-			r = e.Value.(*inboxMsg)
-			return
+			return e.Value.(*inboxMsg)
 		}
 	}
 	r = newInboxMsg(msgId)
-	q.msgIds.PushBack(r)
+	elem := q.msgIds.PushBack(r)
+	q.index[msgId] = elem
 
-	return
+	return r
 }
 
 func (q *sessionInboundQueue) GetMinMsgId() int64 {
@@ -274,26 +279,23 @@ func (q *sessionInboundQueue) GetMaxMsgId() int64 {
 }
 
 func (q *sessionInboundQueue) ChangeAckReceived(msgId int64) {
-	for e := q.msgIds.Front(); e != nil; e = e.Next() {
-		if e.Value.(*inboxMsg).msgId == msgId {
-			e.Value.(*inboxMsg).state = RECEIVED | RESPONSE_ACKNOWLEDGED
-		}
+	if elem, ok := q.index[msgId]; ok {
+		elem.Value.(*inboxMsg).state = RECEIVED | RESPONSE_ACKNOWLEDGED
 	}
 }
 
 func (q *sessionInboundQueue) Lookup(msgId int64) (iMsg *inboxMsg) {
-	for e := q.msgIds.Front(); e != nil; e = e.Next() {
-		if msgId == e.Value.(*inboxMsg).msgId {
-			iMsg = e.Value.(*inboxMsg)
-			return
-		}
+	if elem, ok := q.index[msgId]; ok {
+		return elem.Value.(*inboxMsg)
 	}
-	return
+	return nil
 }
 
 func (q *sessionInboundQueue) Shrink() {
 	for q.msgIds.Len() > maxQueueSize {
-		iMsg := q.msgIds.Remove(q.msgIds.Front())
+		front := q.msgIds.Front()
+		iMsg := q.msgIds.Remove(front)
+		delete(q.index, iMsg.(*inboxMsg).msgId)
 		q.minMsgId = iMsg.(*inboxMsg).msgId
 	}
 }
