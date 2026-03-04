@@ -70,11 +70,10 @@ func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt
 
 	valid := false
 
-	// 当前 salt 完全匹配，直接视为合法。
 	if c.sessList.cacheSalt != nil && salt == c.sessList.cacheSalt.GetSalt() {
 		valid = true
 	} else if c.sessList.cacheLastSalt != nil {
-		// 旧 salt 在 valid_until + 300s 宽限期内仍然接受，符合 MTProto 规范。
+		// Accept the previous salt within a 300s grace period after its valid_until.
 		if salt == c.sessList.cacheLastSalt.GetSalt() {
 			date := int32(time.Now().Unix())
 			if c.sessList.cacheLastSalt.GetValidUntil()+300 >= date {
@@ -317,8 +316,11 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 		}
 
 		if msg.MsgId < c.inQueue.GetMinMsgId() {
-			// errorCode = kMsgIdTooOld
-			// break
+			// Use upper 32 bits (time) to check if the message is too old (>300s).
+			if clientTime+300 < serverTime {
+				errorCode = kMsgIdTooOld
+				break
+			}
 		}
 
 		//// TODO(@benqi): check kSeqNoTooHigh and kSeqNoTooLow
@@ -616,9 +618,18 @@ func (c *session) onMsgsStateInfo(ctx context.Context, gatewayId string, msgId *
 		}
 	})
 
-	// TODO(@benqi): resend
-	if len(resendIds) > 0 {
-		//
+	// Resend messages that the peer reported as NOT_RECEIVED.
+	if len(resendIds) > 0 && gatewayId != "" {
+		sentTime := time.Now().Unix()
+		for _, id := range resendIds {
+			if o := c.outQueue.Lookup(id); o != nil && o.msg != nil {
+				if ok, err := c.sendRawDirectToGateway(ctx, gatewayId, o.msg); err != nil || !ok {
+					logx.WithContext(ctx).Errorf("onMsgsStateInfo - resend msg_id %d failed: %v", id, err)
+					continue
+				}
+				o.sent = sentTime
+			}
+		}
 	}
 
 	// 2. no ack
@@ -673,9 +684,18 @@ func (c *session) onMsgsAllInfo(ctx context.Context, gatewayId string, msgId *in
 		}
 	})
 
-	// TODO(@benqi): resend
-	if len(resendIds) > 0 {
-		//
+	// Resend messages that the peer voluntarily reported as NOT_RECEIVED.
+	if len(resendIds) > 0 && gatewayId != "" {
+		sentTime := time.Now().Unix()
+		for _, id := range resendIds {
+			if o := c.outQueue.Lookup(id); o != nil && o.msg != nil {
+				if ok, err := c.sendRawDirectToGateway(ctx, gatewayId, o.msg); err != nil || !ok {
+					logx.WithContext(ctx).Errorf("onMsgsAllInfo - resend msg_id %d failed: %v", id, err)
+					continue
+				}
+				o.sent = sentTime
+			}
+		}
 	}
 
 	// 2. no ack
@@ -753,9 +773,19 @@ func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *i
 
 		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, msgsStateInfo)
 		msgId.state = RECEIVED | NEED_NO_ACK
-	} else {
+	} else if gatewayId != "" {
+		// 请求的所有 msg_id 都在本端当前窗口内，尝试重发这些消息。
+		sentTime := time.Now().Unix()
 		for i := 0; i < len(msgIds); i++ {
-			// resend
+			o := c.outQueue.Lookup(msgIds[i])
+			if o == nil || o.msg == nil {
+				continue
+			}
+			if ok, err := c.sendRawDirectToGateway(ctx, gatewayId, o.msg); err != nil || !ok {
+				logx.WithContext(ctx).Errorf("onMsgResendReq - resend msg_id %d failed: %v", msgIds[i], err)
+				continue
+			}
+			o.sent = sentTime
 		}
 	}
 }

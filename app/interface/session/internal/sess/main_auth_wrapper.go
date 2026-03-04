@@ -550,7 +550,7 @@ func (m *MainAuthWrapper) runLoop() {
 		m.finish.Done()
 		m.rpcQueue.Close()
 		close(m.closeChan)
-		close(m.sessionDataChan)
+		// Do not close sessionDataChan here to avoid panics from senders writing to a closed channel.
 		m.finish.Wait()
 	}()
 

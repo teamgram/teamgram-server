@@ -264,7 +264,7 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	// check onNewSessionCreated
-	// firstMsgId 应该是本 session 收到的最早一条消息的 msg_id。
+	// firstMsgId should be the earliest msg_id received in this session.
 	minMsgId := msg.MsgId
 	for _, m2 := range msgs {
 		if m2.MsgId < minMsgId {
