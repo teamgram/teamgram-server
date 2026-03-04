@@ -314,9 +314,11 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 				// 第一次收到
 				c.processMsg(ctx, gatewayId, clientIp, inMsg, m2.Object)
 			} else {
-				// TODO(@benqi): resend
-				// 已经收到，返回发送状态
-				// c.notifyMsgsStateInfo(gatewayId, inMsg)
+				// Duplicate message: for large RPC replies, prefer sending MsgDetailedInfo
+				// instead of resending the full answer.
+				if o := c.outQueue.Lookup(inMsg.msgId); o != nil && o.msg != nil && o.msg.Bytes > detailedInfoThreshold {
+					c.notifyMsgDetailedInfo(ctx, gatewayId, inMsg, o)
+				}
 				continue
 			}
 		}

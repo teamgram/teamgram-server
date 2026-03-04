@@ -29,6 +29,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+const detailedInfoThreshold = 4096
+
 func (c *session) onMsgsAck(ctx context.Context, gatewayId string, msgId int64, seqno int32, request *mtproto.TLMsgsAck) {
 	logx.WithContext(ctx).Infof("onMsgsAck - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
@@ -849,7 +851,24 @@ func (c *session) notifyMsgsAllInfo() {
 // Currently, status is always zero. This may change in future.
 //
 // This message does not require an acknowledgment.
-func (c *session) notifyMsgDetailedInfo(inMsg *inboxMsg) {
+func (c *session) notifyMsgDetailedInfo(ctx context.Context, gatewayId string, inMsg *inboxMsg, oMsg *outboxMsg) {
+	if gatewayId == "" || inMsg == nil || oMsg == nil || oMsg.msg == nil {
+		return
+	}
+
+	detail := mtproto.MakeTLMsgDetailedInfo(&mtproto.MsgDetailedInfo{
+		MsgId:       inMsg.msgId,
+		AnswerMsgId: oMsg.msg.MsgId,
+		Bytes:       oMsg.msg.Bytes,
+		Status:      0,
+	}).To_MsgDetailedInfo()
+
+	_, err := c.sendDirectToGateway(ctx, gatewayId, false, detail, func(sentRaw *mtproto.TLMessageRawData) {
+		// nothing to do
+	})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("notifyMsgDetailedInfo - send failed for msg_id %d: %v", inMsg.msgId, err)
+	}
 }
 
 func (c *session) notifyNewMsgDetailedInfo() {
