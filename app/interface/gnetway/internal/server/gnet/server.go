@@ -17,6 +17,7 @@ package gnet
 
 import (
 	"context"
+	"errors"
 	"sync/atomic"
 	"time"
 
