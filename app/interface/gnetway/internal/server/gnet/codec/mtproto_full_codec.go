@@ -34,7 +34,14 @@ import (
 // and 4 CRC32 bytes at the end (length, sequence number, and payload together).
 //
 
-// FullCodec FullCodec
+// FullCodec implements the MTProto full TCP transport.
+// As per https://core.telegram.org/mtproto#tcp-transport, each packet has
+// length(4) + seqno(4) + payload + crc32(4), where length covers the whole
+// packet, seqno is a per‑connection sequence number, and crc32 validates
+// length+seqno+payload.
+//
+// In this implementation FullCodec runs over plain TCP and is mainly used
+// for compatibility with clients that only support the full transport.
 type FullCodec struct {
 	recvSeqNo int32
 	sendSeqNo int32
@@ -85,10 +92,10 @@ func (c *FullCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	totalLen := int(binary.LittleEndian.Uint32(buf))
 	// Minimum: 4 (length) + 4 (seqno) + 4 (crc32) = 12
 	if totalLen < 12 {
-		return false, nil, fmt.Errorf("full codec: invalid total length: %d", totalLen)
+		return false, nil, fmt.Errorf("%w: full codec: invalid total length: %d", ErrProtoBadLength, totalLen)
 	}
 	if totalLen > MAX_MTPRORO_FRAME_SIZE {
-		return false, nil, fmt.Errorf("full codec: too large data(%d)", totalLen)
+		return false, nil, fmt.Errorf("%w: full codec: too large data(%d)", ErrProtoBadLength, totalLen)
 	}
 
 	// Read remaining bytes: seqno + payload + crc32
@@ -109,13 +116,13 @@ func (c *FullCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	h.Write(buf[:payloadEnd])
 	calcCrc := h.Sum32()
 	if recvCrc != calcCrc {
-		return false, nil, fmt.Errorf("full codec: crc32 mismatch: received 0x%08x, calculated 0x%08x", recvCrc, calcCrc)
+		return false, nil, fmt.Errorf("%w: full codec: crc32 mismatch: received 0x%08x, calculated 0x%08x", ErrProtoBadCRC, recvCrc, calcCrc)
 	}
 
 	// Validate sequence number
 	seq := int32(binary.LittleEndian.Uint32(buf[:4]))
 	if seq != c.recvSeqNo {
-		return false, nil, fmt.Errorf("full codec: seq mismatch: received %d, expected %d", seq, c.recvSeqNo)
+		return false, nil, fmt.Errorf("%w: full codec: seq mismatch: received %d, expected %d", ErrProtoBadSeq, seq, c.recvSeqNo)
 	}
 	c.recvSeqNo++
 

@@ -19,7 +19,9 @@ import (
 	"github.com/teamgram/proto/mtproto/crypto"
 )
 
-// AesCTR128Crypto AesCTR128Crypto
+// AesCTR128Crypto wraps per‑connection AES‑CTR128 encrypt/decrypt engines.
+// Keys and IVs are normally derived during the obfuscated transport handshake
+// from a 64‑byte random seed sent by the client.
 type AesCTR128Crypto struct {
 	decrypt *crypto.AesCTR128Encrypt
 	encrypt *crypto.AesCTR128Encrypt

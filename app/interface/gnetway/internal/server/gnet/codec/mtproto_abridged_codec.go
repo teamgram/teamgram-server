@@ -32,6 +32,9 @@ import (
 // In this case, server responses look the same (the server does not send 0xefas the first byte).
 //
 
+// AbridgedCodec implements the MTProto abridged TCP transport.
+// It can work directly over plain TCP or be wrapped by ObfuscatedCodec to
+// run on top of an obfuscated transport.
 type AbridgedCodec struct {
 	*AesCTR128Crypto
 	state     int
@@ -148,10 +151,12 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (bool, []byte, error) {
 
 			c.state = WAIT_PACKET_LENGTH_3_PACKET
 			n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-			// log.Debugf("n = %d", n)
+			if n <= 0 || n%4 != 0 {
+				return false, nil, ErrProtoBadLength
+			}
 			if n > MAX_MTPRORO_FRAME_SIZE {
-				// TODO(@benqi): close conn
-				return false, nil, fmt.Errorf("too large data(%d)", n)
+				// 上层收到 ErrProtoBadLength 后应主动关闭连接。
+				return false, nil, fmt.Errorf("%w: too large data(%d)", ErrProtoBadLength, n)
 			}
 		}
 		if buf, err = in.readN(n); err != nil {
@@ -171,6 +176,9 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (bool, []byte, error) {
 		return needAck, buf, nil
 	case WAIT_PACKET_LENGTH_1_PACKET:
 		n = int(c.packetLen[0]&0x7f) << 2
+		if n <= 0 || n%4 != 0 {
+			return false, nil, ErrProtoBadLength
+		}
 		if buf, err = in.readN(n); err != nil {
 			return false, nil, ErrUnexpectedEOF
 		} else if len(buf) <= 8 {
@@ -199,10 +207,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (bool, []byte, error) {
 
 		c.state = WAIT_PACKET_LENGTH_3_PACKET
 		n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-		// log.Debugf("n = %d", n)
+		if n <= 0 || n%4 != 0 {
+			return false, nil, ErrProtoBadLength
+		}
 		if n > MAX_MTPRORO_FRAME_SIZE {
-			// TODO(@benqi): close conn
-			return false, nil, fmt.Errorf("too large data(%d)", n)
+			return false, nil, fmt.Errorf("%w: too large data(%d)", ErrProtoBadLength, n)
 		}
 		if buf, err = in.readN(n); err != nil {
 			return false, nil, ErrUnexpectedEOF
@@ -221,10 +230,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (bool, []byte, error) {
 		return needAck, buf, nil
 	case WAIT_PACKET_LENGTH_3_PACKET:
 		n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-		// log.Debugf("n = %d", n)
+		if n <= 0 || n%4 != 0 {
+			return false, nil, ErrProtoBadLength
+		}
 		if n > MAX_MTPRORO_FRAME_SIZE {
-			// TODO(@benqi): close conn
-			return false, nil, fmt.Errorf("too large data(%d)", n)
+			return false, nil, fmt.Errorf("%w: too large data(%d)", ErrProtoBadLength, n)
 		}
 		if buf, err = in.readN(n); err != nil {
 			return false, nil, ErrUnexpectedEOF

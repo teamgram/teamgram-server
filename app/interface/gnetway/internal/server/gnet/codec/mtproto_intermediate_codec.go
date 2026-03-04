@@ -22,15 +22,10 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// IntermediateCodec
-// https://core.telegram.org/mtproto#tcp-transport
-//
-// In case 4-byte data alignment is needed,
-// an intermediate version of the original protocol may be used:
-// if the client sends 0xeeeeeeee as the first int (four bytes),
-// then packet length is encoded always by four bytes as in the original version,
-// but the sequence number and CRC32 are omitted,
-// thus decreasing total packet size by 8 bytes.
+// IntermediateCodec implements the MTProto intermediate TCP transport.
+// As per https://core.telegram.org/mtproto#tcp-transport, the client sends
+// 0xeeeeeeee as an initial magic, and each packet is prefixed with a
+// 4‑byte little‑endian length (bytes), without seqno and CRC32.
 type IntermediateCodec struct {
 	*AesCTR128Crypto
 	state     int
@@ -84,9 +79,11 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (bool, []byte, error) {
 
 	needAck := c.packetLen>>31 == 1
 	n = int(c.packetLen & 0x7fffffff)
+	if n <= 0 || n%4 != 0 {
+		return false, nil, ErrProtoBadLength
+	}
 	if n > MAX_MTPRORO_FRAME_SIZE {
-		// TODO(@benqi): close conn
-		return false, nil, fmt.Errorf("too large data(%d)", n)
+		return false, nil, fmt.Errorf("%w: too large data(%d)", ErrProtoBadLength, n)
 	}
 
 	if buf, err = in.readN(n); err != nil {

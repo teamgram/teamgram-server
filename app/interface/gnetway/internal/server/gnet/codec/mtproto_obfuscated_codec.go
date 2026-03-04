@@ -19,6 +19,9 @@ import (
 	"github.com/teamgram/proto/mtproto/crypto"
 )
 
+// ObfuscatedCodec represents a codec that runs on top of an MTProto
+// obfuscated transport. It wraps one of the underlying TCP transports
+// (abridged, intermediate, padded) and carries the target dc id.
 type ObfuscatedCodec struct {
 	Codec
 	dc int16

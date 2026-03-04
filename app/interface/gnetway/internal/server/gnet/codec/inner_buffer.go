@@ -10,7 +10,9 @@ import (
 	"errors"
 )
 
-// innerBuffer
+// innerBuffer is a light wrapper around a byte slice that supports
+// sequential fixed‑length reads. It is used only inside MTProto codecs
+// to avoid extra allocations when slicing data returned by Peek.
 type (
 	innerBuffer []byte
 )
