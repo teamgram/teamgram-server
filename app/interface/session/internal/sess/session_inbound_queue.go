@@ -21,7 +21,6 @@ package sess
 import (
 	"container/list"
 	"fmt"
-	"math"
 )
 
 /*
@@ -236,7 +235,7 @@ func newSessionInboundQueue() *sessionInboundQueue {
 	q.msgIds = list.New()
 	q.firstMsgId = 0
 	q.minMsgId = 0
-	q.maxMsgId = math.MaxInt64
+	q.maxMsgId = 0
 	return q
 }
 

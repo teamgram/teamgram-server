@@ -31,7 +31,6 @@ func nextMessageId(isRpc bool) int64 {
 	ts := unixNano / 1e9
 	ms := (unixNano % 1e9) / 1e6
 	sid := msgIdSeq.Add(1) & 0x1ffff
-	msgIdSeq.CompareAndSwap(0x1ffff, 0)
 	last := 1
 	if !isRpc {
 		last = 3

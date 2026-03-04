@@ -659,8 +659,6 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 
 	var (
 		pendings = make([]*outboxMsg, 0)
-		b        = false
-		err      error
 		sentTime = time.Now().Unix()
 	)
 	for e := c.outQueue.oMsgs.Front(); e != nil; e = e.Next() {
@@ -673,79 +671,71 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 		}
 	}
 
+	if len(pendings) == 0 {
+		return
+	}
+
 	if len(pendings) == 1 {
 		logx.WithContext(ctx).Infof("sess: %s >>> sendRawDirectToGateway - pendings[0]", c)
-		b, err = c.sendRawDirectToGateway(ctx, gatewayId, pendings[0].msg)
-		// log.Debugf("err: %v, b: %v", err, b)
-		if err != nil || !b {
+		if ok, err := c.sendRawDirectToGateway(ctx, gatewayId, pendings[0].msg); err != nil || !ok {
 			return
 		}
+		c.updatePendingStates(ctx, pendings, sentTime)
+		return
+	}
 
-		for _, m := range pendings {
-			if m.state == NEED_NO_ACK {
-				logx.WithContext(ctx).Infof("sess: %s >>> need_no_ack: %d", c, m.msgId)
-				c.outQueue.Remove(m.msgId)
-			} else {
-				logx.WithContext(ctx).Infof("sess: %s >>> pending sent: %d", c, m.msgId)
-				m.sent = sentTime
-			}
-		}
-	} else if len(pendings) > 1 {
-		var (
-			split = 16
-		)
-		for i := 0; i < len(pendings)/split; i++ {
-			msgContainer := &mtproto.TLMsgRawDataContainer{
-				Messages: make([]*mtproto.TLMessageRawData, 0, split),
-			}
-			for _, m := range pendings[i*split : (i+1)*split] {
-				msgContainer.Messages = append(msgContainer.Messages, m.msg)
-			}
-			logx.WithContext(ctx).Infof("sess: %s >>> sendRawDirectToGateway - TLMsgRawDataContainer", c)
-			b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
-				// TODO(@benqi):
-				// nothing do
-			})
-			// log.Debugf("err: %v, b: %v", err, b)
-			if err != nil || !b {
-				continue
-			}
+	c.sendPendingInBatches(ctx, gatewayId, pendings, sentTime)
+}
 
-			for _, m := range pendings[i*split : (i+1)*split] {
-				if m.state == NEED_NO_ACK {
-					logx.WithContext(ctx).Infof("sess: %s >>> need_no_ack: %d", c, m.msgId)
-					c.outQueue.Remove(m.msgId)
-				} else {
-					logx.WithContext(ctx).Infof("sess: %s >>> pending sent: %d", c, m.msgId)
-					m.sent = sentTime
-				}
-			}
+func (c *session) sendPendingInBatches(ctx context.Context, gatewayId string, pendings []*outboxMsg, sentTime int64) {
+	const split = 16
+
+	fullBatches := len(pendings) / split
+	for i := 0; i < fullBatches; i++ {
+		start := i * split
+		end := start + split
+		batch := pendings[start:end]
+		if !c.sendPendingBatch(ctx, gatewayId, batch, sentTime) {
+			continue
 		}
-		if (len(pendings) % split) > 0 {
-			msgContainer := &mtproto.TLMsgRawDataContainer{
-				Messages: make([]*mtproto.TLMessageRawData, 0, split),
-			}
-			for _, m := range pendings[split*(len(pendings)/split):] {
-				msgContainer.Messages = append(msgContainer.Messages, m.msg)
-			}
-			logx.WithContext(ctx).Infof("sess: %s >>> sendRawDirectToGateway - TLMsgRawDataContainer", c)
-			b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
-				// TODO(@benqi):
-				// nothing do
-			})
-			// log.Debugf("err: %v, b: %v", err, b)
-			if err != nil || !b {
-				return
-			}
-			for _, m := range pendings[split*(len(pendings)/split):] {
-				if m.state == NEED_NO_ACK {
-					logx.WithContext(ctx).Infof("sess: %s >>> need_no_ack: %d", c, m.msgId)
-					c.outQueue.Remove(m.msgId)
-				} else {
-					logx.WithContext(ctx).Infof("sess: %s >>> pending sent: %d", c, m.msgId)
-					m.sent = sentTime
-				}
-			}
+	}
+
+	if rem := len(pendings) % split; rem > 0 {
+		start := split * fullBatches
+		batch := pendings[start:]
+		_ = c.sendPendingBatch(ctx, gatewayId, batch, sentTime)
+	}
+}
+
+func (c *session) sendPendingBatch(ctx context.Context, gatewayId string, batch []*outboxMsg, sentTime int64) bool {
+	msgContainer := &mtproto.TLMsgRawDataContainer{
+		Messages: make([]*mtproto.TLMessageRawData, 0, len(batch)),
+	}
+	for _, m := range batch {
+		msgContainer.Messages = append(msgContainer.Messages, m.msg)
+	}
+
+	logx.WithContext(ctx).Infof("sess: %s >>> sendRawDirectToGateway - TLMsgRawDataContainer", c)
+	ok, err := c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+		// nothing to do
+	})
+	if err != nil || !ok {
+		return false
+	}
+
+	c.updatePendingStates(ctx, batch, sentTime)
+	return true
+}
+
+func (c *session) updatePendingStates(ctx context.Context, pendings []*outboxMsg, sentTime int64) {
+	for _, m := range pendings {
+		if m.state == NEED_NO_ACK {
+			logx.WithContext(ctx).Infof("sess: %s >>> need_no_ack: %d", c, m.msgId)
+			c.outQueue.Remove(m.msgId)
+			continue
 		}
+
+		logx.WithContext(ctx).Infof("sess: %s >>> pending sent: %d", c, m.msgId)
+		m.sent = sentTime
 	}
 }
