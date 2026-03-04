@@ -1,6 +1,7 @@
 package pp_test
 
 import (
+	"io"
 	"net"
 	"strings"
 	"testing"
@@ -148,6 +149,36 @@ func TestParseV1Header(t *testing.T) {
 			assert.Equal(t, 1, h.Version)
 		})
 	}
+}
+
+// eofOnLastByteReader simulates a reader that returns the last byte together with io.EOF.
+type eofOnLastByteReader struct {
+	data []byte
+	pos  int
+}
+
+func (r *eofOnLastByteReader) Read(p []byte) (int, error) {
+	if r.pos >= len(r.data) {
+		return 0, io.EOF
+	}
+	n := copy(p, r.data[r.pos:r.pos+1])
+	r.pos++
+	if r.pos == len(r.data) {
+		return n, io.EOF
+	}
+	return n, nil
+}
+
+func TestV1HeaderEOFRightAfterCRLF(t *testing.T) {
+	header := "PROXY UNKNOWN\r\n"
+	r := &eofOnLastByteReader{data: []byte(header)}
+
+	h, err := pp.ReadHeader(r)
+	require.NoError(t, err)
+	require.NotNil(t, h)
+	assert.Equal(t, 1, h.Version)
+	assert.True(t, h.IsLocal)
+	assert.Equal(t, []byte("PROXY UNKNOWN"), h.Unknown)
 }
 
 func BenchmarkReadHeaderV1(b *testing.B) {

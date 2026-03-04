@@ -75,15 +75,19 @@ func readV1Header(buf []byte, r io.Reader) (*Header, error) {
 func readUntilCRLF(buf []byte, r io.Reader, idx int) ([]byte, error) {
 	// Read until we find the cRLF or we hit our max possible header length
 	for idx < 107 {
-		c, err := r.Read(buf[idx : idx+1])
-		if c != 1 {
+		n, err := r.Read(buf[idx : idx+1])
+		if n != 1 {
+			// Keep the original error message for existing callers and tests
+			if err != nil {
+				return nil, errors.New("expected to read more bytes, but got none")
+			}
 			return nil, errors.New("expected to read more bytes, but got none")
+		}
+		if idx > 0 && bytes.Equal(buf[idx-1:idx+1], []byte(cRLF)) {
+			return buf[0 : idx-1], nil
 		}
 		if err != nil {
 			return nil, err
-		}
-		if bytes.Equal(buf[idx-1:idx+1], []byte(cRLF)) {
-			return buf[0 : idx-1], nil
 		}
 		idx++
 	}

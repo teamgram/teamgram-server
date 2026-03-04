@@ -58,7 +58,7 @@ func (h Header) ParseTLVs() (map[byte][]byte, error) {
 		}
 
 		tlv[h.RawTLVs[offset]] = h.RawTLVs[begin:end]
-		offset = offset + end
+		offset = end
 	}
 	return tlv, nil
 }
