@@ -59,13 +59,15 @@ func (q *httpRequestQueue) Pop() chan interface{} {
 func (q *httpRequestQueue) PopTimeoutList() []chan interface{} {
 	var rList []chan interface{}
 	date := time.Now().Unix()
-	for e := q.q.Front(); e != nil; e = e.Next() {
+	for e := q.q.Front(); e != nil; {
+		next := e.Next()
 		if date >= e.Value.(*httpReqItem).expireTime {
 			rList = append(rList, e.Value.(*httpReqItem).resChan)
 			q.q.Remove(e)
 		} else {
 			break
 		}
+		e = next
 	}
 	return rList
 }
@@ -74,4 +76,5 @@ func (q *httpRequestQueue) Clear() {
 	for e := q.q.Front(); e != nil; e = e.Next() {
 		close(e.Value.(*httpReqItem).resChan)
 	}
+	q.q.Init()
 }

@@ -52,12 +52,14 @@ func (q *sessionRpcResultWaitingQueue) Remove(msgId int64) {
 
 func (q *sessionRpcResultWaitingQueue) OnTimer() (msgIdList []int64) {
 	date := time.Now().Unix()
-	for e := q.q.Front(); e != nil; e = e.Next() {
+	for e := q.q.Front(); e != nil; {
+		next := e.Next()
 		if date >= e.Value.(*rpcResultWaiting).date {
 			logx.Infof("onTimer msgId: %v", e.Value)
 			msgIdList = append(msgIdList, e.Value.(*rpcResultWaiting).msgId)
 			q.q.Remove(e)
 		}
+		e = next
 	}
 	return
 }

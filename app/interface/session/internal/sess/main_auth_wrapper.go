@@ -75,7 +75,10 @@ func (s *SessionList) Reset(authId int64) (lastAuthId int64) {
 
 func (s *SessionList) destroySession(sessionId int64) bool {
 	// TODO(@benqi):
-	if _, ok := s.sessions[sessionId]; ok {
+	if sess, ok := s.sessions[sessionId]; ok {
+		if sess.httpQueue != nil {
+			sess.httpQueue.Clear()
+		}
 		// s.updates.onGenericSessionClose(sess)
 		delete(s.sessions, sessionId)
 	} else {
@@ -531,7 +534,7 @@ func (m *MainAuthWrapper) String() string {
 
 func (m *MainAuthWrapper) Start() {
 	m.running.Set(true)
-	m.finish.Add(1)
+	m.finish.Add(2)
 	go m.rpcRunLoop()
 	go m.runLoop()
 }
@@ -619,6 +622,7 @@ func (m *MainAuthWrapper) runLoop() {
 
 func (m *MainAuthWrapper) rpcRunLoop() {
 	defer func() {
+		m.finish.Done()
 		close(m.rpcDataChan)
 	}()
 	for {

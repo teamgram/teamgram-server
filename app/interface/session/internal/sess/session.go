@@ -197,9 +197,10 @@ func (c *session) changeConnState(ctx context.Context, state int) {
 }
 
 func (c *session) onSessionConnNew(ctx context.Context, id string) {
+	// 始终更新 gatewayId，避免重连后仍向旧 gateway 发送数据。
+	c.setGatewayId(id)
 	if c.connState != kStateOnline {
 		c.changeConnState(ctx, kStateOnline)
-		c.setGatewayId(id)
 	}
 }
 
@@ -436,6 +437,9 @@ func (c *session) onTimer(ctx context.Context) bool {
 		}
 	} else if c.connState == kStateOffline || c.connState == kStateNew {
 		if date >= c.closeDate+kCacheSessionTimeout {
+			if c.httpQueue != nil {
+				c.httpQueue.Clear()
+			}
 			c.changeConnState(context.Background(), kStateClose)
 		}
 	}
