@@ -69,6 +69,7 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAccountGetPasswordSettings,
 		*mtproto.TLAccountUpdatePasswordSettings,
 		*mtproto.TLAccountDeclinePasswordReset,
+		*mtproto.TLAccountDeleteAccount,
 		*mtproto.TLAuthRequestPasswordRecovery, // TODO: before process, try fetch usrId
 		*mtproto.TLAuthRecoverPassword,         // TODO: before process, try fetch usrId
 		*mtproto.TLAuthCheckRecoveryPassword:
@@ -80,10 +81,15 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthSignUp,
 		*mtproto.TLAuthSignIn,
 		*mtproto.TLAuthImportLoginToken,
+		*mtproto.TLAuthImportWebTokenAuthorization,
+		*mtproto.TLAuthImportBotAuthorization,
 		*mtproto.TLAuthExportedAuthorization,
 		*mtproto.TLAuthExportAuthorization,
 		*mtproto.TLAuthImportAuthorization,
 		*mtproto.TLAuthCancelCode,
+		*mtproto.TLAuthResetLoginEmail,
+		*mtproto.TLAuthRequestFirebaseSms,
+		*mtproto.TLAuthReportMissingCode,
 		*mtproto.TLAuthExportLoginToken,
 		*mtproto.TLAuthAcceptLoginToken,
 		*mtproto.TLAuthLogOut, // TODO: before process, try fetch usrId
