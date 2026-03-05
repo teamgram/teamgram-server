@@ -112,8 +112,8 @@ func (c *FullCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var lenBuf [4]byte
 	binary.LittleEndian.PutUint32(lenBuf[:], uint32(totalLen))
 	h := crc32.NewIEEE()
-	h.Write(lenBuf[:])
-	h.Write(buf[:payloadEnd])
+	_, _ = h.Write(lenBuf[:])
+	_, _ = h.Write(buf[:payloadEnd])
 	calcCrc := h.Sum32()
 	if recvCrc != calcCrc {
 		return false, nil, fmt.Errorf("%w: full codec: crc32 mismatch: received 0x%08x, calculated 0x%08x", ErrProtoBadCRC, recvCrc, calcCrc)

@@ -15,7 +15,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto/crypto"
 
-	"github.com/valyala/bytebufferpool"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -120,10 +119,6 @@ var (
 	isObfuscated bool
 )
 
-var (
-	xBufPool = bytebufferpool.Pool{}
-)
-
 func init() {
 	flag.BoolVar(&isMTProto, "mtproto", true, "mtproto")
 	flag.BoolVar(&isObfuscated, "obfuscated", true, "obfuscated")
@@ -194,11 +189,9 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 		var (
 			firstByte uint8
 		)
-		// bytes, _ := conn.Peek(1)
 		firstByte = rData[0]
 
 		if firstByte == ABRIDGED_FLAG {
-			// tB, _ := conn.Peek(-1)
 			logx.Debugf("conn(%s) mtproto abridged version, data: %s", conn, hex.EncodeToString(rData))
 			_, _ = conn.Discard(1)
 			return newMTProtoAbridgedCodec(nil), nil
@@ -261,15 +254,6 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	}
 
 	checkFullBuf := rData[:12]
-	//var (
-	//	checkFullBuf []byte
-	//)
-	//
-	//if bytes, err = conn.Peek(12); err != nil {
-	//	return nil, ErrUnexpectedEOF
-	//} else {
-	//	checkFullBuf = bytes
-	//}
 
 	secondInt := binary.BigEndian.Uint32(checkFullBuf[4:])
 	if secondInt == FULL_FLAG {

@@ -23,8 +23,8 @@ import (
 
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/codec"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/panjf2000/gnet/v2/pkg/logging"

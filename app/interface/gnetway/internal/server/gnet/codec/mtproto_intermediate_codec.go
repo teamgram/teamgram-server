@@ -93,8 +93,5 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	_, _ = conn.Discard(n)
 	c.state = WAIT_PACKET_LENGTH
 
-	// message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf)), 0, TRANSPORT_TCP)
-	// _ = message.Decode(buf)
-
 	return needAck, buf, nil
 }
