@@ -8,7 +8,6 @@
                 (:auth_key_id, :user_id, :hash, :date_created, :date_active)
             ON DUPLICATE KEY UPDATE
                 hash = VALUES(hash),
-                user_id = VALUES(user_id),
                 date_active = VALUES(date_active),
                 deleted = 0
         </sql>

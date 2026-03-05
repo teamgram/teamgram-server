@@ -146,61 +146,6 @@ func (dao *AuthsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (last
 	return
 }
 
-// SelectSessions
-// select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (:idList)
-func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList []dataobject.AuthsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.AuthsDO
-	)
-	if len(idList) == 0 {
-		rList = []dataobject.AuthsDO{}
-		return
-	}
-
-	err = dao.db.QueryRowsPartial(ctx, &values, query)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
-		return
-	}
-
-	rList = values
-
-	return
-}
-
-// SelectSessionsWithCB
-// select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (:idList)
-func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *dataobject.AuthsDO)) (rList []dataobject.AuthsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.AuthsDO
-	)
-	if len(idList) == 0 {
-		rList = []dataobject.AuthsDO{}
-		return
-	}
-
-	err = dao.db.QueryRowsPartial(ctx, &values, query)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
-		return
-	}
-
-	rList = values
-
-	if cb != nil {
-		sz := len(rList)
-		for i := 0; i < sz; i++ {
-			cb(sz, i, &rList[i])
-		}
-	}
-
-	return
-}
-
 // SelectByAuthKeyId
 // select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id = :auth_key_id and deleted = 0 limit 1
 func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthsDO, err error) {
@@ -219,60 +164,6 @@ func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rV
 		}
 	} else {
 		rValue = do
-	}
-
-	return
-}
-
-// SelectLayer
-// select layer from auths where auth_key_id = :auth_key_id limit 1
-func (dao *AuthsDAO) SelectLayer(ctx context.Context, authKeyId int64) (rValue int32, err error) {
-	var query = "select layer from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
-
-	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("get in SelectLayer(_), error: %v", err)
-			return
-		} else {
-			err = nil
-		}
-	}
-
-	return
-}
-
-// SelectLangCode
-// select lang_code from auths where auth_key_id = :auth_key_id limit 1
-func (dao *AuthsDAO) SelectLangCode(ctx context.Context, authKeyId int64) (rValue string, err error) {
-	var query = "select lang_code from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
-
-	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("get in SelectLangCode(_), error: %v", err)
-			return
-		} else {
-			err = nil
-		}
-	}
-
-	return
-}
-
-// SelectLangPack
-// select lang_pack from auths where auth_key_id = :auth_key_id limit 1
-func (dao *AuthsDAO) SelectLangPack(ctx context.Context, authKeyId int64) (rValue string, err error) {
-	var query = "select lang_pack from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
-
-	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("get in SelectLangPack(_), error: %v", err)
-			return
-		} else {
-			err = nil
-		}
 	}
 
 	return

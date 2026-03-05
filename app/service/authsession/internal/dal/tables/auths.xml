@@ -34,20 +34,6 @@
         </sql>
     </operation>
 
-    <operation name="SelectSessions" result_set="list">
-        <params>
-            <param name="idList" type="[]int64" />
-        </params>
-        <sql>
-            SELECT
-                auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active
-            FROM
-                auths
-            WHERE
-                auth_key_id IN (:idList)
-        </sql>
-    </operation>
-
     <operation name="SelectByAuthKeyId">
         <sql>
             SELECT
@@ -56,39 +42,6 @@
                 auths
             WHERE
                 auth_key_id = :auth_key_id AND deleted = 0 LIMIT 1
-        </sql>
-    </operation>
-
-    <operation name="SelectLayer" result_set="single">
-        <sql>
-            SELECT
-                layer
-            FROM
-                auths
-            WHERE
-                auth_key_id = :auth_key_id LIMIT 1
-        </sql>
-    </operation>
-
-    <operation name="SelectLangCode" result_set="single">
-        <sql>
-            SELECT
-                lang_code
-            FROM
-                auths
-            WHERE
-                auth_key_id = :auth_key_id LIMIT 1
-        </sql>
-    </operation>
-
-    <operation name="SelectLangPack" result_set="single">
-        <sql>
-            SELECT
-                lang_pack
-            FROM
-                auths
-            WHERE
-                auth_key_id = :auth_key_id LIMIT 1
         </sql>
     </operation>
 
