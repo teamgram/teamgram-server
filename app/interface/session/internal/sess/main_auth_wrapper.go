@@ -170,7 +170,14 @@ func (m *MainAuthWrapper) changeAuthState(ctx context.Context, state int, stateD
 	case mtproto.AuthStateNeedPassword:
 		m.AuthUserId = stateData.(int64)
 	case mtproto.AuthStateNormal:
-		m.AuthUserId = stateData.(int64)
+		newUserId := stateData.(int64)
+		if m.AuthUserId != 0 && m.AuthUserId != newUserId {
+			// 一条 authKey 生命周期内出现多个 userId，视为异常：打高危日志但保留旧值，避免 owner 悄然漂移。
+			logx.WithContext(ctx).Errorf("changeAuthState - authKeyId %d switch user from %d to %d, keep original",
+				m.authKeyId, m.AuthUserId, newUserId)
+			return
+		}
+		m.AuthUserId = newUserId
 	default:
 		m.AuthUserId = 0
 	}

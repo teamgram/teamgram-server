@@ -38,9 +38,15 @@ func (c *SessionCore) SessionCloseSession(in *session.TLSessionCloseSession) (*m
 
 	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(cli.PermAuthKeyId)
 	if mainAuth == nil {
+		// Session 已经不存在，从调用方视角看可以视作已关闭。
 		c.Logger.Errorf("session.closeSession - not found sessList by keyId: %s", cli)
-	} else {
-		mainAuth.SessionClientClosed(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
+		return mtproto.BoolTrue, nil
+	}
+
+	if err := mainAuth.SessionClientClosed(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId); err != nil {
+		// 将 ErrDataChannelFull 等错误传递给调用方，便于 gnetway 做重试或降级处理。
+		c.Logger.Errorf("session.closeSession - SessionClientClosed error: %v, client: %s", err, cli)
+		return nil, err
 	}
 
 	return mtproto.BoolTrue, nil

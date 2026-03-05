@@ -254,10 +254,13 @@ func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId 
 	//
 
 	if request.SessionId == c.sessionId {
-		// The result of this being applied to the current session is undefined.
-		logx.WithContext(ctx).Error("the result of this being applied to the current session is undefined.")
-
-		// TODO(@benqi): handle error???
+		// 应用到当前 session 的语义在 MTProto 文档中未定义，这里保持 session 不变，
+		// 但至少返回 DestroySessionRes 以避免客户端一直等待无响应。
+		destroySessionNone := mtproto.MakeTLDestroySessionNone(&mtproto.DestroySessionRes{
+			SessionId: request.SessionId,
+		}).To_DestroySessionRes()
+		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, destroySessionNone)
+		msgId.state = RECEIVED | NEED_NO_ACK
 		return
 	}
 
