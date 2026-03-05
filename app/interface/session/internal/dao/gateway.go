@@ -19,6 +19,7 @@ import (
 
 func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) []byte {
 	x := mtproto.GetEncodeBuf()
+	defer mtproto.PutEncodeBuf(x)
 
 	x.Long(salt)
 	x.Long(sessionId)
@@ -28,8 +29,6 @@ func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) [
 	x.Bytes(msg2.Body)
 
 	buf := append([]byte(nil), x.GetBuf()...)
-	mtproto.PutEncodeBuf(x)
-
 	return buf
 }
 

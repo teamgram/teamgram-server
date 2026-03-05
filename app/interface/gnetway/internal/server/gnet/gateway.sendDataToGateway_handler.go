@@ -41,12 +41,14 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 
 	ctx = contextx.ValueOnlyFrom(ctx)
 	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
-	x := mtproto.GetEncodeBuf()
-	x.Long(authKey.AuthKeyId())
-	x.Bytes(msgKey)
-	x.Bytes(mtpRawData)
-	payload := append([]byte(nil), x.GetBuf()...)
-	mtproto.PutEncodeBuf(x)
+	payload := func() []byte {
+		x := mtproto.GetEncodeBuf()
+		defer mtproto.PutEncodeBuf(x)
+		x.Long(authKey.AuthKeyId())
+		x.Bytes(msgKey)
+		x.Bytes(mtpRawData)
+		return append([]byte(nil), x.GetBuf()...)
+	}()
 	msg := &mtproto.MTPRawMessage{Payload: payload}
 
 	_ = s.pool.Submit(func() {

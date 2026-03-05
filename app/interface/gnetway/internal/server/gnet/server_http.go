@@ -109,10 +109,12 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		x := mtproto.GetEncodeBuf()
-		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		payload := append([]byte(nil), x.GetBuf()...)
-		mtproto.PutEncodeBuf(x)
+		payload := func() []byte {
+			x := mtproto.GetEncodeBuf()
+			defer mtproto.PutEncodeBuf(x)
+			serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
+			return append([]byte(nil), x.GetBuf()...)
+		}()
 		_, _ = c.Write(httpcodec.FormatResponse(payload))
 		ctx.httpCodec.Reset()
 
@@ -129,10 +131,12 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		x := mtproto.GetEncodeBuf()
-		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		payload := append([]byte(nil), x.GetBuf()...)
-		mtproto.PutEncodeBuf(x)
+		payload := func() []byte {
+			x := mtproto.GetEncodeBuf()
+			defer mtproto.PutEncodeBuf(x)
+			serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
+			return append([]byte(nil), x.GetBuf()...)
+		}()
 		_, _ = c.Write(httpcodec.FormatResponse(payload))
 		ctx.httpCodec.Reset()
 
@@ -152,10 +156,12 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 					logx.Errorf("conn(%s) HTTP onReqDHParams error: %v", c, err)
 					_, _ = c.Write(httpcodec.FormatResponse(nil))
 				} else {
-					xr := mtproto.GetEncodeBuf()
-					serializeToBuffer(xr, mtproto.GenerateMessageId(), serverDHParams)
-					reply := append([]byte(nil), xr.GetBuf()...)
-					mtproto.PutEncodeBuf(xr)
+					reply := func() []byte {
+						xr := mtproto.GetEncodeBuf()
+						defer mtproto.PutEncodeBuf(xr)
+						serializeToBuffer(xr, mtproto.GenerateMessageId(), serverDHParams)
+						return append([]byte(nil), xr.GetBuf()...)
+					}()
 					_, _ = c.Write(httpcodec.FormatResponse(reply))
 				}
 				if ctx2, _ := c.Context().(*connContext); ctx2 != nil {
@@ -183,10 +189,12 @@ func (s *Server) onHttpHandshake(ctx *connContext, c gnet.Conn, body []byte) {
 				if dhGen == nil {
 					_, _ = c.Write(httpcodec.FormatResponse(nil))
 				} else {
-					xr := mtproto.GetEncodeBuf()
-					serializeToBuffer(xr, mtproto.GenerateMessageId(), dhGen)
-					reply := append([]byte(nil), xr.GetBuf()...)
-					mtproto.PutEncodeBuf(xr)
+					reply := func() []byte {
+						xr := mtproto.GetEncodeBuf()
+						defer mtproto.PutEncodeBuf(xr)
+						serializeToBuffer(xr, mtproto.GenerateMessageId(), dhGen)
+						return append([]byte(nil), xr.GetBuf()...)
+					}()
 					_, _ = c.Write(httpcodec.FormatResponse(reply))
 				}
 				if ctx2, _ := c.Context().(*connContext); ctx2 != nil {
@@ -314,12 +322,14 @@ func (s *Server) doHttpEncryptedMessage(ctx *connContext, c gnet.Conn, authKey *
 		}
 
 		msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(rV.Payload)
-		x := mtproto.GetEncodeBuf()
-		x.Long(authKey.AuthKeyId())
-		x.Bytes(msgKey)
-		x.Bytes(mtpRawData)
-		resp := append([]byte(nil), x.GetBuf()...)
-		mtproto.PutEncodeBuf(x)
+		resp := func() []byte {
+			x := mtproto.GetEncodeBuf()
+			defer mtproto.PutEncodeBuf(x)
+			x.Long(authKey.AuthKeyId())
+			x.Bytes(msgKey)
+			x.Bytes(mtpRawData)
+			return append([]byte(nil), x.GetBuf()...)
+		}()
 
 		s.eng.Trigger(connId, func(c gnet.Conn) {
 			_, _ = c.Write(httpcodec.FormatResponse(resp))
@@ -444,10 +454,12 @@ func (s *Server) httpOnReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLRe
 		ServerTime:  int32(s.CachedNow()),
 	}}
 
-	x := mtproto.GetEncodeBuf()
-	serverDHInnerData.Encode(x, 0)
-	serverDHInnerDataBuf := append([]byte(nil), x.GetBuf()...)
-	mtproto.PutEncodeBuf(x)
+	serverDHInnerDataBuf := func() []byte {
+		x := mtproto.GetEncodeBuf()
+		defer mtproto.PutEncodeBuf(x)
+		serverDHInnerData.Encode(x, 0)
+		return append([]byte(nil), x.GetBuf()...)
+	}()
 
 	tmpAesKeyAndIV := make([]byte, 64)
 	var shaBuf [64]byte
