@@ -19,6 +19,5 @@ type AuthUsersDO struct {
 	DateActive           int64 `db:"date_active" json:"date_active"`
 	State                int32 `db:"state" json:"state"`
 	AndroidPushSessionId int64 `db:"android_push_session_id" json:"android_push_session_id"`
-	AuthorizationTtlDays int32 `db:"authorization_ttl_days" json:"authorization_ttl_days"`
 	Deleted              bool  `db:"deleted" json:"deleted"`
 }

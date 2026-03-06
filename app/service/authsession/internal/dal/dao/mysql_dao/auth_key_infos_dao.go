@@ -23,11 +23,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
-
 type AuthKeyInfosDAO struct {
 	db *sqlx.DB
 }
@@ -106,6 +101,7 @@ func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int
 			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {

@@ -14,19 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type AuthKeysDAO struct {
 	db *sqlx.DB
@@ -106,6 +99,7 @@ func (dao *AuthKeysDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) 
 			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {

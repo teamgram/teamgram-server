@@ -14,9 +14,8 @@ require (
 	github.com/panjf2000/gnet/v2 v2.9.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
-	github.com/teamgram/marmota v0.1.24
+	github.com/teamgram/marmota v0.1.25
 	github.com/teamgram/proto v0.222.3
-	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.10.0
 	go.opentelemetry.io/otel v1.24.0
 	google.golang.org/grpc v1.65.0
@@ -97,6 +96,7 @@ require (
 	github.com/rs/xid v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df // indirect
 	go.etcd.io/etcd/api/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.15 // indirect
