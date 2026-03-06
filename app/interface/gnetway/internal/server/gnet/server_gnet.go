@@ -316,15 +316,19 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		return err
 	}
 
-	// Send Quick ACK if requested by client
+	// Send Quick ACK if requested by client.
+	// The token MUST go through ctx.codec.EncodeQuickAck so that the CTR cipher
+	// state is advanced correctly on obfuscated transports. Bypassing the codec
+	// here would desynchronise the client's CTR counter and corrupt all subsequent
+	// messages (causing decryptServerResponse failures on the Android client).
 	if needAck {
 		ackToken := computeQuickAckToken(authKey.AuthKey(), mmsg[24:])
-		var ackBuf [4]byte
-		binary.LittleEndian.PutUint32(ackBuf[:], ackToken)
-		if ctx.websocket {
-			_ = wsutil.WriteServerBinary(c, ackBuf[:])
-		} else {
-			_, _ = c.Write(ackBuf[:])
+		if ackData := ctx.codec.EncodeQuickAck(ackToken); len(ackData) > 0 {
+			if ctx.websocket {
+				_ = wsutil.WriteServerBinary(c, ackData)
+			} else {
+				_, _ = c.Write(ackData)
+			}
 		}
 		metricQuickAck.Inc()
 	}

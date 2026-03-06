@@ -74,6 +74,9 @@ func (c *FullCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
 	return buf, nil
 }
 
+// EncodeQuickAck returns nil: the full transport does not support Quick ACK.
+func (c *FullCodec) EncodeQuickAck(_ uint32) []byte { return nil }
+
 // Decode decodes frames from TCP stream via specific implementation.
 func (c *FullCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var (

@@ -65,6 +65,13 @@ func (c *PaddedIntermediateCodec) Encode(conn CodecWriter, msg interface{}) ([]b
 	return c.Encrypt(buf), nil
 }
 
+// EncodeQuickAck encodes the Quick ACK token for the padded intermediate transport.
+func (c *PaddedIntermediateCodec) EncodeQuickAck(token uint32) []byte {
+	var buf [4]byte
+	binary.LittleEndian.PutUint32(buf[:], token)
+	return c.Encrypt(buf[:])
+}
+
 // Decode decodes frames from TCP stream via specific implementation.
 func (c *PaddedIntermediateCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var (

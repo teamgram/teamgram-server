@@ -79,6 +79,14 @@ func (c *AbridgedCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error
 	return c.Encrypt(buf), nil
 }
 
+// EncodeQuickAck encodes the Quick ACK token for the abridged transport.
+// The MTProto spec requires byte-swapping (big-endian wire order) for abridged.
+func (c *AbridgedCodec) EncodeQuickAck(token uint32) []byte {
+	var buf [4]byte
+	binary.BigEndian.PutUint32(buf[:], token)
+	return c.Encrypt(buf[:])
+}
+
 // Decode decodes frames from TCP stream via specific implementation.
 func (c *AbridgedCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var (

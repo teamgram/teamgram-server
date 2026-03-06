@@ -160,7 +160,13 @@ type CodecWriter interface {
 type Codec interface {
 	Encode(conn CodecWriter, msg interface{}) ([]byte, error)
 	Decode(conn CodecReader) (bool, []byte, error)
-	// FirstBytes() int
+	// EncodeQuickAck encodes a 4-byte Quick ACK token for the transport.
+	// For abridged transport, the token bytes are swapped (big-endian on the wire)
+	// per the MTProto spec. For intermediate/padded-intermediate, the token is sent
+	// as little-endian. In both cases the result is passed through the CTR cipher
+	// (if the connection uses an obfuscated transport).
+	// Returns nil if Quick ACK is not supported by the transport (e.g. full codec).
+	EncodeQuickAck(token uint32) []byte
 }
 
 // CreateCodec chooses either the official MTProto transports or the custom
