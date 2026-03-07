@@ -10,6 +10,7 @@
 package core
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/teamgram/proto/mtproto"
@@ -19,13 +20,17 @@ import (
 // StatusSetSessionOffline
 // status.setSessionOffline online:SessionEntry = Bool;
 func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOffline) (*mtproto.Bool, error) {
+	if in.GetUserId() <= 0 || in.GetAuthKeyId() == 0 {
+		return nil, fmt.Errorf("status.setSessionOffline - invalid params: userId=%d, authKeyId=%d", in.GetUserId(), in.GetAuthKeyId())
+	}
+
 	_, err := c.svcCtx.Dao.KV.HdelCtx(
 		c.ctx,
 		getUserKey(in.GetUserId()),
 		strconv.FormatInt(in.GetAuthKeyId(), 10))
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in, err)
-		return nil, err
+		c.Logger.Errorf("status.setSessionOffline(userId=%d, authKeyId=%d) error: %v", in.GetUserId(), in.GetAuthKeyId(), err)
+		return nil, fmt.Errorf("status.setSessionOffline - hdel: %w", err)
 	}
 
 	return mtproto.BoolTrue, nil

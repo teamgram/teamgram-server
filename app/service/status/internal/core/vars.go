@@ -13,8 +13,7 @@ import (
 )
 
 const (
-	onlineKeyPrefix  = "online"           //
-	userKeyIdsPrefix = "user_online_keys" //
+	userKeyIdsPrefix = "user_online_keys"
 )
 
 func getUserKey(id int64) string {

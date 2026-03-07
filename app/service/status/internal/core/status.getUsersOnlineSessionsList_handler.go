@@ -10,6 +10,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 
@@ -19,64 +21,87 @@ import (
 // StatusGetUsersOnlineSessionsList
 // status.getUsersOnlineSessionsList Vector<long>:users = Vector<UserSessionEntryList>;
 func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUsersOnlineSessionsList) (*status.Vector_UserSessionEntryList, error) {
-	var (
-		// pipeline
-		pipes = make(map[interface{}][]string)
-
-		rValues = &status.Vector_UserSessionEntryList{
-			Datas: make([]*status.UserSessionEntryList, 0, len(in.GetUsers())),
-		}
-	)
-
-	for _, id := range in.GetUsers() {
-		k := getUserKey(id)
-		pipe, err := c.svcCtx.Dao.KV.GetPipeline(k)
-		if err != nil {
-			c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in, err)
-			continue
-		}
-		pipes[pipe] = append(pipes[pipe], k)
+	type keyInfo struct {
+		userId int64
+		key    string
+	}
+	type pipeGroup struct {
+		pipe kv.Pipeline
+		keys []keyInfo
 	}
 
-	for pipe, kList := range pipes {
-		var (
-			cmds = make([]*kv.MapStringStringCmd, len(kList))
-		)
+	users := in.GetUsers()
+	rValues := &status.Vector_UserSessionEntryList{
+		Datas: make([]*status.UserSessionEntryList, 0, len(users)),
+	}
 
-		pipe.(kv.Pipeline).PipelinedCtx(
-			c.ctx,
-			func(pipeliner kv.Pipeliner) error {
-				for i, k := range kList {
-					cmds[i] = pipeliner.HGetAll(c.ctx, k)
-				}
+	groups := make(map[kv.Pipeline]*pipeGroup)
+	var failedUsers []int64
 
-				return nil
-			})
+	for _, id := range users {
+		k := getUserKey(id)
+		rawPipe, err := c.svcCtx.Dao.KV.GetPipeline(k)
+		if err != nil {
+			c.Logger.Errorf("status.getUsersOnlineSessionsList - GetPipeline(userId=%d) error: %v", id, err)
+			failedUsers = append(failedUsers, id)
+			continue
+		}
+		p, ok := rawPipe.(kv.Pipeline)
+		if !ok {
+			c.Logger.Errorf("status.getUsersOnlineSessionsList - unexpected pipeline type: %T", rawPipe)
+			failedUsers = append(failedUsers, id)
+			continue
+		}
+		g, exists := groups[p]
+		if !exists {
+			g = &pipeGroup{pipe: p}
+			groups[p] = g
+		}
+		g.keys = append(g.keys, keyInfo{userId: id, key: k})
+	}
 
-		for i := 0; i < len(kList); i++ {
+	// fill empty results for failed users
+	for _, uid := range failedUsers {
+		rValues.Datas = append(rValues.Datas, status.MakeTLUserSessionEntryList(&status.UserSessionEntryList{
+			UserId: uid,
+		}).To_UserSessionEntryList())
+	}
+
+	for _, g := range groups {
+		cmds := make([]*kv.MapStringStringCmd, len(g.keys))
+
+		err := g.pipe.PipelinedCtx(c.ctx, func(pipeliner kv.Pipeliner) error {
+			for i, ki := range g.keys {
+				cmds[i] = pipeliner.HGetAll(c.ctx, ki.key)
+			}
+			return nil
+		})
+		if err != nil {
+			c.Logger.Errorf("status.getUsersOnlineSessionsList - pipeline exec error: %v", err)
+			return nil, fmt.Errorf("status.getUsersOnlineSessionsList - pipeline exec: %w", err)
+		}
+
+		for i, ki := range g.keys {
 			rMap, err := cmds[i].Result()
 			if err != nil {
-				c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in, err)
-				return nil, err
+				c.Logger.Errorf("status.getUsersOnlineSessionsList - cmd result(userId=%d) error: %v", ki.userId, err)
+				return nil, fmt.Errorf("status.getUsersOnlineSessionsList - cmd result userId=%d: %w", ki.userId, err)
 			}
 
-			var (
-				sessions = status.MakeTLUserSessionEntryList(&status.UserSessionEntryList{
-					UserId:       getIdByUserKey(kList[i]),
-					UserSessions: make([]*status.SessionEntry, len(rMap)),
-				}).To_UserSessionEntryList()
-			)
-
-			sessions.UserSessions = make([]*status.SessionEntry, 0, len(rMap))
+			sessions := make([]*status.SessionEntry, 0, len(rMap))
 			for _, v := range rMap {
-				// keyId, _ := strconv.ParseInt(k, 10, 64)
 				sess := new(status.SessionEntry)
-				if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
-					sessions.UserSessions = append(sessions.UserSessions, sess)
+				if err2 := jsonx.UnmarshalFromString(v, sess); err2 != nil {
+					c.Logger.Infof("status.getUsersOnlineSessionsList - unmarshal(userId=%d) error: %v", ki.userId, err2)
+					continue
 				}
+				sessions = append(sessions, sess)
 			}
 
-			rValues.Datas = append(rValues.Datas, sessions)
+			rValues.Datas = append(rValues.Datas, status.MakeTLUserSessionEntryList(&status.UserSessionEntryList{
+				UserId:       ki.userId,
+				UserSessions: sessions,
+			}).To_UserSessionEntryList())
 		}
 	}
 

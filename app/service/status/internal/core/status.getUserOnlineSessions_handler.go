@@ -33,9 +33,11 @@ func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlin
 
 	for _, v := range rMap {
 		sess := new(status.SessionEntry)
-		if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
-			rValues.UserSessions = append(rValues.UserSessions, sess)
+		if err2 := jsonx.UnmarshalFromString(v, sess); err2 != nil {
+			c.Logger.Infof("status.getUserOnlineSessions - unmarshal session(userId=%d) error: %v, raw: %s", in.GetUserId(), err2, v)
+			continue
 		}
+		rValues.UserSessions = append(rValues.UserSessions, sess)
 	}
 
 	return rValues, nil

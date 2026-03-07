@@ -35,7 +35,11 @@ func (s *Server) Initialize() error {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	logx.Infov(c)
+	if err := c.Validate(); err != nil {
+		return err
+	}
+
+	logx.Infof("status service starting, StatusExpire=%d", c.StatusExpire)
 	ctx := svc.NewServiceContext(c)
 	s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 
