@@ -37,23 +37,16 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		return nil, fmt.Errorf("status.setSessionOnline - marshal session: %w", err)
 	}
 
-	err = c.svcCtx.Dao.KV.HsetCtx(
+	_, err = c.svcCtx.Dao.KV.EvalCtx(
 		c.ctx,
+		hsetAndExpireScript,
 		userK,
 		strconv.FormatInt(sess.GetAuthKeyId(), 10),
-		string(sessData))
-	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline - hset(userId=%d) error: %v", in.GetUserId(), err)
-		return nil, fmt.Errorf("status.setSessionOnline - hset: %w", err)
-	}
-
-	_, err = c.svcCtx.Dao.KV.ExpireCtx(
-		c.ctx,
-		userK,
+		string(sessData),
 		c.svcCtx.Config.StatusExpire)
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline - expire(userId=%d) error: %v", in.GetUserId(), err)
-		return nil, fmt.Errorf("status.setSessionOnline - expire: %w", err)
+		c.Logger.Errorf("status.setSessionOnline - eval(userId=%d) error: %v", in.GetUserId(), err)
+		return nil, fmt.Errorf("status.setSessionOnline - eval: %w", err)
 	}
 
 	return mtproto.BoolTrue, nil

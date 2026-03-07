@@ -12,7 +12,8 @@ package config
 import (
 	"fmt"
 
-	"github.com/zeromicro/go-zero/core/stores/kv"
+	// use marmota/kv for consistency with dao layer (type alias of go-zero/core/stores/kv)
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 

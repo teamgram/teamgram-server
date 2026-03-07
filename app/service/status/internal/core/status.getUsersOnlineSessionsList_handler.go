@@ -31,6 +31,10 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 	}
 
 	users := in.GetUsers()
+	if len(users) > maxBatchUsers {
+		return nil, fmt.Errorf("status.getUsersOnlineSessionsList - too many users: %d, max %d", len(users), maxBatchUsers)
+	}
+
 	rValues := &status.Vector_UserSessionEntryList{
 		Datas: make([]*status.UserSessionEntryList, 0, len(users)),
 	}
