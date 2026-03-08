@@ -35,9 +35,10 @@ func NewDialogFiltersDAO(db *sqlx.DB) *DialogFiltersDAO {
 // insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
 func (dao *DialogFiltersDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DialogFiltersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *DialogFiltersDAO) InsertOrUpdate(ctx context.Context, do *dataobject.
 // insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
 func (dao *DialogFiltersDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DialogFiltersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *DialogFiltersDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Dialog
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 order by order_value desc
 func (dao *DialogFiltersDAO) SelectBySlug(ctx context.Context, userId int64, slug string) (rValue *dataobject.DialogFiltersDO, err error) {
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
+		query string
 		do    = &dataobject.DialogFiltersDO{}
 	)
+	query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, slug)
 
 	if err != nil {
@@ -113,9 +117,11 @@ func (dao *DialogFiltersDAO) SelectBySlug(ctx context.Context, userId int64, slu
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
 func (dao *DialogFiltersDAO) Select(ctx context.Context, userId int64, dialogFilterId int32) (rValue *dataobject.DialogFiltersDO, err error) {
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
+		query string
 		do    = &dataobject.DialogFiltersDO{}
 	)
+	query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, dialogFilterId)
 
 	if err != nil {
@@ -137,9 +143,10 @@ func (dao *DialogFiltersDAO) Select(ctx context.Context, userId int64, dialogFil
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
 func (dao *DialogFiltersDAO) SelectList(ctx context.Context, userId int64) (rList []dataobject.DialogFiltersDO, err error) {
 	var (
-		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		query  string
 		values []dataobject.DialogFiltersDO
 	)
+	query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -157,9 +164,10 @@ func (dao *DialogFiltersDAO) SelectList(ctx context.Context, userId int64) (rLis
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
 func (dao *DialogFiltersDAO) SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *dataobject.DialogFiltersDO)) (rList []dataobject.DialogFiltersDO, err error) {
 	var (
-		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		query  string
 		values []dataobject.DialogFiltersDO
 	)
+	query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -184,9 +192,10 @@ func (dao *DialogFiltersDAO) SelectListWithCB(ctx context.Context, userId int64,
 // update dialog_filters set order_value = :order_value where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (dao *DialogFiltersDAO) UpdateOrder(ctx context.Context, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, orderValue, userId, dialogFilterId)
 
@@ -207,9 +216,10 @@ func (dao *DialogFiltersDAO) UpdateOrder(ctx context.Context, orderValue int64, 
 // update dialog_filters set order_value = :order_value where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (dao *DialogFiltersDAO) UpdateOrderTx(tx *sqlx.Tx, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
 
 	rResult, err = tx.Exec(query, orderValue, userId, dialogFilterId)
 
@@ -230,9 +240,10 @@ func (dao *DialogFiltersDAO) UpdateOrderTx(tx *sqlx.Tx, orderValue int64, userId
 // update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (dao *DialogFiltersDAO) Clear(ctx context.Context, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, userId, dialogFilterId)
 
@@ -253,9 +264,10 @@ func (dao *DialogFiltersDAO) Clear(ctx context.Context, userId int64, dialogFilt
 // update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (dao *DialogFiltersDAO) ClearTx(tx *sqlx.Tx, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
 
 	rResult, err = tx.Exec(query, userId, dialogFilterId)
 

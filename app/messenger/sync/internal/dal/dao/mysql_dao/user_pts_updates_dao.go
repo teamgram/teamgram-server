@@ -35,9 +35,10 @@ func NewUserPtsUpdatesDAO(db *sqlx.DB) *UserPtsUpdatesDAO {
 // insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)
 func (dao *UserPtsUpdatesDAO) Insert(ctx context.Context, do *dataobject.UserPtsUpdatesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *UserPtsUpdatesDAO) Insert(ctx context.Context, do *dataobject.UserPts
 // insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)
 func (dao *UserPtsUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UserPtsUpdatesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *UserPtsUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UserPtsUpdate
 // select pts from user_pts_updates where user_id = :user_id order by pts desc limit 1
 func (dao *UserPtsUpdatesDAO) SelectLastPts(ctx context.Context, userId int64) (rValue *dataobject.UserPtsUpdatesDO, err error) {
 	var (
-		query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
+		query string
 		do    = &dataobject.UserPtsUpdatesDO{}
 	)
+	query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
@@ -113,9 +117,10 @@ func (dao *UserPtsUpdatesDAO) SelectLastPts(ctx context.Context, userId int64) (
 // select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = :user_id and pts > :pts order by pts asc
 func (dao *UserPtsUpdatesDAO) SelectByGtPts(ctx context.Context, userId int64, pts int32) (rList []dataobject.UserPtsUpdatesDO, err error) {
 	var (
-		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
+		query  string
 		values []dataobject.UserPtsUpdatesDO
 	)
+	query = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 
@@ -133,9 +138,10 @@ func (dao *UserPtsUpdatesDAO) SelectByGtPts(ctx context.Context, userId int64, p
 // select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = :user_id and pts > :pts order by pts asc
 func (dao *UserPtsUpdatesDAO) SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int32, cb func(sz, i int, v *dataobject.UserPtsUpdatesDO)) (rList []dataobject.UserPtsUpdatesDO, err error) {
 	var (
-		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
+		query  string
 		values []dataobject.UserPtsUpdatesDO
 	)
+	query = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 

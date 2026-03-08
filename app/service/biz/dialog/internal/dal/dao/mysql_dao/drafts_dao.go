@@ -36,9 +36,10 @@ func NewDraftsDAO(db *sqlx.DB) *DraftsDAO {
 // insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)
 func (dao *DraftsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DraftsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *DraftsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DraftsD
 // insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)
 func (dao *DraftsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DraftsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into drafts(user_id, peer_dialog_id, draft_type, draft_message_data, date2) values (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2) on duplicate key update draft_type = values(draft_type), draft_message_data = values(draft_message_data), date2 = values(date2)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,11 @@ func (dao *DraftsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DraftsDO) (la
 // select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (dao *DraftsDAO) Select(ctx context.Context, userId int32, peerDialogId int64) (rValue *dataobject.DraftsDO, err error) {
 	var (
-		query = "select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id = ?"
+		query string
 		do    = &dataobject.DraftsDO{}
 	)
+	query = "select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, peerDialogId)
 
 	if err != nil {
@@ -113,7 +117,8 @@ func (dao *DraftsDAO) Select(ctx context.Context, userId int32, peerDialogId int
 // SelectIdList
 // select peer_dialog_id from drafts where user_id = :user_id
 func (dao *DraftsDAO) SelectIdList(ctx context.Context, userId int32) (rList []int64, err error) {
-	var query = "select peer_dialog_id from drafts where user_id = ?"
+	var query string
+	query = "select peer_dialog_id from drafts where user_id = ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -127,7 +132,8 @@ func (dao *DraftsDAO) SelectIdList(ctx context.Context, userId int32) (rList []i
 // SelectIdListWithCB
 // select peer_dialog_id from drafts where user_id = :user_id
 func (dao *DraftsDAO) SelectIdListWithCB(ctx context.Context, userId int32, cb func(sz, i int, v int64)) (rList []int64, err error) {
-	var query = "select peer_dialog_id from drafts where user_id = ?"
+	var query string
+	query = "select peer_dialog_id from drafts where user_id = ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -155,9 +161,10 @@ func (dao *DraftsDAO) SelectByIdList(ctx context.Context, userId int32, idList [
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DraftsDO
 	)
+	query = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -181,9 +188,10 @@ func (dao *DraftsDAO) SelectByIdListWithCB(ctx context.Context, userId int32, id
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DraftsDO
 	)
+	query = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -213,9 +221,10 @@ func (dao *DraftsDAO) ClearByIdList(ctx context.Context, userId int32, idList []
 	}
 
 	var (
-		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 
 	rResult, err = dao.db.Exec(ctx, query, userId)
 
@@ -240,9 +249,10 @@ func (dao *DraftsDAO) ClearByIdListTx(tx *sqlx.Tx, userId int32, idList []int64)
 		return
 	}
 	var (
-		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 
 	rResult, err = tx.Exec(query, userId)
 

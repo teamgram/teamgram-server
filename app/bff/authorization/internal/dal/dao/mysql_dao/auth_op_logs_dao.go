@@ -34,9 +34,10 @@ func NewAuthOpLogsDAO(db *sqlx.DB) *AuthOpLogsDAO {
 // insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)
 func (dao *AuthOpLogsDAO) Insert(ctx context.Context, do *dataobject.AuthOpLogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -61,9 +62,10 @@ func (dao *AuthOpLogsDAO) Insert(ctx context.Context, do *dataobject.AuthOpLogsD
 // insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)
 func (dao *AuthOpLogsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthOpLogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {

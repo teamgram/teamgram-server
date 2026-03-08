@@ -37,9 +37,10 @@ func NewUserPeerSettingsDAO(db *sqlx.DB) *UserPeerSettingsDAO {
 // insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
 func (dao *UserPeerSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -64,9 +65,10 @@ func (dao *UserPeerSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 // insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
 func (dao *UserPeerSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -91,9 +93,11 @@ func (dao *UserPeerSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Use
 // select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hide = 0
 func (dao *UserPeerSettingsDAO) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *dataobject.UserPeerSettingsDO, err error) {
 	var (
-		query = "select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = ? and peer_type = ? and peer_id = ? and hide = 0"
+		query string
 		do    = &dataobject.UserPeerSettingsDO{}
 	)
+	query = "select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = ? and peer_type = ? and peer_id = ? and hide = 0"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
@@ -122,9 +126,10 @@ func (dao *UserPeerSettingsDAO) Update(ctx context.Context, cMap map[string]inte
 	}
 
 	var (
-		query   = fmt.Sprintf("update user_peer_settings set %s where user_id = ? and peer_type = ? and peer_id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update user_peer_settings set %s where user_id = ? and peer_type = ? and peer_id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, userId)
 	aValues = append(aValues, peerType)
@@ -156,9 +161,10 @@ func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{
 	}
 
 	var (
-		query   = fmt.Sprintf("update user_peer_settings set %s where user_id = ? and peer_type = ? and peer_id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update user_peer_settings set %s where user_id = ? and peer_type = ? and peer_id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, userId)
 	aValues = append(aValues, peerType)
@@ -183,9 +189,10 @@ func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{
 // update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *UserPeerSettingsDAO) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, userId, peerType, peerId)
 
@@ -206,9 +213,10 @@ func (dao *UserPeerSettingsDAO) Delete(ctx context.Context, userId int64, peerTy
 // update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *UserPeerSettingsDAO) DeleteTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = tx.Exec(query, userId, peerType, peerId)
 

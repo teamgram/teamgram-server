@@ -34,9 +34,10 @@ func NewPhoneBooksDAO(db *sqlx.DB) *PhoneBooksDAO {
 // insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)
 func (dao *PhoneBooksDAO) InsertOrUpdate(ctx context.Context, do *dataobject.PhoneBooksDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -61,9 +62,10 @@ func (dao *PhoneBooksDAO) InsertOrUpdate(ctx context.Context, do *dataobject.Pho
 // insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)
 func (dao *PhoneBooksDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.PhoneBooksDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {

@@ -36,9 +36,10 @@ func NewDocumentsDAO(db *sqlx.DB) *DocumentsDAO {
 // insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)
 func (dao *DocumentsDAO) Insert(ctx context.Context, do *dataobject.DocumentsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *DocumentsDAO) Insert(ctx context.Context, do *dataobject.DocumentsDO)
 // insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)
 func (dao *DocumentsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.DocumentsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,11 @@ func (dao *DocumentsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.DocumentsDO) (last
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = :document_id and access_hash = :access_hash and version = :version
 func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, documentId int64, accessHash int64, version int32) (rValue *dataobject.DocumentsDO, err error) {
 	var (
-		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = ? and access_hash = ? and version = ?"
+		query string
 		do    = &dataobject.DocumentsDO{}
 	)
+	query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = ? and access_hash = ? and version = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, documentId, accessHash, version)
 
 	if err != nil {
@@ -114,9 +118,11 @@ func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, documentId in
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = :document_id
 func (dao *DocumentsDAO) SelectByDocumentId(ctx context.Context, documentId int64) (rValue *dataobject.DocumentsDO, err error) {
 	var (
-		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
+		query string
 		do    = &dataobject.DocumentsDO{}
 	)
+	query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, documentId)
 
 	if err != nil {
@@ -143,9 +149,10 @@ func (dao *DocumentsDAO) SelectByDocumentIdList(ctx context.Context, idList []in
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DocumentsDO
 	)
+	query = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -168,9 +175,10 @@ func (dao *DocumentsDAO) SelectByDocumentIdListWithCB(ctx context.Context, idLis
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DocumentsDO
 	)
+	query = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -200,9 +208,10 @@ func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rL
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DocumentsDO
 	)
+	query = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -225,9 +234,10 @@ func (dao *DocumentsDAO) SelectByIdListWithCB(ctx context.Context, idList []int6
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.DocumentsDO
 	)
+	query = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 

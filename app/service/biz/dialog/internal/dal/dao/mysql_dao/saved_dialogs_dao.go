@@ -35,9 +35,10 @@ func NewSavedDialogsDAO(db *sqlx.DB) *SavedDialogsDAO {
 // insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0
 func (dao *SavedDialogsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.SavedDialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *SavedDialogsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.S
 // insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0
 func (dao *SavedDialogsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.SavedDialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into saved_dialogs(user_id, peer_type, peer_id, pinned, top_message) values (:user_id, :peer_type, :peer_id, 0, :top_message) on duplicate key update top_message = values(top_message), deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *SavedDialogsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.SavedDi
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (dao *SavedDialogsDAO) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *dataobject.SavedDialogsDO, err error) {
 	var (
-		query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
+		query string
 		do    = &dataobject.SavedDialogsDO{}
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
@@ -113,9 +117,10 @@ func (dao *SavedDialogsDAO) Select(ctx context.Context, userId int64, peerType i
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and pinned > 0 and deleted = 0 order by pinned desc
 func (dao *SavedDialogsDAO) SelectPinnedDialogs(ctx context.Context, userId int64) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -133,9 +138,10 @@ func (dao *SavedDialogsDAO) SelectPinnedDialogs(ctx context.Context, userId int6
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and pinned > 0 and deleted = 0 order by pinned desc
 func (dao *SavedDialogsDAO) SelectPinnedDialogsWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *dataobject.SavedDialogsDO)) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -160,9 +166,10 @@ func (dao *SavedDialogsDAO) SelectPinnedDialogsWithCB(ctx context.Context, userI
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and pinned = 0 and top_message < :top_message and deleted = 0 order by top_message desc limit :limit
 func (dao *SavedDialogsDAO) SelectExcludePinnedDialogs(ctx context.Context, userId int64, topMessage int32, limit int32) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
@@ -180,9 +187,10 @@ func (dao *SavedDialogsDAO) SelectExcludePinnedDialogs(ctx context.Context, user
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and pinned = 0 and top_message < :top_message and deleted = 0 order by top_message desc limit :limit
 func (dao *SavedDialogsDAO) SelectExcludePinnedDialogsWithCB(ctx context.Context, userId int64, topMessage int32, limit int32, cb func(sz, i int, v *dataobject.SavedDialogsDO)) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
@@ -207,9 +215,10 @@ func (dao *SavedDialogsDAO) SelectExcludePinnedDialogsWithCB(ctx context.Context
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and top_message < :top_message and deleted = 0 order by top_message desc limit :limit
 func (dao *SavedDialogsDAO) SelectDialogs(ctx context.Context, userId int64, topMessage int32, limit int32) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
@@ -227,9 +236,10 @@ func (dao *SavedDialogsDAO) SelectDialogs(ctx context.Context, userId int64, top
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and top_message < :top_message and deleted = 0 order by top_message desc limit :limit
 func (dao *SavedDialogsDAO) SelectDialogsWithCB(ctx context.Context, userId int64, topMessage int32, limit int32, cb func(sz, i int, v *dataobject.SavedDialogsDO)) (rList []dataobject.SavedDialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
+		query  string
 		values []dataobject.SavedDialogsDO
 	)
+	query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
@@ -254,9 +264,10 @@ func (dao *SavedDialogsDAO) SelectDialogsWithCB(ctx context.Context, userId int6
 // update saved_dialogs set pinned = 0 where user_id = :user_id and pinned > 0 and deleted = 0
 func (dao *SavedDialogsDAO) UpdateUserUnPinned(ctx context.Context, userId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
+		query   string
 		rResult sql.Result
 	)
+	query = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
 
 	rResult, err = dao.db.Exec(ctx, query, userId)
 
@@ -277,9 +288,10 @@ func (dao *SavedDialogsDAO) UpdateUserUnPinned(ctx context.Context, userId int64
 // update saved_dialogs set pinned = 0 where user_id = :user_id and pinned > 0 and deleted = 0
 func (dao *SavedDialogsDAO) UpdateUserUnPinnedTx(tx *sqlx.Tx, userId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
+		query   string
 		rResult sql.Result
 	)
+	query = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
 
 	rResult, err = tx.Exec(query, userId)
 
@@ -300,9 +312,10 @@ func (dao *SavedDialogsDAO) UpdateUserUnPinnedTx(tx *sqlx.Tx, userId int64) (row
 // update saved_dialogs set pinned = :pinned where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *SavedDialogsDAO) UpdateUserPeerPinned(ctx context.Context, pinned int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, pinned, userId, peerType, peerId)
 
@@ -323,9 +336,10 @@ func (dao *SavedDialogsDAO) UpdateUserPeerPinned(ctx context.Context, pinned int
 // update saved_dialogs set pinned = :pinned where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *SavedDialogsDAO) UpdateUserPeerPinnedTx(tx *sqlx.Tx, pinned int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = tx.Exec(query, pinned, userId, peerType, peerId)
 

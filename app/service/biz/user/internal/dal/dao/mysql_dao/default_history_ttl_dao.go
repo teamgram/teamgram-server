@@ -35,9 +35,10 @@ func NewDefaultHistoryTtlDAO(db *sqlx.DB) *DefaultHistoryTtlDAO {
 // insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)
 func (dao *DefaultHistoryTtlDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DefaultHistoryTtlDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *DefaultHistoryTtlDAO) InsertOrUpdate(ctx context.Context, do *dataobj
 // insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)
 func (dao *DefaultHistoryTtlDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DefaultHistoryTtlDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *DefaultHistoryTtlDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.De
 // select id, user_id, period from default_history_ttl where user_id = :user_id
 func (dao *DefaultHistoryTtlDAO) Select(ctx context.Context, userId int64) (rValue *dataobject.DefaultHistoryTtlDO, err error) {
 	var (
-		query = "select id, user_id, period from default_history_ttl where user_id = ?"
+		query string
 		do    = &dataobject.DefaultHistoryTtlDO{}
 	)
+	query = "select id, user_id, period from default_history_ttl where user_id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {

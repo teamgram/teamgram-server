@@ -36,9 +36,10 @@ func NewChatsDAO(db *sqlx.DB) *ChatsDAO {
 // insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)
 func (dao *ChatsDAO) Insert(ctx context.Context, do *dataobject.ChatsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *ChatsDAO) Insert(ctx context.Context, do *dataobject.ChatsDO) (lastIn
 // insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)
 func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,11 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id = :id
 func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id = ?"
+		query string
 		do    = &dataobject.ChatsDO{}
 	)
+	query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
@@ -113,7 +117,9 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 // SelectPhotoId
 // select photo_id from chats where id = :id
 func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64, err error) {
-	var query = "select photo_id from chats where id = ?"
+	var query string
+	query = "select photo_id from chats where id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
@@ -133,9 +139,11 @@ func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64,
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creatorUserId int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+		query string
 		do    = &dataobject.ChatsDO{}
 	)
+	query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, creatorUserId)
 
 	if err != nil {
@@ -157,9 +165,10 @@ func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creatorUserId int64)
 // update chats set title = :title, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateTitle(ctx context.Context, title string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set title = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set title = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, title, id)
 
@@ -180,9 +189,10 @@ func (dao *ChatsDAO) UpdateTitle(ctx context.Context, title string, id int64) (r
 // update chats set title = :title, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set title = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set title = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, title, id)
 
@@ -203,9 +213,10 @@ func (dao *ChatsDAO) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (rowsAff
 // update chats set about = :about where id = :id
 func (dao *ChatsDAO) UpdateAbout(ctx context.Context, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set about = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, about, id)
 
@@ -226,9 +237,10 @@ func (dao *ChatsDAO) UpdateAbout(ctx context.Context, about string, id int64) (r
 // update chats set about = :about where id = :id
 func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set about = ? where id = ?"
 
 	rResult, err = tx.Exec(query, about, id)
 
@@ -254,9 +266,10 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
+		query  string
 		values []dataobject.ChatsDO
 	)
+	query = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -279,9 +292,10 @@ func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, c
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
+		query  string
 		values []dataobject.ChatsDO
 	)
+	query = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -306,9 +320,10 @@ func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, c
 // update chats set participant_count = :participant_count, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateParticipantCount(ctx context.Context, participantCount int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set participant_count = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, participantCount, id)
 
@@ -329,9 +344,10 @@ func (dao *ChatsDAO) UpdateParticipantCount(ctx context.Context, participantCoun
 // update chats set participant_count = :participant_count, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateParticipantCountTx(tx *sqlx.Tx, participantCount int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set participant_count = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, participantCount, id)
 
@@ -352,9 +368,10 @@ func (dao *ChatsDAO) UpdateParticipantCountTx(tx *sqlx.Tx, participantCount int3
 // update chats set photo_id = :photo_id, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdatePhotoId(ctx context.Context, photoId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set photo_id = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, photoId, id)
 
@@ -375,9 +392,10 @@ func (dao *ChatsDAO) UpdatePhotoId(ctx context.Context, photoId int64, id int64)
 // update chats set photo_id = :photo_id, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set photo_id = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, photoId, id)
 
@@ -398,9 +416,10 @@ func (dao *ChatsDAO) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64) (rows
 // update chats set admins_enabled = :admins_enabled, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateAdminsEnabled(ctx context.Context, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, id)
 
@@ -421,9 +440,10 @@ func (dao *ChatsDAO) UpdateAdminsEnabled(ctx context.Context, id int64) (rowsAff
 // update chats set admins_enabled = :admins_enabled, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateAdminsEnabledTx(tx *sqlx.Tx, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, id)
 
@@ -444,9 +464,10 @@ func (dao *ChatsDAO) UpdateAdminsEnabledTx(tx *sqlx.Tx, id int64) (rowsAffected 
 // update chats set default_banned_rights = :default_banned_rights, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateDefaultBannedRights(ctx context.Context, defaultBannedRights int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, defaultBannedRights, id)
 
@@ -467,9 +488,10 @@ func (dao *ChatsDAO) UpdateDefaultBannedRights(ctx context.Context, defaultBanne
 // update chats set default_banned_rights = :default_banned_rights, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBannedRights int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, defaultBannedRights, id)
 
@@ -490,9 +512,10 @@ func (dao *ChatsDAO) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBannedRight
 // update chats set version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateVersion(ctx context.Context, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, id)
 
@@ -513,9 +536,10 @@ func (dao *ChatsDAO) UpdateVersion(ctx context.Context, id int64) (rowsAffected 
 // update chats set version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, id)
 
@@ -536,9 +560,10 @@ func (dao *ChatsDAO) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected int64,
 // update chats set deactivated = :deactivated, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateDeactivated(ctx context.Context, deactivated bool, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set deactivated = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, deactivated, id)
 
@@ -559,9 +584,10 @@ func (dao *ChatsDAO) UpdateDeactivated(ctx context.Context, deactivated bool, id
 // update chats set deactivated = :deactivated, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set deactivated = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, deactivated, id)
 
@@ -582,9 +608,11 @@ func (dao *ChatsDAO) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, id int64
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where deactivated = 0 and link = :link
 func (dao *ChatsDAO) SelectByLink(ctx context.Context) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where deactivated = 0 and link = ?"
+		query string
 		do    = &dataobject.ChatsDO{}
 	)
+	query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where deactivated = 0 and link = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query)
 
 	if err != nil {
@@ -606,9 +634,10 @@ func (dao *ChatsDAO) SelectByLink(ctx context.Context) (rValue *dataobject.Chats
 // update chats set link = :link, `date` = :date, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateLink(ctx context.Context, date int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, date, id)
 
@@ -629,9 +658,10 @@ func (dao *ChatsDAO) UpdateLink(ctx context.Context, date int64, id int64) (rows
 // update chats set link = :link, `date` = :date, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateLinkTx(tx *sqlx.Tx, date int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, date, id)
 
@@ -652,9 +682,10 @@ func (dao *ChatsDAO) UpdateLinkTx(tx *sqlx.Tx, date int64, id int64) (rowsAffect
 // update chats set migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateMigratedTo(ctx context.Context, migratedToId int64, migratedToAccessHash int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, migratedToId, migratedToAccessHash, id)
 
@@ -675,9 +706,10 @@ func (dao *ChatsDAO) UpdateMigratedTo(ctx context.Context, migratedToId int64, m
 // update chats set migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version = version + 1 where id = :id
 func (dao *ChatsDAO) UpdateMigratedToTx(tx *sqlx.Tx, migratedToId int64, migratedToAccessHash int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
 
 	rResult, err = tx.Exec(query, migratedToId, migratedToAccessHash, id)
 

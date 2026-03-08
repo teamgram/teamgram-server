@@ -36,9 +36,10 @@ func NewPopularContactsDAO(db *sqlx.DB) *PopularContactsDAO {
 // insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1
 func (dao *PopularContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.PopularContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1"
+		query string
 		r     sql.Result
 	)
+	query = "insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *PopularContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobjec
 // insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1
 func (dao *PopularContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.PopularContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1"
+		query string
 		r     sql.Result
 	)
+	query = "insert into popular_contacts(phone, importers, deleted) values (:phone, :importers, 0) on duplicate key update importers = importers + 1"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,10 @@ func (dao *PopularContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Popu
 // update popular_contacts set importers = importers + 1 where phone = :phone
 func (dao *PopularContactsDAO) IncreaseImporters(ctx context.Context, phone string) (rowsAffected int64, err error) {
 	var (
-		query   = "update popular_contacts set importers = importers + 1 where phone = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update popular_contacts set importers = importers + 1 where phone = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, phone)
 
@@ -113,9 +116,10 @@ func (dao *PopularContactsDAO) IncreaseImporters(ctx context.Context, phone stri
 // update popular_contacts set importers = importers + 1 where phone = :phone
 func (dao *PopularContactsDAO) IncreaseImportersTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
 	var (
-		query   = "update popular_contacts set importers = importers + 1 where phone = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update popular_contacts set importers = importers + 1 where phone = ?"
 
 	rResult, err = tx.Exec(query, phone)
 
@@ -140,9 +144,10 @@ func (dao *PopularContactsDAO) IncreaseImportersList(ctx context.Context, phoneL
 	}
 
 	var (
-		query   = fmt.Sprintf("update popular_contacts set importers = importers + 1 where phone in (%s)", sqlx.InStringList(phoneList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update popular_contacts set importers = importers + 1 where phone in (%s)", sqlx.InStringList(phoneList))
 
 	rResult, err = dao.db.Exec(ctx, query)
 
@@ -166,9 +171,10 @@ func (dao *PopularContactsDAO) IncreaseImportersListTx(tx *sqlx.Tx, phoneList []
 		return
 	}
 	var (
-		query   = fmt.Sprintf("update popular_contacts set importers = importers + 1 where phone in (%s)", sqlx.InStringList(phoneList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update popular_contacts set importers = importers + 1 where phone in (%s)", sqlx.InStringList(phoneList))
 
 	rResult, err = tx.Exec(query)
 
@@ -189,9 +195,11 @@ func (dao *PopularContactsDAO) IncreaseImportersListTx(tx *sqlx.Tx, phoneList []
 // select phone, importers from popular_contacts where phone = :phone
 func (dao *PopularContactsDAO) SelectImporters(ctx context.Context, phone string) (rValue *dataobject.PopularContactsDO, err error) {
 	var (
-		query = "select phone, importers from popular_contacts where phone = ?"
+		query string
 		do    = &dataobject.PopularContactsDO{}
 	)
+	query = "select phone, importers from popular_contacts where phone = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
@@ -218,9 +226,10 @@ func (dao *PopularContactsDAO) SelectImportersList(ctx context.Context, phoneLis
 	}
 
 	var (
-		query  = fmt.Sprintf("select phone, importers from popular_contacts where phone in (%s)", sqlx.InStringList(phoneList))
+		query  string
 		values []dataobject.PopularContactsDO
 	)
+	query = fmt.Sprintf("select phone, importers from popular_contacts where phone in (%s)", sqlx.InStringList(phoneList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -243,9 +252,10 @@ func (dao *PopularContactsDAO) SelectImportersListWithCB(ctx context.Context, ph
 	}
 
 	var (
-		query  = fmt.Sprintf("select phone, importers from popular_contacts where phone in (%s)", sqlx.InStringList(phoneList))
+		query  string
 		values []dataobject.PopularContactsDO
 	)
+	query = fmt.Sprintf("select phone, importers from popular_contacts where phone in (%s)", sqlx.InStringList(phoneList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 

@@ -34,9 +34,10 @@ func NewHashTagsDAO(db *sqlx.DB) *HashTagsDAO {
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
 func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -61,9 +62,10 @@ func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashT
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
 func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -87,7 +89,8 @@ func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO)
 // SelectPeerHashTagList
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
 func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) (rList []int32, err error) {
-	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
+	var query string
+	query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
@@ -101,7 +104,8 @@ func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, userId int64,
 // SelectPeerHashTagListWithCB
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
 func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int32)) (rList []int32, err error) {
-	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
+	var query string
+	query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
@@ -123,9 +127,10 @@ func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, userId 
 // update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
 func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, userId int64, hashTagMessageId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, userId, hashTagMessageId)
 
@@ -146,9 +151,10 @@ func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, userId int64
 // update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
 func (dao *HashTagsDAO) DeleteHashTagMessageIdTx(tx *sqlx.Tx, userId int64, hashTagMessageId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
 
 	rResult, err = tx.Exec(query, userId, hashTagMessageId)
 

@@ -37,9 +37,10 @@ func NewPredefinedUsersDAO(db *sqlx.DB) *PredefinedUsersDAO {
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
 func (dao *PredefinedUsersDAO) Insert(ctx context.Context, do *dataobject.PredefinedUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -64,9 +65,10 @@ func (dao *PredefinedUsersDAO) Insert(ctx context.Context, do *dataobject.Predef
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
 func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -91,9 +93,11 @@ func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUs
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = :phone and deleted = 0 limit 1
 func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) (rValue *dataobject.PredefinedUsersDO, err error) {
 	var (
-		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
+		query string
 		do    = &dataobject.PredefinedUsersDO{}
 	)
+	query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
@@ -115,9 +119,10 @@ func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) 
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
 func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
-		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
+		query  string
 		values []dataobject.PredefinedUsersDO
 	)
+	query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -135,9 +140,10 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rL
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
 func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(sz, i int, v *dataobject.PredefinedUsersDO)) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
-		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
+		query  string
 		values []dataobject.PredefinedUsersDO
 	)
+	query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -162,9 +168,10 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Contex
 // update predefined_users set deleted = 0 where phone = :phone
 func (dao *PredefinedUsersDAO) Delete(ctx context.Context, phone string) (rowsAffected int64, err error) {
 	var (
-		query   = "update predefined_users set deleted = 0 where phone = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update predefined_users set deleted = 0 where phone = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, phone)
 
@@ -185,9 +192,10 @@ func (dao *PredefinedUsersDAO) Delete(ctx context.Context, phone string) (rowsAf
 // update predefined_users set deleted = 0 where phone = :phone
 func (dao *PredefinedUsersDAO) DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
 	var (
-		query   = "update predefined_users set deleted = 0 where phone = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update predefined_users set deleted = 0 where phone = ?"
 
 	rResult, err = tx.Exec(query, phone)
 
@@ -215,9 +223,10 @@ func (dao *PredefinedUsersDAO) Update(ctx context.Context, cMap map[string]inter
 	}
 
 	var (
-		query   = fmt.Sprintf("update predefined_users set %s where phone = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update predefined_users set %s where phone = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, phone)
 
@@ -247,9 +256,10 @@ func (dao *PredefinedUsersDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}
 	}
 
 	var (
-		query   = fmt.Sprintf("update predefined_users set %s where phone = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update predefined_users set %s where phone = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, phone)
 

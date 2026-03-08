@@ -37,9 +37,10 @@ func NewAuthKeyInfosDAO(db *sqlx.DB) *AuthKeyInfosDAO {
 // insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
 func (dao *AuthKeyInfosDAO) Insert(ctx context.Context, do *dataobject.AuthKeyInfosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -64,9 +65,10 @@ func (dao *AuthKeyInfosDAO) Insert(ctx context.Context, do *dataobject.AuthKeyIn
 // insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
 func (dao *AuthKeyInfosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeyInfosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -91,9 +93,11 @@ func (dao *AuthKeyInfosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeyInfosDO)
 // select auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_key_infos where auth_key_id = :auth_key_id limit 1
 func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthKeyInfosDO, err error) {
 	var (
-		query = "select auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_key_infos where auth_key_id = ? limit 1"
+		query string
 		do    = &dataobject.AuthKeyInfosDO{}
 	)
+	query = "select auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_key_infos where auth_key_id = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
@@ -122,9 +126,10 @@ func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string
 	}
 
 	var (
-		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, authKeyId)
 
@@ -154,9 +159,10 @@ func (dao *AuthKeyInfosDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]inter
 	}
 
 	var (
-		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, authKeyId)
 

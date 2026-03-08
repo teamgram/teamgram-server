@@ -36,9 +36,10 @@ func NewUserPeerBlocksDAO(db *sqlx.DB) *UserPeerBlocksDAO {
 // insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0
 func (dao *UserPeerBlocksDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserPeerBlocksDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *UserPeerBlocksDAO) InsertOrUpdate(ctx context.Context, do *dataobject
 // insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0
 func (dao *UserPeerBlocksDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPeerBlocksDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_peer_blocks(user_id, peer_type, peer_id, `date`) values (:user_id, :peer_type, :peer_id, :date) on duplicate key update `date` = values(`date`), deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,10 @@ func (dao *UserPeerBlocksDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserP
 // select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = :user_id and deleted = 0 order by id asc limit :limit
 func (dao *UserPeerBlocksDAO) SelectList(ctx context.Context, userId int64, limit int32) (rList []dataobject.UserPeerBlocksDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
+		query  string
 		values []dataobject.UserPeerBlocksDO
 	)
+	query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
@@ -110,9 +113,10 @@ func (dao *UserPeerBlocksDAO) SelectList(ctx context.Context, userId int64, limi
 // select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = :user_id and deleted = 0 order by id asc limit :limit
 func (dao *UserPeerBlocksDAO) SelectListWithCB(ctx context.Context, userId int64, limit int32, cb func(sz, i int, v *dataobject.UserPeerBlocksDO)) (rList []dataobject.UserPeerBlocksDO, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
+		query  string
 		values []dataobject.UserPeerBlocksDO
 	)
+	query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
@@ -143,8 +147,9 @@ func (dao *UserPeerBlocksDAO) SelectListByIdList(ctx context.Context, userId int
 	}
 
 	var (
-		query = fmt.Sprintf("select peer_id from user_peer_blocks where user_id = ? and peer_type = 2 and peer_id in (%s) and deleted = 0", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select peer_id from user_peer_blocks where user_id = ? and peer_type = 2 and peer_id in (%s) and deleted = 0", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -165,8 +170,9 @@ func (dao *UserPeerBlocksDAO) SelectListByIdListWithCB(ctx context.Context, user
 	}
 
 	var (
-		query = fmt.Sprintf("select peer_id from user_peer_blocks where user_id = ? and peer_type = 2 and peer_id in (%s) and deleted = 0", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select peer_id from user_peer_blocks where user_id = ? and peer_type = 2 and peer_id in (%s) and deleted = 0", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -188,9 +194,11 @@ func (dao *UserPeerBlocksDAO) SelectListByIdListWithCB(ctx context.Context, user
 // select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (dao *UserPeerBlocksDAO) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *dataobject.UserPeerBlocksDO, err error) {
 	var (
-		query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
+		query string
 		do    = &dataobject.UserPeerBlocksDO{}
 	)
+	query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
@@ -212,9 +220,10 @@ func (dao *UserPeerBlocksDAO) Select(ctx context.Context, userId int64, peerType
 // update user_peer_blocks set deleted = 1, `date` = 0 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *UserPeerBlocksDAO) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_peer_blocks set deleted = 1, `date` = 0 where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_peer_blocks set deleted = 1, `date` = 0 where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, userId, peerType, peerId)
 
@@ -235,9 +244,10 @@ func (dao *UserPeerBlocksDAO) Delete(ctx context.Context, userId int64, peerType
 // update user_peer_blocks set deleted = 1, `date` = 0 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (dao *UserPeerBlocksDAO) DeleteTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_peer_blocks set deleted = 1, `date` = 0 where user_id = ? and peer_type = ? and peer_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_peer_blocks set deleted = 1, `date` = 0 where user_id = ? and peer_type = ? and peer_id = ?"
 
 	rResult, err = tx.Exec(query, userId, peerType, peerId)
 

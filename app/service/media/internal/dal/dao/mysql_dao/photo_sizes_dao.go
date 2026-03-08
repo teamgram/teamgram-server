@@ -35,9 +35,10 @@ func NewPhotoSizesDAO(db *sqlx.DB) *PhotoSizesDAO {
 // insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
 func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesD
 // insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
 func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,10 @@ func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (la
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photoSizeId int64) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		query  string
 		values []dataobject.PhotoSizesDO
 	)
+	query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
 
@@ -109,9 +112,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photoSize
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdWithCB(ctx context.Context, photoSizeId int64, cb func(sz, i int, v *dataobject.PhotoSizesDO)) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		query  string
 		values []dataobject.PhotoSizesDO
 	)
+	query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
 
@@ -141,9 +145,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idLis
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.PhotoSizesDO
 	)
+	query = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -166,9 +171,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdListWithCB(ctx context.Context,
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.PhotoSizesDO
 	)
+	query = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 

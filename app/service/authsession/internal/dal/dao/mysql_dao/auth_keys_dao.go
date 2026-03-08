@@ -35,9 +35,10 @@ func NewAuthKeysDAO(db *sqlx.DB) *AuthKeysDAO {
 // insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)
 func (dao *AuthKeysDAO) Insert(ctx context.Context, do *dataobject.AuthKeysDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *AuthKeysDAO) Insert(ctx context.Context, do *dataobject.AuthKeysDO) (
 // insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)
 func (dao *AuthKeysDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeysDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *AuthKeysDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeysDO) (lastIn
 // select auth_key_id, body from auth_keys where auth_key_id = :auth_key_id
 func (dao *AuthKeysDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthKeysDO, err error) {
 	var (
-		query = "select auth_key_id, body from auth_keys where auth_key_id = ?"
+		query string
 		do    = &dataobject.AuthKeysDO{}
 	)
+	query = "select auth_key_id, body from auth_keys where auth_key_id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {

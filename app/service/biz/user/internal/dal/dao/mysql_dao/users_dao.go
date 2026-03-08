@@ -37,9 +37,10 @@ func NewUsersDAO(db *sqlx.DB) *UsersDAO {
 // insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
 func (dao *UsersDAO) Insert(ctx context.Context, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -64,9 +65,10 @@ func (dao *UsersDAO) Insert(ctx context.Context, do *dataobject.UsersDO) (lastIn
 // insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
 func (dao *UsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into users(user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -91,9 +93,10 @@ func (dao *UsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId
 // insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
 func (dao *UsersDAO) InsertTestUser(ctx context.Context, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -118,9 +121,10 @@ func (dao *UsersDAO) InsertTestUser(ctx context.Context, do *dataobject.UsersDO)
 // insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
 func (dao *UsersDAO) InsertTestUserTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -145,9 +149,11 @@ func (dao *UsersDAO) InsertTestUserTx(tx *sqlx.Tx, do *dataobject.UsersDO) (last
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone = :phone limit 1
 func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone = ? limit 1"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
@@ -169,9 +175,11 @@ func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rVa
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id = :id limit 1
 func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id = ? limit 1"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
@@ -193,9 +201,11 @@ func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobje
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id < :maxId order by id desc limit 1
 func (dao *UsersDAO) SelectNextTestUserId(ctx context.Context, maxId int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id < ? order by id desc limit 1"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id < ? order by id desc limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, maxId)
 
 	if err != nil {
@@ -222,9 +232,10 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, idList []int64) (r
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -247,9 +258,10 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, idList []int
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -279,9 +291,10 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone in (%s)", sqlx.InStringList(phoneList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone in (%s)", sqlx.InStringList(phoneList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -304,9 +317,10 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone in (%s)", sqlx.InStringList(phoneList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone in (%s)", sqlx.InStringList(phoneList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -337,8 +351,9 @@ func (dao *UsersDAO) SearchByQueryString(ctx context.Context, q string, q2 strin
 	}
 
 	var (
-		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, q, q2, q2, limit)
 
@@ -359,8 +374,9 @@ func (dao *UsersDAO) SearchByQueryStringWithCB(ctx context.Context, q string, q2
 	}
 
 	var (
-		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, q, q2, q2, limit)
 
@@ -388,9 +404,10 @@ func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idLi
 	}
 
 	var (
-		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
@@ -414,9 +431,10 @@ func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string
 	}
 
 	var (
-		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
@@ -441,9 +459,10 @@ func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string
 // update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 func (dao *UsersDAO) Delete(ctx context.Context, phone string, deleteReason string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, phone, deleteReason, id)
 
@@ -464,9 +483,10 @@ func (dao *UsersDAO) Delete(ctx context.Context, phone string, deleteReason stri
 // update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 func (dao *UsersDAO) DeleteTx(tx *sqlx.Tx, phone string, deleteReason string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
 
 	rResult, err = tx.Exec(query, phone, deleteReason, id)
 
@@ -487,9 +507,10 @@ func (dao *UsersDAO) DeleteTx(tx *sqlx.Tx, phone string, deleteReason string, id
 // update users set username = :username where id = :id
 func (dao *UsersDAO) UpdateUsername(ctx context.Context, username string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set username = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set username = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, username, id)
 
@@ -510,9 +531,10 @@ func (dao *UsersDAO) UpdateUsername(ctx context.Context, username string, id int
 // update users set username = :username where id = :id
 func (dao *UsersDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set username = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set username = ? where id = ?"
 
 	rResult, err = tx.Exec(query, username, id)
 
@@ -533,9 +555,10 @@ func (dao *UsersDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, id int64) (r
 // update users set first_name = :first_name, last_name = :last_name where id = :id
 func (dao *UsersDAO) UpdateFirstAndLastName(ctx context.Context, firstName string, lastName string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set first_name = ?, last_name = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set first_name = ?, last_name = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, firstName, lastName, id)
 
@@ -556,9 +579,10 @@ func (dao *UsersDAO) UpdateFirstAndLastName(ctx context.Context, firstName strin
 // update users set first_name = :first_name, last_name = :last_name where id = :id
 func (dao *UsersDAO) UpdateFirstAndLastNameTx(tx *sqlx.Tx, firstName string, lastName string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set first_name = ?, last_name = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set first_name = ?, last_name = ? where id = ?"
 
 	rResult, err = tx.Exec(query, firstName, lastName, id)
 
@@ -579,9 +603,10 @@ func (dao *UsersDAO) UpdateFirstAndLastNameTx(tx *sqlx.Tx, firstName string, las
 // update users set about = :about where id = :id
 func (dao *UsersDAO) UpdateAbout(ctx context.Context, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set about = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, about, id)
 
@@ -602,9 +627,10 @@ func (dao *UsersDAO) UpdateAbout(ctx context.Context, about string, id int64) (r
 // update users set about = :about where id = :id
 func (dao *UsersDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set about = ? where id = ?"
 
 	rResult, err = tx.Exec(query, about, id)
 
@@ -625,9 +651,10 @@ func (dao *UsersDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 // update users set first_name = :first_name, last_name = :last_name, about = :about where id = :id
 func (dao *UsersDAO) UpdateProfile(ctx context.Context, firstName string, lastName string, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set first_name = ?, last_name = ?, about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set first_name = ?, last_name = ?, about = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, firstName, lastName, about, id)
 
@@ -648,9 +675,10 @@ func (dao *UsersDAO) UpdateProfile(ctx context.Context, firstName string, lastNa
 // update users set first_name = :first_name, last_name = :last_name, about = :about where id = :id
 func (dao *UsersDAO) UpdateProfileTx(tx *sqlx.Tx, firstName string, lastName string, about string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set first_name = ?, last_name = ?, about = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set first_name = ?, last_name = ?, about = ? where id = ?"
 
 	rResult, err = tx.Exec(query, firstName, lastName, about, id)
 
@@ -671,9 +699,11 @@ func (dao *UsersDAO) UpdateProfileTx(tx *sqlx.Tx, firstName string, lastName str
 // select id from users where username = :username limit 1
 func (dao *UsersDAO) SelectByUsername(ctx context.Context, username string) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id from users where username = ? limit 1"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select id from users where username = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, username)
 
 	if err != nil {
@@ -695,9 +725,11 @@ func (dao *UsersDAO) SelectByUsername(ctx context.Context, username string) (rVa
 // select account_days_ttl from users where id = :id
 func (dao *UsersDAO) SelectAccountDaysTTL(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select account_days_ttl from users where id = ?"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select account_days_ttl from users where id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
@@ -719,9 +751,10 @@ func (dao *UsersDAO) SelectAccountDaysTTL(ctx context.Context, id int64) (rValue
 // update users set account_days_ttl = :account_days_ttl where id = :id
 func (dao *UsersDAO) UpdateAccountDaysTTL(ctx context.Context, accountDaysTtl int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set account_days_ttl = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set account_days_ttl = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, accountDaysTtl, id)
 
@@ -742,9 +775,10 @@ func (dao *UsersDAO) UpdateAccountDaysTTL(ctx context.Context, accountDaysTtl in
 // update users set account_days_ttl = :account_days_ttl where id = :id
 func (dao *UsersDAO) UpdateAccountDaysTTLTx(tx *sqlx.Tx, accountDaysTtl int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set account_days_ttl = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set account_days_ttl = ? where id = ?"
 
 	rResult, err = tx.Exec(query, accountDaysTtl, id)
 
@@ -764,7 +798,9 @@ func (dao *UsersDAO) UpdateAccountDaysTTLTx(tx *sqlx.Tx, accountDaysTtl int32, i
 // SelectProfilePhoto
 // select photo_id from users where id = :id limit 1
 func (dao *UsersDAO) SelectProfilePhoto(ctx context.Context, id int64) (rValue int64, err error) {
-	var query = "select photo_id from users where id = ? limit 1"
+	var query string
+	query = "select photo_id from users where id = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
@@ -784,9 +820,11 @@ func (dao *UsersDAO) SelectProfilePhoto(ctx context.Context, id int64) (rValue i
 // select country_code from users where id = :id
 func (dao *UsersDAO) SelectCountryCode(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select country_code from users where id = ?"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select country_code from users where id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
@@ -808,9 +846,10 @@ func (dao *UsersDAO) SelectCountryCode(ctx context.Context, id int64) (rValue *d
 // update users set photo_id = :photo_id where id = :id
 func (dao *UsersDAO) UpdateProfilePhoto(ctx context.Context, photoId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set photo_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set photo_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, photoId, id)
 
@@ -831,9 +870,10 @@ func (dao *UsersDAO) UpdateProfilePhoto(ctx context.Context, photoId int64, id i
 // update users set photo_id = :photo_id where id = :id
 func (dao *UsersDAO) UpdateProfilePhotoTx(tx *sqlx.Tx, photoId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set photo_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set photo_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, photoId, id)
 
@@ -861,9 +901,10 @@ func (dao *UsersDAO) UpdateUser(ctx context.Context, cMap map[string]interface{}
 	}
 
 	var (
-		query   = fmt.Sprintf("update users set %s where id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update users set %s where id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, id)
 
@@ -893,9 +934,10 @@ func (dao *UsersDAO) UpdateUserTx(tx *sqlx.Tx, cMap map[string]interface{}, id i
 	}
 
 	var (
-		query   = fmt.Sprintf("update users set %s where id = ?", strings.Join(names, ", "))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update users set %s where id = ?", strings.Join(names, ", "))
 
 	aValues = append(aValues, id)
 
@@ -918,9 +960,10 @@ func (dao *UsersDAO) UpdateUserTx(tx *sqlx.Tx, cMap map[string]interface{}, id i
 // update users set emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until where id = :id
 func (dao *UsersDAO) UpdateEmojiStatus(ctx context.Context, emojiStatusDocumentId int64, emojiStatusUntil int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set emoji_status_document_id = ?, emoji_status_until = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set emoji_status_document_id = ?, emoji_status_until = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, emojiStatusDocumentId, emojiStatusUntil, id)
 
@@ -941,9 +984,10 @@ func (dao *UsersDAO) UpdateEmojiStatus(ctx context.Context, emojiStatusDocumentI
 // update users set emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until where id = :id
 func (dao *UsersDAO) UpdateEmojiStatusTx(tx *sqlx.Tx, emojiStatusDocumentId int64, emojiStatusUntil int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set emoji_status_document_id = ?, emoji_status_until = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set emoji_status_document_id = ?, emoji_status_until = ? where id = ?"
 
 	rResult, err = tx.Exec(query, emojiStatusDocumentId, emojiStatusUntil, id)
 
@@ -964,9 +1008,10 @@ func (dao *UsersDAO) UpdateEmojiStatusTx(tx *sqlx.Tx, emojiStatusDocumentId int6
 // update users set stories_max_id = :stories_max_id where id = :id
 func (dao *UsersDAO) UpdateStoriesMaxId(ctx context.Context, storiesMaxId int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set stories_max_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set stories_max_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, storiesMaxId, id)
 
@@ -987,9 +1032,10 @@ func (dao *UsersDAO) UpdateStoriesMaxId(ctx context.Context, storiesMaxId int32,
 // update users set stories_max_id = :stories_max_id where id = :id
 func (dao *UsersDAO) UpdateStoriesMaxIdTx(tx *sqlx.Tx, storiesMaxId int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set stories_max_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set stories_max_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, storiesMaxId, id)
 
@@ -1010,9 +1056,10 @@ func (dao *UsersDAO) UpdateStoriesMaxIdTx(tx *sqlx.Tx, storiesMaxId int32, id in
 // update users set color = :color, color_background_emoji_id = :color_background_emoji_id where id = :id
 func (dao *UsersDAO) UpdateColor(ctx context.Context, color int32, colorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set color = ?, color_background_emoji_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set color = ?, color_background_emoji_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, color, colorBackgroundEmojiId, id)
 
@@ -1033,9 +1080,10 @@ func (dao *UsersDAO) UpdateColor(ctx context.Context, color int32, colorBackgrou
 // update users set color = :color, color_background_emoji_id = :color_background_emoji_id where id = :id
 func (dao *UsersDAO) UpdateColorTx(tx *sqlx.Tx, color int32, colorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set color = ?, color_background_emoji_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set color = ?, color_background_emoji_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, color, colorBackgroundEmojiId, id)
 
@@ -1056,9 +1104,10 @@ func (dao *UsersDAO) UpdateColorTx(tx *sqlx.Tx, color int32, colorBackgroundEmoj
 // update users set profile_color = :profile_color, profile_color_background_emoji_id = :profile_color_background_emoji_id where id = :id
 func (dao *UsersDAO) UpdateProfileColor(ctx context.Context, profileColor int32, profileColorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set profile_color = ?, profile_color_background_emoji_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set profile_color = ?, profile_color_background_emoji_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, profileColor, profileColorBackgroundEmojiId, id)
 
@@ -1079,9 +1128,10 @@ func (dao *UsersDAO) UpdateProfileColor(ctx context.Context, profileColor int32,
 // update users set profile_color = :profile_color, profile_color_background_emoji_id = :profile_color_background_emoji_id where id = :id
 func (dao *UsersDAO) UpdateProfileColorTx(tx *sqlx.Tx, profileColor int32, profileColorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set profile_color = ?, profile_color_background_emoji_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set profile_color = ?, profile_color_background_emoji_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, profileColor, profileColorBackgroundEmojiId, id)
 
@@ -1102,9 +1152,10 @@ func (dao *UsersDAO) UpdateProfileColorTx(tx *sqlx.Tx, profileColor int32, profi
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int64, q1 string, q2 string, q3 string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
 
@@ -1122,9 +1173,10 @@ func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 func (dao *UsersDAO) QueryChannelParticipantsWithCB(ctx context.Context, channelId int64, q1 string, q2 string, q3 string, cb func(sz, i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  string
 		values []dataobject.UsersDO
 	)
+	query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
 
@@ -1154,8 +1206,9 @@ func (dao *UsersDAO) SelectBots(ctx context.Context, idList []int64) (rList []in
 	}
 
 	var (
-		query = fmt.Sprintf("select id from users where id in (%s) and is_bot = 1", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select id from users where id in (%s) and is_bot = 1", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query)
 
@@ -1175,8 +1228,9 @@ func (dao *UsersDAO) SelectBotsWithCB(ctx context.Context, idList []int64, cb fu
 	}
 
 	var (
-		query = fmt.Sprintf("select id from users where id in (%s) and is_bot = 1", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select id from users where id in (%s) and is_bot = 1", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query)
 
@@ -1198,9 +1252,10 @@ func (dao *UsersDAO) SelectBotsWithCB(ctx context.Context, idList []int64, cb fu
 // update users set birthday = :birthday where id = :id
 func (dao *UsersDAO) UpdateBirthday(ctx context.Context, birthday string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set birthday = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set birthday = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, birthday, id)
 
@@ -1221,9 +1276,10 @@ func (dao *UsersDAO) UpdateBirthday(ctx context.Context, birthday string, id int
 // update users set birthday = :birthday where id = :id
 func (dao *UsersDAO) UpdateBirthdayTx(tx *sqlx.Tx, birthday string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set birthday = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set birthday = ? where id = ?"
 
 	rResult, err = tx.Exec(query, birthday, id)
 
@@ -1244,9 +1300,10 @@ func (dao *UsersDAO) UpdateBirthdayTx(tx *sqlx.Tx, birthday string, id int64) (r
 // update users set personal_channel_id = :personal_channel_id where id = :id
 func (dao *UsersDAO) UpdatePersonalChannelId(ctx context.Context, personalChannelId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set personal_channel_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set personal_channel_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, personalChannelId, id)
 
@@ -1267,9 +1324,10 @@ func (dao *UsersDAO) UpdatePersonalChannelId(ctx context.Context, personalChanne
 // update users set personal_channel_id = :personal_channel_id where id = :id
 func (dao *UsersDAO) UpdatePersonalChannelIdTx(tx *sqlx.Tx, personalChannelId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set personal_channel_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set personal_channel_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, personalChannelId, id)
 
@@ -1290,9 +1348,10 @@ func (dao *UsersDAO) UpdatePersonalChannelIdTx(tx *sqlx.Tx, personalChannelId in
 // update users set authorization_ttl_days = :authorization_ttl_days where id = :id
 func (dao *UsersDAO) UpdateAuthorizationTTL(ctx context.Context, authorizationTtlDays int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set authorization_ttl_days = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set authorization_ttl_days = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, authorizationTtlDays, id)
 
@@ -1313,9 +1372,10 @@ func (dao *UsersDAO) UpdateAuthorizationTTL(ctx context.Context, authorizationTt
 // update users set authorization_ttl_days = :authorization_ttl_days where id = :id
 func (dao *UsersDAO) UpdateAuthorizationTTLTx(tx *sqlx.Tx, authorizationTtlDays int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set authorization_ttl_days = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set authorization_ttl_days = ? where id = ?"
 
 	rResult, err = tx.Exec(query, authorizationTtlDays, id)
 
@@ -1336,9 +1396,11 @@ func (dao *UsersDAO) UpdateAuthorizationTTLTx(tx *sqlx.Tx, authorizationTtlDays 
 // select authorization_ttl_days from users where id = :id
 func (dao *UsersDAO) SelectAuthorizationTTL(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select authorization_ttl_days from users where id = ?"
+		query string
 		do    = &dataobject.UsersDO{}
 	)
+	query = "select authorization_ttl_days from users where id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
@@ -1360,9 +1422,10 @@ func (dao *UsersDAO) SelectAuthorizationTTL(ctx context.Context, id int64) (rVal
 // update users set saved_music_id = :saved_music_id where id = :id
 func (dao *UsersDAO) UpdateSavedMusicId(ctx context.Context, savedMusicId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set saved_music_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set saved_music_id = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, savedMusicId, id)
 
@@ -1383,9 +1446,10 @@ func (dao *UsersDAO) UpdateSavedMusicId(ctx context.Context, savedMusicId int64,
 // update users set saved_music_id = :saved_music_id where id = :id
 func (dao *UsersDAO) UpdateSavedMusicIdTx(tx *sqlx.Tx, savedMusicId int64, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set saved_music_id = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set saved_music_id = ? where id = ?"
 
 	rResult, err = tx.Exec(query, savedMusicId, id)
 
@@ -1406,9 +1470,10 @@ func (dao *UsersDAO) UpdateSavedMusicIdTx(tx *sqlx.Tx, savedMusicId int64, id in
 // update users set main_tab = :main_tab where id = :id
 func (dao *UsersDAO) UpdateMainTab(ctx context.Context, mainTab int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set main_tab = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set main_tab = ? where id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, mainTab, id)
 
@@ -1429,9 +1494,10 @@ func (dao *UsersDAO) UpdateMainTab(ctx context.Context, mainTab int32, id int64)
 // update users set main_tab = :main_tab where id = :id
 func (dao *UsersDAO) UpdateMainTabTx(tx *sqlx.Tx, mainTab int32, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set main_tab = ? where id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update users set main_tab = ? where id = ?"
 
 	rResult, err = tx.Exec(query, mainTab, id)
 

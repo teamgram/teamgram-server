@@ -36,9 +36,10 @@ func NewUserPresencesDAO(db *sqlx.DB) *UserPresencesDAO {
 // insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)
 func (dao *UserPresencesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserPresencesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *UserPresencesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.
 // insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)
 func (dao *UserPresencesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPresencesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -90,9 +92,11 @@ func (dao *UserPresencesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPr
 // select id, user_id, last_seen_at, expires from user_presences where user_id = :user_id
 func (dao *UserPresencesDAO) Select(ctx context.Context, userId int64) (rValue *dataobject.UserPresencesDO, err error) {
 	var (
-		query = "select id, user_id, last_seen_at, expires from user_presences where user_id = ?"
+		query string
 		do    = &dataobject.UserPresencesDO{}
 	)
+	query = "select id, user_id, last_seen_at, expires from user_presences where user_id = ?"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
@@ -119,9 +123,10 @@ func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rL
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UserPresencesDO
 	)
+	query = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -144,9 +149,10 @@ func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int6
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UserPresencesDO
 	)
+	query = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -171,9 +177,10 @@ func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int6
 // update user_presences set last_seen_at = :last_seen_at, expires = :expires where user_id = :user_id
 func (dao *UserPresencesDAO) UpdateLastSeenAt(ctx context.Context, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, lastSeenAt, expires, userId)
 
@@ -194,9 +201,10 @@ func (dao *UserPresencesDAO) UpdateLastSeenAt(ctx context.Context, lastSeenAt in
 // update user_presences set last_seen_at = :last_seen_at, expires = :expires where user_id = :user_id
 func (dao *UserPresencesDAO) UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
 
 	rResult, err = tx.Exec(query, lastSeenAt, expires, userId)
 

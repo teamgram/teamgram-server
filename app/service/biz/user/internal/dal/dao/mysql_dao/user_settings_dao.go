@@ -35,9 +35,10 @@ func NewUserSettingsDAO(db *sqlx.DB) *UserSettingsDAO {
 // insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)
 func (dao *UserSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *UserSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.U
 // insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)
 func (dao *UserSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *UserSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserSet
 // select id, user_id, key2, value from user_settings where user_id = :user_id and key2 = :key2 and deleted = 0 limit 1
 func (dao *UserSettingsDAO) SelectByKey(ctx context.Context, userId int64, key2 string) (rValue *dataobject.UserSettingsDO, err error) {
 	var (
-		query = "select id, user_id, key2, value from user_settings where user_id = ? and key2 = ? and deleted = 0 limit 1"
+		query string
 		do    = &dataobject.UserSettingsDO{}
 	)
+	query = "select id, user_id, key2, value from user_settings where user_id = ? and key2 = ? and deleted = 0 limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, userId, key2)
 
 	if err != nil {
@@ -113,9 +117,10 @@ func (dao *UserSettingsDAO) SelectByKey(ctx context.Context, userId int64, key2 
 // update user_settings set value = :value, deleted = 0 where user_id = :user_id and key2 = :key2
 func (dao *UserSettingsDAO) Update(ctx context.Context, value string, userId int64, key2 string) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, value, userId, key2)
 
@@ -136,9 +141,10 @@ func (dao *UserSettingsDAO) Update(ctx context.Context, value string, userId int
 // update user_settings set value = :value, deleted = 0 where user_id = :user_id and key2 = :key2
 func (dao *UserSettingsDAO) UpdateTx(tx *sqlx.Tx, value string, userId int64, key2 string) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
 
 	rResult, err = tx.Exec(query, value, userId, key2)
 

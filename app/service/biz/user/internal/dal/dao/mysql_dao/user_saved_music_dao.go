@@ -35,9 +35,10 @@ func NewUserSavedMusicDAO(db *sqlx.DB) *UserSavedMusicDAO {
 // insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0
 func (dao *UserSavedMusicDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserSavedMusicDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *UserSavedMusicDAO) InsertOrUpdate(ctx context.Context, do *dataobject
 // insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0
 func (dao *UserSavedMusicDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserSavedMusicDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_saved_music(user_id, saved_music_id, order2) values (:user_id, :saved_music_id, :order2) on duplicate key update deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,10 @@ func (dao *UserSavedMusicDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserS
 // select id, user_id, saved_music_id from user_saved_music where user_id = :user_id and deleted = 0
 func (dao *UserSavedMusicDAO) SelectList(ctx context.Context, userId int64) (rList []dataobject.UserSavedMusicDO, err error) {
 	var (
-		query  = "select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0"
+		query  string
 		values []dataobject.UserSavedMusicDO
 	)
+	query = "select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -109,9 +112,10 @@ func (dao *UserSavedMusicDAO) SelectList(ctx context.Context, userId int64) (rLi
 // select id, user_id, saved_music_id from user_saved_music where user_id = :user_id and deleted = 0
 func (dao *UserSavedMusicDAO) SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *dataobject.UserSavedMusicDO)) (rList []dataobject.UserSavedMusicDO, err error) {
 	var (
-		query  = "select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0"
+		query  string
 		values []dataobject.UserSavedMusicDO
 	)
+	query = "select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0"
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -142,9 +146,10 @@ func (dao *UserSavedMusicDAO) SelectListByIdList(ctx context.Context, userId int
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0 and saved_music_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UserSavedMusicDO
 	)
+	query = fmt.Sprintf("select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0 and saved_music_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -168,9 +173,10 @@ func (dao *UserSavedMusicDAO) SelectListByIdListWithCB(ctx context.Context, user
 	}
 
 	var (
-		query  = fmt.Sprintf("select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0 and saved_music_id in (%s)", sqlx.InInt64List(idList))
+		query  string
 		values []dataobject.UserSavedMusicDO
 	)
+	query = fmt.Sprintf("select id, user_id, saved_music_id from user_saved_music where user_id = ? and deleted = 0 and saved_music_id in (%s)", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -195,9 +201,10 @@ func (dao *UserSavedMusicDAO) SelectListByIdListWithCB(ctx context.Context, user
 // update user_saved_music set deleted = 1, order2 = 0 where user_id = :user_id and saved_music_id = :saved_music_id
 func (dao *UserSavedMusicDAO) Delete(ctx context.Context, userId int64, savedMusicId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_saved_music set deleted = 1, order2 = 0 where user_id = ? and saved_music_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_saved_music set deleted = 1, order2 = 0 where user_id = ? and saved_music_id = ?"
 
 	rResult, err = dao.db.Exec(ctx, query, userId, savedMusicId)
 
@@ -218,9 +225,10 @@ func (dao *UserSavedMusicDAO) Delete(ctx context.Context, userId int64, savedMus
 // update user_saved_music set deleted = 1, order2 = 0 where user_id = :user_id and saved_music_id = :saved_music_id
 func (dao *UserSavedMusicDAO) DeleteTx(tx *sqlx.Tx, userId int64, savedMusicId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_saved_music set deleted = 1, order2 = 0 where user_id = ? and saved_music_id = ?"
+		query   string
 		rResult sql.Result
 	)
+	query = "update user_saved_music set deleted = 1, order2 = 0 where user_id = ? and saved_music_id = ?"
 
 	rResult, err = tx.Exec(query, userId, savedMusicId)
 

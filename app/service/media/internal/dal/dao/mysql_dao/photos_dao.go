@@ -35,9 +35,10 @@ func NewPhotosDAO(db *sqlx.DB) *PhotosDAO {
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
 func (dao *PhotosDAO) Insert(ctx context.Context, do *dataobject.PhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -62,9 +63,10 @@ func (dao *PhotosDAO) Insert(ctx context.Context, do *dataobject.PhotosDO) (last
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
 func (dao *PhotosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
+		query string
 		r     sql.Result
 	)
+	query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,9 +91,11 @@ func (dao *PhotosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotosDO) (lastInsert
 // select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = :photo_id limit 1
 func (dao *PhotosDAO) SelectByPhotoId(ctx context.Context, photoId int64) (rValue *dataobject.PhotosDO, err error) {
 	var (
-		query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
+		query string
 		do    = &dataobject.PhotosDO{}
 	)
+	query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
+
 	err = dao.db.QueryRowPartial(ctx, do, query, photoId)
 
 	if err != nil {

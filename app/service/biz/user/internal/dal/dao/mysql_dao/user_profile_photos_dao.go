@@ -36,9 +36,10 @@ func NewUserProfilePhotosDAO(db *sqlx.DB) *UserProfilePhotosDAO {
 // insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
 func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -63,9 +64,10 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobj
 // insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
 func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
+		query string
 		r     sql.Result
 	)
+	query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -89,7 +91,8 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Us
 // SelectList
 // select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
 func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, userId int64) (rList []int64, err error) {
-	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
+	var query string
+	query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -103,7 +106,8 @@ func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, userId int64) (
 // SelectListWithCB
 // select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
 func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) (rList []int64, err error) {
-	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
+	var query string
+	query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
 
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
@@ -129,8 +133,9 @@ func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, userId int64, i
 		return
 	}
 	var (
-		query = fmt.Sprintf("select photo_id from user_profile_photos where user_id = ? and photo_id not in (%s) and deleted = 0 order by date2 desc limit 1", sqlx.InInt64List(idList))
+		query string
 	)
+	query = fmt.Sprintf("select photo_id from user_profile_photos where user_id = ? and photo_id not in (%s) and deleted = 0 order by date2 desc limit 1", sqlx.InInt64List(idList))
 
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, userId)
 
@@ -156,9 +161,10 @@ func (dao *UserProfilePhotosDAO) Delete(ctx context.Context, userId int64, idLis
 	}
 
 	var (
-		query   = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
 
 	rResult, err = dao.db.Exec(ctx, query, userId)
 
@@ -183,9 +189,10 @@ func (dao *UserProfilePhotosDAO) DeleteTx(tx *sqlx.Tx, userId int64, idList []in
 		return
 	}
 	var (
-		query   = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
+		query   string
 		rResult sql.Result
 	)
+	query = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
 
 	rResult, err = tx.Exec(query, userId)
 
