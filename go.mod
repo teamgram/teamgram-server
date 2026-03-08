@@ -142,10 +142,7 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace (
-	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.9.1 => github.com/teamgram/gnet/v2 v2.9.1-teamgram
+// github.com/panjf2000/gnet/v2 => ../gnet
 // github.com/teamgram/marmota => ../marmota
 // github.com/teamgram/proto => ../proto
-// github.com/teamgram/proto/v2 => ../proto/v2
-)
+replace github.com/panjf2000/gnet/v2 v2.9.1 => github.com/teamgram/gnet/v2 v2.9.1-teamgram
