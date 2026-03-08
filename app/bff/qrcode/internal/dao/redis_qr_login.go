@@ -107,7 +107,7 @@ func (d *Dao) PutCacheQRLoginCode(ctx context.Context, keyId int64, qrCode *mode
 	}
 
 	if expiredIn > 0 {
-		if _, err = d.kv.ExpireCtx(ctx, key, expiredIn+2); err != nil {
+		if _, err = d.kv.ExpireWithResultCtx(ctx, key, expiredIn+2); err != nil {
 			logx.WithContext(ctx).Error("conn.Send(EXPIRE %d,%d) error(%v)", key, expiredIn, err)
 			return
 		}

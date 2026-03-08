@@ -21,15 +21,15 @@ package dao
 import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/config"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	authsession_client "github.com/teamgram/teamgram-server/app/service/authsession/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type Dao struct {
-	kv kv.Store
+	kv kv.ExtStore
 	user_client.UserClient
 	authsession_client.AuthsessionClient
 	sync_client.SyncClient

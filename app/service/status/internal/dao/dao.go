@@ -15,7 +15,7 @@ import (
 )
 
 type Dao struct {
-	KV kv.Store
+	KV kv.ExtStore
 }
 
 func New(c config.Config) *Dao {

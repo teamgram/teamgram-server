@@ -10,18 +10,18 @@
 package dao
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 
-	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Dao struct {
 	*minio_util.MinioUtil
 	idgen_client.IDGenClient2
-	ssdb kv.Store
+	ssdb kv.ExtStore
 }
 
 func New(c config.Config) *Dao {

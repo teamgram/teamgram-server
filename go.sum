@@ -229,10 +229,8 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/teamgram/gnet/v2 v2.9.1-teamgram h1:C/5fSDyK+HgiTLeTn58h1EhYy9pGMRU1xQV3tgQkfPE=
 github.com/teamgram/gnet/v2 v2.9.1-teamgram/go.mod h1:WQTxDWYuQ/hz3eccH0FN32IVuvZ19HewEWx0l62fx7E=
-github.com/teamgram/go-zero v1.10.0-teamgram h1:Fut0XmoCFDShNQU97yolMbk+kBYkexI7DbR+xBcXfVc=
-github.com/teamgram/go-zero v1.10.0-teamgram/go.mod h1:vAAg4mrqpKtZ/h5ZZefQjdP1oaG4L1AR6s8iFusJxus=
-github.com/teamgram/marmota v0.1.25 h1:95luhSHnZl9MbKdrl3Zh5SIVnyuRJjP4Aj13a9faGmY=
-github.com/teamgram/marmota v0.1.25/go.mod h1:dWwXdo3dxlr2pgKJxnG7NwR/j5245OzfyiQOgdso420=
+github.com/teamgram/marmota v0.2.0 h1:kmOIg+s54x0mtuDSHTF4jblgeH6fIHWhGqNdHheYAAU=
+github.com/teamgram/marmota v0.2.0/go.mod h1:nEZdVPvIT6ZQSi55H26YL6dVaZ+VMt6w79sCDubPrsM=
 github.com/teamgram/proto v0.222.3 h1:AWaYpaYI2NcJnVw3JTSbheAVCKrCtykAWsSxpkgzSSg=
 github.com/teamgram/proto v0.222.3/go.mod h1:a/ovyAetA0gyRu/3A8y5JJQUePOEbrx2bOF/fIRQUB4=
 github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df h1:lL/Oy/WWGQJ7cly/i0z/ALOprHiHRI+KjSoZLVmTwp8=
@@ -244,6 +242,8 @@ github.com/yuin/gopher-lua v1.1.1 h1:kYKnWBjvbNP4XLT3+bPEwAXJx262OhaHDWDVOPjL46M
 github.com/yuin/gopher-lua v1.1.1/go.mod h1:GBR0iDaNXjAgGg9zfCvksxSRnQx76gclCIb7kdAd1Pw=
 github.com/zeebo/xxh3 v1.0.2 h1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=
 github.com/zeebo/xxh3 v1.0.2/go.mod h1:5NWz9Sef7zIDm2JHfFlcQvNekmcEl9ekUZQQKCYaDcA=
+github.com/zeromicro/go-zero v1.10.0 h1:+qfAqj+BGt0qjW1PQk2VO5WLwIQBh60CA3OTLsBosS8=
+github.com/zeromicro/go-zero v1.10.0/go.mod h1:qAModWGsfkrBl0JP9oS7K7k6dgucExOuQdpzHyXVKLg=
 go.etcd.io/etcd/api/v3 v3.5.15 h1:3KpLJir1ZEBrYuV2v+Twaa/e2MdDCEZ/70H+lzEiwsk=
 go.etcd.io/etcd/api/v3 v3.5.15/go.mod h1:N9EhGzXq58WuMllgH9ZvnEr7SI9pS0k0+DHZezGp7jM=
 go.etcd.io/etcd/client/pkg/v3 v3.5.15 h1:fo0HpWz/KlHGMCC+YejpiCmyWDEuIpnTDzpJLB5fWlA=

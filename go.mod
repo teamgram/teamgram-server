@@ -14,7 +14,7 @@ require (
 	github.com/panjf2000/gnet/v2 v2.9.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
-	github.com/teamgram/marmota v0.1.25
+	github.com/teamgram/marmota v0.2.0
 	github.com/teamgram/proto v0.222.3
 	github.com/zeromicro/go-zero v1.10.0
 	go.opentelemetry.io/otel v1.24.0
@@ -145,8 +145,7 @@ require (
 replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
 	github.com/panjf2000/gnet/v2 v2.9.1 => github.com/teamgram/gnet/v2 v2.9.1-teamgram
-	// github.com/teamgram/marmota => ../marmota
-	// github.com/teamgram/proto => ../proto
-	// github.com/teamgram/proto/v2 => ../proto/v2
-	github.com/zeromicro/go-zero v1.10.0 => github.com/teamgram/go-zero v1.10.0-teamgram
+// github.com/teamgram/marmota => ../marmota
+// github.com/teamgram/proto => ../proto
+// github.com/teamgram/proto/v2 => ../proto/v2
 )
