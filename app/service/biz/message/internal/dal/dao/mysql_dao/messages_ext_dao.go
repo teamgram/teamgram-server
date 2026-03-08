@@ -55,7 +55,7 @@ func (dao *MessagesDAO) SelectByPhotoVideoMediaTypeWithCB(ctx context.Context, u
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}

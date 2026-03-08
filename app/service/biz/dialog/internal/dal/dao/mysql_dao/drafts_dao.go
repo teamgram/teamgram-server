@@ -15,18 +15,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type DraftsDAO struct {
 	db *sqlx.DB
@@ -54,12 +48,12 @@ func (dao *DraftsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DraftsD
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +75,12 @@ func (dao *DraftsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DraftsDO) (la
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +100,7 @@ func (dao *DraftsDAO) Select(ctx context.Context, userId int32, peerDialogId int
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -119,6 +114,7 @@ func (dao *DraftsDAO) Select(ctx context.Context, userId int32, peerDialogId int
 // select peer_dialog_id from drafts where user_id = :user_id
 func (dao *DraftsDAO) SelectIdList(ctx context.Context, userId int32) (rList []int64, err error) {
 	var query = "select peer_dialog_id from drafts where user_id = ?"
+
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
@@ -132,6 +128,7 @@ func (dao *DraftsDAO) SelectIdList(ctx context.Context, userId int32) (rList []i
 // select peer_dialog_id from drafts where user_id = :user_id
 func (dao *DraftsDAO) SelectIdListWithCB(ctx context.Context, userId int32, cb func(sz, i int, v int64)) (rList []int64, err error) {
 	var query = "select peer_dialog_id from drafts where user_id = ?"
+
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
@@ -140,7 +137,7 @@ func (dao *DraftsDAO) SelectIdListWithCB(ctx context.Context, userId int32, cb f
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, rList[i])
 		}
 	}
@@ -150,27 +147,58 @@ func (dao *DraftsDAO) SelectIdListWithCB(ctx context.Context, userId int32, cb f
 
 // SelectByIdList
 // select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = :user_id and peer_dialog_id in (:idList)
-func (dao *DraftsDAO) SelectByIdList(ctx context.Context, userId int32, idList []int64) (rValue *dataobject.DraftsDO, err error) {
-	var (
-		query = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
-		do    = &dataobject.DraftsDO{}
-	)
+func (dao *DraftsDAO) SelectByIdList(ctx context.Context, userId int32, idList []int64) (rList []dataobject.DraftsDO, err error) {
 
 	if len(idList) == 0 {
+		rList = []dataobject.DraftsDO{}
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, do, query, userId)
+	var (
+		query  = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.DraftsDO
+	)
+
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
-			return
-		} else {
-			err = nil
+		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByIdListWithCB
+// select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = :user_id and peer_dialog_id in (:idList)
+func (dao *DraftsDAO) SelectByIdListWithCB(ctx context.Context, userId int32, idList []int64, cb func(sz, i int, v *dataobject.DraftsDO)) (rList []dataobject.DraftsDO, err error) {
+
+	if len(idList) == 0 {
+		rList = []dataobject.DraftsDO{}
+		return
+	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.DraftsDO
+	)
+
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := range sz {
+			cb(sz, i, &rList[i])
 		}
-	} else {
-		rValue = do
 	}
 
 	return
@@ -179,14 +207,15 @@ func (dao *DraftsDAO) SelectByIdList(ctx context.Context, userId int32, idList [
 // ClearByIdList
 // update drafts set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and peer_dialog_id in (:idList)
 func (dao *DraftsDAO) ClearByIdList(ctx context.Context, userId int32, idList []int64) (rowsAffected int64, err error) {
-	var (
-		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
-		rResult sql.Result
-	)
 
 	if len(idList) == 0 {
 		return
 	}
+
+	var (
+		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
 
 	rResult, err = dao.db.Exec(ctx, query, userId)
 
@@ -206,14 +235,14 @@ func (dao *DraftsDAO) ClearByIdList(ctx context.Context, userId int32, idList []
 // ClearByIdListTx
 // update drafts set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and peer_dialog_id in (:idList)
 func (dao *DraftsDAO) ClearByIdListTx(tx *sqlx.Tx, userId int32, idList []int64) (rowsAffected int64, err error) {
-	var (
-		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
-		rResult sql.Result
-	)
 
 	if len(idList) == 0 {
 		return
 	}
+	var (
+		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
 
 	rResult, err = tx.Exec(query, userId)
 

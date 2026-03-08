@@ -14,19 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type DialogFiltersDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *DialogFiltersDAO) InsertOrUpdate(ctx context.Context, do *dataobject.
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *DialogFiltersDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Dialog
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +99,7 @@ func (dao *DialogFiltersDAO) SelectBySlug(ctx context.Context, userId int64, slu
 			logx.WithContext(ctx).Errorf("queryx in SelectBySlug(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -129,6 +123,7 @@ func (dao *DialogFiltersDAO) Select(ctx context.Context, userId int64, dialogFil
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -145,6 +140,7 @@ func (dao *DialogFiltersDAO) SelectList(ctx context.Context, userId int64) (rLis
 		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
 		values []dataobject.DialogFiltersDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -164,6 +160,7 @@ func (dao *DialogFiltersDAO) SelectListWithCB(ctx context.Context, userId int64,
 		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
 		values []dataobject.DialogFiltersDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -175,7 +172,7 @@ func (dao *DialogFiltersDAO) SelectListWithCB(ctx context.Context, userId int64,
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -213,6 +210,7 @@ func (dao *DialogFiltersDAO) UpdateOrderTx(tx *sqlx.Tx, orderValue int64, userId
 		query   = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, orderValue, userId, dialogFilterId)
 
 	if err != nil {
@@ -258,6 +256,7 @@ func (dao *DialogFiltersDAO) ClearTx(tx *sqlx.Tx, userId int64, dialogFilterId i
 		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, userId, dialogFilterId)
 
 	if err != nil {

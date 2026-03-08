@@ -23,11 +23,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
-
 type PredefinedUsersDAO struct {
 	db *sqlx.DB
 }
@@ -54,12 +49,12 @@ func (dao *PredefinedUsersDAO) Insert(ctx context.Context, do *dataobject.Predef
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +76,12 @@ func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUs
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +101,7 @@ func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) 
 			logx.WithContext(ctx).Errorf("queryx in SelectByPhone(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -122,6 +118,7 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rL
 		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
 		values []dataobject.PredefinedUsersDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
@@ -141,6 +138,7 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Contex
 		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
 		values []dataobject.PredefinedUsersDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
@@ -152,7 +150,7 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Contex
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -190,6 +188,7 @@ func (dao *PredefinedUsersDAO) DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected
 		query   = "update predefined_users set deleted = 0 where phone = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, phone)
 
 	if err != nil {

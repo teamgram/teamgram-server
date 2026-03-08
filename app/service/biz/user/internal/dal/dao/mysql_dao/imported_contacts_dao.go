@@ -13,20 +13,13 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type ImportedContactsDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *ImportedContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *ImportedContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Imp
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -99,6 +92,7 @@ func (dao *ImportedContactsDAO) SelectList(ctx context.Context, userId int64) (r
 		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
 		values []dataobject.ImportedContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -118,6 +112,7 @@ func (dao *ImportedContactsDAO) SelectListWithCB(ctx context.Context, userId int
 		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
 		values []dataobject.ImportedContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -129,7 +124,7 @@ func (dao *ImportedContactsDAO) SelectListWithCB(ctx context.Context, userId int
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -140,15 +135,16 @@ func (dao *ImportedContactsDAO) SelectListWithCB(ctx context.Context, userId int
 // SelectListByImportedList
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0 and imported_user_id in (:idList)
 func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, userId int64, idList []int64) (rList []dataobject.ImportedContactsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.ImportedContactsDO
-	)
 
 	if len(idList) == 0 {
 		rList = []dataobject.ImportedContactsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.ImportedContactsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -165,15 +161,16 @@ func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, us
 // SelectListByImportedListWithCB
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0 and imported_user_id in (:idList)
 func (dao *ImportedContactsDAO) SelectListByImportedListWithCB(ctx context.Context, userId int64, idList []int64, cb func(sz, i int, v *dataobject.ImportedContactsDO)) (rList []dataobject.ImportedContactsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.ImportedContactsDO
-	)
 
 	if len(idList) == 0 {
 		rList = []dataobject.ImportedContactsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.ImportedContactsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -186,7 +183,7 @@ func (dao *ImportedContactsDAO) SelectListByImportedListWithCB(ctx context.Conte
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -201,6 +198,7 @@ func (dao *ImportedContactsDAO) SelectAllList(ctx context.Context, userId int64)
 		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
 		values []dataobject.ImportedContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -220,6 +218,7 @@ func (dao *ImportedContactsDAO) SelectAllListWithCB(ctx context.Context, userId 
 		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
 		values []dataobject.ImportedContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -231,7 +230,7 @@ func (dao *ImportedContactsDAO) SelectAllListWithCB(ctx context.Context, userId 
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -269,6 +268,7 @@ func (dao *ImportedContactsDAO) DeleteTx(tx *sqlx.Tx, userId int64, importedUser
 		query   = "update imported_contacts set deleted = 1 where user_id = ? and imported_user_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, userId, importedUserId)
 
 	if err != nil {

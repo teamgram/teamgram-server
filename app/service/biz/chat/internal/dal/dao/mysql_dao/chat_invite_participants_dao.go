@@ -13,20 +13,12 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type ChatInviteParticipantsDAO struct {
 	db *sqlx.DB
@@ -54,12 +46,12 @@ func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +73,12 @@ func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatI
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -99,6 +91,7 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link
 		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = ? and requested = ?"
 		values []dataobject.ChatInviteParticipantsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
@@ -118,6 +111,7 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context
 		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = ? and requested = ?"
 		values []dataobject.ChatInviteParticipantsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
@@ -129,7 +123,7 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -166,6 +160,7 @@ func (dao *ChatInviteParticipantsDAO) DeleteTx(tx *sqlx.Tx, chatId int64, userId
 		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, chatId, userId)
 
 	if err != nil {
@@ -188,6 +183,7 @@ func (dao *ChatInviteParticipantsDAO) SelectRecentRequestedList(ctx context.Cont
 		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = ? and requested = 1"
 		values []dataobject.ChatInviteParticipantsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
@@ -207,6 +203,7 @@ func (dao *ChatInviteParticipantsDAO) SelectRecentRequestedListWithCB(ctx contex
 		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = ? and requested = 1"
 		values []dataobject.ChatInviteParticipantsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
@@ -218,7 +215,7 @@ func (dao *ChatInviteParticipantsDAO) SelectRecentRequestedListWithCB(ctx contex
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -256,6 +253,7 @@ func (dao *ChatInviteParticipantsDAO) UpdateChatIdTx(tx *sqlx.Tx, chatId int64, 
 		query   = "update chat_invite_participants set chat_id = ? where link = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, chatId, link)
 
 	if err != nil {
@@ -301,6 +299,7 @@ func (dao *ChatInviteParticipantsDAO) UpdateApprovedByTx(tx *sqlx.Tx, approvedBy
 		query   = "update chat_invite_participants set requested = 0, approved_by = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, approvedBy, chatId, userId)
 
 	if err != nil {

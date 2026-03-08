@@ -13,20 +13,13 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type BotCommandsDAO struct {
 	db *sqlx.DB
@@ -41,14 +34,14 @@ func NewBotCommandsDAO(db *sqlx.DB) *BotCommandsDAO {
 // InsertBulk
 // insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)
 func (dao *BotCommandsDAO) InsertBulk(ctx context.Context, doList []*dataobject.BotCommandsDO) (lastInsertId, rowsAffected int64, err error) {
+	if len(doList) == 0 {
+		return
+	}
+
 	var (
 		query = "insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)"
 		r     sql.Result
 	)
-
-	if len(doList) == 0 {
-		return
-	}
 
 	r, err = dao.db.NamedExec(ctx, query, doList)
 	if err != nil {
@@ -58,12 +51,12 @@ func (dao *BotCommandsDAO) InsertBulk(ctx context.Context, doList []*dataobject.
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v), error: %v", doList, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v), error: %v", doList, err)
 	}
 
 	return
@@ -72,14 +65,14 @@ func (dao *BotCommandsDAO) InsertBulk(ctx context.Context, doList []*dataobject.
 // InsertBulkTx
 // insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)
 func (dao *BotCommandsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.BotCommandsDO) (lastInsertId, rowsAffected int64, err error) {
+	if len(doList) == 0 {
+		return
+	}
+
 	var (
 		query = "insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)"
 		r     sql.Result
 	)
-
-	if len(doList) == 0 {
-		return
-	}
 
 	r, err = tx.NamedExec(query, doList)
 	if err != nil {
@@ -89,12 +82,12 @@ func (dao *BotCommandsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.BotCom
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v), error: %v", doList, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v), error: %v", doList, err)
 	}
 
 	return
@@ -129,6 +122,7 @@ func (dao *BotCommandsDAO) DeleteTx(tx *sqlx.Tx, botId int64) (rowsAffected int6
 		query   = "delete from bot_commands where bot_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, botId)
 
 	if err != nil {
@@ -160,12 +154,12 @@ func (dao *BotCommandsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.Bo
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -187,12 +181,12 @@ func (dao *BotCommandsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.BotComma
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -205,6 +199,7 @@ func (dao *BotCommandsDAO) SelectList(ctx context.Context, botId int64) (rList [
 		query  = "select id, bot_id, command, description from bot_commands where bot_id = ?"
 		values []dataobject.BotCommandsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
@@ -224,6 +219,7 @@ func (dao *BotCommandsDAO) SelectListWithCB(ctx context.Context, botId int64, cb
 		query  = "select id, bot_id, command, description from bot_commands where bot_id = ?"
 		values []dataobject.BotCommandsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
@@ -235,7 +231,7 @@ func (dao *BotCommandsDAO) SelectListWithCB(ctx context.Context, botId int64, cb
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -246,14 +242,15 @@ func (dao *BotCommandsDAO) SelectListWithCB(ctx context.Context, botId int64, cb
 // SelectListByIdList
 // select id, bot_id, command, description from bot_commands where bot_id in (:id_list)
 func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, idList []int32) (rList []dataobject.BotCommandsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, bot_id, command, description from bot_commands where bot_id in (%s)", sqlx.InInt32List(idList))
-		values []dataobject.BotCommandsDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.BotCommandsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, bot_id, command, description from bot_commands where bot_id in (%s)", sqlx.InInt32List(idList))
+		values []dataobject.BotCommandsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -270,14 +267,15 @@ func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, idList []int3
 // SelectListByIdListWithCB
 // select id, bot_id, command, description from bot_commands where bot_id in (:id_list)
 func (dao *BotCommandsDAO) SelectListByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *dataobject.BotCommandsDO)) (rList []dataobject.BotCommandsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, bot_id, command, description from bot_commands where bot_id in (%s)", sqlx.InInt32List(idList))
-		values []dataobject.BotCommandsDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.BotCommandsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, bot_id, command, description from bot_commands where bot_id in (%s)", sqlx.InInt32List(idList))
+		values []dataobject.BotCommandsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -290,7 +288,7 @@ func (dao *BotCommandsDAO) SelectListByIdListWithCB(ctx context.Context, idList 
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}

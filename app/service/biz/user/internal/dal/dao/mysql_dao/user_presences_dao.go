@@ -15,18 +15,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type UserPresencesDAO struct {
 	db *sqlx.DB
@@ -54,12 +48,12 @@ func (dao *UserPresencesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +75,12 @@ func (dao *UserPresencesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPr
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +100,7 @@ func (dao *UserPresencesDAO) Select(ctx context.Context, userId int64) (rValue *
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -118,14 +113,15 @@ func (dao *UserPresencesDAO) Select(ctx context.Context, userId int64) (rValue *
 // SelectList
 // select id, user_id, last_seen_at, expires from user_presences where user_id in (:idList)
 func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rList []dataobject.UserPresencesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.UserPresencesDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPresencesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.UserPresencesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -142,14 +138,15 @@ func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rL
 // SelectListWithCB
 // select id, user_id, last_seen_at, expires from user_presences where user_id in (:idList)
 func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *dataobject.UserPresencesDO)) (rList []dataobject.UserPresencesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
-		values []dataobject.UserPresencesDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPresencesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
+		values []dataobject.UserPresencesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -162,7 +159,7 @@ func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int6
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -200,6 +197,7 @@ func (dao *UserPresencesDAO) UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt int64, e
 		query   = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, lastSeenAt, expires, userId)
 
 	if err != nil {

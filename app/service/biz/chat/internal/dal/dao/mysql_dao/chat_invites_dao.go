@@ -23,11 +23,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
-
 type ChatInvitesDAO struct {
 	db *sqlx.DB
 }
@@ -54,12 +49,12 @@ func (dao *ChatInvitesDAO) Insert(ctx context.Context, do *dataobject.ChatInvite
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +76,12 @@ func (dao *ChatInvitesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInvitesDO) (
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -99,6 +94,7 @@ func (dao *ChatInvitesDAO) SelectListByAdminId(ctx context.Context, chatId int64
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ? and admin_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
@@ -118,6 +114,7 @@ func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chatId
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ? and admin_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
@@ -129,7 +126,7 @@ func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chatId
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -151,6 +148,7 @@ func (dao *ChatInvitesDAO) SelectByLink(ctx context.Context, link string) (rValu
 			logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -167,6 +165,7 @@ func (dao *ChatInvitesDAO) SelectAll(ctx context.Context) (rList []dataobject.Ch
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
@@ -186,6 +185,7 @@ func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(sz, i in
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
@@ -197,7 +197,7 @@ func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(sz, i in
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -212,6 +212,7 @@ func (dao *ChatInvitesDAO) SelectListByChatId(ctx context.Context, chatId int64)
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
@@ -231,6 +232,7 @@ func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chatId 
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
@@ -242,7 +244,7 @@ func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chatId 
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -345,6 +347,7 @@ func (dao *ChatInvitesDAO) DeleteByLinkTx(tx *sqlx.Tx, chatId int64, link string
 		query   = "delete from chat_invites where chat_id = ? and link = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, chatId, link)
 
 	if err != nil {
@@ -389,6 +392,7 @@ func (dao *ChatInvitesDAO) DeleteByRevokedTx(tx *sqlx.Tx, chatId int64, adminId 
 		query   = "delete from chat_invites where chat_id = ? and admin_id = ? and revoked = 1"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, chatId, adminId)
 
 	if err != nil {

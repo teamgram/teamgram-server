@@ -14,19 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type UserPtsUpdatesDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *UserPtsUpdatesDAO) Insert(ctx context.Context, do *dataobject.UserPts
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *UserPtsUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UserPtsUpdate
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +99,7 @@ func (dao *UserPtsUpdatesDAO) SelectLastPts(ctx context.Context, userId int64) (
 			logx.WithContext(ctx).Errorf("queryx in SelectLastPts(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -122,6 +116,7 @@ func (dao *UserPtsUpdatesDAO) SelectByGtPts(ctx context.Context, userId int64, p
 		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
 		values []dataobject.UserPtsUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 
 	if err != nil {
@@ -141,6 +136,7 @@ func (dao *UserPtsUpdatesDAO) SelectByGtPtsWithCB(ctx context.Context, userId in
 		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
 		values []dataobject.UserPtsUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 
 	if err != nil {
@@ -152,7 +148,7 @@ func (dao *UserPtsUpdatesDAO) SelectByGtPtsWithCB(ctx context.Context, userId in
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}

@@ -35,7 +35,7 @@
         </sql>
     </operation>
 
-    <operation name="SelectByIdList">
+    <operation name="SelectByIdList" result_set="list">
         <params>
             <param name="idList" type="[]int64" />
         </params>

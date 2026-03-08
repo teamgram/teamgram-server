@@ -15,18 +15,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type ChatsDAO struct {
 	db *sqlx.DB
@@ -54,12 +48,12 @@ func (dao *ChatsDAO) Insert(ctx context.Context, do *dataobject.ChatsDO) (lastIn
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +75,12 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +100,7 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -126,6 +121,7 @@ func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64,
 			logx.WithContext(ctx).Errorf("get in SelectPhotoId(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	}
@@ -147,6 +143,7 @@ func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creatorUserId int64)
 			logx.WithContext(ctx).Errorf("queryx in SelectLastCreator(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -186,6 +183,7 @@ func (dao *ChatsDAO) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (rowsAff
 		query   = "update chats set title = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, title, id)
 
 	if err != nil {
@@ -231,6 +229,7 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 		query   = "update chats set about = ? where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, about, id)
 
 	if err != nil {
@@ -249,14 +248,15 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 // SelectByIdList
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (:idList)
 func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.ChatsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
-		values []dataobject.ChatsDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.ChatsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
+		values []dataobject.ChatsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -273,14 +273,15 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 // SelectByIdListWithCB
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (:idList)
 func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *dataobject.ChatsDO)) (rList []dataobject.ChatsDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
-		values []dataobject.ChatsDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.ChatsDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (%s)", sqlx.InInt32List(idList))
+		values []dataobject.ChatsDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -293,7 +294,7 @@ func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, c
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -331,6 +332,7 @@ func (dao *ChatsDAO) UpdateParticipantCountTx(tx *sqlx.Tx, participantCount int3
 		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, participantCount, id)
 
 	if err != nil {
@@ -376,6 +378,7 @@ func (dao *ChatsDAO) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64) (rows
 		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, photoId, id)
 
 	if err != nil {
@@ -421,6 +424,7 @@ func (dao *ChatsDAO) UpdateAdminsEnabledTx(tx *sqlx.Tx, id int64) (rowsAffected 
 		query   = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, id)
 
 	if err != nil {
@@ -466,6 +470,7 @@ func (dao *ChatsDAO) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBannedRight
 		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, defaultBannedRights, id)
 
 	if err != nil {
@@ -511,6 +516,7 @@ func (dao *ChatsDAO) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected int64,
 		query   = "update chats set version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, id)
 
 	if err != nil {
@@ -556,6 +562,7 @@ func (dao *ChatsDAO) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, id int64
 		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, deactivated, id)
 
 	if err != nil {
@@ -585,6 +592,7 @@ func (dao *ChatsDAO) SelectByLink(ctx context.Context) (rValue *dataobject.Chats
 			logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -624,6 +632,7 @@ func (dao *ChatsDAO) UpdateLinkTx(tx *sqlx.Tx, date int64, id int64) (rowsAffect
 		query   = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, date, id)
 
 	if err != nil {
@@ -669,6 +678,7 @@ func (dao *ChatsDAO) UpdateMigratedToTx(tx *sqlx.Tx, migratedToId int64, migrate
 		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, migratedToId, migratedToAccessHash, id)
 
 	if err != nil {

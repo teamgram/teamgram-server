@@ -13,20 +13,13 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type UnregisteredContactsDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *UnregisteredContactsDAO) InsertOrUpdate(ctx context.Context, do *data
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *UnregisteredContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -99,6 +92,7 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhone(ctx context.Context, 
 		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
 		values []dataobject.UnregisteredContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
@@ -118,6 +112,7 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Con
 		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
 		values []dataobject.UnregisteredContactsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
@@ -129,7 +124,7 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Con
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -167,6 +162,7 @@ func (dao *UnregisteredContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, importFirst
 		query   = "update unregistered_contacts set import_first_name = ?, import_last_name = ? where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, importFirstName, importLastName, id)
 
 	if err != nil {
@@ -185,14 +181,14 @@ func (dao *UnregisteredContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, importFirst
 // DeleteContacts
 // update unregistered_contacts set imported = 1 where id in (:id_list)
 func (dao *UnregisteredContactsDAO) DeleteContacts(ctx context.Context, idList []int64) (rowsAffected int64, err error) {
+	if len(idList) == 0 {
+		return
+	}
+
 	var (
 		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
-
-	if len(idList) == 0 {
-		return
-	}
 
 	rResult, err = dao.db.Exec(ctx, query)
 
@@ -212,14 +208,13 @@ func (dao *UnregisteredContactsDAO) DeleteContacts(ctx context.Context, idList [
 // DeleteContactsTx
 // update unregistered_contacts set imported = 1 where id in (:id_list)
 func (dao *UnregisteredContactsDAO) DeleteContactsTx(tx *sqlx.Tx, idList []int64) (rowsAffected int64, err error) {
+	if len(idList) == 0 {
+		return
+	}
 	var (
 		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
-
-	if len(idList) == 0 {
-		return
-	}
 
 	rResult, err = tx.Exec(query)
 
@@ -266,6 +261,7 @@ func (dao *UnregisteredContactsDAO) DeleteImportersByPhoneTx(tx *sqlx.Tx, phone 
 		query   = "update unregistered_contacts set imported = 1 where phone = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, phone)
 
 	if err != nil {

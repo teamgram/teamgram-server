@@ -14,8 +14,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/teamgram/proto/mtproto"
 	"strings"
+
+	"github.com/teamgram/proto/mtproto"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"

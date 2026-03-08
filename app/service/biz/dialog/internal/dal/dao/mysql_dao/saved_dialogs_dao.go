@@ -14,19 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type SavedDialogsDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *SavedDialogsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.S
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *SavedDialogsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.SavedDi
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +99,7 @@ func (dao *SavedDialogsDAO) Select(ctx context.Context, userId int64, peerType i
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -122,6 +116,7 @@ func (dao *SavedDialogsDAO) SelectPinnedDialogs(ctx context.Context, userId int6
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -141,6 +136,7 @@ func (dao *SavedDialogsDAO) SelectPinnedDialogsWithCB(ctx context.Context, userI
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned > 0 and deleted = 0 order by pinned desc"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -152,7 +148,7 @@ func (dao *SavedDialogsDAO) SelectPinnedDialogsWithCB(ctx context.Context, userI
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -167,6 +163,7 @@ func (dao *SavedDialogsDAO) SelectExcludePinnedDialogs(ctx context.Context, user
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
@@ -186,6 +183,7 @@ func (dao *SavedDialogsDAO) SelectExcludePinnedDialogsWithCB(ctx context.Context
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and pinned = 0 and top_message < ? and deleted = 0 order by top_message desc limit ?"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
@@ -197,7 +195,7 @@ func (dao *SavedDialogsDAO) SelectExcludePinnedDialogsWithCB(ctx context.Context
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -212,6 +210,7 @@ func (dao *SavedDialogsDAO) SelectDialogs(ctx context.Context, userId int64, top
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
@@ -231,6 +230,7 @@ func (dao *SavedDialogsDAO) SelectDialogsWithCB(ctx context.Context, userId int6
 		query  = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and top_message < ? and deleted = 0 order by top_message desc limit ?"
 		values []dataobject.SavedDialogsDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
@@ -242,7 +242,7 @@ func (dao *SavedDialogsDAO) SelectDialogsWithCB(ctx context.Context, userId int6
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -280,6 +280,7 @@ func (dao *SavedDialogsDAO) UpdateUserUnPinnedTx(tx *sqlx.Tx, userId int64) (row
 		query   = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
@@ -325,6 +326,7 @@ func (dao *SavedDialogsDAO) UpdateUserPeerPinnedTx(tx *sqlx.Tx, pinned int64, us
 		query   = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, pinned, userId, peerType, peerId)
 
 	if err != nil {

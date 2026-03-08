@@ -1,5 +1,6 @@
 ./dalgen.sh bot_commands
 ./dalgen.sh bots
+./dalgen.sh default_history_ttl
 ./dalgen.sh imported_contacts
 ./dalgen.sh phone_books
 ./dalgen.sh popular_contacts
@@ -13,5 +14,7 @@
 ./dalgen.sh user_presences
 ./dalgen.sh user_privacies
 ./dalgen.sh user_profile_photos
+./dalgen.sh user_saved_music
 ./dalgen.sh user_settings
+./dalgen.sh username
 ./dalgen.sh users

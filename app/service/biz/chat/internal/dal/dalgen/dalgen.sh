@@ -2,5 +2,6 @@
 
 dalgen3 --xml=$1 --db=teamgram --go2=github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject
 
+goimports -w ../dao/mysql_dao/*.go
 gofmt -w ../dao/mysql_dao/*.go
 gofmt -w ../dataobject/*.go

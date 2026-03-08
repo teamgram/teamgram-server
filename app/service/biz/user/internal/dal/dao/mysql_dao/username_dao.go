@@ -23,11 +23,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
-
 type UsernameDAO struct {
 	db *sqlx.DB
 }
@@ -54,12 +49,12 @@ func (dao *UsernameDAO) Insert(ctx context.Context, do *dataobject.UsernameDO) (
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +76,12 @@ func (dao *UsernameDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsernameDO) (lastIn
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -95,14 +90,15 @@ func (dao *UsernameDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsernameDO) (lastIn
 // SelectList
 // select username, peer_type, peer_id, editable, active, order2 from username where username in (:nameList) and editable = 1
 func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rList []dataobject.UsernameDO, err error) {
-	var (
-		query  = fmt.Sprintf("select username, peer_type, peer_id, editable, active, order2 from username where username in (%s) and editable = 1", sqlx.InStringList(nameList))
-		values []dataobject.UsernameDO
-	)
 	if len(nameList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select username, peer_type, peer_id, editable, active, order2 from username where username in (%s) and editable = 1", sqlx.InStringList(nameList))
+		values []dataobject.UsernameDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -119,14 +115,15 @@ func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rLis
 // SelectListWithCB
 // select username, peer_type, peer_id, editable, active, order2 from username where username in (:nameList) and editable = 1
 func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string, cb func(sz, i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
-	var (
-		query  = fmt.Sprintf("select username, peer_type, peer_id, editable, active, order2 from username where username in (%s) and editable = 1", sqlx.InStringList(nameList))
-		values []dataobject.UsernameDO
-	)
 	if len(nameList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select username, peer_type, peer_id, editable, active, order2 from username where username in (%s) and editable = 1", sqlx.InStringList(nameList))
+		values []dataobject.UsernameDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -139,7 +136,7 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -161,6 +158,7 @@ func (dao *UsernameDAO) SelectByUsername(ctx context.Context, username string) (
 			logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -263,6 +261,7 @@ func (dao *UsernameDAO) DeleteTx(tx *sqlx.Tx, username string) (rowsAffected int
 		query   = "delete from username where username = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, username)
 
 	if err != nil {
@@ -307,6 +306,7 @@ func (dao *UsernameDAO) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int64) (ro
 		query   = "delete from username where peer_type = ? and peer_id = ? and editable = 1"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, peerType, peerId)
 
 	if err != nil {
@@ -351,6 +351,7 @@ func (dao *UsernameDAO) DeleteByChannelIdTx(tx *sqlx.Tx, peerId int64) (rowsAffe
 		query   = "delete from username where peer_type = 2 and peer_id = ? and editable = 0"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, peerId)
 
 	if err != nil {
@@ -380,6 +381,7 @@ func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peerType int32, peerId
 			logx.WithContext(ctx).Errorf("queryx in SelectByPeer(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -403,6 +405,7 @@ func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peerId int64) (rValu
 			logx.WithContext(ctx).Errorf("queryx in SelectByUserId(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -419,6 +422,7 @@ func (dao *UsernameDAO) SelectListByUserId(ctx context.Context, peerId int64) (r
 		query  = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id = ?"
 		values []dataobject.UsernameDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
@@ -438,6 +442,7 @@ func (dao *UsernameDAO) SelectListByUserIdWithCB(ctx context.Context, peerId int
 		query  = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id = ?"
 		values []dataobject.UsernameDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
@@ -449,7 +454,7 @@ func (dao *UsernameDAO) SelectListByUserIdWithCB(ctx context.Context, peerId int
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -471,6 +476,7 @@ func (dao *UsernameDAO) SelectByChannelId(ctx context.Context, peerId int64) (rV
 			logx.WithContext(ctx).Errorf("queryx in SelectByChannelId(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -487,6 +493,7 @@ func (dao *UsernameDAO) SelectListByChannelId(ctx context.Context, peerId int64)
 		query  = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 4 and peer_id = ?"
 		values []dataobject.UsernameDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
@@ -506,6 +513,7 @@ func (dao *UsernameDAO) SelectListByChannelIdWithCB(ctx context.Context, peerId 
 		query  = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 4 and peer_id = ?"
 		values []dataobject.UsernameDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
@@ -517,7 +525,7 @@ func (dao *UsernameDAO) SelectListByChannelIdWithCB(ctx context.Context, peerId 
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -555,6 +563,7 @@ func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peerType 
 		query   = "update username set username = ? where peer_type = ? and peer_id = ? and editable = 1"
 		rResult sql.Result
 	)
+
 	rResult, err = tx.Exec(query, username, peerType, peerId)
 
 	if err != nil {
@@ -573,15 +582,16 @@ func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peerType 
 // SearchByQueryNotIdList
 // select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
 func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idList []int64, limit int32) (rList []dataobject.UsernameDO, err error) {
-	var (
-		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
-		values []dataobject.UsernameDO
-	)
 
 	if len(idList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
+		values []dataobject.UsernameDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
@@ -598,15 +608,16 @@ func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, i
 // SearchByQueryNotIdListWithCB
 // select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
 func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, idList []int64, limit int32, cb func(sz, i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
-	var (
-		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
-		values []dataobject.UsernameDO
-	)
 
 	if len(idList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
+		values []dataobject.UsernameDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
@@ -619,7 +630,7 @@ func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 str
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}

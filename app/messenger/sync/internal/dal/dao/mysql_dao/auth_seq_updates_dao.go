@@ -14,19 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type AuthSeqUpdatesDAO struct {
 	db *sqlx.DB
@@ -54,12 +47,12 @@ func (dao *AuthSeqUpdatesDAO) Insert(ctx context.Context, do *dataobject.AuthSeq
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +74,12 @@ func (dao *AuthSeqUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthSeqUpdate
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v), error: %v", do, err)
 	}
 
 	return
@@ -106,6 +99,7 @@ func (dao *AuthSeqUpdatesDAO) SelectLastSeq(ctx context.Context, authId int64, u
 			logx.WithContext(ctx).Errorf("queryx in SelectLastSeq(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -122,6 +116,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtSeq(ctx context.Context, authId int64, u
 		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
 		values []dataobject.AuthSeqUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, authId, userId, seq)
 
 	if err != nil {
@@ -141,6 +136,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtSeqWithCB(ctx context.Context, authId in
 		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
 		values []dataobject.AuthSeqUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, authId, userId, seq)
 
 	if err != nil {
@@ -152,7 +148,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtSeqWithCB(ctx context.Context, authId in
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -167,6 +163,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtDate(ctx context.Context, authId int64, 
 		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
 		values []dataobject.AuthSeqUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, authId, userId, date2)
 
 	if err != nil {
@@ -186,6 +183,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtDateWithCB(ctx context.Context, authId i
 		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
 		values []dataobject.AuthSeqUpdatesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, authId, userId, date2)
 
 	if err != nil {
@@ -197,7 +195,7 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtDateWithCB(ctx context.Context, authId i
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}

@@ -15,18 +15,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var _ *sql.Result
-var _ = fmt.Sprintf
-var _ = strings.Join
-var _ = errors.Is
 
 type UserPrivaciesDAO struct {
 	db *sqlx.DB
@@ -54,12 +48,12 @@ func (dao *UserPrivaciesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -81,12 +75,12 @@ func (dao *UserPrivaciesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPr
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v), error: %v", do, err)
 	}
 
 	return
@@ -95,14 +89,14 @@ func (dao *UserPrivaciesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPr
 // InsertBulk
 // insert into user_privacies(user_id, key_type, rules) values (:user_id, :key_type, :rules)
 func (dao *UserPrivaciesDAO) InsertBulk(ctx context.Context, doList []*dataobject.UserPrivaciesDO) (lastInsertId, rowsAffected int64, err error) {
+	if len(doList) == 0 {
+		return
+	}
+
 	var (
 		query = "insert into user_privacies(user_id, key_type, rules) values (:user_id, :key_type, :rules)"
 		r     sql.Result
 	)
-
-	if len(doList) == 0 {
-		return
-	}
 
 	r, err = dao.db.NamedExec(ctx, query, doList)
 	if err != nil {
@@ -112,12 +106,12 @@ func (dao *UserPrivaciesDAO) InsertBulk(ctx context.Context, doList []*dataobjec
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v), error: %v", doList, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v), error: %v", doList, err)
 	}
 
 	return
@@ -126,14 +120,14 @@ func (dao *UserPrivaciesDAO) InsertBulk(ctx context.Context, doList []*dataobjec
 // InsertBulkTx
 // insert into user_privacies(user_id, key_type, rules) values (:user_id, :key_type, :rules)
 func (dao *UserPrivaciesDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.UserPrivaciesDO) (lastInsertId, rowsAffected int64, err error) {
+	if len(doList) == 0 {
+		return
+	}
+
 	var (
 		query = "insert into user_privacies(user_id, key_type, rules) values (:user_id, :key_type, :rules)"
 		r     sql.Result
 	)
-
-	if len(doList) == 0 {
-		return
-	}
 
 	r, err = tx.NamedExec(query, doList)
 	if err != nil {
@@ -143,12 +137,12 @@ func (dao *UserPrivaciesDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.User
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v), error: %v", doList, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v), error: %v", doList, err)
 	}
 
 	return
@@ -168,6 +162,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacy(ctx context.Context, userId int64, ke
 			logx.WithContext(ctx).Errorf("queryx in SelectPrivacy(_), error: %v", err)
 			return
 		} else {
+			// not found not error, return nil, nil
 			err = nil
 		}
 	} else {
@@ -180,15 +175,16 @@ func (dao *UserPrivaciesDAO) SelectPrivacy(ctx context.Context, userId int64, ke
 // SelectPrivacyList
 // select id, user_id, key_type, rules from user_privacies where user_id = :user_id and key_type in (:keyList)
 func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, userId int64, keyList []int32) (rList []dataobject.UserPrivaciesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (%s)", sqlx.InInt32List(keyList))
-		values []dataobject.UserPrivaciesDO
-	)
 
 	if len(keyList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (%s)", sqlx.InInt32List(keyList))
+		values []dataobject.UserPrivaciesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -205,15 +201,16 @@ func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, userId int64
 // SelectPrivacyListWithCB
 // select id, user_id, key_type, rules from user_privacies where user_id = :user_id and key_type in (:keyList)
 func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, userId int64, keyList []int32, cb func(sz, i int, v *dataobject.UserPrivaciesDO)) (rList []dataobject.UserPrivaciesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (%s)", sqlx.InInt32List(keyList))
-		values []dataobject.UserPrivaciesDO
-	)
 
 	if len(keyList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (%s)", sqlx.InInt32List(keyList))
+		values []dataobject.UserPrivaciesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
@@ -226,7 +223,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, userId
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -237,18 +234,20 @@ func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, userId
 // SelectUsersPrivacyList
 // select id, user_id, key_type, rules from user_privacies where user_id in (:idList) and key_type in (:keyList)
 func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList []int32, keyList []int32) (rList []dataobject.UserPrivaciesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
-		values []dataobject.UserPrivaciesDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
 	if len(keyList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
+		values []dataobject.UserPrivaciesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -265,18 +264,20 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList 
 // SelectUsersPrivacyListWithCB
 // select id, user_id, key_type, rules from user_privacies where user_id in (:idList) and key_type in (:keyList)
 func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, idList []int32, keyList []int32, cb func(sz, i int, v *dataobject.UserPrivaciesDO)) (rList []dataobject.UserPrivaciesDO, err error) {
-	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
-		values []dataobject.UserPrivaciesDO
-	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
 	if len(keyList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
 		return
 	}
+
+	var (
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
+		values []dataobject.UserPrivaciesDO
+	)
 
 	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
@@ -289,7 +290,7 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, i
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
@@ -304,6 +305,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyAll(ctx context.Context, userId int64)
 		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
 		values []dataobject.UserPrivaciesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -323,6 +325,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyAllWithCB(ctx context.Context, userId 
 		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
 		values []dataobject.UserPrivaciesDO
 	)
+
 	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
@@ -334,7 +337,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyAllWithCB(ctx context.Context, userId 
 
 	if cb != nil {
 		sz := len(rList)
-		for i := 0; i < sz; i++ {
+		for i := range sz {
 			cb(sz, i, &rList[i])
 		}
 	}
