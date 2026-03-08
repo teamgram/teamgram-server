@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<table sqlname="messages">
+<table sqlname="messages" shard_key="user_id">
     <operation name="InsertOrReturnId">
         <sql>
             INSERT INTO messages
@@ -44,6 +44,20 @@
                 messages
             WHERE
                 user_id = :user_id AND user_message_box_id = :user_message_box_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageDataIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period
+            FROM
+                messages
+            WHERE
+                deleted = 0 and dialog_message_id in (:idList) ORDER BY user_message_box_id DESC
         </sql>
     </operation>
 

@@ -264,7 +264,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 		}
 
 		// dup, we'll recreate box
-		do, err := d.MessagesDAO.SelectByRandomId(ctx, fromId, outboxMessage.RandomId)
+		do, err := d.MessagesDAO.SelectByRandomId(ctx, d.MessagesDAO.CalcTableName(fromId), fromId, outboxMessage.RandomId)
 		if err != nil {
 			return nil, false, err
 		}

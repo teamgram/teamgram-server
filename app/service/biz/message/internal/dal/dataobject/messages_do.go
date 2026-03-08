@@ -35,5 +35,6 @@ type MessagesDO struct {
 	TtlPeriod         int32  `db:"ttl_period" json:"ttl_period"`
 	SavedPeerType     int32  `db:"saved_peer_type" json:"saved_peer_type"`
 	SavedPeerId       int64  `db:"saved_peer_id" json:"saved_peer_id"`
+	OutboxReadDate    int64  `db:"outbox_read_date" json:"outbox_read_date"`
 	Deleted           bool   `db:"deleted" json:"deleted"`
 }
