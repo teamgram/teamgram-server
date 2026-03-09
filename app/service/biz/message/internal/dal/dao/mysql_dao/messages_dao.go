@@ -64,12 +64,12 @@ func (dao *MessagesDAO) InsertOrReturnId(ctx context.Context, do *dataobject.Mes
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrReturnId(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrReturnId(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrReturnId(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrReturnId(%v), error: %v", do, err)
 	}
 
 	return
@@ -91,12 +91,12 @@ func (dao *MessagesDAO) InsertOrReturnIdTx(tx *sqlx.Tx, do *dataobject.MessagesD
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrReturnId(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrReturnId(%v), error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrReturnId(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrReturnId(%v), error: %v", do, err)
 	}
 
 	return
