@@ -88,32 +88,6 @@ func (dao *DocumentsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.DocumentsDO) (last
 	return
 }
 
-// SelectByFileLocation
-// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = :document_id and access_hash = :access_hash and version = :version
-func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, documentId int64, accessHash int64, version int32) (rValue *dataobject.DocumentsDO, err error) {
-	var (
-		query string
-		do    = &dataobject.DocumentsDO{}
-	)
-	query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = ? and access_hash = ? and version = ?"
-
-	err = dao.db.QueryRowPartial(ctx, do, query, documentId, accessHash, version)
-
-	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
-			return
-		} else {
-			// not found not error, return nil, nil
-			err = nil
-		}
-	} else {
-		rValue = do
-	}
-
-	return
-}
-
 // SelectByDocumentId
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = :document_id
 func (dao *DocumentsDAO) SelectByDocumentId(ctx context.Context, documentId int64) (rValue *dataobject.DocumentsDO, err error) {
