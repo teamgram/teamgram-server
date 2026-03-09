@@ -52,10 +52,9 @@ func (dao *MessagesDAO) CalcTableName(id int64) string {
 // insert into messages(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)
 func (dao *MessagesDAO) InsertOrReturnId(ctx context.Context, do *dataobject.MessagesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query string
+		query = "insert into " + dao.CalcTableName(do.UserId) + "(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)"
 		r     sql.Result
 	)
-	query = strings.Replace("insert into __TABLE__(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) on duplicate key update id = last_insert_id(id)", "__TABLE__", dao.CalcTableName(do.UserId), -1)
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
@@ -65,12 +64,12 @@ func (dao *MessagesDAO) InsertOrReturnId(ctx context.Context, do *dataobject.Mes
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrReturnId(%v), error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrReturnId(%v)_error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrReturnId(%v), error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrReturnId(%v)_error: %v", do, err)
 	}
 
 	return
@@ -80,10 +79,9 @@ func (dao *MessagesDAO) InsertOrReturnId(ctx context.Context, do *dataobject.Mes
 // insert into messages(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)
 func (dao *MessagesDAO) InsertOrReturnIdTx(tx *sqlx.Tx, do *dataobject.MessagesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query string
+		query = "insert into " + dao.CalcTableName(do.UserId) + "(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)"
 		r     sql.Result
 	)
-	query = strings.Replace("insert into __TABLE__(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) on duplicate key update id = last_insert_id(id)", "__TABLE__", dao.CalcTableName(do.UserId), -1)
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
@@ -93,12 +91,12 @@ func (dao *MessagesDAO) InsertOrReturnIdTx(tx *sqlx.Tx, do *dataobject.MessagesD
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrReturnId(%v), error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrReturnId(%v)_error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrReturnId(%v), error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrReturnId(%v)_error: %v", do, err)
 	}
 
 	return
