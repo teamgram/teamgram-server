@@ -15,7 +15,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
 	github.com/teamgram/marmota v0.2.0
-	github.com/teamgram/proto v0.222.3
+	github.com/teamgram/proto v0.223.1
 	github.com/zeromicro/go-zero v1.10.0
 	go.opentelemetry.io/otel v1.24.0
 	google.golang.org/grpc v1.65.0

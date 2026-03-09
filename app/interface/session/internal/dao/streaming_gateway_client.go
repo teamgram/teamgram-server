@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	gatewaySendBufSize            = 8192
+	gatewaySendBufSize             = 8192
 	gatewayInitialReconnectBackoff = 100 * time.Millisecond
 	gatewayMaxReconnectBackoff     = 10 * time.Second
 )

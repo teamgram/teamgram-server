@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -224,6 +224,51 @@ func (s *Service) MessagesGetMessageReadParticipants31C1C44F(ctx context.Context
 	}
 
 	c.Logger.Debugf("messages.getMessageReadParticipants31C1C44F - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesEditChatCreator
+// messages.editChatCreator#f743b857 peer:InputPeer user_id:InputUser password:InputCheckPasswordSRP = Updates;
+func (s *Service) MessagesEditChatCreator(ctx context.Context, request *mtproto.TLMessagesEditChatCreator) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.editChatCreator - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesEditChatCreator(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.editChatCreator - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesGetFutureChatCreatorAfterLeave
+// messages.getFutureChatCreatorAfterLeave#3b7d0ea6 peer:InputPeer = User;
+func (s *Service) MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, request *mtproto.TLMessagesGetFutureChatCreatorAfterLeave) (*mtproto.User, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getFutureChatCreatorAfterLeave - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesGetFutureChatCreatorAfterLeave(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getFutureChatCreatorAfterLeave - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesEditChatParticipantRank
+// messages.editChatParticipantRank#a00f32b0 peer:InputPeer participant:InputPeer rank:string = Updates;
+func (s *Service) MessagesEditChatParticipantRank(ctx context.Context, request *mtproto.TLMessagesEditChatParticipantRank) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.editChatParticipantRank - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesEditChatParticipantRank(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.editChatParticipantRank - reply: {%s}", r)
 	return r, err
 }
 
