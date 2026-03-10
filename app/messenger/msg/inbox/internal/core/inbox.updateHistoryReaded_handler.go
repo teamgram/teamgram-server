@@ -67,14 +67,17 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 			in.PeerId,
 			mtproto.MakePeerDialogId(in.PeerType, in.FromId))
 
+		updateReadHistoryOutbox := mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
+			Peer_PEER: mtproto.MakePeerUser(in.FromId),
+			MaxId:     replyId.UserMessageBoxId,
+			Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.PeerId),
+			PtsCount:  1,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, in.PeerId, updateReadHistoryOutbox)
+
 		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-			UserId: in.PeerId,
-			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
-				Peer_PEER: mtproto.MakePeerUser(in.FromId),
-				MaxId:     replyId.UserMessageBoxId,
-				Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.PeerId),
-				PtsCount:  1,
-			}).To_Update()),
+			UserId:  in.PeerId,
+			Updates: mtproto.MakeUpdatesByUpdates(updateReadHistoryOutbox),
 		})
 	case mtproto.PEER_CHAT:
 		replyId, err := c.svcCtx.Dao.MessagesDAO.SelectPeerUserMessage(
@@ -117,14 +120,17 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 						replyId.PeerId,
 						mtproto.MakePeerDialogId(in.PeerType, in.PeerId))
 
+					updateReadHistoryOutbox := mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
+						Peer_PEER: mtproto.MakePeerChat(in.PeerId),
+						MaxId:     replyId.UserMessageBoxId,
+						Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, replyId.UserId),
+						PtsCount:  1,
+					}).To_Update()
+					c.persistPtsUpdate(c.ctx, replyId.UserId, updateReadHistoryOutbox)
+
 					_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-						UserId: replyId.UserId,
-						Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
-							Peer_PEER: mtproto.MakePeerChat(in.PeerId),
-							MaxId:     replyId.UserMessageBoxId,
-							Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, replyId.UserId),
-							PtsCount:  1,
-						}).To_Update()),
+						UserId:  replyId.UserId,
+						Updates: mtproto.MakeUpdatesByUpdates(updateReadHistoryOutbox),
 					})
 				}
 			},

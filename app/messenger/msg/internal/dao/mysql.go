@@ -31,6 +31,7 @@ type Mysql struct {
 	*mysql_dao.DialogsDAO
 	*mysql_dao.SavedDialogsDAO
 	*mysql_dao.MessageReadOutboxDAO
+	*mysql_dao.UserPtsUpdatesDAO
 	*sqlx.CommonDAO
 }
 
@@ -43,6 +44,7 @@ func NewMysqlDao(db *sqlx.DB, shardingSize int) *Mysql {
 		DialogsDAO:           mysql_dao.NewDialogsDAO(db),
 		SavedDialogsDAO:      mysql_dao.NewSavedDialogsDAO(db),
 		MessageReadOutboxDAO: mysql_dao.NewMessageReadOutboxDAO(db),
+		UserPtsUpdatesDAO:    mysql_dao.NewUserPtsUpdatesDAO(db),
 		CommonDAO:            sqlx.NewCommonDAO(db),
 	}
 }

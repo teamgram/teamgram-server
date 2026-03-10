@@ -66,17 +66,20 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			}
 		}
 
+		updateEditMessage := mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
+			Pts_INT32:       in.NewMessage.Pts,
+			PtsCount:        in.NewMessage.PtsCount,
+			Message_MESSAGE: in.NewMessage.Message,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, in.UserId, updateEditMessage)
+
 		_, err := c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 			UserId:        in.UserId,
 			PermAuthKeyId: in.FromAuthKeyId,
 			Updates: mtproto.MakeUpdatesByUpdatesUsersChats(
 				in.Users,
 				in.Chats,
-				mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
-					Pts_INT32:       in.NewMessage.Pts,
-					PtsCount:        in.NewMessage.PtsCount,
-					Message_MESSAGE: in.NewMessage.Message,
-				}).To_Update()),
+				updateEditMessage),
 		})
 		if err != nil {
 			c.Logger.Errorf("inbox.editMessageToInboxV2 - error: %v", err)
@@ -168,14 +171,17 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			}
 		}
 
+		updateEditMessage := mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
+			Pts_INT32:       pts,
+			PtsCount:        ptsCount,
+			Message_MESSAGE: newMessage,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, in.UserId, updateEditMessage)
+
 		pushUpdates := mtproto.MakeUpdatesByUpdatesUsersChats(
 			in.Users,
 			in.Chats,
-			mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
-				Pts_INT32:       pts,
-				PtsCount:        ptsCount,
-				Message_MESSAGE: newMessage,
-			}).To_Update())
+			updateEditMessage)
 
 		if isBot {
 			if c.svcCtx.Dao.BotSyncClient != nil {

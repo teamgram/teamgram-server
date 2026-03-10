@@ -56,7 +56,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateDeleteMessages: func(
@@ -66,7 +67,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateReadHistoryInbox: func(
@@ -76,7 +78,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateReadHistoryOutbox: func(
@@ -86,7 +89,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateWebPage: func(
@@ -96,7 +100,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateReadMessagesContents: func(
@@ -106,7 +111,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateEditMessage: func(
@@ -116,7 +122,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			needPush = true
 		},
 		mtproto.Predicate_updateFolderPeers: func(
@@ -127,7 +134,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			}
 		},
 		mtproto.Predicate_updatePinnedMessages: func(
@@ -138,7 +146,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			// removed in pure push mode
 			}
 		},
 		mtproto.Predicate_updatePhoneCall: func(

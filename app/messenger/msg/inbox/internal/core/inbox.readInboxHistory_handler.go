@@ -108,17 +108,20 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 		})
 	}
 
+	updateReadHistoryInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+		Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
+		MaxId:     maxId,
+		Pts_INT32: pts,
+		PtsCount:  ptsCount,
+	}).To_Update()
+	c.persistPtsUpdate(c.ctx, in.UserId, updateReadHistoryInbox)
+
 	_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
 			UserId:        in.UserId,
 			PermAuthKeyId: in.AuthKeyId,
-			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
-				MaxId:     maxId,
-				Pts_INT32: pts,
-				PtsCount:  ptsCount,
-			}).To_Update()),
+			Updates:       mtproto.MakeUpdatesByUpdates(updateReadHistoryInbox),
 		})
 
 	return mtproto.EmptyVoid, nil

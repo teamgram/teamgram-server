@@ -83,17 +83,20 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 				}
 			}
 
+			updateNewMessage := mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+				Message_MESSAGE: inBox.GetMessage(),
+				Pts_INT32:       inBox.Pts,
+				PtsCount:        inBox.PtsCount,
+			}).To_Update()
+			c.persistPtsUpdate(c.ctx, inBox.UserId, updateNewMessage)
+
 			_, err = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        inBox.UserId,
 				PermAuthKeyId: in.FromAuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdatesUsersChats(
 					in.Users,
 					in.Chats,
-					mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
-						Message_MESSAGE: inBox.GetMessage(),
-						Pts_INT32:       inBox.Pts,
-						PtsCount:        inBox.PtsCount,
-					}).To_Update()),
+					updateNewMessage),
 			})
 		}
 
@@ -188,14 +191,16 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 				//}
 			}
 
+			updateNewMessage := mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+				Message_MESSAGE: inBox.GetMessage(),
+				Pts_INT32:       inBox.Pts,
+				PtsCount:        inBox.PtsCount,
+			}).To_Update()
+
 			pushUpdates := mtproto.MakeUpdatesByUpdatesUsersChats(
 				in.Users,
 				in.Chats,
-				mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
-					Message_MESSAGE: inBox.GetMessage(),
-					Pts_INT32:       inBox.Pts,
-					PtsCount:        inBox.PtsCount,
-				}).To_Update())
+				updateNewMessage)
 
 			if in.PeerType == mtproto.PEER_CHAT {
 				switch inBox.GetMessage().GetAction().GetPredicateName() {
@@ -215,14 +220,16 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 							Date2:           nil,
 						})
 
-					pushUpdates.PushFrontUpdate(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+					updateReadHistoryInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
 						FolderId:         nil,
 						Peer_PEER:        mtproto.MakePeerChat(in.PeerId),
 						MaxId:            inBox.MessageId,
 						StillUnreadCount: 0,
 						Pts_INT32:        c.svcCtx.Dao.NextPtsId(c.ctx, in.UserId),
 						PtsCount:         1,
-					}).To_Update())
+					}).To_Update()
+					c.persistPtsUpdate(c.ctx, in.UserId, updateReadHistoryInbox)
+					pushUpdates.PushFrontUpdate(updateReadHistoryInbox)
 				}
 			}
 
@@ -236,6 +243,8 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 					break
 				}
 			}
+
+			c.persistPtsUpdate(c.ctx, inBox.UserId, updateNewMessage)
 
 			if isBot {
 				if c.svcCtx.Dao.BotSyncClient != nil {

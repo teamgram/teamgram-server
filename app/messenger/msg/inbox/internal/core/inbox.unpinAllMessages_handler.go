@@ -52,17 +52,20 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 
 		pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, peer.PeerId, len(idList))
 		ptsCount = int32(len(idList))
+		updatePinnedMessages := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
+			Pinned:    false,
+			Peer_PEER: mtproto.MakePeerUser(in.UserId),
+			Messages:  idList,
+			Pts_INT32: pts,
+			PtsCount:  ptsCount,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, peer.PeerId, updatePinnedMessages)
+
 		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
 			&sync.TLSyncPushUpdates{
-				UserId: peer.PeerId,
-				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
-					Pinned:    false,
-					Peer_PEER: mtproto.MakePeerUser(in.UserId),
-					Messages:  idList,
-					Pts_INT32: pts,
-					PtsCount:  ptsCount,
-				}).To_Update()),
+				UserId:  peer.PeerId,
+				Updates: mtproto.MakeUpdatesByUpdates(updatePinnedMessages),
 			})
 	case mtproto.PEER_CHAT:
 		// TODO: 性能优化
@@ -93,17 +96,20 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 
 				pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, v.UserId, len(idList))
 				ptsCount = int32(len(idList))
+				updatePinnedMessages := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
+					Pinned:    false,
+					Peer_PEER: mtproto.MakePeerChat(peer.PeerId),
+					Messages:  idList,
+					Pts_INT32: pts,
+					PtsCount:  ptsCount,
+				}).To_Update()
+				c.persistPtsUpdate(c.ctx, v.UserId, updatePinnedMessages)
+
 				c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 					c.ctx,
 					&sync.TLSyncPushUpdates{
-						UserId: v.UserId,
-						Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
-							Pinned:    false,
-							Peer_PEER: mtproto.MakePeerChat(peer.PeerId),
-							Messages:  idList,
-							Pts_INT32: pts,
-							PtsCount:  ptsCount,
-						}).To_Update()),
+						UserId:  v.UserId,
+						Updates: mtproto.MakeUpdatesByUpdates(updatePinnedMessages),
 					})
 			},
 		)

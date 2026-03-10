@@ -220,6 +220,16 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				}
 			}
 		}
+
+		_, err = d.AddToPtsQueueTx(tx, fromId, pts, 1, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+			Message_MESSAGE: outMsgBox.Message,
+			Pts_INT32:       pts,
+			PtsCount:        1,
+		}).To_Update())
+		if err != nil {
+			result.Err = err
+			return
+		}
 	})
 
 	if tR.Err != nil {
@@ -627,6 +637,16 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 					})
 				}
 			}
+		}
+
+		_, err = d.AddToPtsQueueTx(tx, fromId, outMsgBox.Pts, outMsgBox.PtsCount, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+			Message_MESSAGE: outMsgBox.Message,
+			Pts_INT32:       outMsgBox.Pts,
+			PtsCount:        outMsgBox.PtsCount,
+		}).To_Update())
+		if err != nil {
+			result.Err = err
+			return
 		}
 	})
 

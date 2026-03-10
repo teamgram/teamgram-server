@@ -76,19 +76,21 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 					Date2:           nil,
 				})
 
+			updatePinnedMessages := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
+				Pinned:    !in.GetUnpin(),
+				Peer_PEER: mtproto.MakePeerUser(in.UserId),
+				Messages:  []int32{v.UserMessageBoxId},
+				Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, v.UserId),
+				PtsCount:  1,
+			}).To_Update()
+			c.persistPtsUpdate(c.ctx, v.UserId, updatePinnedMessages)
+
 			// sync
 			_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,
 				&sync.TLSyncPushUpdates{
-					UserId: v.UserId,
-					Updates: mtproto.MakeUpdatesByUpdates(
-						mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
-							Pinned:    !in.GetUnpin(),
-							Peer_PEER: mtproto.MakePeerUser(in.UserId),
-							Messages:  []int32{v.UserMessageBoxId},
-							Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, v.UserId),
-							PtsCount:  1,
-						}).To_Update()),
+					UserId:  v.UserId,
+					Updates: mtproto.MakeUpdatesByUpdates(updatePinnedMessages),
 				})
 		} else {
 			_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
@@ -106,19 +108,21 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 					Date2:           nil,
 				})
 
+			updatePinnedMessages := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
+				Pinned:    !in.GetUnpin(),
+				Peer_PEER: mtproto.MakePeerChat(peer.PeerId),
+				Messages:  []int32{v.UserMessageBoxId},
+				Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, v.UserId),
+				PtsCount:  1,
+			}).To_Update()
+			c.persistPtsUpdate(c.ctx, v.UserId, updatePinnedMessages)
+
 			// sync
 			_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,
 				&sync.TLSyncPushUpdates{
-					UserId: v.UserId,
-					Updates: mtproto.MakeUpdatesByUpdates(
-						mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
-							Pinned:    !in.GetUnpin(),
-							Peer_PEER: mtproto.MakePeerChat(peer.PeerId),
-							Messages:  []int32{v.UserMessageBoxId},
-							Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, v.UserId),
-							PtsCount:  1,
-						}).To_Update()),
+					UserId:  v.UserId,
+					Updates: mtproto.MakeUpdatesByUpdates(updatePinnedMessages),
 				})
 		}
 	}

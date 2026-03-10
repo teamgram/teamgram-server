@@ -48,19 +48,21 @@ func (c *InboxCore) InboxDeleteChatHistoryToInbox(in *inbox.TLInboxDeleteChatHis
 		return nil, err
 	}
 
-	pushUpdates := mtproto.MakeUpdatesByUpdates(
-		mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-			Messages:  deleteIds,
-			Pts_INT32: pts - 2,
-			PtsCount:  ptsCount - 2,
-		}).To_Update(),
-		mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-			Peer_PEER: peer.ToPeer(),
-			MaxId:     lastMessage.Id,
-			Pts_INT32: pts - 1,
-			PtsCount:  1,
-		}).To_Update(),
-	)
+	updateDeleteMessages := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+		Messages:  deleteIds,
+		Pts_INT32: pts - 2,
+		PtsCount:  ptsCount - 2,
+	}).To_Update()
+	updateReadHistoryInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+		Peer_PEER: peer.ToPeer(),
+		MaxId:     lastMessage.Id,
+		Pts_INT32: pts - 1,
+		PtsCount:  1,
+	}).To_Update()
+	c.persistPtsUpdate(c.ctx, in.FromId, updateDeleteMessages)
+	c.persistPtsUpdate(c.ctx, in.FromId, updateReadHistoryInbox)
+
+	pushUpdates := mtproto.MakeUpdatesByUpdates(updateDeleteMessages, updateReadHistoryInbox)
 
 	_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 		c.ctx,

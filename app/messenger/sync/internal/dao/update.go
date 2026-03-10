@@ -14,6 +14,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func (d *Dao) AddSeqToUpdatesQueue(ctx context.Context, authId, userId int64, updateType int32, updateData []byte) int32 {
@@ -32,8 +33,10 @@ func (d *Dao) AddSeqToUpdatesQueue(ctx context.Context, authId, userId int64, up
 }
 
 func (d *Dao) AddToPtsQueue(ctx context.Context, userId int64, pts, ptsCount int32, update *mtproto.Update) int32 {
-	// TODO(@benqi): check error
-	updateData, _ := jsonx.Marshal(update)
+	updateData, err := jsonx.Marshal(update)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("AddToPtsQueue - marshal update error: %v", err)
+	}
 
 	do := &dataobject.UserPtsUpdatesDO{
 		UserId:     userId,
@@ -44,6 +47,9 @@ func (d *Dao) AddToPtsQueue(ctx context.Context, userId int64, pts, ptsCount int
 		Date2:      time.Now().Unix(),
 	}
 
-	i, _, _ := d.UserPtsUpdatesDAO.Insert(ctx, do)
+	i, _, err := d.UserPtsUpdatesDAO.Insert(ctx, do)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("AddToPtsQueue - insert into user_pts_updates error: %v", err)
+	}
 	return int32(i)
 }

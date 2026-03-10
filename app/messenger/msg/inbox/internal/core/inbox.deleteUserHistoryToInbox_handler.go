@@ -68,23 +68,30 @@ func (c *InboxCore) InboxDeleteUserHistoryToInbox(in *inbox.TLInboxDeleteUserHis
 
 		_, _ = c.svcCtx.Dao.EditUserOutboxMessage(c.ctx, in.PeerUserId, in.FromId, clearHistoryMessage)
 
+		updateDeleteMessages := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+			Messages:  deleteIds,
+			Pts_INT32: pts - 2,
+			PtsCount:  ptsCount - 2,
+		}).To_Update()
+		updateReadHistoryInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+			Peer_PEER: peer.ToPeer(),
+			MaxId:     lastMessage.Id,
+			Pts_INT32: pts - 1,
+			PtsCount:  1,
+		}).To_Update()
+		updateEditMessage := mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
+			Message_MESSAGE: clearHistoryMessage,
+			Pts_INT32:       pts,
+			PtsCount:        1,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, in.PeerUserId, updateDeleteMessages)
+		c.persistPtsUpdate(c.ctx, in.PeerUserId, updateReadHistoryInbox)
+		c.persistPtsUpdate(c.ctx, in.PeerUserId, updateEditMessage)
+
 		pushUpdates := mtproto.MakeUpdatesByUpdates(
-			mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-				Messages:  deleteIds,
-				Pts_INT32: pts - 2,
-				PtsCount:  ptsCount - 2,
-			}).To_Update(),
-			mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: peer.ToPeer(),
-				MaxId:     lastMessage.Id,
-				Pts_INT32: pts - 1,
-				PtsCount:  1,
-			}).To_Update(),
-			mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
-				Message_MESSAGE: clearHistoryMessage,
-				Pts_INT32:       pts,
-				PtsCount:        1,
-			}).To_Update(),
+			updateDeleteMessages,
+			updateReadHistoryInbox,
+			updateEditMessage,
 		)
 		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
@@ -97,18 +104,23 @@ func (c *InboxCore) InboxDeleteUserHistoryToInbox(in *inbox.TLInboxDeleteUserHis
 			return nil, err
 		}
 
+		updateDeleteMessages := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+			Messages:  deleteIds,
+			Pts_INT32: pts - 2,
+			PtsCount:  ptsCount - 2,
+		}).To_Update()
+		updateReadHistoryInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+			Peer_PEER: peer.ToPeer(),
+			MaxId:     lastMessage.Id,
+			Pts_INT32: pts - 1,
+			PtsCount:  1,
+		}).To_Update()
+		c.persistPtsUpdate(c.ctx, in.PeerUserId, updateDeleteMessages)
+		c.persistPtsUpdate(c.ctx, in.PeerUserId, updateReadHistoryInbox)
+
 		pushUpdates := mtproto.MakeUpdatesByUpdates(
-			mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-				Messages:  deleteIds,
-				Pts_INT32: pts - 2,
-				PtsCount:  ptsCount - 2,
-			}).To_Update(),
-			mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: peer.ToPeer(),
-				MaxId:     lastMessage.Id,
-				Pts_INT32: pts - 1,
-				PtsCount:  1,
-			}).To_Update(),
+			updateDeleteMessages,
+			updateReadHistoryInbox,
 		)
 		c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
