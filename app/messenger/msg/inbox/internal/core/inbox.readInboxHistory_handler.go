@@ -114,7 +114,11 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 		Pts_INT32: pts,
 		PtsCount:  ptsCount,
 	}).To_Update()
-	c.persistPtsUpdate(c.ctx, in.UserId, updateReadHistoryInbox)
+	if isUseV3 {
+		// V3: pts allocated here, must persist
+		c.persistPtsUpdate(c.ctx, in.UserId, updateReadHistoryInbox)
+	}
+	// V2: user_pts_updates already written by msg service before RPC return
 
 	_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,

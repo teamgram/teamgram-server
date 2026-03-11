@@ -866,24 +866,16 @@ func (d *Dao) editOutboxMessageV2(ctx context.Context, fromId int64, peerType in
 		err := mtproto.ErrInternalServerError
 		return nil, err
 	}
-	//if _, err := d.MessagesDAO.UpdateEditMessage(ctx, string(mData), message.Message, fromId, message.Id); err != nil {
-	//	return nil, err
-	//}
 
-	//// d.HashTagsDAO.DeleteHashTagMessageId(ctx, fromId, message.Id)
-	//for _, entity := range message.GetEntities() {
-	//	if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
-	//		if entity.GetUrl() != "" {
-	//			d.HashTagsDAO.InsertOrUpdate(ctx, &dataobject.HashTagsDO{
-	//				UserId:           fromId,
-	//				PeerType:         peerType,
-	//				PeerId:           peerId,
-	//				HashTag:          entity.GetUrl(),
-	//				HashTagMessageId: dstMessage.MessageId,
-	//			})
-	//		}
-	//	}
-	//}
+	// Write sender's user_pts_updates before RPC return to guarantee
+	// getDifference completeness for the sender.
+	if _, err := d.AddToPtsQueueE(ctx, fromId, pts, ptsCount, mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
+		Message_MESSAGE: message,
+		Pts_INT32:       pts,
+		PtsCount:        ptsCount,
+	}).To_Update()); err != nil {
+		logx.WithContext(ctx).Errorf("editOutboxMessageV2 - AddToPtsQueueE error, user_id: %d, pts: %d, err: %v", fromId, pts, err)
+	}
 
 	return mtproto.MakeTLMessageBox(&mtproto.MessageBox{
 		UserId:            dstMessage.UserId,

@@ -88,13 +88,16 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*mtp
 
 		// pinned
 		c.svcCtx.Dao.MessagesDAO.UpdatePinned(c.ctx, !in.GetUnpin(), in.UserId, in.Id)
+		pinnedPts := c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId)
 		updatePinnedMessage := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
 			Pinned:    !in.GetUnpin(),
 			Peer_PEER: peer.ToPeer(),
 			Messages:  []int32{in.Id},
-			Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId),
+			Pts_INT32: pinnedPts,
 			PtsCount:  1,
 		}).To_Update()
+		// Write user_pts_updates before RPC return to guarantee getDifference completeness
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pinnedPts, 1, updatePinnedMessage)
 
 		if !in.GetUnpin() && !in.PmOneside && !peer.IsSelfUser(in.UserId) {
 			rUpdates, err = c.MsgSendMessageV2(&msg.TLMsgSendMessageV2{

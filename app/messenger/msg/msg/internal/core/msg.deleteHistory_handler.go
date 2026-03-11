@@ -102,25 +102,29 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 		}).To_Message()
 		c.svcCtx.Dao.EditUserOutboxMessage(c.ctx, in.UserId, in.PeerId, clearHistoryMessage)
 
-		syncUpdates := mtproto.MakeUpdatesByUpdates(
-			mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-				Messages:  deleteIds,
-				Pts_INT32: pts - 2,
-				PtsCount:  ptsCount - 2,
-			}).To_Update(),
-			mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: peer.ToPeer(),
-				MaxId:     lastMessage.Id,
-				Pts_INT32: pts - 1,
-				PtsCount:  1,
-			}).To_Update(),
-			mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
-				Message_MESSAGE: clearHistoryMessage,
-				Pts_INT32:       pts,
-				PtsCount:        1,
-			}).To_Update(),
-		)
+		updateDelete := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+			Messages:  deleteIds,
+			Pts_INT32: pts - 2,
+			PtsCount:  ptsCount - 2,
+		}).To_Update()
+		updateReadInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+			Peer_PEER: peer.ToPeer(),
+			MaxId:     lastMessage.Id,
+			Pts_INT32: pts - 1,
+			PtsCount:  1,
+		}).To_Update()
+		updateEdit := mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
+			Message_MESSAGE: clearHistoryMessage,
+			Pts_INT32:       pts,
+			PtsCount:        1,
+		}).To_Update()
 
+		// Write user_pts_updates before RPC return to guarantee getDifference completeness
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts-2, ptsCount-2, updateDelete)
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts-1, 1, updateReadInbox)
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts, 1, updateEdit)
+
+		syncUpdates := mtproto.MakeUpdatesByUpdates(updateDelete, updateReadInbox, updateEdit)
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{
@@ -132,22 +136,24 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 		if _, err = c.svcCtx.Dao.DeleteByMessageIdList(c.ctx, in.UserId, deleteIds); err != nil {
 			return nil, err
 		}
-		// s.PrivateFacade
 
-		syncUpdates := mtproto.MakeUpdatesByUpdates(
-			mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-				Messages:  deleteIds,
-				Pts_INT32: pts - 2,
-				PtsCount:  ptsCount - 2,
-			}).To_Update(),
-			mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: peer.ToPeer(),
-				MaxId:     lastMessage.Id,
-				Pts_INT32: pts - 1,
-				PtsCount:  1,
-			}).To_Update(),
-		)
+		updateDelete := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+			Messages:  deleteIds,
+			Pts_INT32: pts - 2,
+			PtsCount:  ptsCount - 2,
+		}).To_Update()
+		updateReadInbox := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+			Peer_PEER: peer.ToPeer(),
+			MaxId:     lastMessage.Id,
+			Pts_INT32: pts - 1,
+			PtsCount:  1,
+		}).To_Update()
 
+		// Write user_pts_updates before RPC return to guarantee getDifference completeness
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts-2, ptsCount-2, updateDelete)
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts-1, 1, updateReadInbox)
+
+		syncUpdates := mtproto.MakeUpdatesByUpdates(updateDelete, updateReadInbox)
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{

@@ -563,11 +563,9 @@ func (dao *MessagesDAO) SelectForwardByOffsetDateLimitWithCB(ctx context.Context
 // select user_message_box_id, message_box_type from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
 func (dao *MessagesDAO) SelectPeerUserMessageId(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (rValue *dataobject.MessagesDO, err error) {
 	var (
-		query string
+		query = "select user_message_box_id, message_box_type from " + dao.CalcTableName(peerId) + " where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from " + dao.CalcTableName(userId) + " where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)"
 		do    = &dataobject.MessagesDO{}
 	)
-	query = strings.Replace("select user_message_box_id, message_box_type from __TABLE__ where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from __TABLE__ where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)", "__TABLE__", dao.CalcTableName(userId), -1)
-
 	err = dao.db.QueryRowPartial(ctx, do, query, peerId, userId, userMessageBoxId)
 
 	if err != nil {
@@ -589,10 +587,9 @@ func (dao *MessagesDAO) SelectPeerUserMessageId(ctx context.Context, peerId int6
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
 func (dao *MessagesDAO) SelectPeerUserMessage(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (rValue *dataobject.MessagesDO, err error) {
 	var (
-		query string
+		query = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from " + dao.CalcTableName(peerId) + " where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from " + dao.CalcTableName(userId) + " where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)"
 		do    = &dataobject.MessagesDO{}
 	)
-	query = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from __TABLE__ where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)", "__TABLE__", dao.CalcTableName(userId), -1)
 
 	err = dao.db.QueryRowPartial(ctx, do, query, peerId, userId, userMessageBoxId)
 

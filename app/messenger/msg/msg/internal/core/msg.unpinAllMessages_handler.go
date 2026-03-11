@@ -72,18 +72,23 @@ func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*mtproto.M
 		// update
 		pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, in.UserId, len(idList))
 		ptsCount = int32(len(idList))
+
+		// Write user_pts_updates before RPC return to guarantee getDifference completeness
+		updateUnpin := mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
+			Pinned:    false,
+			Peer_PEER: peer.ToPeer(),
+			Messages:  idList,
+			Pts_INT32: pts,
+			PtsCount:  ptsCount,
+		}).To_Update()
+		c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts, ptsCount, updateUnpin)
+
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{
 				UserId:        in.UserId,
 				PermAuthKeyId: in.AuthKeyId,
-				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
-					Pinned:    false,
-					Peer_PEER: peer.ToPeer(),
-					Messages:  idList,
-					Pts_INT32: pts,
-					PtsCount:  ptsCount,
-				}).To_Update()),
+				Updates:       mtproto.MakeUpdatesByUpdates(updateUnpin),
 			})
 
 		// inbox

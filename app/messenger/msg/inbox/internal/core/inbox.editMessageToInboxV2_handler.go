@@ -71,7 +71,8 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			PtsCount:        in.NewMessage.PtsCount,
 			Message_MESSAGE: in.NewMessage.Message,
 		}).To_Update()
-		c.persistPtsUpdate(c.ctx, in.UserId, updateEditMessage)
+		// Note: sender's user_pts_updates already written by msg service before RPC return
+		// (in editOutboxMessageV2), no need to persist again here.
 
 		_, err := c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 			UserId:        in.UserId,

@@ -93,6 +93,14 @@ func (c *MsgCore) msgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistory
 	pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(ctx, in.UserId)
 	ptsCount = 1
 
+	// Write user_pts_updates before RPC return to guarantee getDifference completeness
+	c.svcCtx.Dao.AddToPtsQueue(ctx, in.UserId, pts, ptsCount, mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+		Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
+		MaxId:     maxId,
+		Pts_INT32: pts,
+		PtsCount:  ptsCount,
+	}).To_Update())
+
 	_, _ = c.svcCtx.Dao.InboxClient.InboxReadInboxHistory(
 		ctx,
 		&inbox.TLInboxReadInboxHistory{

@@ -77,15 +77,19 @@ func (c *MsgCore) deleteUserMessages(in *msg.TLMsgDeleteMessages) (*mtproto.Mess
 	pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, in.UserId, len(in.Id))
 	ptsCount = int32(len(in.Id))
 
+	// Write user_pts_updates before RPC return to guarantee getDifference completeness
+	updateDeleteMessages := mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
+		Messages:  in.Id,
+		Pts_INT32: pts,
+		PtsCount:  ptsCount,
+	}).To_Update()
+	c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts, ptsCount, updateDeleteMessages)
+
 	// me
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 		UserId:        in.UserId,
 		PermAuthKeyId: in.AuthKeyId,
-		Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
-			Messages:  in.Id,
-			Pts_INT32: pts,
-			PtsCount:  ptsCount,
-		}).To_Update()),
+		Updates:       mtproto.MakeUpdatesByUpdates(updateDeleteMessages),
 	})
 
 	if in.Revoke {

@@ -39,9 +39,9 @@ biz:
 	@echo "build biz..."
 	@go build -ldflags ${ldflags} -o teamgramd/bin/biz -tags=jsoniter app/service/biz/biz/cmd/biz/*.go
 
-msgtransfer:
-	@echo "build msgtransfer..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msgtransfer -tags=jsoniter app/messenger/msg/msgtransfer/cmd/msgtransfer/*.go
+#msgtransfer:
+#	@echo "build msgtransfer..."
+#	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msgtransfer -tags=jsoniter app/messenger/msg/msgtransfer/cmd/msgtransfer/*.go
 
 msg:
 	@echo "build msg..."

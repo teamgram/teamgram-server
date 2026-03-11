@@ -104,6 +104,15 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 	pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId)
 	ptsCount = 1
 
+	// Write user_pts_updates before RPC return to guarantee getDifference completeness
+	updateReadHistory := mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+		Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
+		MaxId:     maxId,
+		Pts_INT32: pts,
+		PtsCount:  ptsCount,
+	}).To_Update()
+	c.svcCtx.Dao.AddToPtsQueue(c.ctx, in.UserId, pts, ptsCount, updateReadHistory)
+
 	// result
 	return threading2.WrapperGoFunc(
 		c.ctx,
@@ -113,12 +122,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 		}).To_Messages_AffectedMessages(),
 		func(ctx context.Context) {
 			// syncNotMe
-			syncUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
-				Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
-				MaxId:     maxId,
-				Pts_INT32: pts,
-				PtsCount:  ptsCount,
-			}).To_Update())
+			syncUpdates := mtproto.MakeUpdatesByUpdates(updateReadHistory)
 
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        in.UserId,
