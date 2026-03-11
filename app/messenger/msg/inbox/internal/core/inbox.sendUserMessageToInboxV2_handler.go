@@ -46,22 +46,34 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			isUseV3 = true
 		}
 
-		//boxList := in.GetBoxList()
 		for _, inBox := range in.GetBoxList() {
 			if isUseV3 {
+				// V3: pts allocated here in inbox consumer
 				inBox.Pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.FromId)
 				inBox.PtsCount = 1
-			}
 
-			err := c.svcCtx.Dao.SendMessageToOutboxV1(
-				c.ctx,
-				in.FromId,
-				mtproto.MakePeerUtil(in.PeerType, in.PeerId),
-				inBox)
-			if err != nil {
-				// TODO: handle error
-				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
-				return nil, err
+				// V3: write outbox + user_pts_updates together (pts allocated above)
+				err := c.svcCtx.Dao.SendMessageToOutboxV1(
+					c.ctx,
+					in.FromId,
+					mtproto.MakePeerUtil(in.PeerType, in.PeerId),
+					inBox)
+				if err != nil {
+					c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+					return nil, err
+				}
+			} else {
+				// V2: user_pts_updates already written by msg service before RPC return,
+				// only write outbox message to DB here (skip pts write to avoid duplicates).
+				err := c.svcCtx.Dao.SendMessageToOutboxV1NoPts(
+					c.ctx,
+					in.FromId,
+					mtproto.MakePeerUtil(in.PeerType, in.PeerId),
+					inBox)
+				if err != nil {
+					c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+					return nil, err
+				}
 			}
 
 			// TODO: handle sendToSelfUser
@@ -88,9 +100,8 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 				Pts_INT32:       inBox.Pts,
 				PtsCount:        inBox.PtsCount,
 			}).To_Update()
-			c.persistPtsUpdate(c.ctx, inBox.UserId, updateNewMessage)
 
-			_, err = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+			_, err := c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        inBox.UserId,
 				PermAuthKeyId: in.FromAuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdatesUsersChats(
@@ -98,6 +109,9 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 					in.Chats,
 					updateNewMessage),
 			})
+			if err != nil {
+				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - SyncUpdatesNotMe error: %v", err)
+			}
 		}
 
 		if isUseV3 {

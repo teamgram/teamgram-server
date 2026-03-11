@@ -583,6 +583,16 @@ func (d *Dao) DeletePhoneCallHistory(ctx context.Context, userId int64) ([]int32
 }
 
 func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outMsgBox *mtproto.MessageBox) error {
+	return d.sendMessageToOutboxV1(ctx, fromId, peer, outMsgBox, true)
+}
+
+// SendMessageToOutboxV1NoPts writes the outbox message to DB without writing
+// user_pts_updates (caller is responsible for pts persistence).
+func (d *Dao) SendMessageToOutboxV1NoPts(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outMsgBox *mtproto.MessageBox) error {
+	return d.sendMessageToOutboxV1(ctx, fromId, peer, outMsgBox, false)
+}
+
+func (d *Dao) sendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outMsgBox *mtproto.MessageBox, writePts bool) error {
 	message := outMsgBox.Message
 	mData, _ := jsonx.Marshal(outMsgBox.GetMessage())
 	outBoxMsgId := outMsgBox.MessageId
@@ -639,14 +649,16 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 			}
 		}
 
-		_, err = d.AddToPtsQueueTx(tx, fromId, outMsgBox.Pts, outMsgBox.PtsCount, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
-			Message_MESSAGE: outMsgBox.Message,
-			Pts_INT32:       outMsgBox.Pts,
-			PtsCount:        outMsgBox.PtsCount,
-		}).To_Update())
-		if err != nil {
-			result.Err = err
-			return
+		if writePts {
+			_, err = d.AddToPtsQueueTx(tx, fromId, outMsgBox.Pts, outMsgBox.PtsCount, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+				Message_MESSAGE: outMsgBox.Message,
+				Pts_INT32:       outMsgBox.Pts,
+				PtsCount:        outMsgBox.PtsCount,
+			}).To_Update())
+			if err != nil {
+				result.Err = err
+				return
+			}
 		}
 	})
 
@@ -742,6 +754,18 @@ func (d *Dao) sendMessageToOutboxV2(ctx context.Context, fromId int64, peer *mtp
 		TtlPeriod:         0,
 		HasReaction:       false,
 	}).To_MessageBox()
+
+	// Write sender's user_pts_updates before RPC return to guarantee
+	// getDifference completeness for the sender.
+	if out && pts > 0 {
+		if _, err = d.AddToPtsQueueE(ctx, fromId, pts, 1, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+			Message_MESSAGE: message,
+			Pts_INT32:       pts,
+			PtsCount:        1,
+		}).To_Update()); err != nil {
+			logx.WithContext(ctx).Errorf("sendMessageToOutboxV2 - AddToPtsQueueE error, user_id: %d, pts: %d, err: %v", fromId, pts, err)
+		}
+	}
 
 	return outMsgBox, nil
 }

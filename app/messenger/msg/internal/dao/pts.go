@@ -61,3 +61,28 @@ func (d *Dao) AddToPtsQueueTx(tx *sqlx.Tx, userId int64, pts, ptsCount int32, up
 	i, _, err := d.UserPtsUpdatesDAO.InsertTx(tx, do)
 	return int32(i), err
 }
+
+// CheckPtsContinuity checks whether a user's pts sequence is continuous
+// starting from afterPts. Returns any gaps found as (expectedPts, actualPts) pairs.
+func (d *Dao) CheckPtsContinuity(ctx context.Context, userId int64, afterPts int32) (gaps [][2]int32, err error) {
+	rows, err := d.UserPtsUpdatesDAO.SelectByGtPts(ctx, userId, afterPts)
+	if err != nil {
+		return nil, err
+	}
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	expectedPts := afterPts
+	for _, row := range rows {
+		nextExpected := expectedPts + row.PtsCount
+		if row.Pts != nextExpected {
+			gaps = append(gaps, [2]int32{nextExpected, row.Pts})
+			logx.WithContext(ctx).Errorf("pts gap detected - user_id: %d, expected_pts: %d, actual_pts: %d",
+				userId, nextExpected, row.Pts)
+		}
+		expectedPts = row.Pts
+	}
+
+	return gaps, nil
+}

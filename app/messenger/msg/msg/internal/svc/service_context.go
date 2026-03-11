@@ -67,9 +67,5 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 		svcCtx.MsgPlugin = svcCtx.Dao
 	}
 
-	if c.MsgTransferClient != nil {
-		svcCtx.Dao.ShardingMsgTransferClient = dao.NewShardingMsgTransferClient(*c.MsgTransferClient)
-	}
-
 	return svcCtx
 }

@@ -17,7 +17,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/threading"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
@@ -32,70 +31,60 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 
 			switch protoreflect.FullName(method) {
 			case proto.MessageName((*sync.TLSyncUpdatesMe)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
+				c := core.New(ctx, svcCtx)
 
-					r := new(sync.TLSyncUpdatesMe)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Error(err.Error())
-						return
-					}
-					c.Logger.Debugf("sync.updatesMe - request: %s", r)
+				r := new(sync.TLSyncUpdatesMe)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Error(err.Error())
+					return
+				}
+				c.Logger.Debugf("sync.updatesMe - request: %s", r)
 
-					c.SyncUpdatesMe(r)
-				})
+				c.SyncUpdatesMe(r)
 			case proto.MessageName((*sync.TLSyncUpdatesNotMe)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
+				c := core.New(ctx, svcCtx)
 
-					r := new(sync.TLSyncUpdatesNotMe)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Error(err.Error())
-						return
-					}
-					c.Logger.Debugf("sync.updatesNotMe - request: %s", r)
+				r := new(sync.TLSyncUpdatesNotMe)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Error(err.Error())
+					return
+				}
+				c.Logger.Debugf("sync.updatesNotMe - request: %s", r)
 
-					c.SyncUpdatesNotMe(r)
-				})
+				c.SyncUpdatesNotMe(r)
 			case proto.MessageName((*sync.TLSyncPushUpdates)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
+				c := core.New(ctx, svcCtx)
 
-					r := new(sync.TLSyncPushUpdates)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Error(err.Error())
-						return
-					}
-					c.Logger.Debugf("sync.pushUpdates - request: %s", r)
+				r := new(sync.TLSyncPushUpdates)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Error(err.Error())
+					return
+				}
+				c.Logger.Debugf("sync.pushUpdates - request: %s", r)
 
-					c.SyncPushUpdates(r)
-				})
+				c.SyncPushUpdates(r)
 			case proto.MessageName((*sync.TLSyncPushRpcResult)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
+				c := core.New(ctx, svcCtx)
 
-					r := new(sync.TLSyncPushRpcResult)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Error(err.Error())
-						return
-					}
-					c.Logger.Debugf("sync.pushRpcResult - request: %s", r)
+				r := new(sync.TLSyncPushRpcResult)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Error(err.Error())
+					return
+				}
+				c.Logger.Debugf("sync.pushRpcResult - request: %s", r)
 
-					c.SyncPushRpcResult(r)
-				})
+				c.SyncPushRpcResult(r)
 			case proto.MessageName((*sync.TLSyncBroadcastUpdates)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
+				c := core.New(ctx, svcCtx)
 
-					r := new(sync.TLSyncBroadcastUpdates)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Error(err.Error())
-						return
-					}
-					c.Logger.Debugf("sync.broadcastUpdates - request: %s", r)
+				r := new(sync.TLSyncBroadcastUpdates)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Error(err.Error())
+					return
+				}
+				c.Logger.Debugf("sync.broadcastUpdates - request: %s", r)
 
-					c.SyncBroadcastUpdates(r)
-				})
+				c.SyncBroadcastUpdates(r)
 			default:
 				err := fmt.Errorf("invalid key: %s", key)
 				logx.Error(err.Error())
