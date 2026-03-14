@@ -126,6 +126,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			}
 
 			dstMessage.Message = newMessage.Message
+			dstMessage.Action = newMessage.Action
 			dstMessage.Media = newMessage.Media
 			dstMessage.ReplyMarkup = newMessage.ReplyMarkup
 			dstMessage.Entities = newMessage.Entities
