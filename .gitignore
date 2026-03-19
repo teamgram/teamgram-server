@@ -64,10 +64,6 @@ app/service/dfs/internal/imaging/abc/abc
 /v2/
 v2
 
-.claude/
-CLAUDE.md
-.cursor
-
 docs/specs
 
 .pending
