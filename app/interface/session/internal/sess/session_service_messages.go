@@ -23,7 +23,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

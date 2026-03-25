@@ -22,11 +22,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/client"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

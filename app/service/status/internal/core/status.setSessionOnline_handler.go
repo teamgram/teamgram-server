@@ -19,10 +19,11 @@
 package core
 
 import (
+	"fmt"
 	"strconv"
 
-	"github.com/teamgooo/teamgooo-server/app/service/status/status"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
@@ -37,24 +38,26 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		sess, _ = in.Session.(*status.TLSessionEntry)
 	)
 
-	sessData, _ := jsonx.Marshal(sess)
-	err := c.svcCtx.Dao.KV.HsetCtx(
-		c.ctx,
-		userK,
-		strconv.FormatInt(sess.AuthKeyId, 10),
-		string(sessData))
-	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
-		return nil, err
+	if in.UserId <= 0 || sess == nil || sess.AuthKeyId == 0 {
+		return nil, fmt.Errorf("status.setSessionOnline - invalid params: userId=%d, session=%v", in.UserId, sess)
 	}
 
-	_, err = c.svcCtx.Dao.KV.ExpireCtx(
+	sessData, err := jsonx.Marshal(sess)
+	if err != nil {
+		c.Logger.Errorf("status.setSessionOnline - marshal session error: %v", err)
+		return nil, fmt.Errorf("status.setSessionOnline - marshal session: %w", err)
+	}
+
+	_, err = c.svcCtx.Dao.KV.EvalCtx(
 		c.ctx,
+		hsetAndExpireScript,
 		userK,
+		strconv.FormatInt(sess.AuthKeyId, 10),
+		string(sessData),
 		c.svcCtx.Config.StatusExpire)
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
-		return nil, err
+		c.Logger.Errorf("status.setSessionOnline - eval(userId=%d) error: %v", in.UserId, err)
+		return nil, fmt.Errorf("status.setSessionOnline - eval: %w", err)
 	}
 
 	return tg.BoolTrue, nil

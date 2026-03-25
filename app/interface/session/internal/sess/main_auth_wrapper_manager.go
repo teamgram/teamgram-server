@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/dao"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/dao"
 )
 
 type MainAuthWrapperManager struct {

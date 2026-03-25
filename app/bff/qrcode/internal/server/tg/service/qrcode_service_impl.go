@@ -13,8 +13,8 @@ package service
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/internal/core"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/internal/core"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthExportLoginToken

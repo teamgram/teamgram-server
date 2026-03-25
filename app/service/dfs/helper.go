@@ -17,9 +17,9 @@
 package dfshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/dfs/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/dfs/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/dfs/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/svc"
 )
 
 type (

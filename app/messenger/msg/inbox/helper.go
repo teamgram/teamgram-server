@@ -17,9 +17,9 @@
 package inboxhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/inbox/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/inbox/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/inbox/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/internal/svc"
 )
 
 type (

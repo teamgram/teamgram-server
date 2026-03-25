@@ -17,9 +17,9 @@
 package fileshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/files/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/files/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/files/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/files/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/files/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/files/internal/svc"
 )
 
 type (

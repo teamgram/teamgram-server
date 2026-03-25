@@ -13,8 +13,8 @@ package msgservice
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/msg/msg"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"

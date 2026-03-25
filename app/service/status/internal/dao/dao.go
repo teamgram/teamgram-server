@@ -19,12 +19,12 @@
 package dao
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/status/internal/config"
 	"github.com/teamgram/marmota/pkg/stores/kv"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/internal/config"
 )
 
 type Dao struct {
-	KV kv.Store
+	KV kv.ExtStore
 }
 
 func New(c config.Config) *Dao {

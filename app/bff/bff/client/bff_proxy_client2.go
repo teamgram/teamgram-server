@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

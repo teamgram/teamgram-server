@@ -13,8 +13,8 @@ package mt
 import (
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
 var (

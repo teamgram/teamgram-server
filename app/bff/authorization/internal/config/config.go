@@ -17,8 +17,8 @@
 package config
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/code/conf"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 )

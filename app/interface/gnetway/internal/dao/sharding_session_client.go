@@ -9,9 +9,9 @@ package dao
 import (
 	"errors"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/config"
-	sessionclient "github.com/teamgooo/teamgooo-server/app/interface/session/client"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
+	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/hash"

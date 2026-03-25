@@ -19,8 +19,8 @@ package tg
 import (
 	"errors"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface/ecode"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
 
 type (

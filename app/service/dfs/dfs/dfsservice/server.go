@@ -11,7 +11,7 @@
 package dfsservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/dfs/dfs"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 
 	"github.com/cloudwego/kitex/server"
 )

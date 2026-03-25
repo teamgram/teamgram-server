@@ -11,8 +11,8 @@
 package codeclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/code/code/codeservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

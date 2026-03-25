@@ -13,8 +13,8 @@ package updatesservice
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/updates/updates"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"

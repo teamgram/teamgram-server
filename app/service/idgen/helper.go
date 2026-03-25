@@ -17,9 +17,9 @@
 package idgenhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/svc"
 )
 
 type (

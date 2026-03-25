@@ -16,8 +16,8 @@
 package netserver
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type AuthKeyUtil = authKeyUtil

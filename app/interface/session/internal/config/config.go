@@ -19,9 +19,9 @@
 package config
 
 import (
-	bff_proxy_client "github.com/teamgooo/teamgooo-server/app/bff/bff/client"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
-	// "github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	bff_proxy_client "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	// "github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {

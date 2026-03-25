@@ -17,9 +17,9 @@
 package userhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/svc"
 )
 
 type (

@@ -17,9 +17,9 @@
 package dao
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/config"
-	media_client "github.com/teamgooo/teamgooo-server/app/service/media/client"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
+	media_client "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )

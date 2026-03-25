@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/errno"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/errno"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/remote"

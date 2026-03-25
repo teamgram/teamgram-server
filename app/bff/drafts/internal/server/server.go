@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/drafts/drafts/draftsservice"
-	"github.com/teamgooo/teamgooo-server/app/bff/drafts/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/drafts/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/drafts/internal/svc"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/drafts/draftsservice"
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

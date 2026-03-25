@@ -11,8 +11,8 @@
 package chatclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/chat/chat/chatservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat/chatservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

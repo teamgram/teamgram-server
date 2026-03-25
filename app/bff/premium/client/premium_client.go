@@ -13,8 +13,8 @@ package premiumclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/premium/premium/premiumservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/premium/premium/premiumservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

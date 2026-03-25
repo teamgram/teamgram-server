@@ -23,10 +23,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface/ecode"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/bytedance/gopkg/lang/dirtmake"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -48,7 +48,7 @@ func NewZRpcCodec(debug bool) remote.Codec {
 	return &ZRpcCodec{printDebugInfo: debug}
 }
 
-func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remote.ByteBuffer) error {
+func (c *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remote.ByteBuffer) error {
 	var validData interface{}
 	switch message.MessageType() {
 	case remote.Exception:
@@ -72,7 +72,7 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 	_ = validData.(iface.TLObject).Encode(x, 201)
 	payload := x.Bytes()
 
-	if jc.printDebugInfo {
+	if c.printDebugInfo {
 		klog.Infof("encoded payload: %s\n", hex.EncodeToString(payload))
 	}
 
@@ -86,7 +86,7 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 	}
 
 	// Encode Meta using binary format
-	buf, err := jc.encodeMeta(data)
+	buf, err := c.encodeMeta(data)
 	if err != nil {
 		return perrors.NewProtocolError(fmt.Errorf("binary encode, marshal data failed: %w", err))
 	}
@@ -116,7 +116,7 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 	return nil
 }
 
-func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remote.ByteBuffer) error {
+func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remote.ByteBuffer) error {
 	// Read magic number (4 bytes)
 	magic := dirtmake.Bytes(4, 4)
 	_, err := in.ReadBinary(magic)
@@ -144,7 +144,7 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	}
 
 	// Decode Meta from binary format
-	data, err := jc.decodeMeta(buf)
+	data, err := c.decodeMeta(buf)
 	if err != nil {
 		return perrors.NewProtocolError(fmt.Errorf("binary decode, unmarshal Meta data failed: %w", err))
 	}
@@ -159,7 +159,7 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 		return err
 	}
 
-	if jc.printDebugInfo {
+	if c.printDebugInfo {
 		klog.Infof("encoded payload: %s\n", hex.EncodeToString(data.Payload))
 	}
 
@@ -188,12 +188,12 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	return nil
 }
 
-func (jc *ZRpcCodec) Name() string {
+func (c *ZRpcCodec) Name() string {
 	return "ZRPC"
 }
 
 // encodeMeta encodes Meta struct into binary format
-func (jc *ZRpcCodec) encodeMeta(meta *Meta) ([]byte, error) {
+func (c *ZRpcCodec) encodeMeta(meta *Meta) ([]byte, error) {
 	// Calculate buffer size
 	size := 0
 	size += 2 + len(meta.ServiceName) // ServiceName length (2 bytes) + data
@@ -256,7 +256,7 @@ func (jc *ZRpcCodec) encodeMeta(meta *Meta) ([]byte, error) {
 }
 
 // decodeMeta decodes Meta struct from binary format
-func (jc *ZRpcCodec) decodeMeta(buf []byte) (*Meta, error) {
+func (c *ZRpcCodec) decodeMeta(buf []byte) (*Meta, error) {
 	if len(buf) < 4 {
 		return nil, fmt.Errorf("buffer too small")
 	}

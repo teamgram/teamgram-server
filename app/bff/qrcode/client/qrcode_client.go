@@ -13,8 +13,8 @@ package qrcodeclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/qrcode/qrcodeservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/qrcode/qrcodeservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

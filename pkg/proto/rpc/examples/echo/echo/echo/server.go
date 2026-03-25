@@ -2,7 +2,7 @@
 package echo
 
 import (
-	api "github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
+	api "github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
 
 	server "github.com/cloudwego/kitex/server"
 )

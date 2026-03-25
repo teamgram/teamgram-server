@@ -20,10 +20,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/codec"
-	echoclient "github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/client"
-	api "github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/codec"
+	echoclient "github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/client"
+	api "github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo/echo"
 
 	"github.com/cloudwego/kitex/client"
 )

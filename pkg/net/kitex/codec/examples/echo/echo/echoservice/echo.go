@@ -14,8 +14,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"

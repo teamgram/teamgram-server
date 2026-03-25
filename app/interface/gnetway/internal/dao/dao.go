@@ -7,7 +7,7 @@
 package dao
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
 )
 
 type Dao struct {

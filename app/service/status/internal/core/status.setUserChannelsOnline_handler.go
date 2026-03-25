@@ -19,8 +19,8 @@
 package core
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/status/status"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

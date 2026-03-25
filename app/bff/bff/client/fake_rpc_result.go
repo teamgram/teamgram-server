@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

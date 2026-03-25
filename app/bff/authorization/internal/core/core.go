@@ -23,13 +23,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/svc"
-	msgpb "github.com/teamgooo/teamgooo-server/app/messenger/msg/msg/msg"
-	"github.com/teamgooo/teamgooo-server/pkg/code/conf"
-	"github.com/teamgooo/teamgooo-server/pkg/env2"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
-	"github.com/teamgooo/teamgooo-server/pkg/phonenumber"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/svc"
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
+	"github.com/teamgram/teamgram-server/v2/pkg/env2"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/phonenumber"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

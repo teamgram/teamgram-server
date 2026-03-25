@@ -17,9 +17,9 @@
 package passporthelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/passport/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/passport/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/passport/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/passport/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/passport/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/passport/internal/svc"
 )
 
 type (

@@ -11,7 +11,7 @@
 package messageservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 
 	"github.com/cloudwego/kitex/server"
 )

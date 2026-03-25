@@ -7,7 +7,7 @@
 package core
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
 )
 
 func (c *EchoCore) EchoEcho(in *echo.TLEchoEcho) (resp *echo.Echo, err error) {

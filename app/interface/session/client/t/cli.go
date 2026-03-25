@@ -20,10 +20,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/client"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session/sessionservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session/sessionservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/zeromicro/go-zero/core/discov"

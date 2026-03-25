@@ -17,9 +17,9 @@
 package usernamehelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/internal/svc"
 )
 
 type (

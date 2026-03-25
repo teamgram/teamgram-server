@@ -14,8 +14,8 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/svc"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

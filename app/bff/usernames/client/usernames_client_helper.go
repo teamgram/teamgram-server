@@ -11,8 +11,8 @@
 package usernamesclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/usernames/usernames/usernamesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/usernames/usernamesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

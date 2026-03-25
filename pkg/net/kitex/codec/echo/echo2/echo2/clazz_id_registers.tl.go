@@ -14,7 +14,7 @@
 package echo2
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
 func init() {

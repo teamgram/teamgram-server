@@ -23,10 +23,10 @@ import (
 	"time"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
-	echoclient "github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/client"
-	api "github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	echoclient "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/client"
+	api "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/discov"

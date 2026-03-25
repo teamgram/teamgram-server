@@ -11,8 +11,8 @@
 package syncclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/sync/syncservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync/syncservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

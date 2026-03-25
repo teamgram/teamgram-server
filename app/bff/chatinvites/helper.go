@@ -17,9 +17,9 @@
 package chatinviteshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/chatinvites/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/chatinvites/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/chatinvites/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/internal/svc"
 )
 
 type (

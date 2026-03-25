@@ -11,8 +11,8 @@
 package accountclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/account/account/accountservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

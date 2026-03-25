@@ -9,8 +9,8 @@ package echoclient
 import (
 	"context"
 
-	api "github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo/echo"
+	api "github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo/echo"
 )
 
 type EchoClient interface {

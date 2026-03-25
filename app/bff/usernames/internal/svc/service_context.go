@@ -17,7 +17,7 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/usernames/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 )
 
 type ServiceContext struct {

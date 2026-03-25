@@ -30,7 +30,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 )
 
 /*

@@ -11,7 +11,7 @@
 package sessionservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 
 	"github.com/cloudwego/kitex/server"
 )

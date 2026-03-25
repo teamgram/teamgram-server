@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/configuration/configurationservice"
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/internal/svc"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

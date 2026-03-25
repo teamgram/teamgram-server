@@ -13,8 +13,8 @@ package service
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/userchannelprofiles/internal/core"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/userchannelprofiles/internal/core"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateProfile

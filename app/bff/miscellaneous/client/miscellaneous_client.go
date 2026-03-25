@@ -13,8 +13,8 @@ package miscellaneousclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/miscellaneous/miscellaneous/miscellaneousservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/miscellaneous/miscellaneous/miscellaneousservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

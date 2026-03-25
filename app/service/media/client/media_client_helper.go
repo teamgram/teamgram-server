@@ -11,8 +11,8 @@
 package mediaclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/media/media/mediaservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media/mediaservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

@@ -13,7 +13,7 @@ package main
 import (
 	"github.com/teamgram/marmota/pkg/commands"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/internal/server"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/server"
 )
 
 func main() {

@@ -17,9 +17,9 @@
 package premiumhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/premium/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/premium/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/premium/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/premium/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/premium/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/premium/internal/svc"
 )
 
 type (

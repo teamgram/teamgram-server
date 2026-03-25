@@ -21,7 +21,7 @@ package sess
 import (
 	"container/list"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

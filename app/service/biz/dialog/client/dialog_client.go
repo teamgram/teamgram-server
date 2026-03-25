@@ -13,9 +13,9 @@ package dialogclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/dialog/dialog"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/dialog/dialog/dialogservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

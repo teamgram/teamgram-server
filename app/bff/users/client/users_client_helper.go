@@ -11,8 +11,8 @@
 package usersclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/users/users/usersservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/users/users/usersservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

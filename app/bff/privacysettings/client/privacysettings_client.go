@@ -13,8 +13,8 @@ package privacysettingsclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/privacysettings/privacysettings/privacysettingsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/privacysettings/privacysettings/privacysettingsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

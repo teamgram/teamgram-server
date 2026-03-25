@@ -20,8 +20,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/svc"
 	"github.com/teamgram/marmota/pkg/cache"
 
 	"github.com/zeromicro/go-zero/core/logx"

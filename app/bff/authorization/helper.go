@@ -17,9 +17,9 @@
 package authorizationhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/svc"
 )
 
 type (

@@ -11,7 +11,7 @@
 package service
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/miscellaneous/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/miscellaneous/internal/svc"
 )
 
 type Service struct {

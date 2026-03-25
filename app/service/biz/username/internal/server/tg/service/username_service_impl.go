@@ -13,9 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/internal/core"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/username"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/username"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

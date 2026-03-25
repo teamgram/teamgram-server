@@ -19,8 +19,8 @@ package core
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/internal/svc"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

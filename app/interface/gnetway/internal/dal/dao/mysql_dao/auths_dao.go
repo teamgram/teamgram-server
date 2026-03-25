@@ -17,7 +17,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dal/dataobject"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
 	"github.com/zeromicro/go-zero/core/logx"

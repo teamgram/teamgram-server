@@ -13,7 +13,7 @@ package main
 import (
 	"github.com/teamgram/marmota/pkg/commands"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/miscellaneous/internal/server"
+	"github.com/teamgram/teamgram-server/v2/app/bff/miscellaneous/internal/server"
 )
 
 func main() {

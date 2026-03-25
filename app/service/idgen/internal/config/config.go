@@ -17,7 +17,7 @@
 package config
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 

@@ -11,8 +11,8 @@
 package configurationclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/configuration/configurationservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

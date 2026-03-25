@@ -13,9 +13,9 @@ package codeclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/code/code"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/code/code/codeservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

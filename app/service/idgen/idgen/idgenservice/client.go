@@ -13,8 +13,8 @@ package idgenservice
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/idgen"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"

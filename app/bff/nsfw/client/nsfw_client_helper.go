@@ -11,8 +11,8 @@
 package nsfwclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/nsfw/nsfw/nsfwservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/nsfw/nsfw/nsfwservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

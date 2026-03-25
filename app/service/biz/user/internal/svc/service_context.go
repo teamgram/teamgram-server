@@ -17,8 +17,8 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/dao"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dao"
 )
 
 type ServiceContext struct {

@@ -11,7 +11,7 @@
 package service
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo2/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/internal/svc"
 )
 
 type Service struct {

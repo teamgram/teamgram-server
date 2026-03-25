@@ -17,9 +17,9 @@
 package sessionhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/svc"
 )
 
 type (

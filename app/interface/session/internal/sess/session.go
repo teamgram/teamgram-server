@@ -23,10 +23,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

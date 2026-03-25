@@ -17,7 +17,7 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/config"
 )
 
 type ServiceContext struct {
