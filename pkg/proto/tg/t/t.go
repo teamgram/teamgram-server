@@ -8,7 +8,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func Match(m *tg.InputUser, f ...interface{}) {

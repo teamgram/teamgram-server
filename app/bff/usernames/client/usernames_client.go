@@ -13,8 +13,8 @@ package usernamesclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/usernames/usernames/usernamesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/usernames/usernamesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

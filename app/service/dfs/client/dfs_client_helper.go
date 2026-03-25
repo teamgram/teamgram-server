@@ -11,8 +11,8 @@
 package dfsclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/dfs/dfs/dfsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs/dfsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

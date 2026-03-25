@@ -19,10 +19,10 @@
 package dao
 
 import (
-	bff_proxy_client "github.com/teamgooo/teamgooo-server/app/bff/bff/client"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/config"
-	authsessionclient "github.com/teamgooo/teamgooo-server/app/service/authsession/client"
-	statusclient "github.com/teamgooo/teamgooo-server/app/service/status/client"
+	bff_proxy_client "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/config"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	statusclient "github.com/teamgram/teamgram-server/v2/app/service/status/client"
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/marmota/pkg/net/ip"
 )

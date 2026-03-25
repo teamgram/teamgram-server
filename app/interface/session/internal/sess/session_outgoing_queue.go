@@ -22,7 +22,7 @@ import (
 	"container/list"
 	"math"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
 
 const (

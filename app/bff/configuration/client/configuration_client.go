@@ -13,8 +13,8 @@ package configurationclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/configuration/configuration/configurationservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

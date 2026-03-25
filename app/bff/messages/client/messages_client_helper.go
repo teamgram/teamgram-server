@@ -11,8 +11,8 @@
 package messagesclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/messages/messages/messagesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/messages/messagesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

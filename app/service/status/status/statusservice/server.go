@@ -11,7 +11,7 @@
 package statusservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/status/status"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 
 	"github.com/cloudwego/kitex/server"
 )

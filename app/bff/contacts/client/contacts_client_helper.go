@@ -11,8 +11,8 @@
 package contactsclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/contacts/contacts/contactsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/contacts/contacts/contactsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

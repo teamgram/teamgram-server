@@ -10,11 +10,11 @@ import (
 	"flag"
 	"log"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/codec"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/config"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/codec"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/config"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/svc"
 
 	"github.com/cloudwego/kitex/server"
 )

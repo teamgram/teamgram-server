@@ -17,9 +17,9 @@
 package qrcodehelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/internal/svc"
 )
 
 type (

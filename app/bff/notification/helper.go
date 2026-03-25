@@ -17,9 +17,9 @@
 package notificationhelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/notification/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/notification/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/notification/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/svc"
 )
 
 type (

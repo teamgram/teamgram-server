@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/idgen/idgenservice"
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/internal/svc"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen/idgenservice"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

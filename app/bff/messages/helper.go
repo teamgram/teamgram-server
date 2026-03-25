@@ -17,9 +17,9 @@
 package messageshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/messages/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/messages/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/messages/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
 )
 
 type (

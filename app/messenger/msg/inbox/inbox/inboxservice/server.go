@@ -11,7 +11,7 @@
 package inboxservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/inbox/inbox"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 
 	"github.com/cloudwego/kitex/server"
 )

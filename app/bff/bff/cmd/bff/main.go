@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/bff/internal/server"
+	"github.com/teamgram/teamgram-server/v2/app/bff/bff/internal/server"
 	"github.com/teamgram/marmota/pkg/commands"
 )
 

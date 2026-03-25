@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/svc"
-	"github.com/teamgooo/teamgooo-server/app/service/media/media/mediaservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media/mediaservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

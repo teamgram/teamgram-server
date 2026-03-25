@@ -11,7 +11,7 @@
 package mediaservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 
 	"github.com/cloudwego/kitex/server"
 )

@@ -17,9 +17,9 @@
 package chatshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/chats/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/chats/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/chats/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/svc"
 )
 
 type (

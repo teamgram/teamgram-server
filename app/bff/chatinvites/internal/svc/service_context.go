@@ -17,7 +17,7 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/chatinvites/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/internal/config"
 )
 
 type ServiceContext struct {

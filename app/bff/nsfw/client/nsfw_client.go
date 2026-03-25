@@ -13,8 +13,8 @@ package nsfwclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/nsfw/nsfw/nsfwservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/nsfw/nsfw/nsfwservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

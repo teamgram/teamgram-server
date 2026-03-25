@@ -11,7 +11,7 @@
 package userservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 	"github.com/cloudwego/kitex/server"
 )

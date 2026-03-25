@@ -9,7 +9,7 @@ package kitex
 import (
 	"net"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"

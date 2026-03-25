@@ -28,13 +28,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/config"
-	sessionclient "github.com/teamgooo/teamgooo-server/app/interface/session/client"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
+	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/hack"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -420,321 +420,321 @@ func (s *Server) onReqDHParams(c *connection, ctx *HandshakeStateCtx, request *m
 	// Synchronous execution instead of asyncRun
 	err = (func() error {
 		/*
-				### 4.1) RSA_PAD(data, server_public_key) mentioned above is implemented as follows:
+			### 4.1) RSA_PAD(data, server_public_key) mentioned above is implemented as follows:
 
-				- data_with_padding := data + random_padding_bytes; — where random_padding_bytes are chosen so that the
-				  resulting length of data_with_padding is precisely 192 bytes, and data is the TL-serialized data to be encrypted
-				  as before. One has to check that data is not longer than 144 bytes.
-				- data_pad_reversed := BYTE_REVERSE(data_with_padding); — is obtained from data_with_padding by
-				  reversing the byte order.
-				- a random 32-byte temp_key is generated.
-				- data_with_hash := data_pad_reversed + SHA256(temp_key + data_with_padding); — after this assignment,
-				  data_with_hash is exactly 224 bytes long.
-				- aes_encrypted := AES256_IGE(data_with_hash, temp_key, 0); — AES256-IGE encryption with zero IV.
-				- temp_key_xor := temp_key XOR SHA256(aes_encrypted); — adjusted key, 32 bytes
-				- key_aes_encrypted := temp_key_xor + aes_encrypted; — exactly 256 bytes (2048 bits) long
-				- The value of key_aes_encrypted is compared with the RSA-modulus of server_pubkey as a big-endian 2048-bit
-				  (256-byte) unsigned integer. If key_aes_encrypted turns out to be greater than or equal to the RSA modulus, the
-				  previous steps starting from the generation of new random temp_key are repeated. Otherwise the final step is
-				  performed:
-				- encrypted_data := RSA(key_aes_encrypted, server_pubkey); — 256-byte big-endian integer is elevated to
-				  the requisite power from the RSA public key modulo the RSA modulus, and the result is stored as a big-endian
-				  integer consisting of exactly 256 bytes (with leading zero bytes if required).
-			*/
+			- data_with_padding := data + random_padding_bytes; — where random_padding_bytes are chosen so that the
+			  resulting length of data_with_padding is precisely 192 bytes, and data is the TL-serialized data to be encrypted
+			  as before. One has to check that data is not longer than 144 bytes.
+			- data_pad_reversed := BYTE_REVERSE(data_with_padding); — is obtained from data_with_padding by
+			  reversing the byte order.
+			- a random 32-byte temp_key is generated.
+			- data_with_hash := data_pad_reversed + SHA256(temp_key + data_with_padding); — after this assignment,
+			  data_with_hash is exactly 224 bytes long.
+			- aes_encrypted := AES256_IGE(data_with_hash, temp_key, 0); — AES256-IGE encryption with zero IV.
+			- temp_key_xor := temp_key XOR SHA256(aes_encrypted); — adjusted key, 32 bytes
+			- key_aes_encrypted := temp_key_xor + aes_encrypted; — exactly 256 bytes (2048 bits) long
+			- The value of key_aes_encrypted is compared with the RSA-modulus of server_pubkey as a big-endian 2048-bit
+			  (256-byte) unsigned integer. If key_aes_encrypted turns out to be greater than or equal to the RSA modulus, the
+			  previous steps starting from the generation of new random temp_key are repeated. Otherwise the final step is
+			  performed:
+			- encrypted_data := RSA(key_aes_encrypted, server_pubkey); — 256-byte big-endian integer is elevated to
+			  the requisite power from the RSA public key modulo the RSA modulus, and the result is stored as a big-endian
+			  integer consisting of exactly 256 bytes (with leading zero bytes if required).
+		*/
 
-			// encryptedData := []byte(request.EncryptedData)
-			//
-			// log.Debugf("EncryptedData: len = %d, data: %s", len(request.EncryptedData), hex.EncodeToString(hack.Bytes(request.EncryptedData)))
+		// encryptedData := []byte(request.EncryptedData)
+		//
+		// log.Debugf("EncryptedData: len = %d, data: %s", len(request.EncryptedData), hex.EncodeToString(hack.Bytes(request.EncryptedData)))
 
-			if len(request.EncryptedData) < 256 {
-				logx.Error("need len(encryptedPQInnerData) < 256")
-				return fmt.Errorf("process Req_DHParams - len(encryptedPQInnerData) != 256")
-			}
+		if len(request.EncryptedData) < 256 {
+			logx.Error("need len(encryptedPQInnerData) < 256")
+			return fmt.Errorf("process Req_DHParams - len(encryptedPQInnerData) != 256")
+		}
 
-			//
-			// 1. 解密
-			innerData := rsa.Decrypt([]byte(request.EncryptedData))
-			if len(innerData) != 256 {
-				logx.Error("need len(encryptedPQInnerData) < 256")
-				return fmt.Errorf("process Req_DHParams - len(encryptedPQInnerData) != 256")
-			}
+		//
+		// 1. 解密
+		innerData := rsa.Decrypt([]byte(request.EncryptedData))
+		if len(innerData) != 256 {
+			logx.Error("need len(encryptedPQInnerData) < 256")
+			return fmt.Errorf("process Req_DHParams - len(encryptedPQInnerData) != 256")
+		}
 
-			// void Datacenter::aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length) {
-			// Datacenter::aesIgeEncryption(
-			//	innerDataBuffer->bytes() + keySize,
-			//	innerDataBuffer->bytes(),
-			//	innerDataBuffer->bytes() + encryptedDataSize + paddedDataSize,
-			//	true,
-			//	true,
-			//	paddedDataSize + SHA256_DIGEST_LENGTH);
-			//
+		// void Datacenter::aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length) {
+		// Datacenter::aesIgeEncryption(
+		//	innerDataBuffer->bytes() + keySize,
+		//	innerDataBuffer->bytes(),
+		//	innerDataBuffer->bytes() + encryptedDataSize + paddedDataSize,
+		//	true,
+		//	true,
+		//	paddedDataSize + SHA256_DIGEST_LENGTH);
+		//
 
-			key := innerData[:32]
-			// log.Debugf("key1: %s", hex.EncodeToString(key))
-			hash := crypto.Sha256Digest(innerData[32:])
-			for i := 0; i < 32; i++ {
-				key[i] = key[i] ^ hash[i]
-			}
-			// log.Debugf("key2: %s", hex.EncodeToString(key))
+		key := innerData[:32]
+		// log.Debugf("key1: %s", hex.EncodeToString(key))
+		hash := crypto.Sha256Digest(innerData[32:])
+		for i := 0; i < 32; i++ {
+			key[i] = key[i] ^ hash[i]
+		}
+		// log.Debugf("key2: %s", hex.EncodeToString(key))
 
-			paddedDataWithHash, err := crypto.NewAES256IGECryptor(key, zeroIV).Decrypt(innerData[32:])
-			if err != nil {
-				err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
-				logx.Error(err.Error())
-				return err
-			}
+		paddedDataWithHash, err := crypto.NewAES256IGECryptor(key, zeroIV).Decrypt(innerData[32:])
+		if err != nil {
+			err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
+			logx.Error(err.Error())
+			return err
+		}
 
-			// log.Debugf("paddedDataWithHash1: %s", hex.EncodeToString(paddedDataWithHash))
+		// log.Debugf("paddedDataWithHash1: %s", hex.EncodeToString(paddedDataWithHash))
 
-			//if !bytes.Equal(crypto.Sha256Digest(paddedDataWithHash[:192]), paddedDataWithHash[192:]) {
-			//	log.Error("process Req_DHParams - sha1Check error")
-			//	return nil, fmt.Errorf("process Req_DHParams - sha1Check error")
-			//}
+		//if !bytes.Equal(crypto.Sha256Digest(paddedDataWithHash[:192]), paddedDataWithHash[192:]) {
+		//	log.Error("process Req_DHParams - sha1Check error")
+		//	return nil, fmt.Errorf("process Req_DHParams - sha1Check error")
+		//}
 
-			for i, j := 0, 191; i < j; i, j = i+1, j-1 {
-				paddedDataWithHash[i], paddedDataWithHash[j] = paddedDataWithHash[j], paddedDataWithHash[i]
-			}
-			// log.Debugf("paddedDataWithHash2: %s", hex.EncodeToString(paddedDataWithHash))
+		for i, j := 0, 191; i < j; i, j = i+1, j-1 {
+			paddedDataWithHash[i], paddedDataWithHash[j] = paddedDataWithHash[j], paddedDataWithHash[i]
+		}
+		// log.Debugf("paddedDataWithHash2: %s", hex.EncodeToString(paddedDataWithHash))
 
-			// TODO
-			//if !checkSha1(encryptedPQInnerData, 256-SHA_DIGEST_LENGTH) {
-			//	log.Error("process Req_DHParams - sha1Check error")
-			//	return nil, fmt.Errorf("process Req_DHParams - sha1Check error")
-			//}
+		// TODO
+		//if !checkSha1(encryptedPQInnerData, 256-SHA_DIGEST_LENGTH) {
+		//	log.Error("process Req_DHParams - sha1Check error")
+		//	return nil, fmt.Errorf("process Req_DHParams - sha1Check error")
+		//}
 
+		// 2. 再检查一遍p_q_inner_data里的pq, p, q, nonce, server_nonce合法性
+		// 客户端传输数据解析
+		// PQ
+		checkPQInnerData := func(iPQ, iP, iQ string, iNonce, iServerNonce bin.Int128) error {
 			// 2. 再检查一遍p_q_inner_data里的pq, p, q, nonce, server_nonce合法性
 			// 客户端传输数据解析
 			// PQ
-			checkPQInnerData := func(iPQ, iP, iQ string, iNonce, iServerNonce bin.Int128) error {
-				// 2. 再检查一遍p_q_inner_data里的pq, p, q, nonce, server_nonce合法性
-				// 客户端传输数据解析
-				// PQ
-				if !bytes.Equal([]byte(iPQ), []byte(pq)) {
-					logx.Error("process Req_DHParams - Invalid p_q_inner_data.pq value")
-					return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.pq value")
-				}
-
-				// P
-				if !bytes.Equal([]byte(iP), p) {
-					logx.Error("process Req_DHParams - Invalid p_q_inner_data.p value")
-					return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.p value")
-				}
-
-				// Q
-				if !bytes.Equal([]byte(iQ), q) {
-					logx.Error("process Req_DHParams - Invalid p_q_inner_data.q value")
-					return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.q value")
-				}
-
-				// Nonce
-				if !(iNonce == request.Nonce) {
-					logx.Error("process Req_DHParams - Invalid Nonce")
-					return fmt.Errorf("process Req_DHParams - InvalidNonce")
-				}
-
-				// ServerNonce
-				if !(iServerNonce == request.ServerNonce) {
-					logx.Error("process Req_DHParams - Wrong ServerNonce")
-					return fmt.Errorf("process Req_DHParams - Wrong ServerNonce")
-				}
-
-				return nil
+			if !bytes.Equal([]byte(iPQ), []byte(pq)) {
+				logx.Error("process Req_DHParams - Invalid p_q_inner_data.pq value")
+				return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.pq value")
 			}
 
-			// 2. 反序列化出pqInnerData
-			//var (
-			//	newNonce2 bin.Int256
-			//)
-
-			d := bin.NewDecoder(paddedDataWithHash)
-			clazzID, _ := d.ClazzID()
-			switch clazzID {
-			case mt.ClazzID_p_q_inner_data:
-				pqInnerData := &mt.TLPQInnerData{ClazzID: clazzID}
-				_ = pqInnerData.Decode(d)
-
-				err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
-				if err2 != nil {
-					return err2
-				}
-
-				handshakeType = tg.AuthKeyTypePerm
-				newNonce2 = pqInnerData.NewNonce
-			case mt.ClazzID_p_q_inner_data_dc:
-				pqInnerData := &mt.TLPQInnerDataDc{ClazzID: clazzID}
-				_ = pqInnerData.Decode(d)
-
-				err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
-				if err2 != nil {
-					return err2
-				}
-
-				handshakeType = tg.AuthKeyTypePerm
-				newNonce2 = pqInnerData.NewNonce
-			case mt.ClazzID_p_q_inner_data_temp:
-				pqInnerData := &mt.TLPQInnerDataTemp{ClazzID: clazzID}
-				_ = pqInnerData.Decode(d)
-
-				err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
-				if err2 != nil {
-					return err2
-				}
-
-				handshakeType = tg.AuthKeyTypeTemp
-				expiresIn = pqInnerData.ExpiresIn
-				newNonce2 = pqInnerData.NewNonce
-			case mt.ClazzID_p_q_inner_data_temp_dc:
-				pqInnerData := &mt.TLPQInnerDataTempDc{ClazzID: clazzID}
-				_ = pqInnerData.Decode(d)
-
-				err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
-				if err2 != nil {
-					return err2
-				}
-
-				if pqInnerData.Dc < 0 {
-					handshakeType = tg.AuthKeyTypeMediaTemp
-				} else {
-					handshakeType = tg.AuthKeyTypeTemp
-				}
-				expiresIn = pqInnerData.ExpiresIn
-				newNonce2 = pqInnerData.NewNonce
-			default:
-				err2 := fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
-				logx.Error(err2.Error())
-				return err2
+			// P
+			if !bytes.Equal([]byte(iP), p) {
+				logx.Error("process Req_DHParams - Invalid p_q_inner_data.p value")
+				return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.p value")
 			}
-			//dbuf := tg.NewDecodeBuf(paddedDataWithHash)
-			//o := dbuf.Object()
-			//if dbuf.GetError() != nil {
-			//	err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
-			//	logx.Error(err.Error())
-			//	return err
-			//}
-			//
-			//var pqInnerData *tg.P_QInnerData
-			//// TODO(@benqi):
-			//switch innerData := o.(type) {
-			//case *tg.TLPQInnerData:
-			//	handshakeType = tg.AuthKeyTypePerm
-			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *tg.TLPQInnerDataDc:
-			//	handshakeType = tg.AuthKeyTypePerm
-			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *tg.TLPQInnerDataTemp:
-			//	handshakeType = tg.AuthKeyTypeTemp
-			//	expiresIn = innerData.GetExpiresIn()
-			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *tg.TLPQInnerDataTempDc:
-			//	if innerData.GetDc() < 0 {
-			//		handshakeType = tg.AuthKeyTypeMediaTemp
-			//	} else {
-			//		handshakeType = tg.AuthKeyTypeTemp
-			//	}
-			//	expiresIn = innerData.GetExpiresIn()
-			//	pqInnerData = innerData.To_P_QInnerData()
-			//default:
-			//	err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
-			//	logx.Error(err.Error())
-			//	return err
-			//}
 
-			//// 2. 再检查一遍p_q_inner_data里的pq, p, q, nonce, server_nonce合法性
-			//// 客户端传输数据解析
-			//// PQ
-			//if !bytes.Equal([]byte(pqInnerData.GetPq()), []byte(pq)) {
-			//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.pq value")
-			//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.pq value")
-			//}
-			//
-			//// P
-			//if !bytes.Equal([]byte(pqInnerData.GetP()), p) {
-			//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.p value")
-			//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.p value")
-			//}
-			//
-			//// Q
-			//if !bytes.Equal([]byte(pqInnerData.GetQ()), q) {
-			//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.q value")
-			//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.q value")
-			//}
-			//
-			//// Nonce
-			//if !bytes.Equal(pqInnerData.GetNonce(), request.Nonce) {
-			//	logx.Error("process Req_DHParams - Invalid Nonce")
-			//	return fmt.Errorf("process Req_DHParams - InvalidNonce")
-			//}
-			//
-			//// ServerNonce
-			//if !bytes.Equal(pqInnerData.GetServerNonce(), request.ServerNonce) {
-			//	logx.Error("process Req_DHParams - Wrong ServerNonce")
-			//	return fmt.Errorf("process Req_DHParams - Wrong ServerNonce")
-			//}
+			// Q
+			if !bytes.Equal([]byte(iQ), q) {
+				logx.Error("process Req_DHParams - Invalid p_q_inner_data.q value")
+				return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.q value")
+			}
 
-			// TODO(@benqi): check dc
-			// log.Info("processReq_DHParams - pqInnerData Decode sucess: ", pqInnerData.String())
-
-			// 检查NewNonce的长度(int256)
-			// 缓存NewNonce
-			// newNonce = pqInnerData.GetNewNonce()
-			A = crypto.GenerateNonce(256)
-			// ctx.A = A
-			// ctx.P = s.handshake.dh2048p
-
-			bigIntA := new(big.Int).SetBytes(A)
-
-			// 服务端计算GA = g^a mod p
-			gA := new(big.Int).Exp(gBigIntDH2048G, bigIntA, gBigIntDH2048P)
+			// Nonce
+			if !(iNonce == request.Nonce) {
+				logx.Error("process Req_DHParams - Invalid Nonce")
+				return fmt.Errorf("process Req_DHParams - InvalidNonce")
+			}
 
 			// ServerNonce
-			serverDHInnerData := &mt.TLServerDHInnerData{
-				Nonce:       request.Nonce,
-				ServerNonce: request.ServerNonce,
-				G:           int32(s.handshake.dh2048g[0]),
-				GA:          string(gA.Bytes()),
-				DhPrime:     string(P),
-				ServerTime:  int32(time.Now().Unix()),
+			if !(iServerNonce == request.ServerNonce) {
+				logx.Error("process Req_DHParams - Wrong ServerNonce")
+				return fmt.Errorf("process Req_DHParams - Wrong ServerNonce")
 			}
-
-			x := bin.NewEncoder()
-			defer x.End()
-			_ = serverDHInnerData.Encode(x, 0)
-			serverDHInnerDataBuf := x.Bytes()
-			// server_DHInnerData_buf_sha1 := sha1.Sum(server_DHInnerData_buf)
-
-			// 创建aes和iv key
-			tmpAesKeyAndIV := make([]byte, 64)
-			sha1A := sha1.Sum(append(newNonce2[:], request.ServerNonce[:]...))
-			sha1B := sha1.Sum(append(request.ServerNonce[:], newNonce2[:]...))
-			sha1C := sha1.Sum(append(newNonce2[:], newNonce2[:]...))
-			copy(tmpAesKeyAndIV, sha1A[:])
-			copy(tmpAesKeyAndIV[20:], sha1B[:])
-			copy(tmpAesKeyAndIV[40:], sha1C[:])
-			copy(tmpAesKeyAndIV[60:], newNonce2[:4])
-
-			tmpLen := 20 + len(serverDHInnerDataBuf)
-			if tmpLen%16 > 0 {
-				tmpLen = (tmpLen/16 + 1) * 16
-			} else {
-				tmpLen = 20 + len(serverDHInnerDataBuf)
-			}
-
-			tmpEncryptedAnswer := make([]byte, tmpLen)
-			sha1Tmp := sha1.Sum(serverDHInnerDataBuf)
-			copy(tmpEncryptedAnswer, sha1Tmp[:])
-			copy(tmpEncryptedAnswer[20:], serverDHInnerDataBuf)
-
-			e := crypto.NewAES256IGECryptor(tmpAesKeyAndIV[:32], tmpAesKeyAndIV[32:64])
-			tmpEncryptedAnswer, _ = e.Encrypt(tmpEncryptedAnswer)
-
-			serverDHParams = mt.MakeTLServerDHParamsOk(&mt.TLServerDHParamsOk{
-				Nonce:           request.Nonce,
-				ServerNonce:     request.ServerNonce,
-				EncryptedAnswer: hack.String(tmpEncryptedAnswer),
-			})
 
 			return nil
-		})() // Immediately execute the function
+		}
+
+		// 2. 反序列化出pqInnerData
+		//var (
+		//	newNonce2 bin.Int256
+		//)
+
+		d := bin.NewDecoder(paddedDataWithHash)
+		clazzID, _ := d.ClazzID()
+		switch clazzID {
+		case mt.ClazzID_p_q_inner_data:
+			pqInnerData := &mt.TLPQInnerData{ClazzID: clazzID}
+			_ = pqInnerData.Decode(d)
+
+			err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
+			if err2 != nil {
+				return err2
+			}
+
+			handshakeType = tg.AuthKeyTypePerm
+			newNonce2 = pqInnerData.NewNonce
+		case mt.ClazzID_p_q_inner_data_dc:
+			pqInnerData := &mt.TLPQInnerDataDc{ClazzID: clazzID}
+			_ = pqInnerData.Decode(d)
+
+			err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
+			if err2 != nil {
+				return err2
+			}
+
+			handshakeType = tg.AuthKeyTypePerm
+			newNonce2 = pqInnerData.NewNonce
+		case mt.ClazzID_p_q_inner_data_temp:
+			pqInnerData := &mt.TLPQInnerDataTemp{ClazzID: clazzID}
+			_ = pqInnerData.Decode(d)
+
+			err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
+			if err2 != nil {
+				return err2
+			}
+
+			handshakeType = tg.AuthKeyTypeTemp
+			expiresIn = pqInnerData.ExpiresIn
+			newNonce2 = pqInnerData.NewNonce
+		case mt.ClazzID_p_q_inner_data_temp_dc:
+			pqInnerData := &mt.TLPQInnerDataTempDc{ClazzID: clazzID}
+			_ = pqInnerData.Decode(d)
+
+			err2 := checkPQInnerData(pqInnerData.Pq, pqInnerData.P, pqInnerData.Q, pqInnerData.Nonce, pqInnerData.ServerNonce)
+			if err2 != nil {
+				return err2
+			}
+
+			if pqInnerData.Dc < 0 {
+				handshakeType = tg.AuthKeyTypeMediaTemp
+			} else {
+				handshakeType = tg.AuthKeyTypeTemp
+			}
+			expiresIn = pqInnerData.ExpiresIn
+			newNonce2 = pqInnerData.NewNonce
+		default:
+			err2 := fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
+			logx.Error(err2.Error())
+			return err2
+		}
+		//dbuf := tg.NewDecodeBuf(paddedDataWithHash)
+		//o := dbuf.Object()
+		//if dbuf.GetError() != nil {
+		//	err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
+		//	logx.Error(err.Error())
+		//	return err
+		//}
+		//
+		//var pqInnerData *tg.P_QInnerData
+		//// TODO(@benqi):
+		//switch innerData := o.(type) {
+		//case *tg.TLPQInnerData:
+		//	handshakeType = tg.AuthKeyTypePerm
+		//	pqInnerData = innerData.To_P_QInnerData()
+		//case *tg.TLPQInnerDataDc:
+		//	handshakeType = tg.AuthKeyTypePerm
+		//	pqInnerData = innerData.To_P_QInnerData()
+		//case *tg.TLPQInnerDataTemp:
+		//	handshakeType = tg.AuthKeyTypeTemp
+		//	expiresIn = innerData.GetExpiresIn()
+		//	pqInnerData = innerData.To_P_QInnerData()
+		//case *tg.TLPQInnerDataTempDc:
+		//	if innerData.GetDc() < 0 {
+		//		handshakeType = tg.AuthKeyTypeMediaTemp
+		//	} else {
+		//		handshakeType = tg.AuthKeyTypeTemp
+		//	}
+		//	expiresIn = innerData.GetExpiresIn()
+		//	pqInnerData = innerData.To_P_QInnerData()
+		//default:
+		//	err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
+		//	logx.Error(err.Error())
+		//	return err
+		//}
+
+		//// 2. 再检查一遍p_q_inner_data里的pq, p, q, nonce, server_nonce合法性
+		//// 客户端传输数据解析
+		//// PQ
+		//if !bytes.Equal([]byte(pqInnerData.GetPq()), []byte(pq)) {
+		//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.pq value")
+		//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.pq value")
+		//}
+		//
+		//// P
+		//if !bytes.Equal([]byte(pqInnerData.GetP()), p) {
+		//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.p value")
+		//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.p value")
+		//}
+		//
+		//// Q
+		//if !bytes.Equal([]byte(pqInnerData.GetQ()), q) {
+		//	logx.Error("process Req_DHParams - Invalid p_q_inner_data.q value")
+		//	return fmt.Errorf("process Req_DHParams - Invalid p_q_inner_data.q value")
+		//}
+		//
+		//// Nonce
+		//if !bytes.Equal(pqInnerData.GetNonce(), request.Nonce) {
+		//	logx.Error("process Req_DHParams - Invalid Nonce")
+		//	return fmt.Errorf("process Req_DHParams - InvalidNonce")
+		//}
+		//
+		//// ServerNonce
+		//if !bytes.Equal(pqInnerData.GetServerNonce(), request.ServerNonce) {
+		//	logx.Error("process Req_DHParams - Wrong ServerNonce")
+		//	return fmt.Errorf("process Req_DHParams - Wrong ServerNonce")
+		//}
+
+		// TODO(@benqi): check dc
+		// log.Info("processReq_DHParams - pqInnerData Decode sucess: ", pqInnerData.String())
+
+		// 检查NewNonce的长度(int256)
+		// 缓存NewNonce
+		// newNonce = pqInnerData.GetNewNonce()
+		A = crypto.GenerateNonce(256)
+		// ctx.A = A
+		// ctx.P = s.handshake.dh2048p
+
+		bigIntA := new(big.Int).SetBytes(A)
+
+		// 服务端计算GA = g^a mod p
+		gA := new(big.Int).Exp(gBigIntDH2048G, bigIntA, gBigIntDH2048P)
+
+		// ServerNonce
+		serverDHInnerData := &mt.TLServerDHInnerData{
+			Nonce:       request.Nonce,
+			ServerNonce: request.ServerNonce,
+			G:           int32(s.handshake.dh2048g[0]),
+			GA:          string(gA.Bytes()),
+			DhPrime:     string(P),
+			ServerTime:  int32(time.Now().Unix()),
+		}
+
+		x := bin.NewEncoder()
+		defer x.End()
+		_ = serverDHInnerData.Encode(x, 0)
+		serverDHInnerDataBuf := x.Bytes()
+		// server_DHInnerData_buf_sha1 := sha1.Sum(server_DHInnerData_buf)
+
+		// 创建aes和iv key
+		tmpAesKeyAndIV := make([]byte, 64)
+		sha1A := sha1.Sum(append(newNonce2[:], request.ServerNonce[:]...))
+		sha1B := sha1.Sum(append(request.ServerNonce[:], newNonce2[:]...))
+		sha1C := sha1.Sum(append(newNonce2[:], newNonce2[:]...))
+		copy(tmpAesKeyAndIV, sha1A[:])
+		copy(tmpAesKeyAndIV[20:], sha1B[:])
+		copy(tmpAesKeyAndIV[40:], sha1C[:])
+		copy(tmpAesKeyAndIV[60:], newNonce2[:4])
+
+		tmpLen := 20 + len(serverDHInnerDataBuf)
+		if tmpLen%16 > 0 {
+			tmpLen = (tmpLen/16 + 1) * 16
+		} else {
+			tmpLen = 20 + len(serverDHInnerDataBuf)
+		}
+
+		tmpEncryptedAnswer := make([]byte, tmpLen)
+		sha1Tmp := sha1.Sum(serverDHInnerDataBuf)
+		copy(tmpEncryptedAnswer, sha1Tmp[:])
+		copy(tmpEncryptedAnswer[20:], serverDHInnerDataBuf)
+
+		e := crypto.NewAES256IGECryptor(tmpAesKeyAndIV[:32], tmpAesKeyAndIV[32:64])
+		tmpEncryptedAnswer, _ = e.Encrypt(tmpEncryptedAnswer)
+
+		serverDHParams = mt.MakeTLServerDHParamsOk(&mt.TLServerDHParamsOk{
+			Nonce:           request.Nonce,
+			ServerNonce:     request.ServerNonce,
+			EncryptedAnswer: hack.String(tmpEncryptedAnswer),
+		})
+
+		return nil
+	})() // Immediately execute the function
 
 	if err != nil {
 		return nil, err

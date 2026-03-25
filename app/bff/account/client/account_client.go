@@ -13,8 +13,8 @@ package accountclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/account/account/accountservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

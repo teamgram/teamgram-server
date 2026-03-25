@@ -19,8 +19,8 @@
 package sess
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

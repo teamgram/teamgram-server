@@ -11,8 +11,8 @@
 package passportclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/passport/passport/passportservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/passport/passport/passportservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

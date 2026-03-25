@@ -13,9 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/core"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

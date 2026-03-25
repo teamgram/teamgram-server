@@ -21,8 +21,8 @@ package none
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/pkg/code/conf"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func New(c *conf.SmsVerifyCodeConfig) *noneVerifyCode {

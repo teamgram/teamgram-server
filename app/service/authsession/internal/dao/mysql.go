@@ -19,7 +19,7 @@
 package dao
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/internal/dal/dao/mysql_dao"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/dal/dao/mysql_dao"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 

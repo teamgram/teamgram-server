@@ -21,7 +21,7 @@ package netserver
 import (
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 )
 
 //int64_t ConnectionsManager::generateMessageId() {

@@ -13,8 +13,8 @@ package contactsclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/contacts/contacts/contactsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/contacts/contacts/contactsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

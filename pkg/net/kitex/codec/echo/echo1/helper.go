@@ -17,9 +17,9 @@
 package echo1helper
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo1/internal/config"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo1/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo1/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/internal/config"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/internal/svc"
 )
 
 type (

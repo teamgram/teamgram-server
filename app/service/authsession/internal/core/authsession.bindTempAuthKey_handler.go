@@ -21,12 +21,12 @@ package core
 import (
 	"errors"
 
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/authsession"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/mt"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

@@ -17,9 +17,9 @@
 package mediahelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/svc"
 )
 
 type (

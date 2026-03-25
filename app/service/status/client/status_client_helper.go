@@ -11,8 +11,8 @@
 package statusclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/status/status/statusservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status/statusservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

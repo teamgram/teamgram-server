@@ -17,9 +17,9 @@
 package savedmessagedialogshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/savedmessagedialogs/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/savedmessagedialogs/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/savedmessagedialogs/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/savedmessagedialogs/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/savedmessagedialogs/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/savedmessagedialogs/internal/svc"
 )
 
 type (

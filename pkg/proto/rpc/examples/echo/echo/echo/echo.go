@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
-	api "github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	api "github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"

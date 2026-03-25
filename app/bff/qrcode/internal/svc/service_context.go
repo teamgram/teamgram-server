@@ -17,7 +17,7 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/internal/config"
 )
 
 type ServiceContext struct {

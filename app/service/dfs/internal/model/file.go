@@ -19,7 +19,7 @@
 package model
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;

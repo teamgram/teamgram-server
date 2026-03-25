@@ -11,8 +11,8 @@
 package inboxclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/msg/inbox/inbox/inboxservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox/inboxservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

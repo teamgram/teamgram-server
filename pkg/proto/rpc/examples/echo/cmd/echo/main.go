@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/server"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/server"
 )
 
 func main() {

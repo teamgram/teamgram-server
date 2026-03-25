@@ -6,7 +6,7 @@
 package bffproxyclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type BFFProxyClientListConf struct {

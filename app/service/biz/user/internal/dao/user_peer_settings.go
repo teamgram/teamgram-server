@@ -22,8 +22,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/dal/dataobject"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 

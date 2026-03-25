@@ -17,9 +17,9 @@
 package core
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

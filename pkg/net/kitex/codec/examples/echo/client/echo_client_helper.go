@@ -11,8 +11,8 @@
 package echoclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/examples/echo/echo/echoservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo/echoservice"
 
 	"github.com/cloudwego/kitex/client"
 )

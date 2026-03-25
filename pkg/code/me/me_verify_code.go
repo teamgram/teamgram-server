@@ -24,7 +24,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/teamgooo/teamgooo-server/pkg/code/conf"
+	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
 	"github.com/teamgram/marmota/pkg/hack"
 
 	"github.com/zeromicro/go-zero/core/logx"

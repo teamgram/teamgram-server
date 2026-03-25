@@ -17,9 +17,9 @@
 package dialogshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/dialogs/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/dialogs/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/dialogs/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
 )
 
 type (

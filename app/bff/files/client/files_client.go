@@ -13,8 +13,8 @@ package filesclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/files/files/filesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/files/files/filesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

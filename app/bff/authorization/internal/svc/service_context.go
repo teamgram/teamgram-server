@@ -17,11 +17,11 @@
 package svc
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/dao"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/logic"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/plugin"
-	"github.com/teamgooo/teamgooo-server/pkg/code"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/dao"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/plugin"
+	"github.com/teamgram/teamgram-server/v2/pkg/code"
 )
 
 type ServiceContext struct {

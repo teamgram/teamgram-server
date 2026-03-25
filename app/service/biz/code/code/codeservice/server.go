@@ -11,7 +11,7 @@
 package codeservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/code/code"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 
 	"github.com/cloudwego/kitex/server"
 )

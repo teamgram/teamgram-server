@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/user/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/marmota/pkg/threading2"

@@ -25,8 +25,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/internal/dal/dataobject"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 

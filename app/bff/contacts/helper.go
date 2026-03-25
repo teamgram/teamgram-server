@@ -17,9 +17,9 @@
 package contactshelper
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/bff/contacts/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/contacts/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/contacts/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/contacts/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/contacts/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/contacts/internal/svc"
 )
 
 type (

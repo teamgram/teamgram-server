@@ -21,11 +21,11 @@ package core
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/sess"
-	"github.com/teamgooo/teamgooo-server/app/interface/session/internal/svc"
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/authsession"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/metadata"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/sess"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

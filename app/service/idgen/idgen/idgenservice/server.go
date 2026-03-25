@@ -11,7 +11,7 @@
 package idgenservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/idgen"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 
 	"github.com/cloudwego/kitex/server"
 )

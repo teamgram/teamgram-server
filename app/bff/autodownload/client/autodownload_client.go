@@ -13,8 +13,8 @@ package autodownloadclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/autodownload/autodownload/autodownloadservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

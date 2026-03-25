@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/internal/svc"
-	"github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/sponsoredmessages/sponsoredmessagesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/sponsoredmessages/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/sponsoredmessages/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/bff/sponsoredmessages/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/sponsoredmessages/sponsoredmessages/sponsoredmessagesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

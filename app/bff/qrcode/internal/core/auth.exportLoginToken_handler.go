@@ -19,9 +19,9 @@ package core
 import (
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/qrcode/model"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/crypto"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/model"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 const (

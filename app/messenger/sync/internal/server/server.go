@@ -19,11 +19,11 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/internal/server/tg/service"
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/internal/svc"
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/sync/syncservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync/syncservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

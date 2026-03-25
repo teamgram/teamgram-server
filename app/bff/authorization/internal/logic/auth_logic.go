@@ -22,10 +22,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/internal/dao"
-	"github.com/teamgooo/teamgooo-server/app/bff/authorization/model"
-	"github.com/teamgooo/teamgooo-server/pkg/code"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/dao"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
+	"github.com/teamgram/teamgram-server/v2/pkg/code"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

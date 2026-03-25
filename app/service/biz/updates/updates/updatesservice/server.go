@@ -11,7 +11,7 @@
 package updatesservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/updates/updates"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 
 	"github.com/cloudwego/kitex/server"
 )

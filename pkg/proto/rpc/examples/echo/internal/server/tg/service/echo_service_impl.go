@@ -10,8 +10,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/echo"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/core"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/core"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 )

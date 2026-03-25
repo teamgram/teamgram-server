@@ -12,7 +12,7 @@ package dao
 import (
 	"flag"
 
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/config"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 

@@ -13,9 +13,9 @@ package echo2client
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo2/echo2"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo2/echo2/echo2service"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/echo2"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/echo2/echo2service"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

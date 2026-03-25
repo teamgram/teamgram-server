@@ -11,8 +11,8 @@
 package authsessionclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/authsession/authsession/authsessionservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession/authsessionservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

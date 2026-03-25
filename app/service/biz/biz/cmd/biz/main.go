@@ -17,7 +17,7 @@ package main
 import (
 	"github.com/teamgram/marmota/pkg/commands"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/biz/internal/server"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/server"
 )
 
 func main() {

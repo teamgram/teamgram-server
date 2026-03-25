@@ -17,7 +17,7 @@
 package tg
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/iface/ecode"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 )
 
 // https://core.telegram.org/api/errors

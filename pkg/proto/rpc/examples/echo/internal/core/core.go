@@ -9,7 +9,7 @@ package core
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/pkg/proto/rpc/examples/echo/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/rpc/examples/echo/internal/svc"
 )
 
 type EchoCore struct {

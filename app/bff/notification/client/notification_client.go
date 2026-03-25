@@ -13,8 +13,8 @@ package notificationclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/notification/notification/notificationservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/notification/notificationservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

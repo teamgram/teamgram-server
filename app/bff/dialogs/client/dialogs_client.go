@@ -13,8 +13,8 @@ package dialogsclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/dialogs/dialogs/dialogsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/dialogs/dialogsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

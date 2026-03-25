@@ -4,6 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
+
 Teamgooo Server (`teamgooo-server`) is a complete, production-ready Telegram-compatible server implementation written in Go. It implements MTProto (Telegram's binary protocol) and provides a full microservices architecture for running a Telegram-like messaging platform.
 
 **Key characteristics:**
@@ -13,7 +14,7 @@ Teamgooo Server (`teamgooo-server`) is a complete, production-ready Telegram-com
 - Uses CloudWeGo Kitex framework for RPC
 - Uses etcd for service discovery and configuration
 - Licensed under Apache License 2.0
-- Primary module: `github.com/teamgooo/teamgooo-server`
+- Primary module: `github.com/teamgram/teamgram-server/v2`
 - Version: v0.211.0-teamgooo-server
 
 ## Development Commands
@@ -326,7 +327,7 @@ package main
 
 import (
     "github.com/teamgram/marmota/pkg/commands"
-    "github.com/teamgooo/teamgooo-server/app/{layer}/{service}/internal/server"
+    "github.com/teamgram/teamgram-server/v2/app/{layer}/{service}/internal/server"
 )
 
 func main() {

@@ -13,8 +13,8 @@ package sponsoredmessagesclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/sponsoredmessages/sponsoredmessagesservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/sponsoredmessages/sponsoredmessages/sponsoredmessagesservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

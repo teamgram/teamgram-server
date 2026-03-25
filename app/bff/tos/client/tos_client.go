@@ -13,8 +13,8 @@ package tosclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/tos/tos/tosservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/tos/tos/tosservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

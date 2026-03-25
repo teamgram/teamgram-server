@@ -11,7 +11,7 @@
 package echo1service
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec/echo/echo1/echo1"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1"
 
 	"github.com/cloudwego/kitex/server"
 )

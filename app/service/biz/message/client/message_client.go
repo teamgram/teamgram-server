@@ -13,9 +13,9 @@ package messageclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/biz/message/message"
-	"github.com/teamgooo/teamgooo-server/app/service/biz/message/message/messageservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

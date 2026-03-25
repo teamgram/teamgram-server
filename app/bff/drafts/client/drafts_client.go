@@ -13,8 +13,8 @@ package draftsclient
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/bff/drafts/drafts/draftsservice"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/drafts/draftsservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 )

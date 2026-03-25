@@ -11,8 +11,8 @@
 package idgenclient
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/idgen/idgen/idgenservice"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen/idgenservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
 )

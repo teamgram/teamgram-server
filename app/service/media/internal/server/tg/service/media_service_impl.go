@@ -13,9 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgooo/teamgooo-server/app/service/media/internal/core"
-	"github.com/teamgooo/teamgooo-server/app/service/media/media"
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool

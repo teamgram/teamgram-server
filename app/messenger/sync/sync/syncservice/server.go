@@ -11,7 +11,7 @@
 package syncservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 
 	"github.com/cloudwego/kitex/server"
 )

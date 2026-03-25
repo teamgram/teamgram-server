@@ -11,7 +11,7 @@
 package gnetwayservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/gnetway"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway"
 
 	"github.com/cloudwego/kitex/server"
 )

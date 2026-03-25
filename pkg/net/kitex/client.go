@@ -10,7 +10,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/kitex/pkg/serviceinfo"
-	"github.com/teamgooo/teamgooo-server/pkg/net/kitex/codec"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
 	"github.com/cloudwego/kitex/client"
 	etcd "github.com/kitex-contrib/registry-etcd"

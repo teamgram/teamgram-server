@@ -19,7 +19,7 @@
 package dao
 
 import (
-	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 

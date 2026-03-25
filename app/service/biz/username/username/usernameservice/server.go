@@ -11,7 +11,7 @@
 package usernameservice
 
 import (
-	"github.com/teamgooo/teamgooo-server/app/service/biz/username/username"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/username"
 
 	"github.com/cloudwego/kitex/server"
 )
