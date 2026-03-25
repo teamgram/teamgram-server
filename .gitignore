@@ -63,3 +63,5 @@ v2
 
 /pkg/proto/rpc/client/client
 /pkg/proto/rpc/server/server
+
+.cache/
