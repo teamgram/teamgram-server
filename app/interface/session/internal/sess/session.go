@@ -375,9 +375,9 @@ func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, in
 	case *mtproto.TLInitConnection:
 		c.onInitConnection(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInitConnection))
 	case *mtproto.TLGzipPacked:
-		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLGzipPacked).Obj)
+		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLGzipPacked).Obj, nil)
 	default:
-		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r)
+		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r, nil)
 	}
 }
 

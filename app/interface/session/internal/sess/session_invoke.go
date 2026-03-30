@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	"github.com/teamgram/proto/mtproto"
+	rpcmetadata "github.com/teamgram/proto/mtproto/rpc/metadata"
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -227,7 +228,7 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 		return
 	}
 
-	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+	c.onRpcRequest(ctx, gatewayId, clientIp, msgId, query, newTakeoutMetadata(0, request.GetRange()))
 }
 
 func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithTakeout) {
@@ -255,7 +256,20 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 		return
 	}
 
-	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+	query, takeout, err := newTakeoutGuard().ValidateWrappedQuery(request.GetTakeoutId(), query)
+	if err != nil {
+		if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
+			c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcErr)
+			msgId.state = RECEIVED | RESPONSE_GENERATED
+			return
+		}
+
+		c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, mtproto.NewRpcError(mtproto.ErrInternalServerError))
+		msgId.state = RECEIVED | RESPONSE_GENERATED
+		return
+	}
+
+	c.onRpcRequest(ctx, gatewayId, clientIp, msgId, query, takeout)
 }
 
 func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithBusinessConnection) {
@@ -402,7 +416,7 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, query mtproto.TLObject) bool {
+func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, query mtproto.TLObject, takeout *rpcmetadata.Takeout) bool {
 	logx.WithContext(ctx).Infof("onRpcRequest - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -493,6 +507,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 			clientIp:  clientIp,
 			reqMsgId:  msgId.msgId,
 			reqMsg:    query,
+			takeout:   takeout,
 		})
 
 	return true

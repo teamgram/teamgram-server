@@ -655,6 +655,7 @@ func (m *MainAuthWrapper) rpcRunLoop() {
 							Langpack:      m.LangPack(),
 							PermAuthKeyId: m.authKeyId,
 							LangCode:      m.LangCode(),
+							Takeout:       request.takeout,
 						},
 						request)
 					m.rpcDataChan <- request

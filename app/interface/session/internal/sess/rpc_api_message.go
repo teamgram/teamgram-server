@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/mtproto"
+	metadata "github.com/teamgram/proto/mtproto/rpc/metadata"
 )
 
 type rpcApiMessage struct {
@@ -20,6 +21,7 @@ type rpcApiMessage struct {
 	clientIp  string
 	reqMsgId  int64
 	reqMsg    mtproto.TLObject
+	takeout   *metadata.Takeout
 	rpcResult *mtproto.TLRpcResult
 }
 
@@ -43,12 +45,12 @@ func (m *rpcApiMessage) TryGetRpcResultError() (*mtproto.TLRpcError, bool) {
 
 func (m *rpcApiMessage) DebugString() string {
 	if m.rpcResult == nil {
-		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s}",
+		return fmt.Sprintf("{session_id: %d, req_msg_id: %d, req_msg: %s}",
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg)
 	} else {
-		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
+		return fmt.Sprintf("{session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg,
