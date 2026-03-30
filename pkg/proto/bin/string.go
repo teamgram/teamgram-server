@@ -25,20 +25,22 @@ const (
 func (e *Encoder) encodeString(v string) {
 	l := len(v)
 	if l <= maxSmallStringLength {
-		_ = e.w.WriteByte(byte(l))
-		_, _ = e.w.WriteString(v)
+		e.buf = append(e.buf, byte(l))
+		e.buf = append(e.buf, v...)
 		currentLen := l + 1
-		_, _ = e.w.Write(make([]byte, nearestPaddedValueLength(currentLen)-currentLen))
+		pad := nearestPaddedValueLength(currentLen) - currentLen
+		e.buf = append(e.buf, zeroPad[:pad]...)
 		return
 	} else {
-		_, _ = e.w.Write([]byte{firstLongStringByte,
+		e.buf = append(e.buf, []byte{firstLongStringByte,
 			byte(l),
 			byte(l >> 8),
 			byte(l >> 16),
-		})
-		_, _ = e.w.WriteString(v)
+		}...)
+		e.buf = append(e.buf, v...)
 		currentLen := l + 4
-		_, _ = e.w.Write(make([]byte, nearestPaddedValueLength(currentLen)-currentLen))
+		pad := nearestPaddedValueLength(currentLen) - currentLen
+		e.buf = append(e.buf, zeroPad[:pad]...)
 	}
 }
 
@@ -62,8 +64,8 @@ func decodeString(b []byte) (padding int, v string, err error) {
 	}
 	if strLen > maxSmallStringLength {
 		return 0, "", &InvalidLengthError{
+			Type:   "string",
 			Length: strLen,
-			Where:  "string",
 		}
 	}
 	return nearestPaddedValueLength(strLen + 1), string(b[1 : strLen+1]), nil

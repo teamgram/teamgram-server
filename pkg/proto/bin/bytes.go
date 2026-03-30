@@ -14,18 +14,17 @@ import (
 func (e *Encoder) encodeBytes(v []byte) {
 	l := len(v)
 	if l <= maxSmallStringLength {
-		_ = e.w.WriteByte(byte(l))
-		_, _ = e.w.Write(v)
+		e.buf = append(e.buf, byte(l))
+		e.buf = append(e.buf, v...)
 		currentLen := l + 1
-		_, _ = e.w.Write(make([]byte, nearestPaddedValueLength(currentLen)-currentLen))
+		pad := nearestPaddedValueLength(currentLen) - currentLen
+		e.buf = append(e.buf, zeroPad[:pad]...)
 	} else {
-		_ = e.w.WriteByte(firstLongStringByte)
-		_ = e.w.WriteByte(byte(l))
-		_ = e.w.WriteByte(byte(l >> 8))
-		_ = e.w.WriteByte(byte(l >> 16))
-		_, _ = e.w.Write(v)
+		e.buf = append(e.buf, firstLongStringByte, byte(l), byte(l>>8), byte(l>>16))
+		e.buf = append(e.buf, v...)
 		currentLen := l + 4
-		_, _ = e.w.Write(make([]byte, nearestPaddedValueLength(currentLen)-currentLen))
+		pad := nearestPaddedValueLength(currentLen) - currentLen
+		e.buf = append(e.buf, zeroPad[:pad]...)
 	}
 }
 
@@ -52,8 +51,8 @@ func decodeBytes(b []byte) (n int, v []byte, err error) {
 	}
 	if strLen > maxSmallStringLength {
 		return 0, nil, &InvalidLengthError{
+			Type:   "bytes",
 			Length: strLen,
-			Where:  "bytes",
 		}
 	}
 	return nearestPaddedValueLength(strLen + 1), b[1 : strLen+1], nil

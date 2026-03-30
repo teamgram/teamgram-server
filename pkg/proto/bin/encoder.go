@@ -9,55 +9,82 @@ package bin
 import (
 	"math"
 	"math/big"
+	"sync"
+)
 
-	"github.com/valyala/bytebufferpool"
+const (
+	defaultEncoderCap = 256
+	maxPooledCap      = 64 << 10
 )
 
 var (
-	pool = bytebufferpool.Pool{}
+	encoderPool = sync.Pool{
+		New: func() any {
+			return &Encoder{buf: make([]byte, 0, defaultEncoderCap)}
+		},
+	}
+	zeroPad = [4]byte{}
 )
 
-//type EncodeOptions struct {
-//	Cap int
-//}
-//
-//func NewEncodeOptions() *EncodeOptions {
-//	return &EncodeOptions{
-//		Cap: 100,
-//	}
-//}
-//
-//type EncodeOption func(*EncodeOptions)
-//
-//func EncodeWithCap(cap int) EncodeOption {
-//	return func(o *EncodeOptions) {
-//		o.Cap = cap
-//	}
-//}
-
 type Encoder struct {
-	w *bytebufferpool.ByteBuffer
+	buf      []byte
+	released bool
+}
+
+func AcquireEncoder() *Encoder {
+	return AcquireEncoderCap(defaultEncoderCap)
+}
+
+func AcquireEncoderCap(capHint int) *Encoder {
+	e := encoderPool.Get().(*Encoder)
+	if capHint <= 0 {
+		capHint = defaultEncoderCap
+	}
+	if cap(e.buf) < capHint {
+		e.buf = make([]byte, 0, capHint)
+	} else {
+		e.buf = e.buf[:0]
+	}
+	e.released = false
+	return e
 }
 
 func NewEncoder() *Encoder {
-	return &Encoder{
-		w: pool.Get(),
-	}
+	return AcquireEncoder()
 }
 
 // Clone returns new copy of buffer.
 func (e *Encoder) Clone() []byte {
-	return append([]byte{}, e.w.Bytes()...)
+	return append([]byte(nil), e.buf...)
 }
 
-// Bytes Bytes
+// Bytes returns the internal encoded bytes view.
 func (e *Encoder) Bytes() []byte {
-	return e.w.Bytes()
+	return e.buf
 }
 
-// Len Len
+// Len returns encoded bytes length.
 func (e *Encoder) Len() int {
-	return e.w.Len()
+	return len(e.buf)
+}
+
+// Cap returns current backing buffer capacity.
+func (e *Encoder) Cap() int {
+	return cap(e.buf)
+}
+
+// Grow reserves at least n bytes for future writes.
+func (e *Encoder) Grow(n int) {
+	if n <= 0 {
+		return
+	}
+	required := len(e.buf) + n
+	if required <= cap(e.buf) {
+		return
+	}
+	buf := make([]byte, len(e.buf), required)
+	copy(buf, e.buf)
+	e.buf = buf
 }
 
 // PutClazzID serializes type definition id, like a8509bda.
@@ -66,10 +93,13 @@ func (e *Encoder) PutClazzID(id uint32) {
 }
 
 // Put appends raw bytes to buffer.
-//
-// Buffer does not retain raw.
 func (e *Encoder) Put(raw []byte) {
-	_, _ = e.w.Write(raw)
+	e.buf = append(e.buf, raw...)
+}
+
+// PutRaw appends raw bytes to buffer.
+func (e *Encoder) PutRaw(raw []byte) {
+	e.Put(raw)
 }
 
 // PutString serializes bare string.
@@ -82,34 +112,25 @@ func (e *Encoder) PutBytes(v []byte) {
 	e.encodeBytes(v)
 }
 
-//// PutVectorHeader serializes vector header with provided length.
-//func (e *Encoder) PutVectorHeader(length int) {
-//	e.PutClazzID(ClazzID_vector)
-//	e.PutInt32(int32(length))
-//}
-
-// PutInt serializes v as signed 32-bit integer.
-//
-// If v is bigger than 32-bit, `behavior` is undefined.
-func (e *Encoder) PutInt(v int) {
-	e.PutUint32(uint32(v))
+// PutVectorHeader serializes a TL vector header and item count.
+func (e *Encoder) PutVectorHeader(length int32) {
+	e.PutClazzID(ClazzIDVector)
+	e.PutInt32(length)
 }
 
-//// PutBool serializes bare boolean.
-//func (e *Encoder) PutBool(v bool) {
-//	switch v {
-//	case true:
-//		e.PutClazzID(ClazzID_boolTrue)
-//	case false:
-//		e.PutClazzID(ClazzID_boolFalse)
-//	}
-//}
+// PutInt serializes v as signed 32-bit integer.
+func (e *Encoder) PutInt(v int) {
+	e.PutInt32(int32(v))
+}
+
+// PutUint serializes v as unsigned 32-bit integer.
+func (e *Encoder) PutUint(v uint32) {
+	e.PutUint32(v)
+}
 
 // PutUint16 serializes unsigned 16-bit integer.
 func (e *Encoder) PutUint16(v uint16) {
-	_, _ = e.w.Write([]byte{
-		byte(v),
-		byte(v >> 8)})
+	e.buf = append(e.buf, byte(v), byte(v>>8))
 }
 
 // PutInt32 serializes signed 32-bit integer.
@@ -119,12 +140,12 @@ func (e *Encoder) PutInt32(v int32) {
 
 // PutUint32 serializes unsigned 32-bit integer.
 func (e *Encoder) PutUint32(v uint32) {
-	_, _ = e.w.Write([]byte{
+	e.buf = append(e.buf,
 		byte(v),
-		byte(v >> 8),
-		byte(v >> 16),
-		byte(v >> 24),
-	})
+		byte(v>>8),
+		byte(v>>16),
+		byte(v>>24),
+	)
 }
 
 // PutInt53 serializes v as signed integer.
@@ -142,18 +163,23 @@ func (e *Encoder) PutInt64(v int64) {
 	e.PutUint64(uint64(v))
 }
 
-// PutUint64 serializes v as unsigned 64-bit integer.
+// PutUlong serializes v as unsigned 64-bit integer.
+func (e *Encoder) PutUlong(v uint64) {
+	e.PutUint64(v)
+}
+
+// PutUint64 serializes unsigned 64-bit integer.
 func (e *Encoder) PutUint64(v uint64) {
-	_, _ = e.w.Write([]byte{
+	e.buf = append(e.buf,
 		byte(v),
-		byte(v >> 8),
-		byte(v >> 16),
-		byte(v >> 24),
-		byte(v >> 32),
-		byte(v >> 40),
-		byte(v >> 48),
-		byte(v >> 56),
-	})
+		byte(v>>8),
+		byte(v>>16),
+		byte(v>>24),
+		byte(v>>32),
+		byte(v>>40),
+		byte(v>>48),
+		byte(v>>56),
+	)
 }
 
 // PutDouble serializes v as 64-bit floating point.
@@ -163,12 +189,12 @@ func (e *Encoder) PutDouble(v float64) {
 
 // PutInt128 serializes v as 128-bit signed integer.
 func (e *Encoder) PutInt128(v Int128) {
-	_, _ = e.w.Write(v[:])
+	e.buf = append(e.buf, v[:]...)
 }
 
 // PutInt256 serializes v as 256-bit signed integer.
 func (e *Encoder) PutInt256(v Int256) {
-	_, _ = e.w.Write(v[:])
+	e.buf = append(e.buf, v[:]...)
 }
 
 func (e *Encoder) BigInt(s *big.Int) {
@@ -176,9 +202,22 @@ func (e *Encoder) BigInt(s *big.Int) {
 }
 
 func (e *Encoder) Reset() {
-	e.w.Reset()
+	e.buf = e.buf[:0]
+}
+
+func (e *Encoder) Release() {
+	if e == nil || e.released {
+		return
+	}
+	if cap(e.buf) > maxPooledCap {
+		e.buf = make([]byte, 0, defaultEncoderCap)
+	} else {
+		e.buf = e.buf[:0]
+	}
+	e.released = true
+	encoderPool.Put(e)
 }
 
 func (e *Encoder) End() {
-	bytebufferpool.Put(e.w)
+	e.Release()
 }
