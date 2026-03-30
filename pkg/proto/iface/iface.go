@@ -108,8 +108,8 @@ func DecodeObjectList[T TLObject](d *bin.Decoder) ([]T, error) {
 	}
 	if n < 0 {
 		return nil, &bin.InvalidLengthError{
+			Type:   "vector",
 			Length: n,
-			Where:  "vector",
 		}
 	}
 
@@ -159,7 +159,7 @@ func DecodeBool(d *bin.Decoder) (bool, error) {
 		_ = d.ConsumeClazzID(ClazzID_boolTrue)
 		return false, nil
 	default:
-		return false, bin.NewUnexpectedClazzID(v)
+		return false, bin.NewUnexpectedClazzID(0, v, d.Offset())
 	}
 }
 
@@ -181,8 +181,8 @@ func DecodeInt32List(d *bin.Decoder) ([]int32, error) {
 	}
 	if n < 0 {
 		return nil, &bin.InvalidLengthError{
+			Type:   "vector",
 			Length: n,
-			Where:  "vector",
 		}
 	}
 
@@ -215,8 +215,8 @@ func DecodeInt64List(d *bin.Decoder) ([]int64, error) {
 	}
 	if n < 0 {
 		return nil, &bin.InvalidLengthError{
+			Type:   "vector",
 			Length: n,
-			Where:  "vector",
 		}
 	}
 
@@ -249,8 +249,8 @@ func DecodeStringList(d *bin.Decoder) ([]string, error) {
 	}
 	if n < 0 {
 		return nil, &bin.InvalidLengthError{
+			Type:   "vector",
 			Length: n,
-			Where:  "vector",
 		}
 	}
 
@@ -283,8 +283,8 @@ func DecodeBytesList(d *bin.Decoder) ([][]byte, error) {
 	}
 	if n < 0 {
 		return nil, &bin.InvalidLengthError{
+			Type:   "vector",
 			Length: n,
-			Where:  "vector",
 		}
 	}
 

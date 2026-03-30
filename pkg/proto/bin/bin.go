@@ -10,6 +10,8 @@ package bin
 // Values in TL are generally aligned to Word.
 const WordLen = 4
 
+const ClazzIDVector = 0x1cb5c415
+
 func nearestPaddedValueLength(l int) int {
 	n := WordLen * (l / WordLen)
 	if n < l {

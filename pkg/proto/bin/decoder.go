@@ -12,59 +12,78 @@ import (
 	"math"
 )
 
+var ErrUnexpectedEOF = io.ErrUnexpectedEOF
+
 // Decoder 解码
 type Decoder struct {
 	buf []byte
+	off int
 }
 
 // NewDecoder NewDecoder
 func NewDecoder(b []byte) *Decoder {
-	return &Decoder{
-		buf: b,
-	}
+	return &Decoder{buf: b}
 }
 
 // ResetTo sets internal buffer exactly to provided value.
-//
-// Buffer will retain buf, so user should not modify or read it
-// concurrently.
 func (d *Decoder) ResetTo(buf []byte) {
+	d.Reset(buf)
+}
+
+// Reset replaces the decoder input and rewinds offset.
+func (d *Decoder) Reset(buf []byte) {
 	d.buf = buf
+	d.off = 0
 }
 
-// Raw returns internal byte slice.
+// Raw returns internal remaining byte slice.
 func (d *Decoder) Raw() []byte {
-	return d.buf
+	return d.buf[d.off:]
 }
 
-// Len returns length of internal buffer.
+// RawRemaining returns internal remaining byte slice.
+func (d *Decoder) RawRemaining() []byte {
+	return d.Raw()
+}
+
+// Len returns remaining length of internal buffer.
 func (d *Decoder) Len() int {
-	return len(d.buf)
+	return d.Remaining()
+}
+
+// Remaining returns remaining unread bytes.
+func (d *Decoder) Remaining() int {
+	return len(d.buf) - d.off
+}
+
+// Offset returns current read offset.
+func (d *Decoder) Offset() int {
+	return d.off
 }
 
 // Skip moves cursor for next n bytes.
-func (d *Decoder) Skip(n int) {
-	d.buf = d.buf[n:]
+func (d *Decoder) Skip(n int) error {
+	if n < 0 || d.Remaining() < n {
+		return ErrUnexpectedEOF
+	}
+	d.off += n
+	return nil
 }
 
 // PeekClazzID returns next type id in Buffer, but does not consume it.
 func (d *Decoder) PeekClazzID() (uint32, error) {
-	if len(d.buf) < WordLen {
-		return 0, io.ErrUnexpectedEOF
+	if d.Remaining() < WordLen {
+		return 0, ErrUnexpectedEOF
 	}
-	v := binary.LittleEndian.Uint32(d.buf)
-	return v, nil
+	return binary.LittleEndian.Uint32(d.buf[d.off:]), nil
 }
 
 // PeekN returns n bytes from Buffer to target, but does not consume it.
-//
-// Returns io.ErrUnexpectedEOF if buffer contains less that n bytes.
-// Expects that len(target) >= n.
 func (d *Decoder) PeekN(target []byte, n int) error {
-	if len(d.buf) < n {
-		return io.ErrUnexpectedEOF
+	if n < 0 || len(target) < n || d.Remaining() < n {
+		return ErrUnexpectedEOF
 	}
-	copy(target, d.buf[:n])
+	copy(target, d.buf[d.off:d.off+n])
 	return nil
 }
 
@@ -75,32 +94,33 @@ func (d *Decoder) ClazzID() (uint32, error) {
 
 // Uint32 decodes unsigned 32-bit integer from Buffer.
 func (d *Decoder) Uint32() (uint32, error) {
-	if len(d.buf) < WordLen {
-		return 0, io.ErrUnexpectedEOF
+	if d.Remaining() < WordLen {
+		return 0, ErrUnexpectedEOF
 	}
-	v := binary.LittleEndian.Uint32(d.buf)
-	d.buf = d.buf[WordLen:]
+	v := binary.LittleEndian.Uint32(d.buf[d.off:])
+	d.off += WordLen
 	return v, nil
 }
 
 // Int64 decodes 64-bit signed integer from Buffer.
 func (d *Decoder) Int64() (int64, error) {
-	v, err := d.Uint64()
-	if err != nil {
-		return 0, err
-	}
-	return int64(v), nil
+	return d.Long()
 }
 
 // Uint64 decodes 64-bit unsigned integer from Buffer.
 func (d *Decoder) Uint64() (uint64, error) {
 	const size = WordLen * 2
-	if len(d.buf) < size {
-		return 0, io.ErrUnexpectedEOF
+	if d.Remaining() < size {
+		return 0, ErrUnexpectedEOF
 	}
-	v := binary.LittleEndian.Uint64(d.buf)
-	d.buf = d.buf[size:]
+	v := binary.LittleEndian.Uint64(d.buf[d.off:])
+	d.off += size
 	return v, nil
+}
+
+// Ulong decodes 64-bit unsigned integer from Buffer.
+func (d *Decoder) Ulong() (uint64, error) {
+	return d.Uint64()
 }
 
 // Int32 decodes signed 32-bit integer from Buffer.
@@ -113,99 +133,81 @@ func (d *Decoder) Int32() (int32, error) {
 }
 
 // ConsumeN consumes n bytes from buffer, writing them to target.
-//
-// Returns io.ErrUnexpectedEOF if buffer contains less that n bytes.
-// Expects that len(target) >= n.
 func (d *Decoder) ConsumeN(target []byte, n int) error {
 	if err := d.PeekN(target, n); err != nil {
 		return err
 	}
-	d.buf = d.buf[n:]
+	d.off += n
 	return nil
 }
 
-//// Bool decodes bare boolean from Buffer.
-//func (d *Decoder) Bool() (bool, error) {
-//	v, err := d.PeekClazzID()
-//	if err != nil {
-//		return false, err
-//	}
-//	switch v {
-//	case ClazzID_boolTrue:
-//		d.buf = d.buf[WordLen:]
-//		return true, nil
-//	case ClazzID_boolFalse:
-//		d.buf = d.buf[WordLen:]
-//		return false, nil
-//	default:
-//		return false, NewUnexpectedClazzID(v)
-//	}
-//}
-
 // ConsumeClazzID decodes type id from Buffer. If id differs from provided,
-// the *UnexpectedIDErr{ID: gotID} will be returned and buffer will be
-// not consumed.
+// buffer will not be consumed.
 func (d *Decoder) ConsumeClazzID(id uint32) error {
 	v, err := d.PeekClazzID()
 	if err != nil {
 		return err
 	}
 	if v != id {
-		return NewUnexpectedClazzID(v)
+		return NewUnexpectedClazzID(id, v, d.off)
 	}
-	d.buf = d.buf[WordLen:]
+	d.off += WordLen
 	return nil
 }
 
-//// VectorHeader decodes vector length from Buffer.
-//func (d *Decoder) VectorHeader() (int, error) {
-//	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-//		return 0, err
-//	}
-//	n, err := d.Int()
-//	if err != nil {
-//		return 0, err
-//	}
-//	if n < 0 {
-//		return 0, &InvalidLengthError{
-//			Length: int(n),
-//			Where:  "vector",
-//		}
-//	}
-//	return int(n), nil
-//}
+// VectorHeader decodes a TL vector header and item count.
+func (d *Decoder) VectorHeader() (int32, error) {
+	if err := d.ConsumeClazzID(ClazzIDVector); err != nil {
+		return 0, err
+	}
+	n, err := d.Int32()
+	if err != nil {
+		return 0, err
+	}
+	if n < 0 {
+		return 0, &InvalidLengthError{Type: "vector", Length: int(n), Offset: d.off - WordLen}
+	}
+	return n, nil
+}
 
 // String decodes string from Buffer.
 func (d *Decoder) String() (string, error) {
-	n, v, err := decodeString(d.buf)
+	n, v, err := decodeString(d.buf[d.off:])
 	if err != nil {
 		return "", err
 	}
-	if len(d.buf) < n {
-		return "", io.ErrUnexpectedEOF
+	if d.Remaining() < n {
+		return "", ErrUnexpectedEOF
 	}
-	d.buf = d.buf[n:]
+	d.off += n
 	return v, nil
 }
 
 // Bytes decodes byte slice from Buffer.
-//
-// NB: returning value is a copy, it's safe to modify it.
 func (d *Decoder) Bytes() ([]byte, error) {
-	n, v, err := decodeBytes(d.buf)
+	v, err := d.BytesView()
 	if err != nil {
 		return nil, err
 	}
-	if len(d.buf) < n {
-		return nil, io.ErrUnexpectedEOF
-	}
-	d.buf = d.buf[n:]
 	return append([]byte(nil), v...), nil
+}
+
+// BytesView decodes a borrowed byte slice from Buffer without copying.
+func (d *Decoder) BytesView() ([]byte, error) {
+	n, v, err := decodeBytes(d.buf[d.off:])
+	if err != nil {
+		return nil, err
+	}
+	if d.Remaining() < n {
+		return nil, ErrUnexpectedEOF
+	}
+	d.off += n
+	return v, nil
 }
 
 // Int decodes integer from Buffer.
 func (d *Decoder) Int() (int, error) {
-	v, err := d.Uint32()
+	v, err := d.Int32()
 	if err != nil {
 		return 0, err
 	}
@@ -239,11 +241,11 @@ func (d *Decoder) Long() (int64, error) {
 func (d *Decoder) Int128() (Int128, error) {
 	v := Int128{}
 	size := len(v)
-	if len(d.buf) < size {
-		return Int128{}, io.ErrUnexpectedEOF
+	if d.Remaining() < size {
+		return Int128{}, ErrUnexpectedEOF
 	}
-	copy(v[:size], d.buf[:size])
-	d.buf = d.buf[size:]
+	copy(v[:], d.buf[d.off:d.off+size])
+	d.off += size
 	return v, nil
 }
 
@@ -251,10 +253,10 @@ func (d *Decoder) Int128() (Int128, error) {
 func (d *Decoder) Int256() (Int256, error) {
 	v := Int256{}
 	size := len(v)
-	if len(d.buf) < size {
-		return Int256{}, io.ErrUnexpectedEOF
+	if d.Remaining() < size {
+		return Int256{}, ErrUnexpectedEOF
 	}
-	copy(v[:size], d.buf[:size])
-	d.buf = d.buf[size:]
+	copy(v[:], d.buf[d.off:d.off+size])
+	d.off += size
 	return v, nil
 }
