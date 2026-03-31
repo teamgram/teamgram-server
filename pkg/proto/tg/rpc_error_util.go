@@ -33,6 +33,18 @@ var (
 )
 
 func NewRpcError(e error) *TLRpcError {
+	if e == nil {
+		return &TLRpcError{
+			ErrorCode:    ErrInternal,
+			ErrorMessage: "INTERNAL_SERVER_ERROR",
+		}
+	}
+
+	var rpcErr *TLRpcError
+	if errors.As(e, &rpcErr) && rpcErr != nil {
+		return rpcErr
+	}
+
 	var (
 		err ecode.CodeError
 	)

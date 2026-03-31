@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -192,7 +192,7 @@ func init() {
 	iface.RegisterClazzID(0x56d6a247, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleGroupCallSetting{ClazzID: 0x56d6a247} }) // 0x56d6a247
 	iface.RegisterClazzID(0xfe9fc158, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionParticipantJoinByInvite{ClazzID: 0xfe9fc158}
-	})                                                                                                                                         // 0xfe9fc158
+	}) // 0xfe9fc158
 	iface.RegisterClazzID(0x5a50fca4, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteDelete{ClazzID: 0x5a50fca4} }) // 0x5a50fca4
 	iface.RegisterClazzID(0x410a134e, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteRevoke{ClazzID: 0x410a134e} }) // 0x410a134e
 	iface.RegisterClazzID(0xe90ebb59, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteEdit{ClazzID: 0xe90ebb59} })   // 0xe90ebb59
@@ -200,12 +200,12 @@ func init() {
 	iface.RegisterClazzID(0x6e941a38, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeHistoryTTL{ClazzID: 0x6e941a38} })     // 0x6e941a38
 	iface.RegisterClazzID(0xafb6144a, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionParticipantJoinByRequest{ClazzID: 0xafb6144a}
-	})                                                                                                                                     // 0xafb6144a
+	}) // 0xafb6144a
 	iface.RegisterClazzID(0xcb2ac766, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleNoForwards{ClazzID: 0xcb2ac766} }) // 0xcb2ac766
 	iface.RegisterClazzID(0x278f2868, func() iface.TLObject { return &TLChannelAdminLogEventActionSendMessage{ClazzID: 0x278f2868} })      // 0x278f2868
 	iface.RegisterClazzID(0xbe4e0ef8, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionChangeAvailableReactions{ClazzID: 0xbe4e0ef8}
-	})                                                                                                                                           // 0xbe4e0ef8
+	}) // 0xbe4e0ef8
 	iface.RegisterClazzID(0xf04fb3a9, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeUsernames{ClazzID: 0xf04fb3a9} })        // 0xf04fb3a9
 	iface.RegisterClazzID(0x2cc6383, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleForum{ClazzID: 0x2cc6383} })              // 0x2cc6383
 	iface.RegisterClazzID(0x58707d28, func() iface.TLObject { return &TLChannelAdminLogEventActionCreateTopic{ClazzID: 0x58707d28} })            // 0x58707d28
@@ -220,18 +220,22 @@ func init() {
 	iface.RegisterClazzID(0x46d840ab, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeEmojiStickerSet{ClazzID: 0x46d840ab} })  // 0x46d840ab
 	iface.RegisterClazzID(0x60a79c79, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionToggleSignatureProfiles{ClazzID: 0x60a79c79}
-	})                                                                                                                                           // 0x60a79c79
+	}) // 0x60a79c79
 	iface.RegisterClazzID(0x64642db3, func() iface.TLObject { return &TLChannelAdminLogEventActionParticipantSubExtend{ClazzID: 0x64642db3} })   // 0x64642db3
 	iface.RegisterClazzID(0xc517f77e, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleAutotranslation{ClazzID: 0xc517f77e} })  // 0xc517f77e
+	iface.RegisterClazzID(0x5806b4ec, func() iface.TLObject { return &TLChannelAdminLogEventActionParticipantEditRank{ClazzID: 0x5806b4ec} })    // 0x5806b4ec
 	iface.RegisterClazzID(0xea107ae4, func() iface.TLObject { return &TLChannelAdminLogEventsFilter{ClazzID: 0xea107ae4} })                      // 0xea107ae4
 	iface.RegisterClazzID(0xbfb5ad8b, func() iface.TLObject { return &TLChannelLocationEmpty{ClazzID: 0xbfb5ad8b} })                             // 0xbfb5ad8b
 	iface.RegisterClazzID(0x209b82db, func() iface.TLObject { return &TLChannelLocation{ClazzID: 0x209b82db} })                                  // 0x209b82db
 	iface.RegisterClazzID(0x94d42ee7, func() iface.TLObject { return &TLChannelMessagesFilterEmpty{ClazzID: 0x94d42ee7} })                       // 0x94d42ee7
 	iface.RegisterClazzID(0xcd77d957, func() iface.TLObject { return &TLChannelMessagesFilter{ClazzID: 0xcd77d957} })                            // 0xcd77d957
+	iface.RegisterClazzID(0x1bd54456, func() iface.TLObject { return &TLChannelParticipant{ClazzID: 0x1bd54456} })                               // 0x1bd54456
 	iface.RegisterClazzID(0xcb397619, func() iface.TLObject { return &TLChannelParticipant{ClazzID: 0xcb397619} })                               // 0xcb397619
+	iface.RegisterClazzID(0xa9478a1a, func() iface.TLObject { return &TLChannelParticipantSelf{ClazzID: 0xa9478a1a} })                           // 0xa9478a1a
 	iface.RegisterClazzID(0x4f607bef, func() iface.TLObject { return &TLChannelParticipantSelf{ClazzID: 0x4f607bef} })                           // 0x4f607bef
 	iface.RegisterClazzID(0x2fe601d3, func() iface.TLObject { return &TLChannelParticipantCreator{ClazzID: 0x2fe601d3} })                        // 0x2fe601d3
 	iface.RegisterClazzID(0x34c3bb53, func() iface.TLObject { return &TLChannelParticipantAdmin{ClazzID: 0x34c3bb53} })                          // 0x34c3bb53
+	iface.RegisterClazzID(0xd5f0ad91, func() iface.TLObject { return &TLChannelParticipantBanned{ClazzID: 0xd5f0ad91} })                         // 0xd5f0ad91
 	iface.RegisterClazzID(0x6df8014e, func() iface.TLObject { return &TLChannelParticipantBanned{ClazzID: 0x6df8014e} })                         // 0x6df8014e
 	iface.RegisterClazzID(0x1b03f006, func() iface.TLObject { return &TLChannelParticipantLeft{ClazzID: 0x1b03f006} })                           // 0x1b03f006
 	iface.RegisterClazzID(0xde3f3c79, func() iface.TLObject { return &TLChannelParticipantsRecent{ClazzID: 0xde3f3c79} })                        // 0xde3f3c79
@@ -265,8 +269,11 @@ func init() {
 	iface.RegisterClazzID(0x61695cb0, func() iface.TLObject { return &TLChatInvitePeek{ClazzID: 0x61695cb0} })                                   // 0x61695cb0
 	iface.RegisterClazzID(0x8c5adfd9, func() iface.TLObject { return &TLChatInviteImporter{ClazzID: 0x8c5adfd9} })                               // 0x8c5adfd9
 	iface.RegisterClazzID(0xf041e250, func() iface.TLObject { return &TLChatOnlines{ClazzID: 0xf041e250} })                                      // 0xf041e250
+	iface.RegisterClazzID(0x38e79fde, func() iface.TLObject { return &TLChatParticipant{ClazzID: 0x38e79fde} })                                  // 0x38e79fde
 	iface.RegisterClazzID(0xc02d4007, func() iface.TLObject { return &TLChatParticipant{ClazzID: 0xc02d4007} })                                  // 0xc02d4007
+	iface.RegisterClazzID(0xe1f867b8, func() iface.TLObject { return &TLChatParticipantCreator{ClazzID: 0xe1f867b8} })                           // 0xe1f867b8
 	iface.RegisterClazzID(0xe46bcee4, func() iface.TLObject { return &TLChatParticipantCreator{ClazzID: 0xe46bcee4} })                           // 0xe46bcee4
+	iface.RegisterClazzID(0x360d5d2, func() iface.TLObject { return &TLChatParticipantAdmin{ClazzID: 0x360d5d2} })                               // 0x360d5d2
 	iface.RegisterClazzID(0xa0933f5b, func() iface.TLObject { return &TLChatParticipantAdmin{ClazzID: 0xa0933f5b} })                             // 0xa0933f5b
 	iface.RegisterClazzID(0x8763d3e1, func() iface.TLObject { return &TLChatParticipantsForbidden{ClazzID: 0x8763d3e1} })                        // 0x8763d3e1
 	iface.RegisterClazzID(0x3cbc93f8, func() iface.TLObject { return &TLChatParticipants{ClazzID: 0x3cbc93f8} })                                 // 0x3cbc93f8
@@ -652,25 +659,44 @@ func init() {
 	iface.RegisterClazzID(0xb71e767a, func() iface.TLObject { return &TLJsonString{ClazzID: 0xb71e767a} })                                       // 0xb71e767a
 	iface.RegisterClazzID(0xf7444763, func() iface.TLObject { return &TLJsonArray{ClazzID: 0xf7444763} })                                        // 0xf7444763
 	iface.RegisterClazzID(0x99c1d49d, func() iface.TLObject { return &TLJsonObject{ClazzID: 0x99c1d49d} })                                       // 0x99c1d49d
+	iface.RegisterClazzID(0x7d170cff, func() iface.TLObject { return &TLKeyboardButton{ClazzID: 0x7d170cff} })                                   // 0x7d170cff
 	iface.RegisterClazzID(0xa2fa4880, func() iface.TLObject { return &TLKeyboardButton{ClazzID: 0xa2fa4880} })                                   // 0xa2fa4880
+	iface.RegisterClazzID(0xd80c25ec, func() iface.TLObject { return &TLKeyboardButtonUrl{ClazzID: 0xd80c25ec} })                                // 0xd80c25ec
 	iface.RegisterClazzID(0x258aff05, func() iface.TLObject { return &TLKeyboardButtonUrl{ClazzID: 0x258aff05} })                                // 0x258aff05
+	iface.RegisterClazzID(0xe62bc960, func() iface.TLObject { return &TLKeyboardButtonCallback{ClazzID: 0xe62bc960} })                           // 0xe62bc960
 	iface.RegisterClazzID(0x35bbdb6b, func() iface.TLObject { return &TLKeyboardButtonCallback{ClazzID: 0x35bbdb6b} })                           // 0x35bbdb6b
+	iface.RegisterClazzID(0x417efd8f, func() iface.TLObject { return &TLKeyboardButtonRequestPhone{ClazzID: 0x417efd8f} })                       // 0x417efd8f
 	iface.RegisterClazzID(0xb16a6c29, func() iface.TLObject { return &TLKeyboardButtonRequestPhone{ClazzID: 0xb16a6c29} })                       // 0xb16a6c29
+	iface.RegisterClazzID(0xaa40f94d, func() iface.TLObject { return &TLKeyboardButtonRequestGeoLocation{ClazzID: 0xaa40f94d} })                 // 0xaa40f94d
 	iface.RegisterClazzID(0xfc796b3f, func() iface.TLObject { return &TLKeyboardButtonRequestGeoLocation{ClazzID: 0xfc796b3f} })                 // 0xfc796b3f
+	iface.RegisterClazzID(0x991399fc, func() iface.TLObject { return &TLKeyboardButtonSwitchInline{ClazzID: 0x991399fc} })                       // 0x991399fc
 	iface.RegisterClazzID(0x93b9fbb5, func() iface.TLObject { return &TLKeyboardButtonSwitchInline{ClazzID: 0x93b9fbb5} })                       // 0x93b9fbb5
+	iface.RegisterClazzID(0x89c590f9, func() iface.TLObject { return &TLKeyboardButtonGame{ClazzID: 0x89c590f9} })                               // 0x89c590f9
 	iface.RegisterClazzID(0x50f41ccf, func() iface.TLObject { return &TLKeyboardButtonGame{ClazzID: 0x50f41ccf} })                               // 0x50f41ccf
+	iface.RegisterClazzID(0x3fa53905, func() iface.TLObject { return &TLKeyboardButtonBuy{ClazzID: 0x3fa53905} })                                // 0x3fa53905
 	iface.RegisterClazzID(0xafd93fbb, func() iface.TLObject { return &TLKeyboardButtonBuy{ClazzID: 0xafd93fbb} })                                // 0xafd93fbb
+	iface.RegisterClazzID(0xf51006f9, func() iface.TLObject { return &TLKeyboardButtonUrlAuth{ClazzID: 0xf51006f9} })                            // 0xf51006f9
 	iface.RegisterClazzID(0x10b78d29, func() iface.TLObject { return &TLKeyboardButtonUrlAuth{ClazzID: 0x10b78d29} })                            // 0x10b78d29
+	iface.RegisterClazzID(0x68013e72, func() iface.TLObject { return &TLInputKeyboardButtonUrlAuth{ClazzID: 0x68013e72} })                       // 0x68013e72
 	iface.RegisterClazzID(0xd02e7fd4, func() iface.TLObject { return &TLInputKeyboardButtonUrlAuth{ClazzID: 0xd02e7fd4} })                       // 0xd02e7fd4
+	iface.RegisterClazzID(0x7a11d782, func() iface.TLObject { return &TLKeyboardButtonRequestPoll{ClazzID: 0x7a11d782} })                        // 0x7a11d782
 	iface.RegisterClazzID(0xbbc7515d, func() iface.TLObject { return &TLKeyboardButtonRequestPoll{ClazzID: 0xbbc7515d} })                        // 0xbbc7515d
+	iface.RegisterClazzID(0x7d5e07c7, func() iface.TLObject { return &TLInputKeyboardButtonUserProfile{ClazzID: 0x7d5e07c7} })                   // 0x7d5e07c7
 	iface.RegisterClazzID(0xe988037b, func() iface.TLObject { return &TLInputKeyboardButtonUserProfile{ClazzID: 0xe988037b} })                   // 0xe988037b
+	iface.RegisterClazzID(0xc0fd5d09, func() iface.TLObject { return &TLKeyboardButtonUserProfile{ClazzID: 0xc0fd5d09} })                        // 0xc0fd5d09
 	iface.RegisterClazzID(0x308660c1, func() iface.TLObject { return &TLKeyboardButtonUserProfile{ClazzID: 0x308660c1} })                        // 0x308660c1
+	iface.RegisterClazzID(0xe846b1a0, func() iface.TLObject { return &TLKeyboardButtonWebView{ClazzID: 0xe846b1a0} })                            // 0xe846b1a0
 	iface.RegisterClazzID(0x13767230, func() iface.TLObject { return &TLKeyboardButtonWebView{ClazzID: 0x13767230} })                            // 0x13767230
+	iface.RegisterClazzID(0xe15c4370, func() iface.TLObject { return &TLKeyboardButtonSimpleWebView{ClazzID: 0xe15c4370} })                      // 0xe15c4370
 	iface.RegisterClazzID(0xa0c0505c, func() iface.TLObject { return &TLKeyboardButtonSimpleWebView{ClazzID: 0xa0c0505c} })                      // 0xa0c0505c
+	iface.RegisterClazzID(0x5b0f15f5, func() iface.TLObject { return &TLKeyboardButtonRequestPeer{ClazzID: 0x5b0f15f5} })                        // 0x5b0f15f5
 	iface.RegisterClazzID(0x53d7bfd8, func() iface.TLObject { return &TLKeyboardButtonRequestPeer{ClazzID: 0x53d7bfd8} })                        // 0x53d7bfd8
+	iface.RegisterClazzID(0x2b78156, func() iface.TLObject { return &TLInputKeyboardButtonRequestPeer{ClazzID: 0x2b78156} })                     // 0x2b78156
 	iface.RegisterClazzID(0xc9662d05, func() iface.TLObject { return &TLInputKeyboardButtonRequestPeer{ClazzID: 0xc9662d05} })                   // 0xc9662d05
+	iface.RegisterClazzID(0xbcc4af10, func() iface.TLObject { return &TLKeyboardButtonCopy{ClazzID: 0xbcc4af10} })                               // 0xbcc4af10
 	iface.RegisterClazzID(0x75d2698e, func() iface.TLObject { return &TLKeyboardButtonCopy{ClazzID: 0x75d2698e} })                               // 0x75d2698e
 	iface.RegisterClazzID(0x77608b83, func() iface.TLObject { return &TLKeyboardButtonRow{ClazzID: 0x77608b83} })                                // 0x77608b83
+	iface.RegisterClazzID(0x4fdd3430, func() iface.TLObject { return &TLKeyboardButtonStyle{ClazzID: 0x4fdd3430} })                              // 0x4fdd3430
 	iface.RegisterClazzID(0xcb296bf8, func() iface.TLObject { return &TLLabeledPrice{ClazzID: 0xcb296bf8} })                                     // 0xcb296bf8
 	iface.RegisterClazzID(0xf385c1f6, func() iface.TLObject { return &TLLangPackDifference{ClazzID: 0xf385c1f6} })                               // 0xf385c1f6
 	iface.RegisterClazzID(0xeeca5ce3, func() iface.TLObject { return &TLLangPackLanguage{ClazzID: 0xeeca5ce3} })                                 // 0xeeca5ce3
@@ -689,6 +715,7 @@ func init() {
 	iface.RegisterClazzID(0x5787686d, func() iface.TLObject { return &TLMediaAreaStarGift{ClazzID: 0x5787686d} })                                // 0x5787686d
 	iface.RegisterClazzID(0xcfc9e002, func() iface.TLObject { return &TLMediaAreaCoordinates{ClazzID: 0xcfc9e002} })                             // 0xcfc9e002
 	iface.RegisterClazzID(0x90a6ca84, func() iface.TLObject { return &TLMessageEmpty{ClazzID: 0x90a6ca84} })                                     // 0x90a6ca84
+	iface.RegisterClazzID(0x3ae56482, func() iface.TLObject { return &TLMessage{ClazzID: 0x3ae56482} })                                          // 0x3ae56482
 	iface.RegisterClazzID(0x9cb490e9, func() iface.TLObject { return &TLMessage{ClazzID: 0x9cb490e9} })                                          // 0x9cb490e9
 	iface.RegisterClazzID(0xb92f76cf, func() iface.TLObject { return &TLMessage{ClazzID: 0xb92f76cf} })                                          // 0xb92f76cf
 	iface.RegisterClazzID(0x7a800e0a, func() iface.TLObject { return &TLMessageService{ClazzID: 0x7a800e0a} })                                   // 0x7a800e0a
@@ -739,6 +766,7 @@ func init() {
 	iface.RegisterClazzID(0x45d5b021, func() iface.TLObject { return &TLMessageActionGiftStars{ClazzID: 0x45d5b021} })                           // 0x45d5b021
 	iface.RegisterClazzID(0xb00c47a2, func() iface.TLObject { return &TLMessageActionPrizeStars{ClazzID: 0xb00c47a2} })                          // 0xb00c47a2
 	iface.RegisterClazzID(0xea2c31d3, func() iface.TLObject { return &TLMessageActionStarGift{ClazzID: 0xea2c31d3} })                            // 0xea2c31d3
+	iface.RegisterClazzID(0xe6c31522, func() iface.TLObject { return &TLMessageActionStarGiftUnique{ClazzID: 0xe6c31522} })                      // 0xe6c31522
 	iface.RegisterClazzID(0x95728543, func() iface.TLObject { return &TLMessageActionStarGiftUnique{ClazzID: 0x95728543} })                      // 0x95728543
 	iface.RegisterClazzID(0xac1f1fcd, func() iface.TLObject { return &TLMessageActionPaidMessagesRefunded{ClazzID: 0xac1f1fcd} })                // 0xac1f1fcd
 	iface.RegisterClazzID(0x84b88578, func() iface.TLObject { return &TLMessageActionPaidMessagesPrice{ClazzID: 0x84b88578} })                   // 0x84b88578
@@ -752,6 +780,10 @@ func init() {
 	iface.RegisterClazzID(0x2c8f2a25, func() iface.TLObject { return &TLMessageActionSuggestBirthday{ClazzID: 0x2c8f2a25} })                     // 0x2c8f2a25
 	iface.RegisterClazzID(0x774278d4, func() iface.TLObject { return &TLMessageActionStarGiftPurchaseOffer{ClazzID: 0x774278d4} })               // 0x774278d4
 	iface.RegisterClazzID(0x73ada76b, func() iface.TLObject { return &TLMessageActionStarGiftPurchaseOfferDeclined{ClazzID: 0x73ada76b} })       // 0x73ada76b
+	iface.RegisterClazzID(0xb07ed085, func() iface.TLObject { return &TLMessageActionNewCreatorPending{ClazzID: 0xb07ed085} })                   // 0xb07ed085
+	iface.RegisterClazzID(0xe188503b, func() iface.TLObject { return &TLMessageActionChangeCreator{ClazzID: 0xe188503b} })                       // 0xe188503b
+	iface.RegisterClazzID(0xbf7d6572, func() iface.TLObject { return &TLMessageActionNoForwardsToggle{ClazzID: 0xbf7d6572} })                    // 0xbf7d6572
+	iface.RegisterClazzID(0x3e2793ba, func() iface.TLObject { return &TLMessageActionNoForwardsRequest{ClazzID: 0x3e2793ba} })                   // 0x3e2793ba
 	iface.RegisterClazzID(0x2ffdf1b7, func() iface.TLObject { return &TLMessageActionBizDataRaw{ClazzID: 0x2ffdf1b7} })                          // 0x2ffdf1b7
 	iface.RegisterClazzID(0x397f9368, func() iface.TLObject { return &TLMessageBox{ClazzID: 0x397f9368} })                                       // 0x397f9368
 	iface.RegisterClazzID(0x5308e2e1, func() iface.TLObject { return &TLMessageBoxList{ClazzID: 0x5308e2e1} })                                   // 0x5308e2e1
@@ -777,6 +809,7 @@ func init() {
 	iface.RegisterClazzID(0x32ca960f, func() iface.TLObject { return &TLMessageEntitySpoiler{ClazzID: 0x32ca960f} })                             // 0x32ca960f
 	iface.RegisterClazzID(0xc8cf05f8, func() iface.TLObject { return &TLMessageEntityCustomEmoji{ClazzID: 0xc8cf05f8} })                         // 0xc8cf05f8
 	iface.RegisterClazzID(0xf1ccaaac, func() iface.TLObject { return &TLMessageEntityBlockquote{ClazzID: 0xf1ccaaac} })                          // 0xf1ccaaac
+	iface.RegisterClazzID(0x904ac7c7, func() iface.TLObject { return &TLMessageEntityFormattedDate{ClazzID: 0x904ac7c7} })                       // 0x904ac7c7
 	iface.RegisterClazzID(0xad628cc8, func() iface.TLObject { return &TLMessageExtendedMediaPreview{ClazzID: 0xad628cc8} })                      // 0xad628cc8
 	iface.RegisterClazzID(0xee479c64, func() iface.TLObject { return &TLMessageExtendedMedia{ClazzID: 0xee479c64} })                             // 0xee479c64
 	iface.RegisterClazzID(0x4e4df4bb, func() iface.TLObject { return &TLMessageFwdHeader{ClazzID: 0x4e4df4bb} })                                 // 0x4e4df4bb
@@ -1186,6 +1219,7 @@ func init() {
 	iface.RegisterClazzID(0xbd87cb6c, func() iface.TLObject { return &TLSavedDialog{ClazzID: 0xbd87cb6c} })                                      // 0xbd87cb6c
 	iface.RegisterClazzID(0x64407ea7, func() iface.TLObject { return &TLMonoForumDialog{ClazzID: 0x64407ea7} })                                  // 0x64407ea7
 	iface.RegisterClazzID(0xcb6ff828, func() iface.TLObject { return &TLSavedReactionTag{ClazzID: 0xcb6ff828} })                                 // 0xcb6ff828
+	iface.RegisterClazzID(0x41df43fc, func() iface.TLObject { return &TLSavedStarGift{ClazzID: 0x41df43fc} })                                    // 0x41df43fc
 	iface.RegisterClazzID(0xead6805e, func() iface.TLObject { return &TLSavedStarGift{ClazzID: 0xead6805e} })                                    // 0xead6805e
 	iface.RegisterClazzID(0x3e0b5b6a, func() iface.TLObject { return &TLSearchPostsFlood{ClazzID: 0x3e0b5b6a} })                                 // 0x3e0b5b6a
 	iface.RegisterClazzID(0xc9b0539f, func() iface.TLObject { return &TLSearchResultsCalendarPeriod{ClazzID: 0xc9b0539f} })                      // 0xc9b0539f
@@ -1254,16 +1288,25 @@ func init() {
 	iface.RegisterClazzID(0x430d3150, func() iface.TLObject { return &TLSponsoredMessageReportOption{ClazzID: 0x430d3150} })                     // 0x430d3150
 	iface.RegisterClazzID(0xc69708d3, func() iface.TLObject { return &TLSponsoredPeer{ClazzID: 0xc69708d3} })                                    // 0xc69708d3
 	iface.RegisterClazzID(0x313a9547, func() iface.TLObject { return &TLStarGift{ClazzID: 0x313a9547} })                                         // 0x313a9547
+	iface.RegisterClazzID(0x85f0a9cd, func() iface.TLObject { return &TLStarGiftUnique{ClazzID: 0x85f0a9cd} })                                   // 0x85f0a9cd
 	iface.RegisterClazzID(0x569d64c9, func() iface.TLObject { return &TLStarGiftUnique{ClazzID: 0x569d64c9} })                                   // 0x569d64c9
 	iface.RegisterClazzID(0xd31bc45d, func() iface.TLObject { return &TLStarGiftActiveAuctionState{ClazzID: 0xd31bc45d} })                       // 0xd31bc45d
+	iface.RegisterClazzID(0x565251e2, func() iface.TLObject { return &TLStarGiftAttributeModel{ClazzID: 0x565251e2} })                           // 0x565251e2
 	iface.RegisterClazzID(0x39d99013, func() iface.TLObject { return &TLStarGiftAttributeModel{ClazzID: 0x39d99013} })                           // 0x39d99013
+	iface.RegisterClazzID(0x4e7085ea, func() iface.TLObject { return &TLStarGiftAttributePattern{ClazzID: 0x4e7085ea} })                         // 0x4e7085ea
 	iface.RegisterClazzID(0x13acff19, func() iface.TLObject { return &TLStarGiftAttributePattern{ClazzID: 0x13acff19} })                         // 0x13acff19
+	iface.RegisterClazzID(0x9f2504e4, func() iface.TLObject { return &TLStarGiftAttributeBackdrop{ClazzID: 0x9f2504e4} })                        // 0x9f2504e4
 	iface.RegisterClazzID(0xd93d859c, func() iface.TLObject { return &TLStarGiftAttributeBackdrop{ClazzID: 0xd93d859c} })                        // 0xd93d859c
 	iface.RegisterClazzID(0xe0bff26c, func() iface.TLObject { return &TLStarGiftAttributeOriginalDetails{ClazzID: 0xe0bff26c} })                 // 0xe0bff26c
 	iface.RegisterClazzID(0x2eb1b658, func() iface.TLObject { return &TLStarGiftAttributeCounter{ClazzID: 0x2eb1b658} })                         // 0x2eb1b658
 	iface.RegisterClazzID(0x48aaae3c, func() iface.TLObject { return &TLStarGiftAttributeIdModel{ClazzID: 0x48aaae3c} })                         // 0x48aaae3c
 	iface.RegisterClazzID(0x4a162433, func() iface.TLObject { return &TLStarGiftAttributeIdPattern{ClazzID: 0x4a162433} })                       // 0x4a162433
 	iface.RegisterClazzID(0x1f01c757, func() iface.TLObject { return &TLStarGiftAttributeIdBackdrop{ClazzID: 0x1f01c757} })                      // 0x1f01c757
+	iface.RegisterClazzID(0x36437737, func() iface.TLObject { return &TLStarGiftAttributeRarity{ClazzID: 0x36437737} })                          // 0x36437737
+	iface.RegisterClazzID(0xdbce6389, func() iface.TLObject { return &TLStarGiftAttributeRarityUncommon{ClazzID: 0xdbce6389} })                  // 0xdbce6389
+	iface.RegisterClazzID(0xf08d516b, func() iface.TLObject { return &TLStarGiftAttributeRarityRare{ClazzID: 0xf08d516b} })                      // 0xf08d516b
+	iface.RegisterClazzID(0x78fbf3a8, func() iface.TLObject { return &TLStarGiftAttributeRarityEpic{ClazzID: 0x78fbf3a8} })                      // 0x78fbf3a8
+	iface.RegisterClazzID(0xcef7e7a8, func() iface.TLObject { return &TLStarGiftAttributeRarityLegendary{ClazzID: 0xcef7e7a8} })                 // 0xcef7e7a8
 	iface.RegisterClazzID(0x42b00348, func() iface.TLObject { return &TLStarGiftAuctionAcquiredGift{ClazzID: 0x42b00348} })                      // 0x42b00348
 	iface.RegisterClazzID(0x3aae0528, func() iface.TLObject { return &TLStarGiftAuctionRound{ClazzID: 0x3aae0528} })                             // 0x3aae0528
 	iface.RegisterClazzID(0xaa021e5, func() iface.TLObject { return &TLStarGiftAuctionRoundExtendable{ClazzID: 0xaa021e5} })                     // 0xaa021e5
@@ -1523,6 +1566,8 @@ func init() {
 	iface.RegisterClazzID(0x48e246c2, func() iface.TLObject { return &TLUpdateStarGiftAuctionState{ClazzID: 0x48e246c2} })                       // 0x48e246c2
 	iface.RegisterClazzID(0xdc58f31e, func() iface.TLObject { return &TLUpdateStarGiftAuctionUserState{ClazzID: 0xdc58f31e} })                   // 0xdc58f31e
 	iface.RegisterClazzID(0xfb9c547a, func() iface.TLObject { return &TLUpdateEmojiGameInfo{ClazzID: 0xfb9c547a} })                              // 0xfb9c547a
+	iface.RegisterClazzID(0xac072444, func() iface.TLObject { return &TLUpdateStarGiftCraftFail{ClazzID: 0xac072444} })                          // 0xac072444
+	iface.RegisterClazzID(0xbd8367b9, func() iface.TLObject { return &TLUpdateChatParticipantRank{ClazzID: 0xbd8367b9} })                        // 0xbd8367b9
 	iface.RegisterClazzID(0x83ce7a0e, func() iface.TLObject { return &TLUpdateBizDataRaw{ClazzID: 0x83ce7a0e} })                                 // 0x83ce7a0e
 	iface.RegisterClazzID(0x9014a0a2, func() iface.TLObject { return &TLUpdateList{ClazzID: 0x9014a0a2} })                                       // 0x9014a0a2
 	iface.RegisterClazzID(0xe317af7e, func() iface.TLObject { return &TLUpdatesTooLong{ClazzID: 0xe317af7e} })                                   // 0xe317af7e
@@ -1546,7 +1591,10 @@ func init() {
 	iface.RegisterClazzID(0x96a18d5, func() iface.TLObject { return &TLUploadFile{ClazzID: 0x96a18d5} })                                         // 0x96a18d5
 	iface.RegisterClazzID(0xf18cda44, func() iface.TLObject { return &TLUploadFileCdnRedirect{ClazzID: 0xf18cda44} })                            // 0xf18cda44
 	iface.RegisterClazzID(0x21e753bc, func() iface.TLObject { return &TLUploadWebFile{ClazzID: 0x21e753bc} })                                    // 0x21e753bc
+	iface.RegisterClazzID(0xf8f8eb1e, func() iface.TLObject { return &TLUrlAuthResultRequest{ClazzID: 0xf8f8eb1e} })                             // 0xf8f8eb1e
+	iface.RegisterClazzID(0x32fabf1a, func() iface.TLObject { return &TLUrlAuthResultRequest{ClazzID: 0x32fabf1a} })                             // 0x32fabf1a
 	iface.RegisterClazzID(0x92d33a0e, func() iface.TLObject { return &TLUrlAuthResultRequest{ClazzID: 0x92d33a0e} })                             // 0x92d33a0e
+	iface.RegisterClazzID(0x623a8fa0, func() iface.TLObject { return &TLUrlAuthResultAccepted{ClazzID: 0x623a8fa0} })                            // 0x623a8fa0
 	iface.RegisterClazzID(0x8f8c0e4e, func() iface.TLObject { return &TLUrlAuthResultAccepted{ClazzID: 0x8f8c0e4e} })                            // 0x8f8c0e4e
 	iface.RegisterClazzID(0xa9d6db1f, func() iface.TLObject { return &TLUrlAuthResultDefault{ClazzID: 0xa9d6db1f} })                             // 0xa9d6db1f
 	iface.RegisterClazzID(0xd3bc4b7a, func() iface.TLObject { return &TLUserEmpty{ClazzID: 0xd3bc4b7a} })                                        // 0xd3bc4b7a
@@ -1899,7 +1947,9 @@ func init() {
 	iface.RegisterClazzID(0x4e9963b2, func() iface.TLObject { return &TLMessagesGetEmojiKeywordsLanguages{ClazzID: 0x4e9963b2} })        // 0x4e9963b2
 	iface.RegisterClazzID(0xd5b10c26, func() iface.TLObject { return &TLMessagesGetEmojiURL{ClazzID: 0xd5b10c26} })                      // 0xd5b10c26
 	iface.RegisterClazzID(0x1bbcf300, func() iface.TLObject { return &TLMessagesGetSearchCounters{ClazzID: 0x1bbcf300} })                // 0x1bbcf300
+	iface.RegisterClazzID(0x894cc99c, func() iface.TLObject { return &TLMessagesRequestUrlAuth{ClazzID: 0x894cc99c} })                   // 0x894cc99c
 	iface.RegisterClazzID(0x198fb446, func() iface.TLObject { return &TLMessagesRequestUrlAuth{ClazzID: 0x198fb446} })                   // 0x198fb446
+	iface.RegisterClazzID(0x67a3f0de, func() iface.TLObject { return &TLMessagesAcceptUrlAuth{ClazzID: 0x67a3f0de} })                    // 0x67a3f0de
 	iface.RegisterClazzID(0xb12c7125, func() iface.TLObject { return &TLMessagesAcceptUrlAuth{ClazzID: 0xb12c7125} })                    // 0xb12c7125
 	iface.RegisterClazzID(0x4facb138, func() iface.TLObject { return &TLMessagesHidePeerSettingsBar{ClazzID: 0x4facb138} })              // 0x4facb138
 	iface.RegisterClazzID(0xf516760b, func() iface.TLObject { return &TLMessagesGetScheduledHistory{ClazzID: 0xf516760b} })              // 0xf516760b
@@ -1938,6 +1988,7 @@ func init() {
 	iface.RegisterClazzID(0x9c7f2f10, func() iface.TLObject { return &TLMessagesGetSearchResultsPositions{ClazzID: 0x9c7f2f10} })        // 0x9c7f2f10
 	iface.RegisterClazzID(0x7fe7e815, func() iface.TLObject { return &TLMessagesHideChatJoinRequest{ClazzID: 0x7fe7e815} })              // 0x7fe7e815
 	iface.RegisterClazzID(0xe085f4ea, func() iface.TLObject { return &TLMessagesHideAllChatJoinRequests{ClazzID: 0xe085f4ea} })          // 0xe085f4ea
+	iface.RegisterClazzID(0xb2081a35, func() iface.TLObject { return &TLMessagesToggleNoForwards{ClazzID: 0xb2081a35} })                 // 0xb2081a35
 	iface.RegisterClazzID(0xb11eafa2, func() iface.TLObject { return &TLMessagesToggleNoForwards{ClazzID: 0xb11eafa2} })                 // 0xb11eafa2
 	iface.RegisterClazzID(0xccfddf96, func() iface.TLObject { return &TLMessagesSaveDefaultSendAs{ClazzID: 0xccfddf96} })                // 0xccfddf96
 	iface.RegisterClazzID(0xd30d78d4, func() iface.TLObject { return &TLMessagesSendReaction{ClazzID: 0xd30d78d4} })                     // 0xd30d78d4
@@ -2031,6 +2082,11 @@ func init() {
 	iface.RegisterClazzID(0xd2816f10, func() iface.TLObject { return &TLMessagesDeleteTopicHistory{ClazzID: 0xd2816f10} })               // 0xd2816f10
 	iface.RegisterClazzID(0xfb7e8ca7, func() iface.TLObject { return &TLMessagesGetEmojiGameInfo{ClazzID: 0xfb7e8ca7} })                 // 0xfb7e8ca7
 	iface.RegisterClazzID(0x9d4104e2, func() iface.TLObject { return &TLMessagesSummarizeText{ClazzID: 0x9d4104e2} })                    // 0x9d4104e2
+	iface.RegisterClazzID(0xf743b857, func() iface.TLObject { return &TLMessagesEditChatCreator{ClazzID: 0xf743b857} })                  // 0xf743b857
+	iface.RegisterClazzID(0x3b7d0ea6, func() iface.TLObject { return &TLMessagesGetFutureChatCreatorAfterLeave{ClazzID: 0x3b7d0ea6} })   // 0x3b7d0ea6
+	iface.RegisterClazzID(0xa00f32b0, func() iface.TLObject { return &TLMessagesEditChatParticipantRank{ClazzID: 0xa00f32b0} })          // 0xa00f32b0
+	iface.RegisterClazzID(0x35436bbc, func() iface.TLObject { return &TLMessagesDeclineUrlAuth{ClazzID: 0x35436bbc} })                   // 0x35436bbc
+	iface.RegisterClazzID(0xc9a47b0b, func() iface.TLObject { return &TLMessagesCheckUrlAuthMatchCode{ClazzID: 0xc9a47b0b} })            // 0xc9a47b0b
 	iface.RegisterClazzID(0xedd4882a, func() iface.TLObject { return &TLUpdatesGetState{ClazzID: 0xedd4882a} })                          // 0xedd4882a
 	iface.RegisterClazzID(0x19c2f763, func() iface.TLObject { return &TLUpdatesGetDifference{ClazzID: 0x19c2f763} })                     // 0x19c2f763
 	iface.RegisterClazzID(0x3173d78, func() iface.TLObject { return &TLUpdatesGetChannelDifference{ClazzID: 0x3173d78} })                // 0x3173d78
@@ -2082,6 +2138,7 @@ func init() {
 	iface.RegisterClazzID(0xa7f6bbb, func() iface.TLObject { return &TLChannelsGetChannels{ClazzID: 0xa7f6bbb} })                        // 0xa7f6bbb
 	iface.RegisterClazzID(0x8736a09, func() iface.TLObject { return &TLChannelsGetFullChannel{ClazzID: 0x8736a09} })                     // 0x8736a09
 	iface.RegisterClazzID(0x91006707, func() iface.TLObject { return &TLChannelsCreateChannel{ClazzID: 0x91006707} })                    // 0x91006707
+	iface.RegisterClazzID(0x9a98ad68, func() iface.TLObject { return &TLChannelsEditAdmin{ClazzID: 0x9a98ad68} })                        // 0x9a98ad68
 	iface.RegisterClazzID(0xd33c8902, func() iface.TLObject { return &TLChannelsEditAdmin{ClazzID: 0xd33c8902} })                        // 0xd33c8902
 	iface.RegisterClazzID(0x566decd0, func() iface.TLObject { return &TLChannelsEditTitle{ClazzID: 0x566decd0} })                        // 0x566decd0
 	iface.RegisterClazzID(0xf12e57c9, func() iface.TLObject { return &TLChannelsEditPhoto{ClazzID: 0xf12e57c9} })                        // 0xf12e57c9
@@ -2103,7 +2160,6 @@ func init() {
 	iface.RegisterClazzID(0x8341ecc0, func() iface.TLObject { return &TLChannelsGetLeftChannels{ClazzID: 0x8341ecc0} })                  // 0x8341ecc0
 	iface.RegisterClazzID(0xf5dad378, func() iface.TLObject { return &TLChannelsGetGroupsForDiscussion{ClazzID: 0xf5dad378} })           // 0xf5dad378
 	iface.RegisterClazzID(0x40582bb2, func() iface.TLObject { return &TLChannelsSetDiscussionGroup{ClazzID: 0x40582bb2} })               // 0x40582bb2
-	iface.RegisterClazzID(0x8f38cd1f, func() iface.TLObject { return &TLChannelsEditCreator{ClazzID: 0x8f38cd1f} })                      // 0x8f38cd1f
 	iface.RegisterClazzID(0x58e63f6d, func() iface.TLObject { return &TLChannelsEditLocation{ClazzID: 0x58e63f6d} })                     // 0x58e63f6d
 	iface.RegisterClazzID(0xedd49ef0, func() iface.TLObject { return &TLChannelsToggleSlowMode{ClazzID: 0xedd49ef0} })                   // 0xedd49ef0
 	iface.RegisterClazzID(0x11e831ee, func() iface.TLObject { return &TLChannelsGetInactiveChannels{ClazzID: 0x11e831ee} })              // 0x11e831ee
@@ -2225,6 +2281,8 @@ func init() {
 	iface.RegisterClazzID(0xe9ce781c, func() iface.TLObject { return &TLPaymentsResolveStarGiftOffer{ClazzID: 0xe9ce781c} })             // 0xe9ce781c
 	iface.RegisterClazzID(0x8fb86b41, func() iface.TLObject { return &TLPaymentsSendStarGiftOffer{ClazzID: 0x8fb86b41} })                // 0x8fb86b41
 	iface.RegisterClazzID(0x6d038b58, func() iface.TLObject { return &TLPaymentsGetStarGiftUpgradeAttributes{ClazzID: 0x6d038b58} })     // 0x6d038b58
+	iface.RegisterClazzID(0xfd05dd00, func() iface.TLObject { return &TLPaymentsGetCraftStarGifts{ClazzID: 0xfd05dd00} })                // 0xfd05dd00
+	iface.RegisterClazzID(0xb0f9684f, func() iface.TLObject { return &TLPaymentsCraftStarGift{ClazzID: 0xb0f9684f} })                    // 0xb0f9684f
 	iface.RegisterClazzID(0x9021ab67, func() iface.TLObject { return &TLStickersCreateStickerSet{ClazzID: 0x9021ab67} })                 // 0x9021ab67
 	iface.RegisterClazzID(0xf7760f51, func() iface.TLObject { return &TLStickersRemoveStickerFromSet{ClazzID: 0xf7760f51} })             // 0xf7760f51
 	iface.RegisterClazzID(0xffb6d4ca, func() iface.TLObject { return &TLStickersChangeStickerPosition{ClazzID: 0xffb6d4ca} })            // 0xffb6d4ca
@@ -2352,6 +2410,8 @@ func init() {
 	iface.RegisterClazzID(0x778d902f, func() iface.TLObject { return &TLSmsjobsGetSmsJob{ClazzID: 0x778d902f} })                         // 0x778d902f
 	iface.RegisterClazzID(0x4f1ebf24, func() iface.TLObject { return &TLSmsjobsFinishJob{ClazzID: 0x4f1ebf24} })                         // 0x4f1ebf24
 	iface.RegisterClazzID(0xbe1e85ba, func() iface.TLObject { return &TLFragmentGetCollectibleInfo{ClazzID: 0xbe1e85ba} })               // 0xbe1e85ba
+	iface.RegisterClazzID(0x8f38cd1f, func() iface.TLObject { return &TLChannelsEditCreator{ClazzID: 0x8f38cd1f} })                      // 0x8f38cd1f
+	iface.RegisterClazzID(0xa00918af, func() iface.TLObject { return &TLChannelsGetFutureCreatorAfterLeave{ClazzID: 0xa00918af} })       // 0xa00918af
 	iface.RegisterClazzID(0xbb0d87f1, func() iface.TLObject { return &TLTestParseInputAppEvent{ClazzID: 0xbb0d87f1} })                   // 0xbb0d87f1
 	iface.RegisterClazzID(0xc0e202f7, func() iface.TLObject { return &TLHelpTest{ClazzID: 0xc0e202f7} })                                 // 0xc0e202f7
 	iface.RegisterClazzID(0x23e2e31e, func() iface.TLObject { return &TLPredefinedCreatePredefinedUser{ClazzID: 0x23e2e31e} })           // 0x23e2e31e

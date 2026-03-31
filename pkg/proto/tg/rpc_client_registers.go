@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -172,6 +172,8 @@ func init() {
 	iface.RegisterRPCContextTuple("TLAccountResetWebAuthorizations", "/tg.RPCSeamless/account.resetWebAuthorizations", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLMessagesRequestUrlAuth", "/tg.RPCSeamless/messages.requestUrlAuth", func() interface{} { return new(UrlAuthResult) })
 	iface.RegisterRPCContextTuple("TLMessagesAcceptUrlAuth", "/tg.RPCSeamless/messages.acceptUrlAuth", func() interface{} { return new(UrlAuthResult) })
+	iface.RegisterRPCContextTuple("TLMessagesDeclineUrlAuth", "/tg.RPCSeamless/messages.declineUrlAuth", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLMessagesCheckUrlAuthMatchCode", "/tg.RPCSeamless/messages.checkUrlAuthMatchCode", func() interface{} { return new(Bool) })
 
 	// RPCTakeout
 	iface.RegisterRPCContextTuple("TLAccountInitTakeoutSession", "/tg.RPCTakeout/account.initTakeoutSession", func() interface{} { return new(AccountTakeout) })
@@ -395,6 +397,9 @@ func init() {
 	iface.RegisterRPCContextTuple("TLMessagesEditChatDefaultBannedRights", "/tg.RPCChats/messages.editChatDefaultBannedRights", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLMessagesDeleteChat", "/tg.RPCChats/messages.deleteChat", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLMessagesGetMessageReadParticipants", "/tg.RPCChats/messages.getMessageReadParticipants", func() interface{} { return new(VectorReadParticipantDate) })
+	iface.RegisterRPCContextTuple("TLMessagesEditChatCreator", "/tg.RPCChats/messages.editChatCreator", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLMessagesGetFutureChatCreatorAfterLeave", "/tg.RPCChats/messages.getFutureChatCreatorAfterLeave", func() interface{} { return new(User) })
+	iface.RegisterRPCContextTuple("TLMessagesEditChatParticipantRank", "/tg.RPCChats/messages.editChatParticipantRank", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsConvertToGigagroup", "/tg.RPCChats/channels.convertToGigagroup", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsSetEmojiStickers", "/tg.RPCChats/channels.setEmojiStickers", func() interface{} { return new(Bool) })
 
@@ -762,12 +767,13 @@ func init() {
 	iface.RegisterRPCContextTuple("TLChannelsTogglePreHistoryHidden", "/tg.RPCChannels/channels.togglePreHistoryHidden", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsGetGroupsForDiscussion", "/tg.RPCChannels/channels.getGroupsForDiscussion", func() interface{} { return new(MessagesChats) })
 	iface.RegisterRPCContextTuple("TLChannelsSetDiscussionGroup", "/tg.RPCChannels/channels.setDiscussionGroup", func() interface{} { return new(Bool) })
-	iface.RegisterRPCContextTuple("TLChannelsEditCreator", "/tg.RPCChannels/channels.editCreator", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsEditLocation", "/tg.RPCChannels/channels.editLocation", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLChannelsToggleSlowMode", "/tg.RPCChannels/channels.toggleSlowMode", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsGetInactiveChannels", "/tg.RPCChannels/channels.getInactiveChannels", func() interface{} { return new(MessagesInactiveChats) })
 	iface.RegisterRPCContextTuple("TLChannelsDeleteParticipantHistory", "/tg.RPCChannels/channels.deleteParticipantHistory", func() interface{} { return new(MessagesAffectedHistory) })
 	iface.RegisterRPCContextTuple("TLChannelsToggleParticipantsHidden", "/tg.RPCChannels/channels.toggleParticipantsHidden", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLChannelsEditCreator", "/tg.RPCChannels/channels.editCreator", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLChannelsGetFutureCreatorAfterLeave", "/tg.RPCChannels/channels.getFutureCreatorAfterLeave", func() interface{} { return new(User) })
 
 	// RPCAntiSpam
 	iface.RegisterRPCContextTuple("TLChannelsToggleAntiSpam", "/tg.RPCAntiSpam/channels.toggleAntiSpam", func() interface{} { return new(Updates) })
@@ -863,6 +869,8 @@ func init() {
 	iface.RegisterRPCContextTuple("TLPaymentsResolveStarGiftOffer", "/tg.RPCGifts/payments.resolveStarGiftOffer", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLPaymentsSendStarGiftOffer", "/tg.RPCGifts/payments.sendStarGiftOffer", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLPaymentsGetStarGiftUpgradeAttributes", "/tg.RPCGifts/payments.getStarGiftUpgradeAttributes", func() interface{} { return new(PaymentsStarGiftUpgradeAttributes) })
+	iface.RegisterRPCContextTuple("TLPaymentsGetCraftStarGifts", "/tg.RPCGifts/payments.getCraftStarGifts", func() interface{} { return new(PaymentsSavedStarGifts) })
+	iface.RegisterRPCContextTuple("TLPaymentsCraftStarGift", "/tg.RPCGifts/payments.craftStarGift", func() interface{} { return new(Updates) })
 
 	// RPCGiftCollections
 	iface.RegisterRPCContextTuple("TLPaymentsCreateStarGiftCollection", "/tg.RPCGiftCollections/payments.createStarGiftCollection", func() interface{} { return new(StarGiftCollection) })

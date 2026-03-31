@@ -113,6 +113,31 @@ type AuthSentCodeClazz interface {
 
 This allows method signatures to stay stable while business logic can still return different constructor variants.
 
+### Single-Constructor Types
+
+If a TL type has only one constructor in the entire schema, it should not be modeled as an abstract wrapper.
+
+In that case, the runtime and business layer should use the concrete constructor type directly.
+
+Example:
+
+- if `FooResult` has exactly one constructor in the whole schema
+- then a method returning `FooResult` should directly return `*TLFooResult`
+
+Recommended rule:
+
+- single-constructor type: generate only the concrete type
+- multi-constructor type: generate wrapper + abstract interface
+
+Do not generate these for single-constructor types:
+
+- wrapper type
+- `XXXClazz` interface
+- `ToXxxType()` promotion helper
+- `Match(...)`
+
+This keeps the runtime model smaller and avoids paying abstraction cost where no polymorphism exists.
+
 ## Constructor-to-Type Promotion
 
 Every concrete constructor that belongs to an abstract type should expose a helper that promotes it into the abstract wrapper.
@@ -317,3 +342,53 @@ The runtime model can be summarized as:
 - encode: layer-driven
 
 This is the recommended foundation for server-side TL support.
+
+## Large Layer Spans
+
+When the server supports a large number of schema layers, the runtime must remain lightweight.
+
+In that environment, the runtime should not try to dynamically model every field-level evolution across every supported layer.
+
+Instead, the design should follow this rule:
+
+- generator heavy
+- runtime light
+
+### What the Generator Should Do
+
+The generator should absorb most schema complexity at generation time:
+
+- load all supported layer schemas
+- compute predicate evolution across layers
+- compute constructor id changes across layers
+- materialize versioned encode/decode branches
+- generate abstract wrappers only for multi-constructor types
+- generate method skeletons with correct abstract result types
+
+### What the Runtime Should Do
+
+The runtime should stay focused on a small set of operations:
+
+- decode by constructor id
+- encode by predicate and target layer
+- wrap and unwrap abstract result types
+- validate method results
+- expose metadata for logging and diagnostics
+
+The runtime should not become a general-purpose field projection engine.
+
+### Why This Matters
+
+If the runtime tries to dynamically reconcile field-level differences for every layer:
+
+- complexity will grow with every new schema layer
+- business logic will be polluted by compatibility rules
+- the protocol layer will become harder to reason about
+- maintenance cost will become unacceptable
+
+For wide layer support, the correct architecture is:
+
+- schema complexity handled at generation time
+- runtime complexity minimized to dispatch and lookup
+
+This is the only scalable model for long-running Telegram-compatible server support.
