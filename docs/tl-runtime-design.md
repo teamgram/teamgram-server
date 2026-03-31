@@ -191,6 +191,94 @@ Business code should prefer:
 
 instead of raw predicate string comparisons.
 
+## Registry Model
+
+The runtime registry should be split by responsibility instead of forcing all lookups through one map.
+
+### Decode Registry
+
+Decode is constructor-id-driven, so it should have a dedicated registry:
+
+- `clazz_id -> concrete constructor factory`
+- `clazz_id -> predicate`
+- `clazz_id -> abstract parent type`
+
+This registry does not need layer as an input because the incoming payload already contains the constructor id.
+
+Example:
+
+- `0x5e002502 -> auth.sentCode -> auth.SentCode`
+- `0x2390fe44 -> auth.sentCodeSuccess -> auth.SentCode`
+- `0xe0955a3c -> auth.sentCodePaymentRequired -> auth.SentCode`
+
+This registry is used to:
+
+- create concrete result/request objects from bytes
+- decode wrapped abstract result families
+- support logging and diagnostics after decode
+
+### Encode Registry
+
+Encode is layer-driven, so it needs a different registry:
+
+- `predicate + layer -> clazz_id`
+- `predicate + layer -> encode version availability`
+- optionally `type + layer -> allowed constructor predicates`
+
+This registry is used when the server already has a semantic object and needs to serialize it for a specific client layer.
+
+Example:
+
+- `auth.sendCode + layer -> method clazz_id`
+- `auth.sentCode + layer -> constructor clazz_id`
+- `auth.sentCodeSuccess + layer -> constructor clazz_id`
+
+### Type Registry
+
+Abstract result types should have an explicit registry view:
+
+- `type name -> constructor predicate set`
+- optionally `type name + layer -> constructor predicate set`
+
+Example:
+
+- `auth.SentCode -> {auth.sentCode, auth.sentCodeSuccess, auth.sentCodePaymentRequired}`
+
+This registry is useful for:
+
+- method/result validation
+- future compatibility checks
+- introspection and debugging
+
+### Method Registry
+
+Methods should also be explicit runtime metadata, not only generated code.
+
+A method registry should minimally expose:
+
+- `method predicate`
+- request constructor predicate
+- abstract result type name
+
+Example:
+
+- `auth.sendCode -> request: auth.sendCode, result: auth.SentCode`
+
+This lets the runtime reason about what a handler is allowed to return without relying only on handwritten conventions.
+
+### Practical Summary
+
+The runtime should not rely on a single registry.
+
+It should have at least these logical views:
+
+- decode view: `clazz_id -> constructor`
+- encode view: `predicate + layer -> clazz_id`
+- type view: `type -> constructors`
+- method view: `method -> result type`
+
+These views may share the same underlying metadata store, but they should remain distinct in design and API.
+
 ## Method Skeleton Responsibilities
 
 Generated method skeletons should do the following:
