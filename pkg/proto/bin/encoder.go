@@ -114,7 +114,7 @@ func (e *Encoder) PutBytes(v []byte) {
 
 // PutVectorHeader serializes a TL vector header and item count.
 func (e *Encoder) PutVectorHeader(length int32) {
-	e.PutClazzID(ClazzIDVector)
+	e.PutClazzID(ClazzID_vector)
 	e.PutInt32(length)
 }
 
