@@ -188,3 +188,7 @@ func TestEncoderDoubleReleaseIsSafe(t *testing.T) {
 	x.Release()
 	x.Release()
 }
+
+func TestVectorClazzIDUsesPredicateNaming(t *testing.T) {
+	require.Equal(t, uint32(0x1cb5c415), ClazzID_vector)
+}

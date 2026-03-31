@@ -157,7 +157,7 @@ func (d *Decoder) ConsumeClazzID(id uint32) error {
 
 // VectorHeader decodes a TL vector header and item count.
 func (d *Decoder) VectorHeader() (int32, error) {
-	if err := d.ConsumeClazzID(ClazzIDVector); err != nil {
+	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
 		return 0, err
 	}
 	n, err := d.Int32()
