@@ -49,35 +49,35 @@ var (
 //}
 
 func (m *PeerUtil) SelfId() int64 {
-	return m.Clazz.(*TLPeerUtil).SelfId
+	return m.Clazz.SelfId
 }
 
 func (m *PeerUtil) SetSelfId(v int64) {
-	m.Clazz.(*TLPeerUtil).SelfId = v
+	m.Clazz.SelfId = v
 }
 
 func (m *PeerUtil) PeerType() int32 {
-	return m.Clazz.(*TLPeerUtil).PeerType
+	return m.Clazz.PeerType
 }
 
 func (m *PeerUtil) SetPeerType(v int32) {
-	m.Clazz.(*TLPeerUtil).PeerType = v
+	m.Clazz.PeerType = v
 }
 
 func (m *PeerUtil) PeerId() int64 {
-	return m.Clazz.(*TLPeerUtil).PeerId
+	return m.Clazz.PeerId
 }
 
 func (m *PeerUtil) SetPeerId(v int64) {
-	m.Clazz.(*TLPeerUtil).PeerId = v
+	m.Clazz.PeerId = v
 }
 
 func (m *PeerUtil) AccessHash() int64 {
-	return m.Clazz.(*TLPeerUtil).AccessHash
+	return m.Clazz.AccessHash
 }
 
 func (m *PeerUtil) SetAccessHash(v int64) {
-	m.Clazz.(*TLPeerUtil).AccessHash = v
+	m.Clazz.AccessHash = v
 }
 
 func (m *PeerUtil) ToString() (s string) {
@@ -205,13 +205,11 @@ func FromInputEncryptedChat(peer InputEncryptedChatClazz) PeerUtilClazz {
 		PeerType: PEER_UNKNOWN,
 	}
 
-	switch c := peer.(type) {
-
-	case *TLInputEncryptedChat:
+	if peer != nil {
 		p.PeerType = PEER_ENCRYPTED_CHAT
-		p.PeerId = int64(c.ChatId)
-		p.AccessHash = c.AccessHash
-	default:
+		p.PeerId = int64(peer.ChatId)
+		p.AccessHash = peer.AccessHash
+	} else {
 		p.PeerType = PEER_UNKNOWN
 	}
 
