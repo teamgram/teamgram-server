@@ -211,10 +211,107 @@ They should not be the primary mechanism for business branching when concrete Go
 Business code should prefer:
 
 - `ToXxx()` helpers
-- `Match(...)`
 - direct concrete types
+- ordinary Go `type switch` for large unions
 
 instead of raw predicate string comparisons.
+
+## Accessing Abstract Types
+
+Abstract wrappers should remain thin. Their primary purpose is:
+
+- method result typing
+- constructor family grouping
+- layer-aware encoding through the concrete constructor
+
+The primary access pattern for business code should be `ToXxx()` helpers.
+
+Example:
+
+```go
+if v, ok := resp.ToAuthSentCodeSuccess(); ok {
+    // handle success variant
+    return
+}
+
+if v, ok := resp.ToAuthSentCode(); ok {
+    // handle normal sentCode variant
+    return
+}
+```
+
+This style is preferred because it is:
+
+- idiomatic Go
+- explicit
+- type-safe
+- easy to read and refactor
+
+### Match and Switch
+
+Legacy generators may still produce:
+
+```go
+func (m *Xxx) Match(f ...interface{})
+```
+
+This API may remain for compatibility, but it is not the recommended primary access style.
+
+Reasons:
+
+- it relies on variadic `interface{}` callbacks
+- it is less idiomatic than direct typed access
+- it is harder to read and refactor
+- it scales poorly for large constructor families
+
+If a unified dispatch helper is still desired, a typed `Switch(...)` style is preferable to the old `Match(f ...interface{})` style.
+
+Example:
+
+```go
+resp.Switch(
+    func(v *tg.TLAuthSentCode) {
+        // ...
+    },
+    func(v *tg.TLAuthSentCodeSuccess) {
+        // ...
+    },
+)
+```
+
+Even then, `ToXxx()` remains the default recommendation for ordinary business logic.
+
+### Small vs Large Constructor Families
+
+Abstract types should be treated differently depending on constructor count.
+
+For small constructor families such as `auth.SentCode`:
+
+- keep the abstract wrapper
+- generate `ToXxx()` helpers
+- optionally keep a compatibility `Match(...)`
+- optionally generate `Switch(...)`
+
+For large constructor families such as `Update`:
+
+- keep the abstract wrapper
+- keep `ToXxx()` helpers
+- expose `ClazzName()` / predicate metadata
+- prefer ordinary Go `type switch` in business code
+- do not rely on a giant generated `Match(...)` as the main API
+
+Example:
+
+```go
+switch v := upd.Clazz.(type) {
+case *tg.TLUpdateNewMessage:
+    // ...
+case *tg.TLUpdateDeleteMessages:
+    // ...
+}
+```
+
+This keeps the generated API smaller and makes business logic easier to follow.
 
 ## Registry Model
 
