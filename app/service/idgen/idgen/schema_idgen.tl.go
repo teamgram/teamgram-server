@@ -262,6 +262,9 @@ func (m *TLIdVals) Decode(d *bin.Decoder) (err error) {
 	case 0x1c3baa66:
 
 		m.Id_VECTORINT64, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:

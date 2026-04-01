@@ -332,7 +332,9 @@ func (m *TLIdgenGetNextIdValList) Encode(x *bin.Encoder, layer int32) error {
 	case 0xaa85f137:
 		x.PutClazzID(0xaa85f137)
 
-		_ = iface.EncodeObjectList(x, m.Id, layer)
+		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -352,9 +354,11 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xaa85f137:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -392,7 +396,9 @@ func (m *TLIdgenGetCurrentSeqIdList) Encode(x *bin.Encoder, layer int32) error {
 	case 0xd229ae43:
 		x.PutClazzID(0xd229ae43)
 
-		_ = iface.EncodeObjectList(x, m.Id, layer)
+		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -412,9 +418,11 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xd229ae43:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
