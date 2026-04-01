@@ -147,10 +147,25 @@ func (m *TLBindAuthKeyInner) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x75a3f765:
 		m.Nonce, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.TempAuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.PermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.TempSessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.ExpiresAt, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -287,9 +302,21 @@ func (m *TLClientDHInnerData) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x6643b654:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.RetryId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.GB, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -894,11 +921,29 @@ func (m *TLPQInnerData) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x83c95aec:
 		m.Pq, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.P, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.Q, err = d.String()
+		if err != nil {
+			return err
+		}
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1025,12 +1070,33 @@ func (m *TLPQInnerDataDc) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xa9f55f95:
 		m.Pq, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.P, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.Q, err = d.String()
+		if err != nil {
+			return err
+		}
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.Dc, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1157,12 +1223,33 @@ func (m *TLPQInnerDataTemp) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x3c6a84d4:
 		m.Pq, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.P, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.Q, err = d.String()
+		if err != nil {
+			return err
+		}
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.ExpiresIn, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1292,13 +1379,37 @@ func (m *TLPQInnerDataTempDc) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x56fddf88:
 		m.Pq, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.P, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.Q, err = d.String()
+		if err != nil {
+			return err
+		}
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.Dc, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.ExpiresIn, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1533,7 +1644,7 @@ func (m *TLResPQ) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("server_public_key_fingerprints", m.ServerPublicKeyFingerprints); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("server_public_key_fingerprints", m.ServerPublicKeyFingerprints, layer); err != nil {
 			return err
 		}
 
@@ -1567,10 +1678,22 @@ func (m *TLResPQ) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x5162463:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.Pq, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		m.ServerPublicKeyFingerprints, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1717,11 +1840,29 @@ func (m *TLServerDHInnerData) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xb5890dba:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.G, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.DhPrime, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.GA, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.ServerTime, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1862,8 +2003,17 @@ func (m *TLServerDHParamsFail) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x79cb045d:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonceHash.Decode(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -1970,8 +2120,17 @@ func (m *TLServerDHParamsOk) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xd0e8075c:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		m.EncryptedAnswer, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -2212,8 +2371,17 @@ func (m *TLDhGenOk) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x3bcbf734:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonceHash1.Decode(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -2317,8 +2485,17 @@ func (m *TLDhGenRetry) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x46dc1fb9:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonceHash2.Decode(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -2422,8 +2599,17 @@ func (m *TLDhGenFail) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xa69dae02:
 		err = m.Nonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.ServerNonce.Decode(d)
+		if err != nil {
+			return err
+		}
 		err = m.NewNonceHash3.Decode(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -2639,7 +2825,7 @@ func (m *TLAccessPointRule) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("ips", m.Ips); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("ips", m.Ips, layer); err != nil {
 			return err
 		}
 
@@ -2675,7 +2861,13 @@ func (m *TLAccessPointRule) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x4679b65f:
 		m.PhonePrefixRules, err = d.String()
+		if err != nil {
+			return err
+		}
 		m.DcId, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
@@ -2833,8 +3025,17 @@ func (m *TLBadMsgNotification) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xa7eff811:
 		m.BadMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.BadMsgSeqno, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.ErrorCode, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -2941,9 +3142,21 @@ func (m *TLBadServerSalt) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xedab447b:
 		m.BadMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.BadMsgSeqno, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.ErrorCode, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.NewServerSalt, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -3171,6 +3384,9 @@ func (m *TLDestroySessionOk) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xe22045fc:
 		m.SessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -3268,6 +3484,9 @@ func (m *TLDestroySessionNone) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x62d350c9:
 		m.SessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -3491,8 +3710,17 @@ func (m *TLFutureSalt) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x949d9dc:
 		m.ValidSince, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.ValidUntil, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Salt, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -3594,7 +3822,7 @@ func (m *TLFutureSalts) CalcSize(layer int32) int {
 func (m *TLFutureSalts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_future_salts, int(layer)); clazzId {
 	case 0xae500895:
-		if err := iface.ValidateRequiredSlice("salts", m.Salts); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("salts", m.Salts, layer); err != nil {
 			return err
 		}
 
@@ -3630,7 +3858,13 @@ func (m *TLFutureSalts) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xae500895:
 		m.ReqMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.Now, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
@@ -3750,7 +3984,7 @@ func (m *TLHelpConfigSimple) CalcSize(layer int32) int {
 func (m *TLHelpConfigSimple) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_configSimple, int(layer)); clazzId {
 	case 0x5a592a6c:
-		if err := iface.ValidateRequiredSlice("rules", m.Rules); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("rules", m.Rules, layer); err != nil {
 			return err
 		}
 
@@ -3786,7 +4020,13 @@ func (m *TLHelpConfigSimple) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x5a592a6c:
 		m.Date, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Expires, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
@@ -3934,8 +4174,17 @@ func (m *TLHttpWait) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x9299359f:
 		m.MaxDelay, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.WaitAfter, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.MaxWait, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4073,7 +4322,13 @@ func (m *TLIpPort) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xd433ad73:
 		m.Ipv4, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Port, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4180,8 +4435,17 @@ func (m *TLIpPortSecret) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x37982646:
 		m.Ipv4, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Port, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Secret, err = d.Bytes()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4418,9 +4682,21 @@ func (m *TLMsgDetailedInfo) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x276d3ec6:
 		m.MsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.AnswerMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.Bytes, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Status, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4524,8 +4800,17 @@ func (m *TLMsgNewDetailedInfo) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x809db6df:
 		m.AnswerMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.Bytes, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Status, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4716,7 +5001,7 @@ func (m *TLMsgResendReq) CalcSize(layer int32) int {
 func (m *TLMsgResendReq) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_resend_req, int(layer)); clazzId {
 	case 0x7d861a08:
-		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_ids", m.MsgIds, layer); err != nil {
 			return err
 		}
 
@@ -4747,6 +5032,9 @@ func (m *TLMsgResendReq) Decode(d *bin.Decoder) (err error) {
 	case 0x7d861a08:
 
 		m.MsgIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4844,7 +5132,7 @@ func (m *TLMsgsAck) CalcSize(layer int32) int {
 func (m *TLMsgsAck) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_msgs_ack, int(layer)); clazzId {
 	case 0x62d6b459:
-		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_ids", m.MsgIds, layer); err != nil {
 			return err
 		}
 
@@ -4875,6 +5163,9 @@ func (m *TLMsgsAck) Decode(d *bin.Decoder) (err error) {
 	case 0x62d6b459:
 
 		m.MsgIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -4974,7 +5265,7 @@ func (m *TLMsgsAllInfo) CalcSize(layer int32) int {
 func (m *TLMsgsAllInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_msgs_all_info, int(layer)); clazzId {
 	case 0x8cc0d131:
-		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_ids", m.MsgIds, layer); err != nil {
 			return err
 		}
 
@@ -5011,8 +5302,14 @@ func (m *TLMsgsAllInfo) Decode(d *bin.Decoder) (err error) {
 	case 0x8cc0d131:
 
 		m.MsgIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		m.Info, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -5143,7 +5440,13 @@ func (m *TLMsgsStateInfo) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x4deb57d:
 		m.ReqMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.Info, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -5241,7 +5544,7 @@ func (m *TLMsgsStateReq) CalcSize(layer int32) int {
 func (m *TLMsgsStateReq) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_msgs_state_req, int(layer)); clazzId {
 	case 0xda69fb52:
-		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_ids", m.MsgIds, layer); err != nil {
 			return err
 		}
 
@@ -5272,6 +5575,9 @@ func (m *TLMsgsStateReq) Decode(d *bin.Decoder) (err error) {
 	case 0xda69fb52:
 
 		m.MsgIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -5402,8 +5708,17 @@ func (m *TLNewSessionCreated) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x9ec20908:
 		m.FirstMsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.UniqueId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.ServerSalt, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -5531,7 +5846,13 @@ func (m *TLPong) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x347773c5:
 		m.MsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.PingId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -5863,8 +6184,17 @@ func (m *TLRpcAnswerDropped) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xa43ad8b7:
 		m.MsgId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 		m.SeqNo, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.Bytes, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6105,7 +6435,13 @@ func (m *TLRpcError) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x2144ca19:
 		m.ErrorCode, err = d.Int32()
+		if err != nil {
+			return err
+		}
 		m.ErrorMessage, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6278,6 +6614,9 @@ func (m *TLTlsBlockString) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x4218a164:
 		m.Data, err = d.String()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6375,6 +6714,9 @@ func (m *TLTlsBlockRandom) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x4d4dc41e:
 		m.Length, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6472,6 +6814,9 @@ func (m *TLTlsBlockZero) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x9333afb:
 		m.Length, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6661,6 +7006,9 @@ func (m *TLTlsBlockGrease) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xe675a1c1:
 		m.Seed, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -6823,7 +7171,7 @@ func (m *TLTlsBlockScope) CalcSize(layer int32) int {
 func (m *TLTlsBlockScope) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_tlsBlockScope, int(layer)); clazzId {
 	case 0xe725d44f:
-		if err := iface.ValidateRequiredSlice("entries", m.Entries); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("entries", m.Entries, layer); err != nil {
 			return err
 		}
 
@@ -7144,7 +7492,7 @@ func (m *TLTlsClientHello) CalcSize(layer int32) int {
 func (m *TLTlsClientHello) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_tlsClientHello, int(layer)); clazzId {
 	case 0x6c52c484:
-		if err := iface.ValidateRequiredSlice("blocks", m.Blocks); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("blocks", m.Blocks, layer); err != nil {
 			return err
 		}
 

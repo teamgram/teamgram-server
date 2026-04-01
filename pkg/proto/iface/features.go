@@ -157,6 +157,16 @@ func ValidateRequiredObject(field string, v TLObject) error {
 	return nil
 }
 
+func ValidateRequiredObjectWithLayer(field string, v TLObject, layer int32) error {
+	if err := ValidateRequiredObject(field, v); err != nil {
+		return err
+	}
+	if validator, ok := v.(TLObjectValidator); ok {
+		return validator.Validate(layer)
+	}
+	return nil
+}
+
 func ValidateRequiredSlice(field string, v any) error {
 	rv := reflect.ValueOf(v)
 	if !rv.IsValid() {
@@ -167,6 +177,51 @@ func ValidateRequiredSlice(field string, v any) error {
 	}
 	if rv.IsNil() {
 		return fmt.Errorf("%s is required", field)
+	}
+	return nil
+}
+
+func ValidateRequiredSliceWithLayer(field string, v any, layer int32) error {
+	if err := ValidateRequiredSlice(field, v); err != nil {
+		return err
+	}
+
+	rv := reflect.ValueOf(v)
+	for i := 0; i < rv.Len(); i++ {
+		item := rv.Index(i)
+		if !item.IsValid() {
+			return fmt.Errorf("%s[%d] is required", field, i)
+		}
+
+		if item.Kind() == reflect.Interface || item.Kind() == reflect.Pointer {
+			if item.IsNil() {
+				return fmt.Errorf("%s[%d] is required", field, i)
+			}
+		}
+
+		if item.CanInterface() {
+			if validator, ok := item.Interface().(TLObjectValidator); ok {
+				if err := validator.Validate(layer); err != nil {
+					return err
+				}
+				continue
+			}
+		}
+
+		for item.IsValid() && (item.Kind() == reflect.Interface || item.Kind() == reflect.Pointer) {
+			if item.IsNil() {
+				return fmt.Errorf("%s[%d] is required", field, i)
+			}
+			item = item.Elem()
+		}
+		if !item.IsValid() || !item.CanInterface() {
+			continue
+		}
+		if validator, ok := item.Interface().(TLObjectValidator); ok {
+			if err := validator.Validate(layer); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }
