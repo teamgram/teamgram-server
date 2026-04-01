@@ -31,6 +31,12 @@ type Encoder struct {
 	released bool
 }
 
+func (e *Encoder) ensureWritable() {
+	if e == nil || e.released {
+		panic("bin: encoder used after release")
+	}
+}
+
 func AcquireEncoder() *Encoder {
 	return AcquireEncoderCap(defaultEncoderCap)
 }
@@ -55,26 +61,31 @@ func NewEncoder() *Encoder {
 
 // Clone returns new copy of buffer.
 func (e *Encoder) Clone() []byte {
+	e.ensureWritable()
 	return append([]byte(nil), e.buf...)
 }
 
 // Bytes returns the internal encoded bytes view.
 func (e *Encoder) Bytes() []byte {
+	e.ensureWritable()
 	return e.buf
 }
 
 // Len returns encoded bytes length.
 func (e *Encoder) Len() int {
+	e.ensureWritable()
 	return len(e.buf)
 }
 
 // Cap returns current backing buffer capacity.
 func (e *Encoder) Cap() int {
+	e.ensureWritable()
 	return cap(e.buf)
 }
 
 // Grow reserves at least n bytes for future writes.
 func (e *Encoder) Grow(n int) {
+	e.ensureWritable()
 	if n <= 0 {
 		return
 	}
@@ -94,6 +105,7 @@ func (e *Encoder) PutClazzID(id uint32) {
 
 // Put appends raw bytes to buffer.
 func (e *Encoder) Put(raw []byte) {
+	e.ensureWritable()
 	e.buf = append(e.buf, raw...)
 }
 
@@ -104,11 +116,13 @@ func (e *Encoder) PutRaw(raw []byte) {
 
 // PutString serializes bare string.
 func (e *Encoder) PutString(s string) {
+	e.ensureWritable()
 	e.encodeString(s)
 }
 
 // PutBytes serializes bare byte string.
 func (e *Encoder) PutBytes(v []byte) {
+	e.ensureWritable()
 	e.encodeBytes(v)
 }
 
@@ -130,6 +144,7 @@ func (e *Encoder) PutUint(v uint32) {
 
 // PutUint16 serializes unsigned 16-bit integer.
 func (e *Encoder) PutUint16(v uint16) {
+	e.ensureWritable()
 	e.buf = append(e.buf, byte(v), byte(v>>8))
 }
 
@@ -140,6 +155,7 @@ func (e *Encoder) PutInt32(v int32) {
 
 // PutUint32 serializes unsigned 32-bit integer.
 func (e *Encoder) PutUint32(v uint32) {
+	e.ensureWritable()
 	e.buf = append(e.buf,
 		byte(v),
 		byte(v>>8),
@@ -170,6 +186,7 @@ func (e *Encoder) PutUlong(v uint64) {
 
 // PutUint64 serializes unsigned 64-bit integer.
 func (e *Encoder) PutUint64(v uint64) {
+	e.ensureWritable()
 	e.buf = append(e.buf,
 		byte(v),
 		byte(v>>8),
@@ -189,19 +206,23 @@ func (e *Encoder) PutDouble(v float64) {
 
 // PutInt128 serializes v as 128-bit signed integer.
 func (e *Encoder) PutInt128(v Int128) {
+	e.ensureWritable()
 	e.buf = append(e.buf, v[:]...)
 }
 
 // PutInt256 serializes v as 256-bit signed integer.
 func (e *Encoder) PutInt256(v Int256) {
+	e.ensureWritable()
 	e.buf = append(e.buf, v[:]...)
 }
 
 func (e *Encoder) BigInt(s *big.Int) {
+	e.ensureWritable()
 	e.PutBytes(s.Bytes())
 }
 
 func (e *Encoder) Reset() {
+	e.ensureWritable()
 	e.buf = e.buf[:0]
 }
 
@@ -214,6 +235,7 @@ func (e *Encoder) Release() {
 	} else {
 		e.buf = e.buf[:0]
 	}
+	e.buf = nil
 	e.released = true
 	encoderPool.Put(e)
 }

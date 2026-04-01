@@ -7,6 +7,7 @@
 package bin
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -14,6 +15,12 @@ import (
 // information about provided conditional fields, e.g. says
 // that fields "1", "5" and "10" were set.
 type Fields uint32
+
+func validateBitIndex(n int) {
+	if n < 0 || n >= 32 {
+		panic(fmt.Sprintf("bin: invalid fields bit index %d", n))
+	}
+}
 
 // Zero returns true, if all bits are equal to zero.
 func (f *Fields) Zero() bool {
@@ -42,15 +49,18 @@ func (f *Fields) Encode(e *Encoder, layer int) {
 
 // Has reports whether field with index n was set.
 func (f *Fields) Has(n int) bool {
+	validateBitIndex(n)
 	return *f&(1<<n) != 0
 }
 
 // Unset unsets field with index n.
 func (f *Fields) Unset(n int) {
+	validateBitIndex(n)
 	*f &= ^(1 << n)
 }
 
 // Set sets field with index n.
 func (f *Fields) Set(n int) {
+	validateBitIndex(n)
 	*f |= 1 << n
 }
