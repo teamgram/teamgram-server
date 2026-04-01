@@ -1,6 +1,7 @@
 package bin
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -52,7 +53,7 @@ func TestEncoderDecoderRoundTripStringsAndBytesAtTLBoundaries(t *testing.T) {
 
 	cases := []int{0, 1, 2, 3, 4, 253, 254, 255}
 	for _, size := range cases {
-		t.Run(string(rune(size)), func(t *testing.T) {
+		t.Run(strconv.Itoa(size), func(t *testing.T) {
 			x := AcquireEncoderCap(size*2 + 16)
 			defer x.Release()
 
