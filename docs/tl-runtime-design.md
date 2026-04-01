@@ -325,6 +325,43 @@ case *tg.TLUpdateDeleteMessages:
 
 This keeps the generated API smaller and makes business logic easier to follow.
 
+## Concrete Field Naming
+
+Concrete constructor structs should keep the original TL field semantics in their Go field names.
+
+Example:
+
+```tl
+idVal id:long = IdVal;
+idVals id:Vector<long> = IdVal;
+seqIdVal id:long = IdVal;
+```
+
+Recommended generated concrete fields:
+
+```go
+type TLIdVal struct {
+    Id int64
+}
+
+type TLIdVals struct {
+    Id []int64
+}
+
+type TLSeqIdVal struct {
+    Id int64
+}
+```
+
+The generator may still need family-level disambiguation metadata when an abstract type contains same-named fields with different wire types. That internal disambiguation should not leak into the concrete constructor field names.
+
+Recommended rule:
+
+- concrete constructor fields keep the original TL semantic name
+- abstract family merge metadata may use internal type-based disambiguation
+
+Do not expose family-level suffixes such as `Id_INT64` or `Id_VECTORINT64` on concrete constructor structs unless there is an actual collision inside the same concrete struct.
+
 More examples:
 
 ```go
