@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,6 +24,7 @@ var _ *tg.Bool
 
 type EchoClient interface {
 	EchoEcho(ctx context.Context, in *echo.TLEchoEcho) (*echo.Echo, error)
+	Close() error
 }
 
 type defaultEchoClient struct {
@@ -34,6 +35,13 @@ func NewEchoClient(cli client.Client) EchoClient {
 	return &defaultEchoClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultEchoClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // EchoEcho

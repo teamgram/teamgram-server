@@ -104,6 +104,11 @@ func (cli *EchoClient) watch(c kitex.RpcClientConf) {
 
 		for _, n := range removeCliList {
 			cli.dispatcher.Remove(n)
+			if old, ok := cli.cList[n]; ok {
+				if err := old.Close(); err != nil {
+					logx.Errorf("close echo client %s error(%v)", n, err)
+				}
+			}
 		}
 
 		cli.cList = sessions

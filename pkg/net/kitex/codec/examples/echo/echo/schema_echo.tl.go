@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -11,6 +11,7 @@
 package echo
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -18,10 +19,13 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // EchoClazz <--
 //   - TL_Echo
@@ -38,25 +42,51 @@ func DecodeEchoClazz(d *bin.Decoder) (EchoClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_echo:
-		x := &TLEcho{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0x2e3ba51e:
+		x := &TLEcho{ClazzID: id, ClazzName2: ClazzName_echo}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
-	case ClazzName_echo2:
-		x := &TLEcho2{ClazzID: id}
-		_ = x.Decode(d)
+	case 0x2249c1b:
+		x := &TLEcho2{ClazzID: id, ClazzName2: ClazzName_echo2}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeEcho - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLEcho <--
 type TLEcho struct {
-	ClazzID uint32 `json:"_id"`
-	Message string `json:"message"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Message    string `json:"message"`
+}
+
+func MakeTLEcho(m *TLEcho) *TLEcho {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_echo
+
+	return m
+}
+
+func (m *TLEcho) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLEcho) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("echo", m)
 }
 
 // EchoClazzName <--
@@ -66,30 +96,54 @@ func (m *TLEcho) EchoClazzName() string {
 
 // ClazzName <--
 func (m *TLEcho) ClazzName() string {
-	return ClazzName_echo
+	return m.ClazzName2
 }
 
 // ToEcho <--
 func (m *TLEcho) ToEcho() *Echo {
-	return MakeEcho(m)
+	if m == nil {
+		return nil
+	}
+
+	return &Echo{Clazz: m}
+
+}
+
+func (m *TLEcho) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo, int(layer)); clazzId {
+	case 0x2e3ba51e:
+		size := 4
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLEcho) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo, int(layer)); clazzId {
+	case 0x2e3ba51e:
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_echo, layer)
+	}
 }
 
 // Encode <--
 func (m *TLEcho) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2e3ba51e: func() error {
-			x.PutClazzID(0x2e3ba51e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo, int(layer)); clazzId {
+	case 0x2e3ba51e:
+		x.PutClazzID(0x2e3ba51e)
 
-			x.PutString(m.Message)
+		x.PutString(m.Message)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_echo, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_echo, layer)
 	}
@@ -97,25 +151,45 @@ func (m *TLEcho) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLEcho) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2e3ba51e: func() (err error) {
-			m.Message, err = d.String()
+	switch m.ClazzID {
+	case 0x2e3ba51e:
+		m.Message, err = d.String()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // TLEcho2 <--
 type TLEcho2 struct {
-	ClazzID uint32 `json:"_id"`
-	Message string `json:"message"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Message    string `json:"message"`
+}
+
+func MakeTLEcho2(m *TLEcho2) *TLEcho2 {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_echo2
+
+	return m
+}
+
+func (m *TLEcho2) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLEcho2) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("echo2", m)
 }
 
 // EchoClazzName <--
@@ -125,30 +199,54 @@ func (m *TLEcho2) EchoClazzName() string {
 
 // ClazzName <--
 func (m *TLEcho2) ClazzName() string {
-	return ClazzName_echo2
+	return m.ClazzName2
 }
 
 // ToEcho <--
 func (m *TLEcho2) ToEcho() *Echo {
-	return MakeEcho(m)
+	if m == nil {
+		return nil
+	}
+
+	return &Echo{Clazz: m}
+
+}
+
+func (m *TLEcho2) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo2, int(layer)); clazzId {
+	case 0x2249c1b:
+		size := 4
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLEcho2) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo2, int(layer)); clazzId {
+	case 0x2249c1b:
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_echo2, layer)
+	}
 }
 
 // Encode <--
 func (m *TLEcho2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2249c1b: func() error {
-			x.PutClazzID(0x2249c1b)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_echo2, int(layer)); clazzId {
+	case 0x2249c1b:
+		x.PutClazzID(0x2249c1b)
 
-			x.PutString(m.Message)
+		x.PutString(m.Message)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_echo2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_echo2, layer)
 	}
@@ -156,17 +254,15 @@ func (m *TLEcho2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLEcho2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2249c1b: func() (err error) {
-			m.Message, err = d.String()
+	switch m.ClazzID {
+	case 0x2249c1b:
+		m.Message, err = d.String()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -175,26 +271,53 @@ func (m *TLEcho2) Decode(d *bin.Decoder) (err error) {
 type Echo struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	EchoClazz
+	Clazz EchoClazz `json:"_clazz"`
 }
 
-func NewEchoResult() interface{} {
-	return &Echo{}
+func (m *Echo) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
-// MakeEcho <--
-func MakeEcho(c EchoClazz) *Echo {
-	return &Echo{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		EchoClazz: c,
+func (m *Echo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName(m.ClazzName(), m)
+}
+
+func (m *Echo) CalcSize(layer int32) int {
+	if m == nil || m.Clazz == nil {
+		return 0
+	}
+	return iface.CalcObjectSize(m.Clazz, layer)
+}
+
+func (m *Echo) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("Echo is required")
+	}
+	if m.Clazz == nil {
+		return fmt.Errorf("Echo.Clazz is required")
+	}
+	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
+		return v.Validate(layer)
+	}
+	return nil
+}
+
+func (m *Echo) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.EchoClazzName()
 	}
 }
 
 // Encode <--
 func (m *Echo) Encode(x *bin.Encoder, layer int32) error {
-	if m.EchoClazz != nil {
-		return m.EchoClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("Echo - invalid Clazz")
@@ -202,37 +325,21 @@ func (m *Echo) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *Echo) Decode(d *bin.Decoder) (err error) {
-	m.EchoClazz, err = DecodeEchoClazz(d)
+	m.Clazz, err = DecodeEchoClazz(d)
 	return
-}
-
-// Match <--
-func (m *Echo) Match(f ...interface{}) {
-	switch c := m.EchoClazz.(type) {
-	case *TLEcho:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLEcho) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLEcho2:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLEcho2) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToEcho <--
 func (m *Echo) ToEcho() (*TLEcho, bool) {
-	if m.EchoClazz == nil {
+	if m == nil {
 		return nil, false
 	}
 
-	if x, ok := m.EchoClazz.(*TLEcho); ok {
+	if m.Clazz == nil {
+		return nil, false
+	}
+
+	if x, ok := m.Clazz.(*TLEcho); ok {
 		return x, true
 	}
 
@@ -241,11 +348,15 @@ func (m *Echo) ToEcho() (*TLEcho, bool) {
 
 // ToEcho2 <--
 func (m *Echo) ToEcho2() (*TLEcho2, bool) {
-	if m.EchoClazz == nil {
+	if m == nil {
 		return nil, false
 	}
 
-	if x, ok := m.EchoClazz.(*TLEcho2); ok {
+	if m.Clazz == nil {
+		return nil, false
+	}
+
+	if x, ok := m.Clazz.(*TLEcho2); ok {
 		return x, true
 	}
 
