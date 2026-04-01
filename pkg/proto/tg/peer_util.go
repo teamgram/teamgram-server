@@ -324,34 +324,27 @@ func FromInputNotifyPeer(selfId int64, peer *InputNotifyPeer) *PeerUtil {
 		PeerType: PEER_UNKNOWN,
 	}
 
-	peer.Match(
-		func(c *TLInputNotifyPeer) interface{} {
-			p2 := FromInputPeer2(selfId, c.Peer)
-			p, _ = p2.ToPeerUtil()
+	if peer == nil {
+		return p.ToPeerUtil()
+	}
 
-			return nil
-		},
-		func(c *TLInputNotifyUsers) interface{} {
-			p.PeerType = PEER_USERS
-			p.PeerId = 0 // Users notification does not have a specific peer ID
-			p.AccessHash = 0
-
-			return nil
-		},
-		func(c *TLInputNotifyChats) interface{} {
-			p.PeerType = PEER_CHATS
-			p.PeerId = 0 // Chats notification does not have a specific peer ID
-			p.AccessHash = 0
-
-			return nil
-		},
-		func(c *TLInputNotifyBroadcasts) interface{} {
-			p.PeerType = PEER_BROADCASTS
-			p.PeerId = 0 // Broadcasts notification does not have a specific peer ID
-			p.AccessHash = 0
-
-			return nil
-		})
+	switch c := peer.Clazz.(type) {
+	case *TLInputNotifyPeer:
+		p2 := FromInputPeer2(selfId, c.Peer)
+		p, _ = p2.ToPeerUtil()
+	case *TLInputNotifyUsers:
+		p.PeerType = PEER_USERS
+		p.PeerId = 0 // Users notification does not have a specific peer ID
+		p.AccessHash = 0
+	case *TLInputNotifyChats:
+		p.PeerType = PEER_CHATS
+		p.PeerId = 0 // Chats notification does not have a specific peer ID
+		p.AccessHash = 0
+	case *TLInputNotifyBroadcasts:
+		p.PeerType = PEER_BROADCASTS
+		p.PeerId = 0 // Broadcasts notification does not have a specific peer ID
+		p.AccessHash = 0
+	}
 
 	return p.ToPeerUtil()
 }

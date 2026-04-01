@@ -19,22 +19,18 @@
 package tg
 
 func ToUserIdByInput(userSelfId int64, inputUser *InputUser) (id int64) {
-	inputUser.Match(
-		func(c *TLInputUserEmpty) interface{} {
-			id = 0
+	if inputUser == nil {
+		return 0
+	}
 
-			return nil
-		},
-		func(c *TLInputUserSelf) interface{} {
-			id = userSelfId
-
-			return nil
-		},
-		func(c *TLInputUser) interface{} {
-			id = c.UserId
-
-			return nil
-		})
+	switch c := inputUser.Clazz.(type) {
+	case *TLInputUserEmpty:
+		id = 0
+	case *TLInputUserSelf:
+		id = userSelfId
+	case *TLInputUser:
+		id = c.UserId
+	}
 
 	return
 }
@@ -56,17 +52,12 @@ func isUserDeleted(user *User) bool {
 	rV := false
 
 	if user != nil {
-		user.Match(
-			func(c *TLUserEmpty) interface{} {
-				rV = true
-
-				return nil
-			},
-			func(c *TLUser) interface{} {
-				rV = c.Deleted
-
-				return nil
-			})
+		switch c := user.Clazz.(type) {
+		case *TLUserEmpty:
+			rV = true
+		case *TLUser:
+			rV = c.Deleted
+		}
 	} else {
 		rV = true
 	}
@@ -94,28 +85,23 @@ func GetUserName(user *User) (name string) {
 	if user == nil {
 		name = "Deleted Account"
 	} else {
-		user.Match(
-			func(c *TLUserEmpty) interface{} {
-				name = "Deleted Account"
+		switch c := user.Clazz.(type) {
+		case *TLUserEmpty:
+			name = "Deleted Account"
+		case *TLUser:
+			firstName := GetFlagsString(c.FirstName)
+			lastName := GetFlagsString(c.LastName)
 
-				return nil
-			},
-			func(c *TLUser) interface{} {
-				firstName := GetFlagsString(c.FirstName)
-				lastName := GetFlagsString(c.LastName)
-
-				if firstName == "" && lastName == "" {
-					name = ""
-				} else if firstName == "" {
-					name = lastName
-				} else if lastName == "" {
-					name = firstName
-				} else {
-					name = firstName + " " + lastName
-				}
-
-				return nil
-			})
+			if firstName == "" && lastName == "" {
+				name = ""
+			} else if firstName == "" {
+				name = lastName
+			} else if lastName == "" {
+				name = firstName
+			} else {
+				name = firstName + " " + lastName
+			}
+		}
 	}
 
 	return
