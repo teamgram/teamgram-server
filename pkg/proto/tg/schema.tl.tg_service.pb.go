@@ -32,7 +32,7 @@ type TLInvokeAfterMsg struct {
 }
 
 func (m *TLInvokeAfterMsg) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82,7 +82,7 @@ type TLInvokeAfterMsgs struct {
 }
 
 func (m *TLInvokeAfterMsgs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -140,7 +140,7 @@ type TLInitConnection struct {
 }
 
 func (m *TLInitConnection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -361,7 +361,7 @@ type TLInvokeWithLayer struct {
 }
 
 func (m *TLInvokeWithLayer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -410,7 +410,7 @@ type TLInvokeWithoutUpdates struct {
 }
 
 func (m *TLInvokeWithoutUpdates) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -455,7 +455,7 @@ type TLInvokeWithMessagesRange struct {
 }
 
 func (m *TLInvokeWithMessagesRange) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -510,7 +510,7 @@ type TLInvokeWithTakeout struct {
 }
 
 func (m *TLInvokeWithTakeout) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -560,7 +560,7 @@ type TLInvokeWithBusinessConnection struct {
 }
 
 func (m *TLInvokeWithBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -611,7 +611,7 @@ type TLInvokeWithGooglePlayIntegrity struct {
 }
 
 func (m *TLInvokeWithGooglePlayIntegrity) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -667,7 +667,7 @@ type TLInvokeWithApnsSecret struct {
 }
 
 func (m *TLInvokeWithApnsSecret) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -722,7 +722,7 @@ type TLInvokeWithReCaptcha struct {
 }
 
 func (m *TLInvokeWithReCaptcha) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -774,7 +774,7 @@ type TLAuthSendCode struct {
 }
 
 func (m *TLAuthSendCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -844,7 +844,7 @@ type TLAuthSignUp struct {
 }
 
 func (m *TLAuthSignUp) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -931,7 +931,7 @@ type TLAuthSignIn struct {
 }
 
 func (m *TLAuthSignIn) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1028,7 +1028,7 @@ type TLAuthLogOut struct {
 }
 
 func (m *TLAuthLogOut) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1068,7 +1068,7 @@ type TLAuthResetAuthorizations struct {
 }
 
 func (m *TLAuthResetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1109,7 +1109,7 @@ type TLAuthExportAuthorization struct {
 }
 
 func (m *TLAuthExportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1157,7 +1157,7 @@ type TLAuthImportAuthorization struct {
 }
 
 func (m *TLAuthImportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1212,7 +1212,7 @@ type TLAuthBindTempAuthKey struct {
 }
 
 func (m *TLAuthBindTempAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1277,7 +1277,7 @@ type TLAuthImportBotAuthorization struct {
 }
 
 func (m *TLAuthImportBotAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1339,7 +1339,7 @@ type TLAuthCheckPassword struct {
 }
 
 func (m *TLAuthCheckPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1389,7 +1389,7 @@ type TLAuthRequestPasswordRecovery struct {
 }
 
 func (m *TLAuthRequestPasswordRecovery) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1431,7 +1431,7 @@ type TLAuthRecoverPassword struct {
 }
 
 func (m *TLAuthRecoverPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1511,7 +1511,7 @@ type TLAuthResendCode struct {
 }
 
 func (m *TLAuthResendCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1593,7 +1593,7 @@ type TLAuthCancelCode struct {
 }
 
 func (m *TLAuthCancelCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1645,7 +1645,7 @@ type TLAuthDropTempAuthKeys struct {
 }
 
 func (m *TLAuthDropTempAuthKeys) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1692,7 +1692,7 @@ type TLAuthExportLoginToken struct {
 }
 
 func (m *TLAuthExportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1748,7 +1748,7 @@ type TLAuthImportLoginToken struct {
 }
 
 func (m *TLAuthImportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1795,7 +1795,7 @@ type TLAuthAcceptLoginToken struct {
 }
 
 func (m *TLAuthAcceptLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1842,7 +1842,7 @@ type TLAuthCheckRecoveryPassword struct {
 }
 
 func (m *TLAuthCheckRecoveryPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1891,7 +1891,7 @@ type TLAuthImportWebTokenAuthorization struct {
 }
 
 func (m *TLAuthImportWebTokenAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1952,7 +1952,7 @@ type TLAuthRequestFirebaseSms struct {
 }
 
 func (m *TLAuthRequestFirebaseSms) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2064,7 +2064,7 @@ type TLAuthResetLoginEmail struct {
 }
 
 func (m *TLAuthResetLoginEmail) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2118,7 +2118,7 @@ type TLAuthReportMissingCode struct {
 }
 
 func (m *TLAuthReportMissingCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2177,7 +2177,7 @@ type TLAuthCheckPaidAuth struct {
 }
 
 func (m *TLAuthCheckPaidAuth) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2235,7 +2235,7 @@ type TLAuthInitPasskeyLogin struct {
 }
 
 func (m *TLAuthInitPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2289,7 +2289,7 @@ type TLAuthFinishPasskeyLogin struct {
 }
 
 func (m *TLAuthFinishPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2389,7 +2389,7 @@ type TLAccountRegisterDevice struct {
 }
 
 func (m *TLAccountRegisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2502,7 +2502,7 @@ type TLAccountUnregisterDevice struct {
 }
 
 func (m *TLAccountUnregisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2577,7 +2577,7 @@ type TLAccountUpdateNotifySettings struct {
 }
 
 func (m *TLAccountUpdateNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2637,7 +2637,7 @@ type TLAccountGetNotifySettings struct {
 }
 
 func (m *TLAccountGetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2687,7 +2687,7 @@ type TLAccountResetNotifySettings struct {
 }
 
 func (m *TLAccountResetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2730,7 +2730,7 @@ type TLAccountUpdateProfile struct {
 }
 
 func (m *TLAccountUpdateProfile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2831,7 +2831,7 @@ type TLAccountUpdateStatus struct {
 }
 
 func (m *TLAccountUpdateStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2882,7 +2882,7 @@ type TLAccountGetWallPapers struct {
 }
 
 func (m *TLAccountGetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2931,7 +2931,7 @@ type TLAccountReportPeer struct {
 }
 
 func (m *TLAccountReportPeer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2997,7 +2997,7 @@ type TLAccountCheckUsername struct {
 }
 
 func (m *TLAccountCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3044,7 +3044,7 @@ type TLAccountUpdateUsername struct {
 }
 
 func (m *TLAccountUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3091,7 +3091,7 @@ type TLAccountGetPrivacy struct {
 }
 
 func (m *TLAccountGetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3143,7 +3143,7 @@ type TLAccountSetPrivacy struct {
 }
 
 func (m *TLAccountSetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3220,7 +3220,7 @@ type TLAccountDeleteAccount struct {
 }
 
 func (m *TLAccountDeleteAccount) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3297,7 +3297,7 @@ type TLAccountGetAccountTTL struct {
 }
 
 func (m *TLAccountGetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3338,7 +3338,7 @@ type TLAccountSetAccountTTL struct {
 }
 
 func (m *TLAccountSetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3390,7 +3390,7 @@ type TLAccountSendChangePhoneCode struct {
 }
 
 func (m *TLAccountSendChangePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3448,7 +3448,7 @@ type TLAccountChangePhone struct {
 }
 
 func (m *TLAccountChangePhone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3505,7 +3505,7 @@ type TLAccountUpdateDeviceLocked struct {
 }
 
 func (m *TLAccountUpdateDeviceLocked) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3551,7 +3551,7 @@ type TLAccountGetAuthorizations struct {
 }
 
 func (m *TLAccountGetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3592,7 +3592,7 @@ type TLAccountResetAuthorization struct {
 }
 
 func (m *TLAccountResetAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3638,7 +3638,7 @@ type TLAccountGetPassword struct {
 }
 
 func (m *TLAccountGetPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3679,7 +3679,7 @@ type TLAccountGetPasswordSettings struct {
 }
 
 func (m *TLAccountGetPasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3731,7 +3731,7 @@ type TLAccountUpdatePasswordSettings struct {
 }
 
 func (m *TLAccountUpdatePasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3792,7 +3792,7 @@ type TLAccountSendConfirmPhoneCode struct {
 }
 
 func (m *TLAccountSendConfirmPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3849,7 +3849,7 @@ type TLAccountConfirmPhone struct {
 }
 
 func (m *TLAccountConfirmPhone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3902,7 +3902,7 @@ type TLAccountGetTmpPassword struct {
 }
 
 func (m *TLAccountGetTmpPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3958,7 +3958,7 @@ type TLAccountGetWebAuthorizations struct {
 }
 
 func (m *TLAccountGetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3999,7 +3999,7 @@ type TLAccountResetWebAuthorization struct {
 }
 
 func (m *TLAccountResetWebAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4045,7 +4045,7 @@ type TLAccountResetWebAuthorizations struct {
 }
 
 func (m *TLAccountResetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4085,7 +4085,7 @@ type TLAccountGetAllSecureValues struct {
 }
 
 func (m *TLAccountGetAllSecureValues) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4126,7 +4126,7 @@ type TLAccountGetSecureValue struct {
 }
 
 func (m *TLAccountGetSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4192,7 +4192,7 @@ type TLAccountSaveSecureValue struct {
 }
 
 func (m *TLAccountSaveSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4249,7 +4249,7 @@ type TLAccountDeleteSecureValue struct {
 }
 
 func (m *TLAccountDeleteSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4316,7 +4316,7 @@ type TLAccountGetAuthorizationForm struct {
 }
 
 func (m *TLAccountGetAuthorizationForm) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4377,7 +4377,7 @@ type TLAccountAcceptAuthorization struct {
 }
 
 func (m *TLAccountAcceptAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4469,7 +4469,7 @@ type TLAccountSendVerifyPhoneCode struct {
 }
 
 func (m *TLAccountSendVerifyPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4527,7 +4527,7 @@ type TLAccountVerifyPhone struct {
 }
 
 func (m *TLAccountVerifyPhone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4585,7 +4585,7 @@ type TLAccountSendVerifyEmailCode struct {
 }
 
 func (m *TLAccountSendVerifyEmailCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4643,7 +4643,7 @@ type TLAccountVerifyEmail struct {
 }
 
 func (m *TLAccountVerifyEmail) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4709,7 +4709,7 @@ type TLAccountInitTakeoutSession struct {
 }
 
 func (m *TLAccountInitTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4816,7 +4816,7 @@ type TLAccountFinishTakeoutSession struct {
 }
 
 func (m *TLAccountFinishTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4880,7 +4880,7 @@ type TLAccountConfirmPasswordEmail struct {
 }
 
 func (m *TLAccountConfirmPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4926,7 +4926,7 @@ type TLAccountResendPasswordEmail struct {
 }
 
 func (m *TLAccountResendPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4966,7 +4966,7 @@ type TLAccountCancelPasswordEmail struct {
 }
 
 func (m *TLAccountCancelPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5006,7 +5006,7 @@ type TLAccountGetContactSignUpNotification struct {
 }
 
 func (m *TLAccountGetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5047,7 +5047,7 @@ type TLAccountSetContactSignUpNotification struct {
 }
 
 func (m *TLAccountSetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5100,7 +5100,7 @@ type TLAccountGetNotifyExceptions struct {
 }
 
 func (m *TLAccountGetNotifyExceptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5185,7 +5185,7 @@ type TLAccountGetWallPaper struct {
 }
 
 func (m *TLAccountGetWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5239,7 +5239,7 @@ type TLAccountUploadWallPaper struct {
 }
 
 func (m *TLAccountUploadWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5329,7 +5329,7 @@ type TLAccountSaveWallPaper struct {
 }
 
 func (m *TLAccountSaveWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5399,7 +5399,7 @@ type TLAccountInstallWallPaper struct {
 }
 
 func (m *TLAccountInstallWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5458,7 +5458,7 @@ type TLAccountResetWallPapers struct {
 }
 
 func (m *TLAccountResetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5498,7 +5498,7 @@ type TLAccountGetAutoDownloadSettings struct {
 }
 
 func (m *TLAccountGetAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5541,7 +5541,7 @@ type TLAccountSaveAutoDownloadSettings struct {
 }
 
 func (m *TLAccountSaveAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5623,7 +5623,7 @@ type TLAccountUploadTheme struct {
 }
 
 func (m *TLAccountUploadTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5720,7 +5720,7 @@ type TLAccountCreateTheme struct {
 }
 
 func (m *TLAccountCreateTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5839,7 +5839,7 @@ type TLAccountUpdateTheme struct {
 }
 
 func (m *TLAccountUpdateTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5989,7 +5989,7 @@ type TLAccountSaveTheme struct {
 }
 
 func (m *TLAccountSaveTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6052,7 +6052,7 @@ type TLAccountInstallTheme struct {
 }
 
 func (m *TLAccountInstallTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6223,7 +6223,7 @@ type TLAccountGetTheme struct {
 }
 
 func (m *TLAccountGetTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6280,7 +6280,7 @@ type TLAccountGetThemes struct {
 }
 
 func (m *TLAccountGetThemes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6332,7 +6332,7 @@ type TLAccountSetContentSettings struct {
 }
 
 func (m *TLAccountSetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6395,7 +6395,7 @@ type TLAccountGetContentSettings struct {
 }
 
 func (m *TLAccountGetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6436,7 +6436,7 @@ type TLAccountGetMultiWallPapers struct {
 }
 
 func (m *TLAccountGetMultiWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6500,7 +6500,7 @@ type TLAccountGetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountGetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6541,7 +6541,7 @@ type TLAccountSetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountSetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6595,7 +6595,7 @@ type TLAccountReportProfilePhoto struct {
 }
 
 func (m *TLAccountReportProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6669,7 +6669,7 @@ type TLAccountResetPassword struct {
 }
 
 func (m *TLAccountResetPassword) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6709,7 +6709,7 @@ type TLAccountDeclinePasswordReset struct {
 }
 
 func (m *TLAccountDeclinePasswordReset) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6750,7 +6750,7 @@ type TLAccountGetChatThemes struct {
 }
 
 func (m *TLAccountGetChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6797,7 +6797,7 @@ type TLAccountSetAuthorizationTTL struct {
 }
 
 func (m *TLAccountSetAuthorizationTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6847,7 +6847,7 @@ type TLAccountChangeAuthorizationSettings struct {
 }
 
 func (m *TLAccountChangeAuthorizationSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6948,7 +6948,7 @@ type TLAccountGetSavedRingtones struct {
 }
 
 func (m *TLAccountGetSavedRingtones) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6996,7 +6996,7 @@ type TLAccountSaveRingtone struct {
 }
 
 func (m *TLAccountSaveRingtone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7058,7 +7058,7 @@ type TLAccountUploadRingtone struct {
 }
 
 func (m *TLAccountUploadRingtone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7120,7 +7120,7 @@ type TLAccountUpdateEmojiStatus struct {
 }
 
 func (m *TLAccountUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7171,7 +7171,7 @@ type TLAccountGetDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7218,7 +7218,7 @@ type TLAccountGetRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountGetRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7264,7 +7264,7 @@ type TLAccountClearRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountClearRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7305,7 +7305,7 @@ type TLAccountReorderUsernames struct {
 }
 
 func (m *TLAccountReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7351,7 +7351,7 @@ type TLAccountToggleUsername struct {
 }
 
 func (m *TLAccountToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7407,7 +7407,7 @@ type TLAccountGetDefaultProfilePhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultProfilePhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7454,7 +7454,7 @@ type TLAccountGetDefaultGroupPhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultGroupPhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7500,7 +7500,7 @@ type TLAccountGetAutoSaveSettings struct {
 }
 
 func (m *TLAccountGetAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7545,7 +7545,7 @@ type TLAccountSaveAutoSaveSettings struct {
 }
 
 func (m *TLAccountSaveAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7645,7 +7645,7 @@ type TLAccountDeleteAutoSaveExceptions struct {
 }
 
 func (m *TLAccountDeleteAutoSaveExceptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7686,7 +7686,7 @@ type TLAccountInvalidateSignInCodes struct {
 }
 
 func (m *TLAccountInvalidateSignInCodes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7732,7 +7732,7 @@ type TLAccountUpdateColor struct {
 }
 
 func (m *TLAccountUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7811,7 +7811,7 @@ type TLAccountGetDefaultBackgroundEmojis struct {
 }
 
 func (m *TLAccountGetDefaultBackgroundEmojis) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7858,7 +7858,7 @@ type TLAccountGetChannelDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetChannelDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7905,7 +7905,7 @@ type TLAccountGetChannelRestrictedStatusEmojis struct {
 }
 
 func (m *TLAccountGetChannelRestrictedStatusEmojis) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7952,7 +7952,7 @@ type TLAccountUpdateBusinessWorkHours struct {
 }
 
 func (m *TLAccountUpdateBusinessWorkHours) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8026,7 +8026,7 @@ type TLAccountUpdateBusinessLocation struct {
 }
 
 func (m *TLAccountUpdateBusinessLocation) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8113,7 +8113,7 @@ type TLAccountUpdateBusinessGreetingMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessGreetingMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8186,7 +8186,7 @@ type TLAccountUpdateBusinessAwayMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessAwayMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8262,7 +8262,7 @@ type TLAccountUpdateConnectedBot struct {
 }
 
 func (m *TLAccountUpdateConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8359,7 +8359,7 @@ type TLAccountGetConnectedBots struct {
 }
 
 func (m *TLAccountGetConnectedBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8400,7 +8400,7 @@ type TLAccountGetBotBusinessConnection struct {
 }
 
 func (m *TLAccountGetBotBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8447,7 +8447,7 @@ type TLAccountUpdateBusinessIntro struct {
 }
 
 func (m *TLAccountUpdateBusinessIntro) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8521,7 +8521,7 @@ type TLAccountToggleConnectedBotPaused struct {
 }
 
 func (m *TLAccountToggleConnectedBotPaused) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8581,7 +8581,7 @@ type TLAccountDisablePeerConnectedBot struct {
 }
 
 func (m *TLAccountDisablePeerConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8632,7 +8632,7 @@ type TLAccountUpdateBirthday struct {
 }
 
 func (m *TLAccountUpdateBirthday) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8705,7 +8705,7 @@ type TLAccountCreateBusinessChatLink struct {
 }
 
 func (m *TLAccountCreateBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8757,7 +8757,7 @@ type TLAccountEditBusinessChatLink struct {
 }
 
 func (m *TLAccountEditBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8813,7 +8813,7 @@ type TLAccountDeleteBusinessChatLink struct {
 }
 
 func (m *TLAccountDeleteBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8859,7 +8859,7 @@ type TLAccountGetBusinessChatLinks struct {
 }
 
 func (m *TLAccountGetBusinessChatLinks) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8900,7 +8900,7 @@ type TLAccountResolveBusinessChatLink struct {
 }
 
 func (m *TLAccountResolveBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8947,7 +8947,7 @@ type TLAccountUpdatePersonalChannel struct {
 }
 
 func (m *TLAccountUpdatePersonalChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8998,7 +8998,7 @@ type TLAccountToggleSponsoredMessages struct {
 }
 
 func (m *TLAccountToggleSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9048,7 +9048,7 @@ type TLAccountGetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountGetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9089,7 +9089,7 @@ type TLAccountSetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountSetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9140,7 +9140,7 @@ type TLAccountGetCollectibleEmojiStatuses struct {
 }
 
 func (m *TLAccountGetCollectibleEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9188,7 +9188,7 @@ type TLAccountGetPaidMessagesRevenue struct {
 }
 
 func (m *TLAccountGetPaidMessagesRevenue) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9274,7 +9274,7 @@ type TLAccountToggleNoPaidMessagesException struct {
 }
 
 func (m *TLAccountToggleNoPaidMessagesException) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9369,7 +9369,7 @@ type TLAccountSetMainProfileTab struct {
 }
 
 func (m *TLAccountSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9422,7 +9422,7 @@ type TLAccountSaveMusic struct {
 }
 
 func (m *TLAccountSaveMusic) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9512,7 +9512,7 @@ type TLAccountGetSavedMusicIds struct {
 }
 
 func (m *TLAccountGetSavedMusicIds) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9561,7 +9561,7 @@ type TLAccountGetUniqueGiftChatThemes struct {
 }
 
 func (m *TLAccountGetUniqueGiftChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9617,7 +9617,7 @@ type TLAccountInitPasskeyRegistration struct {
 }
 
 func (m *TLAccountInitPasskeyRegistration) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9658,7 +9658,7 @@ type TLAccountRegisterPasskey struct {
 }
 
 func (m *TLAccountRegisterPasskey) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9708,7 +9708,7 @@ type TLAccountGetPasskeys struct {
 }
 
 func (m *TLAccountGetPasskeys) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9749,7 +9749,7 @@ type TLAccountDeletePasskey struct {
 }
 
 func (m *TLAccountDeletePasskey) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9796,7 +9796,7 @@ type TLUsersGetUsers struct {
 }
 
 func (m *TLUsersGetUsers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9861,7 +9861,7 @@ type TLUsersGetFullUser struct {
 }
 
 func (m *TLUsersGetFullUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9913,7 +9913,7 @@ type TLUsersSetSecureValueErrors struct {
 }
 
 func (m *TLUsersSetSecureValueErrors) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9989,7 +9989,7 @@ type TLUsersGetRequirementsToContact struct {
 }
 
 func (m *TLUsersGetRequirementsToContact) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10057,7 +10057,7 @@ type TLUsersGetSavedMusic struct {
 }
 
 func (m *TLUsersGetSavedMusic) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10125,7 +10125,7 @@ type TLUsersGetSavedMusicByID struct {
 }
 
 func (m *TLUsersGetSavedMusicByID) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10202,7 +10202,7 @@ type TLUsersSuggestBirthday struct {
 }
 
 func (m *TLUsersSuggestBirthday) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10262,7 +10262,7 @@ type TLContactsGetContactIDs struct {
 }
 
 func (m *TLContactsGetContactIDs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10308,7 +10308,7 @@ type TLContactsGetStatuses struct {
 }
 
 func (m *TLContactsGetStatuses) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10349,7 +10349,7 @@ type TLContactsGetContacts struct {
 }
 
 func (m *TLContactsGetContacts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10396,7 +10396,7 @@ type TLContactsImportContacts struct {
 }
 
 func (m *TLContactsImportContacts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10461,7 +10461,7 @@ type TLContactsDeleteContacts struct {
 }
 
 func (m *TLContactsDeleteContacts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10526,7 +10526,7 @@ type TLContactsDeleteByPhones struct {
 }
 
 func (m *TLContactsDeleteByPhones) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10572,7 +10572,7 @@ type TLContactsBlock struct {
 }
 
 func (m *TLContactsBlock) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10646,7 +10646,7 @@ type TLContactsUnblock struct {
 }
 
 func (m *TLContactsUnblock) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10721,7 +10721,7 @@ type TLContactsGetBlocked struct {
 }
 
 func (m *TLContactsGetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10796,7 +10796,7 @@ type TLContactsSearch struct {
 }
 
 func (m *TLContactsSearch) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10849,7 +10849,7 @@ type TLContactsResolveUsername struct {
 }
 
 func (m *TLContactsResolveUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10936,7 +10936,7 @@ type TLContactsGetTopPeers struct {
 }
 
 func (m *TLContactsGetTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11064,7 +11064,7 @@ type TLContactsResetTopPeerRating struct {
 }
 
 func (m *TLContactsResetTopPeerRating) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11123,7 +11123,7 @@ type TLContactsResetSaved struct {
 }
 
 func (m *TLContactsResetSaved) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11163,7 +11163,7 @@ type TLContactsGetSaved struct {
 }
 
 func (m *TLContactsGetSaved) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11204,7 +11204,7 @@ type TLContactsToggleTopPeers struct {
 }
 
 func (m *TLContactsToggleTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11260,7 +11260,7 @@ type TLContactsAddContact struct {
 }
 
 func (m *TLContactsAddContact) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11365,7 +11365,7 @@ type TLContactsAcceptContact struct {
 }
 
 func (m *TLContactsAcceptContact) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11418,7 +11418,7 @@ type TLContactsGetLocated struct {
 }
 
 func (m *TLContactsGetLocated) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11509,7 +11509,7 @@ type TLContactsBlockFromReplies struct {
 }
 
 func (m *TLContactsBlockFromReplies) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11590,7 +11590,7 @@ type TLContactsResolvePhone struct {
 }
 
 func (m *TLContactsResolvePhone) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11636,7 +11636,7 @@ type TLContactsExportContactToken struct {
 }
 
 func (m *TLContactsExportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11677,7 +11677,7 @@ type TLContactsImportContactToken struct {
 }
 
 func (m *TLContactsImportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11724,7 +11724,7 @@ type TLContactsEditCloseFriends struct {
 }
 
 func (m *TLContactsEditCloseFriends) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11771,7 +11771,7 @@ type TLContactsSetBlocked struct {
 }
 
 func (m *TLContactsSetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11865,7 +11865,7 @@ type TLContactsGetBirthdays struct {
 }
 
 func (m *TLContactsGetBirthdays) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11906,7 +11906,7 @@ type TLContactsGetSponsoredPeers struct {
 }
 
 func (m *TLContactsGetSponsoredPeers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11954,7 +11954,7 @@ type TLContactsUpdateContactNote struct {
 }
 
 func (m *TLContactsUpdateContactNote) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12015,7 +12015,7 @@ type TLMessagesGetMessages struct {
 }
 
 func (m *TLMessagesGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12097,7 +12097,7 @@ type TLMessagesGetDialogs struct {
 }
 
 func (m *TLMessagesGetDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12212,7 +12212,7 @@ type TLMessagesGetHistory struct {
 }
 
 func (m *TLMessagesGetHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12313,7 +12313,7 @@ type TLMessagesSearch struct {
 }
 
 func (m *TLMessagesSearch) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12513,7 +12513,7 @@ type TLMessagesReadHistory struct {
 }
 
 func (m *TLMessagesReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12575,7 +12575,7 @@ type TLMessagesDeleteHistory struct {
 }
 
 func (m *TLMessagesDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12689,7 +12689,7 @@ type TLMessagesDeleteMessages struct {
 }
 
 func (m *TLMessagesDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12757,7 +12757,7 @@ type TLMessagesReceivedMessages struct {
 }
 
 func (m *TLMessagesReceivedMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12806,7 +12806,7 @@ type TLMessagesSetTyping struct {
 }
 
 func (m *TLMessagesSetTyping) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12917,7 +12917,7 @@ type TLMessagesSendMessage struct {
 }
 
 func (m *TLMessagesSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13232,7 +13232,7 @@ type TLMessagesSendMedia struct {
 }
 
 func (m *TLMessagesSendMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13551,7 +13551,7 @@ type TLMessagesForwardMessages struct {
 }
 
 func (m *TLMessagesForwardMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13829,7 +13829,7 @@ type TLMessagesReportSpam struct {
 }
 
 func (m *TLMessagesReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13880,7 +13880,7 @@ type TLMessagesGetPeerSettings struct {
 }
 
 func (m *TLMessagesGetPeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13934,7 +13934,7 @@ type TLMessagesReport struct {
 }
 
 func (m *TLMessagesReport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14001,7 +14001,7 @@ type TLMessagesGetChats struct {
 }
 
 func (m *TLMessagesGetChats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14046,7 +14046,7 @@ type TLMessagesGetFullChat struct {
 }
 
 func (m *TLMessagesGetFullChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14094,7 +14094,7 @@ type TLMessagesEditChatTitle struct {
 }
 
 func (m *TLMessagesEditChatTitle) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14147,7 +14147,7 @@ type TLMessagesEditChatPhoto struct {
 }
 
 func (m *TLMessagesEditChatPhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14205,7 +14205,7 @@ type TLMessagesAddChatUser struct {
 }
 
 func (m *TLMessagesAddChatUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14269,7 +14269,7 @@ type TLMessagesDeleteChatUser struct {
 }
 
 func (m *TLMessagesDeleteChatUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14349,7 +14349,7 @@ type TLMessagesCreateChat struct {
 }
 
 func (m *TLMessagesCreateChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14452,7 +14452,7 @@ type TLMessagesGetDhConfig struct {
 }
 
 func (m *TLMessagesGetDhConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14506,7 +14506,7 @@ type TLMessagesRequestEncryption struct {
 }
 
 func (m *TLMessagesRequestEncryption) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14570,7 +14570,7 @@ type TLMessagesAcceptEncryption struct {
 }
 
 func (m *TLMessagesAcceptEncryption) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14633,7 +14633,7 @@ type TLMessagesDiscardEncryption struct {
 }
 
 func (m *TLMessagesDiscardEncryption) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14703,7 +14703,7 @@ type TLMessagesSetEncryptedTyping struct {
 }
 
 func (m *TLMessagesSetEncryptedTyping) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14764,7 +14764,7 @@ type TLMessagesReadEncryptedHistory struct {
 }
 
 func (m *TLMessagesReadEncryptedHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14824,7 +14824,7 @@ type TLMessagesSendEncrypted struct {
 }
 
 func (m *TLMessagesSendEncrypted) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14912,7 +14912,7 @@ type TLMessagesSendEncryptedFile struct {
 }
 
 func (m *TLMessagesSendEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15007,7 +15007,7 @@ type TLMessagesSendEncryptedService struct {
 }
 
 func (m *TLMessagesSendEncryptedService) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15069,7 +15069,7 @@ type TLMessagesReceivedQueue struct {
 }
 
 func (m *TLMessagesReceivedQueue) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15116,7 +15116,7 @@ type TLMessagesReportEncryptedSpam struct {
 }
 
 func (m *TLMessagesReportEncryptedSpam) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15167,7 +15167,7 @@ type TLMessagesReadMessageContents struct {
 }
 
 func (m *TLMessagesReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15213,7 +15213,7 @@ type TLMessagesGetStickers struct {
 }
 
 func (m *TLMessagesGetStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15265,7 +15265,7 @@ type TLMessagesGetAllStickers struct {
 }
 
 func (m *TLMessagesGetAllStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15313,7 +15313,7 @@ type TLMessagesGetWebPagePreview struct {
 }
 
 func (m *TLMessagesGetWebPagePreview) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15412,7 +15412,7 @@ type TLMessagesExportChatInvite struct {
 }
 
 func (m *TLMessagesExportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15551,7 +15551,7 @@ type TLMessagesCheckChatInvite struct {
 }
 
 func (m *TLMessagesCheckChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15598,7 +15598,7 @@ type TLMessagesImportChatInvite struct {
 }
 
 func (m *TLMessagesImportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15646,7 +15646,7 @@ type TLMessagesGetStickerSet struct {
 }
 
 func (m *TLMessagesGetStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15721,7 +15721,7 @@ type TLMessagesInstallStickerSet struct {
 }
 
 func (m *TLMessagesInstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15781,7 +15781,7 @@ type TLMessagesUninstallStickerSet struct {
 }
 
 func (m *TLMessagesUninstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15835,7 +15835,7 @@ type TLMessagesStartBot struct {
 }
 
 func (m *TLMessagesStartBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15908,7 +15908,7 @@ type TLMessagesGetMessagesViews struct {
 }
 
 func (m *TLMessagesGetMessagesViews) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15975,7 +15975,7 @@ type TLMessagesEditChatAdmin struct {
 }
 
 func (m *TLMessagesEditChatAdmin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16040,7 +16040,7 @@ type TLMessagesMigrateChat struct {
 }
 
 func (m *TLMessagesMigrateChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16098,7 +16098,7 @@ type TLMessagesSearchGlobal struct {
 }
 
 func (m *TLMessagesSearchGlobal) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16240,7 +16240,7 @@ type TLMessagesReorderStickerSets struct {
 }
 
 func (m *TLMessagesReorderStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16316,7 +16316,7 @@ type TLMessagesGetDocumentByHash struct {
 }
 
 func (m *TLMessagesGetDocumentByHash) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16373,7 +16373,7 @@ type TLMessagesGetSavedGifs struct {
 }
 
 func (m *TLMessagesGetSavedGifs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16421,7 +16421,7 @@ type TLMessagesSaveGif struct {
 }
 
 func (m *TLMessagesSaveGif) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16485,7 +16485,7 @@ type TLMessagesGetInlineBotResults struct {
 }
 
 func (m *TLMessagesGetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16595,7 +16595,7 @@ type TLMessagesSetInlineBotResults struct {
 }
 
 func (m *TLMessagesSetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16760,7 +16760,7 @@ type TLMessagesSendInlineBotResult struct {
 }
 
 func (m *TLMessagesSendInlineBotResult) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16945,7 +16945,7 @@ type TLMessagesGetMessageEditData struct {
 }
 
 func (m *TLMessagesGetMessageEditData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17012,7 +17012,7 @@ type TLMessagesEditMessage struct {
 }
 
 func (m *TLMessagesEditMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17222,7 +17222,7 @@ type TLMessagesEditInlineBotMessage struct {
 }
 
 func (m *TLMessagesEditInlineBotMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17384,7 +17384,7 @@ type TLMessagesGetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesGetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17497,7 +17497,7 @@ type TLMessagesSetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesSetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17602,7 +17602,7 @@ type TLMessagesGetPeerDialogs struct {
 }
 
 func (m *TLMessagesGetPeerDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17675,7 +17675,7 @@ type TLMessagesSaveDraft struct {
 }
 
 func (m *TLMessagesSaveDraft) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17852,7 +17852,7 @@ type TLMessagesGetAllDrafts struct {
 }
 
 func (m *TLMessagesGetAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17893,7 +17893,7 @@ type TLMessagesGetFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17940,7 +17940,7 @@ type TLMessagesReadFeaturedStickers struct {
 }
 
 func (m *TLMessagesReadFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17986,7 +17986,7 @@ type TLMessagesGetRecentStickers struct {
 }
 
 func (m *TLMessagesGetRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18057,7 +18057,7 @@ type TLMessagesSaveRecentSticker struct {
 }
 
 func (m *TLMessagesSaveRecentSticker) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18139,7 +18139,7 @@ type TLMessagesClearRecentStickers struct {
 }
 
 func (m *TLMessagesClearRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18206,7 +18206,7 @@ type TLMessagesGetArchivedStickers struct {
 }
 
 func (m *TLMessagesGetArchivedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18286,7 +18286,7 @@ type TLMessagesGetMaskStickers struct {
 }
 
 func (m *TLMessagesGetMaskStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18333,7 +18333,7 @@ type TLMessagesGetAttachedStickers struct {
 }
 
 func (m *TLMessagesGetAttachedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18389,7 +18389,7 @@ type TLMessagesSetGameScore struct {
 }
 
 func (m *TLMessagesSetGameScore) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18493,7 +18493,7 @@ type TLMessagesSetInlineGameScore struct {
 }
 
 func (m *TLMessagesSetInlineGameScore) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18589,7 +18589,7 @@ type TLMessagesGetGameHighScores struct {
 }
 
 func (m *TLMessagesGetGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18656,7 +18656,7 @@ type TLMessagesGetInlineGameHighScores struct {
 }
 
 func (m *TLMessagesGetInlineGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18718,7 +18718,7 @@ type TLMessagesGetCommonChats struct {
 }
 
 func (m *TLMessagesGetCommonChats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18781,7 +18781,7 @@ type TLMessagesGetWebPage struct {
 }
 
 func (m *TLMessagesGetWebPage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18834,7 +18834,7 @@ type TLMessagesToggleDialogPin struct {
 }
 
 func (m *TLMessagesToggleDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18909,7 +18909,7 @@ type TLMessagesReorderPinnedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19002,7 +19002,7 @@ type TLMessagesGetPinnedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19051,7 +19051,7 @@ type TLMessagesSetBotShippingResults struct {
 }
 
 func (m *TLMessagesSetBotShippingResults) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19161,7 +19161,7 @@ type TLMessagesSetBotPrecheckoutResults struct {
 }
 
 func (m *TLMessagesSetBotPrecheckoutResults) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19246,7 +19246,7 @@ type TLMessagesUploadMedia struct {
 }
 
 func (m *TLMessagesUploadMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19338,7 +19338,7 @@ type TLMessagesSendScreenshotNotification struct {
 }
 
 func (m *TLMessagesSendScreenshotNotification) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19404,7 +19404,7 @@ type TLMessagesGetFavedStickers struct {
 }
 
 func (m *TLMessagesGetFavedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19452,7 +19452,7 @@ type TLMessagesFaveSticker struct {
 }
 
 func (m *TLMessagesFaveSticker) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19518,7 +19518,7 @@ type TLMessagesGetUnreadMentions struct {
 }
 
 func (m *TLMessagesGetUnreadMentions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19626,7 +19626,7 @@ type TLMessagesReadMentions struct {
 }
 
 func (m *TLMessagesReadMentions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19709,7 +19709,7 @@ type TLMessagesGetRecentLocations struct {
 }
 
 func (m *TLMessagesGetRecentLocations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19785,7 +19785,7 @@ type TLMessagesSendMultiMedia struct {
 }
 
 func (m *TLMessagesSendMultiMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20013,7 +20013,7 @@ type TLMessagesUploadEncryptedFile struct {
 }
 
 func (m *TLMessagesUploadEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20075,7 +20075,7 @@ type TLMessagesSearchStickerSets struct {
 }
 
 func (m *TLMessagesSearchStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20148,7 +20148,7 @@ type TLMessagesGetSplitRanges struct {
 }
 
 func (m *TLMessagesGetSplitRanges) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20191,7 +20191,7 @@ type TLMessagesMarkDialogUnread struct {
 }
 
 func (m *TLMessagesMarkDialogUnread) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20280,7 +20280,7 @@ type TLMessagesGetDialogUnreadMarks struct {
 }
 
 func (m *TLMessagesGetDialogUnreadMarks) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20352,7 +20352,7 @@ type TLMessagesClearAllDrafts struct {
 }
 
 func (m *TLMessagesClearAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20397,7 +20397,7 @@ type TLMessagesUpdatePinnedMessage struct {
 }
 
 func (m *TLMessagesUpdatePinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20490,7 +20490,7 @@ type TLMessagesSendVote struct {
 }
 
 func (m *TLMessagesSendVote) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20552,7 +20552,7 @@ type TLMessagesGetPollResults struct {
 }
 
 func (m *TLMessagesGetPollResults) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20609,7 +20609,7 @@ type TLMessagesGetOnlines struct {
 }
 
 func (m *TLMessagesGetOnlines) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20661,7 +20661,7 @@ type TLMessagesEditChatAbout struct {
 }
 
 func (m *TLMessagesEditChatAbout) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20719,7 +20719,7 @@ type TLMessagesEditChatDefaultBannedRights struct {
 }
 
 func (m *TLMessagesEditChatDefaultBannedRights) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20779,7 +20779,7 @@ type TLMessagesGetEmojiKeywords struct {
 }
 
 func (m *TLMessagesGetEmojiKeywords) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20827,7 +20827,7 @@ type TLMessagesGetEmojiKeywordsDifference struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsDifference) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20879,7 +20879,7 @@ type TLMessagesGetEmojiKeywordsLanguages struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsLanguages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20924,7 +20924,7 @@ type TLMessagesGetEmojiURL struct {
 }
 
 func (m *TLMessagesGetEmojiURL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20974,7 +20974,7 @@ type TLMessagesGetSearchCounters struct {
 }
 
 func (m *TLMessagesGetSearchCounters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21099,7 +21099,7 @@ type TLMessagesRequestUrlAuth struct {
 }
 
 func (m *TLMessagesRequestUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21316,7 +21316,7 @@ type TLMessagesAcceptUrlAuth struct {
 }
 
 func (m *TLMessagesAcceptUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21551,7 +21551,7 @@ type TLMessagesHidePeerSettingsBar struct {
 }
 
 func (m *TLMessagesHidePeerSettingsBar) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21603,7 +21603,7 @@ type TLMessagesGetScheduledHistory struct {
 }
 
 func (m *TLMessagesGetScheduledHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21661,7 +21661,7 @@ type TLMessagesGetScheduledMessages struct {
 }
 
 func (m *TLMessagesGetScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21717,7 +21717,7 @@ type TLMessagesSendScheduledMessages struct {
 }
 
 func (m *TLMessagesSendScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21773,7 +21773,7 @@ type TLMessagesDeleteScheduledMessages struct {
 }
 
 func (m *TLMessagesDeleteScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21832,7 +21832,7 @@ type TLMessagesGetPollVotes struct {
 }
 
 func (m *TLMessagesGetPollVotes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21942,7 +21942,7 @@ type TLMessagesToggleStickerSets struct {
 }
 
 func (m *TLMessagesToggleStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22041,7 +22041,7 @@ type TLMessagesGetDialogFilters struct {
 }
 
 func (m *TLMessagesGetDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22081,7 +22081,7 @@ type TLMessagesGetSuggestedDialogFilters struct {
 }
 
 func (m *TLMessagesGetSuggestedDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22123,7 +22123,7 @@ type TLMessagesUpdateDialogFilter struct {
 }
 
 func (m *TLMessagesUpdateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22201,7 +22201,7 @@ type TLMessagesUpdateDialogFiltersOrder struct {
 }
 
 func (m *TLMessagesUpdateDialogFiltersOrder) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22248,7 +22248,7 @@ type TLMessagesGetOldFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetOldFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22313,7 +22313,7 @@ type TLMessagesGetReplies struct {
 }
 
 func (m *TLMessagesGetReplies) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22406,7 +22406,7 @@ type TLMessagesGetDiscussionMessage struct {
 }
 
 func (m *TLMessagesGetDiscussionMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22465,7 +22465,7 @@ type TLMessagesReadDiscussion struct {
 }
 
 func (m *TLMessagesReadDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22529,7 +22529,7 @@ type TLMessagesUnpinAllMessages struct {
 }
 
 func (m *TLMessagesUnpinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22626,7 +22626,7 @@ type TLMessagesDeleteChat struct {
 }
 
 func (m *TLMessagesDeleteChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22673,7 +22673,7 @@ type TLMessagesDeletePhoneCallHistory struct {
 }
 
 func (m *TLMessagesDeletePhoneCallHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22737,7 +22737,7 @@ type TLMessagesCheckHistoryImport struct {
 }
 
 func (m *TLMessagesCheckHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22786,7 +22786,7 @@ type TLMessagesInitHistoryImport struct {
 }
 
 func (m *TLMessagesInitHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22855,7 +22855,7 @@ type TLMessagesUploadImportedMedia struct {
 }
 
 func (m *TLMessagesUploadImportedMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22927,7 +22927,7 @@ type TLMessagesStartHistoryImport struct {
 }
 
 func (m *TLMessagesStartHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22989,7 +22989,7 @@ type TLMessagesGetExportedChatInvites struct {
 }
 
 func (m *TLMessagesGetExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23108,7 +23108,7 @@ type TLMessagesGetExportedChatInvite struct {
 }
 
 func (m *TLMessagesGetExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23171,7 +23171,7 @@ type TLMessagesEditExportedChatInvite struct {
 }
 
 func (m *TLMessagesEditExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23309,7 +23309,7 @@ type TLMessagesDeleteRevokedExportedChatInvites struct {
 }
 
 func (m *TLMessagesDeleteRevokedExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23370,7 +23370,7 @@ type TLMessagesDeleteExportedChatInvite struct {
 }
 
 func (m *TLMessagesDeleteExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23427,7 +23427,7 @@ type TLMessagesGetAdminsWithInvites struct {
 }
 
 func (m *TLMessagesGetAdminsWithInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23485,7 +23485,7 @@ type TLMessagesGetChatInviteImporters struct {
 }
 
 func (m *TLMessagesGetChatInviteImporters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23617,7 +23617,7 @@ type TLMessagesSetHistoryTTL struct {
 }
 
 func (m *TLMessagesSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23674,7 +23674,7 @@ type TLMessagesCheckHistoryImportPeer struct {
 }
 
 func (m *TLMessagesCheckHistoryImportPeer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23726,7 +23726,7 @@ type TLMessagesSetChatTheme struct {
 }
 
 func (m *TLMessagesSetChatTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23787,7 +23787,7 @@ type TLMessagesGetMessageReadParticipants struct {
 }
 
 func (m *TLMessagesGetMessageReadParticipants) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23848,7 +23848,7 @@ type TLMessagesGetSearchResultsCalendar struct {
 }
 
 func (m *TLMessagesGetSearchResultsCalendar) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23956,7 +23956,7 @@ type TLMessagesGetSearchResultsPositions struct {
 }
 
 func (m *TLMessagesGetSearchResultsPositions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24062,7 +24062,7 @@ type TLMessagesHideChatJoinRequest struct {
 }
 
 func (m *TLMessagesHideChatJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24146,7 +24146,7 @@ type TLMessagesHideAllChatJoinRequests struct {
 }
 
 func (m *TLMessagesHideAllChatJoinRequests) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24236,7 +24236,7 @@ type TLMessagesToggleNoForwards struct {
 }
 
 func (m *TLMessagesToggleNoForwards) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24353,7 +24353,7 @@ type TLMessagesSaveDefaultSendAs struct {
 }
 
 func (m *TLMessagesSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24417,7 +24417,7 @@ type TLMessagesSendReaction struct {
 }
 
 func (m *TLMessagesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24534,7 +24534,7 @@ type TLMessagesGetMessagesReactions struct {
 }
 
 func (m *TLMessagesGetMessagesReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24593,7 +24593,7 @@ type TLMessagesGetMessageReactionsList struct {
 }
 
 func (m *TLMessagesGetMessageReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24705,7 +24705,7 @@ type TLMessagesSetChatAvailableReactions struct {
 }
 
 func (m *TLMessagesSetChatAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24811,7 +24811,7 @@ type TLMessagesGetAvailableReactions struct {
 }
 
 func (m *TLMessagesGetAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24858,7 +24858,7 @@ type TLMessagesSetDefaultReaction struct {
 }
 
 func (m *TLMessagesSetDefaultReaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24912,7 +24912,7 @@ type TLMessagesTranslateText struct {
 }
 
 func (m *TLMessagesTranslateText) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25037,7 +25037,7 @@ type TLMessagesGetUnreadReactions struct {
 }
 
 func (m *TLMessagesGetUnreadReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25162,7 +25162,7 @@ type TLMessagesReadReactions struct {
 }
 
 func (m *TLMessagesReadReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25261,7 +25261,7 @@ type TLMessagesSearchSentMedia struct {
 }
 
 func (m *TLMessagesSearchSentMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25323,7 +25323,7 @@ type TLMessagesGetAttachMenuBots struct {
 }
 
 func (m *TLMessagesGetAttachMenuBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25370,7 +25370,7 @@ type TLMessagesGetAttachMenuBot struct {
 }
 
 func (m *TLMessagesGetAttachMenuBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25423,7 +25423,7 @@ type TLMessagesToggleBotInAttachMenu struct {
 }
 
 func (m *TLMessagesToggleBotInAttachMenu) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25516,7 +25516,7 @@ type TLMessagesRequestWebView struct {
 }
 
 func (m *TLMessagesRequestWebView) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25706,7 +25706,7 @@ type TLMessagesProlongWebView struct {
 }
 
 func (m *TLMessagesProlongWebView) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25834,7 +25834,7 @@ type TLMessagesRequestSimpleWebView struct {
 }
 
 func (m *TLMessagesRequestSimpleWebView) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25979,7 +25979,7 @@ type TLMessagesSendWebViewResultMessage struct {
 }
 
 func (m *TLMessagesSendWebViewResultMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26038,7 +26038,7 @@ type TLMessagesSendWebViewData struct {
 }
 
 func (m *TLMessagesSendWebViewData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26106,7 +26106,7 @@ type TLMessagesTranscribeAudio struct {
 }
 
 func (m *TLMessagesTranscribeAudio) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26166,7 +26166,7 @@ type TLMessagesRateTranscribedAudio struct {
 }
 
 func (m *TLMessagesRateTranscribedAudio) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26237,7 +26237,7 @@ type TLMessagesGetCustomEmojiDocuments struct {
 }
 
 func (m *TLMessagesGetCustomEmojiDocuments) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26282,7 +26282,7 @@ type TLMessagesGetEmojiStickers struct {
 }
 
 func (m *TLMessagesGetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26329,7 +26329,7 @@ type TLMessagesGetFeaturedEmojiStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26378,7 +26378,7 @@ type TLMessagesReportReaction struct {
 }
 
 func (m *TLMessagesReportReaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26445,7 +26445,7 @@ type TLMessagesGetTopReactions struct {
 }
 
 func (m *TLMessagesGetTopReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26498,7 +26498,7 @@ type TLMessagesGetRecentReactions struct {
 }
 
 func (m *TLMessagesGetRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26549,7 +26549,7 @@ type TLMessagesClearRecentReactions struct {
 }
 
 func (m *TLMessagesClearRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26591,7 +26591,7 @@ type TLMessagesGetExtendedMedia struct {
 }
 
 func (m *TLMessagesGetExtendedMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26646,7 +26646,7 @@ type TLMessagesSetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesSetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26692,7 +26692,7 @@ type TLMessagesGetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesGetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26736,7 +26736,7 @@ type TLMessagesSendBotRequestedPeer struct {
 }
 
 func (m *TLMessagesSendBotRequestedPeer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26822,7 +26822,7 @@ type TLMessagesGetEmojiGroups struct {
 }
 
 func (m *TLMessagesGetEmojiGroups) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26869,7 +26869,7 @@ type TLMessagesGetEmojiStatusGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStatusGroups) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26916,7 +26916,7 @@ type TLMessagesGetEmojiProfilePhotoGroups struct {
 }
 
 func (m *TLMessagesGetEmojiProfilePhotoGroups) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26964,7 +26964,7 @@ type TLMessagesSearchCustomEmoji struct {
 }
 
 func (m *TLMessagesSearchCustomEmoji) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27017,7 +27017,7 @@ type TLMessagesTogglePeerTranslations struct {
 }
 
 func (m *TLMessagesTogglePeerTranslations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27091,7 +27091,7 @@ type TLMessagesGetBotApp struct {
 }
 
 func (m *TLMessagesGetBotApp) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27155,7 +27155,7 @@ type TLMessagesRequestAppWebView struct {
 }
 
 func (m *TLMessagesRequestAppWebView) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27292,7 +27292,7 @@ type TLMessagesSetChatWallPaper struct {
 }
 
 func (m *TLMessagesSetChatWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27420,7 +27420,7 @@ type TLMessagesSearchEmojiStickerSets struct {
 }
 
 func (m *TLMessagesSearchEmojiStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27500,7 +27500,7 @@ type TLMessagesGetSavedDialogs struct {
 }
 
 func (m *TLMessagesGetSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27618,7 +27618,7 @@ type TLMessagesGetSavedHistory struct {
 }
 
 func (m *TLMessagesGetSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27741,7 +27741,7 @@ type TLMessagesDeleteSavedHistory struct {
 }
 
 func (m *TLMessagesDeleteSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27857,7 +27857,7 @@ type TLMessagesGetPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27899,7 +27899,7 @@ type TLMessagesToggleSavedDialogPin struct {
 }
 
 func (m *TLMessagesToggleSavedDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27973,7 +27973,7 @@ type TLMessagesReorderPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28062,7 +28062,7 @@ type TLMessagesGetSavedReactionTags struct {
 }
 
 func (m *TLMessagesGetSavedReactionTags) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28142,7 +28142,7 @@ type TLMessagesUpdateSavedReactionTag struct {
 }
 
 func (m *TLMessagesUpdateSavedReactionTag) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28223,7 +28223,7 @@ type TLMessagesGetDefaultTagReactions struct {
 }
 
 func (m *TLMessagesGetDefaultTagReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28271,7 +28271,7 @@ type TLMessagesGetOutboxReadDate struct {
 }
 
 func (m *TLMessagesGetOutboxReadDate) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28328,7 +28328,7 @@ type TLMessagesGetQuickReplies struct {
 }
 
 func (m *TLMessagesGetQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28375,7 +28375,7 @@ type TLMessagesReorderQuickReplies struct {
 }
 
 func (m *TLMessagesReorderQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28420,7 +28420,7 @@ type TLMessagesCheckQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesCheckQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28468,7 +28468,7 @@ type TLMessagesEditQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesEditQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28520,7 +28520,7 @@ type TLMessagesDeleteQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28569,7 +28569,7 @@ type TLMessagesGetQuickReplyMessages struct {
 }
 
 func (m *TLMessagesGetQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28649,7 +28649,7 @@ type TLMessagesSendQuickReplyMessages struct {
 }
 
 func (m *TLMessagesSendQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28715,7 +28715,7 @@ type TLMessagesDeleteQuickReplyMessages struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28766,7 +28766,7 @@ type TLMessagesToggleDialogFilterTags struct {
 }
 
 func (m *TLMessagesToggleDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28818,7 +28818,7 @@ type TLMessagesGetMyStickers struct {
 }
 
 func (m *TLMessagesGetMyStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28870,7 +28870,7 @@ type TLMessagesGetEmojiStickerGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStickerGroups) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28917,7 +28917,7 @@ type TLMessagesGetAvailableEffects struct {
 }
 
 func (m *TLMessagesGetAvailableEffects) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28966,7 +28966,7 @@ type TLMessagesEditFactCheck struct {
 }
 
 func (m *TLMessagesEditFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29033,7 +29033,7 @@ type TLMessagesDeleteFactCheck struct {
 }
 
 func (m *TLMessagesDeleteFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29091,7 +29091,7 @@ type TLMessagesGetFactCheck struct {
 }
 
 func (m *TLMessagesGetFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29152,7 +29152,7 @@ type TLMessagesRequestMainWebView struct {
 }
 
 func (m *TLMessagesRequestMainWebView) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29282,7 +29282,7 @@ type TLMessagesSendPaidReaction struct {
 }
 
 func (m *TLMessagesSendPaidReaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29382,7 +29382,7 @@ type TLMessagesTogglePaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesTogglePaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29447,7 +29447,7 @@ type TLMessagesGetPaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesGetPaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29488,7 +29488,7 @@ type TLMessagesViewSponsoredMessage struct {
 }
 
 func (m *TLMessagesViewSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29537,7 +29537,7 @@ type TLMessagesClickSponsoredMessage struct {
 }
 
 func (m *TLMessagesClickSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29613,7 +29613,7 @@ type TLMessagesReportSponsoredMessage struct {
 }
 
 func (m *TLMessagesReportSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29666,7 +29666,7 @@ type TLMessagesGetSponsoredMessages struct {
 }
 
 func (m *TLMessagesGetSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29749,7 +29749,7 @@ type TLMessagesSavePreparedInlineMessage struct {
 }
 
 func (m *TLMessagesSavePreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29857,7 +29857,7 @@ type TLMessagesGetPreparedInlineMessage struct {
 }
 
 func (m *TLMessagesGetPreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29920,7 +29920,7 @@ type TLMessagesSearchStickers struct {
 }
 
 func (m *TLMessagesSearchStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30017,7 +30017,7 @@ type TLMessagesReportMessagesDelivery struct {
 }
 
 func (m *TLMessagesReportMessagesDelivery) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30095,7 +30095,7 @@ type TLMessagesGetSavedDialogsByID struct {
 }
 
 func (m *TLMessagesGetSavedDialogsByID) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30194,7 +30194,7 @@ type TLMessagesReadSavedHistory struct {
 }
 
 func (m *TLMessagesReadSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30263,7 +30263,7 @@ type TLMessagesToggleTodoCompleted struct {
 }
 
 func (m *TLMessagesToggleTodoCompleted) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30330,7 +30330,7 @@ type TLMessagesAppendTodoList struct {
 }
 
 func (m *TLMessagesAppendTodoList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30415,7 +30415,7 @@ type TLMessagesToggleSuggestedPostApproval struct {
 }
 
 func (m *TLMessagesToggleSuggestedPostApproval) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30527,7 +30527,7 @@ type TLMessagesGetForumTopics struct {
 }
 
 func (m *TLMessagesGetForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30631,7 +30631,7 @@ type TLMessagesGetForumTopicsByID struct {
 }
 
 func (m *TLMessagesGetForumTopicsByID) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30691,7 +30691,7 @@ type TLMessagesEditForumTopic struct {
 }
 
 func (m *TLMessagesEditForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30827,7 +30827,7 @@ type TLMessagesUpdatePinnedForumTopic struct {
 }
 
 func (m *TLMessagesUpdatePinnedForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30895,7 +30895,7 @@ type TLMessagesReorderPinnedForumTopics struct {
 }
 
 func (m *TLMessagesReorderPinnedForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30978,7 +30978,7 @@ type TLMessagesCreateForumTopic struct {
 }
 
 func (m *TLMessagesCreateForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31109,7 +31109,7 @@ type TLMessagesDeleteTopicHistory struct {
 }
 
 func (m *TLMessagesDeleteTopicHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31165,7 +31165,7 @@ type TLMessagesGetEmojiGameInfo struct {
 }
 
 func (m *TLMessagesGetEmojiGameInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31208,7 +31208,7 @@ type TLMessagesSummarizeText struct {
 }
 
 func (m *TLMessagesSummarizeText) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31296,7 +31296,7 @@ type TLMessagesEditChatCreator struct {
 }
 
 func (m *TLMessagesEditChatCreator) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31365,7 +31365,7 @@ type TLMessagesGetFutureChatCreatorAfterLeave struct {
 }
 
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31418,7 +31418,7 @@ type TLMessagesEditChatParticipantRank struct {
 }
 
 func (m *TLMessagesEditChatParticipantRank) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31484,7 +31484,7 @@ type TLMessagesDeclineUrlAuth struct {
 }
 
 func (m *TLMessagesDeclineUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31532,7 +31532,7 @@ type TLMessagesCheckUrlAuthMatchCode struct {
 }
 
 func (m *TLMessagesCheckUrlAuthMatchCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31583,7 +31583,7 @@ type TLUpdatesGetState struct {
 }
 
 func (m *TLUpdatesGetState) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31629,7 +31629,7 @@ type TLUpdatesGetDifference struct {
 }
 
 func (m *TLUpdatesGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31748,7 +31748,7 @@ type TLUpdatesGetChannelDifference struct {
 }
 
 func (m *TLUpdatesGetChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31843,7 +31843,7 @@ type TLPhotosUpdateProfilePhoto struct {
 }
 
 func (m *TLPhotosUpdateProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31937,7 +31937,7 @@ type TLPhotosUploadProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32079,7 +32079,7 @@ type TLPhotosDeletePhotos struct {
 }
 
 func (m *TLPhotosDeletePhotos) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32147,7 +32147,7 @@ type TLPhotosGetUserPhotos struct {
 }
 
 func (m *TLPhotosGetUserPhotos) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32220,7 +32220,7 @@ type TLPhotosUploadContactProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadContactProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32365,7 +32365,7 @@ type TLUploadSaveFilePart struct {
 }
 
 func (m *TLUploadSaveFilePart) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32426,7 +32426,7 @@ type TLUploadGetFile struct {
 }
 
 func (m *TLUploadGetFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32519,7 +32519,7 @@ type TLUploadSaveBigFilePart struct {
 }
 
 func (m *TLUploadSaveBigFilePart) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32583,7 +32583,7 @@ type TLUploadGetWebFile struct {
 }
 
 func (m *TLUploadGetWebFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32647,7 +32647,7 @@ type TLUploadGetCdnFile struct {
 }
 
 func (m *TLUploadGetCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32705,7 +32705,7 @@ type TLUploadReuploadCdnFile struct {
 }
 
 func (m *TLUploadReuploadCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32758,7 +32758,7 @@ type TLUploadGetCdnFileHashes struct {
 }
 
 func (m *TLUploadGetCdnFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32811,7 +32811,7 @@ type TLUploadGetFileHashes struct {
 }
 
 func (m *TLUploadGetFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32867,7 +32867,7 @@ type TLHelpGetConfig struct {
 }
 
 func (m *TLHelpGetConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32907,7 +32907,7 @@ type TLHelpGetNearestDc struct {
 }
 
 func (m *TLHelpGetNearestDc) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32948,7 +32948,7 @@ type TLHelpGetAppUpdate struct {
 }
 
 func (m *TLHelpGetAppUpdate) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32994,7 +32994,7 @@ type TLHelpGetInviteText struct {
 }
 
 func (m *TLHelpGetInviteText) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33034,7 +33034,7 @@ type TLHelpGetSupport struct {
 }
 
 func (m *TLHelpGetSupport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33076,7 +33076,7 @@ type TLHelpSetBotUpdatesStatus struct {
 }
 
 func (m *TLHelpSetBotUpdatesStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33127,7 +33127,7 @@ type TLHelpGetCdnConfig struct {
 }
 
 func (m *TLHelpGetCdnConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33168,7 +33168,7 @@ type TLHelpGetRecentMeUrls struct {
 }
 
 func (m *TLHelpGetRecentMeUrls) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33214,7 +33214,7 @@ type TLHelpGetTermsOfServiceUpdate struct {
 }
 
 func (m *TLHelpGetTermsOfServiceUpdate) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33255,7 +33255,7 @@ type TLHelpAcceptTermsOfService struct {
 }
 
 func (m *TLHelpAcceptTermsOfService) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33306,7 +33306,7 @@ type TLHelpGetDeepLinkInfo struct {
 }
 
 func (m *TLHelpGetDeepLinkInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33353,7 +33353,7 @@ type TLHelpGetAppConfig struct {
 }
 
 func (m *TLHelpGetAppConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33400,7 +33400,7 @@ type TLHelpSaveAppLog struct {
 }
 
 func (m *TLHelpSaveAppLog) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33465,7 +33465,7 @@ type TLHelpGetPassportConfig struct {
 }
 
 func (m *TLHelpGetPassportConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33511,7 +33511,7 @@ type TLHelpGetSupportName struct {
 }
 
 func (m *TLHelpGetSupportName) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33552,7 +33552,7 @@ type TLHelpGetUserInfo struct {
 }
 
 func (m *TLHelpGetUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33605,7 +33605,7 @@ type TLHelpEditUserInfo struct {
 }
 
 func (m *TLHelpEditUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33685,7 +33685,7 @@ type TLHelpGetPromoData struct {
 }
 
 func (m *TLHelpGetPromoData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33726,7 +33726,7 @@ type TLHelpHidePromoData struct {
 }
 
 func (m *TLHelpHidePromoData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33778,7 +33778,7 @@ type TLHelpDismissSuggestion struct {
 }
 
 func (m *TLHelpDismissSuggestion) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33836,7 +33836,7 @@ type TLHelpGetCountriesList struct {
 }
 
 func (m *TLHelpGetCountriesList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33887,7 +33887,7 @@ type TLHelpGetPremiumPromo struct {
 }
 
 func (m *TLHelpGetPremiumPromo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33928,7 +33928,7 @@ type TLHelpGetPeerColors struct {
 }
 
 func (m *TLHelpGetPeerColors) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33975,7 +33975,7 @@ type TLHelpGetPeerProfileColors struct {
 }
 
 func (m *TLHelpGetPeerProfileColors) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34022,7 +34022,7 @@ type TLHelpGetTimezonesList struct {
 }
 
 func (m *TLHelpGetTimezonesList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34070,7 +34070,7 @@ type TLChannelsReadHistory struct {
 }
 
 func (m *TLChannelsReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34128,7 +34128,7 @@ type TLChannelsDeleteMessages struct {
 }
 
 func (m *TLChannelsDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34185,7 +34185,7 @@ type TLChannelsReportSpam struct {
 }
 
 func (m *TLChannelsReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34251,7 +34251,7 @@ type TLChannelsGetMessages struct {
 }
 
 func (m *TLChannelsGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34352,7 +34352,7 @@ type TLChannelsGetParticipants struct {
 }
 
 func (m *TLChannelsGetParticipants) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34429,7 +34429,7 @@ type TLChannelsGetParticipant struct {
 }
 
 func (m *TLChannelsGetParticipant) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34489,7 +34489,7 @@ type TLChannelsGetChannels struct {
 }
 
 func (m *TLChannelsGetChannels) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34554,7 +34554,7 @@ type TLChannelsGetFullChannel struct {
 }
 
 func (m *TLChannelsGetFullChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34613,7 +34613,7 @@ type TLChannelsCreateChannel struct {
 }
 
 func (m *TLChannelsCreateChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34754,7 +34754,7 @@ type TLChannelsEditAdmin struct {
 }
 
 func (m *TLChannelsEditAdmin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34895,7 +34895,7 @@ type TLChannelsEditTitle struct {
 }
 
 func (m *TLChannelsEditTitle) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34953,7 +34953,7 @@ type TLChannelsEditPhoto struct {
 }
 
 func (m *TLChannelsEditPhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35014,7 +35014,7 @@ type TLChannelsCheckUsername struct {
 }
 
 func (m *TLChannelsCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35072,7 +35072,7 @@ type TLChannelsUpdateUsername struct {
 }
 
 func (m *TLChannelsUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35129,7 +35129,7 @@ type TLChannelsJoinChannel struct {
 }
 
 func (m *TLChannelsJoinChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35180,7 +35180,7 @@ type TLChannelsLeaveChannel struct {
 }
 
 func (m *TLChannelsLeaveChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35232,7 +35232,7 @@ type TLChannelsInviteToChannel struct {
 }
 
 func (m *TLChannelsInviteToChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35308,7 +35308,7 @@ type TLChannelsDeleteChannel struct {
 }
 
 func (m *TLChannelsDeleteChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35362,7 +35362,7 @@ type TLChannelsExportMessageLink struct {
 }
 
 func (m *TLChannelsExportMessageLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35449,7 +35449,7 @@ type TLChannelsToggleSignatures struct {
 }
 
 func (m *TLChannelsToggleSignatures) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35530,7 +35530,7 @@ type TLChannelsGetAdminedPublicChannels struct {
 }
 
 func (m *TLChannelsGetAdminedPublicChannels) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35608,7 +35608,7 @@ type TLChannelsEditBanned struct {
 }
 
 func (m *TLChannelsEditBanned) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35683,7 +35683,7 @@ type TLChannelsGetAdminLog struct {
 }
 
 func (m *TLChannelsGetAdminLog) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35818,7 +35818,7 @@ type TLChannelsSetStickers struct {
 }
 
 func (m *TLChannelsSetStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35879,7 +35879,7 @@ type TLChannelsReadMessageContents struct {
 }
 
 func (m *TLChannelsReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35936,7 +35936,7 @@ type TLChannelsDeleteHistory struct {
 }
 
 func (m *TLChannelsDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36016,7 +36016,7 @@ type TLChannelsTogglePreHistoryHidden struct {
 }
 
 func (m *TLChannelsTogglePreHistoryHidden) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36076,7 +36076,7 @@ type TLChannelsGetLeftChannels struct {
 }
 
 func (m *TLChannelsGetLeftChannels) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36122,7 +36122,7 @@ type TLChannelsGetGroupsForDiscussion struct {
 }
 
 func (m *TLChannelsGetGroupsForDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36164,7 +36164,7 @@ type TLChannelsSetDiscussionGroup struct {
 }
 
 func (m *TLChannelsSetDiscussionGroup) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36226,7 +36226,7 @@ type TLChannelsEditLocation struct {
 }
 
 func (m *TLChannelsEditLocation) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36293,7 +36293,7 @@ type TLChannelsToggleSlowMode struct {
 }
 
 func (m *TLChannelsToggleSlowMode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36349,7 +36349,7 @@ type TLChannelsGetInactiveChannels struct {
 }
 
 func (m *TLChannelsGetInactiveChannels) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36390,7 +36390,7 @@ type TLChannelsConvertToGigagroup struct {
 }
 
 func (m *TLChannelsConvertToGigagroup) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36443,7 +36443,7 @@ type TLChannelsGetSendAs struct {
 }
 
 func (m *TLChannelsGetSendAs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36523,7 +36523,7 @@ type TLChannelsDeleteParticipantHistory struct {
 }
 
 func (m *TLChannelsDeleteParticipantHistory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36584,7 +36584,7 @@ type TLChannelsToggleJoinToSend struct {
 }
 
 func (m *TLChannelsToggleJoinToSend) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36645,7 +36645,7 @@ type TLChannelsToggleJoinRequest struct {
 }
 
 func (m *TLChannelsToggleJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36706,7 +36706,7 @@ type TLChannelsReorderUsernames struct {
 }
 
 func (m *TLChannelsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36763,7 +36763,7 @@ type TLChannelsToggleUsername struct {
 }
 
 func (m *TLChannelsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36829,7 +36829,7 @@ type TLChannelsDeactivateAllUsernames struct {
 }
 
 func (m *TLChannelsDeactivateAllUsernames) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36882,7 +36882,7 @@ type TLChannelsToggleForum struct {
 }
 
 func (m *TLChannelsToggleForum) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36952,7 +36952,7 @@ type TLChannelsToggleAntiSpam struct {
 }
 
 func (m *TLChannelsToggleAntiSpam) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37013,7 +37013,7 @@ type TLChannelsReportAntiSpamFalsePositive struct {
 }
 
 func (m *TLChannelsReportAntiSpamFalsePositive) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37071,7 +37071,7 @@ type TLChannelsToggleParticipantsHidden struct {
 }
 
 func (m *TLChannelsToggleParticipantsHidden) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37134,7 +37134,7 @@ type TLChannelsUpdateColor struct {
 }
 
 func (m *TLChannelsUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37237,7 +37237,7 @@ type TLChannelsToggleViewForumAsMessages struct {
 }
 
 func (m *TLChannelsToggleViewForumAsMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37297,7 +37297,7 @@ type TLChannelsGetChannelRecommendations struct {
 }
 
 func (m *TLChannelsGetChannelRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37371,7 +37371,7 @@ type TLChannelsUpdateEmojiStatus struct {
 }
 
 func (m *TLChannelsUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37432,7 +37432,7 @@ type TLChannelsSetBoostsToUnblockRestrictions struct {
 }
 
 func (m *TLChannelsSetBoostsToUnblockRestrictions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37490,7 +37490,7 @@ type TLChannelsSetEmojiStickers struct {
 }
 
 func (m *TLChannelsSetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37551,7 +37551,7 @@ type TLChannelsRestrictSponsoredMessages struct {
 }
 
 func (m *TLChannelsRestrictSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37617,7 +37617,7 @@ type TLChannelsSearchPosts struct {
 }
 
 func (m *TLChannelsSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37746,7 +37746,7 @@ type TLChannelsUpdatePaidMessagesPrice struct {
 }
 
 func (m *TLChannelsUpdatePaidMessagesPrice) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37826,7 +37826,7 @@ type TLChannelsToggleAutotranslation struct {
 }
 
 func (m *TLChannelsToggleAutotranslation) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37887,7 +37887,7 @@ type TLChannelsGetMessageAuthor struct {
 }
 
 func (m *TLChannelsGetMessageAuthor) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37944,7 +37944,7 @@ type TLChannelsCheckSearchPostsFlood struct {
 }
 
 func (m *TLChannelsCheckSearchPostsFlood) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38016,7 +38016,7 @@ type TLChannelsSetMainProfileTab struct {
 }
 
 func (m *TLChannelsSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38077,7 +38077,7 @@ type TLBotsSendCustomRequest struct {
 }
 
 func (m *TLBotsSendCustomRequest) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38134,7 +38134,7 @@ type TLBotsAnswerWebhookJSONQuery struct {
 }
 
 func (m *TLBotsAnswerWebhookJSONQuery) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38192,7 +38192,7 @@ type TLBotsSetBotCommands struct {
 }
 
 func (m *TLBotsSetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38274,7 +38274,7 @@ type TLBotsResetBotCommands struct {
 }
 
 func (m *TLBotsResetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38332,7 +38332,7 @@ type TLBotsGetBotCommands struct {
 }
 
 func (m *TLBotsGetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38390,7 +38390,7 @@ type TLBotsSetBotMenuButton struct {
 }
 
 func (m *TLBotsSetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38450,7 +38450,7 @@ type TLBotsGetBotMenuButton struct {
 }
 
 func (m *TLBotsGetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38501,7 +38501,7 @@ type TLBotsSetBotBroadcastDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38552,7 +38552,7 @@ type TLBotsSetBotGroupDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotGroupDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38607,7 +38607,7 @@ type TLBotsSetBotInfo struct {
 }
 
 func (m *TLBotsSetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38731,7 +38731,7 @@ type TLBotsGetBotInfo struct {
 }
 
 func (m *TLBotsGetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38811,7 +38811,7 @@ type TLBotsReorderUsernames struct {
 }
 
 func (m *TLBotsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38868,7 +38868,7 @@ type TLBotsToggleUsername struct {
 }
 
 func (m *TLBotsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38934,7 +38934,7 @@ type TLBotsCanSendMessage struct {
 }
 
 func (m *TLBotsCanSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38985,7 +38985,7 @@ type TLBotsAllowSendMessage struct {
 }
 
 func (m *TLBotsAllowSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39038,7 +39038,7 @@ type TLBotsInvokeWebViewCustomMethod struct {
 }
 
 func (m *TLBotsInvokeWebViewCustomMethod) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39105,7 +39105,7 @@ type TLBotsGetPopularAppBots struct {
 }
 
 func (m *TLBotsGetPopularAppBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39159,7 +39159,7 @@ type TLBotsAddPreviewMedia struct {
 }
 
 func (m *TLBotsAddPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39228,7 +39228,7 @@ type TLBotsEditPreviewMedia struct {
 }
 
 func (m *TLBotsEditPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39305,7 +39305,7 @@ type TLBotsDeletePreviewMedia struct {
 }
 
 func (m *TLBotsDeletePreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39388,7 +39388,7 @@ type TLBotsReorderPreviewMedias struct {
 }
 
 func (m *TLBotsReorderPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39470,7 +39470,7 @@ type TLBotsGetPreviewInfo struct {
 }
 
 func (m *TLBotsGetPreviewInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39527,7 +39527,7 @@ type TLBotsGetPreviewMedias struct {
 }
 
 func (m *TLBotsGetPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39579,7 +39579,7 @@ type TLBotsUpdateUserEmojiStatus struct {
 }
 
 func (m *TLBotsUpdateUserEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39640,7 +39640,7 @@ type TLBotsToggleUserEmojiStatusPermission struct {
 }
 
 func (m *TLBotsToggleUserEmojiStatusPermission) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39702,7 +39702,7 @@ type TLBotsCheckDownloadFileParams struct {
 }
 
 func (m *TLBotsCheckDownloadFileParams) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39763,7 +39763,7 @@ type TLBotsGetAdminedBots struct {
 }
 
 func (m *TLBotsGetAdminedBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39806,7 +39806,7 @@ type TLBotsUpdateStarRefProgram struct {
 }
 
 func (m *TLBotsUpdateStarRefProgram) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39895,7 +39895,7 @@ type TLBotsSetCustomVerification struct {
 }
 
 func (m *TLBotsSetCustomVerification) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39999,7 +39999,7 @@ type TLBotsGetBotRecommendations struct {
 }
 
 func (m *TLBotsGetBotRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40051,7 +40051,7 @@ type TLPaymentsGetPaymentForm struct {
 }
 
 func (m *TLPaymentsGetPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40135,7 +40135,7 @@ type TLPaymentsGetPaymentReceipt struct {
 }
 
 func (m *TLPaymentsGetPaymentReceipt) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40194,7 +40194,7 @@ type TLPaymentsValidateRequestedInfo struct {
 }
 
 func (m *TLPaymentsValidateRequestedInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40281,7 +40281,7 @@ type TLPaymentsSendPaymentForm struct {
 }
 
 func (m *TLPaymentsSendPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40406,7 +40406,7 @@ type TLPaymentsGetSavedInfo struct {
 }
 
 func (m *TLPaymentsGetSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40448,7 +40448,7 @@ type TLPaymentsClearSavedInfo struct {
 }
 
 func (m *TLPaymentsClearSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40518,7 +40518,7 @@ type TLPaymentsGetBankCardData struct {
 }
 
 func (m *TLPaymentsGetBankCardData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40565,7 +40565,7 @@ type TLPaymentsExportInvoice struct {
 }
 
 func (m *TLPaymentsExportInvoice) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40617,7 +40617,7 @@ type TLPaymentsAssignAppStoreTransaction struct {
 }
 
 func (m *TLPaymentsAssignAppStoreTransaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40674,7 +40674,7 @@ type TLPaymentsAssignPlayMarketTransaction struct {
 }
 
 func (m *TLPaymentsAssignPlayMarketTransaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40734,7 +40734,7 @@ type TLPaymentsGetPremiumGiftCodeOptions struct {
 }
 
 func (m *TLPaymentsGetPremiumGiftCodeOptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40807,7 +40807,7 @@ type TLPaymentsCheckGiftCode struct {
 }
 
 func (m *TLPaymentsCheckGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40854,7 +40854,7 @@ type TLPaymentsApplyGiftCode struct {
 }
 
 func (m *TLPaymentsApplyGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40902,7 +40902,7 @@ type TLPaymentsGetGiveawayInfo struct {
 }
 
 func (m *TLPaymentsGetGiveawayInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40961,7 +40961,7 @@ type TLPaymentsLaunchPrepaidGiveaway struct {
 }
 
 func (m *TLPaymentsLaunchPrepaidGiveaway) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41026,7 +41026,7 @@ type TLPaymentsGetStarsTopupOptions struct {
 }
 
 func (m *TLPaymentsGetStarsTopupOptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41068,7 +41068,7 @@ type TLPaymentsGetStarsStatus struct {
 }
 
 func (m *TLPaymentsGetStarsStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41148,7 +41148,7 @@ type TLPaymentsGetStarsTransactions struct {
 }
 
 func (m *TLPaymentsGetStarsTransactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41265,7 +41265,7 @@ type TLPaymentsSendStarsForm struct {
 }
 
 func (m *TLPaymentsSendStarsForm) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41322,7 +41322,7 @@ type TLPaymentsRefundStarsCharge struct {
 }
 
 func (m *TLPaymentsRefundStarsCharge) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41381,7 +41381,7 @@ type TLPaymentsGetStarsRevenueStats struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueStats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41463,7 +41463,7 @@ type TLPaymentsGetStarsRevenueWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41561,7 +41561,7 @@ type TLPaymentsGetStarsRevenueAdsAccountUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41614,7 +41614,7 @@ type TLPaymentsGetStarsTransactionsByID struct {
 }
 
 func (m *TLPaymentsGetStarsTransactionsByID) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41712,7 +41712,7 @@ type TLPaymentsGetStarsGiftOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiftOptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41787,7 +41787,7 @@ type TLPaymentsGetStarsSubscriptions struct {
 }
 
 func (m *TLPaymentsGetStarsSubscriptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41868,7 +41868,7 @@ type TLPaymentsChangeStarsSubscription struct {
 }
 
 func (m *TLPaymentsChangeStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41957,7 +41957,7 @@ type TLPaymentsFulfillStarsSubscription struct {
 }
 
 func (m *TLPaymentsFulfillStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42013,7 +42013,7 @@ type TLPaymentsGetStarsGiveawayOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiveawayOptions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42054,7 +42054,7 @@ type TLPaymentsGetStarGifts struct {
 }
 
 func (m *TLPaymentsGetStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42102,7 +42102,7 @@ type TLPaymentsSaveStarGift struct {
 }
 
 func (m *TLPaymentsSaveStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42175,7 +42175,7 @@ type TLPaymentsConvertStarGift struct {
 }
 
 func (m *TLPaymentsConvertStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42228,7 +42228,7 @@ type TLPaymentsBotCancelStarsSubscription struct {
 }
 
 func (m *TLPaymentsBotCancelStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42310,7 +42310,7 @@ type TLPaymentsGetConnectedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42413,7 +42413,7 @@ type TLPaymentsGetConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42477,7 +42477,7 @@ type TLPaymentsGetSuggestedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetSuggestedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42568,7 +42568,7 @@ type TLPaymentsConnectStarRefBot struct {
 }
 
 func (m *TLPaymentsConnectStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42630,7 +42630,7 @@ type TLPaymentsEditConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsEditConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42709,7 +42709,7 @@ type TLPaymentsGetStarGiftUpgradePreview struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradePreview) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42757,7 +42757,7 @@ type TLPaymentsUpgradeStarGift struct {
 }
 
 func (m *TLPaymentsUpgradeStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42831,7 +42831,7 @@ type TLPaymentsTransferStarGift struct {
 }
 
 func (m *TLPaymentsTransferStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42891,7 +42891,7 @@ type TLPaymentsGetUniqueStarGift struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42950,7 +42950,7 @@ type TLPaymentsGetSavedStarGifts struct {
 }
 
 func (m *TLPaymentsGetSavedStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43097,7 +43097,7 @@ type TLPaymentsGetSavedStarGift struct {
 }
 
 func (m *TLPaymentsGetSavedStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43163,7 +43163,7 @@ type TLPaymentsGetStarGiftWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43224,7 +43224,7 @@ type TLPaymentsToggleChatStarGiftNotifications struct {
 }
 
 func (m *TLPaymentsToggleChatStarGiftNotifications) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43298,7 +43298,7 @@ type TLPaymentsToggleStarGiftsPinnedToTop struct {
 }
 
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43374,7 +43374,7 @@ type TLPaymentsCanPurchaseStore struct {
 }
 
 func (m *TLPaymentsCanPurchaseStore) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43432,7 +43432,7 @@ type TLPaymentsGetResaleStarGifts struct {
 }
 
 func (m *TLPaymentsGetResaleStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43570,7 +43570,7 @@ type TLPaymentsUpdateStarGiftPrice struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftPrice) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43632,7 +43632,7 @@ type TLPaymentsCreateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsCreateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43718,7 +43718,7 @@ type TLPaymentsUpdateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43897,7 +43897,7 @@ type TLPaymentsReorderStarGiftCollections struct {
 }
 
 func (m *TLPaymentsReorderStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43953,7 +43953,7 @@ type TLPaymentsDeleteStarGiftCollection struct {
 }
 
 func (m *TLPaymentsDeleteStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44011,7 +44011,7 @@ type TLPaymentsGetStarGiftCollections struct {
 }
 
 func (m *TLPaymentsGetStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44068,7 +44068,7 @@ type TLPaymentsGetUniqueStarGiftValueInfo struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44115,7 +44115,7 @@ type TLPaymentsCheckCanSendGift struct {
 }
 
 func (m *TLPaymentsCheckCanSendGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44163,7 +44163,7 @@ type TLPaymentsGetStarGiftAuctionState struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionState) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44220,7 +44220,7 @@ type TLPaymentsGetStarGiftAuctionAcquiredGifts struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44267,7 +44267,7 @@ type TLPaymentsGetStarGiftActiveAuctions struct {
 }
 
 func (m *TLPaymentsGetStarGiftActiveAuctions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44315,7 +44315,7 @@ type TLPaymentsResolveStarGiftOffer struct {
 }
 
 func (m *TLPaymentsResolveStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44389,7 +44389,7 @@ type TLPaymentsSendStarGiftOffer struct {
 }
 
 func (m *TLPaymentsSendStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44495,7 +44495,7 @@ type TLPaymentsGetStarGiftUpgradeAttributes struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44544,7 +44544,7 @@ type TLPaymentsGetCraftStarGifts struct {
 }
 
 func (m *TLPaymentsGetCraftStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44601,7 +44601,7 @@ type TLPaymentsCraftStarGift struct {
 }
 
 func (m *TLPaymentsCraftStarGift) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44674,7 +44674,7 @@ type TLStickersCreateStickerSet struct {
 }
 
 func (m *TLStickersCreateStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44826,7 +44826,7 @@ type TLStickersRemoveStickerFromSet struct {
 }
 
 func (m *TLStickersRemoveStickerFromSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44878,7 +44878,7 @@ type TLStickersChangeStickerPosition struct {
 }
 
 func (m *TLStickersChangeStickerPosition) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44936,7 +44936,7 @@ type TLStickersAddStickerToSet struct {
 }
 
 func (m *TLStickersAddStickerToSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44998,7 +44998,7 @@ type TLStickersSetStickerSetThumb struct {
 }
 
 func (m *TLStickersSetStickerSetThumb) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45095,7 +45095,7 @@ type TLStickersCheckShortName struct {
 }
 
 func (m *TLStickersCheckShortName) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45142,7 +45142,7 @@ type TLStickersSuggestShortName struct {
 }
 
 func (m *TLStickersSuggestShortName) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45192,7 +45192,7 @@ type TLStickersChangeSticker struct {
 }
 
 func (m *TLStickersChangeSticker) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45305,7 +45305,7 @@ type TLStickersRenameStickerSet struct {
 }
 
 func (m *TLStickersRenameStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45362,7 +45362,7 @@ type TLStickersDeleteStickerSet struct {
 }
 
 func (m *TLStickersDeleteStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45414,7 +45414,7 @@ type TLStickersReplaceSticker struct {
 }
 
 func (m *TLStickersReplaceSticker) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45473,7 +45473,7 @@ type TLPhoneGetCallConfig struct {
 }
 
 func (m *TLPhoneGetCallConfig) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45518,7 +45518,7 @@ type TLPhoneRequestCall struct {
 }
 
 func (m *TLPhoneRequestCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45613,7 +45613,7 @@ type TLPhoneAcceptCall struct {
 }
 
 func (m *TLPhoneAcceptCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45682,7 +45682,7 @@ type TLPhoneConfirmCall struct {
 }
 
 func (m *TLPhoneConfirmCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45753,7 +45753,7 @@ type TLPhoneReceivedCall struct {
 }
 
 func (m *TLPhoneReceivedCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45808,7 +45808,7 @@ type TLPhoneDiscardCall struct {
 }
 
 func (m *TLPhoneDiscardCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45905,7 +45905,7 @@ type TLPhoneSetCallRating struct {
 }
 
 func (m *TLPhoneSetCallRating) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45990,7 +45990,7 @@ type TLPhoneSaveCallDebug struct {
 }
 
 func (m *TLPhoneSaveCallDebug) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46051,7 +46051,7 @@ type TLPhoneSendSignalingData struct {
 }
 
 func (m *TLPhoneSendSignalingData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46112,7 +46112,7 @@ type TLPhoneCreateGroupCall struct {
 }
 
 func (m *TLPhoneCreateGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46227,7 +46227,7 @@ type TLPhoneJoinGroupCall struct {
 }
 
 func (m *TLPhoneJoinGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46370,7 +46370,7 @@ type TLPhoneLeaveGroupCall struct {
 }
 
 func (m *TLPhoneLeaveGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46428,7 +46428,7 @@ type TLPhoneInviteToGroupCall struct {
 }
 
 func (m *TLPhoneInviteToGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46504,7 +46504,7 @@ type TLPhoneDiscardGroupCall struct {
 }
 
 func (m *TLPhoneDiscardGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46559,7 +46559,7 @@ type TLPhoneToggleGroupCallSettings struct {
 }
 
 func (m *TLPhoneToggleGroupCallSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46680,7 +46680,7 @@ type TLPhoneGetGroupCall struct {
 }
 
 func (m *TLPhoneGetGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46741,7 +46741,7 @@ type TLPhoneGetGroupParticipants struct {
 }
 
 func (m *TLPhoneGetGroupParticipants) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46834,7 +46834,7 @@ type TLPhoneCheckGroupCall struct {
 }
 
 func (m *TLPhoneCheckGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46893,7 +46893,7 @@ type TLPhoneToggleGroupCallRecord struct {
 }
 
 func (m *TLPhoneToggleGroupCallRecord) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47011,7 +47011,7 @@ type TLPhoneEditGroupCallParticipant struct {
 }
 
 func (m *TLPhoneEditGroupCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47182,7 +47182,7 @@ type TLPhoneEditGroupCallTitle struct {
 }
 
 func (m *TLPhoneEditGroupCallTitle) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47239,7 +47239,7 @@ type TLPhoneGetGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneGetGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47291,7 +47291,7 @@ type TLPhoneExportGroupCallInvite struct {
 }
 
 func (m *TLPhoneExportGroupCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47365,7 +47365,7 @@ type TLPhoneToggleGroupCallStartSubscription struct {
 }
 
 func (m *TLPhoneToggleGroupCallStartSubscription) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47425,7 +47425,7 @@ type TLPhoneStartScheduledGroupCall struct {
 }
 
 func (m *TLPhoneStartScheduledGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47477,7 +47477,7 @@ type TLPhoneSaveDefaultGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47538,7 +47538,7 @@ type TLPhoneJoinGroupCallPresentation struct {
 }
 
 func (m *TLPhoneJoinGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47598,7 +47598,7 @@ type TLPhoneLeaveGroupCallPresentation struct {
 }
 
 func (m *TLPhoneLeaveGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47649,7 +47649,7 @@ type TLPhoneGetGroupCallStreamChannels struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamChannels) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47702,7 +47702,7 @@ type TLPhoneGetGroupCallStreamRtmpUrl struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47785,7 +47785,7 @@ type TLPhoneSaveCallLog struct {
 }
 
 func (m *TLPhoneSaveCallLog) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47851,7 +47851,7 @@ type TLPhoneCreateConferenceCall struct {
 }
 
 func (m *TLPhoneCreateConferenceCall) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47981,7 +47981,7 @@ type TLPhoneDeleteConferenceCallParticipants struct {
 }
 
 func (m *TLPhoneDeleteConferenceCallParticipants) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48072,7 +48072,7 @@ type TLPhoneSendConferenceCallBroadcast struct {
 }
 
 func (m *TLPhoneSendConferenceCallBroadcast) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48131,7 +48131,7 @@ type TLPhoneInviteConferenceCallParticipant struct {
 }
 
 func (m *TLPhoneInviteConferenceCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48213,7 +48213,7 @@ type TLPhoneDeclineConferenceCallInvite struct {
 }
 
 func (m *TLPhoneDeclineConferenceCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48263,7 +48263,7 @@ type TLPhoneGetGroupCallChainBlocks struct {
 }
 
 func (m *TLPhoneGetGroupCallChainBlocks) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48334,7 +48334,7 @@ type TLPhoneSendGroupCallMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48448,7 +48448,7 @@ type TLPhoneSendGroupCallEncryptedMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallEncryptedMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48507,7 +48507,7 @@ type TLPhoneDeleteGroupCallMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48586,7 +48586,7 @@ type TLPhoneDeleteGroupCallParticipantMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallParticipantMessages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48668,7 +48668,7 @@ type TLPhoneGetGroupCallStars struct {
 }
 
 func (m *TLPhoneGetGroupCallStars) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48720,7 +48720,7 @@ type TLPhoneSaveDefaultSendAs struct {
 }
 
 func (m *TLPhoneSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48781,7 +48781,7 @@ type TLLangpackGetLangPack struct {
 }
 
 func (m *TLLangpackGetLangPack) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48848,7 +48848,7 @@ type TLLangpackGetStrings struct {
 }
 
 func (m *TLLangpackGetStrings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48923,7 +48923,7 @@ type TLLangpackGetDifference struct {
 }
 
 func (m *TLLangpackGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48980,7 +48980,7 @@ type TLLangpackGetLanguages struct {
 }
 
 func (m *TLLangpackGetLanguages) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49035,7 +49035,7 @@ type TLLangpackGetLanguage struct {
 }
 
 func (m *TLLangpackGetLanguage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49087,7 +49087,7 @@ type TLFoldersEditPeerFolders struct {
 }
 
 func (m *TLFoldersEditPeerFolders) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49153,7 +49153,7 @@ type TLStatsGetBroadcastStats struct {
 }
 
 func (m *TLStatsGetBroadcastStats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49227,7 +49227,7 @@ type TLStatsLoadAsyncGraph struct {
 }
 
 func (m *TLStatsLoadAsyncGraph) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49304,7 +49304,7 @@ type TLStatsGetMegagroupStats struct {
 }
 
 func (m *TLStatsGetMegagroupStats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49380,7 +49380,7 @@ type TLStatsGetMessagePublicForwards struct {
 }
 
 func (m *TLStatsGetMessagePublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49449,7 +49449,7 @@ type TLStatsGetMessageStats struct {
 }
 
 func (m *TLStatsGetMessageStats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49530,7 +49530,7 @@ type TLStatsGetStoryStats struct {
 }
 
 func (m *TLStatsGetStoryStats) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49612,7 +49612,7 @@ type TLStatsGetStoryPublicForwards struct {
 }
 
 func (m *TLStatsGetStoryPublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49681,7 +49681,7 @@ type TLChatlistsExportChatlistInvite struct {
 }
 
 func (m *TLChatlistsExportChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49763,7 +49763,7 @@ type TLChatlistsDeleteExportedInvite struct {
 }
 
 func (m *TLChatlistsDeleteExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49823,7 +49823,7 @@ type TLChatlistsEditExportedInvite struct {
 }
 
 func (m *TLChatlistsEditExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49941,7 +49941,7 @@ type TLChatlistsGetExportedInvites struct {
 }
 
 func (m *TLChatlistsGetExportedInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49992,7 +49992,7 @@ type TLChatlistsCheckChatlistInvite struct {
 }
 
 func (m *TLChatlistsCheckChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50040,7 +50040,7 @@ type TLChatlistsJoinChatlistInvite struct {
 }
 
 func (m *TLChatlistsJoinChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50111,7 +50111,7 @@ type TLChatlistsGetChatlistUpdates struct {
 }
 
 func (m *TLChatlistsGetChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50163,7 +50163,7 @@ type TLChatlistsJoinChatlistUpdates struct {
 }
 
 func (m *TLChatlistsJoinChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50239,7 +50239,7 @@ type TLChatlistsHideChatlistUpdates struct {
 }
 
 func (m *TLChatlistsHideChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50290,7 +50290,7 @@ type TLChatlistsGetLeaveChatlistSuggestions struct {
 }
 
 func (m *TLChatlistsGetLeaveChatlistSuggestions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50342,7 +50342,7 @@ type TLChatlistsLeaveChatlist struct {
 }
 
 func (m *TLChatlistsLeaveChatlist) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50418,7 +50418,7 @@ type TLStoriesCanSendStory struct {
 }
 
 func (m *TLStoriesCanSendStory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50482,7 +50482,7 @@ type TLStoriesSendStory struct {
 }
 
 func (m *TLStoriesSendStory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50744,7 +50744,7 @@ type TLStoriesEditStory struct {
 }
 
 func (m *TLStoriesEditStory) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50939,7 +50939,7 @@ type TLStoriesDeleteStories struct {
 }
 
 func (m *TLStoriesDeleteStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50996,7 +50996,7 @@ type TLStoriesTogglePinned struct {
 }
 
 func (m *TLStoriesTogglePinned) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51063,7 +51063,7 @@ type TLStoriesGetAllStories struct {
 }
 
 func (m *TLStoriesGetAllStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51148,7 +51148,7 @@ type TLStoriesGetPinnedStories struct {
 }
 
 func (m *TLStoriesGetPinnedStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51212,7 +51212,7 @@ type TLStoriesGetStoriesArchive struct {
 }
 
 func (m *TLStoriesGetStoriesArchive) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51275,7 +51275,7 @@ type TLStoriesGetStoriesByID struct {
 }
 
 func (m *TLStoriesGetStoriesByID) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51330,7 +51330,7 @@ type TLStoriesToggleAllStoriesHidden struct {
 }
 
 func (m *TLStoriesToggleAllStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51382,7 +51382,7 @@ type TLStoriesReadStories struct {
 }
 
 func (m *TLStoriesReadStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51440,7 +51440,7 @@ type TLStoriesIncrementStoryViews struct {
 }
 
 func (m *TLStoriesIncrementStoryViews) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51502,7 +51502,7 @@ type TLStoriesGetStoryViewsList struct {
 }
 
 func (m *TLStoriesGetStoryViewsList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51620,7 +51620,7 @@ type TLStoriesGetStoriesViews struct {
 }
 
 func (m *TLStoriesGetStoriesViews) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51676,7 +51676,7 @@ type TLStoriesExportStoryLink struct {
 }
 
 func (m *TLStoriesExportStoryLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51736,7 +51736,7 @@ type TLStoriesReport struct {
 }
 
 func (m *TLStoriesReport) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51804,7 +51804,7 @@ type TLStoriesActivateStealthMode struct {
 }
 
 func (m *TLStoriesActivateStealthMode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51877,7 +51877,7 @@ type TLStoriesSendReaction struct {
 }
 
 func (m *TLStoriesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51965,7 +51965,7 @@ type TLStoriesGetPeerStories struct {
 }
 
 func (m *TLStoriesGetPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52015,7 +52015,7 @@ type TLStoriesGetAllReadPeerStories struct {
 }
 
 func (m *TLStoriesGetAllReadPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52056,7 +52056,7 @@ type TLStoriesGetPeerMaxIDs struct {
 }
 
 func (m *TLStoriesGetPeerMaxIDs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52120,7 +52120,7 @@ type TLStoriesGetChatsToSend struct {
 }
 
 func (m *TLStoriesGetChatsToSend) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52162,7 +52162,7 @@ type TLStoriesTogglePeerStoriesHidden struct {
 }
 
 func (m *TLStoriesTogglePeerStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52227,7 +52227,7 @@ type TLStoriesGetStoryReactionsList struct {
 }
 
 func (m *TLStoriesGetStoryReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52344,7 +52344,7 @@ type TLStoriesTogglePinnedToTop struct {
 }
 
 func (m *TLStoriesTogglePinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52403,7 +52403,7 @@ type TLStoriesSearchPosts struct {
 }
 
 func (m *TLStoriesSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52520,7 +52520,7 @@ type TLStoriesCreateAlbum struct {
 }
 
 func (m *TLStoriesCreateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52586,7 +52586,7 @@ type TLStoriesUpdateAlbum struct {
 }
 
 func (m *TLStoriesUpdateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52702,7 +52702,7 @@ type TLStoriesReorderAlbums struct {
 }
 
 func (m *TLStoriesReorderAlbums) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52758,7 +52758,7 @@ type TLStoriesDeleteAlbum struct {
 }
 
 func (m *TLStoriesDeleteAlbum) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52816,7 +52816,7 @@ type TLStoriesGetAlbums struct {
 }
 
 func (m *TLStoriesGetAlbums) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52876,7 +52876,7 @@ type TLStoriesGetAlbumStories struct {
 }
 
 func (m *TLStoriesGetAlbumStories) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52952,7 +52952,7 @@ type TLStoriesStartLive struct {
 }
 
 func (m *TLStoriesStartLive) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53148,7 +53148,7 @@ type TLPremiumGetBoostsList struct {
 }
 
 func (m *TLPremiumGetBoostsList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53231,7 +53231,7 @@ type TLPremiumGetMyBoosts struct {
 }
 
 func (m *TLPremiumGetMyBoosts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53273,7 +53273,7 @@ type TLPremiumApplyBoost struct {
 }
 
 func (m *TLPremiumApplyBoost) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53349,7 +53349,7 @@ type TLPremiumGetBoostsStatus struct {
 }
 
 func (m *TLPremiumGetBoostsStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53401,7 +53401,7 @@ type TLPremiumGetUserBoosts struct {
 }
 
 func (m *TLPremiumGetUserBoosts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53460,7 +53460,7 @@ type TLSmsjobsIsEligibleToJoin struct {
 }
 
 func (m *TLSmsjobsIsEligibleToJoin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53500,7 +53500,7 @@ type TLSmsjobsJoin struct {
 }
 
 func (m *TLSmsjobsJoin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53540,7 +53540,7 @@ type TLSmsjobsLeave struct {
 }
 
 func (m *TLSmsjobsLeave) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53581,7 +53581,7 @@ type TLSmsjobsUpdateSettings struct {
 }
 
 func (m *TLSmsjobsUpdateSettings) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53644,7 +53644,7 @@ type TLSmsjobsGetStatus struct {
 }
 
 func (m *TLSmsjobsGetStatus) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53685,7 +53685,7 @@ type TLSmsjobsGetSmsJob struct {
 }
 
 func (m *TLSmsjobsGetSmsJob) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53733,7 +53733,7 @@ type TLSmsjobsFinishJob struct {
 }
 
 func (m *TLSmsjobsFinishJob) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53809,7 +53809,7 @@ type TLFragmentGetCollectibleInfo struct {
 }
 
 func (m *TLFragmentGetCollectibleInfo) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53862,7 +53862,7 @@ type TLChannelsEditCreator struct {
 }
 
 func (m *TLChannelsEditCreator) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53931,7 +53931,7 @@ type TLChannelsGetFutureCreatorAfterLeave struct {
 }
 
 func (m *TLChannelsGetFutureCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53981,7 +53981,7 @@ type TLTestParseInputAppEvent struct {
 }
 
 func (m *TLTestParseInputAppEvent) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54021,7 +54021,7 @@ type TLHelpTest struct {
 }
 
 func (m *TLHelpTest) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54067,7 +54067,7 @@ type TLPredefinedCreatePredefinedUser struct {
 }
 
 func (m *TLPredefinedCreatePredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54188,7 +54188,7 @@ type TLPredefinedUpdatePredefinedUsername struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedUsername) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54243,7 +54243,7 @@ type TLPredefinedUpdatePredefinedProfile struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedProfile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54350,7 +54350,7 @@ type TLPredefinedUpdatePredefinedVerified struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedVerified) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54420,7 +54420,7 @@ type TLPredefinedUpdatePredefinedCode struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54472,7 +54472,7 @@ type TLPredefinedGetPredefinedUser struct {
 }
 
 func (m *TLPredefinedGetPredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54518,7 +54518,7 @@ type TLPredefinedGetPredefinedUsers struct {
 }
 
 func (m *TLPredefinedGetPredefinedUsers) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54560,7 +54560,7 @@ type TLUsersGetMe struct {
 }
 
 func (m *TLUsersGetMe) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54613,7 +54613,7 @@ type TLAccountUpdateVerified struct {
 }
 
 func (m *TLAccountUpdateVerified) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54685,7 +54685,7 @@ type TLAuthToggleBan struct {
 }
 
 func (m *TLAuthToggleBan) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54781,7 +54781,7 @@ type TLBizInvokeBizDataRaw struct {
 }
 
 func (m *TLBizInvokeBizDataRaw) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
