@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -34,24 +34,18 @@ type TLIdgenNextId struct {
 }
 
 func (m *TLIdgenNextId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenNextId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xbe711020: func() error {
-			x.PutClazzID(0xbe711020)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_nextId, int(layer)); clazzId {
+	case 0xbe711020:
+		x.PutClazzID(0xbe711020)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_nextId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_nextId, layer)
 	}
@@ -59,19 +53,17 @@ func (m *TLIdgenNextId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenNextId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xbe711020: func() (err error) {
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xbe711020:
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -83,26 +75,20 @@ type TLIdgenNextIds struct {
 }
 
 func (m *TLIdgenNextIds) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenNextIds) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x47c56fae: func() error {
-			x.PutClazzID(0x47c56fae)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_nextIds, int(layer)); clazzId {
+	case 0x47c56fae:
+		x.PutClazzID(0x47c56fae)
 
-			x.PutInt32(m.Num)
+		x.PutInt32(m.Num)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_nextIds, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_nextIds, layer)
 	}
@@ -110,20 +96,21 @@ func (m *TLIdgenNextIds) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenNextIds) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x47c56fae: func() (err error) {
-			m.Num, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x47c56fae:
+		m.Num, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -135,26 +122,20 @@ type TLIdgenGetCurrentSeqId struct {
 }
 
 func (m *TLIdgenGetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenGetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x9d5bab80: func() error {
-			x.PutClazzID(0x9d5bab80)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_getCurrentSeqId, int(layer)); clazzId {
+	case 0x9d5bab80:
+		x.PutClazzID(0x9d5bab80)
 
-			x.PutString(m.Key)
+		x.PutString(m.Key)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_getCurrentSeqId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getCurrentSeqId, layer)
 	}
@@ -162,20 +143,21 @@ func (m *TLIdgenGetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenGetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x9d5bab80: func() (err error) {
-			m.Key, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x9d5bab80:
+		m.Key, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -188,27 +170,21 @@ type TLIdgenSetCurrentSeqId struct {
 }
 
 func (m *TLIdgenSetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenSetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xcd2c196d: func() error {
-			x.PutClazzID(0xcd2c196d)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_setCurrentSeqId, int(layer)); clazzId {
+	case 0xcd2c196d:
+		x.PutClazzID(0xcd2c196d)
 
-			x.PutString(m.Key)
-			x.PutInt64(m.Id)
+		x.PutString(m.Key)
+		x.PutInt64(m.Id)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_setCurrentSeqId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_setCurrentSeqId, layer)
 	}
@@ -216,21 +192,25 @@ func (m *TLIdgenSetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenSetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xcd2c196d: func() (err error) {
-			m.Key, err = d.String()
-			m.Id, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xcd2c196d:
+		m.Key, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.Id, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -242,26 +222,20 @@ type TLIdgenGetNextSeqId struct {
 }
 
 func (m *TLIdgenGetNextSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenGetNextSeqId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xf6716968: func() error {
-			x.PutClazzID(0xf6716968)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextSeqId, int(layer)); clazzId {
+	case 0xf6716968:
+		x.PutClazzID(0xf6716968)
 
-			x.PutString(m.Key)
+		x.PutString(m.Key)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextSeqId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextSeqId, layer)
 	}
@@ -269,20 +243,21 @@ func (m *TLIdgenGetNextSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenGetNextSeqId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xf6716968: func() (err error) {
-			m.Key, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xf6716968:
+		m.Key, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -295,27 +270,21 @@ type TLIdgenGetNextNSeqId struct {
 }
 
 func (m *TLIdgenGetNextNSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenGetNextNSeqId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa7d4cc6e: func() error {
-			x.PutClazzID(0xa7d4cc6e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextNSeqId, int(layer)); clazzId {
+	case 0xa7d4cc6e:
+		x.PutClazzID(0xa7d4cc6e)
 
-			x.PutString(m.Key)
-			x.PutInt32(m.N)
+		x.PutString(m.Key)
+		x.PutInt32(m.N)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextNSeqId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextNSeqId, layer)
 	}
@@ -323,21 +292,25 @@ func (m *TLIdgenGetNextNSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenGetNextNSeqId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa7d4cc6e: func() (err error) {
-			m.Key, err = d.String()
-			m.N, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa7d4cc6e:
+		m.Key, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.N, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -349,26 +322,20 @@ type TLIdgenGetNextIdValList struct {
 }
 
 func (m *TLIdgenGetNextIdValList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenGetNextIdValList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xaa85f137: func() error {
-			x.PutClazzID(0xaa85f137)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextIdValList, int(layer)); clazzId {
+	case 0xaa85f137:
+		x.PutClazzID(0xaa85f137)
 
-			_ = iface.EncodeObjectList(x, m.Id, layer)
+		_ = iface.EncodeObjectList(x, m.Id, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_getNextIdValList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextIdValList, layer)
 	}
@@ -376,35 +343,34 @@ func (m *TLIdgenGetNextIdValList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xaa85f137: func() (err error) {
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
-			}
-			l1, err3 := d.Int()
-			v1 := make([]InputIdClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(InputId)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = DecodeInputIdClazz(d)
-				_ = err3
-			}
-			m.Id = v1
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xaa85f137:
+		c1, err2 := d.ClazzID()
+		if c1 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return err2
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]InputIdClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = DecodeInputIdClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.Id = v1
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -416,26 +382,20 @@ type TLIdgenGetCurrentSeqIdList struct {
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLIdgenGetCurrentSeqIdList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd229ae43: func() error {
-			x.PutClazzID(0xd229ae43)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_idgen_getCurrentSeqIdList, int(layer)); clazzId {
+	case 0xd229ae43:
+		x.PutClazzID(0xd229ae43)
 
-			_ = iface.EncodeObjectList(x, m.Id, layer)
+		_ = iface.EncodeObjectList(x, m.Id, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_idgen_getCurrentSeqIdList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getCurrentSeqIdList, layer)
 	}
@@ -443,35 +403,34 @@ func (m *TLIdgenGetCurrentSeqIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd229ae43: func() (err error) {
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
-			}
-			l1, err3 := d.Int()
-			v1 := make([]InputIdClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(InputId)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = DecodeInputIdClazz(d)
-				_ = err3
-			}
-			m.Id = v1
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd229ae43:
+		c1, err2 := d.ClazzID()
+		if c1 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return err2
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]InputIdClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = DecodeInputIdClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.Id = v1
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
