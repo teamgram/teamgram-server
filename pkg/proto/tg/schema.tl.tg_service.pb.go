@@ -9659,7 +9659,7 @@ func (m *TLAccountInstallTheme) Encode(x *bin.Encoder, layer int32) error {
 				flags |= 1 << 0
 			}
 			if m.Format != nil {
-				flags |= 1 << 1
+				flags |= 1 << 2
 			}
 			if m.Theme != nil {
 				flags |= 1 << 1
@@ -9741,7 +9741,7 @@ func (m *TLAccountInstallTheme) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 0)) != 0 {
 			m.Dark = true
 		}
-		if (flags & (1 << 1)) != 0 {
+		if (flags & (1 << 2)) != 0 {
 			m.Format = new(string)
 			*m.Format, err = d.String()
 			if err != nil {
@@ -9750,9 +9750,9 @@ func (m *TLAccountInstallTheme) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			// m4 := &InputTheme{}
-			// _ = m4.Decode(d)
-			// m.Theme = m4
+			// m3 := &InputTheme{}
+			// _ = m3.Decode(d)
+			// m.Theme = m3
 			m.Theme, err = DecodeInputThemeClazz(d)
 			if err != nil {
 				return err
@@ -36674,17 +36674,17 @@ func (m *TLMessagesToggleNoForwards) Decode(d *bin.Decoder) (err error) {
 		return nil
 	case 0xb11eafa2:
 
-		// m1 := &InputPeer{}
-		// _ = m1.Decode(d)
-		// m.Peer = m1
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
 		m.Peer, err = DecodeInputPeerClazz(d)
 		if err != nil {
 			return err
 		}
 
-		// m2 := &Bool{}
-		// _ = m2.Decode(d)
-		// m.Enabled = m2
+		// m3 := &Bool{}
+		// _ = m3.Decode(d)
+		// m.Enabled = m3
 		m.Enabled, err = DecodeBoolClazz(d)
 		if err != nil {
 			return err
@@ -52354,7 +52354,7 @@ type TLChannelsEditAdmin struct {
 	Channel         InputChannelClazz    `json:"channel"`
 	UserId          InputUserClazz       `json:"user_id"`
 	AdminRights     ChatAdminRightsClazz `json:"admin_rights"`
-	Rank_FLAGSTRING *string              `json:"rank_FLAGSTRING_FLAGSTRING"`
+	Rank_FLAGSTRING *string              `json:"rank_FLAGSTRING"`
 	Rank_STRING     string               `json:"rank_STRING"`
 }
 
@@ -52529,25 +52529,25 @@ func (m *TLChannelsEditAdmin) Decode(d *bin.Decoder) (err error) {
 		return nil
 	case 0xd33c8902:
 
-		// m1 := &InputChannel{}
-		// _ = m1.Decode(d)
-		// m.Channel = m1
+		// m2 := &InputChannel{}
+		// _ = m2.Decode(d)
+		// m.Channel = m2
 		m.Channel, err = DecodeInputChannelClazz(d)
 		if err != nil {
 			return err
 		}
 
-		// m2 := &InputUser{}
-		// _ = m2.Decode(d)
-		// m.UserId = m2
+		// m3 := &InputUser{}
+		// _ = m3.Decode(d)
+		// m.UserId = m3
 		m.UserId, err = DecodeInputUserClazz(d)
 		if err != nil {
 			return err
 		}
 
-		// m3 := &ChatAdminRights{}
-		// _ = m3.Decode(d)
-		// m.AdminRights = m3
+		// m4 := &ChatAdminRights{}
+		// _ = m4.Decode(d)
+		// m.AdminRights = m4
 		m.AdminRights, err = DecodeChatAdminRightsClazz(d)
 		if err != nil {
 			return err

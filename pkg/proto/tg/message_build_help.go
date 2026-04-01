@@ -126,9 +126,9 @@ func MakeTextAndMessageEntities(m MessageBuildHelper) (text string, entities []M
 				}))
 			case ClazzName_messageEntityMentionName:
 				entities = append(entities, MakeTLMessageEntityMentionName(&TLMessageEntityMentionName{
-					Offset:       int32(offset),
-					Length:       int32(length),
-					UserId_INT64: m[i].EntityUserId,
+					Offset: int32(offset),
+					Length: int32(length),
+					UserId: m[i].EntityUserId,
 				}))
 			case ClazzName_messageEntityPhone:
 				entities = append(entities, MakeTLMessageEntityPhone(&TLMessageEntityPhone{

@@ -72,7 +72,7 @@ func DecodeIdValClazz(d *bin.Decoder) (IdValClazz, error) {
 type TLIdVal struct {
 	ClazzID    uint32 `json:"_id"`
 	ClazzName2 string `json:"_name"`
-	Id_INT64   int64  `json:"id_INT64"`
+	Id         int64  `json:"id"`
 }
 
 func MakeTLIdVal(m *TLIdVal) *TLIdVal {
@@ -144,7 +144,7 @@ func (m *TLIdVal) Encode(x *bin.Encoder, layer int32) error {
 	case 0xc07844cb:
 		x.PutClazzID(0xc07844cb)
 
-		x.PutInt64(m.Id_INT64)
+		x.PutInt64(m.Id)
 
 		return nil
 	default:
@@ -157,7 +157,7 @@ func (m *TLIdVal) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLIdVal) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xc07844cb:
-		m.Id_INT64, err = d.Int64()
+		m.Id, err = d.Int64()
 		if err != nil {
 			return err
 		}
@@ -170,9 +170,9 @@ func (m *TLIdVal) Decode(d *bin.Decoder) (err error) {
 
 // TLIdVals <--
 type TLIdVals struct {
-	ClazzID        uint32  `json:"_id"`
-	ClazzName2     string  `json:"_name"`
-	Id_VECTORINT64 []int64 `json:"id_VECTORINT64"`
+	ClazzID    uint32  `json:"_id"`
+	ClazzName2 string  `json:"_name"`
+	Id         []int64 `json:"id"`
 }
 
 func MakeTLIdVals(m *TLIdVals) *TLIdVals {
@@ -220,7 +220,7 @@ func (m *TLIdVals) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_idVals, int(layer)); clazzId {
 	case 0x1c3baa66:
 		size := 4
-		size += iface.CalcInt64ListSize(m.Id_VECTORINT64)
+		size += iface.CalcInt64ListSize(m.Id)
 
 		return size
 	default:
@@ -231,7 +231,7 @@ func (m *TLIdVals) CalcSize(layer int32) int {
 func (m *TLIdVals) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_idVals, int(layer)); clazzId {
 	case 0x1c3baa66:
-		if err := iface.ValidateRequiredSlice("id_VECTORINT64", m.Id_VECTORINT64); err != nil {
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
 			return err
 		}
 
@@ -247,7 +247,7 @@ func (m *TLIdVals) Encode(x *bin.Encoder, layer int32) error {
 	case 0x1c3baa66:
 		x.PutClazzID(0x1c3baa66)
 
-		iface.EncodeInt64List(x, m.Id_VECTORINT64)
+		iface.EncodeInt64List(x, m.Id)
 
 		return nil
 	default:
@@ -261,7 +261,7 @@ func (m *TLIdVals) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x1c3baa66:
 
-		m.Id_VECTORINT64, err = iface.DecodeInt64List(d)
+		m.Id, err = iface.DecodeInt64List(d)
 		if err != nil {
 			return err
 		}
@@ -276,7 +276,7 @@ func (m *TLIdVals) Decode(d *bin.Decoder) (err error) {
 type TLSeqIdVal struct {
 	ClazzID    uint32 `json:"_id"`
 	ClazzName2 string `json:"_name"`
-	Id_INT64   int64  `json:"id_INT64"`
+	Id         int64  `json:"id"`
 }
 
 func MakeTLSeqIdVal(m *TLSeqIdVal) *TLSeqIdVal {
@@ -348,7 +348,7 @@ func (m *TLSeqIdVal) Encode(x *bin.Encoder, layer int32) error {
 	case 0x2a047d08:
 		x.PutClazzID(0x2a047d08)
 
-		x.PutInt64(m.Id_INT64)
+		x.PutInt64(m.Id)
 
 		return nil
 	default:
@@ -361,7 +361,7 @@ func (m *TLSeqIdVal) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLSeqIdVal) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x2a047d08:
-		m.Id_INT64, err = d.Int64()
+		m.Id, err = d.Int64()
 		if err != nil {
 			return err
 		}
