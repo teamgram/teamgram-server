@@ -500,36 +500,6 @@ func (m *DestroyAuthKeyRes) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *DestroyAuthKeyRes) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLDestroyAuthKeyOk:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDestroyAuthKeyOk) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDestroyAuthKeyNone:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDestroyAuthKeyNone) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDestroyAuthKeyFail:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDestroyAuthKeyFail) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToDestroyAuthKeyOk <--
 func (m *DestroyAuthKeyRes) ToDestroyAuthKeyOk() (*TLDestroyAuthKeyOk, bool) {
 	if m == nil {
@@ -1006,42 +976,6 @@ func (m *PQInnerData) Encode(x *bin.Encoder, layer int32) error {
 func (m *PQInnerData) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodePQInnerDataClazz(d)
 	return
-}
-
-// Match <--
-func (m *PQInnerData) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLPQInnerData:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPQInnerData) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLPQInnerDataDc:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPQInnerDataDc) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLPQInnerDataTemp:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPQInnerDataTemp) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLPQInnerDataTempDc:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPQInnerDataTempDc) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToPQInnerData <--
@@ -1545,30 +1479,6 @@ func (m *ServerDHParams) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *ServerDHParams) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLServerDHParamsFail:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLServerDHParamsFail) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLServerDHParamsOk:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLServerDHParamsOk) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToServerDHParamsFail <--
 func (m *ServerDHParams) ToServerDHParamsFail() (*TLServerDHParamsFail, bool) {
 	if m == nil {
@@ -1899,36 +1809,6 @@ func (m *SetClientDHParamsAnswer) Encode(x *bin.Encoder, layer int32) error {
 func (m *SetClientDHParamsAnswer) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeSetClientDHParamsAnswerClazz(d)
 	return
-}
-
-// Match <--
-func (m *SetClientDHParamsAnswer) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLDhGenOk:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDhGenOk) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDhGenRetry:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDhGenRetry) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDhGenFail:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDhGenFail) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToDhGenOk <--
@@ -2323,30 +2203,6 @@ func (m *BadMsgNotification) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *BadMsgNotification) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLBadMsgNotification:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLBadMsgNotification) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLBadServerSalt:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLBadServerSalt) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToBadMsgNotification <--
 func (m *BadMsgNotification) ToBadMsgNotification() (*TLBadMsgNotification, bool) {
 	if m == nil {
@@ -2584,30 +2440,6 @@ func (m *DestroySessionRes) Encode(x *bin.Encoder, layer int32) error {
 func (m *DestroySessionRes) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeDestroySessionResClazz(d)
 	return
-}
-
-// Match <--
-func (m *DestroySessionRes) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLDestroySessionOk:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDestroySessionOk) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDestroySessionNone:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDestroySessionNone) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToDestroySessionOk <--
@@ -3303,30 +3135,6 @@ func (m *IpPort) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *IpPort) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLIpPort:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLIpPort) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLIpPortSecret:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLIpPortSecret) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToIpPort <--
 func (m *IpPort) ToIpPort() (*TLIpPort, bool) {
 	if m == nil {
@@ -3579,30 +3387,6 @@ func (m *MsgDetailedInfo) Encode(x *bin.Encoder, layer int32) error {
 func (m *MsgDetailedInfo) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeMsgDetailedInfoClazz(d)
 	return
-}
-
-// Match <--
-func (m *MsgDetailedInfo) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLMsgDetailedInfo:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLMsgDetailedInfo) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLMsgNewDetailedInfo:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLMsgNewDetailedInfo) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToMsgDetailedInfo <--
@@ -4603,36 +4387,6 @@ func (m *RpcDropAnswer) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *RpcDropAnswer) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLRpcAnswerUnknown:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLRpcAnswerUnknown) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLRpcAnswerDroppedRunning:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLRpcAnswerDroppedRunning) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLRpcAnswerDropped:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLRpcAnswerDropped) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToRpcAnswerUnknown <--
 func (m *RpcDropAnswer) ToRpcAnswerUnknown() (*TLRpcAnswerUnknown, bool) {
 	if m == nil {
@@ -5368,60 +5122,6 @@ func (m *TlsBlock) Encode(x *bin.Encoder, layer int32) error {
 func (m *TlsBlock) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeTlsBlockClazz(d)
 	return
-}
-
-// Match <--
-func (m *TlsBlock) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-
-	switch c := m.Clazz.(type) {
-	case *TLTlsBlockString:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockString) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockRandom:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockRandom) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockZero:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockZero) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockDomain:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockDomain) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockGrease:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockGrease) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockPublicKey:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockPublicKey) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLTlsBlockScope:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLTlsBlockScope) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToTlsBlockString <--

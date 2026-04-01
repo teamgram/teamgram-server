@@ -314,35 +314,6 @@ func (m *IdVal) Decode(d *bin.Decoder) (err error) {
 	return
 }
 
-// Match <--
-func (m *IdVal) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLIdVal:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLIdVal) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLIdVals:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLIdVals) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLSeqIdVal:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLSeqIdVal) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
 // ToIdVal <--
 func (m *IdVal) ToIdVal() (*TLIdVal, bool) {
 	if m == nil {
@@ -758,41 +729,6 @@ func (m *InputId) Encode(x *bin.Encoder, layer int32) error {
 func (m *InputId) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeInputIdClazz(d)
 	return
-}
-
-// Match <--
-func (m *InputId) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLInputId:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInputId) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLInputIds:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInputIds) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLInputSeqId:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInputSeqId) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLInputNSeqId:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInputNSeqId) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToInputId <--

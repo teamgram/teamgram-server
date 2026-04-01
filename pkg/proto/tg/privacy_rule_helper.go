@@ -250,43 +250,36 @@ func PickAllIdListByRules(rules []*PrivacyRule) (userIdList, chatIdList, channel
 	channelIdList = make([]int64, 0)
 
 	for _, r := range rules {
-		r.Match(
-			func(c *TLPrivacyValueAllowUsers) interface{} {
-				if len(c.Users) > 0 {
-					userIdList = append(userIdList, c.Users...)
-				}
+		if r == nil {
+			continue
+		}
 
-				return nil
-			},
-			func(c *TLPrivacyValueDisallowUsers) interface{} {
-				if len(c.Users) > 0 {
-					userIdList = append(userIdList, c.Users...)
+		switch c := r.Clazz.(type) {
+		case *TLPrivacyValueAllowUsers:
+			if len(c.Users) > 0 {
+				userIdList = append(userIdList, c.Users...)
+			}
+		case *TLPrivacyValueDisallowUsers:
+			if len(c.Users) > 0 {
+				userIdList = append(userIdList, c.Users...)
+			}
+		case *TLPrivacyValueAllowChatParticipants:
+			for _, id := range c.Chats {
+				if id >= MinNebulaChatChannelID {
+					channelIdList = append(channelIdList, id)
+				} else {
+					chatIdList = append(chatIdList, id)
 				}
-
-				return nil
-			},
-			func(c *TLPrivacyValueAllowChatParticipants) interface{} {
-				for _, id := range c.Chats {
-					if id >= MinNebulaChatChannelID {
-						channelIdList = append(channelIdList, id)
-					} else {
-						chatIdList = append(chatIdList, id)
-					}
+			}
+		case *TLPrivacyValueDisallowChatParticipants:
+			for _, id := range c.Chats {
+				if id >= MinNebulaChatChannelID {
+					channelIdList = append(channelIdList, id)
+				} else {
+					chatIdList = append(chatIdList, id)
 				}
-
-				return nil
-			},
-			func(c *TLPrivacyValueDisallowChatParticipants) interface{} {
-				for _, id := range c.Chats {
-					if id >= MinNebulaChatChannelID {
-						channelIdList = append(channelIdList, id)
-					} else {
-						chatIdList = append(chatIdList, id)
-					}
-				}
-
-				return nil
-			})
+			}
+		}
 	}
 
 	return

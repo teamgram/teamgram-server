@@ -247,15 +247,42 @@ This style is preferred because it is:
 - type-safe
 - easy to read and refactor
 
-### Match and Switch
-
-Legacy generators may still produce:
+More examples:
 
 ```go
-func (m *Xxx) Match(f ...interface{})
+if v, ok := savedRingtone.ToAccountSavedRingtone(); ok {
+    // concrete constructor: account.savedRingtone
+    _ = v
+    return
+}
+
+if v, ok := savedRingtone.ToAccountSavedRingtoneConverted(); ok {
+    // concrete constructor: account.savedRingtoneConverted
+    _ = v.Document
+    return
+}
 ```
 
-This API may remain for compatibility, but it is not the recommended primary access style.
+```go
+if v, ok := sentCode.ToAuthSentCode(); ok {
+    _ = v.PhoneCodeHash
+    return
+}
+
+if v, ok := sentCode.ToAuthSentCodeSuccess(); ok {
+    _ = v.Authorization
+    return
+}
+
+if v, ok := sentCode.ToAuthSentCodePaymentRequired(); ok {
+    _ = v.StoreProduct
+    return
+}
+```
+
+### Match and Switch
+
+The runtime should not generate `Match(f ...interface{})`.
 
 Reasons:
 
@@ -264,22 +291,9 @@ Reasons:
 - it is harder to read and refactor
 - it scales poorly for large constructor families
 
-If a unified dispatch helper is still desired, a typed `Switch(...)` style is preferable to the old `Match(f ...interface{})` style.
+The runtime also does not need to generate a custom `Switch(...)` API by default.
 
-Example:
-
-```go
-resp.Switch(
-    func(v *tg.TLAuthSentCode) {
-        // ...
-    },
-    func(v *tg.TLAuthSentCodeSuccess) {
-        // ...
-    },
-)
-```
-
-Even then, `ToXxx()` remains the default recommendation for ordinary business logic.
+For ordinary business logic, `ToXxx()` and plain Go `type switch` are sufficient and more readable.
 
 ### Small vs Large Constructor Families
 
@@ -289,8 +303,6 @@ For small constructor families such as `auth.SentCode`:
 
 - keep the abstract wrapper
 - generate `ToXxx()` helpers
-- optionally keep a compatibility `Match(...)`
-- optionally generate `Switch(...)`
 
 For large constructor families such as `Update`:
 
@@ -312,6 +324,28 @@ case *tg.TLUpdateDeleteMessages:
 ```
 
 This keeps the generated API smaller and makes business logic easier to follow.
+
+More examples:
+
+```go
+switch v := user.Clazz.(type) {
+case *tg.TLUser:
+    _ = v.FirstName
+case *tg.TLUserEmpty:
+    // deleted or unavailable user
+}
+```
+
+```go
+switch v := media.Clazz.(type) {
+case *tg.TLMessageMediaPhoto:
+    _ = v.Photo
+case *tg.TLMessageMediaDocument:
+    _ = v.Document
+case *tg.TLMessageMediaUnsupported:
+    // ignore unsupported media
+}
+```
 
 ## Registry Model
 
