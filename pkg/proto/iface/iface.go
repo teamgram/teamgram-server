@@ -95,7 +95,9 @@ func EncodeObjectList[T TLObject](x *bin.Encoder, vList []T, layer int32) error 
 	x.PutClazzID(ClazzID_vector)
 	x.PutInt(len(vList))
 	for _, obj := range vList {
-		_ = obj.Encode(x, layer)
+		if err := obj.Encode(x, layer); err != nil {
+			return err
+		}
 	}
 
 	return nil
