@@ -11,6 +11,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
+	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	etcd "github.com/kitex-contrib/registry-etcd"
@@ -25,6 +26,10 @@ type (
 	// RegisterFn defines the method to register a server.
 	RegisterFn func(server.Server) error
 )
+
+var newEtcdRegistry = func(endpoints []string, opts ...etcd.Option) (registry.Registry, error) {
+	return etcd.NewEtcdRegistry(endpoints, opts...)
+}
 
 // A RpcServer is a rpc server.
 type RpcServer struct {
@@ -60,7 +65,7 @@ func NewServer(c RpcServerConf, register RegisterFn) (*RpcServer, error) {
 
 	// codec
 	if c.Codec == "zrpc" {
-		options = append(options, server.WithCodec(codec.NewZRpcCodec(true)))
+		options = append(options, server.WithCodec(codec.NewZRpcCodec(false)))
 	}
 
 	// c.ListenOn
@@ -93,9 +98,9 @@ func NewServer(c RpcServerConf, register RegisterFn) (*RpcServer, error) {
 			server2, err = NewRpcPubServer(c.Etcd.EtcdConf, c.ListenOn, options...)
 		} else {
 			// etcd
-			r, err := etcd.NewEtcdRegistry(c.Etcd.Hosts) // r should not be reused.
+			r, err := newEtcdRegistry(c.Etcd.Hosts) // r should not be reused.
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 
 			options = append(options, server.WithRegistry(r))

@@ -7,6 +7,7 @@
 package kitex
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -16,7 +17,8 @@ import (
 )
 
 var (
-	clientManager = syncx.NewResourceManager()
+	clientManager            = syncx.NewResourceManager()
+	newClientWithServiceInfo = NewClientWithServiceInfo
 )
 
 type client2 struct {
@@ -24,6 +26,9 @@ type client2 struct {
 }
 
 func (c *client2) Close() error {
+	if closer, ok := c.Client.(interface{ Close() error }); ok {
+		return closer.Close()
+	}
 	return nil
 }
 
@@ -37,31 +42,38 @@ func (c *client2) Close() error {
 		client.WithCodec(codec.NewZRpcCodec(true)))
 */
 
+func newCachedClient(c RpcClientConf) (io.Closer, error) {
+	cli, err := newClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
+	if err != nil {
+		return nil, err
+	}
+	if cli == nil {
+		return nil, fmt.Errorf("nil client created for %s", c.ServiceName)
+	}
+
+	return &client2{Client: cli}, nil
+}
+
 func GetCachedKitexClient(c RpcClientConf) Client {
+	if c.Etcd.Key == "" && len(c.Endpoints) == 0 {
+		panic(c)
+	}
+	logx.Infof("kitex client cache lookup: service=%s endpoints=%v etcd_key=%s", c.ServiceName, c.Endpoints, c.Etcd.Key)
+
 	var (
 		val io.Closer
 		err error
 	)
-	if c.Etcd.Key == "" && len(c.Endpoints) == 0 {
-		panic(c)
-	}
-	logx.Infof("client: %v", c)
 	if len(c.Endpoints) > 0 {
 		val, err = clientManager.GetResource(c.ServiceName+"@"+strings.Join(c.Endpoints, "/"), func() (io.Closer, error) {
-			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
-			return &client2{
-				Client: cli,
-			}, nil
+			return newCachedClient(c)
 		})
 		if err != nil {
 			panic(err)
 		}
 	} else {
 		val, err = clientManager.GetResource(c.ServiceName+"@"+c.Etcd.Key, func() (io.Closer, error) {
-			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
-			return &client2{
-				Client: cli,
-			}, nil
+			return newCachedClient(c)
 		})
 		if err != nil {
 			panic(err)
