@@ -384,6 +384,88 @@ case *tg.TLMessageMediaUnsupported:
 }
 ```
 
+## Layer Field Evolution
+
+When the same predicate evolves across layers but keeps the same semantic field, the generated business-facing struct should expose a single stable field whenever possible.
+
+This is especially important for server-side responses, where business code should be able to assign once and let the runtime encode correctly for different client layers.
+
+Example:
+
+```tl
+layer 220-221:
+urlAuthResultAccepted#8f8c0e4e url:string = UrlAuthResult;
+
+layer 222-223:
+urlAuthResultAccepted#623a8fa0 flags:# url:flags.0?string = UrlAuthResult;
+```
+
+Recommended business-facing generated shape:
+
+```go
+type TLUrlAuthResultAccepted struct {
+    ClazzID    uint32  `json:"_id"`
+    ClazzName2 string  `json:"_name"`
+    Url        *string `json:"url"`
+}
+```
+
+Recommended encoding behavior:
+
+- for layers where `url` is required, `Url` must be non-nil
+- for layers where `url` is optional, `Url == nil` means the flag is not set
+- decode should normalize both wire shapes back into the same semantic field
+
+The key rule is:
+
+- business-facing structs should prefer one semantic field over multiple per-layer conflict fields
+- layer-specific shape differences should be handled by encode/decode projection
+
+This keeps business code simple:
+
+```go
+resp := &tg.TLUrlAuthResultAccepted{
+    Url: &url,
+}
+```
+
+The same value can then be serialized for different client layers without forcing business code to set:
+
+- `Url_STRING`
+- `Url_FLAGSTRING`
+
+### When a Single Semantic Field Is Appropriate
+
+Use a single semantic field when the layer change is representational rather than semantic, such as:
+
+- required `string` becoming optional `flags.?string`
+- required object becoming optional `flags.?object`
+- old and new layers representing the same identifier with different optionality
+
+### When a Single Semantic Field Is Not Enough
+
+If the same field name changes in a way that materially changes its domain, such as:
+
+- `int` to `string`
+- `vector<int>` to `vector<object>`
+- scalar to union/object
+
+then the generator should not force multiple conflicting concrete fields into one business-facing struct by default.
+
+In those cases, prefer one of:
+
+- a stable semantic model plus layer-aware projection
+- an explicitly versioned wire representation when no stable semantic field exists
+
+### Practical Rule
+
+For generated server-facing TL structs:
+
+- first try to expose one semantic field that business code can assign once
+- only fall back to suffixed conflict fields when the same concrete struct truly must carry incompatible representations that cannot be normalized safely
+
+This rule matters more than the exact suffix format because the main goal is not naming cleanliness by itself. The main goal is making one assignment work across supported client layers.
+
 ## Registry Model
 
 The runtime registry should be split by responsibility instead of forcing all lookups through one map.
