@@ -79,6 +79,9 @@ func DecodeObject(d *bin.Decoder) (TLObject, error) {
 
 func EncodeObject(obj TLObject, layer int32) ([]byte, error) {
 	x := bin.NewEncoder()
+	if s, ok := obj.(TLObjectSizer); ok {
+		x = bin.AcquireEncoderCap(s.CalcSize(layer))
+	}
 
 	err := obj.Encode(x, layer)
 	if err != nil {

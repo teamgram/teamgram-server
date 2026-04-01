@@ -36,6 +36,35 @@ func (m *TLInvokeAfterMsg) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeAfterMsg) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeAfterMsg) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsg, int(layer)); clazzId {
+	case 0xcb9f372d:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeAfterMsg) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsg, int(layer)); clazzId {
+	case 0xcb9f372d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeAfterMsg, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeAfterMsg) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsg, int(layer)); clazzId {
@@ -84,6 +113,38 @@ type TLInvokeAfterMsgs struct {
 func (m *TLInvokeAfterMsgs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLInvokeAfterMsgs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeAfterMsgs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsgs, int(layer)); clazzId {
+	case 0x3dc4b4f0:
+		size := 4
+		size += iface.CalcInt64ListSize(m.MsgIds)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeAfterMsgs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsgs, int(layer)); clazzId {
+	case 0x3dc4b4f0:
+		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeAfterMsgs, layer)
+	}
 }
 
 // Encode <--
@@ -142,6 +203,117 @@ type TLInitConnection struct {
 func (m *TLInitConnection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLInitConnection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInitConnection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_initConnection, int(layer)); clazzId {
+	case 0xc1cd5ea9:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.DeviceModel)
+		size += iface.CalcStringSize(m.SystemVersion)
+		size += iface.CalcStringSize(m.AppVersion)
+		size += iface.CalcStringSize(m.SystemLangCode)
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+		if m.Proxy != nil {
+			size += iface.CalcObjectSize(m.Proxy, layer)
+		}
+
+		if m.Params != nil {
+			size += iface.CalcObjectSize(m.Params, layer)
+		}
+
+		return size
+	case 0x785188b8:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.DeviceModel)
+		size += iface.CalcStringSize(m.SystemVersion)
+		size += iface.CalcStringSize(m.AppVersion)
+		size += iface.CalcStringSize(m.SystemLangCode)
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+		if m.Proxy != nil {
+			size += iface.CalcObjectSize(m.Proxy, layer)
+		}
+
+		if m.Params != nil {
+			size += iface.CalcObjectSize(m.Params, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInitConnection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_initConnection, int(layer)); clazzId {
+	case 0xc1cd5ea9:
+		if err := iface.ValidateRequiredString("device_model", m.DeviceModel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("system_version", m.SystemVersion); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("app_version", m.AppVersion); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("system_lang_code", m.SystemLangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x785188b8:
+		if err := iface.ValidateRequiredString("device_model", m.DeviceModel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("system_version", m.SystemVersion); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("app_version", m.AppVersion); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("system_lang_code", m.SystemLangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_initConnection, layer)
+	}
 }
 
 // Encode <--
@@ -365,6 +537,35 @@ func (m *TLInvokeWithLayer) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeWithLayer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithLayer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithLayer, int(layer)); clazzId {
+	case 0xda9b0d0d:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithLayer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithLayer, int(layer)); clazzId {
+	case 0xda9b0d0d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithLayer, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeWithLayer) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithLayer, int(layer)); clazzId {
@@ -414,6 +615,34 @@ func (m *TLInvokeWithoutUpdates) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeWithoutUpdates) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithoutUpdates) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithoutUpdates, int(layer)); clazzId {
+	case 0xbf9459b7:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithoutUpdates) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithoutUpdates, int(layer)); clazzId {
+	case 0xbf9459b7:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithoutUpdates, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeWithoutUpdates) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithoutUpdates, int(layer)); clazzId {
@@ -457,6 +686,38 @@ type TLInvokeWithMessagesRange struct {
 func (m *TLInvokeWithMessagesRange) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLInvokeWithMessagesRange) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithMessagesRange) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithMessagesRange, int(layer)); clazzId {
+	case 0x365275f2:
+		size := 4
+		size += iface.CalcObjectSize(m.Range, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithMessagesRange) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithMessagesRange, int(layer)); clazzId {
+	case 0x365275f2:
+		if err := iface.ValidateRequiredObject("range", m.Range); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithMessagesRange, layer)
+	}
 }
 
 // Encode <--
@@ -514,6 +775,35 @@ func (m *TLInvokeWithTakeout) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeWithTakeout) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithTakeout) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithTakeout, int(layer)); clazzId {
+	case 0xaca9fd2e:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithTakeout) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithTakeout, int(layer)); clazzId {
+	case 0xaca9fd2e:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithTakeout, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeWithTakeout) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithTakeout, int(layer)); clazzId {
@@ -562,6 +852,38 @@ type TLInvokeWithBusinessConnection struct {
 func (m *TLInvokeWithBusinessConnection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLInvokeWithBusinessConnection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithBusinessConnection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithBusinessConnection, int(layer)); clazzId {
+	case 0xdd289f8e:
+		size := 4
+		size += iface.CalcStringSize(m.ConnectionId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithBusinessConnection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithBusinessConnection, int(layer)); clazzId {
+	case 0xdd289f8e:
+		if err := iface.ValidateRequiredString("connection_id", m.ConnectionId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithBusinessConnection, layer)
+	}
 }
 
 // Encode <--
@@ -613,6 +935,43 @@ type TLInvokeWithGooglePlayIntegrity struct {
 func (m *TLInvokeWithGooglePlayIntegrity) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLInvokeWithGooglePlayIntegrity) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithGooglePlayIntegrity) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithGooglePlayIntegrity, int(layer)); clazzId {
+	case 0x1df92984:
+		size := 4
+		size += iface.CalcStringSize(m.Nonce)
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithGooglePlayIntegrity) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithGooglePlayIntegrity, int(layer)); clazzId {
+	case 0x1df92984:
+		if err := iface.ValidateRequiredString("nonce", m.Nonce); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithGooglePlayIntegrity, layer)
+	}
 }
 
 // Encode <--
@@ -671,6 +1030,43 @@ func (m *TLInvokeWithApnsSecret) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeWithApnsSecret) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithApnsSecret) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithApnsSecret, int(layer)); clazzId {
+	case 0xdae54f8:
+		size := 4
+		size += iface.CalcStringSize(m.Nonce)
+		size += iface.CalcStringSize(m.Secret)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithApnsSecret) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithApnsSecret, int(layer)); clazzId {
+	case 0xdae54f8:
+		if err := iface.ValidateRequiredString("nonce", m.Nonce); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("secret", m.Secret); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithApnsSecret, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeWithApnsSecret) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithApnsSecret, int(layer)); clazzId {
@@ -726,6 +1122,38 @@ func (m *TLInvokeWithReCaptcha) String() string {
 	return wrapper.String()
 }
 
+func (m *TLInvokeWithReCaptcha) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLInvokeWithReCaptcha) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithReCaptcha, int(layer)); clazzId {
+	case 0xadbb0f94:
+		size := 4
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInvokeWithReCaptcha) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithReCaptcha, int(layer)); clazzId {
+	case 0xadbb0f94:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithReCaptcha, layer)
+	}
+}
+
 // Encode <--
 func (m *TLInvokeWithReCaptcha) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithReCaptcha, int(layer)); clazzId {
@@ -776,6 +1204,49 @@ type TLAuthSendCode struct {
 func (m *TLAuthSendCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthSendCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthSendCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_sendCode, int(layer)); clazzId {
+	case 0xa677244f:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += 4
+		size += iface.CalcStringSize(m.ApiHash)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthSendCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_sendCode, int(layer)); clazzId {
+	case 0xa677244f:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("api_hash", m.ApiHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_sendCode, layer)
+	}
 }
 
 // Encode <--
@@ -846,6 +1317,54 @@ type TLAuthSignUp struct {
 func (m *TLAuthSignUp) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthSignUp) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthSignUp) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_signUp, int(layer)); clazzId {
+	case 0xaac7b717:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += iface.CalcStringSize(m.FirstName)
+		size += iface.CalcStringSize(m.LastName)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthSignUp) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_signUp, int(layer)); clazzId {
+	case 0xaac7b717:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("first_name", m.FirstName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("last_name", m.LastName); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_signUp, layer)
+	}
 }
 
 // Encode <--
@@ -933,6 +1452,51 @@ type TLAuthSignIn struct {
 func (m *TLAuthSignIn) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthSignIn) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthSignIn) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_signIn, int(layer)); clazzId {
+	case 0x8d52a951:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		if m.PhoneCode != nil {
+			size += iface.CalcStringSize(*m.PhoneCode)
+		}
+
+		if m.EmailVerification != nil {
+			size += iface.CalcObjectSize(m.EmailVerification, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthSignIn) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_signIn, int(layer)); clazzId {
+	case 0x8d52a951:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_signIn, layer)
+	}
 }
 
 // Encode <--
@@ -1032,6 +1596,34 @@ func (m *TLAuthLogOut) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthLogOut) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthLogOut) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_logOut, int(layer)); clazzId {
+	case 0x3e72ba19:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthLogOut) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_logOut, int(layer)); clazzId {
+	case 0x3e72ba19:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_logOut, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthLogOut) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_logOut, int(layer)); clazzId {
@@ -1070,6 +1662,34 @@ type TLAuthResetAuthorizations struct {
 func (m *TLAuthResetAuthorizations) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthResetAuthorizations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthResetAuthorizations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resetAuthorizations, int(layer)); clazzId {
+	case 0x9fab0d1a:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthResetAuthorizations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resetAuthorizations, int(layer)); clazzId {
+	case 0x9fab0d1a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_resetAuthorizations, layer)
+	}
 }
 
 // Encode <--
@@ -1111,6 +1731,35 @@ type TLAuthExportAuthorization struct {
 func (m *TLAuthExportAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthExportAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthExportAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_exportAuthorization, int(layer)); clazzId {
+	case 0xe5bfffcd:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthExportAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_exportAuthorization, int(layer)); clazzId {
+	case 0xe5bfffcd:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_exportAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -1159,6 +1808,39 @@ type TLAuthImportAuthorization struct {
 func (m *TLAuthImportAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthImportAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthImportAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importAuthorization, int(layer)); clazzId {
+	case 0xa57a7dad:
+		size := 4
+		size += 8
+		size += iface.CalcBytesSize(m.Bytes)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthImportAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importAuthorization, int(layer)); clazzId {
+	case 0xa57a7dad:
+		if err := iface.ValidateRequiredBytes("bytes", m.Bytes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_importAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -1214,6 +1896,41 @@ type TLAuthBindTempAuthKey struct {
 func (m *TLAuthBindTempAuthKey) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthBindTempAuthKey) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthBindTempAuthKey) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_bindTempAuthKey, int(layer)); clazzId {
+	case 0xcdd42a05:
+		size := 4
+		size += 8
+		size += 8
+		size += 4
+		size += iface.CalcBytesSize(m.EncryptedMessage)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthBindTempAuthKey) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_bindTempAuthKey, int(layer)); clazzId {
+	case 0xcdd42a05:
+		if err := iface.ValidateRequiredBytes("encrypted_message", m.EncryptedMessage); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_bindTempAuthKey, layer)
+	}
 }
 
 // Encode <--
@@ -1281,6 +1998,45 @@ func (m *TLAuthImportBotAuthorization) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthImportBotAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthImportBotAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importBotAuthorization, int(layer)); clazzId {
+	case 0x67a3ff2c:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.ApiHash)
+		size += iface.CalcStringSize(m.BotAuthToken)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthImportBotAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importBotAuthorization, int(layer)); clazzId {
+	case 0x67a3ff2c:
+		if err := iface.ValidateRequiredString("api_hash", m.ApiHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("bot_auth_token", m.BotAuthToken); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_importBotAuthorization, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthImportBotAuthorization) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importBotAuthorization, int(layer)); clazzId {
@@ -1343,6 +2099,38 @@ func (m *TLAuthCheckPassword) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthCheckPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthCheckPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPassword, int(layer)); clazzId {
+	case 0xd18b4d16:
+		size := 4
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthCheckPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPassword, int(layer)); clazzId {
+	case 0xd18b4d16:
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_checkPassword, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthCheckPassword) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPassword, int(layer)); clazzId {
@@ -1393,6 +2181,34 @@ func (m *TLAuthRequestPasswordRecovery) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthRequestPasswordRecovery) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthRequestPasswordRecovery) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_requestPasswordRecovery, int(layer)); clazzId {
+	case 0xd897bc66:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthRequestPasswordRecovery) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_requestPasswordRecovery, int(layer)); clazzId {
+	case 0xd897bc66:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_requestPasswordRecovery, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthRequestPasswordRecovery) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_requestPasswordRecovery, int(layer)); clazzId {
@@ -1433,6 +2249,42 @@ type TLAuthRecoverPassword struct {
 func (m *TLAuthRecoverPassword) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthRecoverPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthRecoverPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_recoverPassword, int(layer)); clazzId {
+	case 0x37096c70:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Code)
+		if m.NewSettings != nil {
+			size += iface.CalcObjectSize(m.NewSettings, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthRecoverPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_recoverPassword, int(layer)); clazzId {
+	case 0x37096c70:
+		if err := iface.ValidateRequiredString("code", m.Code); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_recoverPassword, layer)
+	}
 }
 
 // Encode <--
@@ -1513,6 +2365,47 @@ type TLAuthResendCode struct {
 func (m *TLAuthResendCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthResendCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthResendCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resendCode, int(layer)); clazzId {
+	case 0xcae47523:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		if m.Reason != nil {
+			size += iface.CalcStringSize(*m.Reason)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthResendCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resendCode, int(layer)); clazzId {
+	case 0xcae47523:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_resendCode, layer)
+	}
 }
 
 // Encode <--
@@ -1597,6 +2490,43 @@ func (m *TLAuthCancelCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthCancelCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthCancelCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_cancelCode, int(layer)); clazzId {
+	case 0x1f040578:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthCancelCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_cancelCode, int(layer)); clazzId {
+	case 0x1f040578:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_cancelCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthCancelCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_cancelCode, int(layer)); clazzId {
@@ -1649,6 +2579,38 @@ func (m *TLAuthDropTempAuthKeys) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthDropTempAuthKeys) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthDropTempAuthKeys) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_dropTempAuthKeys, int(layer)); clazzId {
+	case 0x8e48a188:
+		size := 4
+		size += iface.CalcInt64ListSize(m.ExceptAuthKeys)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthDropTempAuthKeys) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_dropTempAuthKeys, int(layer)); clazzId {
+	case 0x8e48a188:
+		if err := iface.ValidateRequiredSlice("except_auth_keys", m.ExceptAuthKeys); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_dropTempAuthKeys, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthDropTempAuthKeys) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_dropTempAuthKeys, int(layer)); clazzId {
@@ -1694,6 +2656,44 @@ type TLAuthExportLoginToken struct {
 func (m *TLAuthExportLoginToken) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthExportLoginToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthExportLoginToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_exportLoginToken, int(layer)); clazzId {
+	case 0xb7e085fe:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.ApiHash)
+		size += iface.CalcInt64ListSize(m.ExceptIds)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthExportLoginToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_exportLoginToken, int(layer)); clazzId {
+	case 0xb7e085fe:
+		if err := iface.ValidateRequiredString("api_hash", m.ApiHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("except_ids", m.ExceptIds); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_exportLoginToken, layer)
+	}
 }
 
 // Encode <--
@@ -1752,6 +2752,38 @@ func (m *TLAuthImportLoginToken) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthImportLoginToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthImportLoginToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importLoginToken, int(layer)); clazzId {
+	case 0x95ac5ce4:
+		size := 4
+		size += iface.CalcBytesSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthImportLoginToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importLoginToken, int(layer)); clazzId {
+	case 0x95ac5ce4:
+		if err := iface.ValidateRequiredBytes("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_importLoginToken, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthImportLoginToken) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importLoginToken, int(layer)); clazzId {
@@ -1797,6 +2829,38 @@ type TLAuthAcceptLoginToken struct {
 func (m *TLAuthAcceptLoginToken) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthAcceptLoginToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthAcceptLoginToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_acceptLoginToken, int(layer)); clazzId {
+	case 0xe894ad4d:
+		size := 4
+		size += iface.CalcBytesSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthAcceptLoginToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_acceptLoginToken, int(layer)); clazzId {
+	case 0xe894ad4d:
+		if err := iface.ValidateRequiredBytes("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_acceptLoginToken, layer)
+	}
 }
 
 // Encode <--
@@ -1846,6 +2910,38 @@ func (m *TLAuthCheckRecoveryPassword) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthCheckRecoveryPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthCheckRecoveryPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkRecoveryPassword, int(layer)); clazzId {
+	case 0xd36bf79:
+		size := 4
+		size += iface.CalcStringSize(m.Code)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthCheckRecoveryPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkRecoveryPassword, int(layer)); clazzId {
+	case 0xd36bf79:
+		if err := iface.ValidateRequiredString("code", m.Code); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_checkRecoveryPassword, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthCheckRecoveryPassword) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkRecoveryPassword, int(layer)); clazzId {
@@ -1893,6 +2989,44 @@ type TLAuthImportWebTokenAuthorization struct {
 func (m *TLAuthImportWebTokenAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthImportWebTokenAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthImportWebTokenAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importWebTokenAuthorization, int(layer)); clazzId {
+	case 0x2db873a9:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.ApiHash)
+		size += iface.CalcStringSize(m.WebAuthToken)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthImportWebTokenAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_importWebTokenAuthorization, int(layer)); clazzId {
+	case 0x2db873a9:
+		if err := iface.ValidateRequiredString("api_hash", m.ApiHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("web_auth_token", m.WebAuthToken); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_importWebTokenAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -1954,6 +3088,55 @@ type TLAuthRequestFirebaseSms struct {
 func (m *TLAuthRequestFirebaseSms) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthRequestFirebaseSms) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthRequestFirebaseSms) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_requestFirebaseSms, int(layer)); clazzId {
+	case 0x8e39261e:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		if m.SafetyNetToken != nil {
+			size += iface.CalcStringSize(*m.SafetyNetToken)
+		}
+
+		if m.PlayIntegrityToken != nil {
+			size += iface.CalcStringSize(*m.PlayIntegrityToken)
+		}
+
+		if m.IosPushSecret != nil {
+			size += iface.CalcStringSize(*m.IosPushSecret)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthRequestFirebaseSms) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_requestFirebaseSms, int(layer)); clazzId {
+	case 0x8e39261e:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_requestFirebaseSms, layer)
+	}
 }
 
 // Encode <--
@@ -2068,6 +3251,43 @@ func (m *TLAuthResetLoginEmail) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthResetLoginEmail) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthResetLoginEmail) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resetLoginEmail, int(layer)); clazzId {
+	case 0x7e960193:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthResetLoginEmail) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resetLoginEmail, int(layer)); clazzId {
+	case 0x7e960193:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_resetLoginEmail, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthResetLoginEmail) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_resetLoginEmail, int(layer)); clazzId {
@@ -2120,6 +3340,48 @@ type TLAuthReportMissingCode struct {
 func (m *TLAuthReportMissingCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthReportMissingCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthReportMissingCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_reportMissingCode, int(layer)); clazzId {
+	case 0xcb9deff6:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += iface.CalcStringSize(m.Mnc)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthReportMissingCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_reportMissingCode, int(layer)); clazzId {
+	case 0xcb9deff6:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mnc", m.Mnc); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_reportMissingCode, layer)
+	}
 }
 
 // Encode <--
@@ -2181,6 +3443,44 @@ func (m *TLAuthCheckPaidAuth) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthCheckPaidAuth) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthCheckPaidAuth) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPaidAuth, int(layer)); clazzId {
+	case 0x56e59f9c:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthCheckPaidAuth) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPaidAuth, int(layer)); clazzId {
+	case 0x56e59f9c:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_checkPaidAuth, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthCheckPaidAuth) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPaidAuth, int(layer)); clazzId {
@@ -2239,6 +3539,39 @@ func (m *TLAuthInitPasskeyLogin) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAuthInitPasskeyLogin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthInitPasskeyLogin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_initPasskeyLogin, int(layer)); clazzId {
+	case 0x518ad0b7:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.ApiHash)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthInitPasskeyLogin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_initPasskeyLogin, int(layer)); clazzId {
+	case 0x518ad0b7:
+		if err := iface.ValidateRequiredString("api_hash", m.ApiHash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_initPasskeyLogin, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAuthInitPasskeyLogin) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_initPasskeyLogin, int(layer)); clazzId {
@@ -2291,6 +3624,46 @@ type TLAuthFinishPasskeyLogin struct {
 func (m *TLAuthFinishPasskeyLogin) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthFinishPasskeyLogin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthFinishPasskeyLogin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_finishPasskeyLogin, int(layer)); clazzId {
+	case 0x9857ad07:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Credential, layer)
+		if m.FromDcId != nil {
+			size += 4
+		}
+
+		if m.FromAuthKeyId != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthFinishPasskeyLogin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_finishPasskeyLogin, int(layer)); clazzId {
+	case 0x9857ad07:
+		if err := iface.ValidateRequiredObject("credential", m.Credential); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_finishPasskeyLogin, layer)
+	}
 }
 
 // Encode <--
@@ -2391,6 +3764,67 @@ type TLAccountRegisterDevice struct {
 func (m *TLAccountRegisterDevice) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountRegisterDevice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountRegisterDevice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_registerDevice, int(layer)); clazzId {
+	case 0xec86017a:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.Token)
+		size += iface.CalcObjectSize(m.AppSandbox, layer)
+		size += iface.CalcBytesSize(m.Secret)
+		size += iface.CalcInt64ListSize(m.OtherUids)
+
+		return size
+	case 0x637ea878:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountRegisterDevice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_registerDevice, int(layer)); clazzId {
+	case 0xec86017a:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("app_sandbox", m.AppSandbox); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("secret", m.Secret); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("other_uids", m.OtherUids); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x637ea878:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_registerDevice, layer)
+	}
 }
 
 // Encode <--
@@ -2506,6 +3940,56 @@ func (m *TLAccountUnregisterDevice) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUnregisterDevice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUnregisterDevice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_unregisterDevice, int(layer)); clazzId {
+	case 0x6a0d3206:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Token)
+		size += iface.CalcInt64ListSize(m.OtherUids)
+
+		return size
+	case 0x65c55b40:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUnregisterDevice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_unregisterDevice, int(layer)); clazzId {
+	case 0x6a0d3206:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("other_uids", m.OtherUids); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x65c55b40:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_unregisterDevice, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUnregisterDevice) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_unregisterDevice, int(layer)); clazzId {
@@ -2581,6 +4065,43 @@ func (m *TLAccountUpdateNotifySettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateNotifySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateNotifySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateNotifySettings, int(layer)); clazzId {
+	case 0x84be5b93:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateNotifySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateNotifySettings, int(layer)); clazzId {
+	case 0x84be5b93:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateNotifySettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateNotifySettings, int(layer)); clazzId {
@@ -2641,6 +4162,38 @@ func (m *TLAccountGetNotifySettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetNotifySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetNotifySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifySettings, int(layer)); clazzId {
+	case 0x12b3ad31:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetNotifySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifySettings, int(layer)); clazzId {
+	case 0x12b3ad31:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getNotifySettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifySettings, int(layer)); clazzId {
@@ -2691,6 +4244,34 @@ func (m *TLAccountResetNotifySettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountResetNotifySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetNotifySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetNotifySettings, int(layer)); clazzId {
+	case 0xdb7e1747:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetNotifySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetNotifySettings, int(layer)); clazzId {
+	case 0xdb7e1747:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetNotifySettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountResetNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetNotifySettings, int(layer)); clazzId {
@@ -2732,6 +4313,46 @@ type TLAccountUpdateProfile struct {
 func (m *TLAccountUpdateProfile) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateProfile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateProfile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateProfile, int(layer)); clazzId {
+	case 0x78515775:
+		size := 4
+		size += 4
+		if m.FirstName != nil {
+			size += iface.CalcStringSize(*m.FirstName)
+		}
+
+		if m.LastName != nil {
+			size += iface.CalcStringSize(*m.LastName)
+		}
+
+		if m.About != nil {
+			size += iface.CalcStringSize(*m.About)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateProfile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateProfile, int(layer)); clazzId {
+	case 0x78515775:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateProfile, layer)
+	}
 }
 
 // Encode <--
@@ -2835,6 +4456,38 @@ func (m *TLAccountUpdateStatus) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateStatus, int(layer)); clazzId {
+	case 0x6628562c:
+		size := 4
+		size += iface.CalcObjectSize(m.Offline, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateStatus, int(layer)); clazzId {
+	case 0x6628562c:
+		if err := iface.ValidateRequiredObject("offline", m.Offline); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateStatus, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateStatus) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateStatus, int(layer)); clazzId {
@@ -2886,6 +4539,35 @@ func (m *TLAccountGetWallPapers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetWallPapers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetWallPapers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPapers, int(layer)); clazzId {
+	case 0x7967d36:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetWallPapers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPapers, int(layer)); clazzId {
+	case 0x7967d36:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getWallPapers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetWallPapers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPapers, int(layer)); clazzId {
@@ -2933,6 +4615,48 @@ type TLAccountReportPeer struct {
 func (m *TLAccountReportPeer) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountReportPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountReportPeer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportPeer, int(layer)); clazzId {
+	case 0xc5ba3d86:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Reason, layer)
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountReportPeer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportPeer, int(layer)); clazzId {
+	case 0xc5ba3d86:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_reportPeer, layer)
+	}
 }
 
 // Encode <--
@@ -3001,6 +4725,38 @@ func (m *TLAccountCheckUsername) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountCheckUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountCheckUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_checkUsername, int(layer)); clazzId {
+	case 0x2714d86c:
+		size := 4
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountCheckUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_checkUsername, int(layer)); clazzId {
+	case 0x2714d86c:
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_checkUsername, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_checkUsername, int(layer)); clazzId {
@@ -3048,6 +4804,38 @@ func (m *TLAccountUpdateUsername) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateUsername, int(layer)); clazzId {
+	case 0x3e0bdd7c:
+		size := 4
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateUsername, int(layer)); clazzId {
+	case 0x3e0bdd7c:
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateUsername, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateUsername) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateUsername, int(layer)); clazzId {
@@ -3093,6 +4881,38 @@ type TLAccountGetPrivacy struct {
 func (m *TLAccountGetPrivacy) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetPrivacy) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetPrivacy) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPrivacy, int(layer)); clazzId {
+	case 0xdadbc950:
+		size := 4
+		size += iface.CalcObjectSize(m.Key, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetPrivacy) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPrivacy, int(layer)); clazzId {
+	case 0xdadbc950:
+		if err := iface.ValidateRequiredObject("key", m.Key); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getPrivacy, layer)
+	}
 }
 
 // Encode <--
@@ -3145,6 +4965,43 @@ type TLAccountSetPrivacy struct {
 func (m *TLAccountSetPrivacy) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetPrivacy) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetPrivacy) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setPrivacy, int(layer)); clazzId {
+	case 0xc9f81ce8:
+		size := 4
+		size += iface.CalcObjectSize(m.Key, layer)
+		size += iface.CalcObjectListSize(m.Rules, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetPrivacy) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setPrivacy, int(layer)); clazzId {
+	case 0xc9f81ce8:
+		if err := iface.ValidateRequiredObject("key", m.Key); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("rules", m.Rules); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setPrivacy, layer)
+	}
 }
 
 // Encode <--
@@ -3224,6 +5081,42 @@ func (m *TLAccountDeleteAccount) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountDeleteAccount) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeleteAccount) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAccount, int(layer)); clazzId {
+	case 0xa2c0cf74:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Reason)
+		if m.Password != nil {
+			size += iface.CalcObjectSize(m.Password, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeleteAccount) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAccount, int(layer)); clazzId {
+	case 0xa2c0cf74:
+		if err := iface.ValidateRequiredString("reason", m.Reason); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_deleteAccount, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountDeleteAccount) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAccount, int(layer)); clazzId {
@@ -3301,6 +5194,34 @@ func (m *TLAccountGetAccountTTL) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetAccountTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAccountTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAccountTTL, int(layer)); clazzId {
+	case 0x8fc711d:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAccountTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAccountTTL, int(layer)); clazzId {
+	case 0x8fc711d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAccountTTL, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetAccountTTL) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAccountTTL, int(layer)); clazzId {
@@ -3340,6 +5261,38 @@ type TLAccountSetAccountTTL struct {
 func (m *TLAccountSetAccountTTL) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetAccountTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetAccountTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setAccountTTL, int(layer)); clazzId {
+	case 0x2442485e:
+		size := 4
+		size += iface.CalcObjectSize(m.Ttl, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetAccountTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setAccountTTL, int(layer)); clazzId {
+	case 0x2442485e:
+		if err := iface.ValidateRequiredObject("ttl", m.Ttl); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setAccountTTL, layer)
+	}
 }
 
 // Encode <--
@@ -3392,6 +5345,43 @@ type TLAccountSendChangePhoneCode struct {
 func (m *TLAccountSendChangePhoneCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSendChangePhoneCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSendChangePhoneCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendChangePhoneCode, int(layer)); clazzId {
+	case 0x82574ae5:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSendChangePhoneCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendChangePhoneCode, int(layer)); clazzId {
+	case 0x82574ae5:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_sendChangePhoneCode, layer)
+	}
 }
 
 // Encode <--
@@ -3452,6 +5442,48 @@ func (m *TLAccountChangePhone) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountChangePhone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountChangePhone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_changePhone, int(layer)); clazzId {
+	case 0x70c32edb:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += iface.CalcStringSize(m.PhoneCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountChangePhone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_changePhone, int(layer)); clazzId {
+	case 0x70c32edb:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code", m.PhoneCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_changePhone, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountChangePhone) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_changePhone, int(layer)); clazzId {
@@ -3509,6 +5541,35 @@ func (m *TLAccountUpdateDeviceLocked) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateDeviceLocked) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateDeviceLocked) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateDeviceLocked, int(layer)); clazzId {
+	case 0x38df3532:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateDeviceLocked) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateDeviceLocked, int(layer)); clazzId {
+	case 0x38df3532:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateDeviceLocked, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateDeviceLocked) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateDeviceLocked, int(layer)); clazzId {
@@ -3555,6 +5616,34 @@ func (m *TLAccountGetAuthorizations) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetAuthorizations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAuthorizations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizations, int(layer)); clazzId {
+	case 0xe320c158:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAuthorizations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizations, int(layer)); clazzId {
+	case 0xe320c158:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAuthorizations, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetAuthorizations) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizations, int(layer)); clazzId {
@@ -3594,6 +5683,35 @@ type TLAccountResetAuthorization struct {
 func (m *TLAccountResetAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountResetAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetAuthorization, int(layer)); clazzId {
+	case 0xdf77f3bc:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetAuthorization, int(layer)); clazzId {
+	case 0xdf77f3bc:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -3642,6 +5760,34 @@ func (m *TLAccountGetPassword) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPassword, int(layer)); clazzId {
+	case 0x548a30f5:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPassword, int(layer)); clazzId {
+	case 0x548a30f5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getPassword, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetPassword) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPassword, int(layer)); clazzId {
@@ -3681,6 +5827,38 @@ type TLAccountGetPasswordSettings struct {
 func (m *TLAccountGetPasswordSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetPasswordSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetPasswordSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasswordSettings, int(layer)); clazzId {
+	case 0x9cd4eaf9:
+		size := 4
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetPasswordSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasswordSettings, int(layer)); clazzId {
+	case 0x9cd4eaf9:
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getPasswordSettings, layer)
+	}
 }
 
 // Encode <--
@@ -3733,6 +5911,43 @@ type TLAccountUpdatePasswordSettings struct {
 func (m *TLAccountUpdatePasswordSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdatePasswordSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdatePasswordSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePasswordSettings, int(layer)); clazzId {
+	case 0xa59b102f:
+		size := 4
+		size += iface.CalcObjectSize(m.Password, layer)
+		size += iface.CalcObjectSize(m.NewSettings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdatePasswordSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePasswordSettings, int(layer)); clazzId {
+	case 0xa59b102f:
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("new_settings", m.NewSettings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updatePasswordSettings, layer)
+	}
 }
 
 // Encode <--
@@ -3796,6 +6011,43 @@ func (m *TLAccountSendConfirmPhoneCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSendConfirmPhoneCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSendConfirmPhoneCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendConfirmPhoneCode, int(layer)); clazzId {
+	case 0x1b3faa88:
+		size := 4
+		size += iface.CalcStringSize(m.Hash)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSendConfirmPhoneCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendConfirmPhoneCode, int(layer)); clazzId {
+	case 0x1b3faa88:
+		if err := iface.ValidateRequiredString("hash", m.Hash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_sendConfirmPhoneCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSendConfirmPhoneCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendConfirmPhoneCode, int(layer)); clazzId {
@@ -3853,6 +6105,43 @@ func (m *TLAccountConfirmPhone) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountConfirmPhone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountConfirmPhone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPhone, int(layer)); clazzId {
+	case 0x5f2178c3:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += iface.CalcStringSize(m.PhoneCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountConfirmPhone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPhone, int(layer)); clazzId {
+	case 0x5f2178c3:
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code", m.PhoneCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_confirmPhone, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountConfirmPhone) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPhone, int(layer)); clazzId {
@@ -3904,6 +6193,39 @@ type TLAccountGetTmpPassword struct {
 func (m *TLAccountGetTmpPassword) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetTmpPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetTmpPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTmpPassword, int(layer)); clazzId {
+	case 0x449e0b51:
+		size := 4
+		size += iface.CalcObjectSize(m.Password, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetTmpPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTmpPassword, int(layer)); clazzId {
+	case 0x449e0b51:
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getTmpPassword, layer)
+	}
 }
 
 // Encode <--
@@ -3962,6 +6284,34 @@ func (m *TLAccountGetWebAuthorizations) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetWebAuthorizations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetWebAuthorizations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWebAuthorizations, int(layer)); clazzId {
+	case 0x182e6d6f:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetWebAuthorizations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWebAuthorizations, int(layer)); clazzId {
+	case 0x182e6d6f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getWebAuthorizations, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetWebAuthorizations) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWebAuthorizations, int(layer)); clazzId {
@@ -4001,6 +6351,35 @@ type TLAccountResetWebAuthorization struct {
 func (m *TLAccountResetWebAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountResetWebAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetWebAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWebAuthorization, int(layer)); clazzId {
+	case 0x2d01b9ef:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetWebAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWebAuthorization, int(layer)); clazzId {
+	case 0x2d01b9ef:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetWebAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -4049,6 +6428,34 @@ func (m *TLAccountResetWebAuthorizations) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountResetWebAuthorizations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetWebAuthorizations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWebAuthorizations, int(layer)); clazzId {
+	case 0x682d2594:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetWebAuthorizations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWebAuthorizations, int(layer)); clazzId {
+	case 0x682d2594:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetWebAuthorizations, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountResetWebAuthorizations) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWebAuthorizations, int(layer)); clazzId {
@@ -4087,6 +6494,34 @@ type TLAccountGetAllSecureValues struct {
 func (m *TLAccountGetAllSecureValues) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetAllSecureValues) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAllSecureValues) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAllSecureValues, int(layer)); clazzId {
+	case 0xb288bc7d:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAllSecureValues) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAllSecureValues, int(layer)); clazzId {
+	case 0xb288bc7d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAllSecureValues, layer)
+	}
 }
 
 // Encode <--
@@ -4128,6 +6563,38 @@ type TLAccountGetSecureValue struct {
 func (m *TLAccountGetSecureValue) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetSecureValue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetSecureValue) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSecureValue, int(layer)); clazzId {
+	case 0x73665bc2:
+		size := 4
+		size += iface.CalcObjectListSize(m.Types, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetSecureValue) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSecureValue, int(layer)); clazzId {
+	case 0x73665bc2:
+		if err := iface.ValidateRequiredSlice("types", m.Types); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getSecureValue, layer)
+	}
 }
 
 // Encode <--
@@ -4196,6 +6663,39 @@ func (m *TLAccountSaveSecureValue) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSaveSecureValue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveSecureValue) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveSecureValue, int(layer)); clazzId {
+	case 0x899fe31d:
+		size := 4
+		size += iface.CalcObjectSize(m.Value, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveSecureValue) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveSecureValue, int(layer)); clazzId {
+	case 0x899fe31d:
+		if err := iface.ValidateRequiredObject("value", m.Value); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveSecureValue, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSaveSecureValue) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveSecureValue, int(layer)); clazzId {
@@ -4251,6 +6751,38 @@ type TLAccountDeleteSecureValue struct {
 func (m *TLAccountDeleteSecureValue) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountDeleteSecureValue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeleteSecureValue) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteSecureValue, int(layer)); clazzId {
+	case 0xb880bc4b:
+		size := 4
+		size += iface.CalcObjectListSize(m.Types, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeleteSecureValue) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteSecureValue, int(layer)); clazzId {
+	case 0xb880bc4b:
+		if err := iface.ValidateRequiredSlice("types", m.Types); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_deleteSecureValue, layer)
+	}
 }
 
 // Encode <--
@@ -4320,6 +6852,44 @@ func (m *TLAccountGetAuthorizationForm) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetAuthorizationForm) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAuthorizationForm) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizationForm, int(layer)); clazzId {
+	case 0xa929597a:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.Scope)
+		size += iface.CalcStringSize(m.PublicKey)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAuthorizationForm) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizationForm, int(layer)); clazzId {
+	case 0xa929597a:
+		if err := iface.ValidateRequiredString("scope", m.Scope); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("public_key", m.PublicKey); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAuthorizationForm, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetAuthorizationForm) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAuthorizationForm, int(layer)); clazzId {
@@ -4379,6 +6949,54 @@ type TLAccountAcceptAuthorization struct {
 func (m *TLAccountAcceptAuthorization) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountAcceptAuthorization) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountAcceptAuthorization) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_acceptAuthorization, int(layer)); clazzId {
+	case 0xf3ed4c73:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.Scope)
+		size += iface.CalcStringSize(m.PublicKey)
+		size += iface.CalcObjectListSize(m.ValueHashes, layer)
+		size += iface.CalcObjectSize(m.Credentials, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountAcceptAuthorization) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_acceptAuthorization, int(layer)); clazzId {
+	case 0xf3ed4c73:
+		if err := iface.ValidateRequiredString("scope", m.Scope); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("public_key", m.PublicKey); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("value_hashes", m.ValueHashes); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("credentials", m.Credentials); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_acceptAuthorization, layer)
+	}
 }
 
 // Encode <--
@@ -4473,6 +7091,43 @@ func (m *TLAccountSendVerifyPhoneCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSendVerifyPhoneCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSendVerifyPhoneCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyPhoneCode, int(layer)); clazzId {
+	case 0xa5a356f9:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSendVerifyPhoneCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyPhoneCode, int(layer)); clazzId {
+	case 0xa5a356f9:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_sendVerifyPhoneCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSendVerifyPhoneCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyPhoneCode, int(layer)); clazzId {
@@ -4529,6 +7184,48 @@ type TLAccountVerifyPhone struct {
 func (m *TLAccountVerifyPhone) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountVerifyPhone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountVerifyPhone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_verifyPhone, int(layer)); clazzId {
+	case 0x4dd3a7f6:
+		size := 4
+		size += iface.CalcStringSize(m.PhoneNumber)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += iface.CalcStringSize(m.PhoneCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountVerifyPhone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_verifyPhone, int(layer)); clazzId {
+	case 0x4dd3a7f6:
+		if err := iface.ValidateRequiredString("phone_number", m.PhoneNumber); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code", m.PhoneCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_verifyPhone, layer)
+	}
 }
 
 // Encode <--
@@ -4589,6 +7286,43 @@ func (m *TLAccountSendVerifyEmailCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSendVerifyEmailCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSendVerifyEmailCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyEmailCode, int(layer)); clazzId {
+	case 0x98e037bb:
+		size := 4
+		size += iface.CalcObjectSize(m.Purpose, layer)
+		size += iface.CalcStringSize(m.Email)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSendVerifyEmailCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyEmailCode, int(layer)); clazzId {
+	case 0x98e037bb:
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("email", m.Email); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_sendVerifyEmailCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSendVerifyEmailCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyEmailCode, int(layer)); clazzId {
@@ -4645,6 +7379,43 @@ type TLAccountVerifyEmail struct {
 func (m *TLAccountVerifyEmail) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountVerifyEmail) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountVerifyEmail) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_verifyEmail, int(layer)); clazzId {
+	case 0x32da4cf:
+		size := 4
+		size += iface.CalcObjectSize(m.Purpose, layer)
+		size += iface.CalcObjectSize(m.Verification, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountVerifyEmail) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_verifyEmail, int(layer)); clazzId {
+	case 0x32da4cf:
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("verification", m.Verification); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_verifyEmail, layer)
+	}
 }
 
 // Encode <--
@@ -4711,6 +7482,38 @@ type TLAccountInitTakeoutSession struct {
 func (m *TLAccountInitTakeoutSession) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountInitTakeoutSession) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountInitTakeoutSession) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_initTakeoutSession, int(layer)); clazzId {
+	case 0x8ef3eab0:
+		size := 4
+		size += 4
+		if m.FileMaxSize != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountInitTakeoutSession) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_initTakeoutSession, int(layer)); clazzId {
+	case 0x8ef3eab0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_initTakeoutSession, layer)
+	}
 }
 
 // Encode <--
@@ -4820,6 +7623,35 @@ func (m *TLAccountFinishTakeoutSession) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountFinishTakeoutSession) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountFinishTakeoutSession) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_finishTakeoutSession, int(layer)); clazzId {
+	case 0x1d2652ee:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountFinishTakeoutSession) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_finishTakeoutSession, int(layer)); clazzId {
+	case 0x1d2652ee:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_finishTakeoutSession, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountFinishTakeoutSession) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_finishTakeoutSession, int(layer)); clazzId {
@@ -4884,6 +7716,38 @@ func (m *TLAccountConfirmPasswordEmail) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountConfirmPasswordEmail) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountConfirmPasswordEmail) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPasswordEmail, int(layer)); clazzId {
+	case 0x8fdf1920:
+		size := 4
+		size += iface.CalcStringSize(m.Code)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountConfirmPasswordEmail) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPasswordEmail, int(layer)); clazzId {
+	case 0x8fdf1920:
+		if err := iface.ValidateRequiredString("code", m.Code); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_confirmPasswordEmail, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountConfirmPasswordEmail) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_confirmPasswordEmail, int(layer)); clazzId {
@@ -4930,6 +7794,34 @@ func (m *TLAccountResendPasswordEmail) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountResendPasswordEmail) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResendPasswordEmail) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resendPasswordEmail, int(layer)); clazzId {
+	case 0x7a7f2a15:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResendPasswordEmail) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resendPasswordEmail, int(layer)); clazzId {
+	case 0x7a7f2a15:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resendPasswordEmail, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountResendPasswordEmail) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resendPasswordEmail, int(layer)); clazzId {
@@ -4968,6 +7860,34 @@ type TLAccountCancelPasswordEmail struct {
 func (m *TLAccountCancelPasswordEmail) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountCancelPasswordEmail) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountCancelPasswordEmail) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_cancelPasswordEmail, int(layer)); clazzId {
+	case 0xc1cbd5b6:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountCancelPasswordEmail) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_cancelPasswordEmail, int(layer)); clazzId {
+	case 0xc1cbd5b6:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_cancelPasswordEmail, layer)
+	}
 }
 
 // Encode <--
@@ -5010,6 +7930,34 @@ func (m *TLAccountGetContactSignUpNotification) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetContactSignUpNotification) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetContactSignUpNotification) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContactSignUpNotification, int(layer)); clazzId {
+	case 0x9f07c728:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetContactSignUpNotification) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContactSignUpNotification, int(layer)); clazzId {
+	case 0x9f07c728:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getContactSignUpNotification, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetContactSignUpNotification) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContactSignUpNotification, int(layer)); clazzId {
@@ -5049,6 +7997,38 @@ type TLAccountSetContactSignUpNotification struct {
 func (m *TLAccountSetContactSignUpNotification) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetContactSignUpNotification) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetContactSignUpNotification) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setContactSignUpNotification, int(layer)); clazzId {
+	case 0xcff43f61:
+		size := 4
+		size += iface.CalcObjectSize(m.Silent, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetContactSignUpNotification) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setContactSignUpNotification, int(layer)); clazzId {
+	case 0xcff43f61:
+		if err := iface.ValidateRequiredObject("silent", m.Silent); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setContactSignUpNotification, layer)
+	}
 }
 
 // Encode <--
@@ -5102,6 +8082,38 @@ type TLAccountGetNotifyExceptions struct {
 func (m *TLAccountGetNotifyExceptions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetNotifyExceptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetNotifyExceptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifyExceptions, int(layer)); clazzId {
+	case 0x53577479:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetNotifyExceptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifyExceptions, int(layer)); clazzId {
+	case 0x53577479:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getNotifyExceptions, layer)
+	}
 }
 
 // Encode <--
@@ -5189,6 +8201,38 @@ func (m *TLAccountGetWallPaper) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetWallPaper) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPaper, int(layer)); clazzId {
+	case 0xfc8ddbea:
+		size := 4
+		size += iface.CalcObjectSize(m.Wallpaper, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetWallPaper) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPaper, int(layer)); clazzId {
+	case 0xfc8ddbea:
+		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getWallPaper, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetWallPaper) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPaper, int(layer)); clazzId {
@@ -5241,6 +8285,49 @@ type TLAccountUploadWallPaper struct {
 func (m *TLAccountUploadWallPaper) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUploadWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUploadWallPaper) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadWallPaper, int(layer)); clazzId {
+	case 0xe39a8f03:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.File, layer)
+		size += iface.CalcStringSize(m.MimeType)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUploadWallPaper) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadWallPaper, int(layer)); clazzId {
+	case 0xe39a8f03:
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mime_type", m.MimeType); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_uploadWallPaper, layer)
+	}
 }
 
 // Encode <--
@@ -5333,6 +8420,48 @@ func (m *TLAccountSaveWallPaper) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSaveWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveWallPaper) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveWallPaper, int(layer)); clazzId {
+	case 0x6c5a5b37:
+		size := 4
+		size += iface.CalcObjectSize(m.Wallpaper, layer)
+		size += iface.CalcObjectSize(m.Unsave, layer)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveWallPaper) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveWallPaper, int(layer)); clazzId {
+	case 0x6c5a5b37:
+		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveWallPaper, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSaveWallPaper) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveWallPaper, int(layer)); clazzId {
@@ -5403,6 +8532,43 @@ func (m *TLAccountInstallWallPaper) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountInstallWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountInstallWallPaper) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installWallPaper, int(layer)); clazzId {
+	case 0xfeed5769:
+		size := 4
+		size += iface.CalcObjectSize(m.Wallpaper, layer)
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountInstallWallPaper) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installWallPaper, int(layer)); clazzId {
+	case 0xfeed5769:
+		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_installWallPaper, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountInstallWallPaper) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installWallPaper, int(layer)); clazzId {
@@ -5462,6 +8628,34 @@ func (m *TLAccountResetWallPapers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountResetWallPapers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetWallPapers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWallPapers, int(layer)); clazzId {
+	case 0xbb3b9804:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetWallPapers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWallPapers, int(layer)); clazzId {
+	case 0xbb3b9804:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetWallPapers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountResetWallPapers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetWallPapers, int(layer)); clazzId {
@@ -5500,6 +8694,34 @@ type TLAccountGetAutoDownloadSettings struct {
 func (m *TLAccountGetAutoDownloadSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetAutoDownloadSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAutoDownloadSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAutoDownloadSettings, int(layer)); clazzId {
+	case 0x56da0b3f:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAutoDownloadSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAutoDownloadSettings, int(layer)); clazzId {
+	case 0x56da0b3f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAutoDownloadSettings, layer)
+	}
 }
 
 // Encode <--
@@ -5543,6 +8765,39 @@ type TLAccountSaveAutoDownloadSettings struct {
 func (m *TLAccountSaveAutoDownloadSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSaveAutoDownloadSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveAutoDownloadSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoDownloadSettings, int(layer)); clazzId {
+	case 0x76f36233:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveAutoDownloadSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoDownloadSettings, int(layer)); clazzId {
+	case 0x76f36233:
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveAutoDownloadSettings, layer)
+	}
 }
 
 // Encode <--
@@ -5625,6 +8880,53 @@ type TLAccountUploadTheme struct {
 func (m *TLAccountUploadTheme) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUploadTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUploadTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadTheme, int(layer)); clazzId {
+	case 0x1c3db333:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.File, layer)
+		if m.Thumb != nil {
+			size += iface.CalcObjectSize(m.Thumb, layer)
+		}
+
+		size += iface.CalcStringSize(m.FileName)
+		size += iface.CalcStringSize(m.MimeType)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUploadTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadTheme, int(layer)); clazzId {
+	case 0x1c3db333:
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("file_name", m.FileName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mime_type", m.MimeType); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_uploadTheme, layer)
+	}
 }
 
 // Encode <--
@@ -5722,6 +9024,51 @@ type TLAccountCreateTheme struct {
 func (m *TLAccountCreateTheme) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountCreateTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountCreateTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createTheme, int(layer)); clazzId {
+	case 0x652e4400:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Slug)
+		size += iface.CalcStringSize(m.Title)
+		if m.Document != nil {
+			size += iface.CalcObjectSize(m.Document, layer)
+		}
+
+		if m.Settings != nil {
+			size += iface.CalcObjectListSize(m.Settings, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountCreateTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createTheme, int(layer)); clazzId {
+	case 0x652e4400:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_createTheme, layer)
+	}
 }
 
 // Encode <--
@@ -5841,6 +9188,59 @@ type TLAccountUpdateTheme struct {
 func (m *TLAccountUpdateTheme) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateTheme, int(layer)); clazzId {
+	case 0x2bf40ccc:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Format)
+		size += iface.CalcObjectSize(m.Theme, layer)
+		if m.Slug != nil {
+			size += iface.CalcStringSize(*m.Slug)
+		}
+
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.Document != nil {
+			size += iface.CalcObjectSize(m.Document, layer)
+		}
+
+		if m.Settings != nil {
+			size += iface.CalcObjectListSize(m.Settings, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateTheme, int(layer)); clazzId {
+	case 0x2bf40ccc:
+		if err := iface.ValidateRequiredString("format", m.Format); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateTheme, layer)
+	}
 }
 
 // Encode <--
@@ -5993,6 +9393,43 @@ func (m *TLAccountSaveTheme) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSaveTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveTheme, int(layer)); clazzId {
+	case 0xf257106c:
+		size := 4
+		size += iface.CalcObjectSize(m.Theme, layer)
+		size += iface.CalcObjectSize(m.Unsave, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveTheme, int(layer)); clazzId {
+	case 0xf257106c:
+		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveTheme, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSaveTheme) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveTheme, int(layer)); clazzId {
@@ -6054,6 +9491,61 @@ type TLAccountInstallTheme struct {
 func (m *TLAccountInstallTheme) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountInstallTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountInstallTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installTheme, int(layer)); clazzId {
+	case 0xc727bb3b:
+		size := 4
+		size += 4
+		if m.Theme != nil {
+			size += iface.CalcObjectSize(m.Theme, layer)
+		}
+
+		if m.Format != nil {
+			size += iface.CalcStringSize(*m.Format)
+		}
+
+		if m.BaseTheme != nil {
+			size += iface.CalcObjectSize(m.BaseTheme, layer)
+		}
+
+		return size
+	case 0x7ae43737:
+		size := 4
+		size += 4
+		if m.Format != nil {
+			size += iface.CalcStringSize(*m.Format)
+		}
+
+		if m.Theme != nil {
+			size += iface.CalcObjectSize(m.Theme, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountInstallTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installTheme, int(layer)); clazzId {
+	case 0xc727bb3b:
+
+		return nil
+	case 0x7ae43737:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_installTheme, layer)
+	}
 }
 
 // Encode <--
@@ -6227,6 +9719,43 @@ func (m *TLAccountGetTheme) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTheme, int(layer)); clazzId {
+	case 0x3a5869ec:
+		size := 4
+		size += iface.CalcStringSize(m.Format)
+		size += iface.CalcObjectSize(m.Theme, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTheme, int(layer)); clazzId {
+	case 0x3a5869ec:
+		if err := iface.ValidateRequiredString("format", m.Format); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getTheme, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetTheme) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTheme, int(layer)); clazzId {
@@ -6284,6 +9813,39 @@ func (m *TLAccountGetThemes) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetThemes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetThemes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getThemes, int(layer)); clazzId {
+	case 0x7206e458:
+		size := 4
+		size += iface.CalcStringSize(m.Format)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetThemes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getThemes, int(layer)); clazzId {
+	case 0x7206e458:
+		if err := iface.ValidateRequiredString("format", m.Format); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getThemes, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetThemes) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getThemes, int(layer)); clazzId {
@@ -6334,6 +9896,35 @@ type TLAccountSetContentSettings struct {
 func (m *TLAccountSetContentSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetContentSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetContentSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setContentSettings, int(layer)); clazzId {
+	case 0xb574b16b:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetContentSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setContentSettings, int(layer)); clazzId {
+	case 0xb574b16b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setContentSettings, layer)
+	}
 }
 
 // Encode <--
@@ -6399,6 +9990,34 @@ func (m *TLAccountGetContentSettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetContentSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetContentSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContentSettings, int(layer)); clazzId {
+	case 0x8b9b4dae:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetContentSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContentSettings, int(layer)); clazzId {
+	case 0x8b9b4dae:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getContentSettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetContentSettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getContentSettings, int(layer)); clazzId {
@@ -6438,6 +10057,38 @@ type TLAccountGetMultiWallPapers struct {
 func (m *TLAccountGetMultiWallPapers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetMultiWallPapers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetMultiWallPapers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getMultiWallPapers, int(layer)); clazzId {
+	case 0x65ad71dc:
+		size := 4
+		size += iface.CalcObjectListSize(m.Wallpapers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetMultiWallPapers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getMultiWallPapers, int(layer)); clazzId {
+	case 0x65ad71dc:
+		if err := iface.ValidateRequiredSlice("wallpapers", m.Wallpapers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getMultiWallPapers, layer)
+	}
 }
 
 // Encode <--
@@ -6504,6 +10155,34 @@ func (m *TLAccountGetGlobalPrivacySettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetGlobalPrivacySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getGlobalPrivacySettings, int(layer)); clazzId {
+	case 0xeb2b4cf6:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetGlobalPrivacySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getGlobalPrivacySettings, int(layer)); clazzId {
+	case 0xeb2b4cf6:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getGlobalPrivacySettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetGlobalPrivacySettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getGlobalPrivacySettings, int(layer)); clazzId {
@@ -6543,6 +10222,38 @@ type TLAccountSetGlobalPrivacySettings struct {
 func (m *TLAccountSetGlobalPrivacySettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetGlobalPrivacySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setGlobalPrivacySettings, int(layer)); clazzId {
+	case 0x1edaaac2:
+		size := 4
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetGlobalPrivacySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setGlobalPrivacySettings, int(layer)); clazzId {
+	case 0x1edaaac2:
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setGlobalPrivacySettings, layer)
+	}
 }
 
 // Encode <--
@@ -6597,6 +10308,53 @@ type TLAccountReportProfilePhoto struct {
 func (m *TLAccountReportProfilePhoto) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountReportProfilePhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountReportProfilePhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportProfilePhoto, int(layer)); clazzId {
+	case 0xfa8cc6f5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.PhotoId, layer)
+		size += iface.CalcObjectSize(m.Reason, layer)
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountReportProfilePhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportProfilePhoto, int(layer)); clazzId {
+	case 0xfa8cc6f5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("photo_id", m.PhotoId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_reportProfilePhoto, layer)
+	}
 }
 
 // Encode <--
@@ -6673,6 +10431,34 @@ func (m *TLAccountResetPassword) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountResetPassword) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResetPassword) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetPassword, int(layer)); clazzId {
+	case 0x9308ce1b:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResetPassword) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetPassword, int(layer)); clazzId {
+	case 0x9308ce1b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resetPassword, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountResetPassword) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resetPassword, int(layer)); clazzId {
@@ -6711,6 +10497,34 @@ type TLAccountDeclinePasswordReset struct {
 func (m *TLAccountDeclinePasswordReset) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountDeclinePasswordReset) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeclinePasswordReset) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_declinePasswordReset, int(layer)); clazzId {
+	case 0x4c9409f6:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeclinePasswordReset) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_declinePasswordReset, int(layer)); clazzId {
+	case 0x4c9409f6:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_declinePasswordReset, layer)
+	}
 }
 
 // Encode <--
@@ -6752,6 +10566,35 @@ type TLAccountGetChatThemes struct {
 func (m *TLAccountGetChatThemes) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetChatThemes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetChatThemes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChatThemes, int(layer)); clazzId {
+	case 0xd638de89:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetChatThemes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChatThemes, int(layer)); clazzId {
+	case 0xd638de89:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getChatThemes, layer)
+	}
 }
 
 // Encode <--
@@ -6799,6 +10642,35 @@ type TLAccountSetAuthorizationTTL struct {
 func (m *TLAccountSetAuthorizationTTL) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetAuthorizationTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetAuthorizationTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setAuthorizationTTL, int(layer)); clazzId {
+	case 0xbf899aa0:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetAuthorizationTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setAuthorizationTTL, int(layer)); clazzId {
+	case 0xbf899aa0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setAuthorizationTTL, layer)
+	}
 }
 
 // Encode <--
@@ -6849,6 +10721,43 @@ type TLAccountChangeAuthorizationSettings struct {
 func (m *TLAccountChangeAuthorizationSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountChangeAuthorizationSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountChangeAuthorizationSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_changeAuthorizationSettings, int(layer)); clazzId {
+	case 0x40f48462:
+		size := 4
+		size += 4
+		size += 8
+		if m.EncryptedRequestsDisabled != nil {
+			size += iface.CalcObjectSize(m.EncryptedRequestsDisabled, layer)
+		}
+
+		if m.CallRequestsDisabled != nil {
+			size += iface.CalcObjectSize(m.CallRequestsDisabled, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountChangeAuthorizationSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_changeAuthorizationSettings, int(layer)); clazzId {
+	case 0x40f48462:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_changeAuthorizationSettings, layer)
+	}
 }
 
 // Encode <--
@@ -6952,6 +10861,35 @@ func (m *TLAccountGetSavedRingtones) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetSavedRingtones) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetSavedRingtones) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedRingtones, int(layer)); clazzId {
+	case 0xe1902288:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetSavedRingtones) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedRingtones, int(layer)); clazzId {
+	case 0xe1902288:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getSavedRingtones, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetSavedRingtones) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedRingtones, int(layer)); clazzId {
@@ -6998,6 +10936,43 @@ type TLAccountSaveRingtone struct {
 func (m *TLAccountSaveRingtone) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSaveRingtone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveRingtone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveRingtone, int(layer)); clazzId {
+	case 0x3dea5b03:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Unsave, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveRingtone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveRingtone, int(layer)); clazzId {
+	case 0x3dea5b03:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveRingtone, layer)
+	}
 }
 
 // Encode <--
@@ -7062,6 +11037,48 @@ func (m *TLAccountUploadRingtone) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUploadRingtone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUploadRingtone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadRingtone, int(layer)); clazzId {
+	case 0x831a83a2:
+		size := 4
+		size += iface.CalcObjectSize(m.File, layer)
+		size += iface.CalcStringSize(m.FileName)
+		size += iface.CalcStringSize(m.MimeType)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUploadRingtone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadRingtone, int(layer)); clazzId {
+	case 0x831a83a2:
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("file_name", m.FileName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mime_type", m.MimeType); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_uploadRingtone, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUploadRingtone) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadRingtone, int(layer)); clazzId {
@@ -7124,6 +11141,38 @@ func (m *TLAccountUpdateEmojiStatus) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateEmojiStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateEmojiStatus, int(layer)); clazzId {
+	case 0xfbd3de6b:
+		size := 4
+		size += iface.CalcObjectSize(m.EmojiStatus, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateEmojiStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateEmojiStatus, int(layer)); clazzId {
+	case 0xfbd3de6b:
+		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateEmojiStatus, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateEmojiStatus, int(layer)); clazzId {
@@ -7175,6 +11224,35 @@ func (m *TLAccountGetDefaultEmojiStatuses) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetDefaultEmojiStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetDefaultEmojiStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultEmojiStatuses, int(layer)); clazzId {
+	case 0xd6753386:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetDefaultEmojiStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultEmojiStatuses, int(layer)); clazzId {
+	case 0xd6753386:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getDefaultEmojiStatuses, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetDefaultEmojiStatuses) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultEmojiStatuses, int(layer)); clazzId {
@@ -7220,6 +11298,35 @@ type TLAccountGetRecentEmojiStatuses struct {
 func (m *TLAccountGetRecentEmojiStatuses) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetRecentEmojiStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getRecentEmojiStatuses, int(layer)); clazzId {
+	case 0xf578105:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetRecentEmojiStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getRecentEmojiStatuses, int(layer)); clazzId {
+	case 0xf578105:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getRecentEmojiStatuses, layer)
+	}
 }
 
 // Encode <--
@@ -7268,6 +11375,34 @@ func (m *TLAccountClearRecentEmojiStatuses) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountClearRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountClearRecentEmojiStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_clearRecentEmojiStatuses, int(layer)); clazzId {
+	case 0x18201aae:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountClearRecentEmojiStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_clearRecentEmojiStatuses, int(layer)); clazzId {
+	case 0x18201aae:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_clearRecentEmojiStatuses, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountClearRecentEmojiStatuses) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_clearRecentEmojiStatuses, int(layer)); clazzId {
@@ -7307,6 +11442,38 @@ type TLAccountReorderUsernames struct {
 func (m *TLAccountReorderUsernames) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountReorderUsernames) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountReorderUsernames) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reorderUsernames, int(layer)); clazzId {
+	case 0xef500eab:
+		size := 4
+		size += iface.CalcStringListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountReorderUsernames) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reorderUsernames, int(layer)); clazzId {
+	case 0xef500eab:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_reorderUsernames, layer)
+	}
 }
 
 // Encode <--
@@ -7353,6 +11520,43 @@ type TLAccountToggleUsername struct {
 func (m *TLAccountToggleUsername) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountToggleUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountToggleUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleUsername, int(layer)); clazzId {
+	case 0x58d6b376:
+		size := 4
+		size += iface.CalcStringSize(m.Username)
+		size += iface.CalcObjectSize(m.Active, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountToggleUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleUsername, int(layer)); clazzId {
+	case 0x58d6b376:
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_toggleUsername, layer)
+	}
 }
 
 // Encode <--
@@ -7411,6 +11615,35 @@ func (m *TLAccountGetDefaultProfilePhotoEmojis) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetDefaultProfilePhotoEmojis) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetDefaultProfilePhotoEmojis) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultProfilePhotoEmojis, int(layer)); clazzId {
+	case 0xe2750328:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetDefaultProfilePhotoEmojis) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultProfilePhotoEmojis, int(layer)); clazzId {
+	case 0xe2750328:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getDefaultProfilePhotoEmojis, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetDefaultProfilePhotoEmojis) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultProfilePhotoEmojis, int(layer)); clazzId {
@@ -7456,6 +11689,35 @@ type TLAccountGetDefaultGroupPhotoEmojis struct {
 func (m *TLAccountGetDefaultGroupPhotoEmojis) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetDefaultGroupPhotoEmojis) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetDefaultGroupPhotoEmojis) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultGroupPhotoEmojis, int(layer)); clazzId {
+	case 0x915860ae:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetDefaultGroupPhotoEmojis) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultGroupPhotoEmojis, int(layer)); clazzId {
+	case 0x915860ae:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getDefaultGroupPhotoEmojis, layer)
+	}
 }
 
 // Encode <--
@@ -7504,6 +11766,34 @@ func (m *TLAccountGetAutoSaveSettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetAutoSaveSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetAutoSaveSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAutoSaveSettings, int(layer)); clazzId {
+	case 0xadcbbcda:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetAutoSaveSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAutoSaveSettings, int(layer)); clazzId {
+	case 0xadcbbcda:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getAutoSaveSettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetAutoSaveSettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getAutoSaveSettings, int(layer)); clazzId {
@@ -7547,6 +11837,44 @@ type TLAccountSaveAutoSaveSettings struct {
 func (m *TLAccountSaveAutoSaveSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSaveAutoSaveSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveAutoSaveSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoSaveSettings, int(layer)); clazzId {
+	case 0xd69b8361:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveAutoSaveSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoSaveSettings, int(layer)); clazzId {
+	case 0xd69b8361:
+
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveAutoSaveSettings, layer)
+	}
 }
 
 // Encode <--
@@ -7649,6 +11977,34 @@ func (m *TLAccountDeleteAutoSaveExceptions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountDeleteAutoSaveExceptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeleteAutoSaveExceptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAutoSaveExceptions, int(layer)); clazzId {
+	case 0x53bc0020:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeleteAutoSaveExceptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAutoSaveExceptions, int(layer)); clazzId {
+	case 0x53bc0020:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_deleteAutoSaveExceptions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountDeleteAutoSaveExceptions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteAutoSaveExceptions, int(layer)); clazzId {
@@ -7688,6 +12044,38 @@ type TLAccountInvalidateSignInCodes struct {
 func (m *TLAccountInvalidateSignInCodes) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountInvalidateSignInCodes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountInvalidateSignInCodes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_invalidateSignInCodes, int(layer)); clazzId {
+	case 0xca8ae8ba:
+		size := 4
+		size += iface.CalcStringListSize(m.Codes)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountInvalidateSignInCodes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_invalidateSignInCodes, int(layer)); clazzId {
+	case 0xca8ae8ba:
+		if err := iface.ValidateRequiredSlice("codes", m.Codes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_invalidateSignInCodes, layer)
+	}
 }
 
 // Encode <--
@@ -7734,6 +12122,38 @@ type TLAccountUpdateColor struct {
 func (m *TLAccountUpdateColor) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateColor) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateColor) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateColor, int(layer)); clazzId {
+	case 0x684d214e:
+		size := 4
+		size += 4
+		if m.Color != nil {
+			size += iface.CalcObjectSize(m.Color, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateColor) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateColor, int(layer)); clazzId {
+	case 0x684d214e:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateColor, layer)
+	}
 }
 
 // Encode <--
@@ -7815,6 +12235,35 @@ func (m *TLAccountGetDefaultBackgroundEmojis) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetDefaultBackgroundEmojis) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetDefaultBackgroundEmojis) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultBackgroundEmojis, int(layer)); clazzId {
+	case 0xa60ab9ce:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetDefaultBackgroundEmojis) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultBackgroundEmojis, int(layer)); clazzId {
+	case 0xa60ab9ce:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getDefaultBackgroundEmojis, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetDefaultBackgroundEmojis) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getDefaultBackgroundEmojis, int(layer)); clazzId {
@@ -7860,6 +12309,35 @@ type TLAccountGetChannelDefaultEmojiStatuses struct {
 func (m *TLAccountGetChannelDefaultEmojiStatuses) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetChannelDefaultEmojiStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetChannelDefaultEmojiStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChannelDefaultEmojiStatuses, int(layer)); clazzId {
+	case 0x7727a7d5:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetChannelDefaultEmojiStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChannelDefaultEmojiStatuses, int(layer)); clazzId {
+	case 0x7727a7d5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getChannelDefaultEmojiStatuses, layer)
+	}
 }
 
 // Encode <--
@@ -7909,6 +12387,35 @@ func (m *TLAccountGetChannelRestrictedStatusEmojis) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetChannelRestrictedStatusEmojis) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetChannelRestrictedStatusEmojis) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChannelRestrictedStatusEmojis, int(layer)); clazzId {
+	case 0x35a9e0d5:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetChannelRestrictedStatusEmojis) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChannelRestrictedStatusEmojis, int(layer)); clazzId {
+	case 0x35a9e0d5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getChannelRestrictedStatusEmojis, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetChannelRestrictedStatusEmojis) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getChannelRestrictedStatusEmojis, int(layer)); clazzId {
@@ -7954,6 +12461,38 @@ type TLAccountUpdateBusinessWorkHours struct {
 func (m *TLAccountUpdateBusinessWorkHours) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateBusinessWorkHours) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBusinessWorkHours) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessWorkHours, int(layer)); clazzId {
+	case 0x4b00e066:
+		size := 4
+		size += 4
+		if m.BusinessWorkHours != nil {
+			size += iface.CalcObjectSize(m.BusinessWorkHours, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBusinessWorkHours) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessWorkHours, int(layer)); clazzId {
+	case 0x4b00e066:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBusinessWorkHours, layer)
+	}
 }
 
 // Encode <--
@@ -8028,6 +12567,42 @@ type TLAccountUpdateBusinessLocation struct {
 func (m *TLAccountUpdateBusinessLocation) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateBusinessLocation) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBusinessLocation) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessLocation, int(layer)); clazzId {
+	case 0x9e6b131a:
+		size := 4
+		size += 4
+		if m.GeoPoint != nil {
+			size += iface.CalcObjectSize(m.GeoPoint, layer)
+		}
+
+		if m.Address != nil {
+			size += iface.CalcStringSize(*m.Address)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBusinessLocation) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessLocation, int(layer)); clazzId {
+	case 0x9e6b131a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBusinessLocation, layer)
+	}
 }
 
 // Encode <--
@@ -8117,6 +12692,38 @@ func (m *TLAccountUpdateBusinessGreetingMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountUpdateBusinessGreetingMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBusinessGreetingMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessGreetingMessage, int(layer)); clazzId {
+	case 0x66cdafc4:
+		size := 4
+		size += 4
+		if m.Message != nil {
+			size += iface.CalcObjectSize(m.Message, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBusinessGreetingMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessGreetingMessage, int(layer)); clazzId {
+	case 0x66cdafc4:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBusinessGreetingMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountUpdateBusinessGreetingMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessGreetingMessage, int(layer)); clazzId {
@@ -8188,6 +12795,38 @@ type TLAccountUpdateBusinessAwayMessage struct {
 func (m *TLAccountUpdateBusinessAwayMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateBusinessAwayMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBusinessAwayMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessAwayMessage, int(layer)); clazzId {
+	case 0xa26a7fa5:
+		size := 4
+		size += 4
+		if m.Message != nil {
+			size += iface.CalcObjectSize(m.Message, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBusinessAwayMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessAwayMessage, int(layer)); clazzId {
+	case 0xa26a7fa5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBusinessAwayMessage, layer)
+	}
 }
 
 // Encode <--
@@ -8264,6 +12903,49 @@ type TLAccountUpdateConnectedBot struct {
 func (m *TLAccountUpdateConnectedBot) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateConnectedBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateConnectedBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateConnectedBot, int(layer)); clazzId {
+	case 0x66a08c7e:
+		size := 4
+		size += 4
+		if m.Rights != nil {
+			size += iface.CalcObjectSize(m.Rights, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Recipients, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateConnectedBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateConnectedBot, int(layer)); clazzId {
+	case 0x66a08c7e:
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("recipients", m.Recipients); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateConnectedBot, layer)
+	}
 }
 
 // Encode <--
@@ -8363,6 +13045,34 @@ func (m *TLAccountGetConnectedBots) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetConnectedBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetConnectedBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getConnectedBots, int(layer)); clazzId {
+	case 0x4ea4c80f:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetConnectedBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getConnectedBots, int(layer)); clazzId {
+	case 0x4ea4c80f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getConnectedBots, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetConnectedBots) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getConnectedBots, int(layer)); clazzId {
@@ -8402,6 +13112,38 @@ type TLAccountGetBotBusinessConnection struct {
 func (m *TLAccountGetBotBusinessConnection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetBotBusinessConnection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetBotBusinessConnection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getBotBusinessConnection, int(layer)); clazzId {
+	case 0x76a86270:
+		size := 4
+		size += iface.CalcStringSize(m.ConnectionId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetBotBusinessConnection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getBotBusinessConnection, int(layer)); clazzId {
+	case 0x76a86270:
+		if err := iface.ValidateRequiredString("connection_id", m.ConnectionId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getBotBusinessConnection, layer)
+	}
 }
 
 // Encode <--
@@ -8449,6 +13191,38 @@ type TLAccountUpdateBusinessIntro struct {
 func (m *TLAccountUpdateBusinessIntro) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateBusinessIntro) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBusinessIntro) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessIntro, int(layer)); clazzId {
+	case 0xa614d034:
+		size := 4
+		size += 4
+		if m.Intro != nil {
+			size += iface.CalcObjectSize(m.Intro, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBusinessIntro) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBusinessIntro, int(layer)); clazzId {
+	case 0xa614d034:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBusinessIntro, layer)
+	}
 }
 
 // Encode <--
@@ -8525,6 +13299,43 @@ func (m *TLAccountToggleConnectedBotPaused) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountToggleConnectedBotPaused) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountToggleConnectedBotPaused) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleConnectedBotPaused, int(layer)); clazzId {
+	case 0x646e1097:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Paused, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountToggleConnectedBotPaused) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleConnectedBotPaused, int(layer)); clazzId {
+	case 0x646e1097:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("paused", m.Paused); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_toggleConnectedBotPaused, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountToggleConnectedBotPaused) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleConnectedBotPaused, int(layer)); clazzId {
@@ -8585,6 +13396,38 @@ func (m *TLAccountDisablePeerConnectedBot) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountDisablePeerConnectedBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDisablePeerConnectedBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_disablePeerConnectedBot, int(layer)); clazzId {
+	case 0x5e437ed9:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDisablePeerConnectedBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_disablePeerConnectedBot, int(layer)); clazzId {
+	case 0x5e437ed9:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_disablePeerConnectedBot, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountDisablePeerConnectedBot) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_disablePeerConnectedBot, int(layer)); clazzId {
@@ -8634,6 +13477,38 @@ type TLAccountUpdateBirthday struct {
 func (m *TLAccountUpdateBirthday) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateBirthday) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateBirthday) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBirthday, int(layer)); clazzId {
+	case 0xcc6e0c11:
+		size := 4
+		size += 4
+		if m.Birthday != nil {
+			size += iface.CalcObjectSize(m.Birthday, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateBirthday) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateBirthday, int(layer)); clazzId {
+	case 0xcc6e0c11:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateBirthday, layer)
+	}
 }
 
 // Encode <--
@@ -8709,6 +13584,38 @@ func (m *TLAccountCreateBusinessChatLink) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountCreateBusinessChatLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountCreateBusinessChatLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createBusinessChatLink, int(layer)); clazzId {
+	case 0x8851e68e:
+		size := 4
+		size += iface.CalcObjectSize(m.Link, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountCreateBusinessChatLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createBusinessChatLink, int(layer)); clazzId {
+	case 0x8851e68e:
+		if err := iface.ValidateRequiredObject("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_createBusinessChatLink, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountCreateBusinessChatLink) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createBusinessChatLink, int(layer)); clazzId {
@@ -8759,6 +13666,43 @@ type TLAccountEditBusinessChatLink struct {
 func (m *TLAccountEditBusinessChatLink) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountEditBusinessChatLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountEditBusinessChatLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_editBusinessChatLink, int(layer)); clazzId {
+	case 0x8c3410af:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+		size += iface.CalcObjectSize(m.Link, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountEditBusinessChatLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_editBusinessChatLink, int(layer)); clazzId {
+	case 0x8c3410af:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_editBusinessChatLink, layer)
+	}
 }
 
 // Encode <--
@@ -8817,6 +13761,38 @@ func (m *TLAccountDeleteBusinessChatLink) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountDeleteBusinessChatLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeleteBusinessChatLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteBusinessChatLink, int(layer)); clazzId {
+	case 0x60073674:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeleteBusinessChatLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteBusinessChatLink, int(layer)); clazzId {
+	case 0x60073674:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_deleteBusinessChatLink, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountDeleteBusinessChatLink) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteBusinessChatLink, int(layer)); clazzId {
@@ -8863,6 +13839,34 @@ func (m *TLAccountGetBusinessChatLinks) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetBusinessChatLinks) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetBusinessChatLinks) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getBusinessChatLinks, int(layer)); clazzId {
+	case 0x6f70dde1:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetBusinessChatLinks) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getBusinessChatLinks, int(layer)); clazzId {
+	case 0x6f70dde1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getBusinessChatLinks, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetBusinessChatLinks) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getBusinessChatLinks, int(layer)); clazzId {
@@ -8902,6 +13906,38 @@ type TLAccountResolveBusinessChatLink struct {
 func (m *TLAccountResolveBusinessChatLink) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountResolveBusinessChatLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountResolveBusinessChatLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resolveBusinessChatLink, int(layer)); clazzId {
+	case 0x5492e5ee:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountResolveBusinessChatLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_resolveBusinessChatLink, int(layer)); clazzId {
+	case 0x5492e5ee:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_resolveBusinessChatLink, layer)
+	}
 }
 
 // Encode <--
@@ -8949,6 +13985,38 @@ type TLAccountUpdatePersonalChannel struct {
 func (m *TLAccountUpdatePersonalChannel) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdatePersonalChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdatePersonalChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePersonalChannel, int(layer)); clazzId {
+	case 0xd94305e0:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdatePersonalChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePersonalChannel, int(layer)); clazzId {
+	case 0xd94305e0:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updatePersonalChannel, layer)
+	}
 }
 
 // Encode <--
@@ -9002,6 +14070,38 @@ func (m *TLAccountToggleSponsoredMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountToggleSponsoredMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountToggleSponsoredMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleSponsoredMessages, int(layer)); clazzId {
+	case 0xb9d9a38d:
+		size := 4
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountToggleSponsoredMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleSponsoredMessages, int(layer)); clazzId {
+	case 0xb9d9a38d:
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_toggleSponsoredMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountToggleSponsoredMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleSponsoredMessages, int(layer)); clazzId {
@@ -9052,6 +14152,34 @@ func (m *TLAccountGetReactionsNotifySettings) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetReactionsNotifySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getReactionsNotifySettings, int(layer)); clazzId {
+	case 0x6dd654c:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetReactionsNotifySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getReactionsNotifySettings, int(layer)); clazzId {
+	case 0x6dd654c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getReactionsNotifySettings, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetReactionsNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getReactionsNotifySettings, int(layer)); clazzId {
@@ -9091,6 +14219,38 @@ type TLAccountSetReactionsNotifySettings struct {
 func (m *TLAccountSetReactionsNotifySettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetReactionsNotifySettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setReactionsNotifySettings, int(layer)); clazzId {
+	case 0x316ce548:
+		size := 4
+		size += iface.CalcObjectSize(m.Settings, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetReactionsNotifySettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setReactionsNotifySettings, int(layer)); clazzId {
+	case 0x316ce548:
+		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setReactionsNotifySettings, layer)
+	}
 }
 
 // Encode <--
@@ -9144,6 +14304,35 @@ func (m *TLAccountGetCollectibleEmojiStatuses) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetCollectibleEmojiStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetCollectibleEmojiStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getCollectibleEmojiStatuses, int(layer)); clazzId {
+	case 0x2e7b4543:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetCollectibleEmojiStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getCollectibleEmojiStatuses, int(layer)); clazzId {
+	case 0x2e7b4543:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getCollectibleEmojiStatuses, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetCollectibleEmojiStatuses) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getCollectibleEmojiStatuses, int(layer)); clazzId {
@@ -9190,6 +14379,44 @@ type TLAccountGetPaidMessagesRevenue struct {
 func (m *TLAccountGetPaidMessagesRevenue) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetPaidMessagesRevenue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetPaidMessagesRevenue) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPaidMessagesRevenue, int(layer)); clazzId {
+	case 0x19ba4a67:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetPaidMessagesRevenue) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPaidMessagesRevenue, int(layer)); clazzId {
+	case 0x19ba4a67:
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getPaidMessagesRevenue, layer)
+	}
 }
 
 // Encode <--
@@ -9276,6 +14503,44 @@ type TLAccountToggleNoPaidMessagesException struct {
 func (m *TLAccountToggleNoPaidMessagesException) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountToggleNoPaidMessagesException) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountToggleNoPaidMessagesException) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleNoPaidMessagesException, int(layer)); clazzId {
+	case 0xfe2eda76:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountToggleNoPaidMessagesException) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleNoPaidMessagesException, int(layer)); clazzId {
+	case 0xfe2eda76:
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_toggleNoPaidMessagesException, layer)
+	}
 }
 
 // Encode <--
@@ -9373,6 +14638,38 @@ func (m *TLAccountSetMainProfileTab) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountSetMainProfileTab) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSetMainProfileTab) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setMainProfileTab, int(layer)); clazzId {
+	case 0x5dee78b0:
+		size := 4
+		size += iface.CalcObjectSize(m.Tab, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSetMainProfileTab) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setMainProfileTab, int(layer)); clazzId {
+	case 0x5dee78b0:
+		if err := iface.ValidateRequiredObject("tab", m.Tab); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_setMainProfileTab, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setMainProfileTab, int(layer)); clazzId {
@@ -9424,6 +14721,42 @@ type TLAccountSaveMusic struct {
 func (m *TLAccountSaveMusic) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountSaveMusic) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountSaveMusic) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveMusic, int(layer)); clazzId {
+	case 0xb26732a9:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		if m.AfterId != nil {
+			size += iface.CalcObjectSize(m.AfterId, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountSaveMusic) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveMusic, int(layer)); clazzId {
+	case 0xb26732a9:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_saveMusic, layer)
+	}
 }
 
 // Encode <--
@@ -9516,6 +14849,35 @@ func (m *TLAccountGetSavedMusicIds) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetSavedMusicIds) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetSavedMusicIds) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedMusicIds, int(layer)); clazzId {
+	case 0xe09d5faf:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetSavedMusicIds) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedMusicIds, int(layer)); clazzId {
+	case 0xe09d5faf:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getSavedMusicIds, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetSavedMusicIds) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSavedMusicIds, int(layer)); clazzId {
@@ -9563,6 +14925,40 @@ type TLAccountGetUniqueGiftChatThemes struct {
 func (m *TLAccountGetUniqueGiftChatThemes) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountGetUniqueGiftChatThemes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetUniqueGiftChatThemes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getUniqueGiftChatThemes, int(layer)); clazzId {
+	case 0xe42ce9c9:
+		size := 4
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetUniqueGiftChatThemes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getUniqueGiftChatThemes, int(layer)); clazzId {
+	case 0xe42ce9c9:
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getUniqueGiftChatThemes, layer)
+	}
 }
 
 // Encode <--
@@ -9621,6 +15017,34 @@ func (m *TLAccountInitPasskeyRegistration) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountInitPasskeyRegistration) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountInitPasskeyRegistration) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_initPasskeyRegistration, int(layer)); clazzId {
+	case 0x429547e8:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountInitPasskeyRegistration) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_initPasskeyRegistration, int(layer)); clazzId {
+	case 0x429547e8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_initPasskeyRegistration, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountInitPasskeyRegistration) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_initPasskeyRegistration, int(layer)); clazzId {
@@ -9660,6 +15084,38 @@ type TLAccountRegisterPasskey struct {
 func (m *TLAccountRegisterPasskey) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountRegisterPasskey) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountRegisterPasskey) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_registerPasskey, int(layer)); clazzId {
+	case 0x55b41fd6:
+		size := 4
+		size += iface.CalcObjectSize(m.Credential, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountRegisterPasskey) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_registerPasskey, int(layer)); clazzId {
+	case 0x55b41fd6:
+		if err := iface.ValidateRequiredObject("credential", m.Credential); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_registerPasskey, layer)
+	}
 }
 
 // Encode <--
@@ -9712,6 +15168,34 @@ func (m *TLAccountGetPasskeys) String() string {
 	return wrapper.String()
 }
 
+func (m *TLAccountGetPasskeys) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountGetPasskeys) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasskeys, int(layer)); clazzId {
+	case 0xea1f0c52:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountGetPasskeys) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasskeys, int(layer)); clazzId {
+	case 0xea1f0c52:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_getPasskeys, layer)
+	}
+}
+
 // Encode <--
 func (m *TLAccountGetPasskeys) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasskeys, int(layer)); clazzId {
@@ -9751,6 +15235,38 @@ type TLAccountDeletePasskey struct {
 func (m *TLAccountDeletePasskey) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountDeletePasskey) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountDeletePasskey) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deletePasskey, int(layer)); clazzId {
+	case 0xf5b5563f:
+		size := 4
+		size += iface.CalcStringSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountDeletePasskey) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deletePasskey, int(layer)); clazzId {
+	case 0xf5b5563f:
+		if err := iface.ValidateRequiredString("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_deletePasskey, layer)
+	}
 }
 
 // Encode <--
@@ -9798,6 +15314,38 @@ type TLUsersGetUsers struct {
 func (m *TLUsersGetUsers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUsersGetUsers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetUsers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getUsers, int(layer)); clazzId {
+	case 0xd91a548:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetUsers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getUsers, int(layer)); clazzId {
+	case 0xd91a548:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getUsers, layer)
+	}
 }
 
 // Encode <--
@@ -9865,6 +15413,38 @@ func (m *TLUsersGetFullUser) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUsersGetFullUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetFullUser) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getFullUser, int(layer)); clazzId {
+	case 0xb60f5918:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetFullUser) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getFullUser, int(layer)); clazzId {
+	case 0xb60f5918:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getFullUser, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUsersGetFullUser) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getFullUser, int(layer)); clazzId {
@@ -9915,6 +15495,43 @@ type TLUsersSetSecureValueErrors struct {
 func (m *TLUsersSetSecureValueErrors) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUsersSetSecureValueErrors) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersSetSecureValueErrors) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_setSecureValueErrors, int(layer)); clazzId {
+	case 0x90c894b5:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectListSize(m.Errors, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersSetSecureValueErrors) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_setSecureValueErrors, int(layer)); clazzId {
+	case 0x90c894b5:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("errors", m.Errors); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_setSecureValueErrors, layer)
+	}
 }
 
 // Encode <--
@@ -9993,6 +15610,38 @@ func (m *TLUsersGetRequirementsToContact) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUsersGetRequirementsToContact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetRequirementsToContact) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getRequirementsToContact, int(layer)); clazzId {
+	case 0xd89a83a3:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetRequirementsToContact) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getRequirementsToContact, int(layer)); clazzId {
+	case 0xd89a83a3:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getRequirementsToContact, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUsersGetRequirementsToContact) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getRequirementsToContact, int(layer)); clazzId {
@@ -10061,6 +15710,41 @@ func (m *TLUsersGetSavedMusic) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUsersGetSavedMusic) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetSavedMusic) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusic, int(layer)); clazzId {
+	case 0x788d7fe3:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetSavedMusic) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusic, int(layer)); clazzId {
+	case 0x788d7fe3:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getSavedMusic, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUsersGetSavedMusic) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusic, int(layer)); clazzId {
@@ -10127,6 +15811,43 @@ type TLUsersGetSavedMusicByID struct {
 func (m *TLUsersGetSavedMusicByID) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUsersGetSavedMusicByID) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetSavedMusicByID) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusicByID, int(layer)); clazzId {
+	case 0x7573a4e9:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectListSize(m.Documents, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetSavedMusicByID) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusicByID, int(layer)); clazzId {
+	case 0x7573a4e9:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("documents", m.Documents); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getSavedMusicByID, layer)
+	}
 }
 
 // Encode <--
@@ -10206,6 +15927,43 @@ func (m *TLUsersSuggestBirthday) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUsersSuggestBirthday) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersSuggestBirthday) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_suggestBirthday, int(layer)); clazzId {
+	case 0xfc533372:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Birthday, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersSuggestBirthday) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_suggestBirthday, int(layer)); clazzId {
+	case 0xfc533372:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("birthday", m.Birthday); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_suggestBirthday, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUsersSuggestBirthday) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_suggestBirthday, int(layer)); clazzId {
@@ -10266,6 +16024,35 @@ func (m *TLContactsGetContactIDs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsGetContactIDs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetContactIDs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getContactIDs, int(layer)); clazzId {
+	case 0x7adc669d:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetContactIDs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getContactIDs, int(layer)); clazzId {
+	case 0x7adc669d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getContactIDs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsGetContactIDs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getContactIDs, int(layer)); clazzId {
@@ -10312,6 +16099,34 @@ func (m *TLContactsGetStatuses) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsGetStatuses) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetStatuses) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getStatuses, int(layer)); clazzId {
+	case 0xc4a353ee:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetStatuses) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getStatuses, int(layer)); clazzId {
+	case 0xc4a353ee:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getStatuses, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsGetStatuses) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getStatuses, int(layer)); clazzId {
@@ -10351,6 +16166,35 @@ type TLContactsGetContacts struct {
 func (m *TLContactsGetContacts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsGetContacts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetContacts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getContacts, int(layer)); clazzId {
+	case 0x5dd69e12:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetContacts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getContacts, int(layer)); clazzId {
+	case 0x5dd69e12:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getContacts, layer)
+	}
 }
 
 // Encode <--
@@ -10398,6 +16242,38 @@ type TLContactsImportContacts struct {
 func (m *TLContactsImportContacts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsImportContacts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsImportContacts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_importContacts, int(layer)); clazzId {
+	case 0x2c800be5:
+		size := 4
+		size += iface.CalcObjectListSize(m.Contacts, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsImportContacts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_importContacts, int(layer)); clazzId {
+	case 0x2c800be5:
+		if err := iface.ValidateRequiredSlice("contacts", m.Contacts); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_importContacts, layer)
+	}
 }
 
 // Encode <--
@@ -10465,6 +16341,38 @@ func (m *TLContactsDeleteContacts) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsDeleteContacts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsDeleteContacts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteContacts, int(layer)); clazzId {
+	case 0x96a0e00:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsDeleteContacts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteContacts, int(layer)); clazzId {
+	case 0x96a0e00:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_deleteContacts, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsDeleteContacts) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteContacts, int(layer)); clazzId {
@@ -10530,6 +16438,38 @@ func (m *TLContactsDeleteByPhones) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsDeleteByPhones) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsDeleteByPhones) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteByPhones, int(layer)); clazzId {
+	case 0x1013fd9e:
+		size := 4
+		size += iface.CalcStringListSize(m.Phones)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsDeleteByPhones) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteByPhones, int(layer)); clazzId {
+	case 0x1013fd9e:
+		if err := iface.ValidateRequiredSlice("phones", m.Phones); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_deleteByPhones, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsDeleteByPhones) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteByPhones, int(layer)); clazzId {
@@ -10574,6 +16514,39 @@ type TLContactsBlock struct {
 func (m *TLContactsBlock) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsBlock) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsBlock) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_block, int(layer)); clazzId {
+	case 0x2e2e8734:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsBlock) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_block, int(layer)); clazzId {
+	case 0x2e2e8734:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_block, layer)
+	}
 }
 
 // Encode <--
@@ -10648,6 +16621,39 @@ type TLContactsUnblock struct {
 func (m *TLContactsUnblock) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsUnblock) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsUnblock) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_unblock, int(layer)); clazzId {
+	case 0xb550d328:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsUnblock) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_unblock, int(layer)); clazzId {
+	case 0xb550d328:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_unblock, layer)
+	}
 }
 
 // Encode <--
@@ -10725,6 +16731,37 @@ func (m *TLContactsGetBlocked) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsGetBlocked) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetBlocked) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBlocked, int(layer)); clazzId {
+	case 0x9a868f80:
+		size := 4
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetBlocked) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBlocked, int(layer)); clazzId {
+	case 0x9a868f80:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getBlocked, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsGetBlocked) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBlocked, int(layer)); clazzId {
@@ -10800,6 +16837,39 @@ func (m *TLContactsSearch) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsSearch) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsSearch) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_search, int(layer)); clazzId {
+	case 0x11f812d8:
+		size := 4
+		size += iface.CalcStringSize(m.Q)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsSearch) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_search, int(layer)); clazzId {
+	case 0x11f812d8:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_search, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsSearch) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_search, int(layer)); clazzId {
@@ -10851,6 +16921,42 @@ type TLContactsResolveUsername struct {
 func (m *TLContactsResolveUsername) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsResolveUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsResolveUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resolveUsername, int(layer)); clazzId {
+	case 0x725afbbc:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Username)
+		if m.Referer != nil {
+			size += iface.CalcStringSize(*m.Referer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsResolveUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resolveUsername, int(layer)); clazzId {
+	case 0x725afbbc:
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_resolveUsername, layer)
+	}
 }
 
 // Encode <--
@@ -10938,6 +17044,38 @@ type TLContactsGetTopPeers struct {
 func (m *TLContactsGetTopPeers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsGetTopPeers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetTopPeers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getTopPeers, int(layer)); clazzId {
+	case 0x973478b6:
+		size := 4
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetTopPeers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getTopPeers, int(layer)); clazzId {
+	case 0x973478b6:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getTopPeers, layer)
+	}
 }
 
 // Encode <--
@@ -11068,6 +17206,43 @@ func (m *TLContactsResetTopPeerRating) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsResetTopPeerRating) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsResetTopPeerRating) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetTopPeerRating, int(layer)); clazzId {
+	case 0x1ae373ac:
+		size := 4
+		size += iface.CalcObjectSize(m.Category, layer)
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsResetTopPeerRating) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetTopPeerRating, int(layer)); clazzId {
+	case 0x1ae373ac:
+		if err := iface.ValidateRequiredObject("category", m.Category); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_resetTopPeerRating, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsResetTopPeerRating) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetTopPeerRating, int(layer)); clazzId {
@@ -11127,6 +17302,34 @@ func (m *TLContactsResetSaved) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsResetSaved) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsResetSaved) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetSaved, int(layer)); clazzId {
+	case 0x879537f1:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsResetSaved) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetSaved, int(layer)); clazzId {
+	case 0x879537f1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_resetSaved, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsResetSaved) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetSaved, int(layer)); clazzId {
@@ -11165,6 +17368,34 @@ type TLContactsGetSaved struct {
 func (m *TLContactsGetSaved) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsGetSaved) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetSaved) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getSaved, int(layer)); clazzId {
+	case 0x82f1e39f:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetSaved) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getSaved, int(layer)); clazzId {
+	case 0x82f1e39f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getSaved, layer)
+	}
 }
 
 // Encode <--
@@ -11206,6 +17437,38 @@ type TLContactsToggleTopPeers struct {
 func (m *TLContactsToggleTopPeers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsToggleTopPeers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsToggleTopPeers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_toggleTopPeers, int(layer)); clazzId {
+	case 0x8514bdda:
+		size := 4
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsToggleTopPeers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_toggleTopPeers, int(layer)); clazzId {
+	case 0x8514bdda:
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_toggleTopPeers, layer)
+	}
 }
 
 // Encode <--
@@ -11262,6 +17525,57 @@ type TLContactsAddContact struct {
 func (m *TLContactsAddContact) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsAddContact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsAddContact) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_addContact, int(layer)); clazzId {
+	case 0xd9ba2e54:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcStringSize(m.FirstName)
+		size += iface.CalcStringSize(m.LastName)
+		size += iface.CalcStringSize(m.Phone)
+		if m.Note != nil {
+			size += iface.CalcObjectSize(m.Note, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsAddContact) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_addContact, int(layer)); clazzId {
+	case 0xd9ba2e54:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("first_name", m.FirstName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("last_name", m.LastName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_addContact, layer)
+	}
 }
 
 // Encode <--
@@ -11369,6 +17683,38 @@ func (m *TLContactsAcceptContact) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsAcceptContact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsAcceptContact) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_acceptContact, int(layer)); clazzId {
+	case 0xf831a20f:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsAcceptContact) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_acceptContact, int(layer)); clazzId {
+	case 0xf831a20f:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_acceptContact, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsAcceptContact) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_acceptContact, int(layer)); clazzId {
@@ -11420,6 +17766,42 @@ type TLContactsGetLocated struct {
 func (m *TLContactsGetLocated) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsGetLocated) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetLocated) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getLocated, int(layer)); clazzId {
+	case 0xd348bc44:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.GeoPoint, layer)
+		if m.SelfExpires != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetLocated) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getLocated, int(layer)); clazzId {
+	case 0xd348bc44:
+		if err := iface.ValidateRequiredObject("geo_point", m.GeoPoint); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getLocated, layer)
+	}
 }
 
 // Encode <--
@@ -11513,6 +17895,36 @@ func (m *TLContactsBlockFromReplies) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsBlockFromReplies) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsBlockFromReplies) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_blockFromReplies, int(layer)); clazzId {
+	case 0x29a8962c:
+		size := 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsBlockFromReplies) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_blockFromReplies, int(layer)); clazzId {
+	case 0x29a8962c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_blockFromReplies, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsBlockFromReplies) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_blockFromReplies, int(layer)); clazzId {
@@ -11594,6 +18006,38 @@ func (m *TLContactsResolvePhone) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsResolvePhone) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsResolvePhone) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resolvePhone, int(layer)); clazzId {
+	case 0x8af94344:
+		size := 4
+		size += iface.CalcStringSize(m.Phone)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsResolvePhone) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resolvePhone, int(layer)); clazzId {
+	case 0x8af94344:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_resolvePhone, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsResolvePhone) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resolvePhone, int(layer)); clazzId {
@@ -11640,6 +18084,34 @@ func (m *TLContactsExportContactToken) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsExportContactToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsExportContactToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_exportContactToken, int(layer)); clazzId {
+	case 0xf8654027:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsExportContactToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_exportContactToken, int(layer)); clazzId {
+	case 0xf8654027:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_exportContactToken, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsExportContactToken) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_exportContactToken, int(layer)); clazzId {
@@ -11679,6 +18151,38 @@ type TLContactsImportContactToken struct {
 func (m *TLContactsImportContactToken) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsImportContactToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsImportContactToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_importContactToken, int(layer)); clazzId {
+	case 0x13005788:
+		size := 4
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsImportContactToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_importContactToken, int(layer)); clazzId {
+	case 0x13005788:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_importContactToken, layer)
+	}
 }
 
 // Encode <--
@@ -11728,6 +18232,38 @@ func (m *TLContactsEditCloseFriends) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsEditCloseFriends) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsEditCloseFriends) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_editCloseFriends, int(layer)); clazzId {
+	case 0xba6705f0:
+		size := 4
+		size += iface.CalcInt64ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsEditCloseFriends) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_editCloseFriends, int(layer)); clazzId {
+	case 0xba6705f0:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_editCloseFriends, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsEditCloseFriends) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_editCloseFriends, int(layer)); clazzId {
@@ -11773,6 +18309,40 @@ type TLContactsSetBlocked struct {
 func (m *TLContactsSetBlocked) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsSetBlocked) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsSetBlocked) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_setBlocked, int(layer)); clazzId {
+	case 0x94c65c76:
+		size := 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsSetBlocked) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_setBlocked, int(layer)); clazzId {
+	case 0x94c65c76:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_setBlocked, layer)
+	}
 }
 
 // Encode <--
@@ -11869,6 +18439,34 @@ func (m *TLContactsGetBirthdays) String() string {
 	return wrapper.String()
 }
 
+func (m *TLContactsGetBirthdays) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetBirthdays) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBirthdays, int(layer)); clazzId {
+	case 0xdaeda864:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetBirthdays) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBirthdays, int(layer)); clazzId {
+	case 0xdaeda864:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getBirthdays, layer)
+	}
+}
+
 // Encode <--
 func (m *TLContactsGetBirthdays) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getBirthdays, int(layer)); clazzId {
@@ -11908,6 +18506,38 @@ type TLContactsGetSponsoredPeers struct {
 func (m *TLContactsGetSponsoredPeers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsGetSponsoredPeers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsGetSponsoredPeers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getSponsoredPeers, int(layer)); clazzId {
+	case 0xb6c8c393:
+		size := 4
+		size += iface.CalcStringSize(m.Q)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsGetSponsoredPeers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getSponsoredPeers, int(layer)); clazzId {
+	case 0xb6c8c393:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_getSponsoredPeers, layer)
+	}
 }
 
 // Encode <--
@@ -11956,6 +18586,43 @@ type TLContactsUpdateContactNote struct {
 func (m *TLContactsUpdateContactNote) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLContactsUpdateContactNote) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLContactsUpdateContactNote) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_updateContactNote, int(layer)); clazzId {
+	case 0x139f63fb:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Note, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContactsUpdateContactNote) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_updateContactNote, int(layer)); clazzId {
+	case 0x139f63fb:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("note", m.Note); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contacts_updateContactNote, layer)
+	}
 }
 
 // Encode <--
@@ -12017,6 +18684,49 @@ type TLMessagesGetMessages struct {
 func (m *TLMessagesGetMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessages, int(layer)); clazzId {
+	case 0x63c66506:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id_VECTORINPUTMESSAGE, layer)
+
+		return size
+	case 0x4222fa74:
+		size := 4
+		size += iface.CalcInt32ListSize(m.Id_VECTORINT32)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessages, int(layer)); clazzId {
+	case 0x63c66506:
+		if err := iface.ValidateRequiredSlice("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x4222fa74:
+		if err := iface.ValidateRequiredSlice("id_VECTORINT32", m.Id_VECTORINT32); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessages, layer)
+	}
 }
 
 // Encode <--
@@ -12099,6 +18809,47 @@ type TLMessagesGetDialogs struct {
 func (m *TLMessagesGetDialogs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogs, int(layer)); clazzId {
+	case 0xa0f4cb4f:
+		size := 4
+		size += 4
+		if m.FolderId != nil {
+			size += 4
+		}
+
+		size += 4
+		size += 4
+		size += iface.CalcObjectSize(m.OffsetPeer, layer)
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogs, int(layer)); clazzId {
+	case 0xa0f4cb4f:
+		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDialogs, layer)
+	}
 }
 
 // Encode <--
@@ -12216,6 +18967,45 @@ func (m *TLMessagesGetHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getHistory, int(layer)); clazzId {
+	case 0x4423e6c5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getHistory, int(layer)); clazzId {
+	case 0x4423e6c5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getHistory, int(layer)); clazzId {
@@ -12315,6 +19105,73 @@ type TLMessagesSearch struct {
 func (m *TLMessagesSearch) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSearch) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearch) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_search, int(layer)); clazzId {
+	case 0x29ee847a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Q)
+		if m.FromId != nil {
+			size += iface.CalcObjectSize(m.FromId, layer)
+		}
+
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		if m.SavedReaction != nil {
+			size += iface.CalcObjectListSize(m.SavedReaction, layer)
+		}
+
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearch) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_search, int(layer)); clazzId {
+	case 0x29ee847a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_search, layer)
+	}
 }
 
 // Encode <--
@@ -12517,6 +19374,39 @@ func (m *TLMessagesReadHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readHistory, int(layer)); clazzId {
+	case 0xe306d3a:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readHistory, int(layer)); clazzId {
+	case 0xe306d3a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readHistory, int(layer)); clazzId {
@@ -12577,6 +19467,47 @@ type TLMessagesDeleteHistory struct {
 func (m *TLMessagesDeleteHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesDeleteHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteHistory, int(layer)); clazzId {
+	case 0xb08f922a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.MinDate != nil {
+			size += 4
+		}
+
+		if m.MaxDate != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteHistory, int(layer)); clazzId {
+	case 0xb08f922a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteHistory, layer)
+	}
 }
 
 // Encode <--
@@ -12693,6 +19624,39 @@ func (m *TLMessagesDeleteMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteMessages, int(layer)); clazzId {
+	case 0xe58e95d2:
+		size := 4
+		size += 4
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteMessages, int(layer)); clazzId {
+	case 0xe58e95d2:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteMessages, int(layer)); clazzId {
@@ -12761,6 +19725,35 @@ func (m *TLMessagesReceivedMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReceivedMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReceivedMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedMessages, int(layer)); clazzId {
+	case 0x5a954c0:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReceivedMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedMessages, int(layer)); clazzId {
+	case 0x5a954c0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_receivedMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReceivedMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedMessages, int(layer)); clazzId {
@@ -12808,6 +19801,48 @@ type TLMessagesSetTyping struct {
 func (m *TLMessagesSetTyping) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetTyping) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetTyping) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setTyping, int(layer)); clazzId {
+	case 0x58943ee2:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		size += iface.CalcObjectSize(m.Action, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetTyping) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setTyping, int(layer)); clazzId {
+	case 0x58943ee2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("action", m.Action); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setTyping, layer)
+	}
 }
 
 // Encode <--
@@ -12919,6 +19954,84 @@ type TLMessagesSendMessage struct {
 func (m *TLMessagesSendMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMessage, int(layer)); clazzId {
+	case 0x545cd15a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		size += iface.CalcStringSize(m.Message)
+		size += 8
+		if m.ReplyMarkup != nil {
+			size += iface.CalcObjectSize(m.ReplyMarkup, layer)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.ScheduleRepeatPeriod != nil {
+			size += 4
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		if m.QuickReplyShortcut != nil {
+			size += iface.CalcObjectSize(m.QuickReplyShortcut, layer)
+		}
+
+		if m.Effect != nil {
+			size += 8
+		}
+
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		if m.SuggestedPost != nil {
+			size += iface.CalcObjectSize(m.SuggestedPost, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMessage, int(layer)); clazzId {
+	case 0x545cd15a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendMessage, layer)
+	}
 }
 
 // Encode <--
@@ -13234,6 +20347,89 @@ type TLMessagesSendMedia struct {
 func (m *TLMessagesSendMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMedia, int(layer)); clazzId {
+	case 0x330e77f:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Media, layer)
+		size += iface.CalcStringSize(m.Message)
+		size += 8
+		if m.ReplyMarkup != nil {
+			size += iface.CalcObjectSize(m.ReplyMarkup, layer)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.ScheduleRepeatPeriod != nil {
+			size += 4
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		if m.QuickReplyShortcut != nil {
+			size += iface.CalcObjectSize(m.QuickReplyShortcut, layer)
+		}
+
+		if m.Effect != nil {
+			size += 8
+		}
+
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		if m.SuggestedPost != nil {
+			size += iface.CalcObjectSize(m.SuggestedPost, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMedia, int(layer)); clazzId {
+	case 0x330e77f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendMedia, layer)
+	}
 }
 
 // Encode <--
@@ -13555,6 +20751,93 @@ func (m *TLMessagesForwardMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesForwardMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesForwardMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_forwardMessages, int(layer)); clazzId {
+	case 0x13704a7c:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.FromPeer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcInt64ListSize(m.RandomId)
+		size += iface.CalcObjectSize(m.ToPeer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.ScheduleRepeatPeriod != nil {
+			size += 4
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		if m.QuickReplyShortcut != nil {
+			size += iface.CalcObjectSize(m.QuickReplyShortcut, layer)
+		}
+
+		if m.Effect != nil {
+			size += 8
+		}
+
+		if m.VideoTimestamp != nil {
+			size += 4
+		}
+
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		if m.SuggestedPost != nil {
+			size += iface.CalcObjectSize(m.SuggestedPost, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesForwardMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_forwardMessages, int(layer)); clazzId {
+	case 0x13704a7c:
+		if err := iface.ValidateRequiredObject("from_peer", m.FromPeer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("random_id", m.RandomId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("to_peer", m.ToPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_forwardMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_forwardMessages, int(layer)); clazzId {
@@ -13833,6 +21116,38 @@ func (m *TLMessagesReportSpam) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReportSpam) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReportSpam) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSpam, int(layer)); clazzId {
+	case 0xcf1592db:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportSpam) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSpam, int(layer)); clazzId {
+	case 0xcf1592db:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportSpam, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReportSpam) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSpam, int(layer)); clazzId {
@@ -13882,6 +21197,38 @@ type TLMessagesGetPeerSettings struct {
 func (m *TLMessagesGetPeerSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetPeerSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPeerSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerSettings, int(layer)); clazzId {
+	case 0xefd9a6a2:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPeerSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerSettings, int(layer)); clazzId {
+	case 0xefd9a6a2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPeerSettings, layer)
+	}
 }
 
 // Encode <--
@@ -13936,6 +21283,53 @@ type TLMessagesReport struct {
 func (m *TLMessagesReport) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_report, int(layer)); clazzId {
+	case 0xfc78af9b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcBytesSize(m.Option)
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_report, int(layer)); clazzId {
+	case 0xfc78af9b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("option", m.Option); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_report, layer)
+	}
 }
 
 // Encode <--
@@ -14005,6 +21399,38 @@ func (m *TLMessagesGetChats) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetChats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetChats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChats, int(layer)); clazzId {
+	case 0x49e9528f:
+		size := 4
+		size += iface.CalcInt64ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetChats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChats, int(layer)); clazzId {
+	case 0x49e9528f:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getChats, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetChats) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChats, int(layer)); clazzId {
@@ -14048,6 +21474,35 @@ type TLMessagesGetFullChat struct {
 func (m *TLMessagesGetFullChat) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetFullChat) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFullChat) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFullChat, int(layer)); clazzId {
+	case 0xaeb00b34:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFullChat) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFullChat, int(layer)); clazzId {
+	case 0xaeb00b34:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFullChat, layer)
+	}
 }
 
 // Encode <--
@@ -14096,6 +21551,39 @@ type TLMessagesEditChatTitle struct {
 func (m *TLMessagesEditChatTitle) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditChatTitle) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatTitle) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatTitle, int(layer)); clazzId {
+	case 0x73783ffd:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.Title)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatTitle) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatTitle, int(layer)); clazzId {
+	case 0x73783ffd:
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatTitle, layer)
+	}
 }
 
 // Encode <--
@@ -14149,6 +21637,39 @@ type TLMessagesEditChatPhoto struct {
 func (m *TLMessagesEditChatPhoto) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditChatPhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatPhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatPhoto, int(layer)); clazzId {
+	case 0x35ddd674:
+		size := 4
+		size += 8
+		size += iface.CalcObjectSize(m.Photo, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatPhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatPhoto, int(layer)); clazzId {
+	case 0x35ddd674:
+		if err := iface.ValidateRequiredObject("photo", m.Photo); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatPhoto, layer)
+	}
 }
 
 // Encode <--
@@ -14207,6 +21728,40 @@ type TLMessagesAddChatUser struct {
 func (m *TLMessagesAddChatUser) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesAddChatUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesAddChatUser) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addChatUser, int(layer)); clazzId {
+	case 0xcbc6d107:
+		size := 4
+		size += 8
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesAddChatUser) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addChatUser, int(layer)); clazzId {
+	case 0xcbc6d107:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_addChatUser, layer)
+	}
 }
 
 // Encode <--
@@ -14271,6 +21826,40 @@ type TLMessagesDeleteChatUser struct {
 func (m *TLMessagesDeleteChatUser) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesDeleteChatUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteChatUser) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChatUser, int(layer)); clazzId {
+	case 0xa2185cab:
+		size := 4
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteChatUser) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChatUser, int(layer)); clazzId {
+	case 0xa2185cab:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteChatUser, layer)
+	}
 }
 
 // Encode <--
@@ -14351,6 +21940,47 @@ type TLMessagesCreateChat struct {
 func (m *TLMessagesCreateChat) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesCreateChat) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCreateChat) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createChat, int(layer)); clazzId {
+	case 0x92ceddd4:
+		size := 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Users, layer)
+		size += iface.CalcStringSize(m.Title)
+		if m.TtlPeriod != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCreateChat) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createChat, int(layer)); clazzId {
+	case 0x92ceddd4:
+		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_createChat, layer)
+	}
 }
 
 // Encode <--
@@ -14456,6 +22086,36 @@ func (m *TLMessagesGetDhConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDhConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDhConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDhConfig, int(layer)); clazzId {
+	case 0x26cf8950:
+		size := 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDhConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDhConfig, int(layer)); clazzId {
+	case 0x26cf8950:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDhConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDhConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDhConfig, int(layer)); clazzId {
@@ -14508,6 +22168,44 @@ type TLMessagesRequestEncryption struct {
 func (m *TLMessagesRequestEncryption) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestEncryption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestEncryption) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestEncryption, int(layer)); clazzId {
+	case 0xf64daf43:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+		size += iface.CalcBytesSize(m.GA)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestEncryption) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestEncryption, int(layer)); clazzId {
+	case 0xf64daf43:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("g_a", m.GA); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestEncryption, layer)
+	}
 }
 
 // Encode <--
@@ -14574,6 +22272,44 @@ func (m *TLMessagesAcceptEncryption) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesAcceptEncryption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesAcceptEncryption) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptEncryption, int(layer)); clazzId {
+	case 0x3dbc0415:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcBytesSize(m.GB)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesAcceptEncryption) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptEncryption, int(layer)); clazzId {
+	case 0x3dbc0415:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("g_b", m.GB); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_acceptEncryption, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesAcceptEncryption) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptEncryption, int(layer)); clazzId {
@@ -14635,6 +22371,36 @@ type TLMessagesDiscardEncryption struct {
 func (m *TLMessagesDiscardEncryption) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesDiscardEncryption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDiscardEncryption) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_discardEncryption, int(layer)); clazzId {
+	case 0xf393aea0:
+		size := 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDiscardEncryption) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_discardEncryption, int(layer)); clazzId {
+	case 0xf393aea0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_discardEncryption, layer)
+	}
 }
 
 // Encode <--
@@ -14707,6 +22473,43 @@ func (m *TLMessagesSetEncryptedTyping) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetEncryptedTyping) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetEncryptedTyping) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setEncryptedTyping, int(layer)); clazzId {
+	case 0x791451ed:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Typing, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetEncryptedTyping) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setEncryptedTyping, int(layer)); clazzId {
+	case 0x791451ed:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("typing", m.Typing); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setEncryptedTyping, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetEncryptedTyping) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setEncryptedTyping, int(layer)); clazzId {
@@ -14768,6 +22571,39 @@ func (m *TLMessagesReadEncryptedHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadEncryptedHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadEncryptedHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readEncryptedHistory, int(layer)); clazzId {
+	case 0x7f4b690a:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadEncryptedHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readEncryptedHistory, int(layer)); clazzId {
+	case 0x7f4b690a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readEncryptedHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadEncryptedHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readEncryptedHistory, int(layer)); clazzId {
@@ -14826,6 +22662,45 @@ type TLMessagesSendEncrypted struct {
 func (m *TLMessagesSendEncrypted) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendEncrypted) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendEncrypted) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncrypted, int(layer)); clazzId {
+	case 0x44fa7a15:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcBytesSize(m.Data)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendEncrypted) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncrypted, int(layer)); clazzId {
+	case 0x44fa7a15:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("data", m.Data); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendEncrypted, layer)
+	}
 }
 
 // Encode <--
@@ -14914,6 +22789,50 @@ type TLMessagesSendEncryptedFile struct {
 func (m *TLMessagesSendEncryptedFile) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendEncryptedFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendEncryptedFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedFile, int(layer)); clazzId {
+	case 0x5559481d:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcBytesSize(m.Data)
+		size += iface.CalcObjectSize(m.File, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendEncryptedFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedFile, int(layer)); clazzId {
+	case 0x5559481d:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("data", m.Data); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendEncryptedFile, layer)
+	}
 }
 
 // Encode <--
@@ -15011,6 +22930,44 @@ func (m *TLMessagesSendEncryptedService) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendEncryptedService) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendEncryptedService) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedService, int(layer)); clazzId {
+	case 0x32d439a4:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcBytesSize(m.Data)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendEncryptedService) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedService, int(layer)); clazzId {
+	case 0x32d439a4:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("data", m.Data); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendEncryptedService, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendEncryptedService) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedService, int(layer)); clazzId {
@@ -15073,6 +23030,35 @@ func (m *TLMessagesReceivedQueue) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReceivedQueue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReceivedQueue) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedQueue, int(layer)); clazzId {
+	case 0x55a5bb66:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReceivedQueue) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedQueue, int(layer)); clazzId {
+	case 0x55a5bb66:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_receivedQueue, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReceivedQueue) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_receivedQueue, int(layer)); clazzId {
@@ -15118,6 +23104,38 @@ type TLMessagesReportEncryptedSpam struct {
 func (m *TLMessagesReportEncryptedSpam) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReportEncryptedSpam) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReportEncryptedSpam) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportEncryptedSpam, int(layer)); clazzId {
+	case 0x4b0c8c0f:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportEncryptedSpam) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportEncryptedSpam, int(layer)); clazzId {
+	case 0x4b0c8c0f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportEncryptedSpam, layer)
+	}
 }
 
 // Encode <--
@@ -15171,6 +23189,38 @@ func (m *TLMessagesReadMessageContents) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadMessageContents) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadMessageContents) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMessageContents, int(layer)); clazzId {
+	case 0x36a73f77:
+		size := 4
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadMessageContents) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMessageContents, int(layer)); clazzId {
+	case 0x36a73f77:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readMessageContents, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadMessageContents) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMessageContents, int(layer)); clazzId {
@@ -15215,6 +23265,39 @@ type TLMessagesGetStickers struct {
 func (m *TLMessagesGetStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getStickers, int(layer)); clazzId {
+	case 0xd5a5d3a1:
+		size := 4
+		size += iface.CalcStringSize(m.Emoticon)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getStickers, int(layer)); clazzId {
+	case 0xd5a5d3a1:
+		if err := iface.ValidateRequiredString("emoticon", m.Emoticon); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getStickers, layer)
+	}
 }
 
 // Encode <--
@@ -15269,6 +23352,35 @@ func (m *TLMessagesGetAllStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetAllStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAllStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllStickers, int(layer)); clazzId {
+	case 0xb8a0a1a8:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAllStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllStickers, int(layer)); clazzId {
+	case 0xb8a0a1a8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAllStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetAllStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllStickers, int(layer)); clazzId {
@@ -15315,6 +23427,42 @@ type TLMessagesGetWebPagePreview struct {
 func (m *TLMessagesGetWebPagePreview) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetWebPagePreview) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetWebPagePreview) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getWebPagePreview, int(layer)); clazzId {
+	case 0x570d6f6f:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Message)
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetWebPagePreview) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getWebPagePreview, int(layer)); clazzId {
+	case 0x570d6f6f:
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getWebPagePreview, layer)
+	}
 }
 
 // Encode <--
@@ -15414,6 +23562,54 @@ type TLMessagesExportChatInvite struct {
 func (m *TLMessagesExportChatInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesExportChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesExportChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_exportChatInvite, int(layer)); clazzId {
+	case 0xa455de90:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.ExpireDate != nil {
+			size += 4
+		}
+
+		if m.UsageLimit != nil {
+			size += 4
+		}
+
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.SubscriptionPricing != nil {
+			size += iface.CalcObjectSize(m.SubscriptionPricing, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesExportChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_exportChatInvite, int(layer)); clazzId {
+	case 0xa455de90:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_exportChatInvite, layer)
+	}
 }
 
 // Encode <--
@@ -15555,6 +23751,38 @@ func (m *TLMessagesCheckChatInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesCheckChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCheckChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkChatInvite, int(layer)); clazzId {
+	case 0x3eadb1bb:
+		size := 4
+		size += iface.CalcStringSize(m.Hash)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCheckChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkChatInvite, int(layer)); clazzId {
+	case 0x3eadb1bb:
+		if err := iface.ValidateRequiredString("hash", m.Hash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_checkChatInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesCheckChatInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkChatInvite, int(layer)); clazzId {
@@ -15600,6 +23828,38 @@ type TLMessagesImportChatInvite struct {
 func (m *TLMessagesImportChatInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesImportChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesImportChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_importChatInvite, int(layer)); clazzId {
+	case 0x6c50051c:
+		size := 4
+		size += iface.CalcStringSize(m.Hash)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesImportChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_importChatInvite, int(layer)); clazzId {
+	case 0x6c50051c:
+		if err := iface.ValidateRequiredString("hash", m.Hash); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_importChatInvite, layer)
+	}
 }
 
 // Encode <--
@@ -15648,6 +23908,50 @@ type TLMessagesGetStickerSet struct {
 func (m *TLMessagesGetStickerSet) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getStickerSet, int(layer)); clazzId {
+	case 0xc8a0ec74:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+		size += 4
+
+		return size
+	case 0x2619a90e:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getStickerSet, int(layer)); clazzId {
+	case 0xc8a0ec74:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x2619a90e:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getStickerSet, layer)
+	}
 }
 
 // Encode <--
@@ -15725,6 +24029,43 @@ func (m *TLMessagesInstallStickerSet) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesInstallStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesInstallStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_installStickerSet, int(layer)); clazzId {
+	case 0xc78fe460:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+		size += iface.CalcObjectSize(m.Archived, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesInstallStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_installStickerSet, int(layer)); clazzId {
+	case 0xc78fe460:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("archived", m.Archived); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_installStickerSet, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesInstallStickerSet) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_installStickerSet, int(layer)); clazzId {
@@ -15785,6 +24126,38 @@ func (m *TLMessagesUninstallStickerSet) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesUninstallStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUninstallStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uninstallStickerSet, int(layer)); clazzId {
+	case 0xf96e55de:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUninstallStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uninstallStickerSet, int(layer)); clazzId {
+	case 0xf96e55de:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_uninstallStickerSet, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesUninstallStickerSet) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uninstallStickerSet, int(layer)); clazzId {
@@ -15837,6 +24210,49 @@ type TLMessagesStartBot struct {
 func (m *TLMessagesStartBot) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesStartBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesStartBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startBot, int(layer)); clazzId {
+	case 0xe6df7378:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcStringSize(m.StartParam)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesStartBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startBot, int(layer)); clazzId {
+	case 0xe6df7378:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("start_param", m.StartParam); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_startBot, layer)
+	}
 }
 
 // Encode <--
@@ -15912,6 +24328,48 @@ func (m *TLMessagesGetMessagesViews) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMessagesViews) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessagesViews) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesViews, int(layer)); clazzId {
+	case 0x5784d3e1:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcObjectSize(m.Increment, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessagesViews) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesViews, int(layer)); clazzId {
+	case 0x5784d3e1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("increment", m.Increment); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessagesViews, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMessagesViews) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesViews, int(layer)); clazzId {
@@ -15979,6 +24437,44 @@ func (m *TLMessagesEditChatAdmin) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesEditChatAdmin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatAdmin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAdmin, int(layer)); clazzId {
+	case 0xa85bd1c2:
+		size := 4
+		size += 8
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.IsAdmin, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatAdmin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAdmin, int(layer)); clazzId {
+	case 0xa85bd1c2:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("is_admin", m.IsAdmin); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatAdmin, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAdmin, int(layer)); clazzId {
@@ -16044,6 +24540,35 @@ func (m *TLMessagesMigrateChat) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesMigrateChat) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesMigrateChat) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_migrateChat, int(layer)); clazzId {
+	case 0xa2875319:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesMigrateChat) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_migrateChat, int(layer)); clazzId {
+	case 0xa2875319:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_migrateChat, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesMigrateChat) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_migrateChat, int(layer)); clazzId {
@@ -16100,6 +24625,58 @@ type TLMessagesSearchGlobal struct {
 func (m *TLMessagesSearchGlobal) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSearchGlobal) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchGlobal) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchGlobal, int(layer)); clazzId {
+	case 0x4bc6589a:
+		size := 4
+		size += 4
+		if m.FolderId != nil {
+			size += 4
+		}
+
+		size += iface.CalcStringSize(m.Q)
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+		size += 4
+		size += iface.CalcObjectSize(m.OffsetPeer, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchGlobal) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchGlobal, int(layer)); clazzId {
+	case 0x4bc6589a:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchGlobal, layer)
+	}
 }
 
 // Encode <--
@@ -16244,6 +24821,39 @@ func (m *TLMessagesReorderStickerSets) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReorderStickerSets) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReorderStickerSets) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderStickerSets, int(layer)); clazzId {
+	case 0x78337739:
+		size := 4
+		size += 4
+		size += iface.CalcInt64ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReorderStickerSets) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderStickerSets, int(layer)); clazzId {
+	case 0x78337739:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reorderStickerSets, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReorderStickerSets) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderStickerSets, int(layer)); clazzId {
@@ -16320,6 +24930,44 @@ func (m *TLMessagesGetDocumentByHash) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDocumentByHash) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDocumentByHash) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDocumentByHash, int(layer)); clazzId {
+	case 0xb1f2061f:
+		size := 4
+		size += iface.CalcBytesSize(m.Sha256)
+		size += 8
+		size += iface.CalcStringSize(m.MimeType)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDocumentByHash) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDocumentByHash, int(layer)); clazzId {
+	case 0xb1f2061f:
+		if err := iface.ValidateRequiredBytes("sha256", m.Sha256); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mime_type", m.MimeType); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDocumentByHash, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDocumentByHash) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDocumentByHash, int(layer)); clazzId {
@@ -16377,6 +25025,35 @@ func (m *TLMessagesGetSavedGifs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetSavedGifs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSavedGifs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedGifs, int(layer)); clazzId {
+	case 0x5cf09635:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSavedGifs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedGifs, int(layer)); clazzId {
+	case 0x5cf09635:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSavedGifs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetSavedGifs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedGifs, int(layer)); clazzId {
@@ -16423,6 +25100,43 @@ type TLMessagesSaveGif struct {
 func (m *TLMessagesSaveGif) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSaveGif) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSaveGif) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveGif, int(layer)); clazzId {
+	case 0x327a30cb:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Unsave, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSaveGif) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveGif, int(layer)); clazzId {
+	case 0x327a30cb:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_saveGif, layer)
+	}
 }
 
 // Encode <--
@@ -16487,6 +25201,58 @@ type TLMessagesGetInlineBotResults struct {
 func (m *TLMessagesGetInlineBotResults) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetInlineBotResults) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetInlineBotResults) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineBotResults, int(layer)); clazzId {
+	case 0x514e999d:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.GeoPoint != nil {
+			size += iface.CalcObjectSize(m.GeoPoint, layer)
+		}
+
+		size += iface.CalcStringSize(m.Query)
+		size += iface.CalcStringSize(m.Offset)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetInlineBotResults) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineBotResults, int(layer)); clazzId {
+	case 0x514e999d:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("query", m.Query); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getInlineBotResults, layer)
+	}
 }
 
 // Encode <--
@@ -16597,6 +25363,52 @@ type TLMessagesSetInlineBotResults struct {
 func (m *TLMessagesSetInlineBotResults) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetInlineBotResults) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetInlineBotResults) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineBotResults, int(layer)); clazzId {
+	case 0xbb12a419:
+		size := 4
+		size += 4
+		size += 8
+		size += iface.CalcObjectListSize(m.Results, layer)
+		size += 4
+		if m.NextOffset != nil {
+			size += iface.CalcStringSize(*m.NextOffset)
+		}
+
+		if m.SwitchPm != nil {
+			size += iface.CalcObjectSize(m.SwitchPm, layer)
+		}
+
+		if m.SwitchWebview != nil {
+			size += iface.CalcObjectSize(m.SwitchWebview, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetInlineBotResults) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineBotResults, int(layer)); clazzId {
+	case 0xbb12a419:
+		if err := iface.ValidateRequiredSlice("results", m.Results); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setInlineBotResults, layer)
+	}
 }
 
 // Encode <--
@@ -16762,6 +25574,65 @@ type TLMessagesSendInlineBotResult struct {
 func (m *TLMessagesSendInlineBotResult) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendInlineBotResult) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendInlineBotResult) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendInlineBotResult, int(layer)); clazzId {
+	case 0xc0cf7646:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		size += 8
+		size += 8
+		size += iface.CalcStringSize(m.Id)
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		if m.QuickReplyShortcut != nil {
+			size += iface.CalcObjectSize(m.QuickReplyShortcut, layer)
+		}
+
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendInlineBotResult) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendInlineBotResult, int(layer)); clazzId {
+	case 0xc0cf7646:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendInlineBotResult, layer)
+	}
 }
 
 // Encode <--
@@ -16949,6 +25820,39 @@ func (m *TLMessagesGetMessageEditData) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMessageEditData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessageEditData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageEditData, int(layer)); clazzId {
+	case 0xfda68d36:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessageEditData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageEditData, int(layer)); clazzId {
+	case 0xfda68d36:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessageEditData, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMessageEditData) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageEditData, int(layer)); clazzId {
@@ -17014,6 +25918,67 @@ type TLMessagesEditMessage struct {
 func (m *TLMessagesEditMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editMessage, int(layer)); clazzId {
+	case 0x51e842e1:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Message != nil {
+			size += iface.CalcStringSize(*m.Message)
+		}
+
+		if m.Media != nil {
+			size += iface.CalcObjectSize(m.Media, layer)
+		}
+
+		if m.ReplyMarkup != nil {
+			size += iface.CalcObjectSize(m.ReplyMarkup, layer)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.ScheduleRepeatPeriod != nil {
+			size += 4
+		}
+
+		if m.QuickReplyShortcutId != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editMessage, int(layer)); clazzId {
+	case 0x51e842e1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editMessage, layer)
+	}
 }
 
 // Encode <--
@@ -17226,6 +26191,54 @@ func (m *TLMessagesEditInlineBotMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesEditInlineBotMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditInlineBotMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editInlineBotMessage, int(layer)); clazzId {
+	case 0x83557dba:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		if m.Message != nil {
+			size += iface.CalcStringSize(*m.Message)
+		}
+
+		if m.Media != nil {
+			size += iface.CalcObjectSize(m.Media, layer)
+		}
+
+		if m.ReplyMarkup != nil {
+			size += iface.CalcObjectSize(m.ReplyMarkup, layer)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditInlineBotMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editInlineBotMessage, int(layer)); clazzId {
+	case 0x83557dba:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editInlineBotMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesEditInlineBotMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editInlineBotMessage, int(layer)); clazzId {
@@ -17388,6 +26401,47 @@ func (m *TLMessagesGetBotCallbackAnswer) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetBotCallbackAnswer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotCallbackAnswer, int(layer)); clazzId {
+	case 0x9342ca07:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Data != nil {
+			size += iface.CalcBytesSize(m.Data)
+		}
+
+		if m.Password != nil {
+			size += iface.CalcObjectSize(m.Password, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetBotCallbackAnswer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotCallbackAnswer, int(layer)); clazzId {
+	case 0x9342ca07:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getBotCallbackAnswer, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotCallbackAnswer, int(layer)); clazzId {
@@ -17501,6 +26555,45 @@ func (m *TLMessagesSetBotCallbackAnswer) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetBotCallbackAnswer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotCallbackAnswer, int(layer)); clazzId {
+	case 0xd58f130a:
+		size := 4
+		size += 4
+		size += 8
+		if m.Message != nil {
+			size += iface.CalcStringSize(*m.Message)
+		}
+
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetBotCallbackAnswer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotCallbackAnswer, int(layer)); clazzId {
+	case 0xd58f130a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setBotCallbackAnswer, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotCallbackAnswer, int(layer)); clazzId {
@@ -17606,6 +26699,38 @@ func (m *TLMessagesGetPeerDialogs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPeerDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPeerDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerDialogs, int(layer)); clazzId {
+	case 0xe470bcfd:
+		size := 4
+		size += iface.CalcObjectListSize(m.Peers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPeerDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerDialogs, int(layer)); clazzId {
+	case 0xe470bcfd:
+		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPeerDialogs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPeerDialogs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerDialogs, int(layer)); clazzId {
@@ -17677,6 +26802,64 @@ type TLMessagesSaveDraft struct {
 func (m *TLMessagesSaveDraft) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSaveDraft) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSaveDraft) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDraft, int(layer)); clazzId {
+	case 0x54ae308e:
+		size := 4
+		size += 4
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Message)
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.Media != nil {
+			size += iface.CalcObjectSize(m.Media, layer)
+		}
+
+		if m.Effect != nil {
+			size += 8
+		}
+
+		if m.SuggestedPost != nil {
+			size += iface.CalcObjectSize(m.SuggestedPost, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSaveDraft) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDraft, int(layer)); clazzId {
+	case 0x54ae308e:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_saveDraft, layer)
+	}
 }
 
 // Encode <--
@@ -17856,6 +27039,34 @@ func (m *TLMessagesGetAllDrafts) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetAllDrafts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAllDrafts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllDrafts, int(layer)); clazzId {
+	case 0x6a3f8d65:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAllDrafts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllDrafts, int(layer)); clazzId {
+	case 0x6a3f8d65:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAllDrafts, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAllDrafts, int(layer)); clazzId {
@@ -17895,6 +27106,35 @@ type TLMessagesGetFeaturedStickers struct {
 func (m *TLMessagesGetFeaturedStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetFeaturedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFeaturedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFeaturedStickers, int(layer)); clazzId {
+	case 0x64780b14:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFeaturedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFeaturedStickers, int(layer)); clazzId {
+	case 0x64780b14:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFeaturedStickers, layer)
+	}
 }
 
 // Encode <--
@@ -17944,6 +27184,38 @@ func (m *TLMessagesReadFeaturedStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadFeaturedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadFeaturedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readFeaturedStickers, int(layer)); clazzId {
+	case 0x5b118126:
+		size := 4
+		size += iface.CalcInt64ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadFeaturedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readFeaturedStickers, int(layer)); clazzId {
+	case 0x5b118126:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readFeaturedStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadFeaturedStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readFeaturedStickers, int(layer)); clazzId {
@@ -17988,6 +27260,36 @@ type TLMessagesGetRecentStickers struct {
 func (m *TLMessagesGetRecentStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetRecentStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetRecentStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentStickers, int(layer)); clazzId {
+	case 0x9da9403b:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetRecentStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentStickers, int(layer)); clazzId {
+	case 0x9da9403b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getRecentStickers, layer)
+	}
 }
 
 // Encode <--
@@ -18059,6 +27361,44 @@ type TLMessagesSaveRecentSticker struct {
 func (m *TLMessagesSaveRecentSticker) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSaveRecentSticker) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSaveRecentSticker) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveRecentSticker, int(layer)); clazzId {
+	case 0x392718f8:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Unsave, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSaveRecentSticker) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveRecentSticker, int(layer)); clazzId {
+	case 0x392718f8:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_saveRecentSticker, layer)
+	}
 }
 
 // Encode <--
@@ -18143,6 +27483,35 @@ func (m *TLMessagesClearRecentStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesClearRecentStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesClearRecentStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentStickers, int(layer)); clazzId {
+	case 0x8999602d:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesClearRecentStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentStickers, int(layer)); clazzId {
+	case 0x8999602d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_clearRecentStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesClearRecentStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentStickers, int(layer)); clazzId {
@@ -18208,6 +27577,37 @@ type TLMessagesGetArchivedStickers struct {
 func (m *TLMessagesGetArchivedStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetArchivedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetArchivedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getArchivedStickers, int(layer)); clazzId {
+	case 0x57f17692:
+		size := 4
+		size += 4
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetArchivedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getArchivedStickers, int(layer)); clazzId {
+	case 0x57f17692:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getArchivedStickers, layer)
+	}
 }
 
 // Encode <--
@@ -18290,6 +27690,35 @@ func (m *TLMessagesGetMaskStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMaskStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMaskStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMaskStickers, int(layer)); clazzId {
+	case 0x640f82b8:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMaskStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMaskStickers, int(layer)); clazzId {
+	case 0x640f82b8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMaskStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMaskStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMaskStickers, int(layer)); clazzId {
@@ -18335,6 +27764,38 @@ type TLMessagesGetAttachedStickers struct {
 func (m *TLMessagesGetAttachedStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetAttachedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAttachedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachedStickers, int(layer)); clazzId {
+	case 0xcc5b67cc:
+		size := 4
+		size += iface.CalcObjectSize(m.Media, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAttachedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachedStickers, int(layer)); clazzId {
+	case 0xcc5b67cc:
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAttachedStickers, layer)
+	}
 }
 
 // Encode <--
@@ -18391,6 +27852,46 @@ type TLMessagesSetGameScore struct {
 func (m *TLMessagesSetGameScore) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetGameScore) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetGameScore) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setGameScore, int(layer)); clazzId {
+	case 0x8ef8ecc0:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetGameScore) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setGameScore, int(layer)); clazzId {
+	case 0x8ef8ecc0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setGameScore, layer)
+	}
 }
 
 // Encode <--
@@ -18497,6 +27998,45 @@ func (m *TLMessagesSetInlineGameScore) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetInlineGameScore) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetInlineGameScore) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineGameScore, int(layer)); clazzId {
+	case 0x15ad9f64:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetInlineGameScore) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineGameScore, int(layer)); clazzId {
+	case 0x15ad9f64:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setInlineGameScore, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetInlineGameScore) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineGameScore, int(layer)); clazzId {
@@ -18593,6 +28133,44 @@ func (m *TLMessagesGetGameHighScores) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetGameHighScores) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetGameHighScores) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getGameHighScores, int(layer)); clazzId {
+	case 0xe822649d:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetGameHighScores) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getGameHighScores, int(layer)); clazzId {
+	case 0xe822649d:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getGameHighScores, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetGameHighScores) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getGameHighScores, int(layer)); clazzId {
@@ -18660,6 +28238,43 @@ func (m *TLMessagesGetInlineGameHighScores) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetInlineGameHighScores) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetInlineGameHighScores) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineGameHighScores, int(layer)); clazzId {
+	case 0xf635e1b:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetInlineGameHighScores) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineGameHighScores, int(layer)); clazzId {
+	case 0xf635e1b:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getInlineGameHighScores, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetInlineGameHighScores) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineGameHighScores, int(layer)); clazzId {
@@ -18720,6 +28335,40 @@ type TLMessagesGetCommonChats struct {
 func (m *TLMessagesGetCommonChats) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetCommonChats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetCommonChats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCommonChats, int(layer)); clazzId {
+	case 0xe40ca104:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetCommonChats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCommonChats, int(layer)); clazzId {
+	case 0xe40ca104:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getCommonChats, layer)
+	}
 }
 
 // Encode <--
@@ -18785,6 +28434,39 @@ func (m *TLMessagesGetWebPage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetWebPage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetWebPage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getWebPage, int(layer)); clazzId {
+	case 0x8d9692a3:
+		size := 4
+		size += iface.CalcStringSize(m.Url)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetWebPage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getWebPage, int(layer)); clazzId {
+	case 0x8d9692a3:
+		if err := iface.ValidateRequiredString("url", m.Url); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getWebPage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetWebPage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getWebPage, int(layer)); clazzId {
@@ -18836,6 +28518,39 @@ type TLMessagesToggleDialogPin struct {
 func (m *TLMessagesToggleDialogPin) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleDialogPin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleDialogPin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogPin, int(layer)); clazzId {
+	case 0xa731e257:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleDialogPin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogPin, int(layer)); clazzId {
+	case 0xa731e257:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleDialogPin, layer)
+	}
 }
 
 // Encode <--
@@ -18911,6 +28626,40 @@ type TLMessagesReorderPinnedDialogs struct {
 func (m *TLMessagesReorderPinnedDialogs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReorderPinnedDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReorderPinnedDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedDialogs, int(layer)); clazzId {
+	case 0x3b1adf37:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Order, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReorderPinnedDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedDialogs, int(layer)); clazzId {
+	case 0x3b1adf37:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reorderPinnedDialogs, layer)
+	}
 }
 
 // Encode <--
@@ -19006,6 +28755,35 @@ func (m *TLMessagesGetPinnedDialogs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPinnedDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPinnedDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedDialogs, int(layer)); clazzId {
+	case 0xd6b94df2:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPinnedDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedDialogs, int(layer)); clazzId {
+	case 0xd6b94df2:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPinnedDialogs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedDialogs, int(layer)); clazzId {
@@ -19053,6 +28831,43 @@ type TLMessagesSetBotShippingResults struct {
 func (m *TLMessagesSetBotShippingResults) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetBotShippingResults) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetBotShippingResults) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotShippingResults, int(layer)); clazzId {
+	case 0xe5f672fa:
+		size := 4
+		size += 4
+		size += 8
+		if m.Error != nil {
+			size += iface.CalcStringSize(*m.Error)
+		}
+
+		if m.ShippingOptions != nil {
+			size += iface.CalcObjectListSize(m.ShippingOptions, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetBotShippingResults) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotShippingResults, int(layer)); clazzId {
+	case 0xe5f672fa:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setBotShippingResults, layer)
+	}
 }
 
 // Encode <--
@@ -19165,6 +28980,39 @@ func (m *TLMessagesSetBotPrecheckoutResults) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetBotPrecheckoutResults) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetBotPrecheckoutResults) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotPrecheckoutResults, int(layer)); clazzId {
+	case 0x9c2dd95:
+		size := 4
+		size += 4
+		size += 8
+		if m.Error != nil {
+			size += iface.CalcStringSize(*m.Error)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetBotPrecheckoutResults) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotPrecheckoutResults, int(layer)); clazzId {
+	case 0x9c2dd95:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setBotPrecheckoutResults, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetBotPrecheckoutResults) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setBotPrecheckoutResults, int(layer)); clazzId {
@@ -19248,6 +29096,49 @@ type TLMessagesUploadMedia struct {
 func (m *TLMessagesUploadMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUploadMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUploadMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadMedia, int(layer)); clazzId {
+	case 0x14967978:
+		size := 4
+		size += 4
+		if m.BusinessConnectionId != nil {
+			size += iface.CalcStringSize(*m.BusinessConnectionId)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Media, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUploadMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadMedia, int(layer)); clazzId {
+	case 0x14967978:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_uploadMedia, layer)
+	}
 }
 
 // Encode <--
@@ -19342,6 +29233,44 @@ func (m *TLMessagesSendScreenshotNotification) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendScreenshotNotification) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendScreenshotNotification) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScreenshotNotification, int(layer)); clazzId {
+	case 0xa1405817:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.ReplyTo, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendScreenshotNotification) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScreenshotNotification, int(layer)); clazzId {
+	case 0xa1405817:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reply_to", m.ReplyTo); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendScreenshotNotification, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendScreenshotNotification) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScreenshotNotification, int(layer)); clazzId {
@@ -19408,6 +29337,35 @@ func (m *TLMessagesGetFavedStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetFavedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFavedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFavedStickers, int(layer)); clazzId {
+	case 0x4f1aaa9:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFavedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFavedStickers, int(layer)); clazzId {
+	case 0x4f1aaa9:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFavedStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetFavedStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFavedStickers, int(layer)); clazzId {
@@ -19454,6 +29412,43 @@ type TLMessagesFaveSticker struct {
 func (m *TLMessagesFaveSticker) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesFaveSticker) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesFaveSticker) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_faveSticker, int(layer)); clazzId {
+	case 0xb9ffc55b:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += iface.CalcObjectSize(m.Unfave, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesFaveSticker) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_faveSticker, int(layer)); clazzId {
+	case 0xb9ffc55b:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("unfave", m.Unfave); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_faveSticker, layer)
+	}
 }
 
 // Encode <--
@@ -19520,6 +29515,48 @@ type TLMessagesGetUnreadMentions struct {
 func (m *TLMessagesGetUnreadMentions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetUnreadMentions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetUnreadMentions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadMentions, int(layer)); clazzId {
+	case 0xf107e790:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetUnreadMentions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadMentions, int(layer)); clazzId {
+	case 0xf107e790:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getUnreadMentions, layer)
+	}
 }
 
 // Encode <--
@@ -19630,6 +29667,42 @@ func (m *TLMessagesReadMentions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadMentions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadMentions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMentions, int(layer)); clazzId {
+	case 0x36e5bf4d:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadMentions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMentions, int(layer)); clazzId {
+	case 0x36e5bf4d:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readMentions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadMentions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMentions, int(layer)); clazzId {
@@ -19713,6 +29786,40 @@ func (m *TLMessagesGetRecentLocations) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetRecentLocations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetRecentLocations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentLocations, int(layer)); clazzId {
+	case 0x702a40e0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetRecentLocations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentLocations, int(layer)); clazzId {
+	case 0x702a40e0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getRecentLocations, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetRecentLocations) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentLocations, int(layer)); clazzId {
@@ -19787,6 +29894,67 @@ type TLMessagesSendMultiMedia struct {
 func (m *TLMessagesSendMultiMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendMultiMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendMultiMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMultiMedia, int(layer)); clazzId {
+	case 0x1bf89d74:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.MultiMedia, layer)
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		if m.QuickReplyShortcut != nil {
+			size += iface.CalcObjectSize(m.QuickReplyShortcut, layer)
+		}
+
+		if m.Effect != nil {
+			size += 8
+		}
+
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendMultiMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMultiMedia, int(layer)); clazzId {
+	case 0x1bf89d74:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("multi_media", m.MultiMedia); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendMultiMedia, layer)
+	}
 }
 
 // Encode <--
@@ -20017,6 +30185,43 @@ func (m *TLMessagesUploadEncryptedFile) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesUploadEncryptedFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUploadEncryptedFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadEncryptedFile, int(layer)); clazzId {
+	case 0x5057c497:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.File, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUploadEncryptedFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadEncryptedFile, int(layer)); clazzId {
+	case 0x5057c497:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_uploadEncryptedFile, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadEncryptedFile, int(layer)); clazzId {
@@ -20077,6 +30282,40 @@ type TLMessagesSearchStickerSets struct {
 func (m *TLMessagesSearchStickerSets) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSearchStickerSets) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchStickerSets) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchStickerSets, int(layer)); clazzId {
+	case 0x35705b8a:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Q)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchStickerSets) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchStickerSets, int(layer)); clazzId {
+	case 0x35705b8a:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchStickerSets, layer)
+	}
 }
 
 // Encode <--
@@ -20152,6 +30391,34 @@ func (m *TLMessagesGetSplitRanges) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetSplitRanges) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSplitRanges) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSplitRanges, int(layer)); clazzId {
+	case 0x1cff7e08:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSplitRanges) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSplitRanges, int(layer)); clazzId {
+	case 0x1cff7e08:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSplitRanges, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetSplitRanges) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSplitRanges, int(layer)); clazzId {
@@ -20193,6 +30460,44 @@ type TLMessagesMarkDialogUnread struct {
 func (m *TLMessagesMarkDialogUnread) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesMarkDialogUnread) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesMarkDialogUnread) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_markDialogUnread, int(layer)); clazzId {
+	case 0x8c5006f8:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesMarkDialogUnread) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_markDialogUnread, int(layer)); clazzId {
+	case 0x8c5006f8:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_markDialogUnread, layer)
+	}
 }
 
 // Encode <--
@@ -20284,6 +30589,38 @@ func (m *TLMessagesGetDialogUnreadMarks) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDialogUnreadMarks) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDialogUnreadMarks) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogUnreadMarks, int(layer)); clazzId {
+	case 0x21202222:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDialogUnreadMarks) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogUnreadMarks, int(layer)); clazzId {
+	case 0x21202222:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDialogUnreadMarks, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDialogUnreadMarks) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogUnreadMarks, int(layer)); clazzId {
@@ -20356,6 +30693,34 @@ func (m *TLMessagesClearAllDrafts) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesClearAllDrafts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesClearAllDrafts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearAllDrafts, int(layer)); clazzId {
+	case 0x7e58ee9c:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesClearAllDrafts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearAllDrafts, int(layer)); clazzId {
+	case 0x7e58ee9c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_clearAllDrafts, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearAllDrafts, int(layer)); clazzId {
@@ -20399,6 +30764,40 @@ type TLMessagesUpdatePinnedMessage struct {
 func (m *TLMessagesUpdatePinnedMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUpdatePinnedMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUpdatePinnedMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedMessage, int(layer)); clazzId {
+	case 0xd2aaf7ec:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUpdatePinnedMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedMessage, int(layer)); clazzId {
+	case 0xd2aaf7ec:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_updatePinnedMessage, layer)
+	}
 }
 
 // Encode <--
@@ -20494,6 +30893,44 @@ func (m *TLMessagesSendVote) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendVote) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendVote) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendVote, int(layer)); clazzId {
+	case 0x10ea6184:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcBytesListSize(m.Options)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendVote) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendVote, int(layer)); clazzId {
+	case 0x10ea6184:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("options", m.Options); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendVote, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendVote) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendVote, int(layer)); clazzId {
@@ -20556,6 +30993,39 @@ func (m *TLMessagesGetPollResults) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPollResults) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPollResults) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
+	case 0x73bb643b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPollResults) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
+	case 0x73bb643b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPollResults, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPollResults) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
@@ -20613,6 +31083,38 @@ func (m *TLMessagesGetOnlines) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetOnlines) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetOnlines) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOnlines, int(layer)); clazzId {
+	case 0x6e2be050:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetOnlines) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOnlines, int(layer)); clazzId {
+	case 0x6e2be050:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getOnlines, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetOnlines) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOnlines, int(layer)); clazzId {
@@ -20663,6 +31165,43 @@ type TLMessagesEditChatAbout struct {
 func (m *TLMessagesEditChatAbout) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditChatAbout) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatAbout) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAbout, int(layer)); clazzId {
+	case 0xdef60797:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.About)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatAbout) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAbout, int(layer)); clazzId {
+	case 0xdef60797:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("about", m.About); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatAbout, layer)
+	}
 }
 
 // Encode <--
@@ -20721,6 +31260,43 @@ type TLMessagesEditChatDefaultBannedRights struct {
 func (m *TLMessagesEditChatDefaultBannedRights) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditChatDefaultBannedRights) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatDefaultBannedRights) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatDefaultBannedRights, int(layer)); clazzId {
+	case 0xa5866b41:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.BannedRights, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatDefaultBannedRights) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatDefaultBannedRights, int(layer)); clazzId {
+	case 0xa5866b41:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("banned_rights", m.BannedRights); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatDefaultBannedRights, layer)
+	}
 }
 
 // Encode <--
@@ -20783,6 +31359,38 @@ func (m *TLMessagesGetEmojiKeywords) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiKeywords) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiKeywords) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywords, int(layer)); clazzId {
+	case 0x35a0e062:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiKeywords) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywords, int(layer)); clazzId {
+	case 0x35a0e062:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiKeywords, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiKeywords) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywords, int(layer)); clazzId {
@@ -20829,6 +31437,39 @@ type TLMessagesGetEmojiKeywordsDifference struct {
 func (m *TLMessagesGetEmojiKeywordsDifference) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetEmojiKeywordsDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiKeywordsDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsDifference, int(layer)); clazzId {
+	case 0x1508b6af:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiKeywordsDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsDifference, int(layer)); clazzId {
+	case 0x1508b6af:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiKeywordsDifference, layer)
+	}
 }
 
 // Encode <--
@@ -20883,6 +31524,38 @@ func (m *TLMessagesGetEmojiKeywordsLanguages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiKeywordsLanguages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiKeywordsLanguages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsLanguages, int(layer)); clazzId {
+	case 0x4e9963b2:
+		size := 4
+		size += iface.CalcStringListSize(m.LangCodes)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiKeywordsLanguages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsLanguages, int(layer)); clazzId {
+	case 0x4e9963b2:
+		if err := iface.ValidateRequiredSlice("lang_codes", m.LangCodes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiKeywordsLanguages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiKeywordsLanguages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsLanguages, int(layer)); clazzId {
@@ -20926,6 +31599,38 @@ type TLMessagesGetEmojiURL struct {
 func (m *TLMessagesGetEmojiURL) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetEmojiURL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiURL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiURL, int(layer)); clazzId {
+	case 0xd5b10c26:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiURL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiURL, int(layer)); clazzId {
+	case 0xd5b10c26:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiURL, layer)
+	}
 }
 
 // Encode <--
@@ -20976,6 +31681,52 @@ type TLMessagesGetSearchCounters struct {
 func (m *TLMessagesGetSearchCounters) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSearchCounters) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSearchCounters) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchCounters, int(layer)); clazzId {
+	case 0x1bbcf300:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		size += iface.CalcObjectListSize(m.Filters, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSearchCounters) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchCounters, int(layer)); clazzId {
+	case 0x1bbcf300:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("filters", m.Filters); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSearchCounters, layer)
+	}
 }
 
 // Encode <--
@@ -21101,6 +31852,77 @@ type TLMessagesRequestUrlAuth struct {
 func (m *TLMessagesRequestUrlAuth) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestUrlAuth) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestUrlAuth) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestUrlAuth, int(layer)); clazzId {
+	case 0x894cc99c:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.MsgId != nil {
+			size += 4
+		}
+
+		if m.ButtonId != nil {
+			size += 4
+		}
+
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		if m.InAppOrigin != nil {
+			size += iface.CalcStringSize(*m.InAppOrigin)
+		}
+
+		return size
+	case 0x198fb446:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.MsgId != nil {
+			size += 4
+		}
+
+		if m.ButtonId != nil {
+			size += 4
+		}
+
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestUrlAuth) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestUrlAuth, int(layer)); clazzId {
+	case 0x894cc99c:
+
+		return nil
+	case 0x198fb446:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestUrlAuth, layer)
+	}
 }
 
 // Encode <--
@@ -21318,6 +32140,77 @@ type TLMessagesAcceptUrlAuth struct {
 func (m *TLMessagesAcceptUrlAuth) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesAcceptUrlAuth) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesAcceptUrlAuth) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptUrlAuth, int(layer)); clazzId {
+	case 0x67a3f0de:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.MsgId != nil {
+			size += 4
+		}
+
+		if m.ButtonId != nil {
+			size += 4
+		}
+
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		if m.MatchCode != nil {
+			size += iface.CalcStringSize(*m.MatchCode)
+		}
+
+		return size
+	case 0xb12c7125:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.MsgId != nil {
+			size += 4
+		}
+
+		if m.ButtonId != nil {
+			size += 4
+		}
+
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesAcceptUrlAuth) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptUrlAuth, int(layer)); clazzId {
+	case 0x67a3f0de:
+
+		return nil
+	case 0xb12c7125:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_acceptUrlAuth, layer)
+	}
 }
 
 // Encode <--
@@ -21555,6 +32448,38 @@ func (m *TLMessagesHidePeerSettingsBar) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesHidePeerSettingsBar) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesHidePeerSettingsBar) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hidePeerSettingsBar, int(layer)); clazzId {
+	case 0x4facb138:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesHidePeerSettingsBar) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hidePeerSettingsBar, int(layer)); clazzId {
+	case 0x4facb138:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_hidePeerSettingsBar, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesHidePeerSettingsBar) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hidePeerSettingsBar, int(layer)); clazzId {
@@ -21605,6 +32530,39 @@ type TLMessagesGetScheduledHistory struct {
 func (m *TLMessagesGetScheduledHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetScheduledHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetScheduledHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledHistory, int(layer)); clazzId {
+	case 0xf516760b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetScheduledHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledHistory, int(layer)); clazzId {
+	case 0xf516760b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getScheduledHistory, layer)
+	}
 }
 
 // Encode <--
@@ -21665,6 +32623,43 @@ func (m *TLMessagesGetScheduledMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetScheduledMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetScheduledMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledMessages, int(layer)); clazzId {
+	case 0xbdbb0464:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetScheduledMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledMessages, int(layer)); clazzId {
+	case 0xbdbb0464:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getScheduledMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetScheduledMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledMessages, int(layer)); clazzId {
@@ -21721,6 +32716,43 @@ func (m *TLMessagesSendScheduledMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendScheduledMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendScheduledMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScheduledMessages, int(layer)); clazzId {
+	case 0xbd38850a:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendScheduledMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScheduledMessages, int(layer)); clazzId {
+	case 0xbd38850a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendScheduledMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendScheduledMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScheduledMessages, int(layer)); clazzId {
@@ -21775,6 +32807,43 @@ type TLMessagesDeleteScheduledMessages struct {
 func (m *TLMessagesDeleteScheduledMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesDeleteScheduledMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteScheduledMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteScheduledMessages, int(layer)); clazzId {
+	case 0x59ae2b16:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteScheduledMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteScheduledMessages, int(layer)); clazzId {
+	case 0x59ae2b16:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteScheduledMessages, layer)
+	}
 }
 
 // Encode <--
@@ -21834,6 +32903,49 @@ type TLMessagesGetPollVotes struct {
 func (m *TLMessagesGetPollVotes) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetPollVotes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPollVotes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollVotes, int(layer)); clazzId {
+	case 0xb86e380e:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Option != nil {
+			size += iface.CalcBytesSize(m.Option)
+		}
+
+		if m.Offset != nil {
+			size += iface.CalcStringSize(*m.Offset)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPollVotes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollVotes, int(layer)); clazzId {
+	case 0xb86e380e:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPollVotes, layer)
+	}
 }
 
 // Encode <--
@@ -21946,6 +33058,39 @@ func (m *TLMessagesToggleStickerSets) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesToggleStickerSets) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleStickerSets) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleStickerSets, int(layer)); clazzId {
+	case 0xb5052fea:
+		size := 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Stickersets, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleStickerSets) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleStickerSets, int(layer)); clazzId {
+	case 0xb5052fea:
+		if err := iface.ValidateRequiredSlice("stickersets", m.Stickersets); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleStickerSets, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesToggleStickerSets) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleStickerSets, int(layer)); clazzId {
@@ -22045,6 +33190,34 @@ func (m *TLMessagesGetDialogFilters) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDialogFilters) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDialogFilters) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogFilters, int(layer)); clazzId {
+	case 0xefd48c89:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDialogFilters) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogFilters, int(layer)); clazzId {
+	case 0xefd48c89:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDialogFilters, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogFilters, int(layer)); clazzId {
@@ -22083,6 +33256,34 @@ type TLMessagesGetSuggestedDialogFilters struct {
 func (m *TLMessagesGetSuggestedDialogFilters) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSuggestedDialogFilters) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSuggestedDialogFilters) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSuggestedDialogFilters, int(layer)); clazzId {
+	case 0xa29cd42c:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSuggestedDialogFilters) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSuggestedDialogFilters, int(layer)); clazzId {
+	case 0xa29cd42c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSuggestedDialogFilters, layer)
+	}
 }
 
 // Encode <--
@@ -22125,6 +33326,39 @@ type TLMessagesUpdateDialogFilter struct {
 func (m *TLMessagesUpdateDialogFilter) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUpdateDialogFilter) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUpdateDialogFilter) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFilter, int(layer)); clazzId {
+	case 0x1ad4a04a:
+		size := 4
+		size += 4
+		size += 4
+		if m.Filter != nil {
+			size += iface.CalcObjectSize(m.Filter, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUpdateDialogFilter) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFilter, int(layer)); clazzId {
+	case 0x1ad4a04a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_updateDialogFilter, layer)
+	}
 }
 
 // Encode <--
@@ -22205,6 +33439,38 @@ func (m *TLMessagesUpdateDialogFiltersOrder) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesUpdateDialogFiltersOrder) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUpdateDialogFiltersOrder) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFiltersOrder, int(layer)); clazzId {
+	case 0xc563c1e4:
+		size := 4
+		size += iface.CalcInt32ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUpdateDialogFiltersOrder) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFiltersOrder, int(layer)); clazzId {
+	case 0xc563c1e4:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_updateDialogFiltersOrder, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFiltersOrder, int(layer)); clazzId {
@@ -22250,6 +33516,37 @@ type TLMessagesGetOldFeaturedStickers struct {
 func (m *TLMessagesGetOldFeaturedStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetOldFeaturedStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetOldFeaturedStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOldFeaturedStickers, int(layer)); clazzId {
+	case 0x7ed094a1:
+		size := 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetOldFeaturedStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOldFeaturedStickers, int(layer)); clazzId {
+	case 0x7ed094a1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getOldFeaturedStickers, layer)
+	}
 }
 
 // Encode <--
@@ -22315,6 +33612,46 @@ type TLMessagesGetReplies struct {
 func (m *TLMessagesGetReplies) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetReplies) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetReplies) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getReplies, int(layer)); clazzId {
+	case 0x22ddd30c:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetReplies) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getReplies, int(layer)); clazzId {
+	case 0x22ddd30c:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getReplies, layer)
+	}
 }
 
 // Encode <--
@@ -22410,6 +33747,39 @@ func (m *TLMessagesGetDiscussionMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDiscussionMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDiscussionMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDiscussionMessage, int(layer)); clazzId {
+	case 0x446972fd:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDiscussionMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDiscussionMessage, int(layer)); clazzId {
+	case 0x446972fd:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDiscussionMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDiscussionMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDiscussionMessage, int(layer)); clazzId {
@@ -22467,6 +33837,40 @@ type TLMessagesReadDiscussion struct {
 func (m *TLMessagesReadDiscussion) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReadDiscussion) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadDiscussion) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readDiscussion, int(layer)); clazzId {
+	case 0xf731a9f4:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadDiscussion) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readDiscussion, int(layer)); clazzId {
+	case 0xf731a9f4:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readDiscussion, layer)
+	}
 }
 
 // Encode <--
@@ -22531,6 +33935,46 @@ type TLMessagesUnpinAllMessages struct {
 func (m *TLMessagesUnpinAllMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUnpinAllMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUnpinAllMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_unpinAllMessages, int(layer)); clazzId {
+	case 0x62dd747:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUnpinAllMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_unpinAllMessages, int(layer)); clazzId {
+	case 0x62dd747:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_unpinAllMessages, layer)
+	}
 }
 
 // Encode <--
@@ -22630,6 +34074,35 @@ func (m *TLMessagesDeleteChat) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteChat) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteChat) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChat, int(layer)); clazzId {
+	case 0x5bd0ee50:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteChat) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChat, int(layer)); clazzId {
+	case 0x5bd0ee50:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteChat, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteChat) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChat, int(layer)); clazzId {
@@ -22675,6 +34148,35 @@ type TLMessagesDeletePhoneCallHistory struct {
 func (m *TLMessagesDeletePhoneCallHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesDeletePhoneCallHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeletePhoneCallHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deletePhoneCallHistory, int(layer)); clazzId {
+	case 0xf9cbe409:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeletePhoneCallHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deletePhoneCallHistory, int(layer)); clazzId {
+	case 0xf9cbe409:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deletePhoneCallHistory, layer)
+	}
 }
 
 // Encode <--
@@ -22741,6 +34243,38 @@ func (m *TLMessagesCheckHistoryImport) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesCheckHistoryImport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCheckHistoryImport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImport, int(layer)); clazzId {
+	case 0x43fe19f3:
+		size := 4
+		size += iface.CalcStringSize(m.ImportHead)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCheckHistoryImport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImport, int(layer)); clazzId {
+	case 0x43fe19f3:
+		if err := iface.ValidateRequiredString("import_head", m.ImportHead); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_checkHistoryImport, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesCheckHistoryImport) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImport, int(layer)); clazzId {
@@ -22788,6 +34322,44 @@ type TLMessagesInitHistoryImport struct {
 func (m *TLMessagesInitHistoryImport) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesInitHistoryImport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesInitHistoryImport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_initHistoryImport, int(layer)); clazzId {
+	case 0x34090c3b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.File, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesInitHistoryImport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_initHistoryImport, int(layer)); clazzId {
+	case 0x34090c3b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_initHistoryImport, layer)
+	}
 }
 
 // Encode <--
@@ -22857,6 +34429,49 @@ type TLMessagesUploadImportedMedia struct {
 func (m *TLMessagesUploadImportedMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUploadImportedMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUploadImportedMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadImportedMedia, int(layer)); clazzId {
+	case 0x2a862092:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcStringSize(m.FileName)
+		size += iface.CalcObjectSize(m.Media, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUploadImportedMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadImportedMedia, int(layer)); clazzId {
+	case 0x2a862092:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("file_name", m.FileName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_uploadImportedMedia, layer)
+	}
 }
 
 // Encode <--
@@ -22931,6 +34546,39 @@ func (m *TLMessagesStartHistoryImport) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesStartHistoryImport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesStartHistoryImport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startHistoryImport, int(layer)); clazzId {
+	case 0xb43df344:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesStartHistoryImport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startHistoryImport, int(layer)); clazzId {
+	case 0xb43df344:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_startHistoryImport, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesStartHistoryImport) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startHistoryImport, int(layer)); clazzId {
@@ -22991,6 +34639,53 @@ type TLMessagesGetExportedChatInvites struct {
 func (m *TLMessagesGetExportedChatInvites) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetExportedChatInvites) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetExportedChatInvites) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvites, int(layer)); clazzId {
+	case 0xa2b5a3f6:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.AdminId, layer)
+		if m.OffsetDate != nil {
+			size += 4
+		}
+
+		if m.OffsetLink != nil {
+			size += iface.CalcStringSize(*m.OffsetLink)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetExportedChatInvites) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvites, int(layer)); clazzId {
+	case 0xa2b5a3f6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("admin_id", m.AdminId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getExportedChatInvites, layer)
+	}
 }
 
 // Encode <--
@@ -23112,6 +34807,43 @@ func (m *TLMessagesGetExportedChatInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetExportedChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetExportedChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvite, int(layer)); clazzId {
+	case 0x73746f5c:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Link)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetExportedChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvite, int(layer)); clazzId {
+	case 0x73746f5c:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getExportedChatInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvite, int(layer)); clazzId {
@@ -23173,6 +34905,59 @@ type TLMessagesEditExportedChatInvite struct {
 func (m *TLMessagesEditExportedChatInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditExportedChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditExportedChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editExportedChatInvite, int(layer)); clazzId {
+	case 0xbdca2f75:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Link)
+		if m.ExpireDate != nil {
+			size += 4
+		}
+
+		if m.UsageLimit != nil {
+			size += 4
+		}
+
+		if m.RequestNeeded != nil {
+			size += iface.CalcObjectSize(m.RequestNeeded, layer)
+		}
+
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditExportedChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editExportedChatInvite, int(layer)); clazzId {
+	case 0xbdca2f75:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editExportedChatInvite, layer)
+	}
 }
 
 // Encode <--
@@ -23313,6 +35098,43 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteRevokedExportedChatInvites) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteRevokedExportedChatInvites) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteRevokedExportedChatInvites, int(layer)); clazzId {
+	case 0x56987bd5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.AdminId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteRevokedExportedChatInvites) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteRevokedExportedChatInvites, int(layer)); clazzId {
+	case 0x56987bd5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("admin_id", m.AdminId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteRevokedExportedChatInvites, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteRevokedExportedChatInvites, int(layer)); clazzId {
@@ -23374,6 +35196,43 @@ func (m *TLMessagesDeleteExportedChatInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteExportedChatInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteExportedChatInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteExportedChatInvite, int(layer)); clazzId {
+	case 0xd464a42b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Link)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteExportedChatInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteExportedChatInvite, int(layer)); clazzId {
+	case 0xd464a42b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteExportedChatInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteExportedChatInvite, int(layer)); clazzId {
@@ -23429,6 +35288,38 @@ type TLMessagesGetAdminsWithInvites struct {
 func (m *TLMessagesGetAdminsWithInvites) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetAdminsWithInvites) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAdminsWithInvites) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAdminsWithInvites, int(layer)); clazzId {
+	case 0x3920e6ef:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAdminsWithInvites) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAdminsWithInvites, int(layer)); clazzId {
+	case 0x3920e6ef:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAdminsWithInvites, layer)
+	}
 }
 
 // Encode <--
@@ -23487,6 +35378,54 @@ type TLMessagesGetChatInviteImporters struct {
 func (m *TLMessagesGetChatInviteImporters) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetChatInviteImporters) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetChatInviteImporters) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChatInviteImporters, int(layer)); clazzId {
+	case 0xdf04dd4e:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Link != nil {
+			size += iface.CalcStringSize(*m.Link)
+		}
+
+		if m.Q != nil {
+			size += iface.CalcStringSize(*m.Q)
+		}
+
+		size += 4
+		size += iface.CalcObjectSize(m.OffsetUser, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetChatInviteImporters) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChatInviteImporters, int(layer)); clazzId {
+	case 0xdf04dd4e:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("offset_user", m.OffsetUser); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getChatInviteImporters, layer)
+	}
 }
 
 // Encode <--
@@ -23621,6 +35560,39 @@ func (m *TLMessagesSetHistoryTTL) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetHistoryTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetHistoryTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setHistoryTTL, int(layer)); clazzId {
+	case 0xb80e5fe4:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetHistoryTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setHistoryTTL, int(layer)); clazzId {
+	case 0xb80e5fe4:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setHistoryTTL, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setHistoryTTL, int(layer)); clazzId {
@@ -23678,6 +35650,38 @@ func (m *TLMessagesCheckHistoryImportPeer) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesCheckHistoryImportPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCheckHistoryImportPeer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImportPeer, int(layer)); clazzId {
+	case 0x5dc60f03:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCheckHistoryImportPeer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImportPeer, int(layer)); clazzId {
+	case 0x5dc60f03:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_checkHistoryImportPeer, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesCheckHistoryImportPeer) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImportPeer, int(layer)); clazzId {
@@ -23728,6 +35732,43 @@ type TLMessagesSetChatTheme struct {
 func (m *TLMessagesSetChatTheme) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetChatTheme) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetChatTheme) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatTheme, int(layer)); clazzId {
+	case 0x81202c9:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Theme, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetChatTheme) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatTheme, int(layer)); clazzId {
+	case 0x81202c9:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setChatTheme, layer)
+	}
 }
 
 // Encode <--
@@ -23791,6 +35832,39 @@ func (m *TLMessagesGetMessageReadParticipants) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMessageReadParticipants) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessageReadParticipants) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReadParticipants, int(layer)); clazzId {
+	case 0x31c1c44f:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessageReadParticipants) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReadParticipants, int(layer)); clazzId {
+	case 0x31c1c44f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessageReadParticipants, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMessageReadParticipants) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReadParticipants, int(layer)); clazzId {
@@ -23850,6 +35924,50 @@ type TLMessagesGetSearchResultsCalendar struct {
 func (m *TLMessagesGetSearchResultsCalendar) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSearchResultsCalendar) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSearchResultsCalendar) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsCalendar, int(layer)); clazzId {
+	case 0x6aa3f6bd:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSearchResultsCalendar) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsCalendar, int(layer)); clazzId {
+	case 0x6aa3f6bd:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSearchResultsCalendar, layer)
+	}
 }
 
 // Encode <--
@@ -23960,6 +36078,50 @@ func (m *TLMessagesGetSearchResultsPositions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetSearchResultsPositions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSearchResultsPositions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsPositions, int(layer)); clazzId {
+	case 0x9c7f2f10:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSearchResultsPositions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsPositions, int(layer)); clazzId {
+	case 0x9c7f2f10:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSearchResultsPositions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetSearchResultsPositions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsPositions, int(layer)); clazzId {
@@ -24066,6 +36228,44 @@ func (m *TLMessagesHideChatJoinRequest) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesHideChatJoinRequest) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesHideChatJoinRequest) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideChatJoinRequest, int(layer)); clazzId {
+	case 0x7fe7e815:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesHideChatJoinRequest) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideChatJoinRequest, int(layer)); clazzId {
+	case 0x7fe7e815:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_hideChatJoinRequest, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesHideChatJoinRequest) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideChatJoinRequest, int(layer)); clazzId {
@@ -24148,6 +36348,42 @@ type TLMessagesHideAllChatJoinRequests struct {
 func (m *TLMessagesHideAllChatJoinRequests) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesHideAllChatJoinRequests) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesHideAllChatJoinRequests) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideAllChatJoinRequests, int(layer)); clazzId {
+	case 0xe085f4ea:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Link != nil {
+			size += iface.CalcStringSize(*m.Link)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesHideAllChatJoinRequests) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideAllChatJoinRequests, int(layer)); clazzId {
+	case 0xe085f4ea:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_hideAllChatJoinRequests, layer)
+	}
 }
 
 // Encode <--
@@ -24238,6 +36474,63 @@ type TLMessagesToggleNoForwards struct {
 func (m *TLMessagesToggleNoForwards) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleNoForwards) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleNoForwards) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleNoForwards, int(layer)); clazzId {
+	case 0xb2081a35:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+		if m.RequestMsgId != nil {
+			size += 4
+		}
+
+		return size
+	case 0xb11eafa2:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleNoForwards) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleNoForwards, int(layer)); clazzId {
+	case 0xb2081a35:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	case 0xb11eafa2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleNoForwards, layer)
+	}
 }
 
 // Encode <--
@@ -24357,6 +36650,43 @@ func (m *TLMessagesSaveDefaultSendAs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSaveDefaultSendAs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDefaultSendAs, int(layer)); clazzId {
+	case 0xccfddf96:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.SendAs, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSaveDefaultSendAs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDefaultSendAs, int(layer)); clazzId {
+	case 0xccfddf96:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("send_as", m.SendAs); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_saveDefaultSendAs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSaveDefaultSendAs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDefaultSendAs, int(layer)); clazzId {
@@ -24419,6 +36749,43 @@ type TLMessagesSendReaction struct {
 func (m *TLMessagesSendReaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendReaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendReaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendReaction, int(layer)); clazzId {
+	case 0xd30d78d4:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Reaction != nil {
+			size += iface.CalcObjectListSize(m.Reaction, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendReaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendReaction, int(layer)); clazzId {
+	case 0xd30d78d4:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendReaction, layer)
+	}
 }
 
 // Encode <--
@@ -24538,6 +36905,43 @@ func (m *TLMessagesGetMessagesReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMessagesReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessagesReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesReactions, int(layer)); clazzId {
+	case 0x8bba90e6:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessagesReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesReactions, int(layer)); clazzId {
+	case 0x8bba90e6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessagesReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMessagesReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesReactions, int(layer)); clazzId {
@@ -24595,6 +36999,49 @@ type TLMessagesGetMessageReactionsList struct {
 func (m *TLMessagesGetMessageReactionsList) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetMessageReactionsList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMessageReactionsList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReactionsList, int(layer)); clazzId {
+	case 0x461b3f48:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Reaction != nil {
+			size += iface.CalcObjectSize(m.Reaction, layer)
+		}
+
+		if m.Offset != nil {
+			size += iface.CalcStringSize(*m.Offset)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMessageReactionsList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReactionsList, int(layer)); clazzId {
+	case 0x461b3f48:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMessageReactionsList, layer)
+	}
 }
 
 // Encode <--
@@ -24709,6 +37156,51 @@ func (m *TLMessagesSetChatAvailableReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetChatAvailableReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetChatAvailableReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatAvailableReactions, int(layer)); clazzId {
+	case 0x864b2581:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.AvailableReactions, layer)
+		if m.ReactionsLimit != nil {
+			size += 4
+		}
+
+		if m.PaidEnabled != nil {
+			size += iface.CalcObjectSize(m.PaidEnabled, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetChatAvailableReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatAvailableReactions, int(layer)); clazzId {
+	case 0x864b2581:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("available_reactions", m.AvailableReactions); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setChatAvailableReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatAvailableReactions, int(layer)); clazzId {
@@ -24815,6 +37307,35 @@ func (m *TLMessagesGetAvailableReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetAvailableReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAvailableReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAvailableReactions, int(layer)); clazzId {
+	case 0x18dea0ac:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAvailableReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAvailableReactions, int(layer)); clazzId {
+	case 0x18dea0ac:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAvailableReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetAvailableReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAvailableReactions, int(layer)); clazzId {
@@ -24860,6 +37381,38 @@ type TLMessagesSetDefaultReaction struct {
 func (m *TLMessagesSetDefaultReaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSetDefaultReaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetDefaultReaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultReaction, int(layer)); clazzId {
+	case 0x4f47a016:
+		size := 4
+		size += iface.CalcObjectSize(m.Reaction, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetDefaultReaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultReaction, int(layer)); clazzId {
+	case 0x4f47a016:
+		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setDefaultReaction, layer)
+	}
 }
 
 // Encode <--
@@ -24914,6 +37467,52 @@ type TLMessagesTranslateText struct {
 func (m *TLMessagesTranslateText) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesTranslateText) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesTranslateText) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_translateText, int(layer)); clazzId {
+	case 0x63183030:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.Id != nil {
+			size += iface.CalcInt32ListSize(m.Id)
+		}
+
+		if m.Text != nil {
+			size += iface.CalcObjectListSize(m.Text, layer)
+		}
+
+		size += iface.CalcStringSize(m.ToLang)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesTranslateText) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_translateText, int(layer)); clazzId {
+	case 0x63183030:
+
+		if err := iface.ValidateRequiredString("to_lang", m.ToLang); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_translateText, layer)
+	}
 }
 
 // Encode <--
@@ -25041,6 +37640,52 @@ func (m *TLMessagesGetUnreadReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetUnreadReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetUnreadReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadReactions, int(layer)); clazzId {
+	case 0xbd7f90ac:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetUnreadReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadReactions, int(layer)); clazzId {
+	case 0xbd7f90ac:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getUnreadReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetUnreadReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadReactions, int(layer)); clazzId {
@@ -25166,6 +37811,46 @@ func (m *TLMessagesReadReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readReactions, int(layer)); clazzId {
+	case 0x9ec44f93:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		if m.SavedPeerId != nil {
+			size += iface.CalcObjectSize(m.SavedPeerId, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readReactions, int(layer)); clazzId {
+	case 0x9ec44f93:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readReactions, int(layer)); clazzId {
@@ -25265,6 +37950,44 @@ func (m *TLMessagesSearchSentMedia) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSearchSentMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchSentMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchSentMedia, int(layer)); clazzId {
+	case 0x107e31a0:
+		size := 4
+		size += iface.CalcStringSize(m.Q)
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchSentMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchSentMedia, int(layer)); clazzId {
+	case 0x107e31a0:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchSentMedia, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSearchSentMedia) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchSentMedia, int(layer)); clazzId {
@@ -25327,6 +38050,35 @@ func (m *TLMessagesGetAttachMenuBots) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetAttachMenuBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAttachMenuBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBots, int(layer)); clazzId {
+	case 0x16fcc2cb:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAttachMenuBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBots, int(layer)); clazzId {
+	case 0x16fcc2cb:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAttachMenuBots, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetAttachMenuBots) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBots, int(layer)); clazzId {
@@ -25372,6 +38124,38 @@ type TLMessagesGetAttachMenuBot struct {
 func (m *TLMessagesGetAttachMenuBot) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetAttachMenuBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAttachMenuBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBot, int(layer)); clazzId {
+	case 0x77216192:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAttachMenuBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBot, int(layer)); clazzId {
+	case 0x77216192:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAttachMenuBot, layer)
+	}
 }
 
 // Encode <--
@@ -25425,6 +38209,44 @@ type TLMessagesToggleBotInAttachMenu struct {
 func (m *TLMessagesToggleBotInAttachMenu) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleBotInAttachMenu) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleBotInAttachMenu) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleBotInAttachMenu, int(layer)); clazzId {
+	case 0x69f59d69:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleBotInAttachMenu) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleBotInAttachMenu, int(layer)); clazzId {
+	case 0x69f59d69:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleBotInAttachMenu, layer)
+	}
 }
 
 // Encode <--
@@ -25518,6 +38340,68 @@ type TLMessagesRequestWebView struct {
 func (m *TLMessagesRequestWebView) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestWebView) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestWebView) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestWebView, int(layer)); clazzId {
+	case 0x269dc2c1:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Bot, layer)
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		if m.StartParam != nil {
+			size += iface.CalcStringSize(*m.StartParam)
+		}
+
+		if m.ThemeParams != nil {
+			size += iface.CalcObjectSize(m.ThemeParams, layer)
+		}
+
+		size += iface.CalcStringSize(m.Platform)
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestWebView) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestWebView, int(layer)); clazzId {
+	case 0x269dc2c1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("platform", m.Platform); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestWebView, layer)
+	}
 }
 
 // Encode <--
@@ -25710,6 +38594,52 @@ func (m *TLMessagesProlongWebView) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesProlongWebView) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesProlongWebView) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_prolongWebView, int(layer)); clazzId {
+	case 0xb0d81a83:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += 8
+		if m.ReplyTo != nil {
+			size += iface.CalcObjectSize(m.ReplyTo, layer)
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesProlongWebView) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_prolongWebView, int(layer)); clazzId {
+	case 0xb0d81a83:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_prolongWebView, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesProlongWebView) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_prolongWebView, int(layer)); clazzId {
@@ -25836,6 +38766,56 @@ type TLMessagesRequestSimpleWebView struct {
 func (m *TLMessagesRequestSimpleWebView) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestSimpleWebView) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestSimpleWebView) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestSimpleWebView, int(layer)); clazzId {
+	case 0x413a3e73:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		if m.Url != nil {
+			size += iface.CalcStringSize(*m.Url)
+		}
+
+		if m.StartParam != nil {
+			size += iface.CalcStringSize(*m.StartParam)
+		}
+
+		if m.ThemeParams != nil {
+			size += iface.CalcObjectSize(m.ThemeParams, layer)
+		}
+
+		size += iface.CalcStringSize(m.Platform)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestSimpleWebView) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestSimpleWebView, int(layer)); clazzId {
+	case 0x413a3e73:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("platform", m.Platform); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestSimpleWebView, layer)
+	}
 }
 
 // Encode <--
@@ -25983,6 +38963,43 @@ func (m *TLMessagesSendWebViewResultMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendWebViewResultMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendWebViewResultMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewResultMessage, int(layer)); clazzId {
+	case 0xa4314f5:
+		size := 4
+		size += iface.CalcStringSize(m.BotQueryId)
+		size += iface.CalcObjectSize(m.Result, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendWebViewResultMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewResultMessage, int(layer)); clazzId {
+	case 0xa4314f5:
+		if err := iface.ValidateRequiredString("bot_query_id", m.BotQueryId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("result", m.Result); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendWebViewResultMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendWebViewResultMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewResultMessage, int(layer)); clazzId {
@@ -26040,6 +39057,49 @@ type TLMessagesSendWebViewData struct {
 func (m *TLMessagesSendWebViewData) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendWebViewData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendWebViewData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewData, int(layer)); clazzId {
+	case 0xdc0242c8:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += 8
+		size += iface.CalcStringSize(m.ButtonText)
+		size += iface.CalcStringSize(m.Data)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendWebViewData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewData, int(layer)); clazzId {
+	case 0xdc0242c8:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("button_text", m.ButtonText); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("data", m.Data); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendWebViewData, layer)
+	}
 }
 
 // Encode <--
@@ -26110,6 +39170,39 @@ func (m *TLMessagesTranscribeAudio) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesTranscribeAudio) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesTranscribeAudio) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_transcribeAudio, int(layer)); clazzId {
+	case 0x269e9a49:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesTranscribeAudio) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_transcribeAudio, int(layer)); clazzId {
+	case 0x269e9a49:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_transcribeAudio, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesTranscribeAudio) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_transcribeAudio, int(layer)); clazzId {
@@ -26168,6 +39261,45 @@ type TLMessagesRateTranscribedAudio struct {
 func (m *TLMessagesRateTranscribedAudio) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRateTranscribedAudio) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRateTranscribedAudio) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_rateTranscribedAudio, int(layer)); clazzId {
+	case 0x7f1d072f:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.Good, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRateTranscribedAudio) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_rateTranscribedAudio, int(layer)); clazzId {
+	case 0x7f1d072f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("good", m.Good); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_rateTranscribedAudio, layer)
+	}
 }
 
 // Encode <--
@@ -26241,6 +39373,38 @@ func (m *TLMessagesGetCustomEmojiDocuments) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetCustomEmojiDocuments) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetCustomEmojiDocuments) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCustomEmojiDocuments, int(layer)); clazzId {
+	case 0xd9ab0f54:
+		size := 4
+		size += iface.CalcInt64ListSize(m.DocumentId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetCustomEmojiDocuments) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCustomEmojiDocuments, int(layer)); clazzId {
+	case 0xd9ab0f54:
+		if err := iface.ValidateRequiredSlice("document_id", m.DocumentId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getCustomEmojiDocuments, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetCustomEmojiDocuments) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCustomEmojiDocuments, int(layer)); clazzId {
@@ -26284,6 +39448,35 @@ type TLMessagesGetEmojiStickers struct {
 func (m *TLMessagesGetEmojiStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetEmojiStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStickers, int(layer)); clazzId {
+	case 0xfbfca18f:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStickers, int(layer)); clazzId {
+	case 0xfbfca18f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiStickers, layer)
+	}
 }
 
 // Encode <--
@@ -26333,6 +39526,35 @@ func (m *TLMessagesGetFeaturedEmojiStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetFeaturedEmojiStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFeaturedEmojiStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFeaturedEmojiStickers, int(layer)); clazzId {
+	case 0xecf6736:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFeaturedEmojiStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFeaturedEmojiStickers, int(layer)); clazzId {
+	case 0xecf6736:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFeaturedEmojiStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetFeaturedEmojiStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFeaturedEmojiStickers, int(layer)); clazzId {
@@ -26380,6 +39602,44 @@ type TLMessagesReportReaction struct {
 func (m *TLMessagesReportReaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReportReaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReportReaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReaction, int(layer)); clazzId {
+	case 0x3f64c076:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.ReactionPeer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportReaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReaction, int(layer)); clazzId {
+	case 0x3f64c076:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reaction_peer", m.ReactionPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportReaction, layer)
+	}
 }
 
 // Encode <--
@@ -26449,6 +39709,36 @@ func (m *TLMessagesGetTopReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetTopReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetTopReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getTopReactions, int(layer)); clazzId {
+	case 0xbb8125ba:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetTopReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getTopReactions, int(layer)); clazzId {
+	case 0xbb8125ba:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getTopReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetTopReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getTopReactions, int(layer)); clazzId {
@@ -26502,6 +39792,36 @@ func (m *TLMessagesGetRecentReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetRecentReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetRecentReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentReactions, int(layer)); clazzId {
+	case 0x39461db2:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetRecentReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentReactions, int(layer)); clazzId {
+	case 0x39461db2:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getRecentReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetRecentReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentReactions, int(layer)); clazzId {
@@ -26553,6 +39873,34 @@ func (m *TLMessagesClearRecentReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesClearRecentReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesClearRecentReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentReactions, int(layer)); clazzId {
+	case 0x9dfeefb4:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesClearRecentReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentReactions, int(layer)); clazzId {
+	case 0x9dfeefb4:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_clearRecentReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesClearRecentReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clearRecentReactions, int(layer)); clazzId {
@@ -26593,6 +39941,43 @@ type TLMessagesGetExtendedMedia struct {
 func (m *TLMessagesGetExtendedMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetExtendedMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetExtendedMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExtendedMedia, int(layer)); clazzId {
+	case 0x84f80814:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetExtendedMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExtendedMedia, int(layer)); clazzId {
+	case 0x84f80814:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getExtendedMedia, layer)
+	}
 }
 
 // Encode <--
@@ -26650,6 +40035,35 @@ func (m *TLMessagesSetDefaultHistoryTTL) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetDefaultHistoryTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultHistoryTTL, int(layer)); clazzId {
+	case 0x9eb51445:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetDefaultHistoryTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultHistoryTTL, int(layer)); clazzId {
+	case 0x9eb51445:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setDefaultHistoryTTL, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetDefaultHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultHistoryTTL, int(layer)); clazzId {
@@ -26696,6 +40110,34 @@ func (m *TLMessagesGetDefaultHistoryTTL) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDefaultHistoryTTL) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultHistoryTTL, int(layer)); clazzId {
+	case 0x658b7188:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDefaultHistoryTTL) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultHistoryTTL, int(layer)); clazzId {
+	case 0x658b7188:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDefaultHistoryTTL, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDefaultHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultHistoryTTL, int(layer)); clazzId {
@@ -26738,6 +40180,45 @@ type TLMessagesSendBotRequestedPeer struct {
 func (m *TLMessagesSendBotRequestedPeer) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSendBotRequestedPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendBotRequestedPeer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
+	case 0x91b2d060:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += iface.CalcObjectListSize(m.RequestedPeers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendBotRequestedPeer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
+	case 0x91b2d060:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("requested_peers", m.RequestedPeers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendBotRequestedPeer, layer)
+	}
 }
 
 // Encode <--
@@ -26826,6 +40307,35 @@ func (m *TLMessagesGetEmojiGroups) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiGroups) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiGroups) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGroups, int(layer)); clazzId {
+	case 0x7488ce5b:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiGroups) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGroups, int(layer)); clazzId {
+	case 0x7488ce5b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiGroups, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiGroups) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGroups, int(layer)); clazzId {
@@ -26871,6 +40381,35 @@ type TLMessagesGetEmojiStatusGroups struct {
 func (m *TLMessagesGetEmojiStatusGroups) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetEmojiStatusGroups) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiStatusGroups) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStatusGroups, int(layer)); clazzId {
+	case 0x2ecd56cd:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiStatusGroups) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStatusGroups, int(layer)); clazzId {
+	case 0x2ecd56cd:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiStatusGroups, layer)
+	}
 }
 
 // Encode <--
@@ -26920,6 +40459,35 @@ func (m *TLMessagesGetEmojiProfilePhotoGroups) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiProfilePhotoGroups) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiProfilePhotoGroups) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiProfilePhotoGroups, int(layer)); clazzId {
+	case 0x21a548f3:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiProfilePhotoGroups) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiProfilePhotoGroups, int(layer)); clazzId {
+	case 0x21a548f3:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiProfilePhotoGroups, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiProfilePhotoGroups) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiProfilePhotoGroups, int(layer)); clazzId {
@@ -26966,6 +40534,39 @@ type TLMessagesSearchCustomEmoji struct {
 func (m *TLMessagesSearchCustomEmoji) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSearchCustomEmoji) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchCustomEmoji) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchCustomEmoji, int(layer)); clazzId {
+	case 0x2c11c0d7:
+		size := 4
+		size += iface.CalcStringSize(m.Emoticon)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchCustomEmoji) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchCustomEmoji, int(layer)); clazzId {
+	case 0x2c11c0d7:
+		if err := iface.ValidateRequiredString("emoticon", m.Emoticon); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchCustomEmoji, layer)
+	}
 }
 
 // Encode <--
@@ -27019,6 +40620,39 @@ type TLMessagesTogglePeerTranslations struct {
 func (m *TLMessagesTogglePeerTranslations) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesTogglePeerTranslations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesTogglePeerTranslations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePeerTranslations, int(layer)); clazzId {
+	case 0xe47cb579:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesTogglePeerTranslations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePeerTranslations, int(layer)); clazzId {
+	case 0xe47cb579:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_togglePeerTranslations, layer)
+	}
 }
 
 // Encode <--
@@ -27095,6 +40729,39 @@ func (m *TLMessagesGetBotApp) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetBotApp) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetBotApp) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotApp, int(layer)); clazzId {
+	case 0x34fdc5c3:
+		size := 4
+		size += iface.CalcObjectSize(m.App, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetBotApp) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotApp, int(layer)); clazzId {
+	case 0x34fdc5c3:
+		if err := iface.ValidateRequiredObject("app", m.App); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getBotApp, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetBotApp) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotApp, int(layer)); clazzId {
@@ -27157,6 +40824,57 @@ type TLMessagesRequestAppWebView struct {
 func (m *TLMessagesRequestAppWebView) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestAppWebView) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestAppWebView) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestAppWebView, int(layer)); clazzId {
+	case 0x53618bce:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.App, layer)
+		if m.StartParam != nil {
+			size += iface.CalcStringSize(*m.StartParam)
+		}
+
+		if m.ThemeParams != nil {
+			size += iface.CalcObjectSize(m.ThemeParams, layer)
+		}
+
+		size += iface.CalcStringSize(m.Platform)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestAppWebView) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestAppWebView, int(layer)); clazzId {
+	case 0x53618bce:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("app", m.App); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("platform", m.Platform); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestAppWebView, layer)
+	}
 }
 
 // Encode <--
@@ -27296,6 +41014,50 @@ func (m *TLMessagesSetChatWallPaper) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSetChatWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSetChatWallPaper) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatWallPaper, int(layer)); clazzId {
+	case 0x8ffacae1:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Wallpaper != nil {
+			size += iface.CalcObjectSize(m.Wallpaper, layer)
+		}
+
+		if m.Settings != nil {
+			size += iface.CalcObjectSize(m.Settings, layer)
+		}
+
+		if m.Id != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSetChatWallPaper) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatWallPaper, int(layer)); clazzId {
+	case 0x8ffacae1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_setChatWallPaper, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSetChatWallPaper) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatWallPaper, int(layer)); clazzId {
@@ -27424,6 +41186,40 @@ func (m *TLMessagesSearchEmojiStickerSets) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSearchEmojiStickerSets) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchEmojiStickerSets) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchEmojiStickerSets, int(layer)); clazzId {
+	case 0x92b4494c:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Q)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchEmojiStickerSets) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchEmojiStickerSets, int(layer)); clazzId {
+	case 0x92b4494c:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchEmojiStickerSets, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSearchEmojiStickerSets) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchEmojiStickerSets, int(layer)); clazzId {
@@ -27502,6 +41298,48 @@ type TLMessagesGetSavedDialogs struct {
 func (m *TLMessagesGetSavedDialogs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSavedDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSavedDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogs, int(layer)); clazzId {
+	case 0x1e91fc99:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += 4
+		size += 4
+		size += iface.CalcObjectSize(m.OffsetPeer, layer)
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSavedDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogs, int(layer)); clazzId {
+	case 0x1e91fc99:
+
+		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSavedDialogs, layer)
+	}
 }
 
 // Encode <--
@@ -27620,6 +41458,51 @@ type TLMessagesGetSavedHistory struct {
 func (m *TLMessagesGetSavedHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSavedHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSavedHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedHistory, int(layer)); clazzId {
+	case 0x998ab009:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSavedHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedHistory, int(layer)); clazzId {
+	case 0x998ab009:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSavedHistory, layer)
+	}
 }
 
 // Encode <--
@@ -27745,6 +41628,52 @@ func (m *TLMessagesDeleteSavedHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteSavedHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteSavedHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteSavedHistory, int(layer)); clazzId {
+	case 0x4dc5085f:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.MinDate != nil {
+			size += 4
+		}
+
+		if m.MaxDate != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteSavedHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteSavedHistory, int(layer)); clazzId {
+	case 0x4dc5085f:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteSavedHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteSavedHistory, int(layer)); clazzId {
@@ -27861,6 +41790,34 @@ func (m *TLMessagesGetPinnedSavedDialogs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPinnedSavedDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedSavedDialogs, int(layer)); clazzId {
+	case 0xd63d94e0:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPinnedSavedDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedSavedDialogs, int(layer)); clazzId {
+	case 0xd63d94e0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPinnedSavedDialogs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPinnedSavedDialogs, int(layer)); clazzId {
@@ -27901,6 +41858,39 @@ type TLMessagesToggleSavedDialogPin struct {
 func (m *TLMessagesToggleSavedDialogPin) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleSavedDialogPin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleSavedDialogPin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSavedDialogPin, int(layer)); clazzId {
+	case 0xac81bbde:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleSavedDialogPin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSavedDialogPin, int(layer)); clazzId {
+	case 0xac81bbde:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleSavedDialogPin, layer)
+	}
 }
 
 // Encode <--
@@ -27975,6 +41965,39 @@ type TLMessagesReorderPinnedSavedDialogs struct {
 func (m *TLMessagesReorderPinnedSavedDialogs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReorderPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReorderPinnedSavedDialogs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedSavedDialogs, int(layer)); clazzId {
+	case 0x8b716587:
+		size := 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Order, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReorderPinnedSavedDialogs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedSavedDialogs, int(layer)); clazzId {
+	case 0x8b716587:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reorderPinnedSavedDialogs, layer)
+	}
 }
 
 // Encode <--
@@ -28066,6 +42089,40 @@ func (m *TLMessagesGetSavedReactionTags) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetSavedReactionTags) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSavedReactionTags) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedReactionTags, int(layer)); clazzId {
+	case 0x3637e05b:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSavedReactionTags) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedReactionTags, int(layer)); clazzId {
+	case 0x3637e05b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSavedReactionTags, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetSavedReactionTags) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedReactionTags, int(layer)); clazzId {
@@ -28144,6 +42201,42 @@ type TLMessagesUpdateSavedReactionTag struct {
 func (m *TLMessagesUpdateSavedReactionTag) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesUpdateSavedReactionTag) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUpdateSavedReactionTag) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateSavedReactionTag, int(layer)); clazzId {
+	case 0x60297dec:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Reaction, layer)
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUpdateSavedReactionTag) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateSavedReactionTag, int(layer)); clazzId {
+	case 0x60297dec:
+		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_updateSavedReactionTag, layer)
+	}
 }
 
 // Encode <--
@@ -28227,6 +42320,35 @@ func (m *TLMessagesGetDefaultTagReactions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetDefaultTagReactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetDefaultTagReactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultTagReactions, int(layer)); clazzId {
+	case 0xbdf93428:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetDefaultTagReactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultTagReactions, int(layer)); clazzId {
+	case 0xbdf93428:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getDefaultTagReactions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetDefaultTagReactions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDefaultTagReactions, int(layer)); clazzId {
@@ -28273,6 +42395,39 @@ type TLMessagesGetOutboxReadDate struct {
 func (m *TLMessagesGetOutboxReadDate) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetOutboxReadDate) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetOutboxReadDate) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOutboxReadDate, int(layer)); clazzId {
+	case 0x8c4bfe5d:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetOutboxReadDate) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOutboxReadDate, int(layer)); clazzId {
+	case 0x8c4bfe5d:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getOutboxReadDate, layer)
+	}
 }
 
 // Encode <--
@@ -28332,6 +42487,35 @@ func (m *TLMessagesGetQuickReplies) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetQuickReplies) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetQuickReplies) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getQuickReplies, int(layer)); clazzId {
+	case 0xd483f2a8:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetQuickReplies) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getQuickReplies, int(layer)); clazzId {
+	case 0xd483f2a8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getQuickReplies, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetQuickReplies) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getQuickReplies, int(layer)); clazzId {
@@ -28379,6 +42563,38 @@ func (m *TLMessagesReorderQuickReplies) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReorderQuickReplies) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReorderQuickReplies) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderQuickReplies, int(layer)); clazzId {
+	case 0x60331907:
+		size := 4
+		size += iface.CalcInt32ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReorderQuickReplies) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderQuickReplies, int(layer)); clazzId {
+	case 0x60331907:
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reorderQuickReplies, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReorderQuickReplies) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderQuickReplies, int(layer)); clazzId {
@@ -28422,6 +42638,38 @@ type TLMessagesCheckQuickReplyShortcut struct {
 func (m *TLMessagesCheckQuickReplyShortcut) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesCheckQuickReplyShortcut) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCheckQuickReplyShortcut) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkQuickReplyShortcut, int(layer)); clazzId {
+	case 0xf1d0fbd3:
+		size := 4
+		size += iface.CalcStringSize(m.Shortcut)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCheckQuickReplyShortcut) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkQuickReplyShortcut, int(layer)); clazzId {
+	case 0xf1d0fbd3:
+		if err := iface.ValidateRequiredString("shortcut", m.Shortcut); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_checkQuickReplyShortcut, layer)
+	}
 }
 
 // Encode <--
@@ -28470,6 +42718,39 @@ type TLMessagesEditQuickReplyShortcut struct {
 func (m *TLMessagesEditQuickReplyShortcut) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditQuickReplyShortcut) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditQuickReplyShortcut) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editQuickReplyShortcut, int(layer)); clazzId {
+	case 0x5c003cef:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Shortcut)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditQuickReplyShortcut) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editQuickReplyShortcut, int(layer)); clazzId {
+	case 0x5c003cef:
+		if err := iface.ValidateRequiredString("shortcut", m.Shortcut); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editQuickReplyShortcut, layer)
+	}
 }
 
 // Encode <--
@@ -28524,6 +42805,35 @@ func (m *TLMessagesDeleteQuickReplyShortcut) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteQuickReplyShortcut) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteQuickReplyShortcut) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyShortcut, int(layer)); clazzId {
+	case 0x3cc04740:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteQuickReplyShortcut) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyShortcut, int(layer)); clazzId {
+	case 0x3cc04740:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteQuickReplyShortcut, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteQuickReplyShortcut) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyShortcut, int(layer)); clazzId {
@@ -28571,6 +42881,41 @@ type TLMessagesGetQuickReplyMessages struct {
 func (m *TLMessagesGetQuickReplyMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetQuickReplyMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetQuickReplyMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getQuickReplyMessages, int(layer)); clazzId {
+	case 0x94a495c3:
+		size := 4
+		size += 4
+		size += 4
+		if m.Id != nil {
+			size += iface.CalcInt32ListSize(m.Id)
+		}
+
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetQuickReplyMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getQuickReplyMessages, int(layer)); clazzId {
+	case 0x94a495c3:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getQuickReplyMessages, layer)
+	}
 }
 
 // Encode <--
@@ -28653,6 +42998,49 @@ func (m *TLMessagesSendQuickReplyMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendQuickReplyMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendQuickReplyMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendQuickReplyMessages, int(layer)); clazzId {
+	case 0x6c750de1:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcInt64ListSize(m.RandomId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendQuickReplyMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendQuickReplyMessages, int(layer)); clazzId {
+	case 0x6c750de1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("random_id", m.RandomId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendQuickReplyMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendQuickReplyMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendQuickReplyMessages, int(layer)); clazzId {
@@ -28719,6 +43107,39 @@ func (m *TLMessagesDeleteQuickReplyMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteQuickReplyMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteQuickReplyMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyMessages, int(layer)); clazzId {
+	case 0xe105e910:
+		size := 4
+		size += 4
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteQuickReplyMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyMessages, int(layer)); clazzId {
+	case 0xe105e910:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteQuickReplyMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteQuickReplyMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyMessages, int(layer)); clazzId {
@@ -28768,6 +43189,38 @@ type TLMessagesToggleDialogFilterTags struct {
 func (m *TLMessagesToggleDialogFilterTags) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleDialogFilterTags) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleDialogFilterTags) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogFilterTags, int(layer)); clazzId {
+	case 0xfd2dda49:
+		size := 4
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleDialogFilterTags) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogFilterTags, int(layer)); clazzId {
+	case 0xfd2dda49:
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleDialogFilterTags, layer)
+	}
 }
 
 // Encode <--
@@ -28822,6 +43275,36 @@ func (m *TLMessagesGetMyStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetMyStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetMyStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMyStickers, int(layer)); clazzId {
+	case 0xd0b5e1fc:
+		size := 4
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetMyStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMyStickers, int(layer)); clazzId {
+	case 0xd0b5e1fc:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getMyStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetMyStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMyStickers, int(layer)); clazzId {
@@ -28874,6 +43357,35 @@ func (m *TLMessagesGetEmojiStickerGroups) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiStickerGroups) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiStickerGroups) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStickerGroups, int(layer)); clazzId {
+	case 0x1dd840f5:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiStickerGroups) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStickerGroups, int(layer)); clazzId {
+	case 0x1dd840f5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiStickerGroups, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiStickerGroups) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiStickerGroups, int(layer)); clazzId {
@@ -28919,6 +43431,35 @@ type TLMessagesGetAvailableEffects struct {
 func (m *TLMessagesGetAvailableEffects) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetAvailableEffects) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetAvailableEffects) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAvailableEffects, int(layer)); clazzId {
+	case 0xdea20a39:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetAvailableEffects) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAvailableEffects, int(layer)); clazzId {
+	case 0xdea20a39:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getAvailableEffects, layer)
+	}
 }
 
 // Encode <--
@@ -28968,6 +43509,44 @@ type TLMessagesEditFactCheck struct {
 func (m *TLMessagesEditFactCheck) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditFactCheck) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditFactCheck) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editFactCheck, int(layer)); clazzId {
+	case 0x589ee75:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Text, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditFactCheck) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editFactCheck, int(layer)); clazzId {
+	case 0x589ee75:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("text", m.Text); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editFactCheck, layer)
+	}
 }
 
 // Encode <--
@@ -29037,6 +43616,39 @@ func (m *TLMessagesDeleteFactCheck) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteFactCheck) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteFactCheck) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteFactCheck, int(layer)); clazzId {
+	case 0xd1da940c:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteFactCheck) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteFactCheck, int(layer)); clazzId {
+	case 0xd1da940c:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteFactCheck, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteFactCheck) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteFactCheck, int(layer)); clazzId {
@@ -29093,6 +43705,43 @@ type TLMessagesGetFactCheck struct {
 func (m *TLMessagesGetFactCheck) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetFactCheck) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFactCheck) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFactCheck, int(layer)); clazzId {
+	case 0xb9cdc5ee:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.MsgId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFactCheck) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFactCheck, int(layer)); clazzId {
+	case 0xb9cdc5ee:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("msg_id", m.MsgId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFactCheck, layer)
+	}
 }
 
 // Encode <--
@@ -29154,6 +43803,57 @@ type TLMessagesRequestMainWebView struct {
 func (m *TLMessagesRequestMainWebView) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesRequestMainWebView) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesRequestMainWebView) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestMainWebView, int(layer)); clazzId {
+	case 0xc9e01e7b:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Bot, layer)
+		if m.StartParam != nil {
+			size += iface.CalcStringSize(*m.StartParam)
+		}
+
+		if m.ThemeParams != nil {
+			size += iface.CalcObjectSize(m.ThemeParams, layer)
+		}
+
+		size += iface.CalcStringSize(m.Platform)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesRequestMainWebView) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestMainWebView, int(layer)); clazzId {
+	case 0xc9e01e7b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("platform", m.Platform); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_requestMainWebView, layer)
+	}
 }
 
 // Encode <--
@@ -29286,6 +43986,45 @@ func (m *TLMessagesSendPaidReaction) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesSendPaidReaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSendPaidReaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendPaidReaction, int(layer)); clazzId {
+	case 0x58bbcb50:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += 8
+		if m.Private != nil {
+			size += iface.CalcObjectSize(m.Private, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSendPaidReaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendPaidReaction, int(layer)); clazzId {
+	case 0x58bbcb50:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_sendPaidReaction, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesSendPaidReaction) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendPaidReaction, int(layer)); clazzId {
@@ -29386,6 +44125,44 @@ func (m *TLMessagesTogglePaidReactionPrivacy) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesTogglePaidReactionPrivacy) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesTogglePaidReactionPrivacy) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePaidReactionPrivacy, int(layer)); clazzId {
+	case 0x435885b5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Private, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesTogglePaidReactionPrivacy) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePaidReactionPrivacy, int(layer)); clazzId {
+	case 0x435885b5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("private", m.Private); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_togglePaidReactionPrivacy, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesTogglePaidReactionPrivacy) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePaidReactionPrivacy, int(layer)); clazzId {
@@ -29451,6 +44228,34 @@ func (m *TLMessagesGetPaidReactionPrivacy) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPaidReactionPrivacy) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPaidReactionPrivacy) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPaidReactionPrivacy, int(layer)); clazzId {
+	case 0x472455aa:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPaidReactionPrivacy) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPaidReactionPrivacy, int(layer)); clazzId {
+	case 0x472455aa:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPaidReactionPrivacy, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPaidReactionPrivacy) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPaidReactionPrivacy, int(layer)); clazzId {
@@ -29490,6 +44295,38 @@ type TLMessagesViewSponsoredMessage struct {
 func (m *TLMessagesViewSponsoredMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesViewSponsoredMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesViewSponsoredMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_viewSponsoredMessage, int(layer)); clazzId {
+	case 0x269e3643:
+		size := 4
+		size += iface.CalcBytesSize(m.RandomId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesViewSponsoredMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_viewSponsoredMessage, int(layer)); clazzId {
+	case 0x269e3643:
+		if err := iface.ValidateRequiredBytes("random_id", m.RandomId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_viewSponsoredMessage, layer)
+	}
 }
 
 // Encode <--
@@ -29539,6 +44376,39 @@ type TLMessagesClickSponsoredMessage struct {
 func (m *TLMessagesClickSponsoredMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesClickSponsoredMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesClickSponsoredMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clickSponsoredMessage, int(layer)); clazzId {
+	case 0x8235057e:
+		size := 4
+		size += 4
+		size += iface.CalcBytesSize(m.RandomId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesClickSponsoredMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_clickSponsoredMessage, int(layer)); clazzId {
+	case 0x8235057e:
+		if err := iface.ValidateRequiredBytes("random_id", m.RandomId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_clickSponsoredMessage, layer)
+	}
 }
 
 // Encode <--
@@ -29617,6 +44487,43 @@ func (m *TLMessagesReportSponsoredMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReportSponsoredMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReportSponsoredMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSponsoredMessage, int(layer)); clazzId {
+	case 0x12cbf0c4:
+		size := 4
+		size += iface.CalcBytesSize(m.RandomId)
+		size += iface.CalcBytesSize(m.Option)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportSponsoredMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSponsoredMessage, int(layer)); clazzId {
+	case 0x12cbf0c4:
+		if err := iface.ValidateRequiredBytes("random_id", m.RandomId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("option", m.Option); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportSponsoredMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReportSponsoredMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSponsoredMessage, int(layer)); clazzId {
@@ -29668,6 +44575,42 @@ type TLMessagesGetSponsoredMessages struct {
 func (m *TLMessagesGetSponsoredMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSponsoredMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSponsoredMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSponsoredMessages, int(layer)); clazzId {
+	case 0x3d6ce850:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.MsgId != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSponsoredMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSponsoredMessages, int(layer)); clazzId {
+	case 0x3d6ce850:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSponsoredMessages, layer)
+	}
 }
 
 // Encode <--
@@ -29751,6 +44694,47 @@ type TLMessagesSavePreparedInlineMessage struct {
 func (m *TLMessagesSavePreparedInlineMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSavePreparedInlineMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSavePreparedInlineMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_savePreparedInlineMessage, int(layer)); clazzId {
+	case 0xf21f7f2f:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Result, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		if m.PeerTypes != nil {
+			size += iface.CalcObjectListSize(m.PeerTypes, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSavePreparedInlineMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_savePreparedInlineMessage, int(layer)); clazzId {
+	case 0xf21f7f2f:
+		if err := iface.ValidateRequiredObject("result", m.Result); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_savePreparedInlineMessage, layer)
+	}
 }
 
 // Encode <--
@@ -29861,6 +44845,43 @@ func (m *TLMessagesGetPreparedInlineMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetPreparedInlineMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetPreparedInlineMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPreparedInlineMessage, int(layer)); clazzId {
+	case 0x857ebdb8:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetPreparedInlineMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPreparedInlineMessage, int(layer)); clazzId {
+	case 0x857ebdb8:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getPreparedInlineMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetPreparedInlineMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPreparedInlineMessage, int(layer)); clazzId {
@@ -29922,6 +44943,52 @@ type TLMessagesSearchStickers struct {
 func (m *TLMessagesSearchStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSearchStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSearchStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchStickers, int(layer)); clazzId {
+	case 0x29b1c66a:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Q)
+		size += iface.CalcStringSize(m.Emoticon)
+		size += iface.CalcStringListSize(m.LangCode)
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSearchStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_searchStickers, int(layer)); clazzId {
+	case 0x29b1c66a:
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("emoticon", m.Emoticon); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_searchStickers, layer)
+	}
 }
 
 // Encode <--
@@ -30021,6 +45088,44 @@ func (m *TLMessagesReportMessagesDelivery) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReportMessagesDelivery) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReportMessagesDelivery) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMessagesDelivery, int(layer)); clazzId {
+	case 0x5a6d7395:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportMessagesDelivery) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMessagesDelivery, int(layer)); clazzId {
+	case 0x5a6d7395:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportMessagesDelivery, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReportMessagesDelivery) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMessagesDelivery, int(layer)); clazzId {
@@ -30097,6 +45202,44 @@ type TLMessagesGetSavedDialogsByID struct {
 func (m *TLMessagesGetSavedDialogsByID) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesGetSavedDialogsByID) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetSavedDialogsByID) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogsByID, int(layer)); clazzId {
+	case 0x6f6f9c96:
+		size := 4
+		size += 4
+		if m.ParentPeer != nil {
+			size += iface.CalcObjectSize(m.ParentPeer, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.Ids, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetSavedDialogsByID) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogsByID, int(layer)); clazzId {
+	case 0x6f6f9c96:
+
+		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getSavedDialogsByID, layer)
+	}
 }
 
 // Encode <--
@@ -30198,6 +45341,44 @@ func (m *TLMessagesReadSavedHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesReadSavedHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReadSavedHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readSavedHistory, int(layer)); clazzId {
+	case 0xba4a3b5b:
+		size := 4
+		size += iface.CalcObjectSize(m.ParentPeer, layer)
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadSavedHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readSavedHistory, int(layer)); clazzId {
+	case 0xba4a3b5b:
+		if err := iface.ValidateRequiredObject("parent_peer", m.ParentPeer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readSavedHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesReadSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readSavedHistory, int(layer)); clazzId {
@@ -30267,6 +45448,49 @@ func (m *TLMessagesToggleTodoCompleted) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesToggleTodoCompleted) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleTodoCompleted) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleTodoCompleted, int(layer)); clazzId {
+	case 0xd3e03124:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcInt32ListSize(m.Completed)
+		size += iface.CalcInt32ListSize(m.Incompleted)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleTodoCompleted) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleTodoCompleted, int(layer)); clazzId {
+	case 0xd3e03124:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("completed", m.Completed); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("incompleted", m.Incompleted); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleTodoCompleted, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesToggleTodoCompleted) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleTodoCompleted, int(layer)); clazzId {
@@ -30332,6 +45556,44 @@ type TLMessagesAppendTodoList struct {
 func (m *TLMessagesAppendTodoList) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesAppendTodoList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesAppendTodoList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_appendTodoList, int(layer)); clazzId {
+	case 0x21a61057:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectListSize(m.List, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesAppendTodoList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_appendTodoList, int(layer)); clazzId {
+	case 0x21a61057:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("list", m.List); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_appendTodoList, layer)
+	}
 }
 
 // Encode <--
@@ -30417,6 +45679,47 @@ type TLMessagesToggleSuggestedPostApproval struct {
 func (m *TLMessagesToggleSuggestedPostApproval) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesToggleSuggestedPostApproval) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesToggleSuggestedPostApproval) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSuggestedPostApproval, int(layer)); clazzId {
+	case 0x8107455c:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.RejectComment != nil {
+			size += iface.CalcStringSize(*m.RejectComment)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesToggleSuggestedPostApproval) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSuggestedPostApproval, int(layer)); clazzId {
+	case 0x8107455c:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_toggleSuggestedPostApproval, layer)
+	}
 }
 
 // Encode <--
@@ -30531,6 +45834,47 @@ func (m *TLMessagesGetForumTopics) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetForumTopics) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetForumTopics) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopics, int(layer)); clazzId {
+	case 0x3ba47bff:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Q != nil {
+			size += iface.CalcStringSize(*m.Q)
+		}
+
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetForumTopics) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopics, int(layer)); clazzId {
+	case 0x3ba47bff:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getForumTopics, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetForumTopics) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopics, int(layer)); clazzId {
@@ -30635,6 +45979,43 @@ func (m *TLMessagesGetForumTopicsByID) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetForumTopicsByID) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetForumTopicsByID) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopicsByID, int(layer)); clazzId {
+	case 0xaf0a4a08:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Topics)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetForumTopicsByID) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopicsByID, int(layer)); clazzId {
+	case 0xaf0a4a08:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("topics", m.Topics); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getForumTopicsByID, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetForumTopicsByID) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopicsByID, int(layer)); clazzId {
@@ -30693,6 +46074,55 @@ type TLMessagesEditForumTopic struct {
 func (m *TLMessagesEditForumTopic) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditForumTopic) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditForumTopic) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editForumTopic, int(layer)); clazzId {
+	case 0xcecc1134:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.IconEmojiId != nil {
+			size += 8
+		}
+
+		if m.Closed != nil {
+			size += iface.CalcObjectSize(m.Closed, layer)
+		}
+
+		if m.Hidden != nil {
+			size += iface.CalcObjectSize(m.Hidden, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditForumTopic) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editForumTopic, int(layer)); clazzId {
+	case 0xcecc1134:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editForumTopic, layer)
+	}
 }
 
 // Encode <--
@@ -30831,6 +46261,44 @@ func (m *TLMessagesUpdatePinnedForumTopic) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesUpdatePinnedForumTopic) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesUpdatePinnedForumTopic) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedForumTopic, int(layer)); clazzId {
+	case 0x175df251:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Pinned, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesUpdatePinnedForumTopic) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedForumTopic, int(layer)); clazzId {
+	case 0x175df251:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("pinned", m.Pinned); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_updatePinnedForumTopic, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesUpdatePinnedForumTopic) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedForumTopic, int(layer)); clazzId {
@@ -30897,6 +46365,44 @@ type TLMessagesReorderPinnedForumTopics struct {
 func (m *TLMessagesReorderPinnedForumTopics) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesReorderPinnedForumTopics) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesReorderPinnedForumTopics) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedForumTopics, int(layer)); clazzId {
+	case 0xe7841f0:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReorderPinnedForumTopics) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedForumTopics, int(layer)); clazzId {
+	case 0xe7841f0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reorderPinnedForumTopics, layer)
+	}
 }
 
 // Encode <--
@@ -30980,6 +46486,56 @@ type TLMessagesCreateForumTopic struct {
 func (m *TLMessagesCreateForumTopic) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesCreateForumTopic) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCreateForumTopic) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createForumTopic, int(layer)); clazzId {
+	case 0x2f98c3d5:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Title)
+		if m.IconColor != nil {
+			size += 4
+		}
+
+		if m.IconEmojiId != nil {
+			size += 8
+		}
+
+		size += 8
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCreateForumTopic) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createForumTopic, int(layer)); clazzId {
+	case 0x2f98c3d5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_createForumTopic, layer)
+	}
 }
 
 // Encode <--
@@ -31113,6 +46669,39 @@ func (m *TLMessagesDeleteTopicHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeleteTopicHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeleteTopicHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteTopicHistory, int(layer)); clazzId {
+	case 0xd2816f10:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeleteTopicHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteTopicHistory, int(layer)); clazzId {
+	case 0xd2816f10:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deleteTopicHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeleteTopicHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteTopicHistory, int(layer)); clazzId {
@@ -31169,6 +46758,34 @@ func (m *TLMessagesGetEmojiGameInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetEmojiGameInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetEmojiGameInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGameInfo, int(layer)); clazzId {
+	case 0xfb7e8ca7:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetEmojiGameInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGameInfo, int(layer)); clazzId {
+	case 0xfb7e8ca7:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getEmojiGameInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetEmojiGameInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiGameInfo, int(layer)); clazzId {
@@ -31210,6 +46827,43 @@ type TLMessagesSummarizeText struct {
 func (m *TLMessagesSummarizeText) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesSummarizeText) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesSummarizeText) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
+	case 0x9d4104e2:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.ToLang != nil {
+			size += iface.CalcStringSize(*m.ToLang)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesSummarizeText) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
+	case 0x9d4104e2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_summarizeText, layer)
+	}
 }
 
 // Encode <--
@@ -31300,6 +46954,48 @@ func (m *TLMessagesEditChatCreator) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesEditChatCreator) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatCreator) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatCreator, int(layer)); clazzId {
+	case 0xf743b857:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatCreator) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatCreator, int(layer)); clazzId {
+	case 0xf743b857:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatCreator, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesEditChatCreator) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatCreator, int(layer)); clazzId {
@@ -31369,6 +47065,38 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesGetFutureChatCreatorAfterLeave) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesGetFutureChatCreatorAfterLeave) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFutureChatCreatorAfterLeave, int(layer)); clazzId {
+	case 0x3b7d0ea6:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetFutureChatCreatorAfterLeave) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFutureChatCreatorAfterLeave, int(layer)); clazzId {
+	case 0x3b7d0ea6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getFutureChatCreatorAfterLeave, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFutureChatCreatorAfterLeave, int(layer)); clazzId {
@@ -31420,6 +47148,48 @@ type TLMessagesEditChatParticipantRank struct {
 func (m *TLMessagesEditChatParticipantRank) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesEditChatParticipantRank) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesEditChatParticipantRank) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatParticipantRank, int(layer)); clazzId {
+	case 0xa00f32b0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+		size += iface.CalcStringSize(m.Rank)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesEditChatParticipantRank) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatParticipantRank, int(layer)); clazzId {
+	case 0xa00f32b0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("rank", m.Rank); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_editChatParticipantRank, layer)
+	}
 }
 
 // Encode <--
@@ -31488,6 +47258,38 @@ func (m *TLMessagesDeclineUrlAuth) String() string {
 	return wrapper.String()
 }
 
+func (m *TLMessagesDeclineUrlAuth) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesDeclineUrlAuth) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_declineUrlAuth, int(layer)); clazzId {
+	case 0x35436bbc:
+		size := 4
+		size += iface.CalcStringSize(m.Url)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeclineUrlAuth) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_declineUrlAuth, int(layer)); clazzId {
+	case 0x35436bbc:
+		if err := iface.ValidateRequiredString("url", m.Url); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_declineUrlAuth, layer)
+	}
+}
+
 // Encode <--
 func (m *TLMessagesDeclineUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_declineUrlAuth, int(layer)); clazzId {
@@ -31534,6 +47336,43 @@ type TLMessagesCheckUrlAuthMatchCode struct {
 func (m *TLMessagesCheckUrlAuthMatchCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLMessagesCheckUrlAuthMatchCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLMessagesCheckUrlAuthMatchCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkUrlAuthMatchCode, int(layer)); clazzId {
+	case 0xc9a47b0b:
+		size := 4
+		size += iface.CalcStringSize(m.Url)
+		size += iface.CalcStringSize(m.MatchCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesCheckUrlAuthMatchCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkUrlAuthMatchCode, int(layer)); clazzId {
+	case 0xc9a47b0b:
+		if err := iface.ValidateRequiredString("url", m.Url); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("match_code", m.MatchCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_checkUrlAuthMatchCode, layer)
+	}
 }
 
 // Encode <--
@@ -31587,6 +47426,34 @@ func (m *TLUpdatesGetState) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUpdatesGetState) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUpdatesGetState) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getState, int(layer)); clazzId {
+	case 0xedd4882a:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUpdatesGetState) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getState, int(layer)); clazzId {
+	case 0xedd4882a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getState, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUpdatesGetState) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getState, int(layer)); clazzId {
@@ -31631,6 +47498,49 @@ type TLUpdatesGetDifference struct {
 func (m *TLUpdatesGetDifference) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUpdatesGetDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUpdatesGetDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getDifference, int(layer)); clazzId {
+	case 0x19c2f763:
+		size := 4
+		size += 4
+		size += 4
+		if m.PtsLimit != nil {
+			size += 4
+		}
+
+		if m.PtsTotalLimit != nil {
+			size += 4
+		}
+
+		size += 4
+		size += 4
+		if m.QtsLimit != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUpdatesGetDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getDifference, int(layer)); clazzId {
+	case 0x19c2f763:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getDifference, layer)
+	}
 }
 
 // Encode <--
@@ -31752,6 +47662,46 @@ func (m *TLUpdatesGetChannelDifference) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUpdatesGetChannelDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUpdatesGetChannelDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifference, int(layer)); clazzId {
+	case 0x3173d78:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUpdatesGetChannelDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifference, int(layer)); clazzId {
+	case 0x3173d78:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getChannelDifference, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUpdatesGetChannelDifference) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifference, int(layer)); clazzId {
@@ -31847,6 +47797,44 @@ func (m *TLPhotosUpdateProfilePhoto) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhotosUpdateProfilePhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhotosUpdateProfilePhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_updateProfilePhoto, int(layer)); clazzId {
+	case 0x9e82039:
+		size := 4
+		size += 4
+		if m.Bot != nil {
+			size += iface.CalcObjectSize(m.Bot, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotosUpdateProfilePhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_updateProfilePhoto, int(layer)); clazzId {
+	case 0x9e82039:
+
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photos_updateProfilePhoto, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhotosUpdateProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_updateProfilePhoto, int(layer)); clazzId {
@@ -31939,6 +47927,54 @@ type TLPhotosUploadProfilePhoto struct {
 func (m *TLPhotosUploadProfilePhoto) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhotosUploadProfilePhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhotosUploadProfilePhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_uploadProfilePhoto, int(layer)); clazzId {
+	case 0x388a3b5:
+		size := 4
+		size += 4
+		if m.Bot != nil {
+			size += iface.CalcObjectSize(m.Bot, layer)
+		}
+
+		if m.File != nil {
+			size += iface.CalcObjectSize(m.File, layer)
+		}
+
+		if m.Video != nil {
+			size += iface.CalcObjectSize(m.Video, layer)
+		}
+
+		if m.VideoStartTs != nil {
+			size += 8
+		}
+
+		if m.VideoEmojiMarkup != nil {
+			size += iface.CalcObjectSize(m.VideoEmojiMarkup, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotosUploadProfilePhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_uploadProfilePhoto, int(layer)); clazzId {
+	case 0x388a3b5:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photos_uploadProfilePhoto, layer)
+	}
 }
 
 // Encode <--
@@ -32083,6 +48119,38 @@ func (m *TLPhotosDeletePhotos) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhotosDeletePhotos) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhotosDeletePhotos) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_deletePhotos, int(layer)); clazzId {
+	case 0x87cf7f2f:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotosDeletePhotos) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_deletePhotos, int(layer)); clazzId {
+	case 0x87cf7f2f:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photos_deletePhotos, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhotosDeletePhotos) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_deletePhotos, int(layer)); clazzId {
@@ -32149,6 +48217,41 @@ type TLPhotosGetUserPhotos struct {
 func (m *TLPhotosGetUserPhotos) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhotosGetUserPhotos) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhotosGetUserPhotos) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_getUserPhotos, int(layer)); clazzId {
+	case 0x91cd32a8:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotosGetUserPhotos) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_getUserPhotos, int(layer)); clazzId {
+	case 0x91cd32a8:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photos_getUserPhotos, layer)
+	}
 }
 
 // Encode <--
@@ -32222,6 +48325,54 @@ type TLPhotosUploadContactProfilePhoto struct {
 func (m *TLPhotosUploadContactProfilePhoto) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhotosUploadContactProfilePhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhotosUploadContactProfilePhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_uploadContactProfilePhoto, int(layer)); clazzId {
+	case 0xe14c4a71:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		if m.File != nil {
+			size += iface.CalcObjectSize(m.File, layer)
+		}
+
+		if m.Video != nil {
+			size += iface.CalcObjectSize(m.Video, layer)
+		}
+
+		if m.VideoStartTs != nil {
+			size += 8
+		}
+
+		if m.VideoEmojiMarkup != nil {
+			size += iface.CalcObjectSize(m.VideoEmojiMarkup, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotosUploadContactProfilePhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_uploadContactProfilePhoto, int(layer)); clazzId {
+	case 0xe14c4a71:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photos_uploadContactProfilePhoto, layer)
+	}
 }
 
 // Encode <--
@@ -32369,6 +48520,40 @@ func (m *TLUploadSaveFilePart) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUploadSaveFilePart) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadSaveFilePart) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveFilePart, int(layer)); clazzId {
+	case 0xb304a621:
+		size := 4
+		size += 8
+		size += 4
+		size += iface.CalcBytesSize(m.Bytes)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadSaveFilePart) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveFilePart, int(layer)); clazzId {
+	case 0xb304a621:
+		if err := iface.ValidateRequiredBytes("bytes", m.Bytes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_saveFilePart, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUploadSaveFilePart) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveFilePart, int(layer)); clazzId {
@@ -32428,6 +48613,41 @@ type TLUploadGetFile struct {
 func (m *TLUploadGetFile) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUploadGetFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadGetFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFile, int(layer)); clazzId {
+	case 0xbe5335be:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Location, layer)
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadGetFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFile, int(layer)); clazzId {
+	case 0xbe5335be:
+		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_getFile, layer)
+	}
 }
 
 // Encode <--
@@ -32523,6 +48743,41 @@ func (m *TLUploadSaveBigFilePart) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUploadSaveBigFilePart) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadSaveBigFilePart) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveBigFilePart, int(layer)); clazzId {
+	case 0xde7b673d:
+		size := 4
+		size += 8
+		size += 4
+		size += 4
+		size += iface.CalcBytesSize(m.Bytes)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadSaveBigFilePart) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveBigFilePart, int(layer)); clazzId {
+	case 0xde7b673d:
+		if err := iface.ValidateRequiredBytes("bytes", m.Bytes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_saveBigFilePart, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUploadSaveBigFilePart) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_saveBigFilePart, int(layer)); clazzId {
@@ -32585,6 +48840,40 @@ type TLUploadGetWebFile struct {
 func (m *TLUploadGetWebFile) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUploadGetWebFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadGetWebFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getWebFile, int(layer)); clazzId {
+	case 0x24e6818d:
+		size := 4
+		size += iface.CalcObjectSize(m.Location, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadGetWebFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getWebFile, int(layer)); clazzId {
+	case 0x24e6818d:
+		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_getWebFile, layer)
+	}
 }
 
 // Encode <--
@@ -32651,6 +48940,40 @@ func (m *TLUploadGetCdnFile) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUploadGetCdnFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadGetCdnFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFile, int(layer)); clazzId {
+	case 0x395f69da:
+		size := 4
+		size += iface.CalcBytesSize(m.FileToken)
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadGetCdnFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFile, int(layer)); clazzId {
+	case 0x395f69da:
+		if err := iface.ValidateRequiredBytes("file_token", m.FileToken); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_getCdnFile, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUploadGetCdnFile) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFile, int(layer)); clazzId {
@@ -32709,6 +49032,43 @@ func (m *TLUploadReuploadCdnFile) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUploadReuploadCdnFile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadReuploadCdnFile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_reuploadCdnFile, int(layer)); clazzId {
+	case 0x9b2754a8:
+		size := 4
+		size += iface.CalcBytesSize(m.FileToken)
+		size += iface.CalcBytesSize(m.RequestToken)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadReuploadCdnFile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_reuploadCdnFile, int(layer)); clazzId {
+	case 0x9b2754a8:
+		if err := iface.ValidateRequiredBytes("file_token", m.FileToken); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("request_token", m.RequestToken); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_reuploadCdnFile, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUploadReuploadCdnFile) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_reuploadCdnFile, int(layer)); clazzId {
@@ -32762,6 +49122,39 @@ func (m *TLUploadGetCdnFileHashes) String() string {
 	return wrapper.String()
 }
 
+func (m *TLUploadGetCdnFileHashes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadGetCdnFileHashes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFileHashes, int(layer)); clazzId {
+	case 0x91dc3f31:
+		size := 4
+		size += iface.CalcBytesSize(m.FileToken)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadGetCdnFileHashes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFileHashes, int(layer)); clazzId {
+	case 0x91dc3f31:
+		if err := iface.ValidateRequiredBytes("file_token", m.FileToken); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_getCdnFileHashes, layer)
+	}
+}
+
 // Encode <--
 func (m *TLUploadGetCdnFileHashes) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getCdnFileHashes, int(layer)); clazzId {
@@ -32813,6 +49206,39 @@ type TLUploadGetFileHashes struct {
 func (m *TLUploadGetFileHashes) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUploadGetFileHashes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUploadGetFileHashes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFileHashes, int(layer)); clazzId {
+	case 0x9156982a:
+		size := 4
+		size += iface.CalcObjectSize(m.Location, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUploadGetFileHashes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFileHashes, int(layer)); clazzId {
+	case 0x9156982a:
+		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_upload_getFileHashes, layer)
+	}
 }
 
 // Encode <--
@@ -32871,6 +49297,34 @@ func (m *TLHelpGetConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getConfig, int(layer)); clazzId {
+	case 0xc4f9186b:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getConfig, int(layer)); clazzId {
+	case 0xc4f9186b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getConfig, int(layer)); clazzId {
@@ -32909,6 +49363,34 @@ type TLHelpGetNearestDc struct {
 func (m *TLHelpGetNearestDc) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetNearestDc) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetNearestDc) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getNearestDc, int(layer)); clazzId {
+	case 0x1fb33026:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetNearestDc) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getNearestDc, int(layer)); clazzId {
+	case 0x1fb33026:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getNearestDc, layer)
+	}
 }
 
 // Encode <--
@@ -32950,6 +49432,38 @@ type TLHelpGetAppUpdate struct {
 func (m *TLHelpGetAppUpdate) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetAppUpdate) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetAppUpdate) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getAppUpdate, int(layer)); clazzId {
+	case 0x522d5a7d:
+		size := 4
+		size += iface.CalcStringSize(m.Source)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetAppUpdate) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getAppUpdate, int(layer)); clazzId {
+	case 0x522d5a7d:
+		if err := iface.ValidateRequiredString("source", m.Source); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getAppUpdate, layer)
+	}
 }
 
 // Encode <--
@@ -32998,6 +49512,34 @@ func (m *TLHelpGetInviteText) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetInviteText) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetInviteText) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getInviteText, int(layer)); clazzId {
+	case 0x4d392343:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetInviteText) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getInviteText, int(layer)); clazzId {
+	case 0x4d392343:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getInviteText, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetInviteText) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getInviteText, int(layer)); clazzId {
@@ -33036,6 +49578,34 @@ type TLHelpGetSupport struct {
 func (m *TLHelpGetSupport) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetSupport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetSupport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getSupport, int(layer)); clazzId {
+	case 0x9cdf08cd:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetSupport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getSupport, int(layer)); clazzId {
+	case 0x9cdf08cd:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getSupport, layer)
+	}
 }
 
 // Encode <--
@@ -33078,6 +49648,39 @@ type TLHelpSetBotUpdatesStatus struct {
 func (m *TLHelpSetBotUpdatesStatus) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpSetBotUpdatesStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpSetBotUpdatesStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_setBotUpdatesStatus, int(layer)); clazzId {
+	case 0xec22cfcd:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpSetBotUpdatesStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_setBotUpdatesStatus, int(layer)); clazzId {
+	case 0xec22cfcd:
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_setBotUpdatesStatus, layer)
+	}
 }
 
 // Encode <--
@@ -33131,6 +49734,34 @@ func (m *TLHelpGetCdnConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetCdnConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetCdnConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCdnConfig, int(layer)); clazzId {
+	case 0x52029342:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetCdnConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCdnConfig, int(layer)); clazzId {
+	case 0x52029342:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getCdnConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetCdnConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCdnConfig, int(layer)); clazzId {
@@ -33170,6 +49801,38 @@ type TLHelpGetRecentMeUrls struct {
 func (m *TLHelpGetRecentMeUrls) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetRecentMeUrls) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetRecentMeUrls) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getRecentMeUrls, int(layer)); clazzId {
+	case 0x3dc0f114:
+		size := 4
+		size += iface.CalcStringSize(m.Referer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetRecentMeUrls) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getRecentMeUrls, int(layer)); clazzId {
+	case 0x3dc0f114:
+		if err := iface.ValidateRequiredString("referer", m.Referer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getRecentMeUrls, layer)
+	}
 }
 
 // Encode <--
@@ -33218,6 +49881,34 @@ func (m *TLHelpGetTermsOfServiceUpdate) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetTermsOfServiceUpdate) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetTermsOfServiceUpdate) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getTermsOfServiceUpdate, int(layer)); clazzId {
+	case 0x2ca51fd1:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetTermsOfServiceUpdate) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getTermsOfServiceUpdate, int(layer)); clazzId {
+	case 0x2ca51fd1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getTermsOfServiceUpdate, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetTermsOfServiceUpdate) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getTermsOfServiceUpdate, int(layer)); clazzId {
@@ -33257,6 +49948,38 @@ type TLHelpAcceptTermsOfService struct {
 func (m *TLHelpAcceptTermsOfService) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpAcceptTermsOfService) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpAcceptTermsOfService) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_acceptTermsOfService, int(layer)); clazzId {
+	case 0xee72f79a:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpAcceptTermsOfService) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_acceptTermsOfService, int(layer)); clazzId {
+	case 0xee72f79a:
+		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_acceptTermsOfService, layer)
+	}
 }
 
 // Encode <--
@@ -33310,6 +50033,38 @@ func (m *TLHelpGetDeepLinkInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetDeepLinkInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetDeepLinkInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getDeepLinkInfo, int(layer)); clazzId {
+	case 0x3fedc75f:
+		size := 4
+		size += iface.CalcStringSize(m.Path)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetDeepLinkInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getDeepLinkInfo, int(layer)); clazzId {
+	case 0x3fedc75f:
+		if err := iface.ValidateRequiredString("path", m.Path); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getDeepLinkInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetDeepLinkInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getDeepLinkInfo, int(layer)); clazzId {
@@ -33357,6 +50112,35 @@ func (m *TLHelpGetAppConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetAppConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetAppConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getAppConfig, int(layer)); clazzId {
+	case 0x61e3f854:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetAppConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getAppConfig, int(layer)); clazzId {
+	case 0x61e3f854:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getAppConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetAppConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getAppConfig, int(layer)); clazzId {
@@ -33402,6 +50186,38 @@ type TLHelpSaveAppLog struct {
 func (m *TLHelpSaveAppLog) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpSaveAppLog) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpSaveAppLog) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_saveAppLog, int(layer)); clazzId {
+	case 0x6f02f748:
+		size := 4
+		size += iface.CalcObjectListSize(m.Events, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpSaveAppLog) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_saveAppLog, int(layer)); clazzId {
+	case 0x6f02f748:
+		if err := iface.ValidateRequiredSlice("events", m.Events); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_saveAppLog, layer)
+	}
 }
 
 // Encode <--
@@ -33469,6 +50285,35 @@ func (m *TLHelpGetPassportConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetPassportConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetPassportConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPassportConfig, int(layer)); clazzId {
+	case 0xc661ad08:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetPassportConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPassportConfig, int(layer)); clazzId {
+	case 0xc661ad08:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getPassportConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetPassportConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPassportConfig, int(layer)); clazzId {
@@ -33515,6 +50360,34 @@ func (m *TLHelpGetSupportName) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetSupportName) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetSupportName) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getSupportName, int(layer)); clazzId {
+	case 0xd360e72c:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetSupportName) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getSupportName, int(layer)); clazzId {
+	case 0xd360e72c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getSupportName, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetSupportName) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getSupportName, int(layer)); clazzId {
@@ -33554,6 +50427,38 @@ type TLHelpGetUserInfo struct {
 func (m *TLHelpGetUserInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetUserInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetUserInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getUserInfo, int(layer)); clazzId {
+	case 0x38a08d3:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetUserInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getUserInfo, int(layer)); clazzId {
+	case 0x38a08d3:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getUserInfo, layer)
+	}
 }
 
 // Encode <--
@@ -33607,6 +50512,48 @@ type TLHelpEditUserInfo struct {
 func (m *TLHelpEditUserInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpEditUserInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpEditUserInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_editUserInfo, int(layer)); clazzId {
+	case 0x66b91b70:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcStringSize(m.Message)
+		size += iface.CalcObjectListSize(m.Entities, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpEditUserInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_editUserInfo, int(layer)); clazzId {
+	case 0x66b91b70:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("entities", m.Entities); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_editUserInfo, layer)
+	}
 }
 
 // Encode <--
@@ -33689,6 +50636,34 @@ func (m *TLHelpGetPromoData) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetPromoData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetPromoData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPromoData, int(layer)); clazzId {
+	case 0xc0977421:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetPromoData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPromoData, int(layer)); clazzId {
+	case 0xc0977421:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getPromoData, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetPromoData) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPromoData, int(layer)); clazzId {
@@ -33728,6 +50703,38 @@ type TLHelpHidePromoData struct {
 func (m *TLHelpHidePromoData) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpHidePromoData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpHidePromoData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_hidePromoData, int(layer)); clazzId {
+	case 0x1e251c95:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpHidePromoData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_hidePromoData, int(layer)); clazzId {
+	case 0x1e251c95:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_hidePromoData, layer)
+	}
 }
 
 // Encode <--
@@ -33780,6 +50787,43 @@ type TLHelpDismissSuggestion struct {
 func (m *TLHelpDismissSuggestion) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpDismissSuggestion) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpDismissSuggestion) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_dismissSuggestion, int(layer)); clazzId {
+	case 0xf50dbaa1:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Suggestion)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpDismissSuggestion) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_dismissSuggestion, int(layer)); clazzId {
+	case 0xf50dbaa1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("suggestion", m.Suggestion); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_dismissSuggestion, layer)
+	}
 }
 
 // Encode <--
@@ -33840,6 +50884,39 @@ func (m *TLHelpGetCountriesList) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetCountriesList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetCountriesList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCountriesList, int(layer)); clazzId {
+	case 0x735787a8:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetCountriesList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCountriesList, int(layer)); clazzId {
+	case 0x735787a8:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getCountriesList, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetCountriesList) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getCountriesList, int(layer)); clazzId {
@@ -33891,6 +50968,34 @@ func (m *TLHelpGetPremiumPromo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetPremiumPromo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetPremiumPromo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPremiumPromo, int(layer)); clazzId {
+	case 0xb81b93d4:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetPremiumPromo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPremiumPromo, int(layer)); clazzId {
+	case 0xb81b93d4:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getPremiumPromo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetPremiumPromo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPremiumPromo, int(layer)); clazzId {
@@ -33930,6 +51035,35 @@ type TLHelpGetPeerColors struct {
 func (m *TLHelpGetPeerColors) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetPeerColors) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetPeerColors) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPeerColors, int(layer)); clazzId {
+	case 0xda80f42f:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetPeerColors) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPeerColors, int(layer)); clazzId {
+	case 0xda80f42f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getPeerColors, layer)
+	}
 }
 
 // Encode <--
@@ -33979,6 +51113,35 @@ func (m *TLHelpGetPeerProfileColors) String() string {
 	return wrapper.String()
 }
 
+func (m *TLHelpGetPeerProfileColors) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetPeerProfileColors) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPeerProfileColors, int(layer)); clazzId {
+	case 0xabcfa9fd:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetPeerProfileColors) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPeerProfileColors, int(layer)); clazzId {
+	case 0xabcfa9fd:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getPeerProfileColors, layer)
+	}
+}
+
 // Encode <--
 func (m *TLHelpGetPeerProfileColors) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getPeerProfileColors, int(layer)); clazzId {
@@ -34024,6 +51187,35 @@ type TLHelpGetTimezonesList struct {
 func (m *TLHelpGetTimezonesList) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpGetTimezonesList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpGetTimezonesList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getTimezonesList, int(layer)); clazzId {
+	case 0x49b30240:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpGetTimezonesList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getTimezonesList, int(layer)); clazzId {
+	case 0x49b30240:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_getTimezonesList, layer)
+	}
 }
 
 // Encode <--
@@ -34072,6 +51264,39 @@ type TLChannelsReadHistory struct {
 func (m *TLChannelsReadHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsReadHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsReadHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readHistory, int(layer)); clazzId {
+	case 0xcc104937:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsReadHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readHistory, int(layer)); clazzId {
+	case 0xcc104937:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_readHistory, layer)
+	}
 }
 
 // Encode <--
@@ -34132,6 +51357,43 @@ func (m *TLChannelsDeleteMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsDeleteMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsDeleteMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteMessages, int(layer)); clazzId {
+	case 0x84c1fd4e:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsDeleteMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteMessages, int(layer)); clazzId {
+	case 0x84c1fd4e:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_deleteMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteMessages, int(layer)); clazzId {
@@ -34187,6 +51449,48 @@ type TLChannelsReportSpam struct {
 func (m *TLChannelsReportSpam) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsReportSpam) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsReportSpam) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportSpam, int(layer)); clazzId {
+	case 0xf44a8315:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsReportSpam) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportSpam, int(layer)); clazzId {
+	case 0xf44a8315:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_reportSpam, layer)
+	}
 }
 
 // Encode <--
@@ -34253,6 +51557,59 @@ type TLChannelsGetMessages struct {
 func (m *TLChannelsGetMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsGetMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessages, int(layer)); clazzId {
+	case 0xad8c9a23:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectListSize(m.Id_VECTORINPUTMESSAGE, layer)
+
+		return size
+	case 0x93d7b347:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcInt32ListSize(m.Id_VECTORINT32)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessages, int(layer)); clazzId {
+	case 0xad8c9a23:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x93d7b347:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id_VECTORINT32", m.Id_VECTORINT32); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getMessages, layer)
+	}
 }
 
 // Encode <--
@@ -34356,6 +51713,46 @@ func (m *TLChannelsGetParticipants) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetParticipants) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetParticipants) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipants, int(layer)); clazzId {
+	case 0x77ced9d0:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Filter, layer)
+		size += 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetParticipants) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipants, int(layer)); clazzId {
+	case 0x77ced9d0:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getParticipants, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetParticipants) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipants, int(layer)); clazzId {
@@ -34433,6 +51830,43 @@ func (m *TLChannelsGetParticipant) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetParticipant) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetParticipant) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipant, int(layer)); clazzId {
+	case 0xa0ab6cc6:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetParticipant) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipant, int(layer)); clazzId {
+	case 0xa0ab6cc6:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getParticipant, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetParticipant) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipant, int(layer)); clazzId {
@@ -34491,6 +51925,38 @@ type TLChannelsGetChannels struct {
 func (m *TLChannelsGetChannels) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsGetChannels) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetChannels) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getChannels, int(layer)); clazzId {
+	case 0xa7f6bbb:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetChannels) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getChannels, int(layer)); clazzId {
+	case 0xa7f6bbb:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getChannels, layer)
+	}
 }
 
 // Encode <--
@@ -34558,6 +52024,38 @@ func (m *TLChannelsGetFullChannel) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetFullChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetFullChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFullChannel, int(layer)); clazzId {
+	case 0x8736a09:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetFullChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFullChannel, int(layer)); clazzId {
+	case 0x8736a09:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getFullChannel, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetFullChannel) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFullChannel, int(layer)); clazzId {
@@ -34615,6 +52113,55 @@ type TLChannelsCreateChannel struct {
 func (m *TLChannelsCreateChannel) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsCreateChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsCreateChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_createChannel, int(layer)); clazzId {
+	case 0x91006707:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Title)
+		size += iface.CalcStringSize(m.About)
+		if m.GeoPoint != nil {
+			size += iface.CalcObjectSize(m.GeoPoint, layer)
+		}
+
+		if m.Address != nil {
+			size += iface.CalcStringSize(*m.Address)
+		}
+
+		if m.TtlPeriod != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsCreateChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_createChannel, int(layer)); clazzId {
+	case 0x91006707:
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("about", m.About); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_createChannel, layer)
+	}
 }
 
 // Encode <--
@@ -34758,6 +52305,78 @@ func (m *TLChannelsEditAdmin) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsEditAdmin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditAdmin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editAdmin, int(layer)); clazzId {
+	case 0x9a98ad68:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.AdminRights, layer)
+		if m.Rank_FLAGSTRING != nil {
+			size += iface.CalcStringSize(*m.Rank_FLAGSTRING)
+		}
+
+		return size
+	case 0xd33c8902:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.AdminRights, layer)
+		size += iface.CalcStringSize(m.Rank_STRING)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditAdmin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editAdmin, int(layer)); clazzId {
+	case 0x9a98ad68:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+			return err
+		}
+
+		return nil
+	case 0xd33c8902:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("rank_STRING", m.Rank_STRING); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editAdmin, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsEditAdmin) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editAdmin, int(layer)); clazzId {
@@ -34899,6 +52518,43 @@ func (m *TLChannelsEditTitle) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsEditTitle) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditTitle) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editTitle, int(layer)); clazzId {
+	case 0x566decd0:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringSize(m.Title)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditTitle) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editTitle, int(layer)); clazzId {
+	case 0x566decd0:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editTitle, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsEditTitle) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editTitle, int(layer)); clazzId {
@@ -34955,6 +52611,43 @@ type TLChannelsEditPhoto struct {
 func (m *TLChannelsEditPhoto) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsEditPhoto) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditPhoto) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editPhoto, int(layer)); clazzId {
+	case 0xf12e57c9:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Photo, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditPhoto) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editPhoto, int(layer)); clazzId {
+	case 0xf12e57c9:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("photo", m.Photo); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editPhoto, layer)
+	}
 }
 
 // Encode <--
@@ -35018,6 +52711,43 @@ func (m *TLChannelsCheckUsername) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsCheckUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsCheckUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkUsername, int(layer)); clazzId {
+	case 0x10e6bd2c:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsCheckUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkUsername, int(layer)); clazzId {
+	case 0x10e6bd2c:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_checkUsername, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkUsername, int(layer)); clazzId {
@@ -35074,6 +52804,43 @@ type TLChannelsUpdateUsername struct {
 func (m *TLChannelsUpdateUsername) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsUpdateUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsUpdateUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateUsername, int(layer)); clazzId {
+	case 0x3514b3de:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsUpdateUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateUsername, int(layer)); clazzId {
+	case 0x3514b3de:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_updateUsername, layer)
+	}
 }
 
 // Encode <--
@@ -35133,6 +52900,38 @@ func (m *TLChannelsJoinChannel) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsJoinChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsJoinChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_joinChannel, int(layer)); clazzId {
+	case 0x24b524c5:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsJoinChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_joinChannel, int(layer)); clazzId {
+	case 0x24b524c5:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_joinChannel, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsJoinChannel) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_joinChannel, int(layer)); clazzId {
@@ -35182,6 +52981,38 @@ type TLChannelsLeaveChannel struct {
 func (m *TLChannelsLeaveChannel) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsLeaveChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsLeaveChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_leaveChannel, int(layer)); clazzId {
+	case 0xf836aa95:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsLeaveChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_leaveChannel, int(layer)); clazzId {
+	case 0xf836aa95:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_leaveChannel, layer)
+	}
 }
 
 // Encode <--
@@ -35234,6 +53065,43 @@ type TLChannelsInviteToChannel struct {
 func (m *TLChannelsInviteToChannel) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsInviteToChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsInviteToChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_inviteToChannel, int(layer)); clazzId {
+	case 0xc9e33d54:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectListSize(m.Users, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsInviteToChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_inviteToChannel, int(layer)); clazzId {
+	case 0xc9e33d54:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_inviteToChannel, layer)
+	}
 }
 
 // Encode <--
@@ -35312,6 +53180,38 @@ func (m *TLChannelsDeleteChannel) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsDeleteChannel) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsDeleteChannel) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteChannel, int(layer)); clazzId {
+	case 0xc0111fe3:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsDeleteChannel) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteChannel, int(layer)); clazzId {
+	case 0xc0111fe3:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_deleteChannel, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsDeleteChannel) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteChannel, int(layer)); clazzId {
@@ -35364,6 +53264,40 @@ type TLChannelsExportMessageLink struct {
 func (m *TLChannelsExportMessageLink) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsExportMessageLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsExportMessageLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_exportMessageLink, int(layer)); clazzId {
+	case 0xe63fadeb:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsExportMessageLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_exportMessageLink, int(layer)); clazzId {
+	case 0xe63fadeb:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_exportMessageLink, layer)
+	}
 }
 
 // Encode <--
@@ -35453,6 +53387,39 @@ func (m *TLChannelsToggleSignatures) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleSignatures) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleSignatures) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSignatures, int(layer)); clazzId {
+	case 0x418d549c:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleSignatures) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSignatures, int(layer)); clazzId {
+	case 0x418d549c:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleSignatures, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleSignatures) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSignatures, int(layer)); clazzId {
@@ -35534,6 +53501,35 @@ func (m *TLChannelsGetAdminedPublicChannels) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetAdminedPublicChannels) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetAdminedPublicChannels) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminedPublicChannels, int(layer)); clazzId {
+	case 0xf8b036af:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetAdminedPublicChannels) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminedPublicChannels, int(layer)); clazzId {
+	case 0xf8b036af:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getAdminedPublicChannels, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetAdminedPublicChannels) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminedPublicChannels, int(layer)); clazzId {
@@ -35612,6 +53608,48 @@ func (m *TLChannelsEditBanned) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsEditBanned) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditBanned) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editBanned, int(layer)); clazzId {
+	case 0x96e6cd81:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+		size += iface.CalcObjectSize(m.BannedRights, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditBanned) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editBanned, int(layer)); clazzId {
+	case 0x96e6cd81:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("banned_rights", m.BannedRights); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editBanned, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsEditBanned) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editBanned, int(layer)); clazzId {
@@ -35685,6 +53723,55 @@ type TLChannelsGetAdminLog struct {
 func (m *TLChannelsGetAdminLog) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsGetAdminLog) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetAdminLog) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminLog, int(layer)); clazzId {
+	case 0x33ddf480:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringSize(m.Q)
+		if m.EventsFilter != nil {
+			size += iface.CalcObjectSize(m.EventsFilter, layer)
+		}
+
+		if m.Admins != nil {
+			size += iface.CalcObjectListSize(m.Admins, layer)
+		}
+
+		size += 8
+		size += 8
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetAdminLog) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminLog, int(layer)); clazzId {
+	case 0x33ddf480:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("q", m.Q); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getAdminLog, layer)
+	}
 }
 
 // Encode <--
@@ -35822,6 +53909,43 @@ func (m *TLChannelsSetStickers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsSetStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSetStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setStickers, int(layer)); clazzId {
+	case 0xea8ca4f9:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSetStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setStickers, int(layer)); clazzId {
+	case 0xea8ca4f9:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_setStickers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsSetStickers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setStickers, int(layer)); clazzId {
@@ -35883,6 +54007,43 @@ func (m *TLChannelsReadMessageContents) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsReadMessageContents) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsReadMessageContents) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readMessageContents, int(layer)); clazzId {
+	case 0xeab5dc38:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsReadMessageContents) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readMessageContents, int(layer)); clazzId {
+	case 0xeab5dc38:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_readMessageContents, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsReadMessageContents) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readMessageContents, int(layer)); clazzId {
@@ -35938,6 +54099,40 @@ type TLChannelsDeleteHistory struct {
 func (m *TLChannelsDeleteHistory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsDeleteHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsDeleteHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteHistory, int(layer)); clazzId {
+	case 0x9baa9647:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsDeleteHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteHistory, int(layer)); clazzId {
+	case 0x9baa9647:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_deleteHistory, layer)
+	}
 }
 
 // Encode <--
@@ -36020,6 +54215,43 @@ func (m *TLChannelsTogglePreHistoryHidden) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsTogglePreHistoryHidden) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsTogglePreHistoryHidden) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_togglePreHistoryHidden, int(layer)); clazzId {
+	case 0xeabbb94c:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsTogglePreHistoryHidden) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_togglePreHistoryHidden, int(layer)); clazzId {
+	case 0xeabbb94c:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_togglePreHistoryHidden, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsTogglePreHistoryHidden) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_togglePreHistoryHidden, int(layer)); clazzId {
@@ -36080,6 +54312,35 @@ func (m *TLChannelsGetLeftChannels) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetLeftChannels) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetLeftChannels) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getLeftChannels, int(layer)); clazzId {
+	case 0x8341ecc0:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetLeftChannels) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getLeftChannels, int(layer)); clazzId {
+	case 0x8341ecc0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getLeftChannels, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetLeftChannels) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getLeftChannels, int(layer)); clazzId {
@@ -36126,6 +54387,34 @@ func (m *TLChannelsGetGroupsForDiscussion) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetGroupsForDiscussion) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetGroupsForDiscussion) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getGroupsForDiscussion, int(layer)); clazzId {
+	case 0xf5dad378:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetGroupsForDiscussion) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getGroupsForDiscussion, int(layer)); clazzId {
+	case 0xf5dad378:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getGroupsForDiscussion, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetGroupsForDiscussion) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getGroupsForDiscussion, int(layer)); clazzId {
@@ -36166,6 +54455,43 @@ type TLChannelsSetDiscussionGroup struct {
 func (m *TLChannelsSetDiscussionGroup) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsSetDiscussionGroup) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSetDiscussionGroup) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setDiscussionGroup, int(layer)); clazzId {
+	case 0x40582bb2:
+		size := 4
+		size += iface.CalcObjectSize(m.Broadcast, layer)
+		size += iface.CalcObjectSize(m.Group, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSetDiscussionGroup) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setDiscussionGroup, int(layer)); clazzId {
+	case 0x40582bb2:
+		if err := iface.ValidateRequiredObject("broadcast", m.Broadcast); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("group", m.Group); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_setDiscussionGroup, layer)
+	}
 }
 
 // Encode <--
@@ -36228,6 +54554,48 @@ type TLChannelsEditLocation struct {
 func (m *TLChannelsEditLocation) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsEditLocation) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditLocation) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editLocation, int(layer)); clazzId {
+	case 0x58e63f6d:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.GeoPoint, layer)
+		size += iface.CalcStringSize(m.Address)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditLocation) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editLocation, int(layer)); clazzId {
+	case 0x58e63f6d:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("geo_point", m.GeoPoint); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("address", m.Address); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editLocation, layer)
+	}
 }
 
 // Encode <--
@@ -36297,6 +54665,39 @@ func (m *TLChannelsToggleSlowMode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleSlowMode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleSlowMode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSlowMode, int(layer)); clazzId {
+	case 0xedd49ef0:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleSlowMode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSlowMode, int(layer)); clazzId {
+	case 0xedd49ef0:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleSlowMode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleSlowMode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSlowMode, int(layer)); clazzId {
@@ -36353,6 +54754,34 @@ func (m *TLChannelsGetInactiveChannels) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetInactiveChannels) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetInactiveChannels) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getInactiveChannels, int(layer)); clazzId {
+	case 0x11e831ee:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetInactiveChannels) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getInactiveChannels, int(layer)); clazzId {
+	case 0x11e831ee:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getInactiveChannels, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetInactiveChannels) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getInactiveChannels, int(layer)); clazzId {
@@ -36392,6 +54821,38 @@ type TLChannelsConvertToGigagroup struct {
 func (m *TLChannelsConvertToGigagroup) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsConvertToGigagroup) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsConvertToGigagroup) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_convertToGigagroup, int(layer)); clazzId {
+	case 0xb290c69:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsConvertToGigagroup) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_convertToGigagroup, int(layer)); clazzId {
+	case 0xb290c69:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_convertToGigagroup, layer)
+	}
 }
 
 // Encode <--
@@ -36445,6 +54906,39 @@ type TLChannelsGetSendAs struct {
 func (m *TLChannelsGetSendAs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsGetSendAs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetSendAs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getSendAs, int(layer)); clazzId {
+	case 0xe785a43f:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetSendAs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getSendAs, int(layer)); clazzId {
+	case 0xe785a43f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getSendAs, layer)
+	}
 }
 
 // Encode <--
@@ -36527,6 +55021,43 @@ func (m *TLChannelsDeleteParticipantHistory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsDeleteParticipantHistory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsDeleteParticipantHistory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteParticipantHistory, int(layer)); clazzId {
+	case 0x367544db:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsDeleteParticipantHistory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteParticipantHistory, int(layer)); clazzId {
+	case 0x367544db:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_deleteParticipantHistory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsDeleteParticipantHistory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteParticipantHistory, int(layer)); clazzId {
@@ -36586,6 +55117,43 @@ type TLChannelsToggleJoinToSend struct {
 func (m *TLChannelsToggleJoinToSend) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsToggleJoinToSend) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleJoinToSend) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinToSend, int(layer)); clazzId {
+	case 0xe4cb9580:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleJoinToSend) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinToSend, int(layer)); clazzId {
+	case 0xe4cb9580:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleJoinToSend, layer)
+	}
 }
 
 // Encode <--
@@ -36649,6 +55217,43 @@ func (m *TLChannelsToggleJoinRequest) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleJoinRequest) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleJoinRequest) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinRequest, int(layer)); clazzId {
+	case 0x4c2985b6:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleJoinRequest) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinRequest, int(layer)); clazzId {
+	case 0x4c2985b6:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleJoinRequest, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleJoinRequest) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinRequest, int(layer)); clazzId {
@@ -36710,6 +55315,43 @@ func (m *TLChannelsReorderUsernames) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsReorderUsernames) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsReorderUsernames) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reorderUsernames, int(layer)); clazzId {
+	case 0xb45ced1d:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsReorderUsernames) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reorderUsernames, int(layer)); clazzId {
+	case 0xb45ced1d:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_reorderUsernames, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reorderUsernames, int(layer)); clazzId {
@@ -36765,6 +55407,48 @@ type TLChannelsToggleUsername struct {
 func (m *TLChannelsToggleUsername) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsToggleUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleUsername, int(layer)); clazzId {
+	case 0x50f24105:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcStringSize(m.Username)
+		size += iface.CalcObjectSize(m.Active, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleUsername, int(layer)); clazzId {
+	case 0x50f24105:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleUsername, layer)
+	}
 }
 
 // Encode <--
@@ -36833,6 +55517,38 @@ func (m *TLChannelsDeactivateAllUsernames) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsDeactivateAllUsernames) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsDeactivateAllUsernames) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deactivateAllUsernames, int(layer)); clazzId {
+	case 0xa245dd3:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsDeactivateAllUsernames) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deactivateAllUsernames, int(layer)); clazzId {
+	case 0xa245dd3:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_deactivateAllUsernames, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsDeactivateAllUsernames) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deactivateAllUsernames, int(layer)); clazzId {
@@ -36884,6 +55600,48 @@ type TLChannelsToggleForum struct {
 func (m *TLChannelsToggleForum) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsToggleForum) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleForum) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleForum, int(layer)); clazzId {
+	case 0x3ff75734:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+		size += iface.CalcObjectSize(m.Tabs, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleForum) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleForum, int(layer)); clazzId {
+	case 0x3ff75734:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("tabs", m.Tabs); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleForum, layer)
+	}
 }
 
 // Encode <--
@@ -36956,6 +55714,43 @@ func (m *TLChannelsToggleAntiSpam) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleAntiSpam) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleAntiSpam) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAntiSpam, int(layer)); clazzId {
+	case 0x68f3e4eb:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleAntiSpam) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAntiSpam, int(layer)); clazzId {
+	case 0x68f3e4eb:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleAntiSpam, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleAntiSpam) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAntiSpam, int(layer)); clazzId {
@@ -37017,6 +55812,39 @@ func (m *TLChannelsReportAntiSpamFalsePositive) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsReportAntiSpamFalsePositive) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsReportAntiSpamFalsePositive) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportAntiSpamFalsePositive, int(layer)); clazzId {
+	case 0xa850a693:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsReportAntiSpamFalsePositive) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportAntiSpamFalsePositive, int(layer)); clazzId {
+	case 0xa850a693:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_reportAntiSpamFalsePositive, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsReportAntiSpamFalsePositive) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportAntiSpamFalsePositive, int(layer)); clazzId {
@@ -37073,6 +55901,43 @@ type TLChannelsToggleParticipantsHidden struct {
 func (m *TLChannelsToggleParticipantsHidden) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsToggleParticipantsHidden) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleParticipantsHidden) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleParticipantsHidden, int(layer)); clazzId {
+	case 0x6a6e7854:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleParticipantsHidden) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleParticipantsHidden, int(layer)); clazzId {
+	case 0x6a6e7854:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleParticipantsHidden, layer)
+	}
 }
 
 // Encode <--
@@ -37136,6 +56001,46 @@ type TLChannelsUpdateColor struct {
 func (m *TLChannelsUpdateColor) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsUpdateColor) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsUpdateColor) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateColor, int(layer)); clazzId {
+	case 0xd8aa3671:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		if m.Color != nil {
+			size += 4
+		}
+
+		if m.BackgroundEmojiId != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsUpdateColor) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateColor, int(layer)); clazzId {
+	case 0xd8aa3671:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_updateColor, layer)
+	}
 }
 
 // Encode <--
@@ -37241,6 +56146,43 @@ func (m *TLChannelsToggleViewForumAsMessages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleViewForumAsMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleViewForumAsMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleViewForumAsMessages, int(layer)); clazzId {
+	case 0x9738bb15:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleViewForumAsMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleViewForumAsMessages, int(layer)); clazzId {
+	case 0x9738bb15:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleViewForumAsMessages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleViewForumAsMessages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleViewForumAsMessages, int(layer)); clazzId {
@@ -37299,6 +56241,38 @@ type TLChannelsGetChannelRecommendations struct {
 func (m *TLChannelsGetChannelRecommendations) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsGetChannelRecommendations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetChannelRecommendations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getChannelRecommendations, int(layer)); clazzId {
+	case 0x25a71742:
+		size := 4
+		size += 4
+		if m.Channel != nil {
+			size += iface.CalcObjectSize(m.Channel, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetChannelRecommendations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getChannelRecommendations, int(layer)); clazzId {
+	case 0x25a71742:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getChannelRecommendations, layer)
+	}
 }
 
 // Encode <--
@@ -37375,6 +56349,43 @@ func (m *TLChannelsUpdateEmojiStatus) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsUpdateEmojiStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateEmojiStatus, int(layer)); clazzId {
+	case 0xf0d3e6a8:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.EmojiStatus, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsUpdateEmojiStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateEmojiStatus, int(layer)); clazzId {
+	case 0xf0d3e6a8:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_updateEmojiStatus, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateEmojiStatus, int(layer)); clazzId {
@@ -37436,6 +56447,39 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsSetBoostsToUnblockRestrictions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSetBoostsToUnblockRestrictions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setBoostsToUnblockRestrictions, int(layer)); clazzId {
+	case 0xad399cee:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSetBoostsToUnblockRestrictions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setBoostsToUnblockRestrictions, int(layer)); clazzId {
+	case 0xad399cee:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_setBoostsToUnblockRestrictions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsSetBoostsToUnblockRestrictions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setBoostsToUnblockRestrictions, int(layer)); clazzId {
@@ -37492,6 +56536,43 @@ type TLChannelsSetEmojiStickers struct {
 func (m *TLChannelsSetEmojiStickers) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsSetEmojiStickers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSetEmojiStickers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setEmojiStickers, int(layer)); clazzId {
+	case 0x3cd930b7:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSetEmojiStickers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setEmojiStickers, int(layer)); clazzId {
+	case 0x3cd930b7:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_setEmojiStickers, layer)
+	}
 }
 
 // Encode <--
@@ -37553,6 +56634,43 @@ type TLChannelsRestrictSponsoredMessages struct {
 func (m *TLChannelsRestrictSponsoredMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsRestrictSponsoredMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsRestrictSponsoredMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_restrictSponsoredMessages, int(layer)); clazzId {
+	case 0x9ae91519:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Restricted, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsRestrictSponsoredMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_restrictSponsoredMessages, int(layer)); clazzId {
+	case 0x9ae91519:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("restricted", m.Restricted); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_restrictSponsoredMessages, layer)
+	}
 }
 
 // Encode <--
@@ -37619,6 +56737,54 @@ type TLChannelsSearchPosts struct {
 func (m *TLChannelsSearchPosts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsSearchPosts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSearchPosts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_searchPosts, int(layer)); clazzId {
+	case 0xf2c4f24d:
+		size := 4
+		size += 4
+		if m.Hashtag != nil {
+			size += iface.CalcStringSize(*m.Hashtag)
+		}
+
+		if m.Query != nil {
+			size += iface.CalcStringSize(*m.Query)
+		}
+
+		size += 4
+		size += iface.CalcObjectSize(m.OffsetPeer, layer)
+		size += 4
+		size += 4
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSearchPosts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_searchPosts, int(layer)); clazzId {
+	case 0xf2c4f24d:
+
+		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_searchPosts, layer)
+	}
 }
 
 // Encode <--
@@ -37750,6 +56916,40 @@ func (m *TLChannelsUpdatePaidMessagesPrice) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsUpdatePaidMessagesPrice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsUpdatePaidMessagesPrice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updatePaidMessagesPrice, int(layer)); clazzId {
+	case 0x4b12327b:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsUpdatePaidMessagesPrice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updatePaidMessagesPrice, int(layer)); clazzId {
+	case 0x4b12327b:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_updatePaidMessagesPrice, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsUpdatePaidMessagesPrice) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updatePaidMessagesPrice, int(layer)); clazzId {
@@ -37830,6 +57030,43 @@ func (m *TLChannelsToggleAutotranslation) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsToggleAutotranslation) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsToggleAutotranslation) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAutotranslation, int(layer)); clazzId {
+	case 0x167fc0a1:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsToggleAutotranslation) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAutotranslation, int(layer)); clazzId {
+	case 0x167fc0a1:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_toggleAutotranslation, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsToggleAutotranslation) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAutotranslation, int(layer)); clazzId {
@@ -37891,6 +57128,39 @@ func (m *TLChannelsGetMessageAuthor) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetMessageAuthor) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetMessageAuthor) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessageAuthor, int(layer)); clazzId {
+	case 0xece2a0e6:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetMessageAuthor) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessageAuthor, int(layer)); clazzId {
+	case 0xece2a0e6:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getMessageAuthor, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetMessageAuthor) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessageAuthor, int(layer)); clazzId {
@@ -37946,6 +57216,38 @@ type TLChannelsCheckSearchPostsFlood struct {
 func (m *TLChannelsCheckSearchPostsFlood) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsCheckSearchPostsFlood) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsCheckSearchPostsFlood) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkSearchPostsFlood, int(layer)); clazzId {
+	case 0x22567115:
+		size := 4
+		size += 4
+		if m.Query != nil {
+			size += iface.CalcStringSize(*m.Query)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsCheckSearchPostsFlood) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkSearchPostsFlood, int(layer)); clazzId {
+	case 0x22567115:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_checkSearchPostsFlood, layer)
+	}
 }
 
 // Encode <--
@@ -38020,6 +57322,43 @@ func (m *TLChannelsSetMainProfileTab) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsSetMainProfileTab) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsSetMainProfileTab) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setMainProfileTab, int(layer)); clazzId {
+	case 0x3583fcb1:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.Tab, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsSetMainProfileTab) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setMainProfileTab, int(layer)); clazzId {
+	case 0x3583fcb1:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("tab", m.Tab); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_setMainProfileTab, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setMainProfileTab, int(layer)); clazzId {
@@ -38081,6 +57420,43 @@ func (m *TLBotsSendCustomRequest) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsSendCustomRequest) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSendCustomRequest) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_sendCustomRequest, int(layer)); clazzId {
+	case 0xaa2769ed:
+		size := 4
+		size += iface.CalcStringSize(m.CustomMethod)
+		size += iface.CalcObjectSize(m.Params, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSendCustomRequest) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_sendCustomRequest, int(layer)); clazzId {
+	case 0xaa2769ed:
+		if err := iface.ValidateRequiredString("custom_method", m.CustomMethod); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_sendCustomRequest, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsSendCustomRequest) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_sendCustomRequest, int(layer)); clazzId {
@@ -38136,6 +57512,39 @@ type TLBotsAnswerWebhookJSONQuery struct {
 func (m *TLBotsAnswerWebhookJSONQuery) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsAnswerWebhookJSONQuery) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsAnswerWebhookJSONQuery) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_answerWebhookJSONQuery, int(layer)); clazzId {
+	case 0xe6213f4d:
+		size := 4
+		size += 8
+		size += iface.CalcObjectSize(m.Data, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsAnswerWebhookJSONQuery) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_answerWebhookJSONQuery, int(layer)); clazzId {
+	case 0xe6213f4d:
+		if err := iface.ValidateRequiredObject("data", m.Data); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_answerWebhookJSONQuery, layer)
+	}
 }
 
 // Encode <--
@@ -38194,6 +57603,48 @@ type TLBotsSetBotCommands struct {
 func (m *TLBotsSetBotCommands) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsSetBotCommands) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetBotCommands) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotCommands, int(layer)); clazzId {
+	case 0x517165a:
+		size := 4
+		size += iface.CalcObjectSize(m.Scope, layer)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcObjectListSize(m.Commands, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetBotCommands) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotCommands, int(layer)); clazzId {
+	case 0x517165a:
+		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("commands", m.Commands); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setBotCommands, layer)
+	}
 }
 
 // Encode <--
@@ -38278,6 +57729,43 @@ func (m *TLBotsResetBotCommands) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsResetBotCommands) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsResetBotCommands) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_resetBotCommands, int(layer)); clazzId {
+	case 0x3d8de0f9:
+		size := 4
+		size += iface.CalcObjectSize(m.Scope, layer)
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsResetBotCommands) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_resetBotCommands, int(layer)); clazzId {
+	case 0x3d8de0f9:
+		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_resetBotCommands, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsResetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_resetBotCommands, int(layer)); clazzId {
@@ -38336,6 +57824,43 @@ func (m *TLBotsGetBotCommands) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetBotCommands) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetBotCommands) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotCommands, int(layer)); clazzId {
+	case 0xe34c0dd6:
+		size := 4
+		size += iface.CalcObjectSize(m.Scope, layer)
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetBotCommands) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotCommands, int(layer)); clazzId {
+	case 0xe34c0dd6:
+		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getBotCommands, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotCommands, int(layer)); clazzId {
@@ -38392,6 +57917,43 @@ type TLBotsSetBotMenuButton struct {
 func (m *TLBotsSetBotMenuButton) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsSetBotMenuButton) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetBotMenuButton) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotMenuButton, int(layer)); clazzId {
+	case 0x4504d54f:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.Button, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetBotMenuButton) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotMenuButton, int(layer)); clazzId {
+	case 0x4504d54f:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("button", m.Button); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setBotMenuButton, layer)
+	}
 }
 
 // Encode <--
@@ -38454,6 +58016,38 @@ func (m *TLBotsGetBotMenuButton) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetBotMenuButton) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetBotMenuButton) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotMenuButton, int(layer)); clazzId {
+	case 0x9c60eb28:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetBotMenuButton) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotMenuButton, int(layer)); clazzId {
+	case 0x9c60eb28:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getBotMenuButton, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetBotMenuButton) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotMenuButton, int(layer)); clazzId {
@@ -38505,6 +58099,38 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsSetBotBroadcastDefaultAdminRights) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetBotBroadcastDefaultAdminRights) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotBroadcastDefaultAdminRights, int(layer)); clazzId {
+	case 0x788464e1:
+		size := 4
+		size += iface.CalcObjectSize(m.AdminRights, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetBotBroadcastDefaultAdminRights) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotBroadcastDefaultAdminRights, int(layer)); clazzId {
+	case 0x788464e1:
+		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setBotBroadcastDefaultAdminRights, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotBroadcastDefaultAdminRights, int(layer)); clazzId {
@@ -38554,6 +58180,38 @@ type TLBotsSetBotGroupDefaultAdminRights struct {
 func (m *TLBotsSetBotGroupDefaultAdminRights) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsSetBotGroupDefaultAdminRights) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetBotGroupDefaultAdminRights) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotGroupDefaultAdminRights, int(layer)); clazzId {
+	case 0x925ec9ea:
+		size := 4
+		size += iface.CalcObjectSize(m.AdminRights, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetBotGroupDefaultAdminRights) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotGroupDefaultAdminRights, int(layer)); clazzId {
+	case 0x925ec9ea:
+		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setBotGroupDefaultAdminRights, layer)
+	}
 }
 
 // Encode <--
@@ -38609,6 +58267,55 @@ type TLBotsSetBotInfo struct {
 func (m *TLBotsSetBotInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsSetBotInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetBotInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotInfo, int(layer)); clazzId {
+	case 0x10cf3123:
+		size := 4
+		size += 4
+		if m.Bot != nil {
+			size += iface.CalcObjectSize(m.Bot, layer)
+		}
+
+		size += iface.CalcStringSize(m.LangCode)
+		if m.Name != nil {
+			size += iface.CalcStringSize(*m.Name)
+		}
+
+		if m.About != nil {
+			size += iface.CalcStringSize(*m.About)
+		}
+
+		if m.Description != nil {
+			size += iface.CalcStringSize(*m.Description)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetBotInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotInfo, int(layer)); clazzId {
+	case 0x10cf3123:
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setBotInfo, layer)
+	}
 }
 
 // Encode <--
@@ -38735,6 +58442,44 @@ func (m *TLBotsGetBotInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetBotInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetBotInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotInfo, int(layer)); clazzId {
+	case 0xdcd914fd:
+		size := 4
+		size += 4
+		if m.Bot != nil {
+			size += iface.CalcObjectSize(m.Bot, layer)
+		}
+
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetBotInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotInfo, int(layer)); clazzId {
+	case 0xdcd914fd:
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getBotInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetBotInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotInfo, int(layer)); clazzId {
@@ -38815,6 +58560,43 @@ func (m *TLBotsReorderUsernames) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsReorderUsernames) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsReorderUsernames) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderUsernames, int(layer)); clazzId {
+	case 0x9709b1c2:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsReorderUsernames) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderUsernames, int(layer)); clazzId {
+	case 0x9709b1c2:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_reorderUsernames, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderUsernames, int(layer)); clazzId {
@@ -38870,6 +58652,48 @@ type TLBotsToggleUsername struct {
 func (m *TLBotsToggleUsername) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsToggleUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsToggleUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUsername, int(layer)); clazzId {
+	case 0x53ca973:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.Username)
+		size += iface.CalcObjectSize(m.Active, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsToggleUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUsername, int(layer)); clazzId {
+	case 0x53ca973:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_toggleUsername, layer)
+	}
 }
 
 // Encode <--
@@ -38938,6 +58762,38 @@ func (m *TLBotsCanSendMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsCanSendMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsCanSendMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_canSendMessage, int(layer)); clazzId {
+	case 0x1359f4e6:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsCanSendMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_canSendMessage, int(layer)); clazzId {
+	case 0x1359f4e6:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_canSendMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsCanSendMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_canSendMessage, int(layer)); clazzId {
@@ -38987,6 +58843,38 @@ type TLBotsAllowSendMessage struct {
 func (m *TLBotsAllowSendMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsAllowSendMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsAllowSendMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_allowSendMessage, int(layer)); clazzId {
+	case 0xf132e3ef:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsAllowSendMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_allowSendMessage, int(layer)); clazzId {
+	case 0xf132e3ef:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_allowSendMessage, layer)
+	}
 }
 
 // Encode <--
@@ -39040,6 +58928,48 @@ type TLBotsInvokeWebViewCustomMethod struct {
 func (m *TLBotsInvokeWebViewCustomMethod) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsInvokeWebViewCustomMethod) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsInvokeWebViewCustomMethod) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_invokeWebViewCustomMethod, int(layer)); clazzId {
+	case 0x87fc5e7:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.CustomMethod)
+		size += iface.CalcObjectSize(m.Params, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsInvokeWebViewCustomMethod) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_invokeWebViewCustomMethod, int(layer)); clazzId {
+	case 0x87fc5e7:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("custom_method", m.CustomMethod); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_invokeWebViewCustomMethod, layer)
+	}
 }
 
 // Encode <--
@@ -39109,6 +59039,39 @@ func (m *TLBotsGetPopularAppBots) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetPopularAppBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetPopularAppBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPopularAppBots, int(layer)); clazzId {
+	case 0xc2510192:
+		size := 4
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetPopularAppBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPopularAppBots, int(layer)); clazzId {
+	case 0xc2510192:
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getPopularAppBots, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetPopularAppBots) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPopularAppBots, int(layer)); clazzId {
@@ -39161,6 +59124,48 @@ type TLBotsAddPreviewMedia struct {
 func (m *TLBotsAddPreviewMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsAddPreviewMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsAddPreviewMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_addPreviewMedia, int(layer)); clazzId {
+	case 0x17aeb75a:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcObjectSize(m.Media, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsAddPreviewMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_addPreviewMedia, int(layer)); clazzId {
+	case 0x17aeb75a:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_addPreviewMedia, layer)
+	}
 }
 
 // Encode <--
@@ -39230,6 +59235,53 @@ type TLBotsEditPreviewMedia struct {
 func (m *TLBotsEditPreviewMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsEditPreviewMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsEditPreviewMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_editPreviewMedia, int(layer)); clazzId {
+	case 0x8525606f:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcObjectSize(m.Media, layer)
+		size += iface.CalcObjectSize(m.NewMedia, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsEditPreviewMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_editPreviewMedia, int(layer)); clazzId {
+	case 0x8525606f:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("new_media", m.NewMedia); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_editPreviewMedia, layer)
+	}
 }
 
 // Encode <--
@@ -39307,6 +59359,48 @@ type TLBotsDeletePreviewMedia struct {
 func (m *TLBotsDeletePreviewMedia) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsDeletePreviewMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsDeletePreviewMedia) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_deletePreviewMedia, int(layer)); clazzId {
+	case 0x2d0135b3:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcObjectListSize(m.Media, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsDeletePreviewMedia) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_deletePreviewMedia, int(layer)); clazzId {
+	case 0x2d0135b3:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("media", m.Media); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_deletePreviewMedia, layer)
+	}
 }
 
 // Encode <--
@@ -39392,6 +59486,48 @@ func (m *TLBotsReorderPreviewMedias) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsReorderPreviewMedias) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsReorderPreviewMedias) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderPreviewMedias, int(layer)); clazzId {
+	case 0xb627f3aa:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcObjectListSize(m.Order, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsReorderPreviewMedias) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderPreviewMedias, int(layer)); clazzId {
+	case 0xb627f3aa:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_reorderPreviewMedias, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsReorderPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderPreviewMedias, int(layer)); clazzId {
@@ -39474,6 +59610,43 @@ func (m *TLBotsGetPreviewInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetPreviewInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetPreviewInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewInfo, int(layer)); clazzId {
+	case 0x423ab3ad:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetPreviewInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewInfo, int(layer)); clazzId {
+	case 0x423ab3ad:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getPreviewInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetPreviewInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewInfo, int(layer)); clazzId {
@@ -39531,6 +59704,38 @@ func (m *TLBotsGetPreviewMedias) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetPreviewMedias) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetPreviewMedias) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewMedias, int(layer)); clazzId {
+	case 0xa2a5594d:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetPreviewMedias) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewMedias, int(layer)); clazzId {
+	case 0xa2a5594d:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getPreviewMedias, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewMedias, int(layer)); clazzId {
@@ -39581,6 +59786,43 @@ type TLBotsUpdateUserEmojiStatus struct {
 func (m *TLBotsUpdateUserEmojiStatus) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsUpdateUserEmojiStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsUpdateUserEmojiStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateUserEmojiStatus, int(layer)); clazzId {
+	case 0xed9f30c5:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.EmojiStatus, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsUpdateUserEmojiStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateUserEmojiStatus, int(layer)); clazzId {
+	case 0xed9f30c5:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_updateUserEmojiStatus, layer)
+	}
 }
 
 // Encode <--
@@ -39642,6 +59884,43 @@ type TLBotsToggleUserEmojiStatusPermission struct {
 func (m *TLBotsToggleUserEmojiStatusPermission) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsToggleUserEmojiStatusPermission) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsToggleUserEmojiStatusPermission) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUserEmojiStatusPermission, int(layer)); clazzId {
+	case 0x6de6392:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Enabled, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsToggleUserEmojiStatusPermission) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUserEmojiStatusPermission, int(layer)); clazzId {
+	case 0x6de6392:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_toggleUserEmojiStatusPermission, layer)
+	}
 }
 
 // Encode <--
@@ -39706,6 +59985,48 @@ func (m *TLBotsCheckDownloadFileParams) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsCheckDownloadFileParams) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsCheckDownloadFileParams) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkDownloadFileParams, int(layer)); clazzId {
+	case 0x50077589:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.FileName)
+		size += iface.CalcStringSize(m.Url)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsCheckDownloadFileParams) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkDownloadFileParams, int(layer)); clazzId {
+	case 0x50077589:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("file_name", m.FileName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("url", m.Url); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_checkDownloadFileParams, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsCheckDownloadFileParams) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkDownloadFileParams, int(layer)); clazzId {
@@ -39767,6 +60088,34 @@ func (m *TLBotsGetAdminedBots) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetAdminedBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetAdminedBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getAdminedBots, int(layer)); clazzId {
+	case 0xb0711d83:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetAdminedBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getAdminedBots, int(layer)); clazzId {
+	case 0xb0711d83:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getAdminedBots, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetAdminedBots) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getAdminedBots, int(layer)); clazzId {
@@ -39808,6 +60157,43 @@ type TLBotsUpdateStarRefProgram struct {
 func (m *TLBotsUpdateStarRefProgram) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsUpdateStarRefProgram) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsUpdateStarRefProgram) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateStarRefProgram, int(layer)); clazzId {
+	case 0x778b5ab3:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += 4
+		if m.DurationMonths != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsUpdateStarRefProgram) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateStarRefProgram, int(layer)); clazzId {
+	case 0x778b5ab3:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_updateStarRefProgram, layer)
+	}
 }
 
 // Encode <--
@@ -39897,6 +60283,47 @@ type TLBotsSetCustomVerification struct {
 func (m *TLBotsSetCustomVerification) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLBotsSetCustomVerification) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsSetCustomVerification) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setCustomVerification, int(layer)); clazzId {
+	case 0x8b89dfbd:
+		size := 4
+		size += 4
+		if m.Bot != nil {
+			size += iface.CalcObjectSize(m.Bot, layer)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.CustomDescription != nil {
+			size += iface.CalcStringSize(*m.CustomDescription)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsSetCustomVerification) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setCustomVerification, int(layer)); clazzId {
+	case 0x8b89dfbd:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_setCustomVerification, layer)
+	}
 }
 
 // Encode <--
@@ -40003,6 +60430,38 @@ func (m *TLBotsGetBotRecommendations) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBotsGetBotRecommendations) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBotsGetBotRecommendations) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotRecommendations, int(layer)); clazzId {
+	case 0xa1b70815:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetBotRecommendations) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotRecommendations, int(layer)); clazzId {
+	case 0xa1b70815:
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getBotRecommendations, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBotsGetBotRecommendations) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotRecommendations, int(layer)); clazzId {
@@ -40053,6 +60512,42 @@ type TLPaymentsGetPaymentForm struct {
 func (m *TLPaymentsGetPaymentForm) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetPaymentForm) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetPaymentForm) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentForm, int(layer)); clazzId {
+	case 0x37148dbb:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Invoice, layer)
+		if m.ThemeParams != nil {
+			size += iface.CalcObjectSize(m.ThemeParams, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetPaymentForm) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentForm, int(layer)); clazzId {
+	case 0x37148dbb:
+		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getPaymentForm, layer)
+	}
 }
 
 // Encode <--
@@ -40139,6 +60634,39 @@ func (m *TLPaymentsGetPaymentReceipt) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetPaymentReceipt) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetPaymentReceipt) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentReceipt, int(layer)); clazzId {
+	case 0x2478d1cc:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetPaymentReceipt) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentReceipt, int(layer)); clazzId {
+	case 0x2478d1cc:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getPaymentReceipt, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetPaymentReceipt) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentReceipt, int(layer)); clazzId {
@@ -40196,6 +60724,44 @@ type TLPaymentsValidateRequestedInfo struct {
 func (m *TLPaymentsValidateRequestedInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsValidateRequestedInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsValidateRequestedInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_validateRequestedInfo, int(layer)); clazzId {
+	case 0xb6c8f12b:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Invoice, layer)
+		size += iface.CalcObjectSize(m.Info, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsValidateRequestedInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_validateRequestedInfo, int(layer)); clazzId {
+	case 0xb6c8f12b:
+		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("info", m.Info); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_validateRequestedInfo, layer)
+	}
 }
 
 // Encode <--
@@ -40283,6 +60849,56 @@ type TLPaymentsSendPaymentForm struct {
 func (m *TLPaymentsSendPaymentForm) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsSendPaymentForm) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsSendPaymentForm) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendPaymentForm, int(layer)); clazzId {
+	case 0x2d03522f:
+		size := 4
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.Invoice, layer)
+		if m.RequestedInfoId != nil {
+			size += iface.CalcStringSize(*m.RequestedInfoId)
+		}
+
+		if m.ShippingOptionId != nil {
+			size += iface.CalcStringSize(*m.ShippingOptionId)
+		}
+
+		size += iface.CalcObjectSize(m.Credentials, layer)
+		if m.TipAmount != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsSendPaymentForm) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendPaymentForm, int(layer)); clazzId {
+	case 0x2d03522f:
+		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("credentials", m.Credentials); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_sendPaymentForm, layer)
+	}
 }
 
 // Encode <--
@@ -40410,6 +61026,34 @@ func (m *TLPaymentsGetSavedInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetSavedInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetSavedInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedInfo, int(layer)); clazzId {
+	case 0x227d824b:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetSavedInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedInfo, int(layer)); clazzId {
+	case 0x227d824b:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getSavedInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetSavedInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedInfo, int(layer)); clazzId {
@@ -40450,6 +61094,35 @@ type TLPaymentsClearSavedInfo struct {
 func (m *TLPaymentsClearSavedInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsClearSavedInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsClearSavedInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_clearSavedInfo, int(layer)); clazzId {
+	case 0xd83d70c1:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsClearSavedInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_clearSavedInfo, int(layer)); clazzId {
+	case 0xd83d70c1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_clearSavedInfo, layer)
+	}
 }
 
 // Encode <--
@@ -40522,6 +61195,38 @@ func (m *TLPaymentsGetBankCardData) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetBankCardData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetBankCardData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getBankCardData, int(layer)); clazzId {
+	case 0x2e79d779:
+		size := 4
+		size += iface.CalcStringSize(m.Number)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetBankCardData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getBankCardData, int(layer)); clazzId {
+	case 0x2e79d779:
+		if err := iface.ValidateRequiredString("number", m.Number); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getBankCardData, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetBankCardData) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getBankCardData, int(layer)); clazzId {
@@ -40567,6 +61272,38 @@ type TLPaymentsExportInvoice struct {
 func (m *TLPaymentsExportInvoice) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsExportInvoice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsExportInvoice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_exportInvoice, int(layer)); clazzId {
+	case 0xf91b065:
+		size := 4
+		size += iface.CalcObjectSize(m.InvoiceMedia, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsExportInvoice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_exportInvoice, int(layer)); clazzId {
+	case 0xf91b065:
+		if err := iface.ValidateRequiredObject("invoice_media", m.InvoiceMedia); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_exportInvoice, layer)
+	}
 }
 
 // Encode <--
@@ -40619,6 +61356,43 @@ type TLPaymentsAssignAppStoreTransaction struct {
 func (m *TLPaymentsAssignAppStoreTransaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsAssignAppStoreTransaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsAssignAppStoreTransaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_assignAppStoreTransaction, int(layer)); clazzId {
+	case 0x80ed747d:
+		size := 4
+		size += iface.CalcBytesSize(m.Receipt)
+		size += iface.CalcObjectSize(m.Purpose, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsAssignAppStoreTransaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_assignAppStoreTransaction, int(layer)); clazzId {
+	case 0x80ed747d:
+		if err := iface.ValidateRequiredBytes("receipt", m.Receipt); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_assignAppStoreTransaction, layer)
+	}
 }
 
 // Encode <--
@@ -40676,6 +61450,43 @@ type TLPaymentsAssignPlayMarketTransaction struct {
 func (m *TLPaymentsAssignPlayMarketTransaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsAssignPlayMarketTransaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsAssignPlayMarketTransaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_assignPlayMarketTransaction, int(layer)); clazzId {
+	case 0xdffd50d3:
+		size := 4
+		size += iface.CalcObjectSize(m.Receipt, layer)
+		size += iface.CalcObjectSize(m.Purpose, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsAssignPlayMarketTransaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_assignPlayMarketTransaction, int(layer)); clazzId {
+	case 0xdffd50d3:
+		if err := iface.ValidateRequiredObject("receipt", m.Receipt); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_assignPlayMarketTransaction, layer)
+	}
 }
 
 // Encode <--
@@ -40736,6 +61547,38 @@ type TLPaymentsGetPremiumGiftCodeOptions struct {
 func (m *TLPaymentsGetPremiumGiftCodeOptions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetPremiumGiftCodeOptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetPremiumGiftCodeOptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPremiumGiftCodeOptions, int(layer)); clazzId {
+	case 0x2757ba54:
+		size := 4
+		size += 4
+		if m.BoostPeer != nil {
+			size += iface.CalcObjectSize(m.BoostPeer, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetPremiumGiftCodeOptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPremiumGiftCodeOptions, int(layer)); clazzId {
+	case 0x2757ba54:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getPremiumGiftCodeOptions, layer)
+	}
 }
 
 // Encode <--
@@ -40811,6 +61654,38 @@ func (m *TLPaymentsCheckGiftCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsCheckGiftCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsCheckGiftCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_checkGiftCode, int(layer)); clazzId {
+	case 0x8e51b4c1:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsCheckGiftCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_checkGiftCode, int(layer)); clazzId {
+	case 0x8e51b4c1:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_checkGiftCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsCheckGiftCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_checkGiftCode, int(layer)); clazzId {
@@ -40856,6 +61731,38 @@ type TLPaymentsApplyGiftCode struct {
 func (m *TLPaymentsApplyGiftCode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsApplyGiftCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsApplyGiftCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_applyGiftCode, int(layer)); clazzId {
+	case 0xf6e26854:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsApplyGiftCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_applyGiftCode, int(layer)); clazzId {
+	case 0xf6e26854:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_applyGiftCode, layer)
+	}
 }
 
 // Encode <--
@@ -40904,6 +61811,39 @@ type TLPaymentsGetGiveawayInfo struct {
 func (m *TLPaymentsGetGiveawayInfo) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetGiveawayInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetGiveawayInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getGiveawayInfo, int(layer)); clazzId {
+	case 0xf4239425:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetGiveawayInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getGiveawayInfo, int(layer)); clazzId {
+	case 0xf4239425:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getGiveawayInfo, layer)
+	}
 }
 
 // Encode <--
@@ -40963,6 +61903,44 @@ type TLPaymentsLaunchPrepaidGiveaway struct {
 func (m *TLPaymentsLaunchPrepaidGiveaway) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsLaunchPrepaidGiveaway) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsLaunchPrepaidGiveaway) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_launchPrepaidGiveaway, int(layer)); clazzId {
+	case 0x5ff58f20:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+		size += iface.CalcObjectSize(m.Purpose, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsLaunchPrepaidGiveaway) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_launchPrepaidGiveaway, int(layer)); clazzId {
+	case 0x5ff58f20:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_launchPrepaidGiveaway, layer)
+	}
 }
 
 // Encode <--
@@ -41030,6 +62008,34 @@ func (m *TLPaymentsGetStarsTopupOptions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarsTopupOptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsTopupOptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTopupOptions, int(layer)); clazzId {
+	case 0xc00ec7d3:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsTopupOptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTopupOptions, int(layer)); clazzId {
+	case 0xc00ec7d3:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsTopupOptions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarsTopupOptions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTopupOptions, int(layer)); clazzId {
@@ -41070,6 +62076,39 @@ type TLPaymentsGetStarsStatus struct {
 func (m *TLPaymentsGetStarsStatus) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsStatus, int(layer)); clazzId {
+	case 0x4ea9b3bf:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsStatus, int(layer)); clazzId {
+	case 0x4ea9b3bf:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsStatus, layer)
+	}
 }
 
 // Encode <--
@@ -41150,6 +62189,50 @@ type TLPaymentsGetStarsTransactions struct {
 func (m *TLPaymentsGetStarsTransactions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsTransactions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsTransactions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactions, int(layer)); clazzId {
+	case 0x69da4557:
+		size := 4
+		size += 4
+		if m.SubscriptionId != nil {
+			size += iface.CalcStringSize(*m.SubscriptionId)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsTransactions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactions, int(layer)); clazzId {
+	case 0x69da4557:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsTransactions, layer)
+	}
 }
 
 // Encode <--
@@ -41269,6 +62352,39 @@ func (m *TLPaymentsSendStarsForm) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsSendStarsForm) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsSendStarsForm) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarsForm, int(layer)); clazzId {
+	case 0x7998c914:
+		size := 4
+		size += 8
+		size += iface.CalcObjectSize(m.Invoice, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsSendStarsForm) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarsForm, int(layer)); clazzId {
+	case 0x7998c914:
+		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_sendStarsForm, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsSendStarsForm) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarsForm, int(layer)); clazzId {
@@ -41324,6 +62440,43 @@ type TLPaymentsRefundStarsCharge struct {
 func (m *TLPaymentsRefundStarsCharge) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsRefundStarsCharge) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsRefundStarsCharge) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_refundStarsCharge, int(layer)); clazzId {
+	case 0x25ae8f4a:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcStringSize(m.ChargeId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsRefundStarsCharge) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_refundStarsCharge, int(layer)); clazzId {
+	case 0x25ae8f4a:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("charge_id", m.ChargeId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_refundStarsCharge, layer)
+	}
 }
 
 // Encode <--
@@ -41383,6 +62536,39 @@ type TLPaymentsGetStarsRevenueStats struct {
 func (m *TLPaymentsGetStarsRevenueStats) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsRevenueStats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsRevenueStats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueStats, int(layer)); clazzId {
+	case 0xd91ffad6:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsRevenueStats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueStats, int(layer)); clazzId {
+	case 0xd91ffad6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsRevenueStats, layer)
+	}
 }
 
 // Encode <--
@@ -41465,6 +62651,48 @@ type TLPaymentsGetStarsRevenueWithdrawalUrl struct {
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueWithdrawalUrl, int(layer)); clazzId {
+	case 0x2433dc92:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Amount != nil {
+			size += 8
+		}
+
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueWithdrawalUrl, int(layer)); clazzId {
+	case 0x2433dc92:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsRevenueWithdrawalUrl, layer)
+	}
 }
 
 // Encode <--
@@ -41565,6 +62793,38 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueAdsAccountUrl, int(layer)); clazzId {
+	case 0xd1d7efc5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueAdsAccountUrl, int(layer)); clazzId {
+	case 0xd1d7efc5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsRevenueAdsAccountUrl, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueAdsAccountUrl, int(layer)); clazzId {
@@ -41616,6 +62876,44 @@ type TLPaymentsGetStarsTransactionsByID struct {
 func (m *TLPaymentsGetStarsTransactionsByID) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsTransactionsByID) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsTransactionsByID) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactionsByID, int(layer)); clazzId {
+	case 0x2dca16b8:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsTransactionsByID) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactionsByID, int(layer)); clazzId {
+	case 0x2dca16b8:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsTransactionsByID, layer)
+	}
 }
 
 // Encode <--
@@ -41716,6 +63014,38 @@ func (m *TLPaymentsGetStarsGiftOptions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarsGiftOptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsGiftOptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiftOptions, int(layer)); clazzId {
+	case 0xd3c96bc8:
+		size := 4
+		size += 4
+		if m.UserId != nil {
+			size += iface.CalcObjectSize(m.UserId, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsGiftOptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiftOptions, int(layer)); clazzId {
+	case 0xd3c96bc8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsGiftOptions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarsGiftOptions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiftOptions, int(layer)); clazzId {
@@ -41789,6 +63119,44 @@ type TLPaymentsGetStarsSubscriptions struct {
 func (m *TLPaymentsGetStarsSubscriptions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarsSubscriptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsSubscriptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsSubscriptions, int(layer)); clazzId {
+	case 0x32512c5:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Offset)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsSubscriptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsSubscriptions, int(layer)); clazzId {
+	case 0x32512c5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsSubscriptions, layer)
+	}
 }
 
 // Encode <--
@@ -41870,6 +63238,47 @@ type TLPaymentsChangeStarsSubscription struct {
 func (m *TLPaymentsChangeStarsSubscription) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsChangeStarsSubscription) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsChangeStarsSubscription) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_changeStarsSubscription, int(layer)); clazzId {
+	case 0xc7770878:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.SubscriptionId)
+		if m.Canceled != nil {
+			size += iface.CalcObjectSize(m.Canceled, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsChangeStarsSubscription) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_changeStarsSubscription, int(layer)); clazzId {
+	case 0xc7770878:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("subscription_id", m.SubscriptionId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_changeStarsSubscription, layer)
+	}
 }
 
 // Encode <--
@@ -41961,6 +63370,43 @@ func (m *TLPaymentsFulfillStarsSubscription) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsFulfillStarsSubscription) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsFulfillStarsSubscription) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_fulfillStarsSubscription, int(layer)); clazzId {
+	case 0xcc5bebb3:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.SubscriptionId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsFulfillStarsSubscription) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_fulfillStarsSubscription, int(layer)); clazzId {
+	case 0xcc5bebb3:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("subscription_id", m.SubscriptionId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_fulfillStarsSubscription, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsFulfillStarsSubscription) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_fulfillStarsSubscription, int(layer)); clazzId {
@@ -42017,6 +63463,34 @@ func (m *TLPaymentsGetStarsGiveawayOptions) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarsGiveawayOptions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarsGiveawayOptions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiveawayOptions, int(layer)); clazzId {
+	case 0xbd1efd3e:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarsGiveawayOptions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiveawayOptions, int(layer)); clazzId {
+	case 0xbd1efd3e:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarsGiveawayOptions, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarsGiveawayOptions) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsGiveawayOptions, int(layer)); clazzId {
@@ -42056,6 +63530,35 @@ type TLPaymentsGetStarGifts struct {
 func (m *TLPaymentsGetStarGifts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarGifts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGifts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGifts, int(layer)); clazzId {
+	case 0xc4563590:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGifts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGifts, int(layer)); clazzId {
+	case 0xc4563590:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGifts, layer)
+	}
 }
 
 // Encode <--
@@ -42104,6 +63607,39 @@ type TLPaymentsSaveStarGift struct {
 func (m *TLPaymentsSaveStarGift) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsSaveStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsSaveStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_saveStarGift, int(layer)); clazzId {
+	case 0x2a2a697c:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsSaveStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_saveStarGift, int(layer)); clazzId {
+	case 0x2a2a697c:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_saveStarGift, layer)
+	}
 }
 
 // Encode <--
@@ -42179,6 +63715,38 @@ func (m *TLPaymentsConvertStarGift) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsConvertStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsConvertStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_convertStarGift, int(layer)); clazzId {
+	case 0x74bf076b:
+		size := 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsConvertStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_convertStarGift, int(layer)); clazzId {
+	case 0x74bf076b:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_convertStarGift, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsConvertStarGift) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_convertStarGift, int(layer)); clazzId {
@@ -42230,6 +63798,44 @@ type TLPaymentsBotCancelStarsSubscription struct {
 func (m *TLPaymentsBotCancelStarsSubscription) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsBotCancelStarsSubscription) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsBotCancelStarsSubscription) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_botCancelStarsSubscription, int(layer)); clazzId {
+	case 0x6dfa0622:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcStringSize(m.ChargeId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsBotCancelStarsSubscription) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_botCancelStarsSubscription, int(layer)); clazzId {
+	case 0x6dfa0622:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("charge_id", m.ChargeId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_botCancelStarsSubscription, layer)
+	}
 }
 
 // Encode <--
@@ -42312,6 +63918,48 @@ type TLPaymentsGetConnectedStarRefBots struct {
 func (m *TLPaymentsGetConnectedStarRefBots) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetConnectedStarRefBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetConnectedStarRefBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBots, int(layer)); clazzId {
+	case 0x5869a553:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.OffsetDate != nil {
+			size += 4
+		}
+
+		if m.OffsetLink != nil {
+			size += iface.CalcStringSize(*m.OffsetLink)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetConnectedStarRefBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBots, int(layer)); clazzId {
+	case 0x5869a553:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getConnectedStarRefBots, layer)
+	}
 }
 
 // Encode <--
@@ -42417,6 +64065,43 @@ func (m *TLPaymentsGetConnectedStarRefBot) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetConnectedStarRefBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetConnectedStarRefBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBot, int(layer)); clazzId {
+	case 0xb7d998f0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetConnectedStarRefBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBot, int(layer)); clazzId {
+	case 0xb7d998f0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getConnectedStarRefBot, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetConnectedStarRefBot) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBot, int(layer)); clazzId {
@@ -42479,6 +64164,45 @@ type TLPaymentsGetSuggestedStarRefBots struct {
 func (m *TLPaymentsGetSuggestedStarRefBots) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetSuggestedStarRefBots) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetSuggestedStarRefBots) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSuggestedStarRefBots, int(layer)); clazzId {
+	case 0xd6b48f7:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetSuggestedStarRefBots) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSuggestedStarRefBots, int(layer)); clazzId {
+	case 0xd6b48f7:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getSuggestedStarRefBots, layer)
+	}
 }
 
 // Encode <--
@@ -42572,6 +64296,43 @@ func (m *TLPaymentsConnectStarRefBot) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsConnectStarRefBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsConnectStarRefBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_connectStarRefBot, int(layer)); clazzId {
+	case 0x7ed5348a:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Bot, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsConnectStarRefBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_connectStarRefBot, int(layer)); clazzId {
+	case 0x7ed5348a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_connectStarRefBot, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsConnectStarRefBot) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_connectStarRefBot, int(layer)); clazzId {
@@ -42632,6 +64393,44 @@ type TLPaymentsEditConnectedStarRefBot struct {
 func (m *TLPaymentsEditConnectedStarRefBot) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsEditConnectedStarRefBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsEditConnectedStarRefBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_editConnectedStarRefBot, int(layer)); clazzId {
+	case 0xe4fca4a3:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Link)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsEditConnectedStarRefBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_editConnectedStarRefBot, int(layer)); clazzId {
+	case 0xe4fca4a3:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("link", m.Link); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_editConnectedStarRefBot, layer)
+	}
 }
 
 // Encode <--
@@ -42713,6 +64512,35 @@ func (m *TLPaymentsGetStarGiftUpgradePreview) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarGiftUpgradePreview) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftUpgradePreview) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradePreview, int(layer)); clazzId {
+	case 0x9c9abcb1:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftUpgradePreview) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradePreview, int(layer)); clazzId {
+	case 0x9c9abcb1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftUpgradePreview, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarGiftUpgradePreview) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradePreview, int(layer)); clazzId {
@@ -42759,6 +64587,39 @@ type TLPaymentsUpgradeStarGift struct {
 func (m *TLPaymentsUpgradeStarGift) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsUpgradeStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsUpgradeStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_upgradeStarGift, int(layer)); clazzId {
+	case 0xaed6e4f5:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsUpgradeStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_upgradeStarGift, int(layer)); clazzId {
+	case 0xaed6e4f5:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_upgradeStarGift, layer)
+	}
 }
 
 // Encode <--
@@ -42835,6 +64696,43 @@ func (m *TLPaymentsTransferStarGift) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsTransferStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsTransferStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_transferStarGift, int(layer)); clazzId {
+	case 0x7f18176a:
+		size := 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+		size += iface.CalcObjectSize(m.ToId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsTransferStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_transferStarGift, int(layer)); clazzId {
+	case 0x7f18176a:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("to_id", m.ToId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_transferStarGift, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsTransferStarGift) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_transferStarGift, int(layer)); clazzId {
@@ -42895,6 +64793,38 @@ func (m *TLPaymentsGetUniqueStarGift) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetUniqueStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetUniqueStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGift, int(layer)); clazzId {
+	case 0xa1974d72:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetUniqueStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGift, int(layer)); clazzId {
+	case 0xa1974d72:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getUniqueStarGift, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetUniqueStarGift) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGift, int(layer)); clazzId {
@@ -42952,6 +64882,49 @@ type TLPaymentsGetSavedStarGifts struct {
 func (m *TLPaymentsGetSavedStarGifts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetSavedStarGifts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetSavedStarGifts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGifts, int(layer)); clazzId {
+	case 0xa319e569:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.CollectionId != nil {
+			size += 4
+		}
+
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetSavedStarGifts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGifts, int(layer)); clazzId {
+	case 0xa319e569:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getSavedStarGifts, layer)
+	}
 }
 
 // Encode <--
@@ -43101,6 +65074,38 @@ func (m *TLPaymentsGetSavedStarGift) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetSavedStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetSavedStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGift, int(layer)); clazzId {
+	case 0xb455a106:
+		size := 4
+		size += iface.CalcObjectListSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetSavedStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGift, int(layer)); clazzId {
+	case 0xb455a106:
+		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getSavedStarGift, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetSavedStarGift) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGift, int(layer)); clazzId {
@@ -43167,6 +65172,43 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarGiftWithdrawalUrl) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftWithdrawalUrl) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftWithdrawalUrl, int(layer)); clazzId {
+	case 0xd06e93a8:
+		size := 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftWithdrawalUrl) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftWithdrawalUrl, int(layer)); clazzId {
+	case 0xd06e93a8:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftWithdrawalUrl, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftWithdrawalUrl, int(layer)); clazzId {
@@ -43226,6 +65268,39 @@ type TLPaymentsToggleChatStarGiftNotifications struct {
 func (m *TLPaymentsToggleChatStarGiftNotifications) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsToggleChatStarGiftNotifications) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsToggleChatStarGiftNotifications) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleChatStarGiftNotifications, int(layer)); clazzId {
+	case 0x60eaefa1:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsToggleChatStarGiftNotifications) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleChatStarGiftNotifications, int(layer)); clazzId {
+	case 0x60eaefa1:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_toggleChatStarGiftNotifications, layer)
+	}
 }
 
 // Encode <--
@@ -43300,6 +65375,43 @@ type TLPaymentsToggleStarGiftsPinnedToTop struct {
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsToggleStarGiftsPinnedToTop) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsToggleStarGiftsPinnedToTop) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleStarGiftsPinnedToTop, int(layer)); clazzId {
+	case 0x1513e7b0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectListSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsToggleStarGiftsPinnedToTop) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleStarGiftsPinnedToTop, int(layer)); clazzId {
+	case 0x1513e7b0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_toggleStarGiftsPinnedToTop, layer)
+	}
 }
 
 // Encode <--
@@ -43378,6 +65490,38 @@ func (m *TLPaymentsCanPurchaseStore) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsCanPurchaseStore) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsCanPurchaseStore) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_canPurchaseStore, int(layer)); clazzId {
+	case 0x4fdc5ea7:
+		size := 4
+		size += iface.CalcObjectSize(m.Purpose, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsCanPurchaseStore) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_canPurchaseStore, int(layer)); clazzId {
+	case 0x4fdc5ea7:
+		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_canPurchaseStore, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsCanPurchaseStore) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_canPurchaseStore, int(layer)); clazzId {
@@ -43434,6 +65578,50 @@ type TLPaymentsGetResaleStarGifts struct {
 func (m *TLPaymentsGetResaleStarGifts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetResaleStarGifts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetResaleStarGifts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getResaleStarGifts, int(layer)); clazzId {
+	case 0x7a5fa236:
+		size := 4
+		size += 4
+		if m.AttributesHash != nil {
+			size += 8
+		}
+
+		size += 8
+		if m.Attributes != nil {
+			size += iface.CalcObjectListSize(m.Attributes, layer)
+		}
+
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetResaleStarGifts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getResaleStarGifts, int(layer)); clazzId {
+	case 0x7a5fa236:
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getResaleStarGifts, layer)
+	}
 }
 
 // Encode <--
@@ -43574,6 +65762,43 @@ func (m *TLPaymentsUpdateStarGiftPrice) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsUpdateStarGiftPrice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsUpdateStarGiftPrice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftPrice, int(layer)); clazzId {
+	case 0xedbe6ccb:
+		size := 4
+		size += iface.CalcObjectSize(m.Stargift, layer)
+		size += iface.CalcObjectSize(m.ResellAmount, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsUpdateStarGiftPrice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftPrice, int(layer)); clazzId {
+	case 0xedbe6ccb:
+		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("resell_amount", m.ResellAmount); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_updateStarGiftPrice, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsUpdateStarGiftPrice) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftPrice, int(layer)); clazzId {
@@ -43634,6 +65859,48 @@ type TLPaymentsCreateStarGiftCollection struct {
 func (m *TLPaymentsCreateStarGiftCollection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsCreateStarGiftCollection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsCreateStarGiftCollection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_createStarGiftCollection, int(layer)); clazzId {
+	case 0x1f4a0e87:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Title)
+		size += iface.CalcObjectListSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsCreateStarGiftCollection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_createStarGiftCollection, int(layer)); clazzId {
+	case 0x1f4a0e87:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_createStarGiftCollection, layer)
+	}
 }
 
 // Encode <--
@@ -43720,6 +65987,55 @@ type TLPaymentsUpdateStarGiftCollection struct {
 func (m *TLPaymentsUpdateStarGiftCollection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsUpdateStarGiftCollection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsUpdateStarGiftCollection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftCollection, int(layer)); clazzId {
+	case 0x4fddbee7:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.DeleteStargift != nil {
+			size += iface.CalcObjectListSize(m.DeleteStargift, layer)
+		}
+
+		if m.AddStargift != nil {
+			size += iface.CalcObjectListSize(m.AddStargift, layer)
+		}
+
+		if m.Order != nil {
+			size += iface.CalcObjectListSize(m.Order, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsUpdateStarGiftCollection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftCollection, int(layer)); clazzId {
+	case 0x4fddbee7:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_updateStarGiftCollection, layer)
+	}
 }
 
 // Encode <--
@@ -43901,6 +66217,43 @@ func (m *TLPaymentsReorderStarGiftCollections) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsReorderStarGiftCollections) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsReorderStarGiftCollections) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_reorderStarGiftCollections, int(layer)); clazzId {
+	case 0xc32af4cc:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsReorderStarGiftCollections) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_reorderStarGiftCollections, int(layer)); clazzId {
+	case 0xc32af4cc:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_reorderStarGiftCollections, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsReorderStarGiftCollections) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_reorderStarGiftCollections, int(layer)); clazzId {
@@ -43955,6 +66308,39 @@ type TLPaymentsDeleteStarGiftCollection struct {
 func (m *TLPaymentsDeleteStarGiftCollection) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsDeleteStarGiftCollection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsDeleteStarGiftCollection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_deleteStarGiftCollection, int(layer)); clazzId {
+	case 0xad5648e8:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsDeleteStarGiftCollection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_deleteStarGiftCollection, int(layer)); clazzId {
+	case 0xad5648e8:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_deleteStarGiftCollection, layer)
+	}
 }
 
 // Encode <--
@@ -44015,6 +66401,39 @@ func (m *TLPaymentsGetStarGiftCollections) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarGiftCollections) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftCollections) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftCollections, int(layer)); clazzId {
+	case 0x981b91dd:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftCollections) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftCollections, int(layer)); clazzId {
+	case 0x981b91dd:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftCollections, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarGiftCollections) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftCollections, int(layer)); clazzId {
@@ -44072,6 +66491,38 @@ func (m *TLPaymentsGetUniqueStarGiftValueInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetUniqueStarGiftValueInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetUniqueStarGiftValueInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGiftValueInfo, int(layer)); clazzId {
+	case 0x4365af6b:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetUniqueStarGiftValueInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGiftValueInfo, int(layer)); clazzId {
+	case 0x4365af6b:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getUniqueStarGiftValueInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getUniqueStarGiftValueInfo, int(layer)); clazzId {
@@ -44117,6 +66568,35 @@ type TLPaymentsCheckCanSendGift struct {
 func (m *TLPaymentsCheckCanSendGift) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsCheckCanSendGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsCheckCanSendGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_checkCanSendGift, int(layer)); clazzId {
+	case 0xc0c4edc9:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsCheckCanSendGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_checkCanSendGift, int(layer)); clazzId {
+	case 0xc0c4edc9:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_checkCanSendGift, layer)
+	}
 }
 
 // Encode <--
@@ -44165,6 +66645,39 @@ type TLPaymentsGetStarGiftAuctionState struct {
 func (m *TLPaymentsGetStarGiftAuctionState) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarGiftAuctionState) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftAuctionState) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionState, int(layer)); clazzId {
+	case 0x5c9ff4d6:
+		size := 4
+		size += iface.CalcObjectSize(m.Auction, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftAuctionState) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionState, int(layer)); clazzId {
+	case 0x5c9ff4d6:
+		if err := iface.ValidateRequiredObject("auction", m.Auction); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftAuctionState, layer)
+	}
 }
 
 // Encode <--
@@ -44224,6 +66737,35 @@ func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionAcquiredGifts, int(layer)); clazzId {
+	case 0x6ba2cbec:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionAcquiredGifts, int(layer)); clazzId {
+	case 0x6ba2cbec:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftAuctionAcquiredGifts, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionAcquiredGifts, int(layer)); clazzId {
@@ -44269,6 +66811,35 @@ type TLPaymentsGetStarGiftActiveAuctions struct {
 func (m *TLPaymentsGetStarGiftActiveAuctions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetStarGiftActiveAuctions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftActiveAuctions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftActiveAuctions, int(layer)); clazzId {
+	case 0xa5d0514d:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftActiveAuctions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftActiveAuctions, int(layer)); clazzId {
+	case 0xa5d0514d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftActiveAuctions, layer)
+	}
 }
 
 // Encode <--
@@ -44317,6 +66888,36 @@ type TLPaymentsResolveStarGiftOffer struct {
 func (m *TLPaymentsResolveStarGiftOffer) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsResolveStarGiftOffer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsResolveStarGiftOffer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_resolveStarGiftOffer, int(layer)); clazzId {
+	case 0xe9ce781c:
+		size := 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsResolveStarGiftOffer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_resolveStarGiftOffer, int(layer)); clazzId {
+	case 0xe9ce781c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_resolveStarGiftOffer, layer)
+	}
 }
 
 // Encode <--
@@ -44391,6 +66992,54 @@ type TLPaymentsSendStarGiftOffer struct {
 func (m *TLPaymentsSendStarGiftOffer) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsSendStarGiftOffer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsSendStarGiftOffer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarGiftOffer, int(layer)); clazzId {
+	case 0x8fb86b41:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Slug)
+		size += iface.CalcObjectSize(m.Price, layer)
+		size += 4
+		size += 8
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsSendStarGiftOffer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarGiftOffer, int(layer)); clazzId {
+	case 0x8fb86b41:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("price", m.Price); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_sendStarGiftOffer, layer)
+	}
 }
 
 // Encode <--
@@ -44499,6 +67148,35 @@ func (m *TLPaymentsGetStarGiftUpgradeAttributes) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPaymentsGetStarGiftUpgradeAttributes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetStarGiftUpgradeAttributes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradeAttributes, int(layer)); clazzId {
+	case 0x6d038b58:
+		size := 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetStarGiftUpgradeAttributes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradeAttributes, int(layer)); clazzId {
+	case 0x6d038b58:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getStarGiftUpgradeAttributes, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftUpgradeAttributes, int(layer)); clazzId {
@@ -44546,6 +67224,40 @@ type TLPaymentsGetCraftStarGifts struct {
 func (m *TLPaymentsGetCraftStarGifts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsGetCraftStarGifts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsGetCraftStarGifts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getCraftStarGifts, int(layer)); clazzId {
+	case 0xfd05dd00:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsGetCraftStarGifts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getCraftStarGifts, int(layer)); clazzId {
+	case 0xfd05dd00:
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_getCraftStarGifts, layer)
+	}
 }
 
 // Encode <--
@@ -44603,6 +67315,38 @@ type TLPaymentsCraftStarGift struct {
 func (m *TLPaymentsCraftStarGift) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPaymentsCraftStarGift) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPaymentsCraftStarGift) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_craftStarGift, int(layer)); clazzId {
+	case 0xb0f9684f:
+		size := 4
+		size += iface.CalcObjectListSize(m.Stargift, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPaymentsCraftStarGift) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_craftStarGift, int(layer)); clazzId {
+	case 0xb0f9684f:
+		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_payments_craftStarGift, layer)
+	}
 }
 
 // Encode <--
@@ -44676,6 +67420,61 @@ type TLStickersCreateStickerSet struct {
 func (m *TLStickersCreateStickerSet) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersCreateStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersCreateStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_createStickerSet, int(layer)); clazzId {
+	case 0x9021ab67:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcStringSize(m.Title)
+		size += iface.CalcStringSize(m.ShortName)
+		if m.Thumb != nil {
+			size += iface.CalcObjectSize(m.Thumb, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.Stickers, layer)
+		if m.Software != nil {
+			size += iface.CalcStringSize(*m.Software)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersCreateStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_createStickerSet, int(layer)); clazzId {
+	case 0x9021ab67:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("short_name", m.ShortName); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("stickers", m.Stickers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_createStickerSet, layer)
+	}
 }
 
 // Encode <--
@@ -44830,6 +67629,38 @@ func (m *TLStickersRemoveStickerFromSet) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStickersRemoveStickerFromSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersRemoveStickerFromSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_removeStickerFromSet, int(layer)); clazzId {
+	case 0xf7760f51:
+		size := 4
+		size += iface.CalcObjectSize(m.Sticker, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersRemoveStickerFromSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_removeStickerFromSet, int(layer)); clazzId {
+	case 0xf7760f51:
+		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_removeStickerFromSet, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStickersRemoveStickerFromSet) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_removeStickerFromSet, int(layer)); clazzId {
@@ -44880,6 +67711,39 @@ type TLStickersChangeStickerPosition struct {
 func (m *TLStickersChangeStickerPosition) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersChangeStickerPosition) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersChangeStickerPosition) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeStickerPosition, int(layer)); clazzId {
+	case 0xffb6d4ca:
+		size := 4
+		size += iface.CalcObjectSize(m.Sticker, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersChangeStickerPosition) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeStickerPosition, int(layer)); clazzId {
+	case 0xffb6d4ca:
+		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_changeStickerPosition, layer)
+	}
 }
 
 // Encode <--
@@ -44938,6 +67802,43 @@ type TLStickersAddStickerToSet struct {
 func (m *TLStickersAddStickerToSet) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersAddStickerToSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersAddStickerToSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_addStickerToSet, int(layer)); clazzId {
+	case 0x8653febe:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+		size += iface.CalcObjectSize(m.Sticker, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersAddStickerToSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_addStickerToSet, int(layer)); clazzId {
+	case 0x8653febe:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_addStickerToSet, layer)
+	}
 }
 
 // Encode <--
@@ -45000,6 +67901,46 @@ type TLStickersSetStickerSetThumb struct {
 func (m *TLStickersSetStickerSetThumb) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersSetStickerSetThumb) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersSetStickerSetThumb) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_setStickerSetThumb, int(layer)); clazzId {
+	case 0xa76a5392:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+		if m.Thumb != nil {
+			size += iface.CalcObjectSize(m.Thumb, layer)
+		}
+
+		if m.ThumbDocumentId != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersSetStickerSetThumb) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_setStickerSetThumb, int(layer)); clazzId {
+	case 0xa76a5392:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_setStickerSetThumb, layer)
+	}
 }
 
 // Encode <--
@@ -45099,6 +68040,38 @@ func (m *TLStickersCheckShortName) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStickersCheckShortName) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersCheckShortName) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_checkShortName, int(layer)); clazzId {
+	case 0x284b3639:
+		size := 4
+		size += iface.CalcStringSize(m.ShortName)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersCheckShortName) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_checkShortName, int(layer)); clazzId {
+	case 0x284b3639:
+		if err := iface.ValidateRequiredString("short_name", m.ShortName); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_checkShortName, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStickersCheckShortName) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_checkShortName, int(layer)); clazzId {
@@ -45144,6 +68117,38 @@ type TLStickersSuggestShortName struct {
 func (m *TLStickersSuggestShortName) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersSuggestShortName) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersSuggestShortName) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_suggestShortName, int(layer)); clazzId {
+	case 0x4dafc503:
+		size := 4
+		size += iface.CalcStringSize(m.Title)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersSuggestShortName) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_suggestShortName, int(layer)); clazzId {
+	case 0x4dafc503:
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_suggestShortName, layer)
+	}
 }
 
 // Encode <--
@@ -45194,6 +68199,50 @@ type TLStickersChangeSticker struct {
 func (m *TLStickersChangeSticker) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersChangeSticker) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersChangeSticker) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeSticker, int(layer)); clazzId {
+	case 0xf5537ebc:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Sticker, layer)
+		if m.Emoji != nil {
+			size += iface.CalcStringSize(*m.Emoji)
+		}
+
+		if m.MaskCoords != nil {
+			size += iface.CalcObjectSize(m.MaskCoords, layer)
+		}
+
+		if m.Keywords != nil {
+			size += iface.CalcStringSize(*m.Keywords)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersChangeSticker) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeSticker, int(layer)); clazzId {
+	case 0xf5537ebc:
+		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_changeSticker, layer)
+	}
 }
 
 // Encode <--
@@ -45309,6 +68358,43 @@ func (m *TLStickersRenameStickerSet) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStickersRenameStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersRenameStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_renameStickerSet, int(layer)); clazzId {
+	case 0x124b1c00:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+		size += iface.CalcStringSize(m.Title)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersRenameStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_renameStickerSet, int(layer)); clazzId {
+	case 0x124b1c00:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_renameStickerSet, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStickersRenameStickerSet) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_renameStickerSet, int(layer)); clazzId {
@@ -45366,6 +68452,38 @@ func (m *TLStickersDeleteStickerSet) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStickersDeleteStickerSet) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersDeleteStickerSet) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_deleteStickerSet, int(layer)); clazzId {
+	case 0x87704394:
+		size := 4
+		size += iface.CalcObjectSize(m.Stickerset, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersDeleteStickerSet) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_deleteStickerSet, int(layer)); clazzId {
+	case 0x87704394:
+		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_deleteStickerSet, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStickersDeleteStickerSet) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_deleteStickerSet, int(layer)); clazzId {
@@ -45416,6 +68534,43 @@ type TLStickersReplaceSticker struct {
 func (m *TLStickersReplaceSticker) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStickersReplaceSticker) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStickersReplaceSticker) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_replaceSticker, int(layer)); clazzId {
+	case 0x4696459a:
+		size := 4
+		size += iface.CalcObjectSize(m.Sticker, layer)
+		size += iface.CalcObjectSize(m.NewSticker, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStickersReplaceSticker) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_replaceSticker, int(layer)); clazzId {
+	case 0x4696459a:
+		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("new_sticker", m.NewSticker); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stickers_replaceSticker, layer)
+	}
 }
 
 // Encode <--
@@ -45477,6 +68632,34 @@ func (m *TLPhoneGetCallConfig) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneGetCallConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetCallConfig) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getCallConfig, int(layer)); clazzId {
+	case 0x55451fa9:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetCallConfig) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getCallConfig, int(layer)); clazzId {
+	case 0x55451fa9:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getCallConfig, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneGetCallConfig) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getCallConfig, int(layer)); clazzId {
@@ -45520,6 +68703,50 @@ type TLPhoneRequestCall struct {
 func (m *TLPhoneRequestCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneRequestCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneRequestCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_requestCall, int(layer)); clazzId {
+	case 0x42ff96ed:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += 4
+		size += iface.CalcBytesSize(m.GAHash)
+		size += iface.CalcObjectSize(m.Protocol, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneRequestCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_requestCall, int(layer)); clazzId {
+	case 0x42ff96ed:
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("g_a_hash", m.GAHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_requestCall, layer)
+	}
 }
 
 // Encode <--
@@ -45617,6 +68844,48 @@ func (m *TLPhoneAcceptCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneAcceptCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneAcceptCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_acceptCall, int(layer)); clazzId {
+	case 0x3bd2b4a0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcBytesSize(m.GB)
+		size += iface.CalcObjectSize(m.Protocol, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneAcceptCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_acceptCall, int(layer)); clazzId {
+	case 0x3bd2b4a0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("g_b", m.GB); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_acceptCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneAcceptCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_acceptCall, int(layer)); clazzId {
@@ -45684,6 +68953,49 @@ type TLPhoneConfirmCall struct {
 func (m *TLPhoneConfirmCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneConfirmCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneConfirmCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_confirmCall, int(layer)); clazzId {
+	case 0x2efe1722:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcBytesSize(m.GA)
+		size += 8
+		size += iface.CalcObjectSize(m.Protocol, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneConfirmCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_confirmCall, int(layer)); clazzId {
+	case 0x2efe1722:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("g_a", m.GA); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_confirmCall, layer)
+	}
 }
 
 // Encode <--
@@ -45757,6 +69069,38 @@ func (m *TLPhoneReceivedCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneReceivedCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneReceivedCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_receivedCall, int(layer)); clazzId {
+	case 0x17d54f61:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneReceivedCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_receivedCall, int(layer)); clazzId {
+	case 0x17d54f61:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_receivedCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneReceivedCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_receivedCall, int(layer)); clazzId {
@@ -45810,6 +69154,46 @@ type TLPhoneDiscardCall struct {
 func (m *TLPhoneDiscardCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneDiscardCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDiscardCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardCall, int(layer)); clazzId {
+	case 0xb2cbc1c0:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Reason, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDiscardCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardCall, int(layer)); clazzId {
+	case 0xb2cbc1c0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_discardCall, layer)
+	}
 }
 
 // Encode <--
@@ -45909,6 +69293,45 @@ func (m *TLPhoneSetCallRating) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSetCallRating) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSetCallRating) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_setCallRating, int(layer)); clazzId {
+	case 0x59ead627:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcStringSize(m.Comment)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSetCallRating) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_setCallRating, int(layer)); clazzId {
+	case 0x59ead627:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("comment", m.Comment); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_setCallRating, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSetCallRating) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_setCallRating, int(layer)); clazzId {
@@ -45994,6 +69417,43 @@ func (m *TLPhoneSaveCallDebug) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSaveCallDebug) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSaveCallDebug) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallDebug, int(layer)); clazzId {
+	case 0x277add7e:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Debug, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSaveCallDebug) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallDebug, int(layer)); clazzId {
+	case 0x277add7e:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("debug", m.Debug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_saveCallDebug, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSaveCallDebug) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallDebug, int(layer)); clazzId {
@@ -46055,6 +69515,43 @@ func (m *TLPhoneSendSignalingData) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSendSignalingData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSendSignalingData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendSignalingData, int(layer)); clazzId {
+	case 0xff7a9383:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcBytesSize(m.Data)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSendSignalingData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendSignalingData, int(layer)); clazzId {
+	case 0xff7a9383:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("data", m.Data); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_sendSignalingData, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSendSignalingData) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendSignalingData, int(layer)); clazzId {
@@ -46114,6 +69611,47 @@ type TLPhoneCreateGroupCall struct {
 func (m *TLPhoneCreateGroupCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneCreateGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneCreateGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_createGroupCall, int(layer)); clazzId {
+	case 0x48cdc6d8:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneCreateGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_createGroupCall, int(layer)); clazzId {
+	case 0x48cdc6d8:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_createGroupCall, layer)
+	}
 }
 
 // Encode <--
@@ -46229,6 +69767,61 @@ type TLPhoneJoinGroupCall struct {
 func (m *TLPhoneJoinGroupCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneJoinGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneJoinGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCall, int(layer)); clazzId {
+	case 0x8fb53057:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.JoinAs, layer)
+		if m.InviteHash != nil {
+			size += iface.CalcStringSize(*m.InviteHash)
+		}
+
+		if m.PublicKey != nil {
+			size += 32
+		}
+
+		if m.Block != nil {
+			size += iface.CalcBytesSize(m.Block)
+		}
+
+		size += iface.CalcObjectSize(m.Params, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneJoinGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCall, int(layer)); clazzId {
+	case 0x8fb53057:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("join_as", m.JoinAs); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_joinGroupCall, layer)
+	}
 }
 
 // Encode <--
@@ -46374,6 +69967,39 @@ func (m *TLPhoneLeaveGroupCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneLeaveGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneLeaveGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCall, int(layer)); clazzId {
+	case 0x500377f9:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneLeaveGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCall, int(layer)); clazzId {
+	case 0x500377f9:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_leaveGroupCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneLeaveGroupCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCall, int(layer)); clazzId {
@@ -46430,6 +70056,43 @@ type TLPhoneInviteToGroupCall struct {
 func (m *TLPhoneInviteToGroupCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneInviteToGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneInviteToGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteToGroupCall, int(layer)); clazzId {
+	case 0x7b393160:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectListSize(m.Users, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneInviteToGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteToGroupCall, int(layer)); clazzId {
+	case 0x7b393160:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_inviteToGroupCall, layer)
+	}
 }
 
 // Encode <--
@@ -46508,6 +70171,38 @@ func (m *TLPhoneDiscardGroupCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneDiscardGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDiscardGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardGroupCall, int(layer)); clazzId {
+	case 0x7a777135:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDiscardGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardGroupCall, int(layer)); clazzId {
+	case 0x7a777135:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_discardGroupCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneDiscardGroupCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardGroupCall, int(layer)); clazzId {
@@ -46561,6 +70256,50 @@ type TLPhoneToggleGroupCallSettings struct {
 func (m *TLPhoneToggleGroupCallSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneToggleGroupCallSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneToggleGroupCallSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallSettings, int(layer)); clazzId {
+	case 0x974392f2:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		if m.JoinMuted != nil {
+			size += iface.CalcObjectSize(m.JoinMuted, layer)
+		}
+
+		if m.MessagesEnabled != nil {
+			size += iface.CalcObjectSize(m.MessagesEnabled, layer)
+		}
+
+		if m.SendPaidMessagesStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneToggleGroupCallSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallSettings, int(layer)); clazzId {
+	case 0x974392f2:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_toggleGroupCallSettings, layer)
+	}
 }
 
 // Encode <--
@@ -46684,6 +70423,39 @@ func (m *TLPhoneGetGroupCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneGetGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCall, int(layer)); clazzId {
+	case 0x41845db:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCall, int(layer)); clazzId {
+	case 0x41845db:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneGetGroupCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCall, int(layer)); clazzId {
@@ -46743,6 +70515,54 @@ type TLPhoneGetGroupParticipants struct {
 func (m *TLPhoneGetGroupParticipants) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneGetGroupParticipants) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupParticipants) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupParticipants, int(layer)); clazzId {
+	case 0xc558d8ab:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectListSize(m.Ids, layer)
+		size += iface.CalcInt32ListSize(m.Sources)
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupParticipants) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupParticipants, int(layer)); clazzId {
+	case 0xc558d8ab:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("sources", m.Sources); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupParticipants, layer)
+	}
 }
 
 // Encode <--
@@ -46838,6 +70658,43 @@ func (m *TLPhoneCheckGroupCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneCheckGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneCheckGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_checkGroupCall, int(layer)); clazzId {
+	case 0xb59cf977:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcInt32ListSize(m.Sources)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneCheckGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_checkGroupCall, int(layer)); clazzId {
+	case 0xb59cf977:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("sources", m.Sources); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_checkGroupCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneCheckGroupCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_checkGroupCall, int(layer)); clazzId {
@@ -46895,6 +70752,46 @@ type TLPhoneToggleGroupCallRecord struct {
 func (m *TLPhoneToggleGroupCallRecord) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneToggleGroupCallRecord) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneToggleGroupCallRecord) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallRecord, int(layer)); clazzId {
+	case 0xf128c708:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.VideoPortrait != nil {
+			size += iface.CalcObjectSize(m.VideoPortrait, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneToggleGroupCallRecord) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallRecord, int(layer)); clazzId {
+	case 0xf128c708:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_toggleGroupCallRecord, layer)
+	}
 }
 
 // Encode <--
@@ -47013,6 +70910,67 @@ type TLPhoneEditGroupCallParticipant struct {
 func (m *TLPhoneEditGroupCallParticipant) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneEditGroupCallParticipant) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneEditGroupCallParticipant) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallParticipant, int(layer)); clazzId {
+	case 0xa5273abf:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+		if m.Muted != nil {
+			size += iface.CalcObjectSize(m.Muted, layer)
+		}
+
+		if m.Volume != nil {
+			size += 4
+		}
+
+		if m.RaiseHand != nil {
+			size += iface.CalcObjectSize(m.RaiseHand, layer)
+		}
+
+		if m.VideoStopped != nil {
+			size += iface.CalcObjectSize(m.VideoStopped, layer)
+		}
+
+		if m.VideoPaused != nil {
+			size += iface.CalcObjectSize(m.VideoPaused, layer)
+		}
+
+		if m.PresentationPaused != nil {
+			size += iface.CalcObjectSize(m.PresentationPaused, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneEditGroupCallParticipant) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallParticipant, int(layer)); clazzId {
+	case 0xa5273abf:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_editGroupCallParticipant, layer)
+	}
 }
 
 // Encode <--
@@ -47186,6 +71144,43 @@ func (m *TLPhoneEditGroupCallTitle) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneEditGroupCallTitle) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneEditGroupCallTitle) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallTitle, int(layer)); clazzId {
+	case 0x1ca6ac0a:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcStringSize(m.Title)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneEditGroupCallTitle) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallTitle, int(layer)); clazzId {
+	case 0x1ca6ac0a:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_editGroupCallTitle, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneEditGroupCallTitle) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallTitle, int(layer)); clazzId {
@@ -47243,6 +71238,38 @@ func (m *TLPhoneGetGroupCallJoinAs) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneGetGroupCallJoinAs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCallJoinAs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallJoinAs, int(layer)); clazzId {
+	case 0xef7c213a:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCallJoinAs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallJoinAs, int(layer)); clazzId {
+	case 0xef7c213a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCallJoinAs, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneGetGroupCallJoinAs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallJoinAs, int(layer)); clazzId {
@@ -47293,6 +71320,39 @@ type TLPhoneExportGroupCallInvite struct {
 func (m *TLPhoneExportGroupCallInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneExportGroupCallInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneExportGroupCallInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_exportGroupCallInvite, int(layer)); clazzId {
+	case 0xe6aa647f:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneExportGroupCallInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_exportGroupCallInvite, int(layer)); clazzId {
+	case 0xe6aa647f:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_exportGroupCallInvite, layer)
+	}
 }
 
 // Encode <--
@@ -47369,6 +71429,43 @@ func (m *TLPhoneToggleGroupCallStartSubscription) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneToggleGroupCallStartSubscription) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneToggleGroupCallStartSubscription) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallStartSubscription, int(layer)); clazzId {
+	case 0x219c34e6:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.Subscribed, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneToggleGroupCallStartSubscription) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallStartSubscription, int(layer)); clazzId {
+	case 0x219c34e6:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("subscribed", m.Subscribed); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_toggleGroupCallStartSubscription, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneToggleGroupCallStartSubscription) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallStartSubscription, int(layer)); clazzId {
@@ -47429,6 +71526,38 @@ func (m *TLPhoneStartScheduledGroupCall) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneStartScheduledGroupCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneStartScheduledGroupCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_startScheduledGroupCall, int(layer)); clazzId {
+	case 0x5680e342:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneStartScheduledGroupCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_startScheduledGroupCall, int(layer)); clazzId {
+	case 0x5680e342:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_startScheduledGroupCall, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneStartScheduledGroupCall) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_startScheduledGroupCall, int(layer)); clazzId {
@@ -47479,6 +71608,43 @@ type TLPhoneSaveDefaultGroupCallJoinAs struct {
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneSaveDefaultGroupCallJoinAs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSaveDefaultGroupCallJoinAs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultGroupCallJoinAs, int(layer)); clazzId {
+	case 0x575e1f8c:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.JoinAs, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSaveDefaultGroupCallJoinAs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultGroupCallJoinAs, int(layer)); clazzId {
+	case 0x575e1f8c:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("join_as", m.JoinAs); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_saveDefaultGroupCallJoinAs, layer)
+	}
 }
 
 // Encode <--
@@ -47542,6 +71708,43 @@ func (m *TLPhoneJoinGroupCallPresentation) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneJoinGroupCallPresentation) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneJoinGroupCallPresentation) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCallPresentation, int(layer)); clazzId {
+	case 0xcbea6bc4:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.Params, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneJoinGroupCallPresentation) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCallPresentation, int(layer)); clazzId {
+	case 0xcbea6bc4:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_joinGroupCallPresentation, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneJoinGroupCallPresentation) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCallPresentation, int(layer)); clazzId {
@@ -47602,6 +71805,38 @@ func (m *TLPhoneLeaveGroupCallPresentation) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneLeaveGroupCallPresentation) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneLeaveGroupCallPresentation) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCallPresentation, int(layer)); clazzId {
+	case 0x1c50d144:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneLeaveGroupCallPresentation) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCallPresentation, int(layer)); clazzId {
+	case 0x1c50d144:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_leaveGroupCallPresentation, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneLeaveGroupCallPresentation) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCallPresentation, int(layer)); clazzId {
@@ -47651,6 +71886,38 @@ type TLPhoneGetGroupCallStreamChannels struct {
 func (m *TLPhoneGetGroupCallStreamChannels) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneGetGroupCallStreamChannels) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCallStreamChannels) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamChannels, int(layer)); clazzId {
+	case 0x1ab21940:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCallStreamChannels) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamChannels, int(layer)); clazzId {
+	case 0x1ab21940:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCallStreamChannels, layer)
+	}
 }
 
 // Encode <--
@@ -47704,6 +71971,44 @@ type TLPhoneGetGroupCallStreamRtmpUrl struct {
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneGetGroupCallStreamRtmpUrl) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCallStreamRtmpUrl) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamRtmpUrl, int(layer)); clazzId {
+	case 0x5af4c73a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Revoke, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCallStreamRtmpUrl) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamRtmpUrl, int(layer)); clazzId {
+	case 0x5af4c73a:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("revoke", m.Revoke); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCallStreamRtmpUrl, layer)
+	}
 }
 
 // Encode <--
@@ -47789,6 +72094,43 @@ func (m *TLPhoneSaveCallLog) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSaveCallLog) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSaveCallLog) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallLog, int(layer)); clazzId {
+	case 0x41248786:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.File, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSaveCallLog) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallLog, int(layer)); clazzId {
+	case 0x41248786:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_saveCallLog, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSaveCallLog) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallLog, int(layer)); clazzId {
@@ -47853,6 +72195,47 @@ type TLPhoneCreateConferenceCall struct {
 func (m *TLPhoneCreateConferenceCall) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneCreateConferenceCall) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneCreateConferenceCall) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_createConferenceCall, int(layer)); clazzId {
+	case 0x7d0444bb:
+		size := 4
+		size += 4
+		size += 4
+		if m.PublicKey != nil {
+			size += 32
+		}
+
+		if m.Block != nil {
+			size += iface.CalcBytesSize(m.Block)
+		}
+
+		if m.Params != nil {
+			size += iface.CalcObjectSize(m.Params, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneCreateConferenceCall) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_createConferenceCall, int(layer)); clazzId {
+	case 0x7d0444bb:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_createConferenceCall, layer)
+	}
 }
 
 // Encode <--
@@ -47985,6 +72368,49 @@ func (m *TLPhoneDeleteConferenceCallParticipants) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneDeleteConferenceCallParticipants) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDeleteConferenceCallParticipants) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteConferenceCallParticipants, int(layer)); clazzId {
+	case 0x8ca60525:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcInt64ListSize(m.Ids)
+		size += iface.CalcBytesSize(m.Block)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDeleteConferenceCallParticipants) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteConferenceCallParticipants, int(layer)); clazzId {
+	case 0x8ca60525:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("block", m.Block); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_deleteConferenceCallParticipants, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneDeleteConferenceCallParticipants) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteConferenceCallParticipants, int(layer)); clazzId {
@@ -48076,6 +72502,43 @@ func (m *TLPhoneSendConferenceCallBroadcast) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSendConferenceCallBroadcast) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSendConferenceCallBroadcast) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendConferenceCallBroadcast, int(layer)); clazzId {
+	case 0xc6701900:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcBytesSize(m.Block)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSendConferenceCallBroadcast) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendConferenceCallBroadcast, int(layer)); clazzId {
+	case 0xc6701900:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("block", m.Block); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_sendConferenceCallBroadcast, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSendConferenceCallBroadcast) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendConferenceCallBroadcast, int(layer)); clazzId {
@@ -48133,6 +72596,44 @@ type TLPhoneInviteConferenceCallParticipant struct {
 func (m *TLPhoneInviteConferenceCallParticipant) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneInviteConferenceCallParticipant) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneInviteConferenceCallParticipant) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteConferenceCallParticipant, int(layer)); clazzId {
+	case 0xbcf22685:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneInviteConferenceCallParticipant) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteConferenceCallParticipant, int(layer)); clazzId {
+	case 0xbcf22685:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_inviteConferenceCallParticipant, layer)
+	}
 }
 
 // Encode <--
@@ -48217,6 +72718,35 @@ func (m *TLPhoneDeclineConferenceCallInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneDeclineConferenceCallInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDeclineConferenceCallInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_declineConferenceCallInvite, int(layer)); clazzId {
+	case 0x3c479971:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDeclineConferenceCallInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_declineConferenceCallInvite, int(layer)); clazzId {
+	case 0x3c479971:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_declineConferenceCallInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneDeclineConferenceCallInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_declineConferenceCallInvite, int(layer)); clazzId {
@@ -48265,6 +72795,41 @@ type TLPhoneGetGroupCallChainBlocks struct {
 func (m *TLPhoneGetGroupCallChainBlocks) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneGetGroupCallChainBlocks) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCallChainBlocks) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallChainBlocks, int(layer)); clazzId {
+	case 0xee9f88a6:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCallChainBlocks) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallChainBlocks, int(layer)); clazzId {
+	case 0xee9f88a6:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCallChainBlocks, layer)
+	}
 }
 
 // Encode <--
@@ -48336,6 +72901,52 @@ type TLPhoneSendGroupCallMessage struct {
 func (m *TLPhoneSendGroupCallMessage) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneSendGroupCallMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSendGroupCallMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallMessage, int(layer)); clazzId {
+	case 0xb1d11410:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += 8
+		size += iface.CalcObjectSize(m.Message, layer)
+		if m.AllowPaidStars != nil {
+			size += 8
+		}
+
+		if m.SendAs != nil {
+			size += iface.CalcObjectSize(m.SendAs, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSendGroupCallMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallMessage, int(layer)); clazzId {
+	case 0xb1d11410:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_sendGroupCallMessage, layer)
+	}
 }
 
 // Encode <--
@@ -48452,6 +73063,43 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneSendGroupCallEncryptedMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSendGroupCallEncryptedMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallEncryptedMessage, int(layer)); clazzId {
+	case 0xe5afa56d:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcBytesSize(m.EncryptedMessage)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSendGroupCallEncryptedMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallEncryptedMessage, int(layer)); clazzId {
+	case 0xe5afa56d:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("encrypted_message", m.EncryptedMessage); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_sendGroupCallEncryptedMessage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneSendGroupCallEncryptedMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallEncryptedMessage, int(layer)); clazzId {
@@ -48509,6 +73157,44 @@ type TLPhoneDeleteGroupCallMessages struct {
 func (m *TLPhoneDeleteGroupCallMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneDeleteGroupCallMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDeleteGroupCallMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallMessages, int(layer)); clazzId {
+	case 0xf64f54f7:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcInt32ListSize(m.Messages)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDeleteGroupCallMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallMessages, int(layer)); clazzId {
+	case 0xf64f54f7:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("messages", m.Messages); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_deleteGroupCallMessages, layer)
+	}
 }
 
 // Encode <--
@@ -48588,6 +73274,44 @@ type TLPhoneDeleteGroupCallParticipantMessages struct {
 func (m *TLPhoneDeleteGroupCallParticipantMessages) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneDeleteGroupCallParticipantMessages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneDeleteGroupCallParticipantMessages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallParticipantMessages, int(layer)); clazzId {
+	case 0x1dbfeca0:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.Participant, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneDeleteGroupCallParticipantMessages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallParticipantMessages, int(layer)); clazzId {
+	case 0x1dbfeca0:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_deleteGroupCallParticipantMessages, layer)
+	}
 }
 
 // Encode <--
@@ -48672,6 +73396,38 @@ func (m *TLPhoneGetGroupCallStars) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPhoneGetGroupCallStars) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneGetGroupCallStars) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStars, int(layer)); clazzId {
+	case 0x6f636302:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneGetGroupCallStars) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStars, int(layer)); clazzId {
+	case 0x6f636302:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_getGroupCallStars, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPhoneGetGroupCallStars) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStars, int(layer)); clazzId {
@@ -48722,6 +73478,43 @@ type TLPhoneSaveDefaultSendAs struct {
 func (m *TLPhoneSaveDefaultSendAs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPhoneSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPhoneSaveDefaultSendAs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultSendAs, int(layer)); clazzId {
+	case 0x4167add1:
+		size := 4
+		size += iface.CalcObjectSize(m.Call, layer)
+		size += iface.CalcObjectSize(m.SendAs, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneSaveDefaultSendAs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultSendAs, int(layer)); clazzId {
+	case 0x4167add1:
+		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("send_as", m.SendAs); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phone_saveDefaultSendAs, layer)
+	}
 }
 
 // Encode <--
@@ -48783,6 +73576,54 @@ type TLLangpackGetLangPack struct {
 func (m *TLLangpackGetLangPack) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLLangpackGetLangPack) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLLangpackGetLangPack) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLangPack, int(layer)); clazzId {
+	case 0xf2f2330a:
+		size := 4
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	case 0x9ab5c58e:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLLangpackGetLangPack) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLangPack, int(layer)); clazzId {
+	case 0xf2f2330a:
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x9ab5c58e:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_langpack_getLangPack, layer)
+	}
 }
 
 // Encode <--
@@ -48850,6 +73691,64 @@ type TLLangpackGetStrings struct {
 func (m *TLLangpackGetStrings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLLangpackGetStrings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLLangpackGetStrings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getStrings, int(layer)); clazzId {
+	case 0xefea3803:
+		size := 4
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcStringListSize(m.Keys)
+
+		return size
+	case 0x2e1ee318:
+		size := 4
+		size += iface.CalcStringSize(m.LangCode)
+		size += iface.CalcStringListSize(m.Keys)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLLangpackGetStrings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getStrings, int(layer)); clazzId {
+	case 0xefea3803:
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("keys", m.Keys); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x2e1ee318:
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("keys", m.Keys); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_langpack_getStrings, layer)
+	}
 }
 
 // Encode <--
@@ -48927,6 +73826,44 @@ func (m *TLLangpackGetDifference) String() string {
 	return wrapper.String()
 }
 
+func (m *TLLangpackGetDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLLangpackGetDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getDifference, int(layer)); clazzId {
+	case 0xcd984aa5:
+		size := 4
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLLangpackGetDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getDifference, int(layer)); clazzId {
+	case 0xcd984aa5:
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_langpack_getDifference, layer)
+	}
+}
+
 // Encode <--
 func (m *TLLangpackGetDifference) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getDifference, int(layer)); clazzId {
@@ -48984,6 +73921,45 @@ func (m *TLLangpackGetLanguages) String() string {
 	return wrapper.String()
 }
 
+func (m *TLLangpackGetLanguages) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLLangpackGetLanguages) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguages, int(layer)); clazzId {
+	case 0x42c6978f:
+		size := 4
+		size += iface.CalcStringSize(m.LangPack)
+
+		return size
+	case 0x800fd57d:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLLangpackGetLanguages) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguages, int(layer)); clazzId {
+	case 0x42c6978f:
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		return nil
+	case 0x800fd57d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_langpack_getLanguages, layer)
+	}
+}
+
 // Encode <--
 func (m *TLLangpackGetLanguages) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguages, int(layer)); clazzId {
@@ -49039,6 +74015,43 @@ func (m *TLLangpackGetLanguage) String() string {
 	return wrapper.String()
 }
 
+func (m *TLLangpackGetLanguage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLLangpackGetLanguage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguage, int(layer)); clazzId {
+	case 0x6a596502:
+		size := 4
+		size += iface.CalcStringSize(m.LangPack)
+		size += iface.CalcStringSize(m.LangCode)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLLangpackGetLanguage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguage, int(layer)); clazzId {
+	case 0x6a596502:
+		if err := iface.ValidateRequiredString("lang_pack", m.LangPack); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_langpack_getLanguage, layer)
+	}
+}
+
 // Encode <--
 func (m *TLLangpackGetLanguage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_langpack_getLanguage, int(layer)); clazzId {
@@ -49089,6 +74102,38 @@ type TLFoldersEditPeerFolders struct {
 func (m *TLFoldersEditPeerFolders) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLFoldersEditPeerFolders) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLFoldersEditPeerFolders) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_folders_editPeerFolders, int(layer)); clazzId {
+	case 0x6847d0ab:
+		size := 4
+		size += iface.CalcObjectListSize(m.FolderPeers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLFoldersEditPeerFolders) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_folders_editPeerFolders, int(layer)); clazzId {
+	case 0x6847d0ab:
+		if err := iface.ValidateRequiredSlice("folder_peers", m.FolderPeers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_folders_editPeerFolders, layer)
+	}
 }
 
 // Encode <--
@@ -49155,6 +74200,39 @@ type TLStatsGetBroadcastStats struct {
 func (m *TLStatsGetBroadcastStats) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStatsGetBroadcastStats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetBroadcastStats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getBroadcastStats, int(layer)); clazzId {
+	case 0xab42441a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetBroadcastStats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getBroadcastStats, int(layer)); clazzId {
+	case 0xab42441a:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getBroadcastStats, layer)
+	}
 }
 
 // Encode <--
@@ -49229,6 +74307,42 @@ type TLStatsLoadAsyncGraph struct {
 func (m *TLStatsLoadAsyncGraph) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStatsLoadAsyncGraph) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsLoadAsyncGraph) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_loadAsyncGraph, int(layer)); clazzId {
+	case 0x621d5fa0:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Token)
+		if m.X != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsLoadAsyncGraph) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_loadAsyncGraph, int(layer)); clazzId {
+	case 0x621d5fa0:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_loadAsyncGraph, layer)
+	}
 }
 
 // Encode <--
@@ -49308,6 +74422,39 @@ func (m *TLStatsGetMegagroupStats) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStatsGetMegagroupStats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetMegagroupStats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMegagroupStats, int(layer)); clazzId {
+	case 0xdcdf8607:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetMegagroupStats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMegagroupStats, int(layer)); clazzId {
+	case 0xdcdf8607:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getMegagroupStats, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStatsGetMegagroupStats) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMegagroupStats, int(layer)); clazzId {
@@ -49384,6 +74531,45 @@ func (m *TLStatsGetMessagePublicForwards) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStatsGetMessagePublicForwards) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetMessagePublicForwards) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessagePublicForwards, int(layer)); clazzId {
+	case 0x5f150144:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetMessagePublicForwards) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessagePublicForwards, int(layer)); clazzId {
+	case 0x5f150144:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getMessagePublicForwards, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStatsGetMessagePublicForwards) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessagePublicForwards, int(layer)); clazzId {
@@ -49451,6 +74637,40 @@ type TLStatsGetMessageStats struct {
 func (m *TLStatsGetMessageStats) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStatsGetMessageStats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetMessageStats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessageStats, int(layer)); clazzId {
+	case 0xb6e0a3f5:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetMessageStats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessageStats, int(layer)); clazzId {
+	case 0xb6e0a3f5:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getMessageStats, layer)
+	}
 }
 
 // Encode <--
@@ -49532,6 +74752,40 @@ type TLStatsGetStoryStats struct {
 func (m *TLStatsGetStoryStats) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStatsGetStoryStats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetStoryStats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryStats, int(layer)); clazzId {
+	case 0x374fef40:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetStoryStats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryStats, int(layer)); clazzId {
+	case 0x374fef40:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getStoryStats, layer)
+	}
 }
 
 // Encode <--
@@ -49616,6 +74870,45 @@ func (m *TLStatsGetStoryPublicForwards) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStatsGetStoryPublicForwards) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStatsGetStoryPublicForwards) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryPublicForwards, int(layer)); clazzId {
+	case 0xa6437ef6:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStatsGetStoryPublicForwards) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryPublicForwards, int(layer)); clazzId {
+	case 0xa6437ef6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stats_getStoryPublicForwards, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStatsGetStoryPublicForwards) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryPublicForwards, int(layer)); clazzId {
@@ -49683,6 +74976,48 @@ type TLChatlistsExportChatlistInvite struct {
 func (m *TLChatlistsExportChatlistInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsExportChatlistInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsExportChatlistInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_exportChatlistInvite, int(layer)); clazzId {
+	case 0x8472478e:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+		size += iface.CalcStringSize(m.Title)
+		size += iface.CalcObjectListSize(m.Peers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsExportChatlistInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_exportChatlistInvite, int(layer)); clazzId {
+	case 0x8472478e:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_exportChatlistInvite, layer)
+	}
 }
 
 // Encode <--
@@ -49767,6 +75102,43 @@ func (m *TLChatlistsDeleteExportedInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChatlistsDeleteExportedInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsDeleteExportedInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_deleteExportedInvite, int(layer)); clazzId {
+	case 0x719c5c5e:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsDeleteExportedInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_deleteExportedInvite, int(layer)); clazzId {
+	case 0x719c5c5e:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_deleteExportedInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChatlistsDeleteExportedInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_deleteExportedInvite, int(layer)); clazzId {
@@ -49825,6 +75197,51 @@ type TLChatlistsEditExportedInvite struct {
 func (m *TLChatlistsEditExportedInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsEditExportedInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsEditExportedInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_editExportedInvite, int(layer)); clazzId {
+	case 0x653db63d:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+		size += iface.CalcStringSize(m.Slug)
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.Peers != nil {
+			size += iface.CalcObjectListSize(m.Peers, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsEditExportedInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_editExportedInvite, int(layer)); clazzId {
+	case 0x653db63d:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_editExportedInvite, layer)
+	}
 }
 
 // Encode <--
@@ -49945,6 +75362,38 @@ func (m *TLChatlistsGetExportedInvites) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChatlistsGetExportedInvites) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsGetExportedInvites) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getExportedInvites, int(layer)); clazzId {
+	case 0xce03da83:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsGetExportedInvites) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getExportedInvites, int(layer)); clazzId {
+	case 0xce03da83:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_getExportedInvites, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChatlistsGetExportedInvites) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getExportedInvites, int(layer)); clazzId {
@@ -49996,6 +75445,38 @@ func (m *TLChatlistsCheckChatlistInvite) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChatlistsCheckChatlistInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsCheckChatlistInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_checkChatlistInvite, int(layer)); clazzId {
+	case 0x41c10fff:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsCheckChatlistInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_checkChatlistInvite, int(layer)); clazzId {
+	case 0x41c10fff:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_checkChatlistInvite, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChatlistsCheckChatlistInvite) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_checkChatlistInvite, int(layer)); clazzId {
@@ -50042,6 +75523,43 @@ type TLChatlistsJoinChatlistInvite struct {
 func (m *TLChatlistsJoinChatlistInvite) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsJoinChatlistInvite) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsJoinChatlistInvite) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_joinChatlistInvite, int(layer)); clazzId {
+	case 0xa6b1e39a:
+		size := 4
+		size += iface.CalcStringSize(m.Slug)
+		size += iface.CalcObjectListSize(m.Peers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsJoinChatlistInvite) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_joinChatlistInvite, int(layer)); clazzId {
+	case 0xa6b1e39a:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_joinChatlistInvite, layer)
+	}
 }
 
 // Encode <--
@@ -50115,6 +75633,38 @@ func (m *TLChatlistsGetChatlistUpdates) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChatlistsGetChatlistUpdates) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsGetChatlistUpdates) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getChatlistUpdates, int(layer)); clazzId {
+	case 0x89419521:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsGetChatlistUpdates) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getChatlistUpdates, int(layer)); clazzId {
+	case 0x89419521:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_getChatlistUpdates, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChatlistsGetChatlistUpdates) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getChatlistUpdates, int(layer)); clazzId {
@@ -50165,6 +75715,43 @@ type TLChatlistsJoinChatlistUpdates struct {
 func (m *TLChatlistsJoinChatlistUpdates) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsJoinChatlistUpdates) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsJoinChatlistUpdates) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_joinChatlistUpdates, int(layer)); clazzId {
+	case 0xe089f8f5:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+		size += iface.CalcObjectListSize(m.Peers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsJoinChatlistUpdates) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_joinChatlistUpdates, int(layer)); clazzId {
+	case 0xe089f8f5:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_joinChatlistUpdates, layer)
+	}
 }
 
 // Encode <--
@@ -50243,6 +75830,38 @@ func (m *TLChatlistsHideChatlistUpdates) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChatlistsHideChatlistUpdates) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsHideChatlistUpdates) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_hideChatlistUpdates, int(layer)); clazzId {
+	case 0x66e486fb:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsHideChatlistUpdates) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_hideChatlistUpdates, int(layer)); clazzId {
+	case 0x66e486fb:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_hideChatlistUpdates, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChatlistsHideChatlistUpdates) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_hideChatlistUpdates, int(layer)); clazzId {
@@ -50292,6 +75911,38 @@ type TLChatlistsGetLeaveChatlistSuggestions struct {
 func (m *TLChatlistsGetLeaveChatlistSuggestions) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsGetLeaveChatlistSuggestions) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsGetLeaveChatlistSuggestions) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getLeaveChatlistSuggestions, int(layer)); clazzId {
+	case 0xfdbcd714:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsGetLeaveChatlistSuggestions) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getLeaveChatlistSuggestions, int(layer)); clazzId {
+	case 0xfdbcd714:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_getLeaveChatlistSuggestions, layer)
+	}
 }
 
 // Encode <--
@@ -50344,6 +75995,43 @@ type TLChatlistsLeaveChatlist struct {
 func (m *TLChatlistsLeaveChatlist) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChatlistsLeaveChatlist) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChatlistsLeaveChatlist) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_leaveChatlist, int(layer)); clazzId {
+	case 0x74fae13a:
+		size := 4
+		size += iface.CalcObjectSize(m.Chatlist, layer)
+		size += iface.CalcObjectListSize(m.Peers, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatlistsLeaveChatlist) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_leaveChatlist, int(layer)); clazzId {
+	case 0x74fae13a:
+		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chatlists_leaveChatlist, layer)
+	}
 }
 
 // Encode <--
@@ -50422,6 +76110,38 @@ func (m *TLStoriesCanSendStory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesCanSendStory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesCanSendStory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_canSendStory, int(layer)); clazzId {
+	case 0x30eb63f0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesCanSendStory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_canSendStory, int(layer)); clazzId {
+	case 0x30eb63f0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_canSendStory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesCanSendStory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_canSendStory, int(layer)); clazzId {
@@ -50484,6 +76204,77 @@ type TLStoriesSendStory struct {
 func (m *TLStoriesSendStory) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesSendStory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesSendStory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
+	case 0x737fc2ec:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Media, layer)
+		if m.MediaAreas != nil {
+			size += iface.CalcObjectListSize(m.MediaAreas, layer)
+		}
+
+		if m.Caption != nil {
+			size += iface.CalcStringSize(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.PrivacyRules, layer)
+		size += 8
+		if m.Period != nil {
+			size += 4
+		}
+
+		if m.FwdFromId != nil {
+			size += iface.CalcObjectSize(m.FwdFromId, layer)
+		}
+
+		if m.FwdFromStory != nil {
+			size += 4
+		}
+
+		if m.Albums != nil {
+			size += iface.CalcInt32ListSize(m.Albums)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesSendStory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
+	case 0x737fc2ec:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("privacy_rules", m.PrivacyRules); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_sendStory, layer)
+	}
 }
 
 // Encode <--
@@ -50748,6 +76539,59 @@ func (m *TLStoriesEditStory) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesEditStory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesEditStory) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
+	case 0xb583ba46:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Media != nil {
+			size += iface.CalcObjectSize(m.Media, layer)
+		}
+
+		if m.MediaAreas != nil {
+			size += iface.CalcObjectListSize(m.MediaAreas, layer)
+		}
+
+		if m.Caption != nil {
+			size += iface.CalcStringSize(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.PrivacyRules != nil {
+			size += iface.CalcObjectListSize(m.PrivacyRules, layer)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesEditStory) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
+	case 0xb583ba46:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_editStory, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
@@ -50943,6 +76787,43 @@ func (m *TLStoriesDeleteStories) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesDeleteStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesDeleteStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteStories, int(layer)); clazzId {
+	case 0xae59db5f:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesDeleteStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteStories, int(layer)); clazzId {
+	case 0xae59db5f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_deleteStories, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesDeleteStories) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteStories, int(layer)); clazzId {
@@ -50998,6 +76879,48 @@ type TLStoriesTogglePinned struct {
 func (m *TLStoriesTogglePinned) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesTogglePinned) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesTogglePinned) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinned, int(layer)); clazzId {
+	case 0x9a75a1ef:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcObjectSize(m.Pinned, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesTogglePinned) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinned, int(layer)); clazzId {
+	case 0x9a75a1ef:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("pinned", m.Pinned); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_togglePinned, layer)
+	}
 }
 
 // Encode <--
@@ -51065,6 +76988,38 @@ type TLStoriesGetAllStories struct {
 func (m *TLStoriesGetAllStories) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetAllStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetAllStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAllStories, int(layer)); clazzId {
+	case 0xeeb0d625:
+		size := 4
+		size += 4
+		if m.State != nil {
+			size += iface.CalcStringSize(*m.State)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetAllStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAllStories, int(layer)); clazzId {
+	case 0xeeb0d625:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getAllStories, layer)
+	}
 }
 
 // Encode <--
@@ -51152,6 +77107,40 @@ func (m *TLStoriesGetPinnedStories) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetPinnedStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetPinnedStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPinnedStories, int(layer)); clazzId {
+	case 0x5821a5dc:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetPinnedStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPinnedStories, int(layer)); clazzId {
+	case 0x5821a5dc:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getPinnedStories, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetPinnedStories) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPinnedStories, int(layer)); clazzId {
@@ -51214,6 +77203,40 @@ type TLStoriesGetStoriesArchive struct {
 func (m *TLStoriesGetStoriesArchive) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetStoriesArchive) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetStoriesArchive) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesArchive, int(layer)); clazzId {
+	case 0xb4352016:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetStoriesArchive) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesArchive, int(layer)); clazzId {
+	case 0xb4352016:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getStoriesArchive, layer)
+	}
 }
 
 // Encode <--
@@ -51279,6 +77302,43 @@ func (m *TLStoriesGetStoriesByID) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetStoriesByID) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetStoriesByID) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesByID, int(layer)); clazzId {
+	case 0x5774ca74:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetStoriesByID) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesByID, int(layer)); clazzId {
+	case 0x5774ca74:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getStoriesByID, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetStoriesByID) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesByID, int(layer)); clazzId {
@@ -51334,6 +77394,38 @@ func (m *TLStoriesToggleAllStoriesHidden) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesToggleAllStoriesHidden) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesToggleAllStoriesHidden) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_toggleAllStoriesHidden, int(layer)); clazzId {
+	case 0x7c2557c4:
+		size := 4
+		size += iface.CalcObjectSize(m.Hidden, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesToggleAllStoriesHidden) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_toggleAllStoriesHidden, int(layer)); clazzId {
+	case 0x7c2557c4:
+		if err := iface.ValidateRequiredObject("hidden", m.Hidden); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_toggleAllStoriesHidden, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesToggleAllStoriesHidden) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_toggleAllStoriesHidden, int(layer)); clazzId {
@@ -51384,6 +77476,39 @@ type TLStoriesReadStories struct {
 func (m *TLStoriesReadStories) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesReadStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesReadStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_readStories, int(layer)); clazzId {
+	case 0xa556dac8:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesReadStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_readStories, int(layer)); clazzId {
+	case 0xa556dac8:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_readStories, layer)
+	}
 }
 
 // Encode <--
@@ -51442,6 +77567,43 @@ type TLStoriesIncrementStoryViews struct {
 func (m *TLStoriesIncrementStoryViews) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesIncrementStoryViews) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesIncrementStoryViews) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_incrementStoryViews, int(layer)); clazzId {
+	case 0xb2028afb:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesIncrementStoryViews) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_incrementStoryViews, int(layer)); clazzId {
+	case 0xb2028afb:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_incrementStoryViews, layer)
+	}
 }
 
 // Encode <--
@@ -51504,6 +77666,50 @@ type TLStoriesGetStoryViewsList struct {
 func (m *TLStoriesGetStoryViewsList) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetStoryViewsList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetStoryViewsList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryViewsList, int(layer)); clazzId {
+	case 0x7ed23c57:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Q != nil {
+			size += iface.CalcStringSize(*m.Q)
+		}
+
+		size += 4
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetStoryViewsList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryViewsList, int(layer)); clazzId {
+	case 0x7ed23c57:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getStoryViewsList, layer)
+	}
 }
 
 // Encode <--
@@ -51624,6 +77830,43 @@ func (m *TLStoriesGetStoriesViews) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetStoriesViews) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetStoriesViews) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesViews, int(layer)); clazzId {
+	case 0x28e16cc8:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetStoriesViews) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesViews, int(layer)); clazzId {
+	case 0x28e16cc8:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getStoriesViews, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetStoriesViews) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesViews, int(layer)); clazzId {
@@ -51678,6 +77921,39 @@ type TLStoriesExportStoryLink struct {
 func (m *TLStoriesExportStoryLink) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesExportStoryLink) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesExportStoryLink) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_exportStoryLink, int(layer)); clazzId {
+	case 0x7b8def20:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesExportStoryLink) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_exportStoryLink, int(layer)); clazzId {
+	case 0x7b8def20:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_exportStoryLink, layer)
+	}
 }
 
 // Encode <--
@@ -51738,6 +78014,53 @@ type TLStoriesReport struct {
 func (m *TLStoriesReport) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesReport) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesReport) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_report, int(layer)); clazzId {
+	case 0x19d8eb45:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+		size += iface.CalcBytesSize(m.Option)
+		size += iface.CalcStringSize(m.Message)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesReport) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_report, int(layer)); clazzId {
+	case 0x19d8eb45:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("option", m.Option); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_report, layer)
+	}
 }
 
 // Encode <--
@@ -51806,6 +78129,35 @@ type TLStoriesActivateStealthMode struct {
 func (m *TLStoriesActivateStealthMode) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesActivateStealthMode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesActivateStealthMode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_activateStealthMode, int(layer)); clazzId {
+	case 0x57bbd166:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesActivateStealthMode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_activateStealthMode, int(layer)); clazzId {
+	case 0x57bbd166:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_activateStealthMode, layer)
+	}
 }
 
 // Encode <--
@@ -51879,6 +78231,45 @@ type TLStoriesSendReaction struct {
 func (m *TLStoriesSendReaction) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesSendReaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesSendReaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendReaction, int(layer)); clazzId {
+	case 0x7fd736b2:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Reaction, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesSendReaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendReaction, int(layer)); clazzId {
+	case 0x7fd736b2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_sendReaction, layer)
+	}
 }
 
 // Encode <--
@@ -51969,6 +78360,38 @@ func (m *TLStoriesGetPeerStories) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetPeerStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetPeerStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerStories, int(layer)); clazzId {
+	case 0x2c4ada50:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetPeerStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerStories, int(layer)); clazzId {
+	case 0x2c4ada50:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getPeerStories, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetPeerStories) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerStories, int(layer)); clazzId {
@@ -52019,6 +78442,34 @@ func (m *TLStoriesGetAllReadPeerStories) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetAllReadPeerStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetAllReadPeerStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAllReadPeerStories, int(layer)); clazzId {
+	case 0x9b5ae7f9:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetAllReadPeerStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAllReadPeerStories, int(layer)); clazzId {
+	case 0x9b5ae7f9:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getAllReadPeerStories, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetAllReadPeerStories) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAllReadPeerStories, int(layer)); clazzId {
@@ -52058,6 +78509,38 @@ type TLStoriesGetPeerMaxIDs struct {
 func (m *TLStoriesGetPeerMaxIDs) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetPeerMaxIDs) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetPeerMaxIDs) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerMaxIDs, int(layer)); clazzId {
+	case 0x78499170:
+		size := 4
+		size += iface.CalcObjectListSize(m.Id, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetPeerMaxIDs) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerMaxIDs, int(layer)); clazzId {
+	case 0x78499170:
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getPeerMaxIDs, layer)
+	}
 }
 
 // Encode <--
@@ -52124,6 +78607,34 @@ func (m *TLStoriesGetChatsToSend) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetChatsToSend) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetChatsToSend) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getChatsToSend, int(layer)); clazzId {
+	case 0xa56a8b60:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetChatsToSend) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getChatsToSend, int(layer)); clazzId {
+	case 0xa56a8b60:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getChatsToSend, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetChatsToSend) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getChatsToSend, int(layer)); clazzId {
@@ -52164,6 +78675,43 @@ type TLStoriesTogglePeerStoriesHidden struct {
 func (m *TLStoriesTogglePeerStoriesHidden) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesTogglePeerStoriesHidden) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesTogglePeerStoriesHidden) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePeerStoriesHidden, int(layer)); clazzId {
+	case 0xbd0415c4:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Hidden, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesTogglePeerStoriesHidden) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePeerStoriesHidden, int(layer)); clazzId {
+	case 0xbd0415c4:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("hidden", m.Hidden); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_togglePeerStoriesHidden, layer)
+	}
 }
 
 // Encode <--
@@ -52229,6 +78777,49 @@ type TLStoriesGetStoryReactionsList struct {
 func (m *TLStoriesGetStoryReactionsList) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetStoryReactionsList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetStoryReactionsList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryReactionsList, int(layer)); clazzId {
+	case 0xb9b2881f:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Reaction != nil {
+			size += iface.CalcObjectSize(m.Reaction, layer)
+		}
+
+		if m.Offset != nil {
+			size += iface.CalcStringSize(*m.Offset)
+		}
+
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetStoryReactionsList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryReactionsList, int(layer)); clazzId {
+	case 0xb9b2881f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getStoryReactionsList, layer)
+	}
 }
 
 // Encode <--
@@ -52348,6 +78939,43 @@ func (m *TLStoriesTogglePinnedToTop) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesTogglePinnedToTop) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesTogglePinnedToTop) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinnedToTop, int(layer)); clazzId {
+	case 0xb297e9b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Id)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesTogglePinnedToTop) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinnedToTop, int(layer)); clazzId {
+	case 0xb297e9b:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_togglePinnedToTop, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesTogglePinnedToTop) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinnedToTop, int(layer)); clazzId {
@@ -52405,6 +79033,53 @@ type TLStoriesSearchPosts struct {
 func (m *TLStoriesSearchPosts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesSearchPosts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesSearchPosts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_searchPosts, int(layer)); clazzId {
+	case 0xd1810907:
+		size := 4
+		size += 4
+		if m.Hashtag != nil {
+			size += iface.CalcStringSize(*m.Hashtag)
+		}
+
+		if m.Area != nil {
+			size += iface.CalcObjectSize(m.Area, layer)
+		}
+
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesSearchPosts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_searchPosts, int(layer)); clazzId {
+	case 0xd1810907:
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_searchPosts, layer)
+	}
 }
 
 // Encode <--
@@ -52524,6 +79199,48 @@ func (m *TLStoriesCreateAlbum) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesCreateAlbum) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesCreateAlbum) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_createAlbum, int(layer)); clazzId {
+	case 0xa36396e5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Title)
+		size += iface.CalcInt32ListSize(m.Stories)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesCreateAlbum) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_createAlbum, int(layer)); clazzId {
+	case 0xa36396e5:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("title", m.Title); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("stories", m.Stories); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_createAlbum, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesCreateAlbum) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_createAlbum, int(layer)); clazzId {
@@ -52588,6 +79305,55 @@ type TLStoriesUpdateAlbum struct {
 func (m *TLStoriesUpdateAlbum) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesUpdateAlbum) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesUpdateAlbum) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_updateAlbum, int(layer)); clazzId {
+	case 0x5e5259b6:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Title != nil {
+			size += iface.CalcStringSize(*m.Title)
+		}
+
+		if m.DeleteStories != nil {
+			size += iface.CalcInt32ListSize(m.DeleteStories)
+		}
+
+		if m.AddStories != nil {
+			size += iface.CalcInt32ListSize(m.AddStories)
+		}
+
+		if m.Order != nil {
+			size += iface.CalcInt32ListSize(m.Order)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesUpdateAlbum) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_updateAlbum, int(layer)); clazzId {
+	case 0x5e5259b6:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_updateAlbum, layer)
+	}
 }
 
 // Encode <--
@@ -52706,6 +79472,43 @@ func (m *TLStoriesReorderAlbums) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesReorderAlbums) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesReorderAlbums) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_reorderAlbums, int(layer)); clazzId {
+	case 0x8535fbd9:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcInt32ListSize(m.Order)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesReorderAlbums) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_reorderAlbums, int(layer)); clazzId {
+	case 0x8535fbd9:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_reorderAlbums, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesReorderAlbums) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_reorderAlbums, int(layer)); clazzId {
@@ -52760,6 +79563,39 @@ type TLStoriesDeleteAlbum struct {
 func (m *TLStoriesDeleteAlbum) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesDeleteAlbum) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesDeleteAlbum) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteAlbum, int(layer)); clazzId {
+	case 0x8d3456d0:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesDeleteAlbum) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteAlbum, int(layer)); clazzId {
+	case 0x8d3456d0:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_deleteAlbum, layer)
+	}
 }
 
 // Encode <--
@@ -52820,6 +79656,39 @@ func (m *TLStoriesGetAlbums) String() string {
 	return wrapper.String()
 }
 
+func (m *TLStoriesGetAlbums) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetAlbums) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbums, int(layer)); clazzId {
+	case 0x25b3eac7:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetAlbums) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbums, int(layer)); clazzId {
+	case 0x25b3eac7:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getAlbums, layer)
+	}
+}
+
 // Encode <--
 func (m *TLStoriesGetAlbums) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbums, int(layer)); clazzId {
@@ -52878,6 +79747,41 @@ type TLStoriesGetAlbumStories struct {
 func (m *TLStoriesGetAlbumStories) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesGetAlbumStories) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesGetAlbumStories) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbumStories, int(layer)); clazzId {
+	case 0xac806d61:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesGetAlbumStories) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbumStories, int(layer)); clazzId {
+	case 0xac806d61:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_getAlbumStories, layer)
+	}
 }
 
 // Encode <--
@@ -52954,6 +79858,60 @@ type TLStoriesStartLive struct {
 func (m *TLStoriesStartLive) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLStoriesStartLive) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLStoriesStartLive) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_startLive, int(layer)); clazzId {
+	case 0xd069ccde:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.Caption != nil {
+			size += iface.CalcStringSize(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.PrivacyRules, layer)
+		size += 8
+		if m.MessagesEnabled != nil {
+			size += iface.CalcObjectSize(m.MessagesEnabled, layer)
+		}
+
+		if m.SendPaidMessagesStars != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLStoriesStartLive) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_startLive, int(layer)); clazzId {
+	case 0xd069ccde:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("privacy_rules", m.PrivacyRules); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_stories_startLive, layer)
+	}
 }
 
 // Encode <--
@@ -53152,6 +80110,45 @@ func (m *TLPremiumGetBoostsList) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPremiumGetBoostsList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPremiumGetBoostsList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsList, int(layer)); clazzId {
+	case 0x60f67660:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcStringSize(m.Offset)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPremiumGetBoostsList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsList, int(layer)); clazzId {
+	case 0x60f67660:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("offset", m.Offset); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_premium_getBoostsList, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPremiumGetBoostsList) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsList, int(layer)); clazzId {
@@ -53235,6 +80232,34 @@ func (m *TLPremiumGetMyBoosts) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPremiumGetMyBoosts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPremiumGetMyBoosts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getMyBoosts, int(layer)); clazzId {
+	case 0xbe77b4a:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPremiumGetMyBoosts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getMyBoosts, int(layer)); clazzId {
+	case 0xbe77b4a:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_premium_getMyBoosts, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPremiumGetMyBoosts) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getMyBoosts, int(layer)); clazzId {
@@ -53275,6 +80300,44 @@ type TLPremiumApplyBoost struct {
 func (m *TLPremiumApplyBoost) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPremiumApplyBoost) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPremiumApplyBoost) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_applyBoost, int(layer)); clazzId {
+	case 0x6b7da746:
+		size := 4
+		size += 4
+		if m.Slots != nil {
+			size += iface.CalcInt32ListSize(m.Slots)
+		}
+
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPremiumApplyBoost) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_applyBoost, int(layer)); clazzId {
+	case 0x6b7da746:
+
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_premium_applyBoost, layer)
+	}
 }
 
 // Encode <--
@@ -53353,6 +80416,38 @@ func (m *TLPremiumGetBoostsStatus) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPremiumGetBoostsStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPremiumGetBoostsStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsStatus, int(layer)); clazzId {
+	case 0x42f1f61:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPremiumGetBoostsStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsStatus, int(layer)); clazzId {
+	case 0x42f1f61:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_premium_getBoostsStatus, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPremiumGetBoostsStatus) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsStatus, int(layer)); clazzId {
@@ -53403,6 +80498,43 @@ type TLPremiumGetUserBoosts struct {
 func (m *TLPremiumGetUserBoosts) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPremiumGetUserBoosts) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPremiumGetUserBoosts) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getUserBoosts, int(layer)); clazzId {
+	case 0x39854d1f:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPremiumGetUserBoosts) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getUserBoosts, int(layer)); clazzId {
+	case 0x39854d1f:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_premium_getUserBoosts, layer)
+	}
 }
 
 // Encode <--
@@ -53464,6 +80596,34 @@ func (m *TLSmsjobsIsEligibleToJoin) String() string {
 	return wrapper.String()
 }
 
+func (m *TLSmsjobsIsEligibleToJoin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsIsEligibleToJoin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_isEligibleToJoin, int(layer)); clazzId {
+	case 0xedc39d0:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsIsEligibleToJoin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_isEligibleToJoin, int(layer)); clazzId {
+	case 0xedc39d0:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_isEligibleToJoin, layer)
+	}
+}
+
 // Encode <--
 func (m *TLSmsjobsIsEligibleToJoin) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_isEligibleToJoin, int(layer)); clazzId {
@@ -53502,6 +80662,34 @@ type TLSmsjobsJoin struct {
 func (m *TLSmsjobsJoin) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLSmsjobsJoin) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsJoin) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_join, int(layer)); clazzId {
+	case 0xa74ece2d:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsJoin) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_join, int(layer)); clazzId {
+	case 0xa74ece2d:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_join, layer)
+	}
 }
 
 // Encode <--
@@ -53544,6 +80732,34 @@ func (m *TLSmsjobsLeave) String() string {
 	return wrapper.String()
 }
 
+func (m *TLSmsjobsLeave) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsLeave) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_leave, int(layer)); clazzId {
+	case 0x9898ad73:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsLeave) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_leave, int(layer)); clazzId {
+	case 0x9898ad73:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_leave, layer)
+	}
+}
+
 // Encode <--
 func (m *TLSmsjobsLeave) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_leave, int(layer)); clazzId {
@@ -53583,6 +80799,35 @@ type TLSmsjobsUpdateSettings struct {
 func (m *TLSmsjobsUpdateSettings) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLSmsjobsUpdateSettings) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsUpdateSettings) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_updateSettings, int(layer)); clazzId {
+	case 0x93fa0bf:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsUpdateSettings) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_updateSettings, int(layer)); clazzId {
+	case 0x93fa0bf:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_updateSettings, layer)
+	}
 }
 
 // Encode <--
@@ -53648,6 +80893,34 @@ func (m *TLSmsjobsGetStatus) String() string {
 	return wrapper.String()
 }
 
+func (m *TLSmsjobsGetStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsGetStatus) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_getStatus, int(layer)); clazzId {
+	case 0x10a698e8:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsGetStatus) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_getStatus, int(layer)); clazzId {
+	case 0x10a698e8:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_getStatus, layer)
+	}
+}
+
 // Encode <--
 func (m *TLSmsjobsGetStatus) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_getStatus, int(layer)); clazzId {
@@ -53687,6 +80960,38 @@ type TLSmsjobsGetSmsJob struct {
 func (m *TLSmsjobsGetSmsJob) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLSmsjobsGetSmsJob) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsGetSmsJob) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_getSmsJob, int(layer)); clazzId {
+	case 0x778d902f:
+		size := 4
+		size += iface.CalcStringSize(m.JobId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsGetSmsJob) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_getSmsJob, int(layer)); clazzId {
+	case 0x778d902f:
+		if err := iface.ValidateRequiredString("job_id", m.JobId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_getSmsJob, layer)
+	}
 }
 
 // Encode <--
@@ -53735,6 +81040,42 @@ type TLSmsjobsFinishJob struct {
 func (m *TLSmsjobsFinishJob) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLSmsjobsFinishJob) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLSmsjobsFinishJob) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_finishJob, int(layer)); clazzId {
+	case 0x4f1ebf24:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.JobId)
+		if m.Error != nil {
+			size += iface.CalcStringSize(*m.Error)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSmsjobsFinishJob) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_smsjobs_finishJob, int(layer)); clazzId {
+	case 0x4f1ebf24:
+		if err := iface.ValidateRequiredString("job_id", m.JobId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_smsjobs_finishJob, layer)
+	}
 }
 
 // Encode <--
@@ -53813,6 +81154,38 @@ func (m *TLFragmentGetCollectibleInfo) String() string {
 	return wrapper.String()
 }
 
+func (m *TLFragmentGetCollectibleInfo) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLFragmentGetCollectibleInfo) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_fragment_getCollectibleInfo, int(layer)); clazzId {
+	case 0xbe1e85ba:
+		size := 4
+		size += iface.CalcObjectSize(m.Collectible, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLFragmentGetCollectibleInfo) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_fragment_getCollectibleInfo, int(layer)); clazzId {
+	case 0xbe1e85ba:
+		if err := iface.ValidateRequiredObject("collectible", m.Collectible); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_fragment_getCollectibleInfo, layer)
+	}
+}
+
 // Encode <--
 func (m *TLFragmentGetCollectibleInfo) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_fragment_getCollectibleInfo, int(layer)); clazzId {
@@ -53864,6 +81237,48 @@ type TLChannelsEditCreator struct {
 func (m *TLChannelsEditCreator) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLChannelsEditCreator) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsEditCreator) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editCreator, int(layer)); clazzId {
+	case 0x8f38cd1f:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.Password, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsEditCreator) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editCreator, int(layer)); clazzId {
+	case 0x8f38cd1f:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_editCreator, layer)
+	}
 }
 
 // Encode <--
@@ -53935,6 +81350,38 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) String() string {
 	return wrapper.String()
 }
 
+func (m *TLChannelsGetFutureCreatorAfterLeave) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLChannelsGetFutureCreatorAfterLeave) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFutureCreatorAfterLeave, int(layer)); clazzId {
+	case 0xa00918af:
+		size := 4
+		size += iface.CalcObjectSize(m.Channel, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelsGetFutureCreatorAfterLeave) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFutureCreatorAfterLeave, int(layer)); clazzId {
+	case 0xa00918af:
+		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channels_getFutureCreatorAfterLeave, layer)
+	}
+}
+
 // Encode <--
 func (m *TLChannelsGetFutureCreatorAfterLeave) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFutureCreatorAfterLeave, int(layer)); clazzId {
@@ -53985,6 +81432,34 @@ func (m *TLTestParseInputAppEvent) String() string {
 	return wrapper.String()
 }
 
+func (m *TLTestParseInputAppEvent) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLTestParseInputAppEvent) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_test_parseInputAppEvent, int(layer)); clazzId {
+	case 0xbb0d87f1:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLTestParseInputAppEvent) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_test_parseInputAppEvent, int(layer)); clazzId {
+	case 0xbb0d87f1:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_test_parseInputAppEvent, layer)
+	}
+}
+
 // Encode <--
 func (m *TLTestParseInputAppEvent) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_test_parseInputAppEvent, int(layer)); clazzId {
@@ -54023,6 +81498,34 @@ type TLHelpTest struct {
 func (m *TLHelpTest) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLHelpTest) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLHelpTest) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_test, int(layer)); clazzId {
+	case 0xc0e202f7:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLHelpTest) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_help_test, int(layer)); clazzId {
+	case 0xc0e202f7:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_test, layer)
+	}
 }
 
 // Encode <--
@@ -54069,6 +81572,56 @@ type TLPredefinedCreatePredefinedUser struct {
 func (m *TLPredefinedCreatePredefinedUser) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPredefinedCreatePredefinedUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedCreatePredefinedUser) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_createPredefinedUser, int(layer)); clazzId {
+	case 0x23e2e31e:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Phone)
+		if m.FirstName != nil {
+			size += iface.CalcStringSize(*m.FirstName)
+		}
+
+		if m.LastName != nil {
+			size += iface.CalcStringSize(*m.LastName)
+		}
+
+		if m.Username != nil {
+			size += iface.CalcStringSize(*m.Username)
+		}
+
+		size += iface.CalcStringSize(m.Code)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedCreatePredefinedUser) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_createPredefinedUser, int(layer)); clazzId {
+	case 0x23e2e31e:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("code", m.Code); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_createPredefinedUser, layer)
+	}
 }
 
 // Encode <--
@@ -54192,6 +81745,43 @@ func (m *TLPredefinedUpdatePredefinedUsername) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPredefinedUpdatePredefinedUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedUpdatePredefinedUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedUsername, int(layer)); clazzId {
+	case 0x12dc0d3a:
+		size := 4
+		size += iface.CalcStringSize(m.Phone)
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedUpdatePredefinedUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedUsername, int(layer)); clazzId {
+	case 0x12dc0d3a:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_updatePredefinedUsername, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPredefinedUpdatePredefinedUsername) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedUsername, int(layer)); clazzId {
@@ -54245,6 +81835,50 @@ type TLPredefinedUpdatePredefinedProfile struct {
 func (m *TLPredefinedUpdatePredefinedProfile) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLPredefinedUpdatePredefinedProfile) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedUpdatePredefinedProfile) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedProfile, int(layer)); clazzId {
+	case 0x2cdcf945:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Phone)
+		if m.FirstName != nil {
+			size += iface.CalcStringSize(*m.FirstName)
+		}
+
+		if m.LastName != nil {
+			size += iface.CalcStringSize(*m.LastName)
+		}
+
+		if m.About != nil {
+			size += iface.CalcStringSize(*m.About)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedUpdatePredefinedProfile) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedProfile, int(layer)); clazzId {
+	case 0x2cdcf945:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_updatePredefinedProfile, layer)
+	}
 }
 
 // Encode <--
@@ -54354,6 +81988,39 @@ func (m *TLPredefinedUpdatePredefinedVerified) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPredefinedUpdatePredefinedVerified) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedUpdatePredefinedVerified) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedVerified, int(layer)); clazzId {
+	case 0x3f3528a9:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Phone)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedUpdatePredefinedVerified) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedVerified, int(layer)); clazzId {
+	case 0x3f3528a9:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_updatePredefinedVerified, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPredefinedUpdatePredefinedVerified) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedVerified, int(layer)); clazzId {
@@ -54424,6 +82091,43 @@ func (m *TLPredefinedUpdatePredefinedCode) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPredefinedUpdatePredefinedCode) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedUpdatePredefinedCode) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedCode, int(layer)); clazzId {
+	case 0xe5361587:
+		size := 4
+		size += iface.CalcStringSize(m.Phone)
+		size += iface.CalcStringSize(m.Code)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedUpdatePredefinedCode) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedCode, int(layer)); clazzId {
+	case 0xe5361587:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("code", m.Code); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_updatePredefinedCode, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPredefinedUpdatePredefinedCode) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_updatePredefinedCode, int(layer)); clazzId {
@@ -54476,6 +82180,38 @@ func (m *TLPredefinedGetPredefinedUser) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPredefinedGetPredefinedUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedGetPredefinedUser) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUser, int(layer)); clazzId {
+	case 0x5202a415:
+		size := 4
+		size += iface.CalcStringSize(m.Phone)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedGetPredefinedUser) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUser, int(layer)); clazzId {
+	case 0x5202a415:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_getPredefinedUser, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPredefinedGetPredefinedUser) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUser, int(layer)); clazzId {
@@ -54522,6 +82258,34 @@ func (m *TLPredefinedGetPredefinedUsers) String() string {
 	return wrapper.String()
 }
 
+func (m *TLPredefinedGetPredefinedUsers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLPredefinedGetPredefinedUsers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUsers, int(layer)); clazzId {
+	case 0x29981ac4:
+		size := 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPredefinedGetPredefinedUsers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUsers, int(layer)); clazzId {
+	case 0x29981ac4:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_predefined_getPredefinedUsers, layer)
+	}
+}
+
 // Encode <--
 func (m *TLPredefinedGetPredefinedUsers) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_predefined_getPredefinedUsers, int(layer)); clazzId {
@@ -54562,6 +82326,39 @@ type TLUsersGetMe struct {
 func (m *TLUsersGetMe) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLUsersGetMe) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLUsersGetMe) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getMe, int(layer)); clazzId {
+	case 0x31345712:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.Token)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUsersGetMe) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getMe, int(layer)); clazzId {
+	case 0x31345712:
+		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_users_getMe, layer)
+	}
 }
 
 // Encode <--
@@ -54615,6 +82412,36 @@ type TLAccountUpdateVerified struct {
 func (m *TLAccountUpdateVerified) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAccountUpdateVerified) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAccountUpdateVerified) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateVerified, int(layer)); clazzId {
+	case 0x15140971:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAccountUpdateVerified) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateVerified, int(layer)); clazzId {
+	case 0x15140971:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_account_updateVerified, layer)
+	}
 }
 
 // Encode <--
@@ -54687,6 +82514,46 @@ type TLAuthToggleBan struct {
 func (m *TLAuthToggleBan) String() string {
 	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
+}
+
+func (m *TLAuthToggleBan) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLAuthToggleBan) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_toggleBan, int(layer)); clazzId {
+	case 0xe21f7938:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Phone)
+		if m.Expires != nil {
+			size += 4
+		}
+
+		if m.Reason != nil {
+			size += iface.CalcStringSize(*m.Reason)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLAuthToggleBan) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_toggleBan, int(layer)); clazzId {
+	case 0xe21f7938:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_auth_toggleBan, layer)
+	}
 }
 
 // Encode <--
@@ -54785,6 +82652,38 @@ func (m *TLBizInvokeBizDataRaw) String() string {
 	return wrapper.String()
 }
 
+func (m *TLBizInvokeBizDataRaw) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("", m)
+}
+
+func (m *TLBizInvokeBizDataRaw) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_biz_invokeBizDataRaw, int(layer)); clazzId {
+	case 0x5a191146:
+		size := 4
+		size += iface.CalcObjectSize(m.BizData, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBizInvokeBizDataRaw) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_biz_invokeBizDataRaw, int(layer)); clazzId {
+	case 0x5a191146:
+		if err := iface.ValidateRequiredObject("biz_data", m.BizData); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_biz_invokeBizDataRaw, layer)
+	}
+}
+
 // Encode <--
 func (m *TLBizInvokeBizDataRaw) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_biz_invokeBizDataRaw, int(layer)); clazzId {
@@ -54839,6 +82738,25 @@ func (m *VectorSecureValue) String() string {
 	return string(data)
 }
 
+func (m *VectorSecureValue) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorSecureValue) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorSecureValue) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorSecureValue is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorSecureValue) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -54861,6 +82779,25 @@ type VectorWallPaper struct {
 func (m *VectorWallPaper) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorWallPaper) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorWallPaper) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorWallPaper) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorWallPaper is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -54887,6 +82824,25 @@ func (m *VectorUser) String() string {
 	return string(data)
 }
 
+func (m *VectorUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorUser) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorUser) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorUser is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorUser) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -54909,6 +82865,25 @@ type VectorRequirementToContact struct {
 func (m *VectorRequirementToContact) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorRequirementToContact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorRequirementToContact) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorRequirementToContact) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorRequirementToContact is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -54935,6 +82910,25 @@ func (m *VectorInt) String() string {
 	return string(data)
 }
 
+func (m *VectorInt) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorInt) CalcSize(layer int32) int {
+	return iface.CalcInt32ListSize(m.Datas)
+
+}
+
+func (m *VectorInt) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorInt is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorInt) Encode(x *bin.Encoder, layer int32) error {
 	iface.EncodeInt32List(x, m.Datas)
@@ -54957,6 +82951,25 @@ type VectorContactStatus struct {
 func (m *VectorContactStatus) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorContactStatus) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorContactStatus) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorContactStatus) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorContactStatus is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -54983,6 +82996,25 @@ func (m *VectorSavedContact) String() string {
 	return string(data)
 }
 
+func (m *VectorSavedContact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorSavedContact) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorSavedContact) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorSavedContact is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorSavedContact) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55005,6 +83037,25 @@ type VectorReceivedNotifyMessage struct {
 func (m *VectorReceivedNotifyMessage) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorReceivedNotifyMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorReceivedNotifyMessage) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorReceivedNotifyMessage) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorReceivedNotifyMessage is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55031,6 +83082,25 @@ func (m *VectorLong) String() string {
 	return string(data)
 }
 
+func (m *VectorLong) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorLong) CalcSize(layer int32) int {
+	return iface.CalcInt64ListSize(m.Datas)
+
+}
+
+func (m *VectorLong) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorLong is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorLong) Encode(x *bin.Encoder, layer int32) error {
 	iface.EncodeInt64List(x, m.Datas)
@@ -55053,6 +83123,25 @@ type VectorStickerSetCovered struct {
 func (m *VectorStickerSetCovered) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorStickerSetCovered) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorStickerSetCovered) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorStickerSetCovered) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorStickerSetCovered is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55079,6 +83168,25 @@ func (m *VectorMessageRange) String() string {
 	return string(data)
 }
 
+func (m *VectorMessageRange) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorMessageRange) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorMessageRange) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorMessageRange is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorMessageRange) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55101,6 +83209,25 @@ type VectorDialogPeer struct {
 func (m *VectorDialogPeer) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorDialogPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorDialogPeer) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorDialogPeer) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorDialogPeer is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55127,6 +83254,25 @@ func (m *VectorEmojiLanguage) String() string {
 	return string(data)
 }
 
+func (m *VectorEmojiLanguage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorEmojiLanguage) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorEmojiLanguage) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorEmojiLanguage is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorEmojiLanguage) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55149,6 +83295,25 @@ type VectorMessagesSearchCounter struct {
 func (m *VectorMessagesSearchCounter) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorMessagesSearchCounter) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorMessagesSearchCounter) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorMessagesSearchCounter) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorMessagesSearchCounter is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55175,6 +83340,25 @@ func (m *VectorDialogFilterSuggested) String() string {
 	return string(data)
 }
 
+func (m *VectorDialogFilterSuggested) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorDialogFilterSuggested) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorDialogFilterSuggested) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorDialogFilterSuggested is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorDialogFilterSuggested) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55197,6 +83381,25 @@ type VectorReadParticipantDate struct {
 func (m *VectorReadParticipantDate) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorReadParticipantDate) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorReadParticipantDate) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorReadParticipantDate) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorReadParticipantDate is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55223,6 +83426,25 @@ func (m *VectorDocument) String() string {
 	return string(data)
 }
 
+func (m *VectorDocument) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorDocument) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorDocument) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorDocument is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorDocument) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55245,6 +83467,25 @@ type VectorFactCheck struct {
 func (m *VectorFactCheck) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorFactCheck) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorFactCheck) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorFactCheck) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorFactCheck is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55271,6 +83512,25 @@ func (m *VectorFileHash) String() string {
 	return string(data)
 }
 
+func (m *VectorFileHash) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorFileHash) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorFileHash) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorFileHash is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorFileHash) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55293,6 +83553,25 @@ type VectorBotCommand struct {
 func (m *VectorBotCommand) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorBotCommand) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorBotCommand) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorBotCommand) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorBotCommand is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55319,6 +83598,25 @@ func (m *VectorBotPreviewMedia) String() string {
 	return string(data)
 }
 
+func (m *VectorBotPreviewMedia) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorBotPreviewMedia) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorBotPreviewMedia) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorBotPreviewMedia is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorBotPreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55341,6 +83639,25 @@ type VectorPremiumGiftCodeOption struct {
 func (m *VectorPremiumGiftCodeOption) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorPremiumGiftCodeOption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorPremiumGiftCodeOption) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorPremiumGiftCodeOption) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorPremiumGiftCodeOption is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55367,6 +83684,25 @@ func (m *VectorStarsTopupOption) String() string {
 	return string(data)
 }
 
+func (m *VectorStarsTopupOption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorStarsTopupOption) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorStarsTopupOption) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorStarsTopupOption is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorStarsTopupOption) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55389,6 +83725,25 @@ type VectorStarsGiftOption struct {
 func (m *VectorStarsGiftOption) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorStarsGiftOption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorStarsGiftOption) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorStarsGiftOption) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorStarsGiftOption is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55415,6 +83770,25 @@ func (m *VectorStarsGiveawayOption) String() string {
 	return string(data)
 }
 
+func (m *VectorStarsGiveawayOption) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorStarsGiveawayOption) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorStarsGiveawayOption) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorStarsGiveawayOption is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorStarsGiveawayOption) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55437,6 +83811,25 @@ type VectorLangPackString struct {
 func (m *VectorLangPackString) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorLangPackString) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorLangPackString) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorLangPackString) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorLangPackString is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55463,6 +83856,25 @@ func (m *VectorLangPackLanguage) String() string {
 	return string(data)
 }
 
+func (m *VectorLangPackLanguage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorLangPackLanguage) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorLangPackLanguage) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorLangPackLanguage is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorLangPackLanguage) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55485,6 +83897,25 @@ type VectorPeer struct {
 func (m *VectorPeer) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorPeer) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorPeer) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorPeer is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
@@ -55511,6 +83942,25 @@ func (m *VectorRecentStory) String() string {
 	return string(data)
 }
 
+func (m *VectorRecentStory) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorRecentStory) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorRecentStory) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorRecentStory is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
+}
+
 // Encode <--
 func (m *VectorRecentStory) Encode(x *bin.Encoder, layer int32) error {
 	_ = iface.EncodeObjectList(x, m.Datas, layer)
@@ -55533,6 +83983,25 @@ type VectorPredefinedUser struct {
 func (m *VectorPredefinedUser) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *VectorPredefinedUser) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(m)
+}
+
+func (m *VectorPredefinedUser) CalcSize(layer int32) int {
+	return iface.CalcObjectListSize(m.Datas, layer)
+
+}
+
+func (m *VectorPredefinedUser) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("VectorPredefinedUser is required")
+	}
+	return iface.ValidateRequiredSlice("_datas", m.Datas)
 }
 
 // Encode <--
