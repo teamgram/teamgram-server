@@ -54,7 +54,7 @@ var (
 )
 
 func MakeInt32Helper(v int32) *Int32 {
-	return &Int32{Clazz: &TLInt32{ClazzName2: ClazzName_int32, V: v}}
+	return &TLInt32{ClazzName2: ClazzName_int32, V: v}
 }
 
 func MakeInt64Helper(v int64) *Int64 {
@@ -62,7 +62,7 @@ func MakeInt64Helper(v int64) *Int64 {
 }
 
 func MakeStringHelper(v string) *String {
-	return &String{Clazz: &TLString{ClazzName2: ClazzName_string, V: v}}
+	return &TLString{ClazzName2: ClazzName_string, V: v}
 }
 
 func ToBoolClazz(b bool) BoolClazz {
