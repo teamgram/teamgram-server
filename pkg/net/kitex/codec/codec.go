@@ -37,15 +37,37 @@ import (
 
 const (
 	// Magic number for ZRPC protocol (ZRPC in ASCII: 0x5A525043)
-	zrpcMagicNumber = uint32(0x5A525043)
+	zrpcMagicNumber     = uint32(0x5A525043)
+	defaultMaxFrameSize = 16 << 20
+	defaultTLLayer      = int32(223)
 )
 
 type ZRpcCodec struct {
 	printDebugInfo bool
+	maxFrameSize   int
+	defaultLayer   int32
+}
+
+type tlLayerProvider interface {
+	TLLayer() int32
 }
 
 func NewZRpcCodec(debug bool) remote.Codec {
-	return &ZRpcCodec{printDebugInfo: debug}
+	return &ZRpcCodec{
+		printDebugInfo: debug,
+		maxFrameSize:   defaultMaxFrameSize,
+		defaultLayer:   defaultTLLayer,
+	}
+}
+
+func (c *ZRpcCodec) resolveEncodeLayer(obj iface.TLObject) int32 {
+	if provider, ok := obj.(tlLayerProvider); ok {
+		if layer := provider.TLLayer(); layer > 0 {
+			return layer
+		}
+	}
+
+	return c.defaultLayer
 }
 
 func (c *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remote.ByteBuffer) error {
@@ -64,12 +86,21 @@ func (c *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remo
 		validData = message.Data()
 	}
 
-	klog.Infof("trans: %v", message.TransInfo().TransStrInfo())
+	if c.printDebugInfo {
+		klog.Infof("trans: %v", message.TransInfo().TransStrInfo())
+	}
+
+	obj, ok := validData.(iface.TLObject)
+	if !ok {
+		return perrors.NewProtocolError(fmt.Errorf("binary encode, invalid payload type: %T", validData))
+	}
 
 	// Encode payload using TL binary protocol
 	x := bin.NewEncoder()
 	defer x.End()
-	_ = validData.(iface.TLObject).Encode(x, 201)
+	if err := obj.Encode(x, c.resolveEncodeLayer(obj)); err != nil {
+		return perrors.NewProtocolError(fmt.Errorf("binary encode, encode payload failed: %w", err))
+	}
 	payload := x.Bytes()
 
 	if c.printDebugInfo {
@@ -134,7 +165,11 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 	if err != nil {
 		return perrors.NewProtocolError(fmt.Errorf("binary decode, read length failed: %w", err))
 	}
-	l := int(binary.BigEndian.Uint32(length))
+	frameLen := binary.BigEndian.Uint32(length)
+	if frameLen > uint32(c.maxFrameSize) {
+		return perrors.NewProtocolError(fmt.Errorf("binary decode, frame too large: %d > %d", frameLen, c.maxFrameSize))
+	}
+	l := int(frameLen)
 
 	// Read data
 	buf := dirtmake.Bytes(l, l)
@@ -164,14 +199,14 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 	}
 
 	if remote.MessageType(data.MsgType) == remote.Exception {
-		exception2, err2 := tg.DecodeRpcErrorClazz(bin.NewDecoder(data.Payload))
+		exception, err2 := tg.DecodeRpcErrorClazz(bin.NewDecoder(data.Payload))
 		if err2 != nil {
 			return perrors.NewProtocolError(fmt.Errorf("binary decode, unmarshal Exception payload failed: %w", err2))
-		} else if exception, ok := exception2.(*tg.TLRpcError); !ok {
-			return perrors.NewProtocolError(fmt.Errorf("binary decode, invalid Exception type: %T", exception2))
-		} else {
-			return ecode.NewCodeError(exception.Code(), exception.ErrorMessage)
 		}
+		if exception == nil {
+			return perrors.NewProtocolError(errors.New("binary decode, invalid Exception type: nil"))
+		}
+		return ecode.NewCodeError(exception.Code(), exception.ErrorMessage)
 	}
 
 	// Decode payload using TL binary protocol
@@ -181,7 +216,9 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 		return perrors.NewProtocolError(fmt.Errorf("binary decode, unmarshal payload failed: %w", err))
 	}
 
-	klog.Infof("trans: %v", data.Metadata)
+	if c.printDebugInfo {
+		klog.Infof("trans: %v", data.Metadata)
+	}
 
 	message.TransInfo().PutTransStrInfo(data.Metadata)
 

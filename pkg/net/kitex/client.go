@@ -13,6 +13,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/discovery"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,6 +35,10 @@ type (
 	NewClientFn func(opts ...client.Option) (Client, error)
 )
 
+var newEtcdResolver = func(endpoints []string, opts ...etcd.Option) (discovery.Resolver, error) {
+	return etcd.NewEtcdResolver(endpoints, opts...)
+}
+
 // MustNewClient returns a Client, exits on any error.
 func MustNewClient(c RpcClientConf, newF NewClientFn) Client {
 	cli, err := NewClient(c, newF)
@@ -47,7 +52,7 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 
 	options = append(options, client.WithDestService(c.DestService))
 	if c.Codec == "zrpc" {
-		options = append(options, client.WithCodec(codec.NewZRpcCodec(true)))
+		options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 	}
 
 	// options = append(options, opts...)
@@ -76,9 +81,9 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 		options = append(options, client.WithHostPorts(c.Endpoints...))
 	} else {
 		if c.HasEtcd() {
-			r, err := etcd.NewEtcdResolver(c.Etcd.Hosts)
+			r, err := newEtcdResolver(c.Etcd.Hosts)
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 
 			options = append(options, client.WithResolver(r))
