@@ -31,7 +31,8 @@ func (i *Int256) Encode(x *Encoder, _ int) {
 	x.PutInt256(*i)
 }
 
-// BigInt returns corresponding big.Int value.
+// BigInt interprets the raw 32 bytes as a big-endian unsigned magnitude.
+// This is only one possible interpretation of the stored bytes.
 func (i *Int256) BigInt() *big.Int {
 	return big.NewInt(0).SetBytes(i[:])
 }

@@ -132,7 +132,9 @@ func (e *Encoder) PutVectorHeader(length int32) {
 	e.PutInt32(length)
 }
 
-// PutInt serializes v as signed 32-bit integer.
+// PutInt serializes v as a signed 32-bit integer.
+// Values outside the int32 range are truncated.
+// Prefer PutInt32 or PutLong when the width must be explicit.
 func (e *Encoder) PutInt(v int) {
 	e.PutInt32(int32(v))
 }
@@ -216,6 +218,9 @@ func (e *Encoder) PutInt256(v Int256) {
 	e.buf = append(e.buf, v[:]...)
 }
 
+// BigInt serializes s.Bytes() as a TL bytes value.
+// It does not encode a dedicated TL big integer type.
+// The resulting bytes use big.Int's big-endian magnitude representation.
 func (e *Encoder) BigInt(s *big.Int) {
 	e.ensureWritable()
 	e.PutBytes(s.Bytes())

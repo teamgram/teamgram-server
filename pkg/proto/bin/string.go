@@ -44,7 +44,7 @@ func (e *Encoder) encodeString(v string) {
 	}
 }
 
-func decodeString(b []byte) (padding int, v string, err error) {
+func decodeString(b []byte) (n int, v string, err error) {
 	if len(b) == 0 {
 		return 0, "", io.ErrUnexpectedEOF
 	}
@@ -56,7 +56,7 @@ func decodeString(b []byte) (padding int, v string, err error) {
 		if len(b) < (int(strLen) + 4) {
 			return 0, "", io.ErrUnexpectedEOF
 		}
-		n := nearestPaddedValueLength(int(strLen) + 4)
+		n = nearestPaddedValueLength(int(strLen) + 4)
 		if err := validatePaddingZeros(b, int(strLen)+4, n); err != nil {
 			return 0, "", err
 		}
@@ -72,7 +72,7 @@ func decodeString(b []byte) (padding int, v string, err error) {
 			Length: strLen,
 		}
 	}
-	n := nearestPaddedValueLength(strLen + 1)
+	n = nearestPaddedValueLength(strLen + 1)
 	if err := validatePaddingZeros(b, strLen+1, n); err != nil {
 		return 0, "", err
 	}
