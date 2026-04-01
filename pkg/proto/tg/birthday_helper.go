@@ -41,7 +41,7 @@ func (m *Birthday) ToBirthdayString() (v string) {
 		return
 	}
 
-	birthday, _ := m.ToBirthday()
+	birthday := m.ToBirthday()
 	if birthday.Year == nil {
 		v = fmt.Sprintf("%02d-%02d", birthday.Month, birthday.Day)
 	} else {

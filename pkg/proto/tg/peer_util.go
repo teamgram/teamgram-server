@@ -48,64 +48,32 @@ var (
 //	AccessHash int64
 //}
 
-func (m *PeerUtil) SelfId() int64 {
-	return m.Clazz.SelfId
-}
-
-func (m *PeerUtil) SetSelfId(v int64) {
-	m.Clazz.SelfId = v
-}
-
-func (m *PeerUtil) PeerType() int32 {
-	return m.Clazz.PeerType
-}
-
-func (m *PeerUtil) SetPeerType(v int32) {
-	m.Clazz.PeerType = v
-}
-
-func (m *PeerUtil) PeerId() int64 {
-	return m.Clazz.PeerId
-}
-
-func (m *PeerUtil) SetPeerId(v int64) {
-	m.Clazz.PeerId = v
-}
-
-func (m *PeerUtil) AccessHash() int64 {
-	return m.Clazz.AccessHash
-}
-
-func (m *PeerUtil) SetAccessHash(v int64) {
-	m.Clazz.AccessHash = v
-}
-
 func (m *PeerUtil) ToString() (s string) {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_EMPTY:
-		return fmt.Sprintf("PEER_EMPTY: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_EMPTY: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_SELF:
-		return fmt.Sprintf("PEER_SELF: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_SELF: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_USER:
-		return fmt.Sprintf("PEER_USER: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_USER: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_CHAT:
-		return fmt.Sprintf("PEER_CHAT: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_CHAT: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_CHANNEL:
-		return fmt.Sprintf("PEER_CHANNEL: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_CHANNEL: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_USERS:
-		return fmt.Sprintf("PEER_USERS: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_USERS: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	case PEER_CHATS:
-		return fmt.Sprintf("PEER_CHATS: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_CHATS: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	//case PEER_ALL:
 	//	return fmt.Sprintf("PEER_ALL: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	default:
-		return fmt.Sprintf("PEER_UNKNOWN: {peer_id: %d, access_hash: %d", m.PeerId(), m.AccessHash())
+		return fmt.Sprintf("PEER_UNKNOWN: {peer_id: %d, access_hash: %d", m.PeerId, m.AccessHash)
 	}
 	// return
 }
 
 func (m *PeerUtil) CanDoSendMessage() bool {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_SELF, PEER_USER, PEER_CHAT, PEER_CHANNEL:
 		return true
 	default:
@@ -228,24 +196,24 @@ func FromInputEncryptedChat(peer InputEncryptedChatClazz) PeerUtilClazz {
 //}
 
 func (m *PeerUtil) ToInputPeer() (peer InputPeerClazz) {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_EMPTY:
 		peer = &TLInputPeerEmpty{}
 	case PEER_SELF:
 		peer = &TLInputPeerSelf{}
 	case PEER_USER:
 		peer = &TLInputPeerUser{
-			UserId:     m.PeerId(),
-			AccessHash: m.AccessHash(),
+			UserId:     m.PeerId,
+			AccessHash: m.AccessHash,
 		}
 	case PEER_CHAT:
 		peer = &TLInputPeerChat{
-			ChatId: m.PeerId(),
+			ChatId: m.PeerId,
 		}
 	case PEER_CHANNEL:
 		peer = &TLInputPeerChannel{
-			ChannelId:  m.PeerId(),
-			AccessHash: m.AccessHash(),
+			ChannelId:  m.PeerId,
+			AccessHash: m.AccessHash,
 		}
 	default:
 		panic(fmt.Sprintf("ToInputPeer(%v) error!", m))
@@ -278,30 +246,30 @@ func FromPeer(peer PeerClazz) PeerUtilClazz {
 }
 
 func (m *PeerUtil) ToPeer() (peer PeerClazz) {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_SELF:
-		if m.PeerId() != 0 {
+		if m.PeerId != 0 {
 			peer = &TLPeerUser{
-				UserId: m.PeerId(),
+				UserId: m.PeerId,
 			}
-		} else if m.SelfId() != 0 {
+		} else if m.SelfId != 0 {
 			peer = &TLPeerUser{
-				UserId: m.SelfId(),
+				UserId: m.SelfId,
 			}
 		} else {
 			panic(fmt.Sprintf("ToPeer(%v) error!", m))
 		}
 	case PEER_USER:
 		peer = &TLPeerUser{
-			UserId: m.PeerId(),
+			UserId: m.PeerId,
 		}
 	case PEER_CHAT:
 		peer = &TLPeerChat{
-			ChatId: m.PeerId(),
+			ChatId: m.PeerId,
 		}
 	case PEER_CHANNEL:
 		peer = &TLPeerChannel{
-			ChannelId: m.PeerId(),
+			ChannelId: m.PeerId,
 		}
 	default:
 		peer = nil
@@ -312,19 +280,19 @@ func (m *PeerUtil) ToPeer() (peer PeerClazz) {
 
 /*
 func (m *PeerUtil) IsEmpty() bool {
-	return m.PeerType() == PEER_EMPTY
+	return m.PeerType == PEER_EMPTY
 }
 
 func (m *PeerUtil) IsSelf() bool {
-	return m.PeerType() == PEER_SELF
+	return m.PeerType == PEER_SELF
 }
 
 func (m *PeerUtil) IsUser() bool {
-	return m.PeerType() == PEER_USER || m.PeerType() == PEER_SELF
+	return m.PeerType == PEER_USER || m.PeerType == PEER_SELF
 }
 
 func (m *PeerUtil) IsChat() bool {
-	return m.PeerType() == PEER_CHAT
+	return m.PeerType == PEER_CHAT
 }
 
 func (m *PeerUtil) IsChatOrChannel() bool {
@@ -340,15 +308,15 @@ func (m *PeerUtil) IsChatOrUser() bool {
 }
 
 func (m *PeerUtil) IsChannel() bool {
-	return m.PeerType() == PEER_CHANNEL
+	return m.PeerType == PEER_CHANNEL
 }
 
 func (m *PeerUtil) IsEncryptedChat() bool {
-	return m.PeerType() == PEER_ENCRYPTED_CHAT
+	return m.PeerType == PEER_ENCRYPTED_CHAT
 }
 
 func (m *PeerUtil) IsSelfUser(id int64) bool {
-	return m.PeerType() == PEER_SELF || m.PeerType() == PEER_USER && m.PeerId() == id
+	return m.PeerType == PEER_SELF || m.PeerType == PEER_USER && m.PeerId == id
 }
 
 func FromInputNotifyPeer(selfId int64, peer *InputNotifyPeer) *PeerUtil {
@@ -389,7 +357,7 @@ func FromInputNotifyPeer(selfId int64, peer *InputNotifyPeer) *PeerUtil {
 }
 
 func (m *PeerUtil) ToInputNotifyPeer(peer *InputNotifyPeer) {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_EMPTY, PEER_SELF, PEER_USER, PEER_CHAT, PEER_CHANNEL:
 		peer = MakeInputNotifyPeer(&TLInputNotifyPeer{
 			Peer: m.ToInputPeer(),
@@ -423,7 +391,7 @@ func (m *PeerUtil) ToInputNotifyPeer(peer *InputNotifyPeer) {
 //}
 
 func (m *PeerUtil) ToNotifyPeer() (peer *NotifyPeer) {
-	switch m.PeerType() {
+	switch m.PeerType {
 	case PEER_EMPTY, PEER_SELF, PEER_USER, PEER_CHAT, PEER_CHANNEL:
 		peer = MakeNotifyPeer(&TLNotifyPeer{
 			Peer: m.ToPeer(),

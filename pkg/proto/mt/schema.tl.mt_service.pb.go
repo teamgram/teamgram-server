@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -28,7 +28,7 @@ type TLReqPq struct {
 }
 
 func (m *TLReqPq) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78,7 +78,7 @@ type TLReqPqMulti struct {
 }
 
 func (m *TLReqPqMulti) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -133,7 +133,7 @@ type TLReqDHParams struct {
 }
 
 func (m *TLReqDHParams) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -195,7 +195,7 @@ type TLSetClientDHParams struct {
 }
 
 func (m *TLSetClientDHParams) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -248,7 +248,7 @@ type TLDestroyAuthKey struct {
 }
 
 func (m *TLDestroyAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -294,7 +294,7 @@ type TLHelpTest struct {
 }
 
 func (m *TLHelpTest) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -340,7 +340,7 @@ type TLTestUseError struct {
 }
 
 func (m *TLTestUseError) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -386,7 +386,7 @@ type TLTestUseConfigSimple struct {
 }
 
 func (m *TLTestUseConfigSimple) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -433,7 +433,7 @@ type TLRpcDropAnswer struct {
 }
 
 func (m *TLRpcDropAnswer) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -483,7 +483,7 @@ type TLGetFutureSalts struct {
 }
 
 func (m *TLGetFutureSalts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -533,7 +533,7 @@ type TLPing struct {
 }
 
 func (m *TLPing) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -584,7 +584,7 @@ type TLPingDelayDisconnect struct {
 }
 
 func (m *TLPingDelayDisconnect) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
@@ -636,7 +636,7 @@ type TLDestroySession struct {
 }
 
 func (m *TLDestroySession) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
 	return wrapper.String()
 }
 
