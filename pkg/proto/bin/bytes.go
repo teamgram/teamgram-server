@@ -43,7 +43,11 @@ func decodeBytes(b []byte) (n int, v []byte, err error) {
 		if len(b) < (int(strLen) + 4) {
 			return 0, nil, io.ErrUnexpectedEOF
 		}
-		return nearestPaddedValueLength(int(strLen) + 4), b[4 : strLen+4], nil
+		n = nearestPaddedValueLength(int(strLen) + 4)
+		if err := validatePaddingZeros(b, int(strLen)+4, n); err != nil {
+			return 0, nil, err
+		}
+		return n, b[4 : strLen+4], nil
 	}
 	strLen := int(b[0])
 	if len(b) < (strLen + 1) {
@@ -55,5 +59,9 @@ func decodeBytes(b []byte) (n int, v []byte, err error) {
 			Length: strLen,
 		}
 	}
-	return nearestPaddedValueLength(strLen + 1), b[1 : strLen+1], nil
+	n = nearestPaddedValueLength(strLen + 1)
+	if err := validatePaddingZeros(b, strLen+1, n); err != nil {
+		return 0, nil, err
+	}
+	return n, b[1 : strLen+1], nil
 }

@@ -189,6 +189,43 @@ func TestEncoderDoubleReleaseIsSafe(t *testing.T) {
 	x.Release()
 }
 
+func TestEncoderUseAfterReleasePanics(t *testing.T) {
+	x := AcquireEncoder()
+	x.Release()
+
+	require.Panics(t, func() {
+		x.PutInt(1)
+	})
+	require.Panics(t, func() {
+		_ = x.Bytes()
+	})
+}
+
+func TestDecoderRejectsNonZeroStringPadding(t *testing.T) {
+	d := NewDecoder([]byte{1, 'a', 1, 0})
+
+	_, err := d.String()
+	require.Error(t, err)
+}
+
+func TestDecoderRejectsNonZeroBytesPadding(t *testing.T) {
+	d := NewDecoder([]byte{1, 'a', 1, 0})
+
+	_, err := d.BytesView()
+	require.Error(t, err)
+}
+
+func TestFieldsPanicsOnInvalidBitIndex(t *testing.T) {
+	var f Fields
+
+	require.Panics(t, func() { f.Set(-1) })
+	require.Panics(t, func() { f.Set(32) })
+	require.Panics(t, func() { f.Unset(-1) })
+	require.Panics(t, func() { f.Unset(32) })
+	require.Panics(t, func() { _ = f.Has(-1) })
+	require.Panics(t, func() { _ = f.Has(32) })
+}
+
 func TestVectorClazzIDUsesPredicateNaming(t *testing.T) {
 	require.Equal(t, uint32(0x1cb5c415), ClazzID_vector)
 }
