@@ -32,7 +32,7 @@ type TLInvokeAfterMsg struct {
 }
 
 func (m *TLInvokeAfterMsg) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeAfterMsg", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40,7 +40,7 @@ func (m *TLInvokeAfterMsg) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeAfterMsg", m)
 }
 
 func (m *TLInvokeAfterMsg) CalcSize(layer int32) int {
@@ -48,6 +48,7 @@ func (m *TLInvokeAfterMsg) CalcSize(layer int32) int {
 	case 0xcb9f372d:
 		size := 4
 		size += 8
+		size += len(m.Query)
 
 		return size
 	default:
@@ -58,6 +59,9 @@ func (m *TLInvokeAfterMsg) CalcSize(layer int32) int {
 func (m *TLInvokeAfterMsg) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsg, int(layer)); clazzId {
 	case 0xcb9f372d:
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -72,7 +76,7 @@ func (m *TLInvokeAfterMsg) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xcb9f372d)
 
 		x.PutInt64(m.MsgId)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -111,7 +115,7 @@ type TLInvokeAfterMsgs struct {
 }
 
 func (m *TLInvokeAfterMsgs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeAfterMsgs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -119,7 +123,7 @@ func (m *TLInvokeAfterMsgs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeAfterMsgs", m)
 }
 
 func (m *TLInvokeAfterMsgs) CalcSize(layer int32) int {
@@ -127,6 +131,7 @@ func (m *TLInvokeAfterMsgs) CalcSize(layer int32) int {
 	case 0x3dc4b4f0:
 		size := 4
 		size += iface.CalcInt64ListSize(m.MsgIds)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -137,7 +142,11 @@ func (m *TLInvokeAfterMsgs) CalcSize(layer int32) int {
 func (m *TLInvokeAfterMsgs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeAfterMsgs, int(layer)); clazzId {
 	case 0x3dc4b4f0:
-		if err := iface.ValidateRequiredSlice("msg_ids", m.MsgIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_ids", m.MsgIds, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
 			return err
 		}
 
@@ -155,7 +164,7 @@ func (m *TLInvokeAfterMsgs) Encode(x *bin.Encoder, layer int32) error {
 
 		iface.EncodeInt64List(x, m.MsgIds)
 
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -201,7 +210,7 @@ type TLInitConnection struct {
 }
 
 func (m *TLInitConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "initConnection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -209,7 +218,7 @@ func (m *TLInitConnection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("initConnection", m)
 }
 
 func (m *TLInitConnection) CalcSize(layer int32) int {
@@ -232,6 +241,8 @@ func (m *TLInitConnection) CalcSize(layer int32) int {
 			size += iface.CalcObjectSize(m.Params, layer)
 		}
 
+		size += len(m.Query)
+
 		return size
 	case 0x785188b8:
 		size := 4
@@ -250,6 +261,8 @@ func (m *TLInitConnection) CalcSize(layer int32) int {
 		if m.Params != nil {
 			size += iface.CalcObjectSize(m.Params, layer)
 		}
+
+		size += len(m.Query)
 
 		return size
 	default:
@@ -284,6 +297,10 @@ func (m *TLInitConnection) Validate(layer int32) error {
 			return err
 		}
 
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
+
 		return nil
 	case 0x785188b8:
 		if err := iface.ValidateRequiredString("device_model", m.DeviceModel); err != nil {
@@ -307,6 +324,10 @@ func (m *TLInitConnection) Validate(layer int32) error {
 		}
 
 		if err := iface.ValidateRequiredString("lang_code", m.LangCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
 			return err
 		}
 
@@ -354,7 +375,7 @@ func (m *TLInitConnection) Encode(x *bin.Encoder, layer int32) error {
 			_ = m.Params.Encode(x, layer)
 		}
 
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	case 0x785188b8:
@@ -392,7 +413,7 @@ func (m *TLInitConnection) Encode(x *bin.Encoder, layer int32) error {
 			_ = m.Params.Encode(x, layer)
 		}
 
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -533,7 +554,7 @@ type TLInvokeWithLayer struct {
 }
 
 func (m *TLInvokeWithLayer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithLayer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -541,7 +562,7 @@ func (m *TLInvokeWithLayer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithLayer", m)
 }
 
 func (m *TLInvokeWithLayer) CalcSize(layer int32) int {
@@ -549,6 +570,7 @@ func (m *TLInvokeWithLayer) CalcSize(layer int32) int {
 	case 0xda9b0d0d:
 		size := 4
 		size += 4
+		size += len(m.Query)
 
 		return size
 	default:
@@ -559,6 +581,9 @@ func (m *TLInvokeWithLayer) CalcSize(layer int32) int {
 func (m *TLInvokeWithLayer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithLayer, int(layer)); clazzId {
 	case 0xda9b0d0d:
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -573,7 +598,7 @@ func (m *TLInvokeWithLayer) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xda9b0d0d)
 
 		x.PutInt32(m.Layer)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -611,7 +636,7 @@ type TLInvokeWithoutUpdates struct {
 }
 
 func (m *TLInvokeWithoutUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithoutUpdates", TLObject: m}
 	return wrapper.String()
 }
 
@@ -619,13 +644,14 @@ func (m *TLInvokeWithoutUpdates) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithoutUpdates", m)
 }
 
 func (m *TLInvokeWithoutUpdates) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithoutUpdates, int(layer)); clazzId {
 	case 0xbf9459b7:
 		size := 4
+		size += len(m.Query)
 
 		return size
 	default:
@@ -636,6 +662,9 @@ func (m *TLInvokeWithoutUpdates) CalcSize(layer int32) int {
 func (m *TLInvokeWithoutUpdates) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithoutUpdates, int(layer)); clazzId {
 	case 0xbf9459b7:
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -649,7 +678,7 @@ func (m *TLInvokeWithoutUpdates) Encode(x *bin.Encoder, layer int32) error {
 	case 0xbf9459b7:
 		x.PutClazzID(0xbf9459b7)
 
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -684,7 +713,7 @@ type TLInvokeWithMessagesRange struct {
 }
 
 func (m *TLInvokeWithMessagesRange) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithMessagesRange", TLObject: m}
 	return wrapper.String()
 }
 
@@ -692,7 +721,7 @@ func (m *TLInvokeWithMessagesRange) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithMessagesRange", m)
 }
 
 func (m *TLInvokeWithMessagesRange) CalcSize(layer int32) int {
@@ -700,6 +729,7 @@ func (m *TLInvokeWithMessagesRange) CalcSize(layer int32) int {
 	case 0x365275f2:
 		size := 4
 		size += iface.CalcObjectSize(m.Range, layer)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -710,7 +740,11 @@ func (m *TLInvokeWithMessagesRange) CalcSize(layer int32) int {
 func (m *TLInvokeWithMessagesRange) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithMessagesRange, int(layer)); clazzId {
 	case 0x365275f2:
-		if err := iface.ValidateRequiredObject("range", m.Range); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("range", m.Range, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
 			return err
 		}
 
@@ -727,7 +761,7 @@ func (m *TLInvokeWithMessagesRange) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x365275f2)
 
 		_ = m.Range.Encode(x, layer)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -771,7 +805,7 @@ type TLInvokeWithTakeout struct {
 }
 
 func (m *TLInvokeWithTakeout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithTakeout", TLObject: m}
 	return wrapper.String()
 }
 
@@ -779,7 +813,7 @@ func (m *TLInvokeWithTakeout) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithTakeout", m)
 }
 
 func (m *TLInvokeWithTakeout) CalcSize(layer int32) int {
@@ -787,6 +821,7 @@ func (m *TLInvokeWithTakeout) CalcSize(layer int32) int {
 	case 0xaca9fd2e:
 		size := 4
 		size += 8
+		size += len(m.Query)
 
 		return size
 	default:
@@ -797,6 +832,9 @@ func (m *TLInvokeWithTakeout) CalcSize(layer int32) int {
 func (m *TLInvokeWithTakeout) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithTakeout, int(layer)); clazzId {
 	case 0xaca9fd2e:
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
 
 		return nil
 	default:
@@ -811,7 +849,7 @@ func (m *TLInvokeWithTakeout) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xaca9fd2e)
 
 		x.PutInt64(m.TakeoutId)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -850,7 +888,7 @@ type TLInvokeWithBusinessConnection struct {
 }
 
 func (m *TLInvokeWithBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithBusinessConnection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -858,7 +896,7 @@ func (m *TLInvokeWithBusinessConnection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithBusinessConnection", m)
 }
 
 func (m *TLInvokeWithBusinessConnection) CalcSize(layer int32) int {
@@ -866,6 +904,7 @@ func (m *TLInvokeWithBusinessConnection) CalcSize(layer int32) int {
 	case 0xdd289f8e:
 		size := 4
 		size += iface.CalcStringSize(m.ConnectionId)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -877,6 +916,10 @@ func (m *TLInvokeWithBusinessConnection) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithBusinessConnection, int(layer)); clazzId {
 	case 0xdd289f8e:
 		if err := iface.ValidateRequiredString("connection_id", m.ConnectionId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
 			return err
 		}
 
@@ -893,7 +936,7 @@ func (m *TLInvokeWithBusinessConnection) Encode(x *bin.Encoder, layer int32) err
 		x.PutClazzID(0xdd289f8e)
 
 		x.PutString(m.ConnectionId)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -933,7 +976,7 @@ type TLInvokeWithGooglePlayIntegrity struct {
 }
 
 func (m *TLInvokeWithGooglePlayIntegrity) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithGooglePlayIntegrity", TLObject: m}
 	return wrapper.String()
 }
 
@@ -941,7 +984,7 @@ func (m *TLInvokeWithGooglePlayIntegrity) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithGooglePlayIntegrity", m)
 }
 
 func (m *TLInvokeWithGooglePlayIntegrity) CalcSize(layer int32) int {
@@ -950,6 +993,7 @@ func (m *TLInvokeWithGooglePlayIntegrity) CalcSize(layer int32) int {
 		size := 4
 		size += iface.CalcStringSize(m.Nonce)
 		size += iface.CalcStringSize(m.Token)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -968,6 +1012,10 @@ func (m *TLInvokeWithGooglePlayIntegrity) Validate(layer int32) error {
 			return err
 		}
 
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
+
 		return nil
 	default:
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithGooglePlayIntegrity, layer)
@@ -982,7 +1030,7 @@ func (m *TLInvokeWithGooglePlayIntegrity) Encode(x *bin.Encoder, layer int32) er
 
 		x.PutString(m.Nonce)
 		x.PutString(m.Token)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -1026,7 +1074,7 @@ type TLInvokeWithApnsSecret struct {
 }
 
 func (m *TLInvokeWithApnsSecret) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithApnsSecret", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1034,7 +1082,7 @@ func (m *TLInvokeWithApnsSecret) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithApnsSecret", m)
 }
 
 func (m *TLInvokeWithApnsSecret) CalcSize(layer int32) int {
@@ -1043,6 +1091,7 @@ func (m *TLInvokeWithApnsSecret) CalcSize(layer int32) int {
 		size := 4
 		size += iface.CalcStringSize(m.Nonce)
 		size += iface.CalcStringSize(m.Secret)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -1061,6 +1110,10 @@ func (m *TLInvokeWithApnsSecret) Validate(layer int32) error {
 			return err
 		}
 
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
+			return err
+		}
+
 		return nil
 	default:
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_invokeWithApnsSecret, layer)
@@ -1075,7 +1128,7 @@ func (m *TLInvokeWithApnsSecret) Encode(x *bin.Encoder, layer int32) error {
 
 		x.PutString(m.Nonce)
 		x.PutString(m.Secret)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -1118,7 +1171,7 @@ type TLInvokeWithReCaptcha struct {
 }
 
 func (m *TLInvokeWithReCaptcha) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithReCaptcha", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1126,7 +1179,7 @@ func (m *TLInvokeWithReCaptcha) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("invokeWithReCaptcha", m)
 }
 
 func (m *TLInvokeWithReCaptcha) CalcSize(layer int32) int {
@@ -1134,6 +1187,7 @@ func (m *TLInvokeWithReCaptcha) CalcSize(layer int32) int {
 	case 0xadbb0f94:
 		size := 4
 		size += iface.CalcStringSize(m.Token)
+		size += len(m.Query)
 
 		return size
 	default:
@@ -1145,6 +1199,10 @@ func (m *TLInvokeWithReCaptcha) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_invokeWithReCaptcha, int(layer)); clazzId {
 	case 0xadbb0f94:
 		if err := iface.ValidateRequiredString("token", m.Token); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("query", m.Query); err != nil {
 			return err
 		}
 
@@ -1161,7 +1219,7 @@ func (m *TLInvokeWithReCaptcha) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xadbb0f94)
 
 		x.PutString(m.Token)
-		// template Debug by @benqi
+		x.PutRaw(m.Query)
 
 		return nil
 	default:
@@ -1202,7 +1260,7 @@ type TLAuthSendCode struct {
 }
 
 func (m *TLAuthSendCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_sendCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1210,7 +1268,7 @@ func (m *TLAuthSendCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_sendCode", m)
 }
 
 func (m *TLAuthSendCode) CalcSize(layer int32) int {
@@ -1239,7 +1297,7 @@ func (m *TLAuthSendCode) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -1315,7 +1373,7 @@ type TLAuthSignUp struct {
 }
 
 func (m *TLAuthSignUp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_signUp", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1323,7 +1381,7 @@ func (m *TLAuthSignUp) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_signUp", m)
 }
 
 func (m *TLAuthSignUp) CalcSize(layer int32) int {
@@ -1450,7 +1508,7 @@ type TLAuthSignIn struct {
 }
 
 func (m *TLAuthSignIn) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_signIn", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1458,7 +1516,7 @@ func (m *TLAuthSignIn) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_signIn", m)
 }
 
 func (m *TLAuthSignIn) CalcSize(layer int32) int {
@@ -1592,7 +1650,7 @@ type TLAuthLogOut struct {
 }
 
 func (m *TLAuthLogOut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_logOut", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1600,7 +1658,7 @@ func (m *TLAuthLogOut) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_logOut", m)
 }
 
 func (m *TLAuthLogOut) CalcSize(layer int32) int {
@@ -1660,7 +1718,7 @@ type TLAuthResetAuthorizations struct {
 }
 
 func (m *TLAuthResetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_resetAuthorizations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1668,7 +1726,7 @@ func (m *TLAuthResetAuthorizations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_resetAuthorizations", m)
 }
 
 func (m *TLAuthResetAuthorizations) CalcSize(layer int32) int {
@@ -1729,7 +1787,7 @@ type TLAuthExportAuthorization struct {
 }
 
 func (m *TLAuthExportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_exportAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1737,7 +1795,7 @@ func (m *TLAuthExportAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_exportAuthorization", m)
 }
 
 func (m *TLAuthExportAuthorization) CalcSize(layer int32) int {
@@ -1806,7 +1864,7 @@ type TLAuthImportAuthorization struct {
 }
 
 func (m *TLAuthImportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_importAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1814,7 +1872,7 @@ func (m *TLAuthImportAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_importAuthorization", m)
 }
 
 func (m *TLAuthImportAuthorization) CalcSize(layer int32) int {
@@ -1894,7 +1952,7 @@ type TLAuthBindTempAuthKey struct {
 }
 
 func (m *TLAuthBindTempAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_bindTempAuthKey", TLObject: m}
 	return wrapper.String()
 }
 
@@ -1902,7 +1960,7 @@ func (m *TLAuthBindTempAuthKey) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_bindTempAuthKey", m)
 }
 
 func (m *TLAuthBindTempAuthKey) CalcSize(layer int32) int {
@@ -1994,7 +2052,7 @@ type TLAuthImportBotAuthorization struct {
 }
 
 func (m *TLAuthImportBotAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_importBotAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2002,7 +2060,7 @@ func (m *TLAuthImportBotAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_importBotAuthorization", m)
 }
 
 func (m *TLAuthImportBotAuthorization) CalcSize(layer int32) int {
@@ -2095,7 +2153,7 @@ type TLAuthCheckPassword struct {
 }
 
 func (m *TLAuthCheckPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2103,7 +2161,7 @@ func (m *TLAuthCheckPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_checkPassword", m)
 }
 
 func (m *TLAuthCheckPassword) CalcSize(layer int32) int {
@@ -2121,7 +2179,7 @@ func (m *TLAuthCheckPassword) CalcSize(layer int32) int {
 func (m *TLAuthCheckPassword) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_checkPassword, int(layer)); clazzId {
 	case 0xd18b4d16:
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -2177,7 +2235,7 @@ type TLAuthRequestPasswordRecovery struct {
 }
 
 func (m *TLAuthRequestPasswordRecovery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_requestPasswordRecovery", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2185,7 +2243,7 @@ func (m *TLAuthRequestPasswordRecovery) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_requestPasswordRecovery", m)
 }
 
 func (m *TLAuthRequestPasswordRecovery) CalcSize(layer int32) int {
@@ -2247,7 +2305,7 @@ type TLAuthRecoverPassword struct {
 }
 
 func (m *TLAuthRecoverPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_recoverPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2255,7 +2313,7 @@ func (m *TLAuthRecoverPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_recoverPassword", m)
 }
 
 func (m *TLAuthRecoverPassword) CalcSize(layer int32) int {
@@ -2363,7 +2421,7 @@ type TLAuthResendCode struct {
 }
 
 func (m *TLAuthResendCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_resendCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2371,7 +2429,7 @@ func (m *TLAuthResendCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_resendCode", m)
 }
 
 func (m *TLAuthResendCode) CalcSize(layer int32) int {
@@ -2486,7 +2544,7 @@ type TLAuthCancelCode struct {
 }
 
 func (m *TLAuthCancelCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_cancelCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2494,7 +2552,7 @@ func (m *TLAuthCancelCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_cancelCode", m)
 }
 
 func (m *TLAuthCancelCode) CalcSize(layer int32) int {
@@ -2575,7 +2633,7 @@ type TLAuthDropTempAuthKeys struct {
 }
 
 func (m *TLAuthDropTempAuthKeys) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_dropTempAuthKeys", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2583,7 +2641,7 @@ func (m *TLAuthDropTempAuthKeys) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_dropTempAuthKeys", m)
 }
 
 func (m *TLAuthDropTempAuthKeys) CalcSize(layer int32) int {
@@ -2601,7 +2659,7 @@ func (m *TLAuthDropTempAuthKeys) CalcSize(layer int32) int {
 func (m *TLAuthDropTempAuthKeys) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_dropTempAuthKeys, int(layer)); clazzId {
 	case 0x8e48a188:
-		if err := iface.ValidateRequiredSlice("except_auth_keys", m.ExceptAuthKeys); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("except_auth_keys", m.ExceptAuthKeys, layer); err != nil {
 			return err
 		}
 
@@ -2654,7 +2712,7 @@ type TLAuthExportLoginToken struct {
 }
 
 func (m *TLAuthExportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_exportLoginToken", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2662,7 +2720,7 @@ func (m *TLAuthExportLoginToken) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_exportLoginToken", m)
 }
 
 func (m *TLAuthExportLoginToken) CalcSize(layer int32) int {
@@ -2686,7 +2744,7 @@ func (m *TLAuthExportLoginToken) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("except_ids", m.ExceptIds); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("except_ids", m.ExceptIds, layer); err != nil {
 			return err
 		}
 
@@ -2748,7 +2806,7 @@ type TLAuthImportLoginToken struct {
 }
 
 func (m *TLAuthImportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_importLoginToken", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2756,7 +2814,7 @@ func (m *TLAuthImportLoginToken) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_importLoginToken", m)
 }
 
 func (m *TLAuthImportLoginToken) CalcSize(layer int32) int {
@@ -2827,7 +2885,7 @@ type TLAuthAcceptLoginToken struct {
 }
 
 func (m *TLAuthAcceptLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_acceptLoginToken", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2835,7 +2893,7 @@ func (m *TLAuthAcceptLoginToken) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_acceptLoginToken", m)
 }
 
 func (m *TLAuthAcceptLoginToken) CalcSize(layer int32) int {
@@ -2906,7 +2964,7 @@ type TLAuthCheckRecoveryPassword struct {
 }
 
 func (m *TLAuthCheckRecoveryPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkRecoveryPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2914,7 +2972,7 @@ func (m *TLAuthCheckRecoveryPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_checkRecoveryPassword", m)
 }
 
 func (m *TLAuthCheckRecoveryPassword) CalcSize(layer int32) int {
@@ -2987,7 +3045,7 @@ type TLAuthImportWebTokenAuthorization struct {
 }
 
 func (m *TLAuthImportWebTokenAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_importWebTokenAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -2995,7 +3053,7 @@ func (m *TLAuthImportWebTokenAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_importWebTokenAuthorization", m)
 }
 
 func (m *TLAuthImportWebTokenAuthorization) CalcSize(layer int32) int {
@@ -3086,7 +3144,7 @@ type TLAuthRequestFirebaseSms struct {
 }
 
 func (m *TLAuthRequestFirebaseSms) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_requestFirebaseSms", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3094,7 +3152,7 @@ func (m *TLAuthRequestFirebaseSms) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_requestFirebaseSms", m)
 }
 
 func (m *TLAuthRequestFirebaseSms) CalcSize(layer int32) int {
@@ -3247,7 +3305,7 @@ type TLAuthResetLoginEmail struct {
 }
 
 func (m *TLAuthResetLoginEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_resetLoginEmail", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3255,7 +3313,7 @@ func (m *TLAuthResetLoginEmail) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_resetLoginEmail", m)
 }
 
 func (m *TLAuthResetLoginEmail) CalcSize(layer int32) int {
@@ -3338,7 +3396,7 @@ type TLAuthReportMissingCode struct {
 }
 
 func (m *TLAuthReportMissingCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_reportMissingCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3346,7 +3404,7 @@ func (m *TLAuthReportMissingCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_reportMissingCode", m)
 }
 
 func (m *TLAuthReportMissingCode) CalcSize(layer int32) int {
@@ -3439,7 +3497,7 @@ type TLAuthCheckPaidAuth struct {
 }
 
 func (m *TLAuthCheckPaidAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkPaidAuth", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3447,7 +3505,7 @@ func (m *TLAuthCheckPaidAuth) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_checkPaidAuth", m)
 }
 
 func (m *TLAuthCheckPaidAuth) CalcSize(layer int32) int {
@@ -3535,7 +3593,7 @@ type TLAuthInitPasskeyLogin struct {
 }
 
 func (m *TLAuthInitPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_initPasskeyLogin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3543,7 +3601,7 @@ func (m *TLAuthInitPasskeyLogin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_initPasskeyLogin", m)
 }
 
 func (m *TLAuthInitPasskeyLogin) CalcSize(layer int32) int {
@@ -3622,7 +3680,7 @@ type TLAuthFinishPasskeyLogin struct {
 }
 
 func (m *TLAuthFinishPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_finishPasskeyLogin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3630,7 +3688,7 @@ func (m *TLAuthFinishPasskeyLogin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_finishPasskeyLogin", m)
 }
 
 func (m *TLAuthFinishPasskeyLogin) CalcSize(layer int32) int {
@@ -3656,7 +3714,7 @@ func (m *TLAuthFinishPasskeyLogin) CalcSize(layer int32) int {
 func (m *TLAuthFinishPasskeyLogin) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_auth_finishPasskeyLogin, int(layer)); clazzId {
 	case 0x9857ad07:
-		if err := iface.ValidateRequiredObject("credential", m.Credential); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("credential", m.Credential, layer); err != nil {
 			return err
 		}
 
@@ -3762,7 +3820,7 @@ type TLAccountRegisterDevice struct {
 }
 
 func (m *TLAccountRegisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_registerDevice", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3770,7 +3828,7 @@ func (m *TLAccountRegisterDevice) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_registerDevice", m)
 }
 
 func (m *TLAccountRegisterDevice) CalcSize(layer int32) int {
@@ -3803,7 +3861,7 @@ func (m *TLAccountRegisterDevice) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("app_sandbox", m.AppSandbox); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("app_sandbox", m.AppSandbox, layer); err != nil {
 			return err
 		}
 
@@ -3811,7 +3869,7 @@ func (m *TLAccountRegisterDevice) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("other_uids", m.OtherUids); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("other_uids", m.OtherUids, layer); err != nil {
 			return err
 		}
 
@@ -3936,7 +3994,7 @@ type TLAccountUnregisterDevice struct {
 }
 
 func (m *TLAccountUnregisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_unregisterDevice", TLObject: m}
 	return wrapper.String()
 }
 
@@ -3944,7 +4002,7 @@ func (m *TLAccountUnregisterDevice) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_unregisterDevice", m)
 }
 
 func (m *TLAccountUnregisterDevice) CalcSize(layer int32) int {
@@ -3974,7 +4032,7 @@ func (m *TLAccountUnregisterDevice) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("other_uids", m.OtherUids); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("other_uids", m.OtherUids, layer); err != nil {
 			return err
 		}
 
@@ -4061,7 +4119,7 @@ type TLAccountUpdateNotifySettings struct {
 }
 
 func (m *TLAccountUpdateNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateNotifySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4069,7 +4127,7 @@ func (m *TLAccountUpdateNotifySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateNotifySettings", m)
 }
 
 func (m *TLAccountUpdateNotifySettings) CalcSize(layer int32) int {
@@ -4088,11 +4146,11 @@ func (m *TLAccountUpdateNotifySettings) CalcSize(layer int32) int {
 func (m *TLAccountUpdateNotifySettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateNotifySettings, int(layer)); clazzId {
 	case 0x84be5b93:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -4158,7 +4216,7 @@ type TLAccountGetNotifySettings struct {
 }
 
 func (m *TLAccountGetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getNotifySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4166,7 +4224,7 @@ func (m *TLAccountGetNotifySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getNotifySettings", m)
 }
 
 func (m *TLAccountGetNotifySettings) CalcSize(layer int32) int {
@@ -4184,7 +4242,7 @@ func (m *TLAccountGetNotifySettings) CalcSize(layer int32) int {
 func (m *TLAccountGetNotifySettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getNotifySettings, int(layer)); clazzId {
 	case 0x12b3ad31:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -4240,7 +4298,7 @@ type TLAccountResetNotifySettings struct {
 }
 
 func (m *TLAccountResetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetNotifySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4248,7 +4306,7 @@ func (m *TLAccountResetNotifySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetNotifySettings", m)
 }
 
 func (m *TLAccountResetNotifySettings) CalcSize(layer int32) int {
@@ -4311,7 +4369,7 @@ type TLAccountUpdateProfile struct {
 }
 
 func (m *TLAccountUpdateProfile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateProfile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4319,7 +4377,7 @@ func (m *TLAccountUpdateProfile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateProfile", m)
 }
 
 func (m *TLAccountUpdateProfile) CalcSize(layer int32) int {
@@ -4452,7 +4510,7 @@ type TLAccountUpdateStatus struct {
 }
 
 func (m *TLAccountUpdateStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4460,7 +4518,7 @@ func (m *TLAccountUpdateStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateStatus", m)
 }
 
 func (m *TLAccountUpdateStatus) CalcSize(layer int32) int {
@@ -4478,7 +4536,7 @@ func (m *TLAccountUpdateStatus) CalcSize(layer int32) int {
 func (m *TLAccountUpdateStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateStatus, int(layer)); clazzId {
 	case 0x6628562c:
-		if err := iface.ValidateRequiredObject("offline", m.Offline); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offline", m.Offline, layer); err != nil {
 			return err
 		}
 
@@ -4535,7 +4593,7 @@ type TLAccountGetWallPapers struct {
 }
 
 func (m *TLAccountGetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getWallPapers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4543,7 +4601,7 @@ func (m *TLAccountGetWallPapers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getWallPapers", m)
 }
 
 func (m *TLAccountGetWallPapers) CalcSize(layer int32) int {
@@ -4613,7 +4671,7 @@ type TLAccountReportPeer struct {
 }
 
 func (m *TLAccountReportPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_reportPeer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4621,7 +4679,7 @@ func (m *TLAccountReportPeer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_reportPeer", m)
 }
 
 func (m *TLAccountReportPeer) CalcSize(layer int32) int {
@@ -4641,11 +4699,11 @@ func (m *TLAccountReportPeer) CalcSize(layer int32) int {
 func (m *TLAccountReportPeer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportPeer, int(layer)); clazzId {
 	case 0xc5ba3d86:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reason", m.Reason, layer); err != nil {
 			return err
 		}
 
@@ -4721,7 +4779,7 @@ type TLAccountCheckUsername struct {
 }
 
 func (m *TLAccountCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_checkUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4729,7 +4787,7 @@ func (m *TLAccountCheckUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_checkUsername", m)
 }
 
 func (m *TLAccountCheckUsername) CalcSize(layer int32) int {
@@ -4800,7 +4858,7 @@ type TLAccountUpdateUsername struct {
 }
 
 func (m *TLAccountUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4808,7 +4866,7 @@ func (m *TLAccountUpdateUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateUsername", m)
 }
 
 func (m *TLAccountUpdateUsername) CalcSize(layer int32) int {
@@ -4879,7 +4937,7 @@ type TLAccountGetPrivacy struct {
 }
 
 func (m *TLAccountGetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getPrivacy", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4887,7 +4945,7 @@ func (m *TLAccountGetPrivacy) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getPrivacy", m)
 }
 
 func (m *TLAccountGetPrivacy) CalcSize(layer int32) int {
@@ -4905,7 +4963,7 @@ func (m *TLAccountGetPrivacy) CalcSize(layer int32) int {
 func (m *TLAccountGetPrivacy) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPrivacy, int(layer)); clazzId {
 	case 0xdadbc950:
-		if err := iface.ValidateRequiredObject("key", m.Key); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("key", m.Key, layer); err != nil {
 			return err
 		}
 
@@ -4963,7 +5021,7 @@ type TLAccountSetPrivacy struct {
 }
 
 func (m *TLAccountSetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setPrivacy", TLObject: m}
 	return wrapper.String()
 }
 
@@ -4971,7 +5029,7 @@ func (m *TLAccountSetPrivacy) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setPrivacy", m)
 }
 
 func (m *TLAccountSetPrivacy) CalcSize(layer int32) int {
@@ -4990,11 +5048,11 @@ func (m *TLAccountSetPrivacy) CalcSize(layer int32) int {
 func (m *TLAccountSetPrivacy) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setPrivacy, int(layer)); clazzId {
 	case 0xc9f81ce8:
-		if err := iface.ValidateRequiredObject("key", m.Key); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("key", m.Key, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("rules", m.Rules); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("rules", m.Rules, layer); err != nil {
 			return err
 		}
 
@@ -5077,7 +5135,7 @@ type TLAccountDeleteAccount struct {
 }
 
 func (m *TLAccountDeleteAccount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteAccount", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5085,7 +5143,7 @@ func (m *TLAccountDeleteAccount) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_deleteAccount", m)
 }
 
 func (m *TLAccountDeleteAccount) CalcSize(layer int32) int {
@@ -5190,7 +5248,7 @@ type TLAccountGetAccountTTL struct {
 }
 
 func (m *TLAccountGetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAccountTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5198,7 +5256,7 @@ func (m *TLAccountGetAccountTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAccountTTL", m)
 }
 
 func (m *TLAccountGetAccountTTL) CalcSize(layer int32) int {
@@ -5259,7 +5317,7 @@ type TLAccountSetAccountTTL struct {
 }
 
 func (m *TLAccountSetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setAccountTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5267,7 +5325,7 @@ func (m *TLAccountSetAccountTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setAccountTTL", m)
 }
 
 func (m *TLAccountSetAccountTTL) CalcSize(layer int32) int {
@@ -5285,7 +5343,7 @@ func (m *TLAccountSetAccountTTL) CalcSize(layer int32) int {
 func (m *TLAccountSetAccountTTL) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setAccountTTL, int(layer)); clazzId {
 	case 0x2442485e:
-		if err := iface.ValidateRequiredObject("ttl", m.Ttl); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("ttl", m.Ttl, layer); err != nil {
 			return err
 		}
 
@@ -5343,7 +5401,7 @@ type TLAccountSendChangePhoneCode struct {
 }
 
 func (m *TLAccountSendChangePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_sendChangePhoneCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5351,7 +5409,7 @@ func (m *TLAccountSendChangePhoneCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_sendChangePhoneCode", m)
 }
 
 func (m *TLAccountSendChangePhoneCode) CalcSize(layer int32) int {
@@ -5374,7 +5432,7 @@ func (m *TLAccountSendChangePhoneCode) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -5438,7 +5496,7 @@ type TLAccountChangePhone struct {
 }
 
 func (m *TLAccountChangePhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_changePhone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5446,7 +5504,7 @@ func (m *TLAccountChangePhone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_changePhone", m)
 }
 
 func (m *TLAccountChangePhone) CalcSize(layer int32) int {
@@ -5537,7 +5595,7 @@ type TLAccountUpdateDeviceLocked struct {
 }
 
 func (m *TLAccountUpdateDeviceLocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateDeviceLocked", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5545,7 +5603,7 @@ func (m *TLAccountUpdateDeviceLocked) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateDeviceLocked", m)
 }
 
 func (m *TLAccountUpdateDeviceLocked) CalcSize(layer int32) int {
@@ -5612,7 +5670,7 @@ type TLAccountGetAuthorizations struct {
 }
 
 func (m *TLAccountGetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAuthorizations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5620,7 +5678,7 @@ func (m *TLAccountGetAuthorizations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAuthorizations", m)
 }
 
 func (m *TLAccountGetAuthorizations) CalcSize(layer int32) int {
@@ -5681,7 +5739,7 @@ type TLAccountResetAuthorization struct {
 }
 
 func (m *TLAccountResetAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5689,7 +5747,7 @@ func (m *TLAccountResetAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetAuthorization", m)
 }
 
 func (m *TLAccountResetAuthorization) CalcSize(layer int32) int {
@@ -5756,7 +5814,7 @@ type TLAccountGetPassword struct {
 }
 
 func (m *TLAccountGetPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5764,7 +5822,7 @@ func (m *TLAccountGetPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getPassword", m)
 }
 
 func (m *TLAccountGetPassword) CalcSize(layer int32) int {
@@ -5825,7 +5883,7 @@ type TLAccountGetPasswordSettings struct {
 }
 
 func (m *TLAccountGetPasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getPasswordSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5833,7 +5891,7 @@ func (m *TLAccountGetPasswordSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getPasswordSettings", m)
 }
 
 func (m *TLAccountGetPasswordSettings) CalcSize(layer int32) int {
@@ -5851,7 +5909,7 @@ func (m *TLAccountGetPasswordSettings) CalcSize(layer int32) int {
 func (m *TLAccountGetPasswordSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPasswordSettings, int(layer)); clazzId {
 	case 0x9cd4eaf9:
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -5909,7 +5967,7 @@ type TLAccountUpdatePasswordSettings struct {
 }
 
 func (m *TLAccountUpdatePasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updatePasswordSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -5917,7 +5975,7 @@ func (m *TLAccountUpdatePasswordSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updatePasswordSettings", m)
 }
 
 func (m *TLAccountUpdatePasswordSettings) CalcSize(layer int32) int {
@@ -5936,11 +5994,11 @@ func (m *TLAccountUpdatePasswordSettings) CalcSize(layer int32) int {
 func (m *TLAccountUpdatePasswordSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePasswordSettings, int(layer)); clazzId {
 	case 0xa59b102f:
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("new_settings", m.NewSettings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("new_settings", m.NewSettings, layer); err != nil {
 			return err
 		}
 
@@ -6007,7 +6065,7 @@ type TLAccountSendConfirmPhoneCode struct {
 }
 
 func (m *TLAccountSendConfirmPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_sendConfirmPhoneCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6015,7 +6073,7 @@ func (m *TLAccountSendConfirmPhoneCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_sendConfirmPhoneCode", m)
 }
 
 func (m *TLAccountSendConfirmPhoneCode) CalcSize(layer int32) int {
@@ -6038,7 +6096,7 @@ func (m *TLAccountSendConfirmPhoneCode) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -6101,7 +6159,7 @@ type TLAccountConfirmPhone struct {
 }
 
 func (m *TLAccountConfirmPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_confirmPhone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6109,7 +6167,7 @@ func (m *TLAccountConfirmPhone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_confirmPhone", m)
 }
 
 func (m *TLAccountConfirmPhone) CalcSize(layer int32) int {
@@ -6191,7 +6249,7 @@ type TLAccountGetTmpPassword struct {
 }
 
 func (m *TLAccountGetTmpPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getTmpPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6199,7 +6257,7 @@ func (m *TLAccountGetTmpPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getTmpPassword", m)
 }
 
 func (m *TLAccountGetTmpPassword) CalcSize(layer int32) int {
@@ -6218,7 +6276,7 @@ func (m *TLAccountGetTmpPassword) CalcSize(layer int32) int {
 func (m *TLAccountGetTmpPassword) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getTmpPassword, int(layer)); clazzId {
 	case 0x449e0b51:
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -6280,7 +6338,7 @@ type TLAccountGetWebAuthorizations struct {
 }
 
 func (m *TLAccountGetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getWebAuthorizations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6288,7 +6346,7 @@ func (m *TLAccountGetWebAuthorizations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getWebAuthorizations", m)
 }
 
 func (m *TLAccountGetWebAuthorizations) CalcSize(layer int32) int {
@@ -6349,7 +6407,7 @@ type TLAccountResetWebAuthorization struct {
 }
 
 func (m *TLAccountResetWebAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWebAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6357,7 +6415,7 @@ func (m *TLAccountResetWebAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetWebAuthorization", m)
 }
 
 func (m *TLAccountResetWebAuthorization) CalcSize(layer int32) int {
@@ -6424,7 +6482,7 @@ type TLAccountResetWebAuthorizations struct {
 }
 
 func (m *TLAccountResetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWebAuthorizations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6432,7 +6490,7 @@ func (m *TLAccountResetWebAuthorizations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetWebAuthorizations", m)
 }
 
 func (m *TLAccountResetWebAuthorizations) CalcSize(layer int32) int {
@@ -6492,7 +6550,7 @@ type TLAccountGetAllSecureValues struct {
 }
 
 func (m *TLAccountGetAllSecureValues) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAllSecureValues", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6500,7 +6558,7 @@ func (m *TLAccountGetAllSecureValues) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAllSecureValues", m)
 }
 
 func (m *TLAccountGetAllSecureValues) CalcSize(layer int32) int {
@@ -6561,7 +6619,7 @@ type TLAccountGetSecureValue struct {
 }
 
 func (m *TLAccountGetSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getSecureValue", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6569,7 +6627,7 @@ func (m *TLAccountGetSecureValue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getSecureValue", m)
 }
 
 func (m *TLAccountGetSecureValue) CalcSize(layer int32) int {
@@ -6587,7 +6645,7 @@ func (m *TLAccountGetSecureValue) CalcSize(layer int32) int {
 func (m *TLAccountGetSecureValue) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getSecureValue, int(layer)); clazzId {
 	case 0x73665bc2:
-		if err := iface.ValidateRequiredSlice("types", m.Types); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("types", m.Types, layer); err != nil {
 			return err
 		}
 
@@ -6659,7 +6717,7 @@ type TLAccountSaveSecureValue struct {
 }
 
 func (m *TLAccountSaveSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveSecureValue", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6667,7 +6725,7 @@ func (m *TLAccountSaveSecureValue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveSecureValue", m)
 }
 
 func (m *TLAccountSaveSecureValue) CalcSize(layer int32) int {
@@ -6686,7 +6744,7 @@ func (m *TLAccountSaveSecureValue) CalcSize(layer int32) int {
 func (m *TLAccountSaveSecureValue) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveSecureValue, int(layer)); clazzId {
 	case 0x899fe31d:
-		if err := iface.ValidateRequiredObject("value", m.Value); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("value", m.Value, layer); err != nil {
 			return err
 		}
 
@@ -6749,7 +6807,7 @@ type TLAccountDeleteSecureValue struct {
 }
 
 func (m *TLAccountDeleteSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteSecureValue", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6757,7 +6815,7 @@ func (m *TLAccountDeleteSecureValue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_deleteSecureValue", m)
 }
 
 func (m *TLAccountDeleteSecureValue) CalcSize(layer int32) int {
@@ -6775,7 +6833,7 @@ func (m *TLAccountDeleteSecureValue) CalcSize(layer int32) int {
 func (m *TLAccountDeleteSecureValue) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_deleteSecureValue, int(layer)); clazzId {
 	case 0xb880bc4b:
-		if err := iface.ValidateRequiredSlice("types", m.Types); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("types", m.Types, layer); err != nil {
 			return err
 		}
 
@@ -6848,7 +6906,7 @@ type TLAccountGetAuthorizationForm struct {
 }
 
 func (m *TLAccountGetAuthorizationForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAuthorizationForm", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6856,7 +6914,7 @@ func (m *TLAccountGetAuthorizationForm) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAuthorizationForm", m)
 }
 
 func (m *TLAccountGetAuthorizationForm) CalcSize(layer int32) int {
@@ -6947,7 +7005,7 @@ type TLAccountAcceptAuthorization struct {
 }
 
 func (m *TLAccountAcceptAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_acceptAuthorization", TLObject: m}
 	return wrapper.String()
 }
 
@@ -6955,7 +7013,7 @@ func (m *TLAccountAcceptAuthorization) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_acceptAuthorization", m)
 }
 
 func (m *TLAccountAcceptAuthorization) CalcSize(layer int32) int {
@@ -6985,11 +7043,11 @@ func (m *TLAccountAcceptAuthorization) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("value_hashes", m.ValueHashes); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("value_hashes", m.ValueHashes, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("credentials", m.Credentials); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("credentials", m.Credentials, layer); err != nil {
 			return err
 		}
 
@@ -7087,7 +7145,7 @@ type TLAccountSendVerifyPhoneCode struct {
 }
 
 func (m *TLAccountSendVerifyPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_sendVerifyPhoneCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7095,7 +7153,7 @@ func (m *TLAccountSendVerifyPhoneCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_sendVerifyPhoneCode", m)
 }
 
 func (m *TLAccountSendVerifyPhoneCode) CalcSize(layer int32) int {
@@ -7118,7 +7176,7 @@ func (m *TLAccountSendVerifyPhoneCode) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -7182,7 +7240,7 @@ type TLAccountVerifyPhone struct {
 }
 
 func (m *TLAccountVerifyPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_verifyPhone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7190,7 +7248,7 @@ func (m *TLAccountVerifyPhone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_verifyPhone", m)
 }
 
 func (m *TLAccountVerifyPhone) CalcSize(layer int32) int {
@@ -7282,7 +7340,7 @@ type TLAccountSendVerifyEmailCode struct {
 }
 
 func (m *TLAccountSendVerifyEmailCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_sendVerifyEmailCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7290,7 +7348,7 @@ func (m *TLAccountSendVerifyEmailCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_sendVerifyEmailCode", m)
 }
 
 func (m *TLAccountSendVerifyEmailCode) CalcSize(layer int32) int {
@@ -7309,7 +7367,7 @@ func (m *TLAccountSendVerifyEmailCode) CalcSize(layer int32) int {
 func (m *TLAccountSendVerifyEmailCode) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_sendVerifyEmailCode, int(layer)); clazzId {
 	case 0x98e037bb:
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
@@ -7377,7 +7435,7 @@ type TLAccountVerifyEmail struct {
 }
 
 func (m *TLAccountVerifyEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_verifyEmail", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7385,7 +7443,7 @@ func (m *TLAccountVerifyEmail) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_verifyEmail", m)
 }
 
 func (m *TLAccountVerifyEmail) CalcSize(layer int32) int {
@@ -7404,11 +7462,11 @@ func (m *TLAccountVerifyEmail) CalcSize(layer int32) int {
 func (m *TLAccountVerifyEmail) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_verifyEmail, int(layer)); clazzId {
 	case 0x32da4cf:
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("verification", m.Verification); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("verification", m.Verification, layer); err != nil {
 			return err
 		}
 
@@ -7480,7 +7538,7 @@ type TLAccountInitTakeoutSession struct {
 }
 
 func (m *TLAccountInitTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_initTakeoutSession", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7488,7 +7546,7 @@ func (m *TLAccountInitTakeoutSession) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_initTakeoutSession", m)
 }
 
 func (m *TLAccountInitTakeoutSession) CalcSize(layer int32) int {
@@ -7619,7 +7677,7 @@ type TLAccountFinishTakeoutSession struct {
 }
 
 func (m *TLAccountFinishTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_finishTakeoutSession", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7627,7 +7685,7 @@ func (m *TLAccountFinishTakeoutSession) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_finishTakeoutSession", m)
 }
 
 func (m *TLAccountFinishTakeoutSession) CalcSize(layer int32) int {
@@ -7712,7 +7770,7 @@ type TLAccountConfirmPasswordEmail struct {
 }
 
 func (m *TLAccountConfirmPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_confirmPasswordEmail", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7720,7 +7778,7 @@ func (m *TLAccountConfirmPasswordEmail) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_confirmPasswordEmail", m)
 }
 
 func (m *TLAccountConfirmPasswordEmail) CalcSize(layer int32) int {
@@ -7790,7 +7848,7 @@ type TLAccountResendPasswordEmail struct {
 }
 
 func (m *TLAccountResendPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resendPasswordEmail", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7798,7 +7856,7 @@ func (m *TLAccountResendPasswordEmail) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resendPasswordEmail", m)
 }
 
 func (m *TLAccountResendPasswordEmail) CalcSize(layer int32) int {
@@ -7858,7 +7916,7 @@ type TLAccountCancelPasswordEmail struct {
 }
 
 func (m *TLAccountCancelPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_cancelPasswordEmail", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7866,7 +7924,7 @@ func (m *TLAccountCancelPasswordEmail) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_cancelPasswordEmail", m)
 }
 
 func (m *TLAccountCancelPasswordEmail) CalcSize(layer int32) int {
@@ -7926,7 +7984,7 @@ type TLAccountGetContactSignUpNotification struct {
 }
 
 func (m *TLAccountGetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getContactSignUpNotification", TLObject: m}
 	return wrapper.String()
 }
 
@@ -7934,7 +7992,7 @@ func (m *TLAccountGetContactSignUpNotification) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getContactSignUpNotification", m)
 }
 
 func (m *TLAccountGetContactSignUpNotification) CalcSize(layer int32) int {
@@ -7995,7 +8053,7 @@ type TLAccountSetContactSignUpNotification struct {
 }
 
 func (m *TLAccountSetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setContactSignUpNotification", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8003,7 +8061,7 @@ func (m *TLAccountSetContactSignUpNotification) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setContactSignUpNotification", m)
 }
 
 func (m *TLAccountSetContactSignUpNotification) CalcSize(layer int32) int {
@@ -8021,7 +8079,7 @@ func (m *TLAccountSetContactSignUpNotification) CalcSize(layer int32) int {
 func (m *TLAccountSetContactSignUpNotification) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setContactSignUpNotification, int(layer)); clazzId {
 	case 0xcff43f61:
-		if err := iface.ValidateRequiredObject("silent", m.Silent); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("silent", m.Silent, layer); err != nil {
 			return err
 		}
 
@@ -8080,7 +8138,7 @@ type TLAccountGetNotifyExceptions struct {
 }
 
 func (m *TLAccountGetNotifyExceptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getNotifyExceptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8088,7 +8146,7 @@ func (m *TLAccountGetNotifyExceptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getNotifyExceptions", m)
 }
 
 func (m *TLAccountGetNotifyExceptions) CalcSize(layer int32) int {
@@ -8197,7 +8255,7 @@ type TLAccountGetWallPaper struct {
 }
 
 func (m *TLAccountGetWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getWallPaper", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8205,7 +8263,7 @@ func (m *TLAccountGetWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getWallPaper", m)
 }
 
 func (m *TLAccountGetWallPaper) CalcSize(layer int32) int {
@@ -8223,7 +8281,7 @@ func (m *TLAccountGetWallPaper) CalcSize(layer int32) int {
 func (m *TLAccountGetWallPaper) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getWallPaper, int(layer)); clazzId {
 	case 0xfc8ddbea:
-		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("wallpaper", m.Wallpaper, layer); err != nil {
 			return err
 		}
 
@@ -8283,7 +8341,7 @@ type TLAccountUploadWallPaper struct {
 }
 
 func (m *TLAccountUploadWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadWallPaper", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8291,7 +8349,7 @@ func (m *TLAccountUploadWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_uploadWallPaper", m)
 }
 
 func (m *TLAccountUploadWallPaper) CalcSize(layer int32) int {
@@ -8312,7 +8370,7 @@ func (m *TLAccountUploadWallPaper) CalcSize(layer int32) int {
 func (m *TLAccountUploadWallPaper) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadWallPaper, int(layer)); clazzId {
 	case 0xe39a8f03:
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -8320,7 +8378,7 @@ func (m *TLAccountUploadWallPaper) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -8416,7 +8474,7 @@ type TLAccountSaveWallPaper struct {
 }
 
 func (m *TLAccountSaveWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveWallPaper", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8424,7 +8482,7 @@ func (m *TLAccountSaveWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveWallPaper", m)
 }
 
 func (m *TLAccountSaveWallPaper) CalcSize(layer int32) int {
@@ -8444,15 +8502,15 @@ func (m *TLAccountSaveWallPaper) CalcSize(layer int32) int {
 func (m *TLAccountSaveWallPaper) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveWallPaper, int(layer)); clazzId {
 	case 0x6c5a5b37:
-		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("wallpaper", m.Wallpaper, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unsave", m.Unsave, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -8528,7 +8586,7 @@ type TLAccountInstallWallPaper struct {
 }
 
 func (m *TLAccountInstallWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_installWallPaper", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8536,7 +8594,7 @@ func (m *TLAccountInstallWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_installWallPaper", m)
 }
 
 func (m *TLAccountInstallWallPaper) CalcSize(layer int32) int {
@@ -8555,11 +8613,11 @@ func (m *TLAccountInstallWallPaper) CalcSize(layer int32) int {
 func (m *TLAccountInstallWallPaper) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_installWallPaper, int(layer)); clazzId {
 	case 0xfeed5769:
-		if err := iface.ValidateRequiredObject("wallpaper", m.Wallpaper); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("wallpaper", m.Wallpaper, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -8624,7 +8682,7 @@ type TLAccountResetWallPapers struct {
 }
 
 func (m *TLAccountResetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWallPapers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8632,7 +8690,7 @@ func (m *TLAccountResetWallPapers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetWallPapers", m)
 }
 
 func (m *TLAccountResetWallPapers) CalcSize(layer int32) int {
@@ -8692,7 +8750,7 @@ type TLAccountGetAutoDownloadSettings struct {
 }
 
 func (m *TLAccountGetAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAutoDownloadSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8700,7 +8758,7 @@ func (m *TLAccountGetAutoDownloadSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAutoDownloadSettings", m)
 }
 
 func (m *TLAccountGetAutoDownloadSettings) CalcSize(layer int32) int {
@@ -8763,7 +8821,7 @@ type TLAccountSaveAutoDownloadSettings struct {
 }
 
 func (m *TLAccountSaveAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveAutoDownloadSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8771,7 +8829,7 @@ func (m *TLAccountSaveAutoDownloadSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveAutoDownloadSettings", m)
 }
 
 func (m *TLAccountSaveAutoDownloadSettings) CalcSize(layer int32) int {
@@ -8790,7 +8848,7 @@ func (m *TLAccountSaveAutoDownloadSettings) CalcSize(layer int32) int {
 func (m *TLAccountSaveAutoDownloadSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoDownloadSettings, int(layer)); clazzId {
 	case 0x76f36233:
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -8878,7 +8936,7 @@ type TLAccountUploadTheme struct {
 }
 
 func (m *TLAccountUploadTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -8886,7 +8944,7 @@ func (m *TLAccountUploadTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_uploadTheme", m)
 }
 
 func (m *TLAccountUploadTheme) CalcSize(layer int32) int {
@@ -8911,7 +8969,7 @@ func (m *TLAccountUploadTheme) CalcSize(layer int32) int {
 func (m *TLAccountUploadTheme) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadTheme, int(layer)); clazzId {
 	case 0x1c3db333:
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -9022,7 +9080,7 @@ type TLAccountCreateTheme struct {
 }
 
 func (m *TLAccountCreateTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_createTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9030,7 +9088,7 @@ func (m *TLAccountCreateTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_createTheme", m)
 }
 
 func (m *TLAccountCreateTheme) CalcSize(layer int32) int {
@@ -9186,7 +9244,7 @@ type TLAccountUpdateTheme struct {
 }
 
 func (m *TLAccountUpdateTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9194,7 +9252,7 @@ func (m *TLAccountUpdateTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateTheme", m)
 }
 
 func (m *TLAccountUpdateTheme) CalcSize(layer int32) int {
@@ -9233,7 +9291,7 @@ func (m *TLAccountUpdateTheme) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("theme", m.Theme, layer); err != nil {
 			return err
 		}
 
@@ -9389,7 +9447,7 @@ type TLAccountSaveTheme struct {
 }
 
 func (m *TLAccountSaveTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9397,7 +9455,7 @@ func (m *TLAccountSaveTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveTheme", m)
 }
 
 func (m *TLAccountSaveTheme) CalcSize(layer int32) int {
@@ -9416,11 +9474,11 @@ func (m *TLAccountSaveTheme) CalcSize(layer int32) int {
 func (m *TLAccountSaveTheme) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveTheme, int(layer)); clazzId {
 	case 0xf257106c:
-		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("theme", m.Theme, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unsave", m.Unsave, layer); err != nil {
 			return err
 		}
 
@@ -9489,7 +9547,7 @@ type TLAccountInstallTheme struct {
 }
 
 func (m *TLAccountInstallTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_installTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9497,7 +9555,7 @@ func (m *TLAccountInstallTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_installTheme", m)
 }
 
 func (m *TLAccountInstallTheme) CalcSize(layer int32) int {
@@ -9715,7 +9773,7 @@ type TLAccountGetTheme struct {
 }
 
 func (m *TLAccountGetTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9723,7 +9781,7 @@ func (m *TLAccountGetTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getTheme", m)
 }
 
 func (m *TLAccountGetTheme) CalcSize(layer int32) int {
@@ -9746,7 +9804,7 @@ func (m *TLAccountGetTheme) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("theme", m.Theme, layer); err != nil {
 			return err
 		}
 
@@ -9809,7 +9867,7 @@ type TLAccountGetThemes struct {
 }
 
 func (m *TLAccountGetThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getThemes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9817,7 +9875,7 @@ func (m *TLAccountGetThemes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getThemes", m)
 }
 
 func (m *TLAccountGetThemes) CalcSize(layer int32) int {
@@ -9894,7 +9952,7 @@ type TLAccountSetContentSettings struct {
 }
 
 func (m *TLAccountSetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setContentSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9902,7 +9960,7 @@ func (m *TLAccountSetContentSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setContentSettings", m)
 }
 
 func (m *TLAccountSetContentSettings) CalcSize(layer int32) int {
@@ -9986,7 +10044,7 @@ type TLAccountGetContentSettings struct {
 }
 
 func (m *TLAccountGetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getContentSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -9994,7 +10052,7 @@ func (m *TLAccountGetContentSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getContentSettings", m)
 }
 
 func (m *TLAccountGetContentSettings) CalcSize(layer int32) int {
@@ -10055,7 +10113,7 @@ type TLAccountGetMultiWallPapers struct {
 }
 
 func (m *TLAccountGetMultiWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getMultiWallPapers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10063,7 +10121,7 @@ func (m *TLAccountGetMultiWallPapers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getMultiWallPapers", m)
 }
 
 func (m *TLAccountGetMultiWallPapers) CalcSize(layer int32) int {
@@ -10081,7 +10139,7 @@ func (m *TLAccountGetMultiWallPapers) CalcSize(layer int32) int {
 func (m *TLAccountGetMultiWallPapers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getMultiWallPapers, int(layer)); clazzId {
 	case 0x65ad71dc:
-		if err := iface.ValidateRequiredSlice("wallpapers", m.Wallpapers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("wallpapers", m.Wallpapers, layer); err != nil {
 			return err
 		}
 
@@ -10151,7 +10209,7 @@ type TLAccountGetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountGetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getGlobalPrivacySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10159,7 +10217,7 @@ func (m *TLAccountGetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getGlobalPrivacySettings", m)
 }
 
 func (m *TLAccountGetGlobalPrivacySettings) CalcSize(layer int32) int {
@@ -10220,7 +10278,7 @@ type TLAccountSetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountSetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setGlobalPrivacySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10228,7 +10286,7 @@ func (m *TLAccountSetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setGlobalPrivacySettings", m)
 }
 
 func (m *TLAccountSetGlobalPrivacySettings) CalcSize(layer int32) int {
@@ -10246,7 +10304,7 @@ func (m *TLAccountSetGlobalPrivacySettings) CalcSize(layer int32) int {
 func (m *TLAccountSetGlobalPrivacySettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setGlobalPrivacySettings, int(layer)); clazzId {
 	case 0x1edaaac2:
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -10306,7 +10364,7 @@ type TLAccountReportProfilePhoto struct {
 }
 
 func (m *TLAccountReportProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_reportProfilePhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10314,7 +10372,7 @@ func (m *TLAccountReportProfilePhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_reportProfilePhoto", m)
 }
 
 func (m *TLAccountReportProfilePhoto) CalcSize(layer int32) int {
@@ -10335,15 +10393,15 @@ func (m *TLAccountReportProfilePhoto) CalcSize(layer int32) int {
 func (m *TLAccountReportProfilePhoto) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reportProfilePhoto, int(layer)); clazzId {
 	case 0xfa8cc6f5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("photo_id", m.PhotoId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("photo_id", m.PhotoId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reason", m.Reason, layer); err != nil {
 			return err
 		}
 
@@ -10427,7 +10485,7 @@ type TLAccountResetPassword struct {
 }
 
 func (m *TLAccountResetPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resetPassword", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10435,7 +10493,7 @@ func (m *TLAccountResetPassword) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resetPassword", m)
 }
 
 func (m *TLAccountResetPassword) CalcSize(layer int32) int {
@@ -10495,7 +10553,7 @@ type TLAccountDeclinePasswordReset struct {
 }
 
 func (m *TLAccountDeclinePasswordReset) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_declinePasswordReset", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10503,7 +10561,7 @@ func (m *TLAccountDeclinePasswordReset) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_declinePasswordReset", m)
 }
 
 func (m *TLAccountDeclinePasswordReset) CalcSize(layer int32) int {
@@ -10564,7 +10622,7 @@ type TLAccountGetChatThemes struct {
 }
 
 func (m *TLAccountGetChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getChatThemes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10572,7 +10630,7 @@ func (m *TLAccountGetChatThemes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getChatThemes", m)
 }
 
 func (m *TLAccountGetChatThemes) CalcSize(layer int32) int {
@@ -10640,7 +10698,7 @@ type TLAccountSetAuthorizationTTL struct {
 }
 
 func (m *TLAccountSetAuthorizationTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setAuthorizationTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10648,7 +10706,7 @@ func (m *TLAccountSetAuthorizationTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setAuthorizationTTL", m)
 }
 
 func (m *TLAccountSetAuthorizationTTL) CalcSize(layer int32) int {
@@ -10719,7 +10777,7 @@ type TLAccountChangeAuthorizationSettings struct {
 }
 
 func (m *TLAccountChangeAuthorizationSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_changeAuthorizationSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10727,7 +10785,7 @@ func (m *TLAccountChangeAuthorizationSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_changeAuthorizationSettings", m)
 }
 
 func (m *TLAccountChangeAuthorizationSettings) CalcSize(layer int32) int {
@@ -10857,7 +10915,7 @@ type TLAccountGetSavedRingtones struct {
 }
 
 func (m *TLAccountGetSavedRingtones) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getSavedRingtones", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10865,7 +10923,7 @@ func (m *TLAccountGetSavedRingtones) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getSavedRingtones", m)
 }
 
 func (m *TLAccountGetSavedRingtones) CalcSize(layer int32) int {
@@ -10934,7 +10992,7 @@ type TLAccountSaveRingtone struct {
 }
 
 func (m *TLAccountSaveRingtone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveRingtone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -10942,7 +11000,7 @@ func (m *TLAccountSaveRingtone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveRingtone", m)
 }
 
 func (m *TLAccountSaveRingtone) CalcSize(layer int32) int {
@@ -10961,11 +11019,11 @@ func (m *TLAccountSaveRingtone) CalcSize(layer int32) int {
 func (m *TLAccountSaveRingtone) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveRingtone, int(layer)); clazzId {
 	case 0x3dea5b03:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unsave", m.Unsave, layer); err != nil {
 			return err
 		}
 
@@ -11033,7 +11091,7 @@ type TLAccountUploadRingtone struct {
 }
 
 func (m *TLAccountUploadRingtone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadRingtone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11041,7 +11099,7 @@ func (m *TLAccountUploadRingtone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_uploadRingtone", m)
 }
 
 func (m *TLAccountUploadRingtone) CalcSize(layer int32) int {
@@ -11061,7 +11119,7 @@ func (m *TLAccountUploadRingtone) CalcSize(layer int32) int {
 func (m *TLAccountUploadRingtone) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_uploadRingtone, int(layer)); clazzId {
 	case 0x831a83a2:
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -11137,7 +11195,7 @@ type TLAccountUpdateEmojiStatus struct {
 }
 
 func (m *TLAccountUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateEmojiStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11145,7 +11203,7 @@ func (m *TLAccountUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateEmojiStatus", m)
 }
 
 func (m *TLAccountUpdateEmojiStatus) CalcSize(layer int32) int {
@@ -11163,7 +11221,7 @@ func (m *TLAccountUpdateEmojiStatus) CalcSize(layer int32) int {
 func (m *TLAccountUpdateEmojiStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateEmojiStatus, int(layer)); clazzId {
 	case 0xfbd3de6b:
-		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("emoji_status", m.EmojiStatus, layer); err != nil {
 			return err
 		}
 
@@ -11220,7 +11278,7 @@ type TLAccountGetDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultEmojiStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11228,7 +11286,7 @@ func (m *TLAccountGetDefaultEmojiStatuses) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getDefaultEmojiStatuses", m)
 }
 
 func (m *TLAccountGetDefaultEmojiStatuses) CalcSize(layer int32) int {
@@ -11296,7 +11354,7 @@ type TLAccountGetRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountGetRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getRecentEmojiStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11304,7 +11362,7 @@ func (m *TLAccountGetRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getRecentEmojiStatuses", m)
 }
 
 func (m *TLAccountGetRecentEmojiStatuses) CalcSize(layer int32) int {
@@ -11371,7 +11429,7 @@ type TLAccountClearRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountClearRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_clearRecentEmojiStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11379,7 +11437,7 @@ func (m *TLAccountClearRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_clearRecentEmojiStatuses", m)
 }
 
 func (m *TLAccountClearRecentEmojiStatuses) CalcSize(layer int32) int {
@@ -11440,7 +11498,7 @@ type TLAccountReorderUsernames struct {
 }
 
 func (m *TLAccountReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_reorderUsernames", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11448,7 +11506,7 @@ func (m *TLAccountReorderUsernames) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_reorderUsernames", m)
 }
 
 func (m *TLAccountReorderUsernames) CalcSize(layer int32) int {
@@ -11466,7 +11524,7 @@ func (m *TLAccountReorderUsernames) CalcSize(layer int32) int {
 func (m *TLAccountReorderUsernames) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_reorderUsernames, int(layer)); clazzId {
 	case 0xef500eab:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -11518,7 +11576,7 @@ type TLAccountToggleUsername struct {
 }
 
 func (m *TLAccountToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11526,7 +11584,7 @@ func (m *TLAccountToggleUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_toggleUsername", m)
 }
 
 func (m *TLAccountToggleUsername) CalcSize(layer int32) int {
@@ -11549,7 +11607,7 @@ func (m *TLAccountToggleUsername) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("active", m.Active, layer); err != nil {
 			return err
 		}
 
@@ -11611,7 +11669,7 @@ type TLAccountGetDefaultProfilePhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultProfilePhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultProfilePhotoEmojis", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11619,7 +11677,7 @@ func (m *TLAccountGetDefaultProfilePhotoEmojis) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getDefaultProfilePhotoEmojis", m)
 }
 
 func (m *TLAccountGetDefaultProfilePhotoEmojis) CalcSize(layer int32) int {
@@ -11687,7 +11745,7 @@ type TLAccountGetDefaultGroupPhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultGroupPhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultGroupPhotoEmojis", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11695,7 +11753,7 @@ func (m *TLAccountGetDefaultGroupPhotoEmojis) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getDefaultGroupPhotoEmojis", m)
 }
 
 func (m *TLAccountGetDefaultGroupPhotoEmojis) CalcSize(layer int32) int {
@@ -11762,7 +11820,7 @@ type TLAccountGetAutoSaveSettings struct {
 }
 
 func (m *TLAccountGetAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getAutoSaveSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11770,7 +11828,7 @@ func (m *TLAccountGetAutoSaveSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getAutoSaveSettings", m)
 }
 
 func (m *TLAccountGetAutoSaveSettings) CalcSize(layer int32) int {
@@ -11835,7 +11893,7 @@ type TLAccountSaveAutoSaveSettings struct {
 }
 
 func (m *TLAccountSaveAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveAutoSaveSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11843,7 +11901,7 @@ func (m *TLAccountSaveAutoSaveSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveAutoSaveSettings", m)
 }
 
 func (m *TLAccountSaveAutoSaveSettings) CalcSize(layer int32) int {
@@ -11867,7 +11925,7 @@ func (m *TLAccountSaveAutoSaveSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveAutoSaveSettings, int(layer)); clazzId {
 	case 0xd69b8361:
 
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -11973,7 +12031,7 @@ type TLAccountDeleteAutoSaveExceptions struct {
 }
 
 func (m *TLAccountDeleteAutoSaveExceptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteAutoSaveExceptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -11981,7 +12039,7 @@ func (m *TLAccountDeleteAutoSaveExceptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_deleteAutoSaveExceptions", m)
 }
 
 func (m *TLAccountDeleteAutoSaveExceptions) CalcSize(layer int32) int {
@@ -12042,7 +12100,7 @@ type TLAccountInvalidateSignInCodes struct {
 }
 
 func (m *TLAccountInvalidateSignInCodes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_invalidateSignInCodes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12050,7 +12108,7 @@ func (m *TLAccountInvalidateSignInCodes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_invalidateSignInCodes", m)
 }
 
 func (m *TLAccountInvalidateSignInCodes) CalcSize(layer int32) int {
@@ -12068,7 +12126,7 @@ func (m *TLAccountInvalidateSignInCodes) CalcSize(layer int32) int {
 func (m *TLAccountInvalidateSignInCodes) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_invalidateSignInCodes, int(layer)); clazzId {
 	case 0xca8ae8ba:
-		if err := iface.ValidateRequiredSlice("codes", m.Codes); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("codes", m.Codes, layer); err != nil {
 			return err
 		}
 
@@ -12120,7 +12178,7 @@ type TLAccountUpdateColor struct {
 }
 
 func (m *TLAccountUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateColor", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12128,7 +12186,7 @@ func (m *TLAccountUpdateColor) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateColor", m)
 }
 
 func (m *TLAccountUpdateColor) CalcSize(layer int32) int {
@@ -12231,7 +12289,7 @@ type TLAccountGetDefaultBackgroundEmojis struct {
 }
 
 func (m *TLAccountGetDefaultBackgroundEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultBackgroundEmojis", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12239,7 +12297,7 @@ func (m *TLAccountGetDefaultBackgroundEmojis) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getDefaultBackgroundEmojis", m)
 }
 
 func (m *TLAccountGetDefaultBackgroundEmojis) CalcSize(layer int32) int {
@@ -12307,7 +12365,7 @@ type TLAccountGetChannelDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetChannelDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getChannelDefaultEmojiStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12315,7 +12373,7 @@ func (m *TLAccountGetChannelDefaultEmojiStatuses) MarshalJSON() ([]byte, error) 
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getChannelDefaultEmojiStatuses", m)
 }
 
 func (m *TLAccountGetChannelDefaultEmojiStatuses) CalcSize(layer int32) int {
@@ -12383,7 +12441,7 @@ type TLAccountGetChannelRestrictedStatusEmojis struct {
 }
 
 func (m *TLAccountGetChannelRestrictedStatusEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getChannelRestrictedStatusEmojis", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12391,7 +12449,7 @@ func (m *TLAccountGetChannelRestrictedStatusEmojis) MarshalJSON() ([]byte, error
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getChannelRestrictedStatusEmojis", m)
 }
 
 func (m *TLAccountGetChannelRestrictedStatusEmojis) CalcSize(layer int32) int {
@@ -12459,7 +12517,7 @@ type TLAccountUpdateBusinessWorkHours struct {
 }
 
 func (m *TLAccountUpdateBusinessWorkHours) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessWorkHours", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12467,7 +12525,7 @@ func (m *TLAccountUpdateBusinessWorkHours) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBusinessWorkHours", m)
 }
 
 func (m *TLAccountUpdateBusinessWorkHours) CalcSize(layer int32) int {
@@ -12565,7 +12623,7 @@ type TLAccountUpdateBusinessLocation struct {
 }
 
 func (m *TLAccountUpdateBusinessLocation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessLocation", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12573,7 +12631,7 @@ func (m *TLAccountUpdateBusinessLocation) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBusinessLocation", m)
 }
 
 func (m *TLAccountUpdateBusinessLocation) CalcSize(layer int32) int {
@@ -12688,7 +12746,7 @@ type TLAccountUpdateBusinessGreetingMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessGreetingMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessGreetingMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12696,7 +12754,7 @@ func (m *TLAccountUpdateBusinessGreetingMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBusinessGreetingMessage", m)
 }
 
 func (m *TLAccountUpdateBusinessGreetingMessage) CalcSize(layer int32) int {
@@ -12793,7 +12851,7 @@ type TLAccountUpdateBusinessAwayMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessAwayMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessAwayMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12801,7 +12859,7 @@ func (m *TLAccountUpdateBusinessAwayMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBusinessAwayMessage", m)
 }
 
 func (m *TLAccountUpdateBusinessAwayMessage) CalcSize(layer int32) int {
@@ -12901,7 +12959,7 @@ type TLAccountUpdateConnectedBot struct {
 }
 
 func (m *TLAccountUpdateConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateConnectedBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -12909,7 +12967,7 @@ func (m *TLAccountUpdateConnectedBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateConnectedBot", m)
 }
 
 func (m *TLAccountUpdateConnectedBot) CalcSize(layer int32) int {
@@ -12934,11 +12992,11 @@ func (m *TLAccountUpdateConnectedBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updateConnectedBot, int(layer)); clazzId {
 	case 0x66a08c7e:
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("recipients", m.Recipients); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("recipients", m.Recipients, layer); err != nil {
 			return err
 		}
 
@@ -13041,7 +13099,7 @@ type TLAccountGetConnectedBots struct {
 }
 
 func (m *TLAccountGetConnectedBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getConnectedBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13049,7 +13107,7 @@ func (m *TLAccountGetConnectedBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getConnectedBots", m)
 }
 
 func (m *TLAccountGetConnectedBots) CalcSize(layer int32) int {
@@ -13110,7 +13168,7 @@ type TLAccountGetBotBusinessConnection struct {
 }
 
 func (m *TLAccountGetBotBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getBotBusinessConnection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13118,7 +13176,7 @@ func (m *TLAccountGetBotBusinessConnection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getBotBusinessConnection", m)
 }
 
 func (m *TLAccountGetBotBusinessConnection) CalcSize(layer int32) int {
@@ -13189,7 +13247,7 @@ type TLAccountUpdateBusinessIntro struct {
 }
 
 func (m *TLAccountUpdateBusinessIntro) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessIntro", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13197,7 +13255,7 @@ func (m *TLAccountUpdateBusinessIntro) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBusinessIntro", m)
 }
 
 func (m *TLAccountUpdateBusinessIntro) CalcSize(layer int32) int {
@@ -13295,7 +13353,7 @@ type TLAccountToggleConnectedBotPaused struct {
 }
 
 func (m *TLAccountToggleConnectedBotPaused) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleConnectedBotPaused", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13303,7 +13361,7 @@ func (m *TLAccountToggleConnectedBotPaused) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_toggleConnectedBotPaused", m)
 }
 
 func (m *TLAccountToggleConnectedBotPaused) CalcSize(layer int32) int {
@@ -13322,11 +13380,11 @@ func (m *TLAccountToggleConnectedBotPaused) CalcSize(layer int32) int {
 func (m *TLAccountToggleConnectedBotPaused) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleConnectedBotPaused, int(layer)); clazzId {
 	case 0x646e1097:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("paused", m.Paused); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("paused", m.Paused, layer); err != nil {
 			return err
 		}
 
@@ -13392,7 +13450,7 @@ type TLAccountDisablePeerConnectedBot struct {
 }
 
 func (m *TLAccountDisablePeerConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_disablePeerConnectedBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13400,7 +13458,7 @@ func (m *TLAccountDisablePeerConnectedBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_disablePeerConnectedBot", m)
 }
 
 func (m *TLAccountDisablePeerConnectedBot) CalcSize(layer int32) int {
@@ -13418,7 +13476,7 @@ func (m *TLAccountDisablePeerConnectedBot) CalcSize(layer int32) int {
 func (m *TLAccountDisablePeerConnectedBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_disablePeerConnectedBot, int(layer)); clazzId {
 	case 0x5e437ed9:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -13475,7 +13533,7 @@ type TLAccountUpdateBirthday struct {
 }
 
 func (m *TLAccountUpdateBirthday) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBirthday", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13483,7 +13541,7 @@ func (m *TLAccountUpdateBirthday) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateBirthday", m)
 }
 
 func (m *TLAccountUpdateBirthday) CalcSize(layer int32) int {
@@ -13580,7 +13638,7 @@ type TLAccountCreateBusinessChatLink struct {
 }
 
 func (m *TLAccountCreateBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_createBusinessChatLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13588,7 +13646,7 @@ func (m *TLAccountCreateBusinessChatLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_createBusinessChatLink", m)
 }
 
 func (m *TLAccountCreateBusinessChatLink) CalcSize(layer int32) int {
@@ -13606,7 +13664,7 @@ func (m *TLAccountCreateBusinessChatLink) CalcSize(layer int32) int {
 func (m *TLAccountCreateBusinessChatLink) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_createBusinessChatLink, int(layer)); clazzId {
 	case 0x8851e68e:
-		if err := iface.ValidateRequiredObject("link", m.Link); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("link", m.Link, layer); err != nil {
 			return err
 		}
 
@@ -13664,7 +13722,7 @@ type TLAccountEditBusinessChatLink struct {
 }
 
 func (m *TLAccountEditBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_editBusinessChatLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13672,7 +13730,7 @@ func (m *TLAccountEditBusinessChatLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_editBusinessChatLink", m)
 }
 
 func (m *TLAccountEditBusinessChatLink) CalcSize(layer int32) int {
@@ -13695,7 +13753,7 @@ func (m *TLAccountEditBusinessChatLink) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("link", m.Link); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("link", m.Link, layer); err != nil {
 			return err
 		}
 
@@ -13757,7 +13815,7 @@ type TLAccountDeleteBusinessChatLink struct {
 }
 
 func (m *TLAccountDeleteBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteBusinessChatLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13765,7 +13823,7 @@ func (m *TLAccountDeleteBusinessChatLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_deleteBusinessChatLink", m)
 }
 
 func (m *TLAccountDeleteBusinessChatLink) CalcSize(layer int32) int {
@@ -13835,7 +13893,7 @@ type TLAccountGetBusinessChatLinks struct {
 }
 
 func (m *TLAccountGetBusinessChatLinks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getBusinessChatLinks", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13843,7 +13901,7 @@ func (m *TLAccountGetBusinessChatLinks) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getBusinessChatLinks", m)
 }
 
 func (m *TLAccountGetBusinessChatLinks) CalcSize(layer int32) int {
@@ -13904,7 +13962,7 @@ type TLAccountResolveBusinessChatLink struct {
 }
 
 func (m *TLAccountResolveBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_resolveBusinessChatLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13912,7 +13970,7 @@ func (m *TLAccountResolveBusinessChatLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_resolveBusinessChatLink", m)
 }
 
 func (m *TLAccountResolveBusinessChatLink) CalcSize(layer int32) int {
@@ -13983,7 +14041,7 @@ type TLAccountUpdatePersonalChannel struct {
 }
 
 func (m *TLAccountUpdatePersonalChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updatePersonalChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -13991,7 +14049,7 @@ func (m *TLAccountUpdatePersonalChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updatePersonalChannel", m)
 }
 
 func (m *TLAccountUpdatePersonalChannel) CalcSize(layer int32) int {
@@ -14009,7 +14067,7 @@ func (m *TLAccountUpdatePersonalChannel) CalcSize(layer int32) int {
 func (m *TLAccountUpdatePersonalChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_updatePersonalChannel, int(layer)); clazzId {
 	case 0xd94305e0:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -14066,7 +14124,7 @@ type TLAccountToggleSponsoredMessages struct {
 }
 
 func (m *TLAccountToggleSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleSponsoredMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14074,7 +14132,7 @@ func (m *TLAccountToggleSponsoredMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_toggleSponsoredMessages", m)
 }
 
 func (m *TLAccountToggleSponsoredMessages) CalcSize(layer int32) int {
@@ -14092,7 +14150,7 @@ func (m *TLAccountToggleSponsoredMessages) CalcSize(layer int32) int {
 func (m *TLAccountToggleSponsoredMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleSponsoredMessages, int(layer)); clazzId {
 	case 0xb9d9a38d:
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -14148,7 +14206,7 @@ type TLAccountGetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountGetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getReactionsNotifySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14156,7 +14214,7 @@ func (m *TLAccountGetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getReactionsNotifySettings", m)
 }
 
 func (m *TLAccountGetReactionsNotifySettings) CalcSize(layer int32) int {
@@ -14217,7 +14275,7 @@ type TLAccountSetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountSetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setReactionsNotifySettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14225,7 +14283,7 @@ func (m *TLAccountSetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setReactionsNotifySettings", m)
 }
 
 func (m *TLAccountSetReactionsNotifySettings) CalcSize(layer int32) int {
@@ -14243,7 +14301,7 @@ func (m *TLAccountSetReactionsNotifySettings) CalcSize(layer int32) int {
 func (m *TLAccountSetReactionsNotifySettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setReactionsNotifySettings, int(layer)); clazzId {
 	case 0x316ce548:
-		if err := iface.ValidateRequiredObject("settings", m.Settings); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("settings", m.Settings, layer); err != nil {
 			return err
 		}
 
@@ -14300,7 +14358,7 @@ type TLAccountGetCollectibleEmojiStatuses struct {
 }
 
 func (m *TLAccountGetCollectibleEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getCollectibleEmojiStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14308,7 +14366,7 @@ func (m *TLAccountGetCollectibleEmojiStatuses) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getCollectibleEmojiStatuses", m)
 }
 
 func (m *TLAccountGetCollectibleEmojiStatuses) CalcSize(layer int32) int {
@@ -14377,7 +14435,7 @@ type TLAccountGetPaidMessagesRevenue struct {
 }
 
 func (m *TLAccountGetPaidMessagesRevenue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getPaidMessagesRevenue", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14385,7 +14443,7 @@ func (m *TLAccountGetPaidMessagesRevenue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getPaidMessagesRevenue", m)
 }
 
 func (m *TLAccountGetPaidMessagesRevenue) CalcSize(layer int32) int {
@@ -14409,7 +14467,7 @@ func (m *TLAccountGetPaidMessagesRevenue) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_getPaidMessagesRevenue, int(layer)); clazzId {
 	case 0x19ba4a67:
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -14501,7 +14559,7 @@ type TLAccountToggleNoPaidMessagesException struct {
 }
 
 func (m *TLAccountToggleNoPaidMessagesException) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleNoPaidMessagesException", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14509,7 +14567,7 @@ func (m *TLAccountToggleNoPaidMessagesException) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_toggleNoPaidMessagesException", m)
 }
 
 func (m *TLAccountToggleNoPaidMessagesException) CalcSize(layer int32) int {
@@ -14533,7 +14591,7 @@ func (m *TLAccountToggleNoPaidMessagesException) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_toggleNoPaidMessagesException, int(layer)); clazzId {
 	case 0xfe2eda76:
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -14634,7 +14692,7 @@ type TLAccountSetMainProfileTab struct {
 }
 
 func (m *TLAccountSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_setMainProfileTab", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14642,7 +14700,7 @@ func (m *TLAccountSetMainProfileTab) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_setMainProfileTab", m)
 }
 
 func (m *TLAccountSetMainProfileTab) CalcSize(layer int32) int {
@@ -14660,7 +14718,7 @@ func (m *TLAccountSetMainProfileTab) CalcSize(layer int32) int {
 func (m *TLAccountSetMainProfileTab) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_setMainProfileTab, int(layer)); clazzId {
 	case 0x5dee78b0:
-		if err := iface.ValidateRequiredObject("tab", m.Tab); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("tab", m.Tab, layer); err != nil {
 			return err
 		}
 
@@ -14719,7 +14777,7 @@ type TLAccountSaveMusic struct {
 }
 
 func (m *TLAccountSaveMusic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_saveMusic", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14727,7 +14785,7 @@ func (m *TLAccountSaveMusic) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_saveMusic", m)
 }
 
 func (m *TLAccountSaveMusic) CalcSize(layer int32) int {
@@ -14749,7 +14807,7 @@ func (m *TLAccountSaveMusic) CalcSize(layer int32) int {
 func (m *TLAccountSaveMusic) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_saveMusic, int(layer)); clazzId {
 	case 0xb26732a9:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -14845,7 +14903,7 @@ type TLAccountGetSavedMusicIds struct {
 }
 
 func (m *TLAccountGetSavedMusicIds) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getSavedMusicIds", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14853,7 +14911,7 @@ func (m *TLAccountGetSavedMusicIds) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getSavedMusicIds", m)
 }
 
 func (m *TLAccountGetSavedMusicIds) CalcSize(layer int32) int {
@@ -14923,7 +14981,7 @@ type TLAccountGetUniqueGiftChatThemes struct {
 }
 
 func (m *TLAccountGetUniqueGiftChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getUniqueGiftChatThemes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -14931,7 +14989,7 @@ func (m *TLAccountGetUniqueGiftChatThemes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getUniqueGiftChatThemes", m)
 }
 
 func (m *TLAccountGetUniqueGiftChatThemes) CalcSize(layer int32) int {
@@ -15013,7 +15071,7 @@ type TLAccountInitPasskeyRegistration struct {
 }
 
 func (m *TLAccountInitPasskeyRegistration) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_initPasskeyRegistration", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15021,7 +15079,7 @@ func (m *TLAccountInitPasskeyRegistration) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_initPasskeyRegistration", m)
 }
 
 func (m *TLAccountInitPasskeyRegistration) CalcSize(layer int32) int {
@@ -15082,7 +15140,7 @@ type TLAccountRegisterPasskey struct {
 }
 
 func (m *TLAccountRegisterPasskey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_registerPasskey", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15090,7 +15148,7 @@ func (m *TLAccountRegisterPasskey) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_registerPasskey", m)
 }
 
 func (m *TLAccountRegisterPasskey) CalcSize(layer int32) int {
@@ -15108,7 +15166,7 @@ func (m *TLAccountRegisterPasskey) CalcSize(layer int32) int {
 func (m *TLAccountRegisterPasskey) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_account_registerPasskey, int(layer)); clazzId {
 	case 0x55b41fd6:
-		if err := iface.ValidateRequiredObject("credential", m.Credential); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("credential", m.Credential, layer); err != nil {
 			return err
 		}
 
@@ -15164,7 +15222,7 @@ type TLAccountGetPasskeys struct {
 }
 
 func (m *TLAccountGetPasskeys) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_getPasskeys", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15172,7 +15230,7 @@ func (m *TLAccountGetPasskeys) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_getPasskeys", m)
 }
 
 func (m *TLAccountGetPasskeys) CalcSize(layer int32) int {
@@ -15233,7 +15291,7 @@ type TLAccountDeletePasskey struct {
 }
 
 func (m *TLAccountDeletePasskey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_deletePasskey", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15241,7 +15299,7 @@ func (m *TLAccountDeletePasskey) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_deletePasskey", m)
 }
 
 func (m *TLAccountDeletePasskey) CalcSize(layer int32) int {
@@ -15312,7 +15370,7 @@ type TLUsersGetUsers struct {
 }
 
 func (m *TLUsersGetUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getUsers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15320,7 +15378,7 @@ func (m *TLUsersGetUsers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getUsers", m)
 }
 
 func (m *TLUsersGetUsers) CalcSize(layer int32) int {
@@ -15338,7 +15396,7 @@ func (m *TLUsersGetUsers) CalcSize(layer int32) int {
 func (m *TLUsersGetUsers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getUsers, int(layer)); clazzId {
 	case 0xd91a548:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -15409,7 +15467,7 @@ type TLUsersGetFullUser struct {
 }
 
 func (m *TLUsersGetFullUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getFullUser", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15417,7 +15475,7 @@ func (m *TLUsersGetFullUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getFullUser", m)
 }
 
 func (m *TLUsersGetFullUser) CalcSize(layer int32) int {
@@ -15435,7 +15493,7 @@ func (m *TLUsersGetFullUser) CalcSize(layer int32) int {
 func (m *TLUsersGetFullUser) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getFullUser, int(layer)); clazzId {
 	case 0xb60f5918:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -15493,7 +15551,7 @@ type TLUsersSetSecureValueErrors struct {
 }
 
 func (m *TLUsersSetSecureValueErrors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_setSecureValueErrors", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15501,7 +15559,7 @@ func (m *TLUsersSetSecureValueErrors) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_setSecureValueErrors", m)
 }
 
 func (m *TLUsersSetSecureValueErrors) CalcSize(layer int32) int {
@@ -15520,11 +15578,11 @@ func (m *TLUsersSetSecureValueErrors) CalcSize(layer int32) int {
 func (m *TLUsersSetSecureValueErrors) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_setSecureValueErrors, int(layer)); clazzId {
 	case 0x90c894b5:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("errors", m.Errors); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("errors", m.Errors, layer); err != nil {
 			return err
 		}
 
@@ -15606,7 +15664,7 @@ type TLUsersGetRequirementsToContact struct {
 }
 
 func (m *TLUsersGetRequirementsToContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getRequirementsToContact", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15614,7 +15672,7 @@ func (m *TLUsersGetRequirementsToContact) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getRequirementsToContact", m)
 }
 
 func (m *TLUsersGetRequirementsToContact) CalcSize(layer int32) int {
@@ -15632,7 +15690,7 @@ func (m *TLUsersGetRequirementsToContact) CalcSize(layer int32) int {
 func (m *TLUsersGetRequirementsToContact) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getRequirementsToContact, int(layer)); clazzId {
 	case 0xd89a83a3:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -15706,7 +15764,7 @@ type TLUsersGetSavedMusic struct {
 }
 
 func (m *TLUsersGetSavedMusic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getSavedMusic", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15714,7 +15772,7 @@ func (m *TLUsersGetSavedMusic) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getSavedMusic", m)
 }
 
 func (m *TLUsersGetSavedMusic) CalcSize(layer int32) int {
@@ -15735,7 +15793,7 @@ func (m *TLUsersGetSavedMusic) CalcSize(layer int32) int {
 func (m *TLUsersGetSavedMusic) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusic, int(layer)); clazzId {
 	case 0x788d7fe3:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -15809,7 +15867,7 @@ type TLUsersGetSavedMusicByID struct {
 }
 
 func (m *TLUsersGetSavedMusicByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getSavedMusicByID", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15817,7 +15875,7 @@ func (m *TLUsersGetSavedMusicByID) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getSavedMusicByID", m)
 }
 
 func (m *TLUsersGetSavedMusicByID) CalcSize(layer int32) int {
@@ -15836,11 +15894,11 @@ func (m *TLUsersGetSavedMusicByID) CalcSize(layer int32) int {
 func (m *TLUsersGetSavedMusicByID) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_getSavedMusicByID, int(layer)); clazzId {
 	case 0x7573a4e9:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("documents", m.Documents); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("documents", m.Documents, layer); err != nil {
 			return err
 		}
 
@@ -15923,7 +15981,7 @@ type TLUsersSuggestBirthday struct {
 }
 
 func (m *TLUsersSuggestBirthday) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_suggestBirthday", TLObject: m}
 	return wrapper.String()
 }
 
@@ -15931,7 +15989,7 @@ func (m *TLUsersSuggestBirthday) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_suggestBirthday", m)
 }
 
 func (m *TLUsersSuggestBirthday) CalcSize(layer int32) int {
@@ -15950,11 +16008,11 @@ func (m *TLUsersSuggestBirthday) CalcSize(layer int32) int {
 func (m *TLUsersSuggestBirthday) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_users_suggestBirthday, int(layer)); clazzId {
 	case 0xfc533372:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("birthday", m.Birthday); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("birthday", m.Birthday, layer); err != nil {
 			return err
 		}
 
@@ -16020,7 +16078,7 @@ type TLContactsGetContactIDs struct {
 }
 
 func (m *TLContactsGetContactIDs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getContactIDs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16028,7 +16086,7 @@ func (m *TLContactsGetContactIDs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getContactIDs", m)
 }
 
 func (m *TLContactsGetContactIDs) CalcSize(layer int32) int {
@@ -16095,7 +16153,7 @@ type TLContactsGetStatuses struct {
 }
 
 func (m *TLContactsGetStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getStatuses", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16103,7 +16161,7 @@ func (m *TLContactsGetStatuses) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getStatuses", m)
 }
 
 func (m *TLContactsGetStatuses) CalcSize(layer int32) int {
@@ -16164,7 +16222,7 @@ type TLContactsGetContacts struct {
 }
 
 func (m *TLContactsGetContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getContacts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16172,7 +16230,7 @@ func (m *TLContactsGetContacts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getContacts", m)
 }
 
 func (m *TLContactsGetContacts) CalcSize(layer int32) int {
@@ -16240,7 +16298,7 @@ type TLContactsImportContacts struct {
 }
 
 func (m *TLContactsImportContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_importContacts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16248,7 +16306,7 @@ func (m *TLContactsImportContacts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_importContacts", m)
 }
 
 func (m *TLContactsImportContacts) CalcSize(layer int32) int {
@@ -16266,7 +16324,7 @@ func (m *TLContactsImportContacts) CalcSize(layer int32) int {
 func (m *TLContactsImportContacts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_importContacts, int(layer)); clazzId {
 	case 0x2c800be5:
-		if err := iface.ValidateRequiredSlice("contacts", m.Contacts); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("contacts", m.Contacts, layer); err != nil {
 			return err
 		}
 
@@ -16337,7 +16395,7 @@ type TLContactsDeleteContacts struct {
 }
 
 func (m *TLContactsDeleteContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_deleteContacts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16345,7 +16403,7 @@ func (m *TLContactsDeleteContacts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_deleteContacts", m)
 }
 
 func (m *TLContactsDeleteContacts) CalcSize(layer int32) int {
@@ -16363,7 +16421,7 @@ func (m *TLContactsDeleteContacts) CalcSize(layer int32) int {
 func (m *TLContactsDeleteContacts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteContacts, int(layer)); clazzId {
 	case 0x96a0e00:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -16434,7 +16492,7 @@ type TLContactsDeleteByPhones struct {
 }
 
 func (m *TLContactsDeleteByPhones) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_deleteByPhones", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16442,7 +16500,7 @@ func (m *TLContactsDeleteByPhones) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_deleteByPhones", m)
 }
 
 func (m *TLContactsDeleteByPhones) CalcSize(layer int32) int {
@@ -16460,7 +16518,7 @@ func (m *TLContactsDeleteByPhones) CalcSize(layer int32) int {
 func (m *TLContactsDeleteByPhones) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_deleteByPhones, int(layer)); clazzId {
 	case 0x1013fd9e:
-		if err := iface.ValidateRequiredSlice("phones", m.Phones); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("phones", m.Phones, layer); err != nil {
 			return err
 		}
 
@@ -16512,7 +16570,7 @@ type TLContactsBlock struct {
 }
 
 func (m *TLContactsBlock) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_block", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16520,7 +16578,7 @@ func (m *TLContactsBlock) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_block", m)
 }
 
 func (m *TLContactsBlock) CalcSize(layer int32) int {
@@ -16539,7 +16597,7 @@ func (m *TLContactsBlock) CalcSize(layer int32) int {
 func (m *TLContactsBlock) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_block, int(layer)); clazzId {
 	case 0x2e2e8734:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -16619,7 +16677,7 @@ type TLContactsUnblock struct {
 }
 
 func (m *TLContactsUnblock) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_unblock", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16627,7 +16685,7 @@ func (m *TLContactsUnblock) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_unblock", m)
 }
 
 func (m *TLContactsUnblock) CalcSize(layer int32) int {
@@ -16646,7 +16704,7 @@ func (m *TLContactsUnblock) CalcSize(layer int32) int {
 func (m *TLContactsUnblock) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_unblock, int(layer)); clazzId {
 	case 0xb550d328:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -16727,7 +16785,7 @@ type TLContactsGetBlocked struct {
 }
 
 func (m *TLContactsGetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getBlocked", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16735,7 +16793,7 @@ func (m *TLContactsGetBlocked) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getBlocked", m)
 }
 
 func (m *TLContactsGetBlocked) CalcSize(layer int32) int {
@@ -16833,7 +16891,7 @@ type TLContactsSearch struct {
 }
 
 func (m *TLContactsSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_search", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16841,7 +16899,7 @@ func (m *TLContactsSearch) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_search", m)
 }
 
 func (m *TLContactsSearch) CalcSize(layer int32) int {
@@ -16919,7 +16977,7 @@ type TLContactsResolveUsername struct {
 }
 
 func (m *TLContactsResolveUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resolveUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -16927,7 +16985,7 @@ func (m *TLContactsResolveUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_resolveUsername", m)
 }
 
 func (m *TLContactsResolveUsername) CalcSize(layer int32) int {
@@ -17042,7 +17100,7 @@ type TLContactsGetTopPeers struct {
 }
 
 func (m *TLContactsGetTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getTopPeers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17050,7 +17108,7 @@ func (m *TLContactsGetTopPeers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getTopPeers", m)
 }
 
 func (m *TLContactsGetTopPeers) CalcSize(layer int32) int {
@@ -17202,7 +17260,7 @@ type TLContactsResetTopPeerRating struct {
 }
 
 func (m *TLContactsResetTopPeerRating) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resetTopPeerRating", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17210,7 +17268,7 @@ func (m *TLContactsResetTopPeerRating) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_resetTopPeerRating", m)
 }
 
 func (m *TLContactsResetTopPeerRating) CalcSize(layer int32) int {
@@ -17229,11 +17287,11 @@ func (m *TLContactsResetTopPeerRating) CalcSize(layer int32) int {
 func (m *TLContactsResetTopPeerRating) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_resetTopPeerRating, int(layer)); clazzId {
 	case 0x1ae373ac:
-		if err := iface.ValidateRequiredObject("category", m.Category); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("category", m.Category, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -17298,7 +17356,7 @@ type TLContactsResetSaved struct {
 }
 
 func (m *TLContactsResetSaved) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resetSaved", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17306,7 +17364,7 @@ func (m *TLContactsResetSaved) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_resetSaved", m)
 }
 
 func (m *TLContactsResetSaved) CalcSize(layer int32) int {
@@ -17366,7 +17424,7 @@ type TLContactsGetSaved struct {
 }
 
 func (m *TLContactsGetSaved) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getSaved", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17374,7 +17432,7 @@ func (m *TLContactsGetSaved) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getSaved", m)
 }
 
 func (m *TLContactsGetSaved) CalcSize(layer int32) int {
@@ -17435,7 +17493,7 @@ type TLContactsToggleTopPeers struct {
 }
 
 func (m *TLContactsToggleTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_toggleTopPeers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17443,7 +17501,7 @@ func (m *TLContactsToggleTopPeers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_toggleTopPeers", m)
 }
 
 func (m *TLContactsToggleTopPeers) CalcSize(layer int32) int {
@@ -17461,7 +17519,7 @@ func (m *TLContactsToggleTopPeers) CalcSize(layer int32) int {
 func (m *TLContactsToggleTopPeers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_toggleTopPeers, int(layer)); clazzId {
 	case 0x8514bdda:
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -17523,7 +17581,7 @@ type TLContactsAddContact struct {
 }
 
 func (m *TLContactsAddContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_addContact", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17531,7 +17589,7 @@ func (m *TLContactsAddContact) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_addContact", m)
 }
 
 func (m *TLContactsAddContact) CalcSize(layer int32) int {
@@ -17556,7 +17614,7 @@ func (m *TLContactsAddContact) CalcSize(layer int32) int {
 func (m *TLContactsAddContact) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_addContact, int(layer)); clazzId {
 	case 0xd9ba2e54:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -17679,7 +17737,7 @@ type TLContactsAcceptContact struct {
 }
 
 func (m *TLContactsAcceptContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_acceptContact", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17687,7 +17745,7 @@ func (m *TLContactsAcceptContact) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_acceptContact", m)
 }
 
 func (m *TLContactsAcceptContact) CalcSize(layer int32) int {
@@ -17705,7 +17763,7 @@ func (m *TLContactsAcceptContact) CalcSize(layer int32) int {
 func (m *TLContactsAcceptContact) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_acceptContact, int(layer)); clazzId {
 	case 0xf831a20f:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -17764,7 +17822,7 @@ type TLContactsGetLocated struct {
 }
 
 func (m *TLContactsGetLocated) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getLocated", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17772,7 +17830,7 @@ func (m *TLContactsGetLocated) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getLocated", m)
 }
 
 func (m *TLContactsGetLocated) CalcSize(layer int32) int {
@@ -17794,7 +17852,7 @@ func (m *TLContactsGetLocated) CalcSize(layer int32) int {
 func (m *TLContactsGetLocated) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_getLocated, int(layer)); clazzId {
 	case 0xd348bc44:
-		if err := iface.ValidateRequiredObject("geo_point", m.GeoPoint); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("geo_point", m.GeoPoint, layer); err != nil {
 			return err
 		}
 
@@ -17891,7 +17949,7 @@ type TLContactsBlockFromReplies struct {
 }
 
 func (m *TLContactsBlockFromReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_blockFromReplies", TLObject: m}
 	return wrapper.String()
 }
 
@@ -17899,7 +17957,7 @@ func (m *TLContactsBlockFromReplies) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_blockFromReplies", m)
 }
 
 func (m *TLContactsBlockFromReplies) CalcSize(layer int32) int {
@@ -18002,7 +18060,7 @@ type TLContactsResolvePhone struct {
 }
 
 func (m *TLContactsResolvePhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resolvePhone", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18010,7 +18068,7 @@ func (m *TLContactsResolvePhone) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_resolvePhone", m)
 }
 
 func (m *TLContactsResolvePhone) CalcSize(layer int32) int {
@@ -18080,7 +18138,7 @@ type TLContactsExportContactToken struct {
 }
 
 func (m *TLContactsExportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_exportContactToken", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18088,7 +18146,7 @@ func (m *TLContactsExportContactToken) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_exportContactToken", m)
 }
 
 func (m *TLContactsExportContactToken) CalcSize(layer int32) int {
@@ -18149,7 +18207,7 @@ type TLContactsImportContactToken struct {
 }
 
 func (m *TLContactsImportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_importContactToken", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18157,7 +18215,7 @@ func (m *TLContactsImportContactToken) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_importContactToken", m)
 }
 
 func (m *TLContactsImportContactToken) CalcSize(layer int32) int {
@@ -18228,7 +18286,7 @@ type TLContactsEditCloseFriends struct {
 }
 
 func (m *TLContactsEditCloseFriends) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_editCloseFriends", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18236,7 +18294,7 @@ func (m *TLContactsEditCloseFriends) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_editCloseFriends", m)
 }
 
 func (m *TLContactsEditCloseFriends) CalcSize(layer int32) int {
@@ -18254,7 +18312,7 @@ func (m *TLContactsEditCloseFriends) CalcSize(layer int32) int {
 func (m *TLContactsEditCloseFriends) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_editCloseFriends, int(layer)); clazzId {
 	case 0xba6705f0:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -18307,7 +18365,7 @@ type TLContactsSetBlocked struct {
 }
 
 func (m *TLContactsSetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_setBlocked", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18315,7 +18373,7 @@ func (m *TLContactsSetBlocked) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_setBlocked", m)
 }
 
 func (m *TLContactsSetBlocked) CalcSize(layer int32) int {
@@ -18335,7 +18393,7 @@ func (m *TLContactsSetBlocked) CalcSize(layer int32) int {
 func (m *TLContactsSetBlocked) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_setBlocked, int(layer)); clazzId {
 	case 0x94c65c76:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -18435,7 +18493,7 @@ type TLContactsGetBirthdays struct {
 }
 
 func (m *TLContactsGetBirthdays) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getBirthdays", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18443,7 +18501,7 @@ func (m *TLContactsGetBirthdays) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getBirthdays", m)
 }
 
 func (m *TLContactsGetBirthdays) CalcSize(layer int32) int {
@@ -18504,7 +18562,7 @@ type TLContactsGetSponsoredPeers struct {
 }
 
 func (m *TLContactsGetSponsoredPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getSponsoredPeers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18512,7 +18570,7 @@ func (m *TLContactsGetSponsoredPeers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_getSponsoredPeers", m)
 }
 
 func (m *TLContactsGetSponsoredPeers) CalcSize(layer int32) int {
@@ -18584,7 +18642,7 @@ type TLContactsUpdateContactNote struct {
 }
 
 func (m *TLContactsUpdateContactNote) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "contacts_updateContactNote", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18592,7 +18650,7 @@ func (m *TLContactsUpdateContactNote) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("contacts_updateContactNote", m)
 }
 
 func (m *TLContactsUpdateContactNote) CalcSize(layer int32) int {
@@ -18611,11 +18669,11 @@ func (m *TLContactsUpdateContactNote) CalcSize(layer int32) int {
 func (m *TLContactsUpdateContactNote) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_contacts_updateContactNote, int(layer)); clazzId {
 	case 0x139f63fb:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("note", m.Note); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("note", m.Note, layer); err != nil {
 			return err
 		}
 
@@ -18682,7 +18740,7 @@ type TLMessagesGetMessages struct {
 }
 
 func (m *TLMessagesGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18690,7 +18748,7 @@ func (m *TLMessagesGetMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessages", m)
 }
 
 func (m *TLMessagesGetMessages) CalcSize(layer int32) int {
@@ -18713,13 +18771,13 @@ func (m *TLMessagesGetMessages) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessages, int(layer)); clazzId {
 	case 0x63c66506:
-		if err := iface.ValidateRequiredSlice("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE, layer); err != nil {
 			return err
 		}
 
 		return nil
 	case 0x4222fa74:
-		if err := iface.ValidateRequiredSlice("id_VECTORINT32", m.Id_VECTORINT32); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id_VECTORINT32", m.Id_VECTORINT32, layer); err != nil {
 			return err
 		}
 
@@ -18807,7 +18865,7 @@ type TLMessagesGetDialogs struct {
 }
 
 func (m *TLMessagesGetDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18815,7 +18873,7 @@ func (m *TLMessagesGetDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDialogs", m)
 }
 
 func (m *TLMessagesGetDialogs) CalcSize(layer int32) int {
@@ -18842,7 +18900,7 @@ func (m *TLMessagesGetDialogs) CalcSize(layer int32) int {
 func (m *TLMessagesGetDialogs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDialogs, int(layer)); clazzId {
 	case 0xa0f4cb4f:
-		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offset_peer", m.OffsetPeer, layer); err != nil {
 			return err
 		}
 
@@ -18963,7 +19021,7 @@ type TLMessagesGetHistory struct {
 }
 
 func (m *TLMessagesGetHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -18971,7 +19029,7 @@ func (m *TLMessagesGetHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getHistory", m)
 }
 
 func (m *TLMessagesGetHistory) CalcSize(layer int32) int {
@@ -18996,7 +19054,7 @@ func (m *TLMessagesGetHistory) CalcSize(layer int32) int {
 func (m *TLMessagesGetHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getHistory, int(layer)); clazzId {
 	case 0x4423e6c5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -19103,7 +19161,7 @@ type TLMessagesSearch struct {
 }
 
 func (m *TLMessagesSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_search", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19111,7 +19169,7 @@ func (m *TLMessagesSearch) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_search", m)
 }
 
 func (m *TLMessagesSearch) CalcSize(layer int32) int {
@@ -19156,7 +19214,7 @@ func (m *TLMessagesSearch) CalcSize(layer int32) int {
 func (m *TLMessagesSearch) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_search, int(layer)); clazzId {
 	case 0x29ee847a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -19164,7 +19222,7 @@ func (m *TLMessagesSearch) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -19370,7 +19428,7 @@ type TLMessagesReadHistory struct {
 }
 
 func (m *TLMessagesReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19378,7 +19436,7 @@ func (m *TLMessagesReadHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readHistory", m)
 }
 
 func (m *TLMessagesReadHistory) CalcSize(layer int32) int {
@@ -19397,7 +19455,7 @@ func (m *TLMessagesReadHistory) CalcSize(layer int32) int {
 func (m *TLMessagesReadHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readHistory, int(layer)); clazzId {
 	case 0xe306d3a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -19465,7 +19523,7 @@ type TLMessagesDeleteHistory struct {
 }
 
 func (m *TLMessagesDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19473,7 +19531,7 @@ func (m *TLMessagesDeleteHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteHistory", m)
 }
 
 func (m *TLMessagesDeleteHistory) CalcSize(layer int32) int {
@@ -19500,7 +19558,7 @@ func (m *TLMessagesDeleteHistory) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteHistory, int(layer)); clazzId {
 	case 0xb08f922a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -19620,7 +19678,7 @@ type TLMessagesDeleteMessages struct {
 }
 
 func (m *TLMessagesDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19628,7 +19686,7 @@ func (m *TLMessagesDeleteMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteMessages", m)
 }
 
 func (m *TLMessagesDeleteMessages) CalcSize(layer int32) int {
@@ -19647,7 +19705,7 @@ func (m *TLMessagesDeleteMessages) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteMessages, int(layer)); clazzId {
 	case 0xe58e95d2:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -19721,7 +19779,7 @@ type TLMessagesReceivedMessages struct {
 }
 
 func (m *TLMessagesReceivedMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_receivedMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19729,7 +19787,7 @@ func (m *TLMessagesReceivedMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_receivedMessages", m)
 }
 
 func (m *TLMessagesReceivedMessages) CalcSize(layer int32) int {
@@ -19799,7 +19857,7 @@ type TLMessagesSetTyping struct {
 }
 
 func (m *TLMessagesSetTyping) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setTyping", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19807,7 +19865,7 @@ func (m *TLMessagesSetTyping) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setTyping", m)
 }
 
 func (m *TLMessagesSetTyping) CalcSize(layer int32) int {
@@ -19831,11 +19889,11 @@ func (m *TLMessagesSetTyping) CalcSize(layer int32) int {
 func (m *TLMessagesSetTyping) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setTyping, int(layer)); clazzId {
 	case 0x58943ee2:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("action", m.Action); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("action", m.Action, layer); err != nil {
 			return err
 		}
 
@@ -19952,7 +20010,7 @@ type TLMessagesSendMessage struct {
 }
 
 func (m *TLMessagesSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -19960,7 +20018,7 @@ func (m *TLMessagesSendMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendMessage", m)
 }
 
 func (m *TLMessagesSendMessage) CalcSize(layer int32) int {
@@ -20020,7 +20078,7 @@ func (m *TLMessagesSendMessage) CalcSize(layer int32) int {
 func (m *TLMessagesSendMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMessage, int(layer)); clazzId {
 	case 0x545cd15a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -20345,7 +20403,7 @@ type TLMessagesSendMedia struct {
 }
 
 func (m *TLMessagesSendMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20353,7 +20411,7 @@ func (m *TLMessagesSendMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendMedia", m)
 }
 
 func (m *TLMessagesSendMedia) CalcSize(layer int32) int {
@@ -20414,11 +20472,11 @@ func (m *TLMessagesSendMedia) CalcSize(layer int32) int {
 func (m *TLMessagesSendMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMedia, int(layer)); clazzId {
 	case 0x330e77f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -20747,7 +20805,7 @@ type TLMessagesForwardMessages struct {
 }
 
 func (m *TLMessagesForwardMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_forwardMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -20755,7 +20813,7 @@ func (m *TLMessagesForwardMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_forwardMessages", m)
 }
 
 func (m *TLMessagesForwardMessages) CalcSize(layer int32) int {
@@ -20816,19 +20874,19 @@ func (m *TLMessagesForwardMessages) CalcSize(layer int32) int {
 func (m *TLMessagesForwardMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_forwardMessages, int(layer)); clazzId {
 	case 0x13704a7c:
-		if err := iface.ValidateRequiredObject("from_peer", m.FromPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("from_peer", m.FromPeer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("random_id", m.RandomId); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("random_id", m.RandomId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("to_peer", m.ToPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("to_peer", m.ToPeer, layer); err != nil {
 			return err
 		}
 
@@ -21112,7 +21170,7 @@ type TLMessagesReportSpam struct {
 }
 
 func (m *TLMessagesReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportSpam", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21120,7 +21178,7 @@ func (m *TLMessagesReportSpam) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reportSpam", m)
 }
 
 func (m *TLMessagesReportSpam) CalcSize(layer int32) int {
@@ -21138,7 +21196,7 @@ func (m *TLMessagesReportSpam) CalcSize(layer int32) int {
 func (m *TLMessagesReportSpam) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportSpam, int(layer)); clazzId {
 	case 0xcf1592db:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -21195,7 +21253,7 @@ type TLMessagesGetPeerSettings struct {
 }
 
 func (m *TLMessagesGetPeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPeerSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21203,7 +21261,7 @@ func (m *TLMessagesGetPeerSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPeerSettings", m)
 }
 
 func (m *TLMessagesGetPeerSettings) CalcSize(layer int32) int {
@@ -21221,7 +21279,7 @@ func (m *TLMessagesGetPeerSettings) CalcSize(layer int32) int {
 func (m *TLMessagesGetPeerSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerSettings, int(layer)); clazzId {
 	case 0xefd9a6a2:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -21281,7 +21339,7 @@ type TLMessagesReport struct {
 }
 
 func (m *TLMessagesReport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_report", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21289,7 +21347,7 @@ func (m *TLMessagesReport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_report", m)
 }
 
 func (m *TLMessagesReport) CalcSize(layer int32) int {
@@ -21310,11 +21368,11 @@ func (m *TLMessagesReport) CalcSize(layer int32) int {
 func (m *TLMessagesReport) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_report, int(layer)); clazzId {
 	case 0xfc78af9b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -21395,7 +21453,7 @@ type TLMessagesGetChats struct {
 }
 
 func (m *TLMessagesGetChats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getChats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21403,7 +21461,7 @@ func (m *TLMessagesGetChats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getChats", m)
 }
 
 func (m *TLMessagesGetChats) CalcSize(layer int32) int {
@@ -21421,7 +21479,7 @@ func (m *TLMessagesGetChats) CalcSize(layer int32) int {
 func (m *TLMessagesGetChats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChats, int(layer)); clazzId {
 	case 0x49e9528f:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -21472,7 +21530,7 @@ type TLMessagesGetFullChat struct {
 }
 
 func (m *TLMessagesGetFullChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFullChat", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21480,7 +21538,7 @@ func (m *TLMessagesGetFullChat) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFullChat", m)
 }
 
 func (m *TLMessagesGetFullChat) CalcSize(layer int32) int {
@@ -21549,7 +21607,7 @@ type TLMessagesEditChatTitle struct {
 }
 
 func (m *TLMessagesEditChatTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatTitle", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21557,7 +21615,7 @@ func (m *TLMessagesEditChatTitle) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatTitle", m)
 }
 
 func (m *TLMessagesEditChatTitle) CalcSize(layer int32) int {
@@ -21635,7 +21693,7 @@ type TLMessagesEditChatPhoto struct {
 }
 
 func (m *TLMessagesEditChatPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatPhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21643,7 +21701,7 @@ func (m *TLMessagesEditChatPhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatPhoto", m)
 }
 
 func (m *TLMessagesEditChatPhoto) CalcSize(layer int32) int {
@@ -21662,7 +21720,7 @@ func (m *TLMessagesEditChatPhoto) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatPhoto) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatPhoto, int(layer)); clazzId {
 	case 0x35ddd674:
-		if err := iface.ValidateRequiredObject("photo", m.Photo); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("photo", m.Photo, layer); err != nil {
 			return err
 		}
 
@@ -21726,7 +21784,7 @@ type TLMessagesAddChatUser struct {
 }
 
 func (m *TLMessagesAddChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_addChatUser", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21734,7 +21792,7 @@ func (m *TLMessagesAddChatUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_addChatUser", m)
 }
 
 func (m *TLMessagesAddChatUser) CalcSize(layer int32) int {
@@ -21754,7 +21812,7 @@ func (m *TLMessagesAddChatUser) CalcSize(layer int32) int {
 func (m *TLMessagesAddChatUser) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addChatUser, int(layer)); clazzId {
 	case 0xcbc6d107:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -21824,7 +21882,7 @@ type TLMessagesDeleteChatUser struct {
 }
 
 func (m *TLMessagesDeleteChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteChatUser", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21832,7 +21890,7 @@ func (m *TLMessagesDeleteChatUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteChatUser", m)
 }
 
 func (m *TLMessagesDeleteChatUser) CalcSize(layer int32) int {
@@ -21852,7 +21910,7 @@ func (m *TLMessagesDeleteChatUser) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteChatUser) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteChatUser, int(layer)); clazzId {
 	case 0xa2185cab:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -21938,7 +21996,7 @@ type TLMessagesCreateChat struct {
 }
 
 func (m *TLMessagesCreateChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_createChat", TLObject: m}
 	return wrapper.String()
 }
 
@@ -21946,7 +22004,7 @@ func (m *TLMessagesCreateChat) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_createChat", m)
 }
 
 func (m *TLMessagesCreateChat) CalcSize(layer int32) int {
@@ -21969,7 +22027,7 @@ func (m *TLMessagesCreateChat) CalcSize(layer int32) int {
 func (m *TLMessagesCreateChat) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createChat, int(layer)); clazzId {
 	case 0x92ceddd4:
-		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("users", m.Users, layer); err != nil {
 			return err
 		}
 
@@ -22082,7 +22140,7 @@ type TLMessagesGetDhConfig struct {
 }
 
 func (m *TLMessagesGetDhConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDhConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22090,7 +22148,7 @@ func (m *TLMessagesGetDhConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDhConfig", m)
 }
 
 func (m *TLMessagesGetDhConfig) CalcSize(layer int32) int {
@@ -22166,7 +22224,7 @@ type TLMessagesRequestEncryption struct {
 }
 
 func (m *TLMessagesRequestEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestEncryption", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22174,7 +22232,7 @@ func (m *TLMessagesRequestEncryption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestEncryption", m)
 }
 
 func (m *TLMessagesRequestEncryption) CalcSize(layer int32) int {
@@ -22194,7 +22252,7 @@ func (m *TLMessagesRequestEncryption) CalcSize(layer int32) int {
 func (m *TLMessagesRequestEncryption) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestEncryption, int(layer)); clazzId {
 	case 0xf64daf43:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -22268,7 +22326,7 @@ type TLMessagesAcceptEncryption struct {
 }
 
 func (m *TLMessagesAcceptEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_acceptEncryption", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22276,7 +22334,7 @@ func (m *TLMessagesAcceptEncryption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_acceptEncryption", m)
 }
 
 func (m *TLMessagesAcceptEncryption) CalcSize(layer int32) int {
@@ -22296,7 +22354,7 @@ func (m *TLMessagesAcceptEncryption) CalcSize(layer int32) int {
 func (m *TLMessagesAcceptEncryption) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_acceptEncryption, int(layer)); clazzId {
 	case 0x3dbc0415:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -22369,7 +22427,7 @@ type TLMessagesDiscardEncryption struct {
 }
 
 func (m *TLMessagesDiscardEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_discardEncryption", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22377,7 +22435,7 @@ func (m *TLMessagesDiscardEncryption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_discardEncryption", m)
 }
 
 func (m *TLMessagesDiscardEncryption) CalcSize(layer int32) int {
@@ -22469,7 +22527,7 @@ type TLMessagesSetEncryptedTyping struct {
 }
 
 func (m *TLMessagesSetEncryptedTyping) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setEncryptedTyping", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22477,7 +22535,7 @@ func (m *TLMessagesSetEncryptedTyping) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setEncryptedTyping", m)
 }
 
 func (m *TLMessagesSetEncryptedTyping) CalcSize(layer int32) int {
@@ -22496,11 +22554,11 @@ func (m *TLMessagesSetEncryptedTyping) CalcSize(layer int32) int {
 func (m *TLMessagesSetEncryptedTyping) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setEncryptedTyping, int(layer)); clazzId {
 	case 0x791451ed:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("typing", m.Typing); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("typing", m.Typing, layer); err != nil {
 			return err
 		}
 
@@ -22567,7 +22625,7 @@ type TLMessagesReadEncryptedHistory struct {
 }
 
 func (m *TLMessagesReadEncryptedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readEncryptedHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22575,7 +22633,7 @@ func (m *TLMessagesReadEncryptedHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readEncryptedHistory", m)
 }
 
 func (m *TLMessagesReadEncryptedHistory) CalcSize(layer int32) int {
@@ -22594,7 +22652,7 @@ func (m *TLMessagesReadEncryptedHistory) CalcSize(layer int32) int {
 func (m *TLMessagesReadEncryptedHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readEncryptedHistory, int(layer)); clazzId {
 	case 0x7f4b690a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -22660,7 +22718,7 @@ type TLMessagesSendEncrypted struct {
 }
 
 func (m *TLMessagesSendEncrypted) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncrypted", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22668,7 +22726,7 @@ func (m *TLMessagesSendEncrypted) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendEncrypted", m)
 }
 
 func (m *TLMessagesSendEncrypted) CalcSize(layer int32) int {
@@ -22689,7 +22747,7 @@ func (m *TLMessagesSendEncrypted) CalcSize(layer int32) int {
 func (m *TLMessagesSendEncrypted) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncrypted, int(layer)); clazzId {
 	case 0x44fa7a15:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -22787,7 +22845,7 @@ type TLMessagesSendEncryptedFile struct {
 }
 
 func (m *TLMessagesSendEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncryptedFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22795,7 +22853,7 @@ func (m *TLMessagesSendEncryptedFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendEncryptedFile", m)
 }
 
 func (m *TLMessagesSendEncryptedFile) CalcSize(layer int32) int {
@@ -22817,7 +22875,7 @@ func (m *TLMessagesSendEncryptedFile) CalcSize(layer int32) int {
 func (m *TLMessagesSendEncryptedFile) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedFile, int(layer)); clazzId {
 	case 0x5559481d:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -22825,7 +22883,7 @@ func (m *TLMessagesSendEncryptedFile) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -22926,7 +22984,7 @@ type TLMessagesSendEncryptedService struct {
 }
 
 func (m *TLMessagesSendEncryptedService) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncryptedService", TLObject: m}
 	return wrapper.String()
 }
 
@@ -22934,7 +22992,7 @@ func (m *TLMessagesSendEncryptedService) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendEncryptedService", m)
 }
 
 func (m *TLMessagesSendEncryptedService) CalcSize(layer int32) int {
@@ -22954,7 +23012,7 @@ func (m *TLMessagesSendEncryptedService) CalcSize(layer int32) int {
 func (m *TLMessagesSendEncryptedService) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendEncryptedService, int(layer)); clazzId {
 	case 0x32d439a4:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -23026,7 +23084,7 @@ type TLMessagesReceivedQueue struct {
 }
 
 func (m *TLMessagesReceivedQueue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_receivedQueue", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23034,7 +23092,7 @@ func (m *TLMessagesReceivedQueue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_receivedQueue", m)
 }
 
 func (m *TLMessagesReceivedQueue) CalcSize(layer int32) int {
@@ -23102,7 +23160,7 @@ type TLMessagesReportEncryptedSpam struct {
 }
 
 func (m *TLMessagesReportEncryptedSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportEncryptedSpam", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23110,7 +23168,7 @@ func (m *TLMessagesReportEncryptedSpam) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reportEncryptedSpam", m)
 }
 
 func (m *TLMessagesReportEncryptedSpam) CalcSize(layer int32) int {
@@ -23128,7 +23186,7 @@ func (m *TLMessagesReportEncryptedSpam) CalcSize(layer int32) int {
 func (m *TLMessagesReportEncryptedSpam) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportEncryptedSpam, int(layer)); clazzId {
 	case 0x4b0c8c0f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -23185,7 +23243,7 @@ type TLMessagesReadMessageContents struct {
 }
 
 func (m *TLMessagesReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readMessageContents", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23193,7 +23251,7 @@ func (m *TLMessagesReadMessageContents) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readMessageContents", m)
 }
 
 func (m *TLMessagesReadMessageContents) CalcSize(layer int32) int {
@@ -23211,7 +23269,7 @@ func (m *TLMessagesReadMessageContents) CalcSize(layer int32) int {
 func (m *TLMessagesReadMessageContents) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMessageContents, int(layer)); clazzId {
 	case 0x36a73f77:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -23263,7 +23321,7 @@ type TLMessagesGetStickers struct {
 }
 
 func (m *TLMessagesGetStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23271,7 +23329,7 @@ func (m *TLMessagesGetStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getStickers", m)
 }
 
 func (m *TLMessagesGetStickers) CalcSize(layer int32) int {
@@ -23348,7 +23406,7 @@ type TLMessagesGetAllStickers struct {
 }
 
 func (m *TLMessagesGetAllStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAllStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23356,7 +23414,7 @@ func (m *TLMessagesGetAllStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAllStickers", m)
 }
 
 func (m *TLMessagesGetAllStickers) CalcSize(layer int32) int {
@@ -23425,7 +23483,7 @@ type TLMessagesGetWebPagePreview struct {
 }
 
 func (m *TLMessagesGetWebPagePreview) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getWebPagePreview", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23433,7 +23491,7 @@ func (m *TLMessagesGetWebPagePreview) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getWebPagePreview", m)
 }
 
 func (m *TLMessagesGetWebPagePreview) CalcSize(layer int32) int {
@@ -23560,7 +23618,7 @@ type TLMessagesExportChatInvite struct {
 }
 
 func (m *TLMessagesExportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_exportChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23568,7 +23626,7 @@ func (m *TLMessagesExportChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_exportChatInvite", m)
 }
 
 func (m *TLMessagesExportChatInvite) CalcSize(layer int32) int {
@@ -23602,7 +23660,7 @@ func (m *TLMessagesExportChatInvite) CalcSize(layer int32) int {
 func (m *TLMessagesExportChatInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_exportChatInvite, int(layer)); clazzId {
 	case 0xa455de90:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -23747,7 +23805,7 @@ type TLMessagesCheckChatInvite struct {
 }
 
 func (m *TLMessagesCheckChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23755,7 +23813,7 @@ func (m *TLMessagesCheckChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_checkChatInvite", m)
 }
 
 func (m *TLMessagesCheckChatInvite) CalcSize(layer int32) int {
@@ -23826,7 +23884,7 @@ type TLMessagesImportChatInvite struct {
 }
 
 func (m *TLMessagesImportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_importChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23834,7 +23892,7 @@ func (m *TLMessagesImportChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_importChatInvite", m)
 }
 
 func (m *TLMessagesImportChatInvite) CalcSize(layer int32) int {
@@ -23906,7 +23964,7 @@ type TLMessagesGetStickerSet struct {
 }
 
 func (m *TLMessagesGetStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -23914,7 +23972,7 @@ func (m *TLMessagesGetStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getStickerSet", m)
 }
 
 func (m *TLMessagesGetStickerSet) CalcSize(layer int32) int {
@@ -23938,13 +23996,13 @@ func (m *TLMessagesGetStickerSet) CalcSize(layer int32) int {
 func (m *TLMessagesGetStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getStickerSet, int(layer)); clazzId {
 	case 0xc8a0ec74:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
 		return nil
 	case 0x2619a90e:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -24025,7 +24083,7 @@ type TLMessagesInstallStickerSet struct {
 }
 
 func (m *TLMessagesInstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_installStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24033,7 +24091,7 @@ func (m *TLMessagesInstallStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_installStickerSet", m)
 }
 
 func (m *TLMessagesInstallStickerSet) CalcSize(layer int32) int {
@@ -24052,11 +24110,11 @@ func (m *TLMessagesInstallStickerSet) CalcSize(layer int32) int {
 func (m *TLMessagesInstallStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_installStickerSet, int(layer)); clazzId {
 	case 0xc78fe460:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("archived", m.Archived); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("archived", m.Archived, layer); err != nil {
 			return err
 		}
 
@@ -24122,7 +24180,7 @@ type TLMessagesUninstallStickerSet struct {
 }
 
 func (m *TLMessagesUninstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_uninstallStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24130,7 +24188,7 @@ func (m *TLMessagesUninstallStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_uninstallStickerSet", m)
 }
 
 func (m *TLMessagesUninstallStickerSet) CalcSize(layer int32) int {
@@ -24148,7 +24206,7 @@ func (m *TLMessagesUninstallStickerSet) CalcSize(layer int32) int {
 func (m *TLMessagesUninstallStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uninstallStickerSet, int(layer)); clazzId {
 	case 0xf96e55de:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -24208,7 +24266,7 @@ type TLMessagesStartBot struct {
 }
 
 func (m *TLMessagesStartBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_startBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24216,7 +24274,7 @@ func (m *TLMessagesStartBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_startBot", m)
 }
 
 func (m *TLMessagesStartBot) CalcSize(layer int32) int {
@@ -24237,11 +24295,11 @@ func (m *TLMessagesStartBot) CalcSize(layer int32) int {
 func (m *TLMessagesStartBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startBot, int(layer)); clazzId {
 	case 0xe6df7378:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -24324,7 +24382,7 @@ type TLMessagesGetMessagesViews struct {
 }
 
 func (m *TLMessagesGetMessagesViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessagesViews", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24332,7 +24390,7 @@ func (m *TLMessagesGetMessagesViews) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessagesViews", m)
 }
 
 func (m *TLMessagesGetMessagesViews) CalcSize(layer int32) int {
@@ -24352,15 +24410,15 @@ func (m *TLMessagesGetMessagesViews) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessagesViews) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesViews, int(layer)); clazzId {
 	case 0x5784d3e1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("increment", m.Increment); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("increment", m.Increment, layer); err != nil {
 			return err
 		}
 
@@ -24433,7 +24491,7 @@ type TLMessagesEditChatAdmin struct {
 }
 
 func (m *TLMessagesEditChatAdmin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatAdmin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24441,7 +24499,7 @@ func (m *TLMessagesEditChatAdmin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatAdmin", m)
 }
 
 func (m *TLMessagesEditChatAdmin) CalcSize(layer int32) int {
@@ -24461,11 +24519,11 @@ func (m *TLMessagesEditChatAdmin) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatAdmin) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAdmin, int(layer)); clazzId {
 	case 0xa85bd1c2:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("is_admin", m.IsAdmin); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("is_admin", m.IsAdmin, layer); err != nil {
 			return err
 		}
 
@@ -24536,7 +24594,7 @@ type TLMessagesMigrateChat struct {
 }
 
 func (m *TLMessagesMigrateChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_migrateChat", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24544,7 +24602,7 @@ func (m *TLMessagesMigrateChat) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_migrateChat", m)
 }
 
 func (m *TLMessagesMigrateChat) CalcSize(layer int32) int {
@@ -24623,7 +24681,7 @@ type TLMessagesSearchGlobal struct {
 }
 
 func (m *TLMessagesSearchGlobal) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchGlobal", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24631,7 +24689,7 @@ func (m *TLMessagesSearchGlobal) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchGlobal", m)
 }
 
 func (m *TLMessagesSearchGlobal) CalcSize(layer int32) int {
@@ -24665,11 +24723,11 @@ func (m *TLMessagesSearchGlobal) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offset_peer", m.OffsetPeer, layer); err != nil {
 			return err
 		}
 
@@ -24817,7 +24875,7 @@ type TLMessagesReorderStickerSets struct {
 }
 
 func (m *TLMessagesReorderStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderStickerSets", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24825,7 +24883,7 @@ func (m *TLMessagesReorderStickerSets) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reorderStickerSets", m)
 }
 
 func (m *TLMessagesReorderStickerSets) CalcSize(layer int32) int {
@@ -24844,7 +24902,7 @@ func (m *TLMessagesReorderStickerSets) CalcSize(layer int32) int {
 func (m *TLMessagesReorderStickerSets) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderStickerSets, int(layer)); clazzId {
 	case 0x78337739:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -24926,7 +24984,7 @@ type TLMessagesGetDocumentByHash struct {
 }
 
 func (m *TLMessagesGetDocumentByHash) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDocumentByHash", TLObject: m}
 	return wrapper.String()
 }
 
@@ -24934,7 +24992,7 @@ func (m *TLMessagesGetDocumentByHash) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDocumentByHash", m)
 }
 
 func (m *TLMessagesGetDocumentByHash) CalcSize(layer int32) int {
@@ -25021,7 +25079,7 @@ type TLMessagesGetSavedGifs struct {
 }
 
 func (m *TLMessagesGetSavedGifs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedGifs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25029,7 +25087,7 @@ func (m *TLMessagesGetSavedGifs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSavedGifs", m)
 }
 
 func (m *TLMessagesGetSavedGifs) CalcSize(layer int32) int {
@@ -25098,7 +25156,7 @@ type TLMessagesSaveGif struct {
 }
 
 func (m *TLMessagesSaveGif) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveGif", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25106,7 +25164,7 @@ func (m *TLMessagesSaveGif) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_saveGif", m)
 }
 
 func (m *TLMessagesSaveGif) CalcSize(layer int32) int {
@@ -25125,11 +25183,11 @@ func (m *TLMessagesSaveGif) CalcSize(layer int32) int {
 func (m *TLMessagesSaveGif) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveGif, int(layer)); clazzId {
 	case 0x327a30cb:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unsave", m.Unsave, layer); err != nil {
 			return err
 		}
 
@@ -25199,7 +25257,7 @@ type TLMessagesGetInlineBotResults struct {
 }
 
 func (m *TLMessagesGetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getInlineBotResults", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25207,7 +25265,7 @@ func (m *TLMessagesGetInlineBotResults) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getInlineBotResults", m)
 }
 
 func (m *TLMessagesGetInlineBotResults) CalcSize(layer int32) int {
@@ -25233,11 +25291,11 @@ func (m *TLMessagesGetInlineBotResults) CalcSize(layer int32) int {
 func (m *TLMessagesGetInlineBotResults) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineBotResults, int(layer)); clazzId {
 	case 0x514e999d:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -25361,7 +25419,7 @@ type TLMessagesSetInlineBotResults struct {
 }
 
 func (m *TLMessagesSetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setInlineBotResults", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25369,7 +25427,7 @@ func (m *TLMessagesSetInlineBotResults) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setInlineBotResults", m)
 }
 
 func (m *TLMessagesSetInlineBotResults) CalcSize(layer int32) int {
@@ -25401,7 +25459,7 @@ func (m *TLMessagesSetInlineBotResults) CalcSize(layer int32) int {
 func (m *TLMessagesSetInlineBotResults) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineBotResults, int(layer)); clazzId {
 	case 0xbb12a419:
-		if err := iface.ValidateRequiredSlice("results", m.Results); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("results", m.Results, layer); err != nil {
 			return err
 		}
 
@@ -25572,7 +25630,7 @@ type TLMessagesSendInlineBotResult struct {
 }
 
 func (m *TLMessagesSendInlineBotResult) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendInlineBotResult", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25580,7 +25638,7 @@ func (m *TLMessagesSendInlineBotResult) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendInlineBotResult", m)
 }
 
 func (m *TLMessagesSendInlineBotResult) CalcSize(layer int32) int {
@@ -25621,7 +25679,7 @@ func (m *TLMessagesSendInlineBotResult) CalcSize(layer int32) int {
 func (m *TLMessagesSendInlineBotResult) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendInlineBotResult, int(layer)); clazzId {
 	case 0xc0cf7646:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -25816,7 +25874,7 @@ type TLMessagesGetMessageEditData struct {
 }
 
 func (m *TLMessagesGetMessageEditData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageEditData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25824,7 +25882,7 @@ func (m *TLMessagesGetMessageEditData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessageEditData", m)
 }
 
 func (m *TLMessagesGetMessageEditData) CalcSize(layer int32) int {
@@ -25843,7 +25901,7 @@ func (m *TLMessagesGetMessageEditData) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessageEditData) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageEditData, int(layer)); clazzId {
 	case 0xfda68d36:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -25916,7 +25974,7 @@ type TLMessagesEditMessage struct {
 }
 
 func (m *TLMessagesEditMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -25924,7 +25982,7 @@ func (m *TLMessagesEditMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editMessage", m)
 }
 
 func (m *TLMessagesEditMessage) CalcSize(layer int32) int {
@@ -25971,7 +26029,7 @@ func (m *TLMessagesEditMessage) CalcSize(layer int32) int {
 func (m *TLMessagesEditMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editMessage, int(layer)); clazzId {
 	case 0x51e842e1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -26187,7 +26245,7 @@ type TLMessagesEditInlineBotMessage struct {
 }
 
 func (m *TLMessagesEditInlineBotMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editInlineBotMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26195,7 +26253,7 @@ func (m *TLMessagesEditInlineBotMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editInlineBotMessage", m)
 }
 
 func (m *TLMessagesEditInlineBotMessage) CalcSize(layer int32) int {
@@ -26229,7 +26287,7 @@ func (m *TLMessagesEditInlineBotMessage) CalcSize(layer int32) int {
 func (m *TLMessagesEditInlineBotMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editInlineBotMessage, int(layer)); clazzId {
 	case 0x83557dba:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -26397,7 +26455,7 @@ type TLMessagesGetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesGetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getBotCallbackAnswer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26405,7 +26463,7 @@ func (m *TLMessagesGetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getBotCallbackAnswer", m)
 }
 
 func (m *TLMessagesGetBotCallbackAnswer) CalcSize(layer int32) int {
@@ -26432,7 +26490,7 @@ func (m *TLMessagesGetBotCallbackAnswer) CalcSize(layer int32) int {
 func (m *TLMessagesGetBotCallbackAnswer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotCallbackAnswer, int(layer)); clazzId {
 	case 0x9342ca07:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -26551,7 +26609,7 @@ type TLMessagesSetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesSetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotCallbackAnswer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26559,7 +26617,7 @@ func (m *TLMessagesSetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setBotCallbackAnswer", m)
 }
 
 func (m *TLMessagesSetBotCallbackAnswer) CalcSize(layer int32) int {
@@ -26695,7 +26753,7 @@ type TLMessagesGetPeerDialogs struct {
 }
 
 func (m *TLMessagesGetPeerDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPeerDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26703,7 +26761,7 @@ func (m *TLMessagesGetPeerDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPeerDialogs", m)
 }
 
 func (m *TLMessagesGetPeerDialogs) CalcSize(layer int32) int {
@@ -26721,7 +26779,7 @@ func (m *TLMessagesGetPeerDialogs) CalcSize(layer int32) int {
 func (m *TLMessagesGetPeerDialogs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPeerDialogs, int(layer)); clazzId {
 	case 0xe470bcfd:
-		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("peers", m.Peers, layer); err != nil {
 			return err
 		}
 
@@ -26800,7 +26858,7 @@ type TLMessagesSaveDraft struct {
 }
 
 func (m *TLMessagesSaveDraft) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveDraft", TLObject: m}
 	return wrapper.String()
 }
 
@@ -26808,7 +26866,7 @@ func (m *TLMessagesSaveDraft) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_saveDraft", m)
 }
 
 func (m *TLMessagesSaveDraft) CalcSize(layer int32) int {
@@ -26848,7 +26906,7 @@ func (m *TLMessagesSaveDraft) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDraft, int(layer)); clazzId {
 	case 0x54ae308e:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -27035,7 +27093,7 @@ type TLMessagesGetAllDrafts struct {
 }
 
 func (m *TLMessagesGetAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAllDrafts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27043,7 +27101,7 @@ func (m *TLMessagesGetAllDrafts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAllDrafts", m)
 }
 
 func (m *TLMessagesGetAllDrafts) CalcSize(layer int32) int {
@@ -27104,7 +27162,7 @@ type TLMessagesGetFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFeaturedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27112,7 +27170,7 @@ func (m *TLMessagesGetFeaturedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFeaturedStickers", m)
 }
 
 func (m *TLMessagesGetFeaturedStickers) CalcSize(layer int32) int {
@@ -27180,7 +27238,7 @@ type TLMessagesReadFeaturedStickers struct {
 }
 
 func (m *TLMessagesReadFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readFeaturedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27188,7 +27246,7 @@ func (m *TLMessagesReadFeaturedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readFeaturedStickers", m)
 }
 
 func (m *TLMessagesReadFeaturedStickers) CalcSize(layer int32) int {
@@ -27206,7 +27264,7 @@ func (m *TLMessagesReadFeaturedStickers) CalcSize(layer int32) int {
 func (m *TLMessagesReadFeaturedStickers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readFeaturedStickers, int(layer)); clazzId {
 	case 0x5b118126:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -27258,7 +27316,7 @@ type TLMessagesGetRecentStickers struct {
 }
 
 func (m *TLMessagesGetRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27266,7 +27324,7 @@ func (m *TLMessagesGetRecentStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getRecentStickers", m)
 }
 
 func (m *TLMessagesGetRecentStickers) CalcSize(layer int32) int {
@@ -27359,7 +27417,7 @@ type TLMessagesSaveRecentSticker struct {
 }
 
 func (m *TLMessagesSaveRecentSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveRecentSticker", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27367,7 +27425,7 @@ func (m *TLMessagesSaveRecentSticker) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_saveRecentSticker", m)
 }
 
 func (m *TLMessagesSaveRecentSticker) CalcSize(layer int32) int {
@@ -27387,11 +27445,11 @@ func (m *TLMessagesSaveRecentSticker) CalcSize(layer int32) int {
 func (m *TLMessagesSaveRecentSticker) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveRecentSticker, int(layer)); clazzId {
 	case 0x392718f8:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unsave", m.Unsave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unsave", m.Unsave, layer); err != nil {
 			return err
 		}
 
@@ -27479,7 +27537,7 @@ type TLMessagesClearRecentStickers struct {
 }
 
 func (m *TLMessagesClearRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearRecentStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27487,7 +27545,7 @@ func (m *TLMessagesClearRecentStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_clearRecentStickers", m)
 }
 
 func (m *TLMessagesClearRecentStickers) CalcSize(layer int32) int {
@@ -27575,7 +27633,7 @@ type TLMessagesGetArchivedStickers struct {
 }
 
 func (m *TLMessagesGetArchivedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getArchivedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27583,7 +27641,7 @@ func (m *TLMessagesGetArchivedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getArchivedStickers", m)
 }
 
 func (m *TLMessagesGetArchivedStickers) CalcSize(layer int32) int {
@@ -27686,7 +27744,7 @@ type TLMessagesGetMaskStickers struct {
 }
 
 func (m *TLMessagesGetMaskStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMaskStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27694,7 +27752,7 @@ func (m *TLMessagesGetMaskStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMaskStickers", m)
 }
 
 func (m *TLMessagesGetMaskStickers) CalcSize(layer int32) int {
@@ -27762,7 +27820,7 @@ type TLMessagesGetAttachedStickers struct {
 }
 
 func (m *TLMessagesGetAttachedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27770,7 +27828,7 @@ func (m *TLMessagesGetAttachedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAttachedStickers", m)
 }
 
 func (m *TLMessagesGetAttachedStickers) CalcSize(layer int32) int {
@@ -27788,7 +27846,7 @@ func (m *TLMessagesGetAttachedStickers) CalcSize(layer int32) int {
 func (m *TLMessagesGetAttachedStickers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachedStickers, int(layer)); clazzId {
 	case 0xcc5b67cc:
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -27850,7 +27908,7 @@ type TLMessagesSetGameScore struct {
 }
 
 func (m *TLMessagesSetGameScore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setGameScore", TLObject: m}
 	return wrapper.String()
 }
 
@@ -27858,7 +27916,7 @@ func (m *TLMessagesSetGameScore) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setGameScore", m)
 }
 
 func (m *TLMessagesSetGameScore) CalcSize(layer int32) int {
@@ -27880,11 +27938,11 @@ func (m *TLMessagesSetGameScore) CalcSize(layer int32) int {
 func (m *TLMessagesSetGameScore) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setGameScore, int(layer)); clazzId {
 	case 0x8ef8ecc0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -27994,7 +28052,7 @@ type TLMessagesSetInlineGameScore struct {
 }
 
 func (m *TLMessagesSetInlineGameScore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setInlineGameScore", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28002,7 +28060,7 @@ func (m *TLMessagesSetInlineGameScore) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setInlineGameScore", m)
 }
 
 func (m *TLMessagesSetInlineGameScore) CalcSize(layer int32) int {
@@ -28023,11 +28081,11 @@ func (m *TLMessagesSetInlineGameScore) CalcSize(layer int32) int {
 func (m *TLMessagesSetInlineGameScore) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setInlineGameScore, int(layer)); clazzId {
 	case 0x15ad9f64:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -28129,7 +28187,7 @@ type TLMessagesGetGameHighScores struct {
 }
 
 func (m *TLMessagesGetGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getGameHighScores", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28137,7 +28195,7 @@ func (m *TLMessagesGetGameHighScores) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getGameHighScores", m)
 }
 
 func (m *TLMessagesGetGameHighScores) CalcSize(layer int32) int {
@@ -28157,11 +28215,11 @@ func (m *TLMessagesGetGameHighScores) CalcSize(layer int32) int {
 func (m *TLMessagesGetGameHighScores) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getGameHighScores, int(layer)); clazzId {
 	case 0xe822649d:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -28234,7 +28292,7 @@ type TLMessagesGetInlineGameHighScores struct {
 }
 
 func (m *TLMessagesGetInlineGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getInlineGameHighScores", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28242,7 +28300,7 @@ func (m *TLMessagesGetInlineGameHighScores) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getInlineGameHighScores", m)
 }
 
 func (m *TLMessagesGetInlineGameHighScores) CalcSize(layer int32) int {
@@ -28261,11 +28319,11 @@ func (m *TLMessagesGetInlineGameHighScores) CalcSize(layer int32) int {
 func (m *TLMessagesGetInlineGameHighScores) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getInlineGameHighScores, int(layer)); clazzId {
 	case 0xf635e1b:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -28333,7 +28391,7 @@ type TLMessagesGetCommonChats struct {
 }
 
 func (m *TLMessagesGetCommonChats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getCommonChats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28341,7 +28399,7 @@ func (m *TLMessagesGetCommonChats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getCommonChats", m)
 }
 
 func (m *TLMessagesGetCommonChats) CalcSize(layer int32) int {
@@ -28361,7 +28419,7 @@ func (m *TLMessagesGetCommonChats) CalcSize(layer int32) int {
 func (m *TLMessagesGetCommonChats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCommonChats, int(layer)); clazzId {
 	case 0xe40ca104:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -28430,7 +28488,7 @@ type TLMessagesGetWebPage struct {
 }
 
 func (m *TLMessagesGetWebPage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getWebPage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28438,7 +28496,7 @@ func (m *TLMessagesGetWebPage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getWebPage", m)
 }
 
 func (m *TLMessagesGetWebPage) CalcSize(layer int32) int {
@@ -28516,7 +28574,7 @@ type TLMessagesToggleDialogPin struct {
 }
 
 func (m *TLMessagesToggleDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleDialogPin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28524,7 +28582,7 @@ func (m *TLMessagesToggleDialogPin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleDialogPin", m)
 }
 
 func (m *TLMessagesToggleDialogPin) CalcSize(layer int32) int {
@@ -28543,7 +28601,7 @@ func (m *TLMessagesToggleDialogPin) CalcSize(layer int32) int {
 func (m *TLMessagesToggleDialogPin) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogPin, int(layer)); clazzId {
 	case 0xa731e257:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -28624,7 +28682,7 @@ type TLMessagesReorderPinnedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28632,7 +28690,7 @@ func (m *TLMessagesReorderPinnedDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reorderPinnedDialogs", m)
 }
 
 func (m *TLMessagesReorderPinnedDialogs) CalcSize(layer int32) int {
@@ -28652,7 +28710,7 @@ func (m *TLMessagesReorderPinnedDialogs) CalcSize(layer int32) int {
 func (m *TLMessagesReorderPinnedDialogs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedDialogs, int(layer)); clazzId {
 	case 0x3b1adf37:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -28751,7 +28809,7 @@ type TLMessagesGetPinnedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPinnedDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28759,7 +28817,7 @@ func (m *TLMessagesGetPinnedDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPinnedDialogs", m)
 }
 
 func (m *TLMessagesGetPinnedDialogs) CalcSize(layer int32) int {
@@ -28829,7 +28887,7 @@ type TLMessagesSetBotShippingResults struct {
 }
 
 func (m *TLMessagesSetBotShippingResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotShippingResults", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28837,7 +28895,7 @@ func (m *TLMessagesSetBotShippingResults) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setBotShippingResults", m)
 }
 
 func (m *TLMessagesSetBotShippingResults) CalcSize(layer int32) int {
@@ -28976,7 +29034,7 @@ type TLMessagesSetBotPrecheckoutResults struct {
 }
 
 func (m *TLMessagesSetBotPrecheckoutResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotPrecheckoutResults", TLObject: m}
 	return wrapper.String()
 }
 
@@ -28984,7 +29042,7 @@ func (m *TLMessagesSetBotPrecheckoutResults) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setBotPrecheckoutResults", m)
 }
 
 func (m *TLMessagesSetBotPrecheckoutResults) CalcSize(layer int32) int {
@@ -29094,7 +29152,7 @@ type TLMessagesUploadMedia struct {
 }
 
 func (m *TLMessagesUploadMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29102,7 +29160,7 @@ func (m *TLMessagesUploadMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_uploadMedia", m)
 }
 
 func (m *TLMessagesUploadMedia) CalcSize(layer int32) int {
@@ -29127,11 +29185,11 @@ func (m *TLMessagesUploadMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadMedia, int(layer)); clazzId {
 	case 0x14967978:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -29229,7 +29287,7 @@ type TLMessagesSendScreenshotNotification struct {
 }
 
 func (m *TLMessagesSendScreenshotNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendScreenshotNotification", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29237,7 +29295,7 @@ func (m *TLMessagesSendScreenshotNotification) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendScreenshotNotification", m)
 }
 
 func (m *TLMessagesSendScreenshotNotification) CalcSize(layer int32) int {
@@ -29257,11 +29315,11 @@ func (m *TLMessagesSendScreenshotNotification) CalcSize(layer int32) int {
 func (m *TLMessagesSendScreenshotNotification) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScreenshotNotification, int(layer)); clazzId {
 	case 0xa1405817:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reply_to", m.ReplyTo); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reply_to", m.ReplyTo, layer); err != nil {
 			return err
 		}
 
@@ -29333,7 +29391,7 @@ type TLMessagesGetFavedStickers struct {
 }
 
 func (m *TLMessagesGetFavedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFavedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29341,7 +29399,7 @@ func (m *TLMessagesGetFavedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFavedStickers", m)
 }
 
 func (m *TLMessagesGetFavedStickers) CalcSize(layer int32) int {
@@ -29410,7 +29468,7 @@ type TLMessagesFaveSticker struct {
 }
 
 func (m *TLMessagesFaveSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_faveSticker", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29418,7 +29476,7 @@ func (m *TLMessagesFaveSticker) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_faveSticker", m)
 }
 
 func (m *TLMessagesFaveSticker) CalcSize(layer int32) int {
@@ -29437,11 +29495,11 @@ func (m *TLMessagesFaveSticker) CalcSize(layer int32) int {
 func (m *TLMessagesFaveSticker) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_faveSticker, int(layer)); clazzId {
 	case 0xb9ffc55b:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("unfave", m.Unfave); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("unfave", m.Unfave, layer); err != nil {
 			return err
 		}
 
@@ -29513,7 +29571,7 @@ type TLMessagesGetUnreadMentions struct {
 }
 
 func (m *TLMessagesGetUnreadMentions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadMentions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29521,7 +29579,7 @@ func (m *TLMessagesGetUnreadMentions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getUnreadMentions", m)
 }
 
 func (m *TLMessagesGetUnreadMentions) CalcSize(layer int32) int {
@@ -29549,7 +29607,7 @@ func (m *TLMessagesGetUnreadMentions) CalcSize(layer int32) int {
 func (m *TLMessagesGetUnreadMentions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadMentions, int(layer)); clazzId {
 	case 0xf107e790:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -29663,7 +29721,7 @@ type TLMessagesReadMentions struct {
 }
 
 func (m *TLMessagesReadMentions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readMentions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29671,7 +29729,7 @@ func (m *TLMessagesReadMentions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readMentions", m)
 }
 
 func (m *TLMessagesReadMentions) CalcSize(layer int32) int {
@@ -29693,7 +29751,7 @@ func (m *TLMessagesReadMentions) CalcSize(layer int32) int {
 func (m *TLMessagesReadMentions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readMentions, int(layer)); clazzId {
 	case 0x36e5bf4d:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -29782,7 +29840,7 @@ type TLMessagesGetRecentLocations struct {
 }
 
 func (m *TLMessagesGetRecentLocations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentLocations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29790,7 +29848,7 @@ func (m *TLMessagesGetRecentLocations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getRecentLocations", m)
 }
 
 func (m *TLMessagesGetRecentLocations) CalcSize(layer int32) int {
@@ -29810,7 +29868,7 @@ func (m *TLMessagesGetRecentLocations) CalcSize(layer int32) int {
 func (m *TLMessagesGetRecentLocations) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getRecentLocations, int(layer)); clazzId {
 	case 0x702a40e0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -29892,7 +29950,7 @@ type TLMessagesSendMultiMedia struct {
 }
 
 func (m *TLMessagesSendMultiMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMultiMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -29900,7 +29958,7 @@ func (m *TLMessagesSendMultiMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendMultiMedia", m)
 }
 
 func (m *TLMessagesSendMultiMedia) CalcSize(layer int32) int {
@@ -29943,11 +30001,11 @@ func (m *TLMessagesSendMultiMedia) CalcSize(layer int32) int {
 func (m *TLMessagesSendMultiMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendMultiMedia, int(layer)); clazzId {
 	case 0x1bf89d74:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("multi_media", m.MultiMedia); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("multi_media", m.MultiMedia, layer); err != nil {
 			return err
 		}
 
@@ -30181,7 +30239,7 @@ type TLMessagesUploadEncryptedFile struct {
 }
 
 func (m *TLMessagesUploadEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadEncryptedFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30189,7 +30247,7 @@ func (m *TLMessagesUploadEncryptedFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_uploadEncryptedFile", m)
 }
 
 func (m *TLMessagesUploadEncryptedFile) CalcSize(layer int32) int {
@@ -30208,11 +30266,11 @@ func (m *TLMessagesUploadEncryptedFile) CalcSize(layer int32) int {
 func (m *TLMessagesUploadEncryptedFile) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadEncryptedFile, int(layer)); clazzId {
 	case 0x5057c497:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -30280,7 +30338,7 @@ type TLMessagesSearchStickerSets struct {
 }
 
 func (m *TLMessagesSearchStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchStickerSets", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30288,7 +30346,7 @@ func (m *TLMessagesSearchStickerSets) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchStickerSets", m)
 }
 
 func (m *TLMessagesSearchStickerSets) CalcSize(layer int32) int {
@@ -30387,7 +30445,7 @@ type TLMessagesGetSplitRanges struct {
 }
 
 func (m *TLMessagesGetSplitRanges) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSplitRanges", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30395,7 +30453,7 @@ func (m *TLMessagesGetSplitRanges) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSplitRanges", m)
 }
 
 func (m *TLMessagesGetSplitRanges) CalcSize(layer int32) int {
@@ -30458,7 +30516,7 @@ type TLMessagesMarkDialogUnread struct {
 }
 
 func (m *TLMessagesMarkDialogUnread) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_markDialogUnread", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30466,7 +30524,7 @@ func (m *TLMessagesMarkDialogUnread) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_markDialogUnread", m)
 }
 
 func (m *TLMessagesMarkDialogUnread) CalcSize(layer int32) int {
@@ -30490,7 +30548,7 @@ func (m *TLMessagesMarkDialogUnread) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_markDialogUnread, int(layer)); clazzId {
 	case 0x8c5006f8:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -30585,7 +30643,7 @@ type TLMessagesGetDialogUnreadMarks struct {
 }
 
 func (m *TLMessagesGetDialogUnreadMarks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogUnreadMarks", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30593,7 +30651,7 @@ func (m *TLMessagesGetDialogUnreadMarks) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDialogUnreadMarks", m)
 }
 
 func (m *TLMessagesGetDialogUnreadMarks) CalcSize(layer int32) int {
@@ -30689,7 +30747,7 @@ type TLMessagesClearAllDrafts struct {
 }
 
 func (m *TLMessagesClearAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearAllDrafts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30697,7 +30755,7 @@ func (m *TLMessagesClearAllDrafts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_clearAllDrafts", m)
 }
 
 func (m *TLMessagesClearAllDrafts) CalcSize(layer int32) int {
@@ -30762,7 +30820,7 @@ type TLMessagesUpdatePinnedMessage struct {
 }
 
 func (m *TLMessagesUpdatePinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_updatePinnedMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30770,7 +30828,7 @@ func (m *TLMessagesUpdatePinnedMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_updatePinnedMessage", m)
 }
 
 func (m *TLMessagesUpdatePinnedMessage) CalcSize(layer int32) int {
@@ -30790,7 +30848,7 @@ func (m *TLMessagesUpdatePinnedMessage) CalcSize(layer int32) int {
 func (m *TLMessagesUpdatePinnedMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedMessage, int(layer)); clazzId {
 	case 0xd2aaf7ec:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -30889,7 +30947,7 @@ type TLMessagesSendVote struct {
 }
 
 func (m *TLMessagesSendVote) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendVote", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30897,7 +30955,7 @@ func (m *TLMessagesSendVote) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendVote", m)
 }
 
 func (m *TLMessagesSendVote) CalcSize(layer int32) int {
@@ -30917,11 +30975,11 @@ func (m *TLMessagesSendVote) CalcSize(layer int32) int {
 func (m *TLMessagesSendVote) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendVote, int(layer)); clazzId {
 	case 0x10ea6184:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("options", m.Options); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("options", m.Options, layer); err != nil {
 			return err
 		}
 
@@ -30989,7 +31047,7 @@ type TLMessagesGetPollResults struct {
 }
 
 func (m *TLMessagesGetPollResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPollResults", TLObject: m}
 	return wrapper.String()
 }
 
@@ -30997,7 +31055,7 @@ func (m *TLMessagesGetPollResults) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPollResults", m)
 }
 
 func (m *TLMessagesGetPollResults) CalcSize(layer int32) int {
@@ -31016,7 +31074,7 @@ func (m *TLMessagesGetPollResults) CalcSize(layer int32) int {
 func (m *TLMessagesGetPollResults) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
 	case 0x73bb643b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -31079,7 +31137,7 @@ type TLMessagesGetOnlines struct {
 }
 
 func (m *TLMessagesGetOnlines) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOnlines", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31087,7 +31145,7 @@ func (m *TLMessagesGetOnlines) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getOnlines", m)
 }
 
 func (m *TLMessagesGetOnlines) CalcSize(layer int32) int {
@@ -31105,7 +31163,7 @@ func (m *TLMessagesGetOnlines) CalcSize(layer int32) int {
 func (m *TLMessagesGetOnlines) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOnlines, int(layer)); clazzId {
 	case 0x6e2be050:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -31163,7 +31221,7 @@ type TLMessagesEditChatAbout struct {
 }
 
 func (m *TLMessagesEditChatAbout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatAbout", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31171,7 +31229,7 @@ func (m *TLMessagesEditChatAbout) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatAbout", m)
 }
 
 func (m *TLMessagesEditChatAbout) CalcSize(layer int32) int {
@@ -31190,7 +31248,7 @@ func (m *TLMessagesEditChatAbout) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatAbout) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatAbout, int(layer)); clazzId {
 	case 0xdef60797:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -31258,7 +31316,7 @@ type TLMessagesEditChatDefaultBannedRights struct {
 }
 
 func (m *TLMessagesEditChatDefaultBannedRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatDefaultBannedRights", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31266,7 +31324,7 @@ func (m *TLMessagesEditChatDefaultBannedRights) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatDefaultBannedRights", m)
 }
 
 func (m *TLMessagesEditChatDefaultBannedRights) CalcSize(layer int32) int {
@@ -31285,11 +31343,11 @@ func (m *TLMessagesEditChatDefaultBannedRights) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatDefaultBannedRights) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatDefaultBannedRights, int(layer)); clazzId {
 	case 0xa5866b41:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("banned_rights", m.BannedRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("banned_rights", m.BannedRights, layer); err != nil {
 			return err
 		}
 
@@ -31355,7 +31413,7 @@ type TLMessagesGetEmojiKeywords struct {
 }
 
 func (m *TLMessagesGetEmojiKeywords) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywords", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31363,7 +31421,7 @@ func (m *TLMessagesGetEmojiKeywords) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiKeywords", m)
 }
 
 func (m *TLMessagesGetEmojiKeywords) CalcSize(layer int32) int {
@@ -31435,7 +31493,7 @@ type TLMessagesGetEmojiKeywordsDifference struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywordsDifference", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31443,7 +31501,7 @@ func (m *TLMessagesGetEmojiKeywordsDifference) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiKeywordsDifference", m)
 }
 
 func (m *TLMessagesGetEmojiKeywordsDifference) CalcSize(layer int32) int {
@@ -31520,7 +31578,7 @@ type TLMessagesGetEmojiKeywordsLanguages struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsLanguages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywordsLanguages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31528,7 +31586,7 @@ func (m *TLMessagesGetEmojiKeywordsLanguages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiKeywordsLanguages", m)
 }
 
 func (m *TLMessagesGetEmojiKeywordsLanguages) CalcSize(layer int32) int {
@@ -31546,7 +31604,7 @@ func (m *TLMessagesGetEmojiKeywordsLanguages) CalcSize(layer int32) int {
 func (m *TLMessagesGetEmojiKeywordsLanguages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getEmojiKeywordsLanguages, int(layer)); clazzId {
 	case 0x4e9963b2:
-		if err := iface.ValidateRequiredSlice("lang_codes", m.LangCodes); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("lang_codes", m.LangCodes, layer); err != nil {
 			return err
 		}
 
@@ -31597,7 +31655,7 @@ type TLMessagesGetEmojiURL struct {
 }
 
 func (m *TLMessagesGetEmojiURL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiURL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31605,7 +31663,7 @@ func (m *TLMessagesGetEmojiURL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiURL", m)
 }
 
 func (m *TLMessagesGetEmojiURL) CalcSize(layer int32) int {
@@ -31679,7 +31737,7 @@ type TLMessagesGetSearchCounters struct {
 }
 
 func (m *TLMessagesGetSearchCounters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchCounters", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31687,7 +31745,7 @@ func (m *TLMessagesGetSearchCounters) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSearchCounters", m)
 }
 
 func (m *TLMessagesGetSearchCounters) CalcSize(layer int32) int {
@@ -31715,11 +31773,11 @@ func (m *TLMessagesGetSearchCounters) CalcSize(layer int32) int {
 func (m *TLMessagesGetSearchCounters) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchCounters, int(layer)); clazzId {
 	case 0x1bbcf300:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("filters", m.Filters); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("filters", m.Filters, layer); err != nil {
 			return err
 		}
 
@@ -31850,7 +31908,7 @@ type TLMessagesRequestUrlAuth struct {
 }
 
 func (m *TLMessagesRequestUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestUrlAuth", TLObject: m}
 	return wrapper.String()
 }
 
@@ -31858,7 +31916,7 @@ func (m *TLMessagesRequestUrlAuth) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestUrlAuth", m)
 }
 
 func (m *TLMessagesRequestUrlAuth) CalcSize(layer int32) int {
@@ -32138,7 +32196,7 @@ type TLMessagesAcceptUrlAuth struct {
 }
 
 func (m *TLMessagesAcceptUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_acceptUrlAuth", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32146,7 +32204,7 @@ func (m *TLMessagesAcceptUrlAuth) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_acceptUrlAuth", m)
 }
 
 func (m *TLMessagesAcceptUrlAuth) CalcSize(layer int32) int {
@@ -32444,7 +32502,7 @@ type TLMessagesHidePeerSettingsBar struct {
 }
 
 func (m *TLMessagesHidePeerSettingsBar) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_hidePeerSettingsBar", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32452,7 +32510,7 @@ func (m *TLMessagesHidePeerSettingsBar) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_hidePeerSettingsBar", m)
 }
 
 func (m *TLMessagesHidePeerSettingsBar) CalcSize(layer int32) int {
@@ -32470,7 +32528,7 @@ func (m *TLMessagesHidePeerSettingsBar) CalcSize(layer int32) int {
 func (m *TLMessagesHidePeerSettingsBar) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hidePeerSettingsBar, int(layer)); clazzId {
 	case 0x4facb138:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -32528,7 +32586,7 @@ type TLMessagesGetScheduledHistory struct {
 }
 
 func (m *TLMessagesGetScheduledHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getScheduledHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32536,7 +32594,7 @@ func (m *TLMessagesGetScheduledHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getScheduledHistory", m)
 }
 
 func (m *TLMessagesGetScheduledHistory) CalcSize(layer int32) int {
@@ -32555,7 +32613,7 @@ func (m *TLMessagesGetScheduledHistory) CalcSize(layer int32) int {
 func (m *TLMessagesGetScheduledHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledHistory, int(layer)); clazzId {
 	case 0xf516760b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -32619,7 +32677,7 @@ type TLMessagesGetScheduledMessages struct {
 }
 
 func (m *TLMessagesGetScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getScheduledMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32627,7 +32685,7 @@ func (m *TLMessagesGetScheduledMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getScheduledMessages", m)
 }
 
 func (m *TLMessagesGetScheduledMessages) CalcSize(layer int32) int {
@@ -32646,11 +32704,11 @@ func (m *TLMessagesGetScheduledMessages) CalcSize(layer int32) int {
 func (m *TLMessagesGetScheduledMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getScheduledMessages, int(layer)); clazzId {
 	case 0xbdbb0464:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -32712,7 +32770,7 @@ type TLMessagesSendScheduledMessages struct {
 }
 
 func (m *TLMessagesSendScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendScheduledMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32720,7 +32778,7 @@ func (m *TLMessagesSendScheduledMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendScheduledMessages", m)
 }
 
 func (m *TLMessagesSendScheduledMessages) CalcSize(layer int32) int {
@@ -32739,11 +32797,11 @@ func (m *TLMessagesSendScheduledMessages) CalcSize(layer int32) int {
 func (m *TLMessagesSendScheduledMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendScheduledMessages, int(layer)); clazzId {
 	case 0xbd38850a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -32805,7 +32863,7 @@ type TLMessagesDeleteScheduledMessages struct {
 }
 
 func (m *TLMessagesDeleteScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteScheduledMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32813,7 +32871,7 @@ func (m *TLMessagesDeleteScheduledMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteScheduledMessages", m)
 }
 
 func (m *TLMessagesDeleteScheduledMessages) CalcSize(layer int32) int {
@@ -32832,11 +32890,11 @@ func (m *TLMessagesDeleteScheduledMessages) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteScheduledMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteScheduledMessages, int(layer)); clazzId {
 	case 0x59ae2b16:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -32901,7 +32959,7 @@ type TLMessagesGetPollVotes struct {
 }
 
 func (m *TLMessagesGetPollVotes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPollVotes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -32909,7 +32967,7 @@ func (m *TLMessagesGetPollVotes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPollVotes", m)
 }
 
 func (m *TLMessagesGetPollVotes) CalcSize(layer int32) int {
@@ -32938,7 +32996,7 @@ func (m *TLMessagesGetPollVotes) CalcSize(layer int32) int {
 func (m *TLMessagesGetPollVotes) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollVotes, int(layer)); clazzId {
 	case 0xb86e380e:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -33054,7 +33112,7 @@ type TLMessagesToggleStickerSets struct {
 }
 
 func (m *TLMessagesToggleStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleStickerSets", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33062,7 +33120,7 @@ func (m *TLMessagesToggleStickerSets) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleStickerSets", m)
 }
 
 func (m *TLMessagesToggleStickerSets) CalcSize(layer int32) int {
@@ -33081,7 +33139,7 @@ func (m *TLMessagesToggleStickerSets) CalcSize(layer int32) int {
 func (m *TLMessagesToggleStickerSets) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleStickerSets, int(layer)); clazzId {
 	case 0xb5052fea:
-		if err := iface.ValidateRequiredSlice("stickersets", m.Stickersets); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stickersets", m.Stickersets, layer); err != nil {
 			return err
 		}
 
@@ -33186,7 +33244,7 @@ type TLMessagesGetDialogFilters struct {
 }
 
 func (m *TLMessagesGetDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogFilters", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33194,7 +33252,7 @@ func (m *TLMessagesGetDialogFilters) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDialogFilters", m)
 }
 
 func (m *TLMessagesGetDialogFilters) CalcSize(layer int32) int {
@@ -33254,7 +33312,7 @@ type TLMessagesGetSuggestedDialogFilters struct {
 }
 
 func (m *TLMessagesGetSuggestedDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSuggestedDialogFilters", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33262,7 +33320,7 @@ func (m *TLMessagesGetSuggestedDialogFilters) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSuggestedDialogFilters", m)
 }
 
 func (m *TLMessagesGetSuggestedDialogFilters) CalcSize(layer int32) int {
@@ -33324,7 +33382,7 @@ type TLMessagesUpdateDialogFilter struct {
 }
 
 func (m *TLMessagesUpdateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateDialogFilter", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33332,7 +33390,7 @@ func (m *TLMessagesUpdateDialogFilter) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_updateDialogFilter", m)
 }
 
 func (m *TLMessagesUpdateDialogFilter) CalcSize(layer int32) int {
@@ -33435,7 +33493,7 @@ type TLMessagesUpdateDialogFiltersOrder struct {
 }
 
 func (m *TLMessagesUpdateDialogFiltersOrder) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateDialogFiltersOrder", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33443,7 +33501,7 @@ func (m *TLMessagesUpdateDialogFiltersOrder) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_updateDialogFiltersOrder", m)
 }
 
 func (m *TLMessagesUpdateDialogFiltersOrder) CalcSize(layer int32) int {
@@ -33461,7 +33519,7 @@ func (m *TLMessagesUpdateDialogFiltersOrder) CalcSize(layer int32) int {
 func (m *TLMessagesUpdateDialogFiltersOrder) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateDialogFiltersOrder, int(layer)); clazzId {
 	case 0xc563c1e4:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -33514,7 +33572,7 @@ type TLMessagesGetOldFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetOldFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOldFeaturedStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33522,7 +33580,7 @@ func (m *TLMessagesGetOldFeaturedStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getOldFeaturedStickers", m)
 }
 
 func (m *TLMessagesGetOldFeaturedStickers) CalcSize(layer int32) int {
@@ -33610,7 +33668,7 @@ type TLMessagesGetReplies struct {
 }
 
 func (m *TLMessagesGetReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getReplies", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33618,7 +33676,7 @@ func (m *TLMessagesGetReplies) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getReplies", m)
 }
 
 func (m *TLMessagesGetReplies) CalcSize(layer int32) int {
@@ -33644,7 +33702,7 @@ func (m *TLMessagesGetReplies) CalcSize(layer int32) int {
 func (m *TLMessagesGetReplies) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getReplies, int(layer)); clazzId {
 	case 0x22ddd30c:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -33743,7 +33801,7 @@ type TLMessagesGetDiscussionMessage struct {
 }
 
 func (m *TLMessagesGetDiscussionMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDiscussionMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33751,7 +33809,7 @@ func (m *TLMessagesGetDiscussionMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDiscussionMessage", m)
 }
 
 func (m *TLMessagesGetDiscussionMessage) CalcSize(layer int32) int {
@@ -33770,7 +33828,7 @@ func (m *TLMessagesGetDiscussionMessage) CalcSize(layer int32) int {
 func (m *TLMessagesGetDiscussionMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getDiscussionMessage, int(layer)); clazzId {
 	case 0x446972fd:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -33835,7 +33893,7 @@ type TLMessagesReadDiscussion struct {
 }
 
 func (m *TLMessagesReadDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readDiscussion", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33843,7 +33901,7 @@ func (m *TLMessagesReadDiscussion) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readDiscussion", m)
 }
 
 func (m *TLMessagesReadDiscussion) CalcSize(layer int32) int {
@@ -33863,7 +33921,7 @@ func (m *TLMessagesReadDiscussion) CalcSize(layer int32) int {
 func (m *TLMessagesReadDiscussion) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readDiscussion, int(layer)); clazzId {
 	case 0xf731a9f4:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -33933,7 +33991,7 @@ type TLMessagesUnpinAllMessages struct {
 }
 
 func (m *TLMessagesUnpinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_unpinAllMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -33941,7 +33999,7 @@ func (m *TLMessagesUnpinAllMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_unpinAllMessages", m)
 }
 
 func (m *TLMessagesUnpinAllMessages) CalcSize(layer int32) int {
@@ -33967,7 +34025,7 @@ func (m *TLMessagesUnpinAllMessages) CalcSize(layer int32) int {
 func (m *TLMessagesUnpinAllMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_unpinAllMessages, int(layer)); clazzId {
 	case 0x62dd747:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -34070,7 +34128,7 @@ type TLMessagesDeleteChat struct {
 }
 
 func (m *TLMessagesDeleteChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteChat", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34078,7 +34136,7 @@ func (m *TLMessagesDeleteChat) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteChat", m)
 }
 
 func (m *TLMessagesDeleteChat) CalcSize(layer int32) int {
@@ -34146,7 +34204,7 @@ type TLMessagesDeletePhoneCallHistory struct {
 }
 
 func (m *TLMessagesDeletePhoneCallHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deletePhoneCallHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34154,7 +34212,7 @@ func (m *TLMessagesDeletePhoneCallHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deletePhoneCallHistory", m)
 }
 
 func (m *TLMessagesDeletePhoneCallHistory) CalcSize(layer int32) int {
@@ -34239,7 +34297,7 @@ type TLMessagesCheckHistoryImport struct {
 }
 
 func (m *TLMessagesCheckHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkHistoryImport", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34247,7 +34305,7 @@ func (m *TLMessagesCheckHistoryImport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_checkHistoryImport", m)
 }
 
 func (m *TLMessagesCheckHistoryImport) CalcSize(layer int32) int {
@@ -34320,7 +34378,7 @@ type TLMessagesInitHistoryImport struct {
 }
 
 func (m *TLMessagesInitHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_initHistoryImport", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34328,7 +34386,7 @@ func (m *TLMessagesInitHistoryImport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_initHistoryImport", m)
 }
 
 func (m *TLMessagesInitHistoryImport) CalcSize(layer int32) int {
@@ -34348,11 +34406,11 @@ func (m *TLMessagesInitHistoryImport) CalcSize(layer int32) int {
 func (m *TLMessagesInitHistoryImport) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_initHistoryImport, int(layer)); clazzId {
 	case 0x34090c3b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -34427,7 +34485,7 @@ type TLMessagesUploadImportedMedia struct {
 }
 
 func (m *TLMessagesUploadImportedMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadImportedMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34435,7 +34493,7 @@ func (m *TLMessagesUploadImportedMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_uploadImportedMedia", m)
 }
 
 func (m *TLMessagesUploadImportedMedia) CalcSize(layer int32) int {
@@ -34456,7 +34514,7 @@ func (m *TLMessagesUploadImportedMedia) CalcSize(layer int32) int {
 func (m *TLMessagesUploadImportedMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_uploadImportedMedia, int(layer)); clazzId {
 	case 0x2a862092:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -34464,7 +34522,7 @@ func (m *TLMessagesUploadImportedMedia) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -34542,7 +34600,7 @@ type TLMessagesStartHistoryImport struct {
 }
 
 func (m *TLMessagesStartHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_startHistoryImport", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34550,7 +34608,7 @@ func (m *TLMessagesStartHistoryImport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_startHistoryImport", m)
 }
 
 func (m *TLMessagesStartHistoryImport) CalcSize(layer int32) int {
@@ -34569,7 +34627,7 @@ func (m *TLMessagesStartHistoryImport) CalcSize(layer int32) int {
 func (m *TLMessagesStartHistoryImport) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_startHistoryImport, int(layer)); clazzId {
 	case 0xb43df344:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -34637,7 +34695,7 @@ type TLMessagesGetExportedChatInvites struct {
 }
 
 func (m *TLMessagesGetExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExportedChatInvites", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34645,7 +34703,7 @@ func (m *TLMessagesGetExportedChatInvites) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getExportedChatInvites", m)
 }
 
 func (m *TLMessagesGetExportedChatInvites) CalcSize(layer int32) int {
@@ -34674,11 +34732,11 @@ func (m *TLMessagesGetExportedChatInvites) CalcSize(layer int32) int {
 func (m *TLMessagesGetExportedChatInvites) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvites, int(layer)); clazzId {
 	case 0xa2b5a3f6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("admin_id", m.AdminId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_id", m.AdminId, layer); err != nil {
 			return err
 		}
 
@@ -34803,7 +34861,7 @@ type TLMessagesGetExportedChatInvite struct {
 }
 
 func (m *TLMessagesGetExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExportedChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34811,7 +34869,7 @@ func (m *TLMessagesGetExportedChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getExportedChatInvite", m)
 }
 
 func (m *TLMessagesGetExportedChatInvite) CalcSize(layer int32) int {
@@ -34830,7 +34888,7 @@ func (m *TLMessagesGetExportedChatInvite) CalcSize(layer int32) int {
 func (m *TLMessagesGetExportedChatInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExportedChatInvite, int(layer)); clazzId {
 	case 0x73746f5c:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -34903,7 +34961,7 @@ type TLMessagesEditExportedChatInvite struct {
 }
 
 func (m *TLMessagesEditExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editExportedChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -34911,7 +34969,7 @@ func (m *TLMessagesEditExportedChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editExportedChatInvite", m)
 }
 
 func (m *TLMessagesEditExportedChatInvite) CalcSize(layer int32) int {
@@ -34946,7 +35004,7 @@ func (m *TLMessagesEditExportedChatInvite) CalcSize(layer int32) int {
 func (m *TLMessagesEditExportedChatInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editExportedChatInvite, int(layer)); clazzId {
 	case 0xbdca2f75:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35094,7 +35152,7 @@ type TLMessagesDeleteRevokedExportedChatInvites struct {
 }
 
 func (m *TLMessagesDeleteRevokedExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteRevokedExportedChatInvites", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35102,7 +35160,7 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) MarshalJSON() ([]byte, erro
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteRevokedExportedChatInvites", m)
 }
 
 func (m *TLMessagesDeleteRevokedExportedChatInvites) CalcSize(layer int32) int {
@@ -35121,11 +35179,11 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteRevokedExportedChatInvites) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteRevokedExportedChatInvites, int(layer)); clazzId {
 	case 0x56987bd5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("admin_id", m.AdminId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_id", m.AdminId, layer); err != nil {
 			return err
 		}
 
@@ -35192,7 +35250,7 @@ type TLMessagesDeleteExportedChatInvite struct {
 }
 
 func (m *TLMessagesDeleteExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteExportedChatInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35200,7 +35258,7 @@ func (m *TLMessagesDeleteExportedChatInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteExportedChatInvite", m)
 }
 
 func (m *TLMessagesDeleteExportedChatInvite) CalcSize(layer int32) int {
@@ -35219,7 +35277,7 @@ func (m *TLMessagesDeleteExportedChatInvite) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteExportedChatInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteExportedChatInvite, int(layer)); clazzId {
 	case 0xd464a42b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35286,7 +35344,7 @@ type TLMessagesGetAdminsWithInvites struct {
 }
 
 func (m *TLMessagesGetAdminsWithInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAdminsWithInvites", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35294,7 +35352,7 @@ func (m *TLMessagesGetAdminsWithInvites) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAdminsWithInvites", m)
 }
 
 func (m *TLMessagesGetAdminsWithInvites) CalcSize(layer int32) int {
@@ -35312,7 +35370,7 @@ func (m *TLMessagesGetAdminsWithInvites) CalcSize(layer int32) int {
 func (m *TLMessagesGetAdminsWithInvites) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAdminsWithInvites, int(layer)); clazzId {
 	case 0x3920e6ef:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35376,7 +35434,7 @@ type TLMessagesGetChatInviteImporters struct {
 }
 
 func (m *TLMessagesGetChatInviteImporters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getChatInviteImporters", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35384,7 +35442,7 @@ func (m *TLMessagesGetChatInviteImporters) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getChatInviteImporters", m)
 }
 
 func (m *TLMessagesGetChatInviteImporters) CalcSize(layer int32) int {
@@ -35414,11 +35472,11 @@ func (m *TLMessagesGetChatInviteImporters) CalcSize(layer int32) int {
 func (m *TLMessagesGetChatInviteImporters) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getChatInviteImporters, int(layer)); clazzId {
 	case 0xdf04dd4e:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("offset_user", m.OffsetUser); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offset_user", m.OffsetUser, layer); err != nil {
 			return err
 		}
 
@@ -35556,7 +35614,7 @@ type TLMessagesSetHistoryTTL struct {
 }
 
 func (m *TLMessagesSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setHistoryTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35564,7 +35622,7 @@ func (m *TLMessagesSetHistoryTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setHistoryTTL", m)
 }
 
 func (m *TLMessagesSetHistoryTTL) CalcSize(layer int32) int {
@@ -35583,7 +35641,7 @@ func (m *TLMessagesSetHistoryTTL) CalcSize(layer int32) int {
 func (m *TLMessagesSetHistoryTTL) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setHistoryTTL, int(layer)); clazzId {
 	case 0xb80e5fe4:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35646,7 +35704,7 @@ type TLMessagesCheckHistoryImportPeer struct {
 }
 
 func (m *TLMessagesCheckHistoryImportPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkHistoryImportPeer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35654,7 +35712,7 @@ func (m *TLMessagesCheckHistoryImportPeer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_checkHistoryImportPeer", m)
 }
 
 func (m *TLMessagesCheckHistoryImportPeer) CalcSize(layer int32) int {
@@ -35672,7 +35730,7 @@ func (m *TLMessagesCheckHistoryImportPeer) CalcSize(layer int32) int {
 func (m *TLMessagesCheckHistoryImportPeer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_checkHistoryImportPeer, int(layer)); clazzId {
 	case 0x5dc60f03:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35730,7 +35788,7 @@ type TLMessagesSetChatTheme struct {
 }
 
 func (m *TLMessagesSetChatTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatTheme", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35738,7 +35796,7 @@ func (m *TLMessagesSetChatTheme) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setChatTheme", m)
 }
 
 func (m *TLMessagesSetChatTheme) CalcSize(layer int32) int {
@@ -35757,11 +35815,11 @@ func (m *TLMessagesSetChatTheme) CalcSize(layer int32) int {
 func (m *TLMessagesSetChatTheme) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatTheme, int(layer)); clazzId {
 	case 0x81202c9:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("theme", m.Theme); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("theme", m.Theme, layer); err != nil {
 			return err
 		}
 
@@ -35828,7 +35886,7 @@ type TLMessagesGetMessageReadParticipants struct {
 }
 
 func (m *TLMessagesGetMessageReadParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageReadParticipants", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35836,7 +35894,7 @@ func (m *TLMessagesGetMessageReadParticipants) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessageReadParticipants", m)
 }
 
 func (m *TLMessagesGetMessageReadParticipants) CalcSize(layer int32) int {
@@ -35855,7 +35913,7 @@ func (m *TLMessagesGetMessageReadParticipants) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessageReadParticipants) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReadParticipants, int(layer)); clazzId {
 	case 0x31c1c44f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -35922,7 +35980,7 @@ type TLMessagesGetSearchResultsCalendar struct {
 }
 
 func (m *TLMessagesGetSearchResultsCalendar) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchResultsCalendar", TLObject: m}
 	return wrapper.String()
 }
 
@@ -35930,7 +35988,7 @@ func (m *TLMessagesGetSearchResultsCalendar) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSearchResultsCalendar", m)
 }
 
 func (m *TLMessagesGetSearchResultsCalendar) CalcSize(layer int32) int {
@@ -35956,11 +36014,11 @@ func (m *TLMessagesGetSearchResultsCalendar) CalcSize(layer int32) int {
 func (m *TLMessagesGetSearchResultsCalendar) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsCalendar, int(layer)); clazzId {
 	case 0x6aa3f6bd:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -36074,7 +36132,7 @@ type TLMessagesGetSearchResultsPositions struct {
 }
 
 func (m *TLMessagesGetSearchResultsPositions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchResultsPositions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36082,7 +36140,7 @@ func (m *TLMessagesGetSearchResultsPositions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSearchResultsPositions", m)
 }
 
 func (m *TLMessagesGetSearchResultsPositions) CalcSize(layer int32) int {
@@ -36108,11 +36166,11 @@ func (m *TLMessagesGetSearchResultsPositions) CalcSize(layer int32) int {
 func (m *TLMessagesGetSearchResultsPositions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSearchResultsPositions, int(layer)); clazzId {
 	case 0x9c7f2f10:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -36224,7 +36282,7 @@ type TLMessagesHideChatJoinRequest struct {
 }
 
 func (m *TLMessagesHideChatJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_hideChatJoinRequest", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36232,7 +36290,7 @@ func (m *TLMessagesHideChatJoinRequest) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_hideChatJoinRequest", m)
 }
 
 func (m *TLMessagesHideChatJoinRequest) CalcSize(layer int32) int {
@@ -36252,11 +36310,11 @@ func (m *TLMessagesHideChatJoinRequest) CalcSize(layer int32) int {
 func (m *TLMessagesHideChatJoinRequest) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideChatJoinRequest, int(layer)); clazzId {
 	case 0x7fe7e815:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -36346,7 +36404,7 @@ type TLMessagesHideAllChatJoinRequests struct {
 }
 
 func (m *TLMessagesHideAllChatJoinRequests) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_hideAllChatJoinRequests", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36354,7 +36412,7 @@ func (m *TLMessagesHideAllChatJoinRequests) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_hideAllChatJoinRequests", m)
 }
 
 func (m *TLMessagesHideAllChatJoinRequests) CalcSize(layer int32) int {
@@ -36376,7 +36434,7 @@ func (m *TLMessagesHideAllChatJoinRequests) CalcSize(layer int32) int {
 func (m *TLMessagesHideAllChatJoinRequests) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_hideAllChatJoinRequests, int(layer)); clazzId {
 	case 0xe085f4ea:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -36472,7 +36530,7 @@ type TLMessagesToggleNoForwards struct {
 }
 
 func (m *TLMessagesToggleNoForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleNoForwards", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36480,7 +36538,7 @@ func (m *TLMessagesToggleNoForwards) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleNoForwards", m)
 }
 
 func (m *TLMessagesToggleNoForwards) CalcSize(layer int32) int {
@@ -36509,21 +36567,21 @@ func (m *TLMessagesToggleNoForwards) CalcSize(layer int32) int {
 func (m *TLMessagesToggleNoForwards) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleNoForwards, int(layer)); clazzId {
 	case 0xb2081a35:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
 		return nil
 	case 0xb11eafa2:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -36646,7 +36704,7 @@ type TLMessagesSaveDefaultSendAs struct {
 }
 
 func (m *TLMessagesSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveDefaultSendAs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36654,7 +36712,7 @@ func (m *TLMessagesSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_saveDefaultSendAs", m)
 }
 
 func (m *TLMessagesSaveDefaultSendAs) CalcSize(layer int32) int {
@@ -36673,11 +36731,11 @@ func (m *TLMessagesSaveDefaultSendAs) CalcSize(layer int32) int {
 func (m *TLMessagesSaveDefaultSendAs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_saveDefaultSendAs, int(layer)); clazzId {
 	case 0xccfddf96:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("send_as", m.SendAs); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("send_as", m.SendAs, layer); err != nil {
 			return err
 		}
 
@@ -36747,7 +36805,7 @@ type TLMessagesSendReaction struct {
 }
 
 func (m *TLMessagesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendReaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36755,7 +36813,7 @@ func (m *TLMessagesSendReaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendReaction", m)
 }
 
 func (m *TLMessagesSendReaction) CalcSize(layer int32) int {
@@ -36778,7 +36836,7 @@ func (m *TLMessagesSendReaction) CalcSize(layer int32) int {
 func (m *TLMessagesSendReaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendReaction, int(layer)); clazzId {
 	case 0xd30d78d4:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -36901,7 +36959,7 @@ type TLMessagesGetMessagesReactions struct {
 }
 
 func (m *TLMessagesGetMessagesReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessagesReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -36909,7 +36967,7 @@ func (m *TLMessagesGetMessagesReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessagesReactions", m)
 }
 
 func (m *TLMessagesGetMessagesReactions) CalcSize(layer int32) int {
@@ -36928,11 +36986,11 @@ func (m *TLMessagesGetMessagesReactions) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessagesReactions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessagesReactions, int(layer)); clazzId {
 	case 0x8bba90e6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -36997,7 +37055,7 @@ type TLMessagesGetMessageReactionsList struct {
 }
 
 func (m *TLMessagesGetMessageReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageReactionsList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37005,7 +37063,7 @@ func (m *TLMessagesGetMessageReactionsList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMessageReactionsList", m)
 }
 
 func (m *TLMessagesGetMessageReactionsList) CalcSize(layer int32) int {
@@ -37034,7 +37092,7 @@ func (m *TLMessagesGetMessageReactionsList) CalcSize(layer int32) int {
 func (m *TLMessagesGetMessageReactionsList) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getMessageReactionsList, int(layer)); clazzId {
 	case 0x461b3f48:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -37152,7 +37210,7 @@ type TLMessagesSetChatAvailableReactions struct {
 }
 
 func (m *TLMessagesSetChatAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatAvailableReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37160,7 +37218,7 @@ func (m *TLMessagesSetChatAvailableReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setChatAvailableReactions", m)
 }
 
 func (m *TLMessagesSetChatAvailableReactions) CalcSize(layer int32) int {
@@ -37187,11 +37245,11 @@ func (m *TLMessagesSetChatAvailableReactions) CalcSize(layer int32) int {
 func (m *TLMessagesSetChatAvailableReactions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatAvailableReactions, int(layer)); clazzId {
 	case 0x864b2581:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("available_reactions", m.AvailableReactions); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("available_reactions", m.AvailableReactions, layer); err != nil {
 			return err
 		}
 
@@ -37303,7 +37361,7 @@ type TLMessagesGetAvailableReactions struct {
 }
 
 func (m *TLMessagesGetAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAvailableReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37311,7 +37369,7 @@ func (m *TLMessagesGetAvailableReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAvailableReactions", m)
 }
 
 func (m *TLMessagesGetAvailableReactions) CalcSize(layer int32) int {
@@ -37379,7 +37437,7 @@ type TLMessagesSetDefaultReaction struct {
 }
 
 func (m *TLMessagesSetDefaultReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setDefaultReaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37387,7 +37445,7 @@ func (m *TLMessagesSetDefaultReaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setDefaultReaction", m)
 }
 
 func (m *TLMessagesSetDefaultReaction) CalcSize(layer int32) int {
@@ -37405,7 +37463,7 @@ func (m *TLMessagesSetDefaultReaction) CalcSize(layer int32) int {
 func (m *TLMessagesSetDefaultReaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setDefaultReaction, int(layer)); clazzId {
 	case 0x4f47a016:
-		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reaction", m.Reaction, layer); err != nil {
 			return err
 		}
 
@@ -37465,7 +37523,7 @@ type TLMessagesTranslateText struct {
 }
 
 func (m *TLMessagesTranslateText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_translateText", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37473,7 +37531,7 @@ func (m *TLMessagesTranslateText) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_translateText", m)
 }
 
 func (m *TLMessagesTranslateText) CalcSize(layer int32) int {
@@ -37636,7 +37694,7 @@ type TLMessagesGetUnreadReactions struct {
 }
 
 func (m *TLMessagesGetUnreadReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37644,7 +37702,7 @@ func (m *TLMessagesGetUnreadReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getUnreadReactions", m)
 }
 
 func (m *TLMessagesGetUnreadReactions) CalcSize(layer int32) int {
@@ -37676,7 +37734,7 @@ func (m *TLMessagesGetUnreadReactions) CalcSize(layer int32) int {
 func (m *TLMessagesGetUnreadReactions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadReactions, int(layer)); clazzId {
 	case 0xbd7f90ac:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -37807,7 +37865,7 @@ type TLMessagesReadReactions struct {
 }
 
 func (m *TLMessagesReadReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37815,7 +37873,7 @@ func (m *TLMessagesReadReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readReactions", m)
 }
 
 func (m *TLMessagesReadReactions) CalcSize(layer int32) int {
@@ -37841,7 +37899,7 @@ func (m *TLMessagesReadReactions) CalcSize(layer int32) int {
 func (m *TLMessagesReadReactions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readReactions, int(layer)); clazzId {
 	case 0x9ec44f93:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -37946,7 +38004,7 @@ type TLMessagesSearchSentMedia struct {
 }
 
 func (m *TLMessagesSearchSentMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchSentMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -37954,7 +38012,7 @@ func (m *TLMessagesSearchSentMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchSentMedia", m)
 }
 
 func (m *TLMessagesSearchSentMedia) CalcSize(layer int32) int {
@@ -37978,7 +38036,7 @@ func (m *TLMessagesSearchSentMedia) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -38046,7 +38104,7 @@ type TLMessagesGetAttachMenuBots struct {
 }
 
 func (m *TLMessagesGetAttachMenuBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachMenuBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38054,7 +38112,7 @@ func (m *TLMessagesGetAttachMenuBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAttachMenuBots", m)
 }
 
 func (m *TLMessagesGetAttachMenuBots) CalcSize(layer int32) int {
@@ -38122,7 +38180,7 @@ type TLMessagesGetAttachMenuBot struct {
 }
 
 func (m *TLMessagesGetAttachMenuBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachMenuBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38130,7 +38188,7 @@ func (m *TLMessagesGetAttachMenuBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAttachMenuBot", m)
 }
 
 func (m *TLMessagesGetAttachMenuBot) CalcSize(layer int32) int {
@@ -38148,7 +38206,7 @@ func (m *TLMessagesGetAttachMenuBot) CalcSize(layer int32) int {
 func (m *TLMessagesGetAttachMenuBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getAttachMenuBot, int(layer)); clazzId {
 	case 0x77216192:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -38207,7 +38265,7 @@ type TLMessagesToggleBotInAttachMenu struct {
 }
 
 func (m *TLMessagesToggleBotInAttachMenu) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleBotInAttachMenu", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38215,7 +38273,7 @@ func (m *TLMessagesToggleBotInAttachMenu) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleBotInAttachMenu", m)
 }
 
 func (m *TLMessagesToggleBotInAttachMenu) CalcSize(layer int32) int {
@@ -38235,11 +38293,11 @@ func (m *TLMessagesToggleBotInAttachMenu) CalcSize(layer int32) int {
 func (m *TLMessagesToggleBotInAttachMenu) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleBotInAttachMenu, int(layer)); clazzId {
 	case 0x69f59d69:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -38338,7 +38396,7 @@ type TLMessagesRequestWebView struct {
 }
 
 func (m *TLMessagesRequestWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestWebView", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38346,7 +38404,7 @@ func (m *TLMessagesRequestWebView) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestWebView", m)
 }
 
 func (m *TLMessagesRequestWebView) CalcSize(layer int32) int {
@@ -38386,11 +38444,11 @@ func (m *TLMessagesRequestWebView) CalcSize(layer int32) int {
 func (m *TLMessagesRequestWebView) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestWebView, int(layer)); clazzId {
 	case 0x269dc2c1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -38590,7 +38648,7 @@ type TLMessagesProlongWebView struct {
 }
 
 func (m *TLMessagesProlongWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_prolongWebView", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38598,7 +38656,7 @@ func (m *TLMessagesProlongWebView) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_prolongWebView", m)
 }
 
 func (m *TLMessagesProlongWebView) CalcSize(layer int32) int {
@@ -38626,11 +38684,11 @@ func (m *TLMessagesProlongWebView) CalcSize(layer int32) int {
 func (m *TLMessagesProlongWebView) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_prolongWebView, int(layer)); clazzId {
 	case 0xb0d81a83:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -38764,7 +38822,7 @@ type TLMessagesRequestSimpleWebView struct {
 }
 
 func (m *TLMessagesRequestSimpleWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestSimpleWebView", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38772,7 +38830,7 @@ func (m *TLMessagesRequestSimpleWebView) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestSimpleWebView", m)
 }
 
 func (m *TLMessagesRequestSimpleWebView) CalcSize(layer int32) int {
@@ -38804,7 +38862,7 @@ func (m *TLMessagesRequestSimpleWebView) CalcSize(layer int32) int {
 func (m *TLMessagesRequestSimpleWebView) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestSimpleWebView, int(layer)); clazzId {
 	case 0x413a3e73:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -38959,7 +39017,7 @@ type TLMessagesSendWebViewResultMessage struct {
 }
 
 func (m *TLMessagesSendWebViewResultMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendWebViewResultMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -38967,7 +39025,7 @@ func (m *TLMessagesSendWebViewResultMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendWebViewResultMessage", m)
 }
 
 func (m *TLMessagesSendWebViewResultMessage) CalcSize(layer int32) int {
@@ -38990,7 +39048,7 @@ func (m *TLMessagesSendWebViewResultMessage) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("result", m.Result); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("result", m.Result, layer); err != nil {
 			return err
 		}
 
@@ -39055,7 +39113,7 @@ type TLMessagesSendWebViewData struct {
 }
 
 func (m *TLMessagesSendWebViewData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendWebViewData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39063,7 +39121,7 @@ func (m *TLMessagesSendWebViewData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendWebViewData", m)
 }
 
 func (m *TLMessagesSendWebViewData) CalcSize(layer int32) int {
@@ -39084,7 +39142,7 @@ func (m *TLMessagesSendWebViewData) CalcSize(layer int32) int {
 func (m *TLMessagesSendWebViewData) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendWebViewData, int(layer)); clazzId {
 	case 0xdc0242c8:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -39166,7 +39224,7 @@ type TLMessagesTranscribeAudio struct {
 }
 
 func (m *TLMessagesTranscribeAudio) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_transcribeAudio", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39174,7 +39232,7 @@ func (m *TLMessagesTranscribeAudio) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_transcribeAudio", m)
 }
 
 func (m *TLMessagesTranscribeAudio) CalcSize(layer int32) int {
@@ -39193,7 +39251,7 @@ func (m *TLMessagesTranscribeAudio) CalcSize(layer int32) int {
 func (m *TLMessagesTranscribeAudio) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_transcribeAudio, int(layer)); clazzId {
 	case 0x269e9a49:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -39259,7 +39317,7 @@ type TLMessagesRateTranscribedAudio struct {
 }
 
 func (m *TLMessagesRateTranscribedAudio) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_rateTranscribedAudio", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39267,7 +39325,7 @@ func (m *TLMessagesRateTranscribedAudio) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_rateTranscribedAudio", m)
 }
 
 func (m *TLMessagesRateTranscribedAudio) CalcSize(layer int32) int {
@@ -39288,11 +39346,11 @@ func (m *TLMessagesRateTranscribedAudio) CalcSize(layer int32) int {
 func (m *TLMessagesRateTranscribedAudio) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_rateTranscribedAudio, int(layer)); clazzId {
 	case 0x7f1d072f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("good", m.Good); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("good", m.Good, layer); err != nil {
 			return err
 		}
 
@@ -39369,7 +39427,7 @@ type TLMessagesGetCustomEmojiDocuments struct {
 }
 
 func (m *TLMessagesGetCustomEmojiDocuments) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getCustomEmojiDocuments", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39377,7 +39435,7 @@ func (m *TLMessagesGetCustomEmojiDocuments) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getCustomEmojiDocuments", m)
 }
 
 func (m *TLMessagesGetCustomEmojiDocuments) CalcSize(layer int32) int {
@@ -39395,7 +39453,7 @@ func (m *TLMessagesGetCustomEmojiDocuments) CalcSize(layer int32) int {
 func (m *TLMessagesGetCustomEmojiDocuments) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getCustomEmojiDocuments, int(layer)); clazzId {
 	case 0xd9ab0f54:
-		if err := iface.ValidateRequiredSlice("document_id", m.DocumentId); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("document_id", m.DocumentId, layer); err != nil {
 			return err
 		}
 
@@ -39446,7 +39504,7 @@ type TLMessagesGetEmojiStickers struct {
 }
 
 func (m *TLMessagesGetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39454,7 +39512,7 @@ func (m *TLMessagesGetEmojiStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiStickers", m)
 }
 
 func (m *TLMessagesGetEmojiStickers) CalcSize(layer int32) int {
@@ -39522,7 +39580,7 @@ type TLMessagesGetFeaturedEmojiStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFeaturedEmojiStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39530,7 +39588,7 @@ func (m *TLMessagesGetFeaturedEmojiStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFeaturedEmojiStickers", m)
 }
 
 func (m *TLMessagesGetFeaturedEmojiStickers) CalcSize(layer int32) int {
@@ -39600,7 +39658,7 @@ type TLMessagesReportReaction struct {
 }
 
 func (m *TLMessagesReportReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportReaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39608,7 +39666,7 @@ func (m *TLMessagesReportReaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reportReaction", m)
 }
 
 func (m *TLMessagesReportReaction) CalcSize(layer int32) int {
@@ -39628,11 +39686,11 @@ func (m *TLMessagesReportReaction) CalcSize(layer int32) int {
 func (m *TLMessagesReportReaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReaction, int(layer)); clazzId {
 	case 0x3f64c076:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reaction_peer", m.ReactionPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reaction_peer", m.ReactionPeer, layer); err != nil {
 			return err
 		}
 
@@ -39705,7 +39763,7 @@ type TLMessagesGetTopReactions struct {
 }
 
 func (m *TLMessagesGetTopReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getTopReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39713,7 +39771,7 @@ func (m *TLMessagesGetTopReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getTopReactions", m)
 }
 
 func (m *TLMessagesGetTopReactions) CalcSize(layer int32) int {
@@ -39788,7 +39846,7 @@ type TLMessagesGetRecentReactions struct {
 }
 
 func (m *TLMessagesGetRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39796,7 +39854,7 @@ func (m *TLMessagesGetRecentReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getRecentReactions", m)
 }
 
 func (m *TLMessagesGetRecentReactions) CalcSize(layer int32) int {
@@ -39869,7 +39927,7 @@ type TLMessagesClearRecentReactions struct {
 }
 
 func (m *TLMessagesClearRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearRecentReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39877,7 +39935,7 @@ func (m *TLMessagesClearRecentReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_clearRecentReactions", m)
 }
 
 func (m *TLMessagesClearRecentReactions) CalcSize(layer int32) int {
@@ -39939,7 +39997,7 @@ type TLMessagesGetExtendedMedia struct {
 }
 
 func (m *TLMessagesGetExtendedMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExtendedMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -39947,7 +40005,7 @@ func (m *TLMessagesGetExtendedMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getExtendedMedia", m)
 }
 
 func (m *TLMessagesGetExtendedMedia) CalcSize(layer int32) int {
@@ -39966,11 +40024,11 @@ func (m *TLMessagesGetExtendedMedia) CalcSize(layer int32) int {
 func (m *TLMessagesGetExtendedMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getExtendedMedia, int(layer)); clazzId {
 	case 0x84f80814:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -40031,7 +40089,7 @@ type TLMessagesSetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesSetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setDefaultHistoryTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40039,7 +40097,7 @@ func (m *TLMessagesSetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setDefaultHistoryTTL", m)
 }
 
 func (m *TLMessagesSetDefaultHistoryTTL) CalcSize(layer int32) int {
@@ -40106,7 +40164,7 @@ type TLMessagesGetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesGetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDefaultHistoryTTL", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40114,7 +40172,7 @@ func (m *TLMessagesGetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDefaultHistoryTTL", m)
 }
 
 func (m *TLMessagesGetDefaultHistoryTTL) CalcSize(layer int32) int {
@@ -40178,7 +40236,7 @@ type TLMessagesSendBotRequestedPeer struct {
 }
 
 func (m *TLMessagesSendBotRequestedPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendBotRequestedPeer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40186,7 +40244,7 @@ func (m *TLMessagesSendBotRequestedPeer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendBotRequestedPeer", m)
 }
 
 func (m *TLMessagesSendBotRequestedPeer) CalcSize(layer int32) int {
@@ -40207,11 +40265,11 @@ func (m *TLMessagesSendBotRequestedPeer) CalcSize(layer int32) int {
 func (m *TLMessagesSendBotRequestedPeer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
 	case 0x91b2d060:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("requested_peers", m.RequestedPeers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("requested_peers", m.RequestedPeers, layer); err != nil {
 			return err
 		}
 
@@ -40303,7 +40361,7 @@ type TLMessagesGetEmojiGroups struct {
 }
 
 func (m *TLMessagesGetEmojiGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiGroups", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40311,7 +40369,7 @@ func (m *TLMessagesGetEmojiGroups) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiGroups", m)
 }
 
 func (m *TLMessagesGetEmojiGroups) CalcSize(layer int32) int {
@@ -40379,7 +40437,7 @@ type TLMessagesGetEmojiStatusGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStatusGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStatusGroups", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40387,7 +40445,7 @@ func (m *TLMessagesGetEmojiStatusGroups) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiStatusGroups", m)
 }
 
 func (m *TLMessagesGetEmojiStatusGroups) CalcSize(layer int32) int {
@@ -40455,7 +40513,7 @@ type TLMessagesGetEmojiProfilePhotoGroups struct {
 }
 
 func (m *TLMessagesGetEmojiProfilePhotoGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiProfilePhotoGroups", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40463,7 +40521,7 @@ func (m *TLMessagesGetEmojiProfilePhotoGroups) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiProfilePhotoGroups", m)
 }
 
 func (m *TLMessagesGetEmojiProfilePhotoGroups) CalcSize(layer int32) int {
@@ -40532,7 +40590,7 @@ type TLMessagesSearchCustomEmoji struct {
 }
 
 func (m *TLMessagesSearchCustomEmoji) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchCustomEmoji", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40540,7 +40598,7 @@ func (m *TLMessagesSearchCustomEmoji) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchCustomEmoji", m)
 }
 
 func (m *TLMessagesSearchCustomEmoji) CalcSize(layer int32) int {
@@ -40618,7 +40676,7 @@ type TLMessagesTogglePeerTranslations struct {
 }
 
 func (m *TLMessagesTogglePeerTranslations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_togglePeerTranslations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40626,7 +40684,7 @@ func (m *TLMessagesTogglePeerTranslations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_togglePeerTranslations", m)
 }
 
 func (m *TLMessagesTogglePeerTranslations) CalcSize(layer int32) int {
@@ -40645,7 +40703,7 @@ func (m *TLMessagesTogglePeerTranslations) CalcSize(layer int32) int {
 func (m *TLMessagesTogglePeerTranslations) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePeerTranslations, int(layer)); clazzId {
 	case 0xe47cb579:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -40725,7 +40783,7 @@ type TLMessagesGetBotApp struct {
 }
 
 func (m *TLMessagesGetBotApp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getBotApp", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40733,7 +40791,7 @@ func (m *TLMessagesGetBotApp) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getBotApp", m)
 }
 
 func (m *TLMessagesGetBotApp) CalcSize(layer int32) int {
@@ -40752,7 +40810,7 @@ func (m *TLMessagesGetBotApp) CalcSize(layer int32) int {
 func (m *TLMessagesGetBotApp) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getBotApp, int(layer)); clazzId {
 	case 0x34fdc5c3:
-		if err := iface.ValidateRequiredObject("app", m.App); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("app", m.App, layer); err != nil {
 			return err
 		}
 
@@ -40822,7 +40880,7 @@ type TLMessagesRequestAppWebView struct {
 }
 
 func (m *TLMessagesRequestAppWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestAppWebView", TLObject: m}
 	return wrapper.String()
 }
 
@@ -40830,7 +40888,7 @@ func (m *TLMessagesRequestAppWebView) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestAppWebView", m)
 }
 
 func (m *TLMessagesRequestAppWebView) CalcSize(layer int32) int {
@@ -40859,11 +40917,11 @@ func (m *TLMessagesRequestAppWebView) CalcSize(layer int32) int {
 func (m *TLMessagesRequestAppWebView) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestAppWebView, int(layer)); clazzId {
 	case 0x53618bce:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("app", m.App); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("app", m.App, layer); err != nil {
 			return err
 		}
 
@@ -41010,7 +41068,7 @@ type TLMessagesSetChatWallPaper struct {
 }
 
 func (m *TLMessagesSetChatWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatWallPaper", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41018,7 +41076,7 @@ func (m *TLMessagesSetChatWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_setChatWallPaper", m)
 }
 
 func (m *TLMessagesSetChatWallPaper) CalcSize(layer int32) int {
@@ -41048,7 +41106,7 @@ func (m *TLMessagesSetChatWallPaper) CalcSize(layer int32) int {
 func (m *TLMessagesSetChatWallPaper) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_setChatWallPaper, int(layer)); clazzId {
 	case 0x8ffacae1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -41182,7 +41240,7 @@ type TLMessagesSearchEmojiStickerSets struct {
 }
 
 func (m *TLMessagesSearchEmojiStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchEmojiStickerSets", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41190,7 +41248,7 @@ func (m *TLMessagesSearchEmojiStickerSets) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchEmojiStickerSets", m)
 }
 
 func (m *TLMessagesSearchEmojiStickerSets) CalcSize(layer int32) int {
@@ -41296,7 +41354,7 @@ type TLMessagesGetSavedDialogs struct {
 }
 
 func (m *TLMessagesGetSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41304,7 +41362,7 @@ func (m *TLMessagesGetSavedDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSavedDialogs", m)
 }
 
 func (m *TLMessagesGetSavedDialogs) CalcSize(layer int32) int {
@@ -41332,7 +41390,7 @@ func (m *TLMessagesGetSavedDialogs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogs, int(layer)); clazzId {
 	case 0x1e91fc99:
 
-		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offset_peer", m.OffsetPeer, layer); err != nil {
 			return err
 		}
 
@@ -41456,7 +41514,7 @@ type TLMessagesGetSavedHistory struct {
 }
 
 func (m *TLMessagesGetSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41464,7 +41522,7 @@ func (m *TLMessagesGetSavedHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSavedHistory", m)
 }
 
 func (m *TLMessagesGetSavedHistory) CalcSize(layer int32) int {
@@ -41495,7 +41553,7 @@ func (m *TLMessagesGetSavedHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedHistory, int(layer)); clazzId {
 	case 0x998ab009:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -41624,7 +41682,7 @@ type TLMessagesDeleteSavedHistory struct {
 }
 
 func (m *TLMessagesDeleteSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteSavedHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41632,7 +41690,7 @@ func (m *TLMessagesDeleteSavedHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteSavedHistory", m)
 }
 
 func (m *TLMessagesDeleteSavedHistory) CalcSize(layer int32) int {
@@ -41664,7 +41722,7 @@ func (m *TLMessagesDeleteSavedHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteSavedHistory, int(layer)); clazzId {
 	case 0x4dc5085f:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -41786,7 +41844,7 @@ type TLMessagesGetPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPinnedSavedDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41794,7 +41852,7 @@ func (m *TLMessagesGetPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPinnedSavedDialogs", m)
 }
 
 func (m *TLMessagesGetPinnedSavedDialogs) CalcSize(layer int32) int {
@@ -41856,7 +41914,7 @@ type TLMessagesToggleSavedDialogPin struct {
 }
 
 func (m *TLMessagesToggleSavedDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleSavedDialogPin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41864,7 +41922,7 @@ func (m *TLMessagesToggleSavedDialogPin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleSavedDialogPin", m)
 }
 
 func (m *TLMessagesToggleSavedDialogPin) CalcSize(layer int32) int {
@@ -41883,7 +41941,7 @@ func (m *TLMessagesToggleSavedDialogPin) CalcSize(layer int32) int {
 func (m *TLMessagesToggleSavedDialogPin) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSavedDialogPin, int(layer)); clazzId {
 	case 0xac81bbde:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -41963,7 +42021,7 @@ type TLMessagesReorderPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedSavedDialogs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -41971,7 +42029,7 @@ func (m *TLMessagesReorderPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reorderPinnedSavedDialogs", m)
 }
 
 func (m *TLMessagesReorderPinnedSavedDialogs) CalcSize(layer int32) int {
@@ -41990,7 +42048,7 @@ func (m *TLMessagesReorderPinnedSavedDialogs) CalcSize(layer int32) int {
 func (m *TLMessagesReorderPinnedSavedDialogs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedSavedDialogs, int(layer)); clazzId {
 	case 0x8b716587:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -42085,7 +42143,7 @@ type TLMessagesGetSavedReactionTags struct {
 }
 
 func (m *TLMessagesGetSavedReactionTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedReactionTags", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42093,7 +42151,7 @@ func (m *TLMessagesGetSavedReactionTags) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSavedReactionTags", m)
 }
 
 func (m *TLMessagesGetSavedReactionTags) CalcSize(layer int32) int {
@@ -42199,7 +42257,7 @@ type TLMessagesUpdateSavedReactionTag struct {
 }
 
 func (m *TLMessagesUpdateSavedReactionTag) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateSavedReactionTag", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42207,7 +42265,7 @@ func (m *TLMessagesUpdateSavedReactionTag) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_updateSavedReactionTag", m)
 }
 
 func (m *TLMessagesUpdateSavedReactionTag) CalcSize(layer int32) int {
@@ -42229,7 +42287,7 @@ func (m *TLMessagesUpdateSavedReactionTag) CalcSize(layer int32) int {
 func (m *TLMessagesUpdateSavedReactionTag) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updateSavedReactionTag, int(layer)); clazzId {
 	case 0x60297dec:
-		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reaction", m.Reaction, layer); err != nil {
 			return err
 		}
 
@@ -42316,7 +42374,7 @@ type TLMessagesGetDefaultTagReactions struct {
 }
 
 func (m *TLMessagesGetDefaultTagReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDefaultTagReactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42324,7 +42382,7 @@ func (m *TLMessagesGetDefaultTagReactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getDefaultTagReactions", m)
 }
 
 func (m *TLMessagesGetDefaultTagReactions) CalcSize(layer int32) int {
@@ -42393,7 +42451,7 @@ type TLMessagesGetOutboxReadDate struct {
 }
 
 func (m *TLMessagesGetOutboxReadDate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOutboxReadDate", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42401,7 +42459,7 @@ func (m *TLMessagesGetOutboxReadDate) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getOutboxReadDate", m)
 }
 
 func (m *TLMessagesGetOutboxReadDate) CalcSize(layer int32) int {
@@ -42420,7 +42478,7 @@ func (m *TLMessagesGetOutboxReadDate) CalcSize(layer int32) int {
 func (m *TLMessagesGetOutboxReadDate) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getOutboxReadDate, int(layer)); clazzId {
 	case 0x8c4bfe5d:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -42483,7 +42541,7 @@ type TLMessagesGetQuickReplies struct {
 }
 
 func (m *TLMessagesGetQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getQuickReplies", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42491,7 +42549,7 @@ func (m *TLMessagesGetQuickReplies) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getQuickReplies", m)
 }
 
 func (m *TLMessagesGetQuickReplies) CalcSize(layer int32) int {
@@ -42559,7 +42617,7 @@ type TLMessagesReorderQuickReplies struct {
 }
 
 func (m *TLMessagesReorderQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderQuickReplies", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42567,7 +42625,7 @@ func (m *TLMessagesReorderQuickReplies) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reorderQuickReplies", m)
 }
 
 func (m *TLMessagesReorderQuickReplies) CalcSize(layer int32) int {
@@ -42585,7 +42643,7 @@ func (m *TLMessagesReorderQuickReplies) CalcSize(layer int32) int {
 func (m *TLMessagesReorderQuickReplies) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderQuickReplies, int(layer)); clazzId {
 	case 0x60331907:
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -42636,7 +42694,7 @@ type TLMessagesCheckQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesCheckQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkQuickReplyShortcut", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42644,7 +42702,7 @@ func (m *TLMessagesCheckQuickReplyShortcut) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_checkQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesCheckQuickReplyShortcut) CalcSize(layer int32) int {
@@ -42716,7 +42774,7 @@ type TLMessagesEditQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesEditQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editQuickReplyShortcut", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42724,7 +42782,7 @@ func (m *TLMessagesEditQuickReplyShortcut) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesEditQuickReplyShortcut) CalcSize(layer int32) int {
@@ -42801,7 +42859,7 @@ type TLMessagesDeleteQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteQuickReplyShortcut", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42809,7 +42867,7 @@ func (m *TLMessagesDeleteQuickReplyShortcut) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesDeleteQuickReplyShortcut) CalcSize(layer int32) int {
@@ -42879,7 +42937,7 @@ type TLMessagesGetQuickReplyMessages struct {
 }
 
 func (m *TLMessagesGetQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getQuickReplyMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -42887,7 +42945,7 @@ func (m *TLMessagesGetQuickReplyMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getQuickReplyMessages", m)
 }
 
 func (m *TLMessagesGetQuickReplyMessages) CalcSize(layer int32) int {
@@ -42994,7 +43052,7 @@ type TLMessagesSendQuickReplyMessages struct {
 }
 
 func (m *TLMessagesSendQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendQuickReplyMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43002,7 +43060,7 @@ func (m *TLMessagesSendQuickReplyMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendQuickReplyMessages", m)
 }
 
 func (m *TLMessagesSendQuickReplyMessages) CalcSize(layer int32) int {
@@ -43023,15 +43081,15 @@ func (m *TLMessagesSendQuickReplyMessages) CalcSize(layer int32) int {
 func (m *TLMessagesSendQuickReplyMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendQuickReplyMessages, int(layer)); clazzId {
 	case 0x6c750de1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("random_id", m.RandomId); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("random_id", m.RandomId, layer); err != nil {
 			return err
 		}
 
@@ -43103,7 +43161,7 @@ type TLMessagesDeleteQuickReplyMessages struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteQuickReplyMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43111,7 +43169,7 @@ func (m *TLMessagesDeleteQuickReplyMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteQuickReplyMessages", m)
 }
 
 func (m *TLMessagesDeleteQuickReplyMessages) CalcSize(layer int32) int {
@@ -43130,7 +43188,7 @@ func (m *TLMessagesDeleteQuickReplyMessages) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteQuickReplyMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteQuickReplyMessages, int(layer)); clazzId {
 	case 0xe105e910:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -43187,7 +43245,7 @@ type TLMessagesToggleDialogFilterTags struct {
 }
 
 func (m *TLMessagesToggleDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleDialogFilterTags", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43195,7 +43253,7 @@ func (m *TLMessagesToggleDialogFilterTags) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleDialogFilterTags", m)
 }
 
 func (m *TLMessagesToggleDialogFilterTags) CalcSize(layer int32) int {
@@ -43213,7 +43271,7 @@ func (m *TLMessagesToggleDialogFilterTags) CalcSize(layer int32) int {
 func (m *TLMessagesToggleDialogFilterTags) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleDialogFilterTags, int(layer)); clazzId {
 	case 0xfd2dda49:
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -43271,7 +43329,7 @@ type TLMessagesGetMyStickers struct {
 }
 
 func (m *TLMessagesGetMyStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMyStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43279,7 +43337,7 @@ func (m *TLMessagesGetMyStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getMyStickers", m)
 }
 
 func (m *TLMessagesGetMyStickers) CalcSize(layer int32) int {
@@ -43353,7 +43411,7 @@ type TLMessagesGetEmojiStickerGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStickerGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStickerGroups", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43361,7 +43419,7 @@ func (m *TLMessagesGetEmojiStickerGroups) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiStickerGroups", m)
 }
 
 func (m *TLMessagesGetEmojiStickerGroups) CalcSize(layer int32) int {
@@ -43429,7 +43487,7 @@ type TLMessagesGetAvailableEffects struct {
 }
 
 func (m *TLMessagesGetAvailableEffects) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAvailableEffects", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43437,7 +43495,7 @@ func (m *TLMessagesGetAvailableEffects) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getAvailableEffects", m)
 }
 
 func (m *TLMessagesGetAvailableEffects) CalcSize(layer int32) int {
@@ -43507,7 +43565,7 @@ type TLMessagesEditFactCheck struct {
 }
 
 func (m *TLMessagesEditFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editFactCheck", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43515,7 +43573,7 @@ func (m *TLMessagesEditFactCheck) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editFactCheck", m)
 }
 
 func (m *TLMessagesEditFactCheck) CalcSize(layer int32) int {
@@ -43535,11 +43593,11 @@ func (m *TLMessagesEditFactCheck) CalcSize(layer int32) int {
 func (m *TLMessagesEditFactCheck) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editFactCheck, int(layer)); clazzId {
 	case 0x589ee75:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("text", m.Text); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("text", m.Text, layer); err != nil {
 			return err
 		}
 
@@ -43612,7 +43670,7 @@ type TLMessagesDeleteFactCheck struct {
 }
 
 func (m *TLMessagesDeleteFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteFactCheck", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43620,7 +43678,7 @@ func (m *TLMessagesDeleteFactCheck) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteFactCheck", m)
 }
 
 func (m *TLMessagesDeleteFactCheck) CalcSize(layer int32) int {
@@ -43639,7 +43697,7 @@ func (m *TLMessagesDeleteFactCheck) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteFactCheck) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteFactCheck, int(layer)); clazzId {
 	case 0xd1da940c:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -43703,7 +43761,7 @@ type TLMessagesGetFactCheck struct {
 }
 
 func (m *TLMessagesGetFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFactCheck", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43711,7 +43769,7 @@ func (m *TLMessagesGetFactCheck) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFactCheck", m)
 }
 
 func (m *TLMessagesGetFactCheck) CalcSize(layer int32) int {
@@ -43730,11 +43788,11 @@ func (m *TLMessagesGetFactCheck) CalcSize(layer int32) int {
 func (m *TLMessagesGetFactCheck) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFactCheck, int(layer)); clazzId {
 	case 0xb9cdc5ee:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("msg_id", m.MsgId); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("msg_id", m.MsgId, layer); err != nil {
 			return err
 		}
 
@@ -43801,7 +43859,7 @@ type TLMessagesRequestMainWebView struct {
 }
 
 func (m *TLMessagesRequestMainWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestMainWebView", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43809,7 +43867,7 @@ func (m *TLMessagesRequestMainWebView) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_requestMainWebView", m)
 }
 
 func (m *TLMessagesRequestMainWebView) CalcSize(layer int32) int {
@@ -43838,11 +43896,11 @@ func (m *TLMessagesRequestMainWebView) CalcSize(layer int32) int {
 func (m *TLMessagesRequestMainWebView) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_requestMainWebView, int(layer)); clazzId {
 	case 0xc9e01e7b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -43982,7 +44040,7 @@ type TLMessagesSendPaidReaction struct {
 }
 
 func (m *TLMessagesSendPaidReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendPaidReaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -43990,7 +44048,7 @@ func (m *TLMessagesSendPaidReaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_sendPaidReaction", m)
 }
 
 func (m *TLMessagesSendPaidReaction) CalcSize(layer int32) int {
@@ -44015,7 +44073,7 @@ func (m *TLMessagesSendPaidReaction) CalcSize(layer int32) int {
 func (m *TLMessagesSendPaidReaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendPaidReaction, int(layer)); clazzId {
 	case 0x58bbcb50:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -44121,7 +44179,7 @@ type TLMessagesTogglePaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesTogglePaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_togglePaidReactionPrivacy", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44129,7 +44187,7 @@ func (m *TLMessagesTogglePaidReactionPrivacy) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_togglePaidReactionPrivacy", m)
 }
 
 func (m *TLMessagesTogglePaidReactionPrivacy) CalcSize(layer int32) int {
@@ -44149,11 +44207,11 @@ func (m *TLMessagesTogglePaidReactionPrivacy) CalcSize(layer int32) int {
 func (m *TLMessagesTogglePaidReactionPrivacy) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_togglePaidReactionPrivacy, int(layer)); clazzId {
 	case 0x435885b5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("private", m.Private); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("private", m.Private, layer); err != nil {
 			return err
 		}
 
@@ -44224,7 +44282,7 @@ type TLMessagesGetPaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesGetPaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPaidReactionPrivacy", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44232,7 +44290,7 @@ func (m *TLMessagesGetPaidReactionPrivacy) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPaidReactionPrivacy", m)
 }
 
 func (m *TLMessagesGetPaidReactionPrivacy) CalcSize(layer int32) int {
@@ -44293,7 +44351,7 @@ type TLMessagesViewSponsoredMessage struct {
 }
 
 func (m *TLMessagesViewSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_viewSponsoredMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44301,7 +44359,7 @@ func (m *TLMessagesViewSponsoredMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_viewSponsoredMessage", m)
 }
 
 func (m *TLMessagesViewSponsoredMessage) CalcSize(layer int32) int {
@@ -44374,7 +44432,7 @@ type TLMessagesClickSponsoredMessage struct {
 }
 
 func (m *TLMessagesClickSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_clickSponsoredMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44382,7 +44440,7 @@ func (m *TLMessagesClickSponsoredMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_clickSponsoredMessage", m)
 }
 
 func (m *TLMessagesClickSponsoredMessage) CalcSize(layer int32) int {
@@ -44483,7 +44541,7 @@ type TLMessagesReportSponsoredMessage struct {
 }
 
 func (m *TLMessagesReportSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportSponsoredMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44491,7 +44549,7 @@ func (m *TLMessagesReportSponsoredMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reportSponsoredMessage", m)
 }
 
 func (m *TLMessagesReportSponsoredMessage) CalcSize(layer int32) int {
@@ -44573,7 +44631,7 @@ type TLMessagesGetSponsoredMessages struct {
 }
 
 func (m *TLMessagesGetSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSponsoredMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44581,7 +44639,7 @@ func (m *TLMessagesGetSponsoredMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSponsoredMessages", m)
 }
 
 func (m *TLMessagesGetSponsoredMessages) CalcSize(layer int32) int {
@@ -44603,7 +44661,7 @@ func (m *TLMessagesGetSponsoredMessages) CalcSize(layer int32) int {
 func (m *TLMessagesGetSponsoredMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSponsoredMessages, int(layer)); clazzId {
 	case 0x3d6ce850:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -44692,7 +44750,7 @@ type TLMessagesSavePreparedInlineMessage struct {
 }
 
 func (m *TLMessagesSavePreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_savePreparedInlineMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44700,7 +44758,7 @@ func (m *TLMessagesSavePreparedInlineMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_savePreparedInlineMessage", m)
 }
 
 func (m *TLMessagesSavePreparedInlineMessage) CalcSize(layer int32) int {
@@ -44723,11 +44781,11 @@ func (m *TLMessagesSavePreparedInlineMessage) CalcSize(layer int32) int {
 func (m *TLMessagesSavePreparedInlineMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_savePreparedInlineMessage, int(layer)); clazzId {
 	case 0xf21f7f2f:
-		if err := iface.ValidateRequiredObject("result", m.Result); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("result", m.Result, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -44841,7 +44899,7 @@ type TLMessagesGetPreparedInlineMessage struct {
 }
 
 func (m *TLMessagesGetPreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPreparedInlineMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44849,7 +44907,7 @@ func (m *TLMessagesGetPreparedInlineMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getPreparedInlineMessage", m)
 }
 
 func (m *TLMessagesGetPreparedInlineMessage) CalcSize(layer int32) int {
@@ -44868,7 +44926,7 @@ func (m *TLMessagesGetPreparedInlineMessage) CalcSize(layer int32) int {
 func (m *TLMessagesGetPreparedInlineMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPreparedInlineMessage, int(layer)); clazzId {
 	case 0x857ebdb8:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -44941,7 +44999,7 @@ type TLMessagesSearchStickers struct {
 }
 
 func (m *TLMessagesSearchStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -44949,7 +45007,7 @@ func (m *TLMessagesSearchStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_searchStickers", m)
 }
 
 func (m *TLMessagesSearchStickers) CalcSize(layer int32) int {
@@ -44981,7 +45039,7 @@ func (m *TLMessagesSearchStickers) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("lang_code", m.LangCode); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("lang_code", m.LangCode, layer); err != nil {
 			return err
 		}
 
@@ -45084,7 +45142,7 @@ type TLMessagesReportMessagesDelivery struct {
 }
 
 func (m *TLMessagesReportMessagesDelivery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportMessagesDelivery", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45092,7 +45150,7 @@ func (m *TLMessagesReportMessagesDelivery) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reportMessagesDelivery", m)
 }
 
 func (m *TLMessagesReportMessagesDelivery) CalcSize(layer int32) int {
@@ -45112,11 +45170,11 @@ func (m *TLMessagesReportMessagesDelivery) CalcSize(layer int32) int {
 func (m *TLMessagesReportMessagesDelivery) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMessagesDelivery, int(layer)); clazzId {
 	case 0x5a6d7395:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -45200,7 +45258,7 @@ type TLMessagesGetSavedDialogsByID struct {
 }
 
 func (m *TLMessagesGetSavedDialogsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedDialogsByID", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45208,7 +45266,7 @@ func (m *TLMessagesGetSavedDialogsByID) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getSavedDialogsByID", m)
 }
 
 func (m *TLMessagesGetSavedDialogsByID) CalcSize(layer int32) int {
@@ -45232,7 +45290,7 @@ func (m *TLMessagesGetSavedDialogsByID) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getSavedDialogsByID, int(layer)); clazzId {
 	case 0x6f6f9c96:
 
-		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("ids", m.Ids, layer); err != nil {
 			return err
 		}
 
@@ -45337,7 +45395,7 @@ type TLMessagesReadSavedHistory struct {
 }
 
 func (m *TLMessagesReadSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readSavedHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45345,7 +45403,7 @@ func (m *TLMessagesReadSavedHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_readSavedHistory", m)
 }
 
 func (m *TLMessagesReadSavedHistory) CalcSize(layer int32) int {
@@ -45365,11 +45423,11 @@ func (m *TLMessagesReadSavedHistory) CalcSize(layer int32) int {
 func (m *TLMessagesReadSavedHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readSavedHistory, int(layer)); clazzId {
 	case 0xba4a3b5b:
-		if err := iface.ValidateRequiredObject("parent_peer", m.ParentPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("parent_peer", m.ParentPeer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -45444,7 +45502,7 @@ type TLMessagesToggleTodoCompleted struct {
 }
 
 func (m *TLMessagesToggleTodoCompleted) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleTodoCompleted", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45452,7 +45510,7 @@ func (m *TLMessagesToggleTodoCompleted) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleTodoCompleted", m)
 }
 
 func (m *TLMessagesToggleTodoCompleted) CalcSize(layer int32) int {
@@ -45473,15 +45531,15 @@ func (m *TLMessagesToggleTodoCompleted) CalcSize(layer int32) int {
 func (m *TLMessagesToggleTodoCompleted) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleTodoCompleted, int(layer)); clazzId {
 	case 0xd3e03124:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("completed", m.Completed); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("completed", m.Completed, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("incompleted", m.Incompleted); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("incompleted", m.Incompleted, layer); err != nil {
 			return err
 		}
 
@@ -45554,7 +45612,7 @@ type TLMessagesAppendTodoList struct {
 }
 
 func (m *TLMessagesAppendTodoList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_appendTodoList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45562,7 +45620,7 @@ func (m *TLMessagesAppendTodoList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_appendTodoList", m)
 }
 
 func (m *TLMessagesAppendTodoList) CalcSize(layer int32) int {
@@ -45582,11 +45640,11 @@ func (m *TLMessagesAppendTodoList) CalcSize(layer int32) int {
 func (m *TLMessagesAppendTodoList) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_appendTodoList, int(layer)); clazzId {
 	case 0x21a61057:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("list", m.List); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("list", m.List, layer); err != nil {
 			return err
 		}
 
@@ -45677,7 +45735,7 @@ type TLMessagesToggleSuggestedPostApproval struct {
 }
 
 func (m *TLMessagesToggleSuggestedPostApproval) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleSuggestedPostApproval", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45685,7 +45743,7 @@ func (m *TLMessagesToggleSuggestedPostApproval) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_toggleSuggestedPostApproval", m)
 }
 
 func (m *TLMessagesToggleSuggestedPostApproval) CalcSize(layer int32) int {
@@ -45712,7 +45770,7 @@ func (m *TLMessagesToggleSuggestedPostApproval) CalcSize(layer int32) int {
 func (m *TLMessagesToggleSuggestedPostApproval) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_toggleSuggestedPostApproval, int(layer)); clazzId {
 	case 0x8107455c:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -45830,7 +45888,7 @@ type TLMessagesGetForumTopics struct {
 }
 
 func (m *TLMessagesGetForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getForumTopics", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45838,7 +45896,7 @@ func (m *TLMessagesGetForumTopics) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getForumTopics", m)
 }
 
 func (m *TLMessagesGetForumTopics) CalcSize(layer int32) int {
@@ -45865,7 +45923,7 @@ func (m *TLMessagesGetForumTopics) CalcSize(layer int32) int {
 func (m *TLMessagesGetForumTopics) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopics, int(layer)); clazzId {
 	case 0x3ba47bff:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -45975,7 +46033,7 @@ type TLMessagesGetForumTopicsByID struct {
 }
 
 func (m *TLMessagesGetForumTopicsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getForumTopicsByID", TLObject: m}
 	return wrapper.String()
 }
 
@@ -45983,7 +46041,7 @@ func (m *TLMessagesGetForumTopicsByID) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getForumTopicsByID", m)
 }
 
 func (m *TLMessagesGetForumTopicsByID) CalcSize(layer int32) int {
@@ -46002,11 +46060,11 @@ func (m *TLMessagesGetForumTopicsByID) CalcSize(layer int32) int {
 func (m *TLMessagesGetForumTopicsByID) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getForumTopicsByID, int(layer)); clazzId {
 	case 0xaf0a4a08:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("topics", m.Topics); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("topics", m.Topics, layer); err != nil {
 			return err
 		}
 
@@ -46072,7 +46130,7 @@ type TLMessagesEditForumTopic struct {
 }
 
 func (m *TLMessagesEditForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editForumTopic", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46080,7 +46138,7 @@ func (m *TLMessagesEditForumTopic) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editForumTopic", m)
 }
 
 func (m *TLMessagesEditForumTopic) CalcSize(layer int32) int {
@@ -46115,7 +46173,7 @@ func (m *TLMessagesEditForumTopic) CalcSize(layer int32) int {
 func (m *TLMessagesEditForumTopic) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editForumTopic, int(layer)); clazzId {
 	case 0xcecc1134:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -46257,7 +46315,7 @@ type TLMessagesUpdatePinnedForumTopic struct {
 }
 
 func (m *TLMessagesUpdatePinnedForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_updatePinnedForumTopic", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46265,7 +46323,7 @@ func (m *TLMessagesUpdatePinnedForumTopic) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_updatePinnedForumTopic", m)
 }
 
 func (m *TLMessagesUpdatePinnedForumTopic) CalcSize(layer int32) int {
@@ -46285,11 +46343,11 @@ func (m *TLMessagesUpdatePinnedForumTopic) CalcSize(layer int32) int {
 func (m *TLMessagesUpdatePinnedForumTopic) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_updatePinnedForumTopic, int(layer)); clazzId {
 	case 0x175df251:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("pinned", m.Pinned); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("pinned", m.Pinned, layer); err != nil {
 			return err
 		}
 
@@ -46363,7 +46421,7 @@ type TLMessagesReorderPinnedForumTopics struct {
 }
 
 func (m *TLMessagesReorderPinnedForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedForumTopics", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46371,7 +46429,7 @@ func (m *TLMessagesReorderPinnedForumTopics) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_reorderPinnedForumTopics", m)
 }
 
 func (m *TLMessagesReorderPinnedForumTopics) CalcSize(layer int32) int {
@@ -46391,11 +46449,11 @@ func (m *TLMessagesReorderPinnedForumTopics) CalcSize(layer int32) int {
 func (m *TLMessagesReorderPinnedForumTopics) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reorderPinnedForumTopics, int(layer)); clazzId {
 	case 0xe7841f0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -46484,7 +46542,7 @@ type TLMessagesCreateForumTopic struct {
 }
 
 func (m *TLMessagesCreateForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_createForumTopic", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46492,7 +46550,7 @@ func (m *TLMessagesCreateForumTopic) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_createForumTopic", m)
 }
 
 func (m *TLMessagesCreateForumTopic) CalcSize(layer int32) int {
@@ -46524,7 +46582,7 @@ func (m *TLMessagesCreateForumTopic) CalcSize(layer int32) int {
 func (m *TLMessagesCreateForumTopic) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_createForumTopic, int(layer)); clazzId {
 	case 0x2f98c3d5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -46665,7 +46723,7 @@ type TLMessagesDeleteTopicHistory struct {
 }
 
 func (m *TLMessagesDeleteTopicHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteTopicHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46673,7 +46731,7 @@ func (m *TLMessagesDeleteTopicHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_deleteTopicHistory", m)
 }
 
 func (m *TLMessagesDeleteTopicHistory) CalcSize(layer int32) int {
@@ -46692,7 +46750,7 @@ func (m *TLMessagesDeleteTopicHistory) CalcSize(layer int32) int {
 func (m *TLMessagesDeleteTopicHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deleteTopicHistory, int(layer)); clazzId {
 	case 0xd2816f10:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -46754,7 +46812,7 @@ type TLMessagesGetEmojiGameInfo struct {
 }
 
 func (m *TLMessagesGetEmojiGameInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiGameInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46762,7 +46820,7 @@ func (m *TLMessagesGetEmojiGameInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getEmojiGameInfo", m)
 }
 
 func (m *TLMessagesGetEmojiGameInfo) CalcSize(layer int32) int {
@@ -46825,7 +46883,7 @@ type TLMessagesSummarizeText struct {
 }
 
 func (m *TLMessagesSummarizeText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_summarizeText", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46833,7 +46891,7 @@ func (m *TLMessagesSummarizeText) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_summarizeText", m)
 }
 
 func (m *TLMessagesSummarizeText) CalcSize(layer int32) int {
@@ -46856,7 +46914,7 @@ func (m *TLMessagesSummarizeText) CalcSize(layer int32) int {
 func (m *TLMessagesSummarizeText) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
 	case 0x9d4104e2:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -46950,7 +47008,7 @@ type TLMessagesEditChatCreator struct {
 }
 
 func (m *TLMessagesEditChatCreator) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatCreator", TLObject: m}
 	return wrapper.String()
 }
 
@@ -46958,7 +47016,7 @@ func (m *TLMessagesEditChatCreator) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatCreator", m)
 }
 
 func (m *TLMessagesEditChatCreator) CalcSize(layer int32) int {
@@ -46978,15 +47036,15 @@ func (m *TLMessagesEditChatCreator) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatCreator) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatCreator, int(layer)); clazzId {
 	case 0xf743b857:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -47061,7 +47119,7 @@ type TLMessagesGetFutureChatCreatorAfterLeave struct {
 }
 
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFutureChatCreatorAfterLeave", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47069,7 +47127,7 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) MarshalJSON() ([]byte, error)
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_getFutureChatCreatorAfterLeave", m)
 }
 
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) CalcSize(layer int32) int {
@@ -47087,7 +47145,7 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) CalcSize(layer int32) int {
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getFutureChatCreatorAfterLeave, int(layer)); clazzId {
 	case 0x3b7d0ea6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -47146,7 +47204,7 @@ type TLMessagesEditChatParticipantRank struct {
 }
 
 func (m *TLMessagesEditChatParticipantRank) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatParticipantRank", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47154,7 +47212,7 @@ func (m *TLMessagesEditChatParticipantRank) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_editChatParticipantRank", m)
 }
 
 func (m *TLMessagesEditChatParticipantRank) CalcSize(layer int32) int {
@@ -47174,11 +47232,11 @@ func (m *TLMessagesEditChatParticipantRank) CalcSize(layer int32) int {
 func (m *TLMessagesEditChatParticipantRank) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_editChatParticipantRank, int(layer)); clazzId {
 	case 0xa00f32b0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
@@ -47254,7 +47312,7 @@ type TLMessagesDeclineUrlAuth struct {
 }
 
 func (m *TLMessagesDeclineUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_declineUrlAuth", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47262,7 +47320,7 @@ func (m *TLMessagesDeclineUrlAuth) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_declineUrlAuth", m)
 }
 
 func (m *TLMessagesDeclineUrlAuth) CalcSize(layer int32) int {
@@ -47334,7 +47392,7 @@ type TLMessagesCheckUrlAuthMatchCode struct {
 }
 
 func (m *TLMessagesCheckUrlAuthMatchCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkUrlAuthMatchCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47342,7 +47400,7 @@ func (m *TLMessagesCheckUrlAuthMatchCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("messages_checkUrlAuthMatchCode", m)
 }
 
 func (m *TLMessagesCheckUrlAuthMatchCode) CalcSize(layer int32) int {
@@ -47422,7 +47480,7 @@ type TLUpdatesGetState struct {
 }
 
 func (m *TLUpdatesGetState) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "updates_getState", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47430,7 +47488,7 @@ func (m *TLUpdatesGetState) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("updates_getState", m)
 }
 
 func (m *TLUpdatesGetState) CalcSize(layer int32) int {
@@ -47496,7 +47554,7 @@ type TLUpdatesGetDifference struct {
 }
 
 func (m *TLUpdatesGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "updates_getDifference", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47504,7 +47562,7 @@ func (m *TLUpdatesGetDifference) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("updates_getDifference", m)
 }
 
 func (m *TLUpdatesGetDifference) CalcSize(layer int32) int {
@@ -47658,7 +47716,7 @@ type TLUpdatesGetChannelDifference struct {
 }
 
 func (m *TLUpdatesGetChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "updates_getChannelDifference", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47666,7 +47724,7 @@ func (m *TLUpdatesGetChannelDifference) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("updates_getChannelDifference", m)
 }
 
 func (m *TLUpdatesGetChannelDifference) CalcSize(layer int32) int {
@@ -47688,11 +47746,11 @@ func (m *TLUpdatesGetChannelDifference) CalcSize(layer int32) int {
 func (m *TLUpdatesGetChannelDifference) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifference, int(layer)); clazzId {
 	case 0x3173d78:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -47793,7 +47851,7 @@ type TLPhotosUpdateProfilePhoto struct {
 }
 
 func (m *TLPhotosUpdateProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "photos_updateProfilePhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47801,7 +47859,7 @@ func (m *TLPhotosUpdateProfilePhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("photos_updateProfilePhoto", m)
 }
 
 func (m *TLPhotosUpdateProfilePhoto) CalcSize(layer int32) int {
@@ -47825,7 +47883,7 @@ func (m *TLPhotosUpdateProfilePhoto) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_updateProfilePhoto, int(layer)); clazzId {
 	case 0x9e82039:
 
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -47925,7 +47983,7 @@ type TLPhotosUploadProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "photos_uploadProfilePhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -47933,7 +47991,7 @@ func (m *TLPhotosUploadProfilePhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("photos_uploadProfilePhoto", m)
 }
 
 func (m *TLPhotosUploadProfilePhoto) CalcSize(layer int32) int {
@@ -48115,7 +48173,7 @@ type TLPhotosDeletePhotos struct {
 }
 
 func (m *TLPhotosDeletePhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "photos_deletePhotos", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48123,7 +48181,7 @@ func (m *TLPhotosDeletePhotos) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("photos_deletePhotos", m)
 }
 
 func (m *TLPhotosDeletePhotos) CalcSize(layer int32) int {
@@ -48141,7 +48199,7 @@ func (m *TLPhotosDeletePhotos) CalcSize(layer int32) int {
 func (m *TLPhotosDeletePhotos) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_deletePhotos, int(layer)); clazzId {
 	case 0x87cf7f2f:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -48215,7 +48273,7 @@ type TLPhotosGetUserPhotos struct {
 }
 
 func (m *TLPhotosGetUserPhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "photos_getUserPhotos", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48223,7 +48281,7 @@ func (m *TLPhotosGetUserPhotos) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("photos_getUserPhotos", m)
 }
 
 func (m *TLPhotosGetUserPhotos) CalcSize(layer int32) int {
@@ -48244,7 +48302,7 @@ func (m *TLPhotosGetUserPhotos) CalcSize(layer int32) int {
 func (m *TLPhotosGetUserPhotos) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_getUserPhotos, int(layer)); clazzId {
 	case 0x91cd32a8:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -48323,7 +48381,7 @@ type TLPhotosUploadContactProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadContactProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "photos_uploadContactProfilePhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48331,7 +48389,7 @@ func (m *TLPhotosUploadContactProfilePhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("photos_uploadContactProfilePhoto", m)
 }
 
 func (m *TLPhotosUploadContactProfilePhoto) CalcSize(layer int32) int {
@@ -48365,7 +48423,7 @@ func (m *TLPhotosUploadContactProfilePhoto) CalcSize(layer int32) int {
 func (m *TLPhotosUploadContactProfilePhoto) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_photos_uploadContactProfilePhoto, int(layer)); clazzId {
 	case 0xe14c4a71:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -48516,7 +48574,7 @@ type TLUploadSaveFilePart struct {
 }
 
 func (m *TLUploadSaveFilePart) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_saveFilePart", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48524,7 +48582,7 @@ func (m *TLUploadSaveFilePart) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_saveFilePart", m)
 }
 
 func (m *TLUploadSaveFilePart) CalcSize(layer int32) int {
@@ -48611,7 +48669,7 @@ type TLUploadGetFile struct {
 }
 
 func (m *TLUploadGetFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_getFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48619,7 +48677,7 @@ func (m *TLUploadGetFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_getFile", m)
 }
 
 func (m *TLUploadGetFile) CalcSize(layer int32) int {
@@ -48640,7 +48698,7 @@ func (m *TLUploadGetFile) CalcSize(layer int32) int {
 func (m *TLUploadGetFile) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFile, int(layer)); clazzId {
 	case 0xbe5335be:
-		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("location", m.Location, layer); err != nil {
 			return err
 		}
 
@@ -48739,7 +48797,7 @@ type TLUploadSaveBigFilePart struct {
 }
 
 func (m *TLUploadSaveBigFilePart) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_saveBigFilePart", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48747,7 +48805,7 @@ func (m *TLUploadSaveBigFilePart) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_saveBigFilePart", m)
 }
 
 func (m *TLUploadSaveBigFilePart) CalcSize(layer int32) int {
@@ -48838,7 +48896,7 @@ type TLUploadGetWebFile struct {
 }
 
 func (m *TLUploadGetWebFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_getWebFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48846,7 +48904,7 @@ func (m *TLUploadGetWebFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_getWebFile", m)
 }
 
 func (m *TLUploadGetWebFile) CalcSize(layer int32) int {
@@ -48866,7 +48924,7 @@ func (m *TLUploadGetWebFile) CalcSize(layer int32) int {
 func (m *TLUploadGetWebFile) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getWebFile, int(layer)); clazzId {
 	case 0x24e6818d:
-		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("location", m.Location, layer); err != nil {
 			return err
 		}
 
@@ -48936,7 +48994,7 @@ type TLUploadGetCdnFile struct {
 }
 
 func (m *TLUploadGetCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_getCdnFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -48944,7 +49002,7 @@ func (m *TLUploadGetCdnFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_getCdnFile", m)
 }
 
 func (m *TLUploadGetCdnFile) CalcSize(layer int32) int {
@@ -49028,7 +49086,7 @@ type TLUploadReuploadCdnFile struct {
 }
 
 func (m *TLUploadReuploadCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_reuploadCdnFile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49036,7 +49094,7 @@ func (m *TLUploadReuploadCdnFile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_reuploadCdnFile", m)
 }
 
 func (m *TLUploadReuploadCdnFile) CalcSize(layer int32) int {
@@ -49118,7 +49176,7 @@ type TLUploadGetCdnFileHashes struct {
 }
 
 func (m *TLUploadGetCdnFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_getCdnFileHashes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49126,7 +49184,7 @@ func (m *TLUploadGetCdnFileHashes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_getCdnFileHashes", m)
 }
 
 func (m *TLUploadGetCdnFileHashes) CalcSize(layer int32) int {
@@ -49204,7 +49262,7 @@ type TLUploadGetFileHashes struct {
 }
 
 func (m *TLUploadGetFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "upload_getFileHashes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49212,7 +49270,7 @@ func (m *TLUploadGetFileHashes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("upload_getFileHashes", m)
 }
 
 func (m *TLUploadGetFileHashes) CalcSize(layer int32) int {
@@ -49231,7 +49289,7 @@ func (m *TLUploadGetFileHashes) CalcSize(layer int32) int {
 func (m *TLUploadGetFileHashes) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_upload_getFileHashes, int(layer)); clazzId {
 	case 0x9156982a:
-		if err := iface.ValidateRequiredObject("location", m.Location); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("location", m.Location, layer); err != nil {
 			return err
 		}
 
@@ -49293,7 +49351,7 @@ type TLHelpGetConfig struct {
 }
 
 func (m *TLHelpGetConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49301,7 +49359,7 @@ func (m *TLHelpGetConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getConfig", m)
 }
 
 func (m *TLHelpGetConfig) CalcSize(layer int32) int {
@@ -49361,7 +49419,7 @@ type TLHelpGetNearestDc struct {
 }
 
 func (m *TLHelpGetNearestDc) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getNearestDc", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49369,7 +49427,7 @@ func (m *TLHelpGetNearestDc) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getNearestDc", m)
 }
 
 func (m *TLHelpGetNearestDc) CalcSize(layer int32) int {
@@ -49430,7 +49488,7 @@ type TLHelpGetAppUpdate struct {
 }
 
 func (m *TLHelpGetAppUpdate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getAppUpdate", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49438,7 +49496,7 @@ func (m *TLHelpGetAppUpdate) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getAppUpdate", m)
 }
 
 func (m *TLHelpGetAppUpdate) CalcSize(layer int32) int {
@@ -49508,7 +49566,7 @@ type TLHelpGetInviteText struct {
 }
 
 func (m *TLHelpGetInviteText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getInviteText", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49516,7 +49574,7 @@ func (m *TLHelpGetInviteText) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getInviteText", m)
 }
 
 func (m *TLHelpGetInviteText) CalcSize(layer int32) int {
@@ -49576,7 +49634,7 @@ type TLHelpGetSupport struct {
 }
 
 func (m *TLHelpGetSupport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getSupport", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49584,7 +49642,7 @@ func (m *TLHelpGetSupport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getSupport", m)
 }
 
 func (m *TLHelpGetSupport) CalcSize(layer int32) int {
@@ -49646,7 +49704,7 @@ type TLHelpSetBotUpdatesStatus struct {
 }
 
 func (m *TLHelpSetBotUpdatesStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_setBotUpdatesStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49654,7 +49712,7 @@ func (m *TLHelpSetBotUpdatesStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_setBotUpdatesStatus", m)
 }
 
 func (m *TLHelpSetBotUpdatesStatus) CalcSize(layer int32) int {
@@ -49730,7 +49788,7 @@ type TLHelpGetCdnConfig struct {
 }
 
 func (m *TLHelpGetCdnConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getCdnConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49738,7 +49796,7 @@ func (m *TLHelpGetCdnConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getCdnConfig", m)
 }
 
 func (m *TLHelpGetCdnConfig) CalcSize(layer int32) int {
@@ -49799,7 +49857,7 @@ type TLHelpGetRecentMeUrls struct {
 }
 
 func (m *TLHelpGetRecentMeUrls) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getRecentMeUrls", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49807,7 +49865,7 @@ func (m *TLHelpGetRecentMeUrls) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getRecentMeUrls", m)
 }
 
 func (m *TLHelpGetRecentMeUrls) CalcSize(layer int32) int {
@@ -49877,7 +49935,7 @@ type TLHelpGetTermsOfServiceUpdate struct {
 }
 
 func (m *TLHelpGetTermsOfServiceUpdate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getTermsOfServiceUpdate", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49885,7 +49943,7 @@ func (m *TLHelpGetTermsOfServiceUpdate) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getTermsOfServiceUpdate", m)
 }
 
 func (m *TLHelpGetTermsOfServiceUpdate) CalcSize(layer int32) int {
@@ -49946,7 +50004,7 @@ type TLHelpAcceptTermsOfService struct {
 }
 
 func (m *TLHelpAcceptTermsOfService) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_acceptTermsOfService", TLObject: m}
 	return wrapper.String()
 }
 
@@ -49954,7 +50012,7 @@ func (m *TLHelpAcceptTermsOfService) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_acceptTermsOfService", m)
 }
 
 func (m *TLHelpAcceptTermsOfService) CalcSize(layer int32) int {
@@ -49972,7 +50030,7 @@ func (m *TLHelpAcceptTermsOfService) CalcSize(layer int32) int {
 func (m *TLHelpAcceptTermsOfService) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_acceptTermsOfService, int(layer)); clazzId {
 	case 0xee72f79a:
-		if err := iface.ValidateRequiredObject("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -50029,7 +50087,7 @@ type TLHelpGetDeepLinkInfo struct {
 }
 
 func (m *TLHelpGetDeepLinkInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getDeepLinkInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50037,7 +50095,7 @@ func (m *TLHelpGetDeepLinkInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getDeepLinkInfo", m)
 }
 
 func (m *TLHelpGetDeepLinkInfo) CalcSize(layer int32) int {
@@ -50108,7 +50166,7 @@ type TLHelpGetAppConfig struct {
 }
 
 func (m *TLHelpGetAppConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getAppConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50116,7 +50174,7 @@ func (m *TLHelpGetAppConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getAppConfig", m)
 }
 
 func (m *TLHelpGetAppConfig) CalcSize(layer int32) int {
@@ -50184,7 +50242,7 @@ type TLHelpSaveAppLog struct {
 }
 
 func (m *TLHelpSaveAppLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_saveAppLog", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50192,7 +50250,7 @@ func (m *TLHelpSaveAppLog) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_saveAppLog", m)
 }
 
 func (m *TLHelpSaveAppLog) CalcSize(layer int32) int {
@@ -50210,7 +50268,7 @@ func (m *TLHelpSaveAppLog) CalcSize(layer int32) int {
 func (m *TLHelpSaveAppLog) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_saveAppLog, int(layer)); clazzId {
 	case 0x6f02f748:
-		if err := iface.ValidateRequiredSlice("events", m.Events); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("events", m.Events, layer); err != nil {
 			return err
 		}
 
@@ -50281,7 +50339,7 @@ type TLHelpGetPassportConfig struct {
 }
 
 func (m *TLHelpGetPassportConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getPassportConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50289,7 +50347,7 @@ func (m *TLHelpGetPassportConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getPassportConfig", m)
 }
 
 func (m *TLHelpGetPassportConfig) CalcSize(layer int32) int {
@@ -50356,7 +50414,7 @@ type TLHelpGetSupportName struct {
 }
 
 func (m *TLHelpGetSupportName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getSupportName", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50364,7 +50422,7 @@ func (m *TLHelpGetSupportName) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getSupportName", m)
 }
 
 func (m *TLHelpGetSupportName) CalcSize(layer int32) int {
@@ -50425,7 +50483,7 @@ type TLHelpGetUserInfo struct {
 }
 
 func (m *TLHelpGetUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getUserInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50433,7 +50491,7 @@ func (m *TLHelpGetUserInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getUserInfo", m)
 }
 
 func (m *TLHelpGetUserInfo) CalcSize(layer int32) int {
@@ -50451,7 +50509,7 @@ func (m *TLHelpGetUserInfo) CalcSize(layer int32) int {
 func (m *TLHelpGetUserInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_getUserInfo, int(layer)); clazzId {
 	case 0x38a08d3:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -50510,7 +50568,7 @@ type TLHelpEditUserInfo struct {
 }
 
 func (m *TLHelpEditUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_editUserInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50518,7 +50576,7 @@ func (m *TLHelpEditUserInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_editUserInfo", m)
 }
 
 func (m *TLHelpEditUserInfo) CalcSize(layer int32) int {
@@ -50538,7 +50596,7 @@ func (m *TLHelpEditUserInfo) CalcSize(layer int32) int {
 func (m *TLHelpEditUserInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_editUserInfo, int(layer)); clazzId {
 	case 0x66b91b70:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -50546,7 +50604,7 @@ func (m *TLHelpEditUserInfo) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("entities", m.Entities); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("entities", m.Entities, layer); err != nil {
 			return err
 		}
 
@@ -50632,7 +50690,7 @@ type TLHelpGetPromoData struct {
 }
 
 func (m *TLHelpGetPromoData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getPromoData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50640,7 +50698,7 @@ func (m *TLHelpGetPromoData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getPromoData", m)
 }
 
 func (m *TLHelpGetPromoData) CalcSize(layer int32) int {
@@ -50701,7 +50759,7 @@ type TLHelpHidePromoData struct {
 }
 
 func (m *TLHelpHidePromoData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_hidePromoData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50709,7 +50767,7 @@ func (m *TLHelpHidePromoData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_hidePromoData", m)
 }
 
 func (m *TLHelpHidePromoData) CalcSize(layer int32) int {
@@ -50727,7 +50785,7 @@ func (m *TLHelpHidePromoData) CalcSize(layer int32) int {
 func (m *TLHelpHidePromoData) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_hidePromoData, int(layer)); clazzId {
 	case 0x1e251c95:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -50785,7 +50843,7 @@ type TLHelpDismissSuggestion struct {
 }
 
 func (m *TLHelpDismissSuggestion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_dismissSuggestion", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50793,7 +50851,7 @@ func (m *TLHelpDismissSuggestion) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_dismissSuggestion", m)
 }
 
 func (m *TLHelpDismissSuggestion) CalcSize(layer int32) int {
@@ -50812,7 +50870,7 @@ func (m *TLHelpDismissSuggestion) CalcSize(layer int32) int {
 func (m *TLHelpDismissSuggestion) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_help_dismissSuggestion, int(layer)); clazzId {
 	case 0xf50dbaa1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -50880,7 +50938,7 @@ type TLHelpGetCountriesList struct {
 }
 
 func (m *TLHelpGetCountriesList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getCountriesList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50888,7 +50946,7 @@ func (m *TLHelpGetCountriesList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getCountriesList", m)
 }
 
 func (m *TLHelpGetCountriesList) CalcSize(layer int32) int {
@@ -50964,7 +51022,7 @@ type TLHelpGetPremiumPromo struct {
 }
 
 func (m *TLHelpGetPremiumPromo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getPremiumPromo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -50972,7 +51030,7 @@ func (m *TLHelpGetPremiumPromo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getPremiumPromo", m)
 }
 
 func (m *TLHelpGetPremiumPromo) CalcSize(layer int32) int {
@@ -51033,7 +51091,7 @@ type TLHelpGetPeerColors struct {
 }
 
 func (m *TLHelpGetPeerColors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getPeerColors", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51041,7 +51099,7 @@ func (m *TLHelpGetPeerColors) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getPeerColors", m)
 }
 
 func (m *TLHelpGetPeerColors) CalcSize(layer int32) int {
@@ -51109,7 +51167,7 @@ type TLHelpGetPeerProfileColors struct {
 }
 
 func (m *TLHelpGetPeerProfileColors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getPeerProfileColors", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51117,7 +51175,7 @@ func (m *TLHelpGetPeerProfileColors) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getPeerProfileColors", m)
 }
 
 func (m *TLHelpGetPeerProfileColors) CalcSize(layer int32) int {
@@ -51185,7 +51243,7 @@ type TLHelpGetTimezonesList struct {
 }
 
 func (m *TLHelpGetTimezonesList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_getTimezonesList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51193,7 +51251,7 @@ func (m *TLHelpGetTimezonesList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_getTimezonesList", m)
 }
 
 func (m *TLHelpGetTimezonesList) CalcSize(layer int32) int {
@@ -51262,7 +51320,7 @@ type TLChannelsReadHistory struct {
 }
 
 func (m *TLChannelsReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_readHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51270,7 +51328,7 @@ func (m *TLChannelsReadHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_readHistory", m)
 }
 
 func (m *TLChannelsReadHistory) CalcSize(layer int32) int {
@@ -51289,7 +51347,7 @@ func (m *TLChannelsReadHistory) CalcSize(layer int32) int {
 func (m *TLChannelsReadHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readHistory, int(layer)); clazzId {
 	case 0xcc104937:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -51353,7 +51411,7 @@ type TLChannelsDeleteMessages struct {
 }
 
 func (m *TLChannelsDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51361,7 +51419,7 @@ func (m *TLChannelsDeleteMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_deleteMessages", m)
 }
 
 func (m *TLChannelsDeleteMessages) CalcSize(layer int32) int {
@@ -51380,11 +51438,11 @@ func (m *TLChannelsDeleteMessages) CalcSize(layer int32) int {
 func (m *TLChannelsDeleteMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteMessages, int(layer)); clazzId {
 	case 0x84c1fd4e:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -51447,7 +51505,7 @@ type TLChannelsReportSpam struct {
 }
 
 func (m *TLChannelsReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_reportSpam", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51455,7 +51513,7 @@ func (m *TLChannelsReportSpam) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_reportSpam", m)
 }
 
 func (m *TLChannelsReportSpam) CalcSize(layer int32) int {
@@ -51475,15 +51533,15 @@ func (m *TLChannelsReportSpam) CalcSize(layer int32) int {
 func (m *TLChannelsReportSpam) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportSpam, int(layer)); clazzId {
 	case 0xf44a8315:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -51555,7 +51613,7 @@ type TLChannelsGetMessages struct {
 }
 
 func (m *TLChannelsGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51563,7 +51621,7 @@ func (m *TLChannelsGetMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getMessages", m)
 }
 
 func (m *TLChannelsGetMessages) CalcSize(layer int32) int {
@@ -51588,21 +51646,21 @@ func (m *TLChannelsGetMessages) CalcSize(layer int32) int {
 func (m *TLChannelsGetMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessages, int(layer)); clazzId {
 	case 0xad8c9a23:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id_VECTORINPUTMESSAGE", m.Id_VECTORINPUTMESSAGE, layer); err != nil {
 			return err
 		}
 
 		return nil
 	case 0x93d7b347:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id_VECTORINT32", m.Id_VECTORINT32); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id_VECTORINT32", m.Id_VECTORINT32, layer); err != nil {
 			return err
 		}
 
@@ -51709,7 +51767,7 @@ type TLChannelsGetParticipants struct {
 }
 
 func (m *TLChannelsGetParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getParticipants", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51717,7 +51775,7 @@ func (m *TLChannelsGetParticipants) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getParticipants", m)
 }
 
 func (m *TLChannelsGetParticipants) CalcSize(layer int32) int {
@@ -51739,11 +51797,11 @@ func (m *TLChannelsGetParticipants) CalcSize(layer int32) int {
 func (m *TLChannelsGetParticipants) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipants, int(layer)); clazzId {
 	case 0x77ced9d0:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("filter", m.Filter); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("filter", m.Filter, layer); err != nil {
 			return err
 		}
 
@@ -51826,7 +51884,7 @@ type TLChannelsGetParticipant struct {
 }
 
 func (m *TLChannelsGetParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getParticipant", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51834,7 +51892,7 @@ func (m *TLChannelsGetParticipant) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getParticipant", m)
 }
 
 func (m *TLChannelsGetParticipant) CalcSize(layer int32) int {
@@ -51853,11 +51911,11 @@ func (m *TLChannelsGetParticipant) CalcSize(layer int32) int {
 func (m *TLChannelsGetParticipant) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getParticipant, int(layer)); clazzId {
 	case 0xa0ab6cc6:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
@@ -51923,7 +51981,7 @@ type TLChannelsGetChannels struct {
 }
 
 func (m *TLChannelsGetChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getChannels", TLObject: m}
 	return wrapper.String()
 }
 
@@ -51931,7 +51989,7 @@ func (m *TLChannelsGetChannels) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getChannels", m)
 }
 
 func (m *TLChannelsGetChannels) CalcSize(layer int32) int {
@@ -51949,7 +52007,7 @@ func (m *TLChannelsGetChannels) CalcSize(layer int32) int {
 func (m *TLChannelsGetChannels) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getChannels, int(layer)); clazzId {
 	case 0xa7f6bbb:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -52020,7 +52078,7 @@ type TLChannelsGetFullChannel struct {
 }
 
 func (m *TLChannelsGetFullChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getFullChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52028,7 +52086,7 @@ func (m *TLChannelsGetFullChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getFullChannel", m)
 }
 
 func (m *TLChannelsGetFullChannel) CalcSize(layer int32) int {
@@ -52046,7 +52104,7 @@ func (m *TLChannelsGetFullChannel) CalcSize(layer int32) int {
 func (m *TLChannelsGetFullChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFullChannel, int(layer)); clazzId {
 	case 0x8736a09:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -52111,7 +52169,7 @@ type TLChannelsCreateChannel struct {
 }
 
 func (m *TLChannelsCreateChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_createChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52119,7 +52177,7 @@ func (m *TLChannelsCreateChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_createChannel", m)
 }
 
 func (m *TLChannelsCreateChannel) CalcSize(layer int32) int {
@@ -52301,7 +52359,7 @@ type TLChannelsEditAdmin struct {
 }
 
 func (m *TLChannelsEditAdmin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editAdmin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52309,7 +52367,7 @@ func (m *TLChannelsEditAdmin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editAdmin", m)
 }
 
 func (m *TLChannelsEditAdmin) CalcSize(layer int32) int {
@@ -52341,29 +52399,29 @@ func (m *TLChannelsEditAdmin) CalcSize(layer int32) int {
 func (m *TLChannelsEditAdmin) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editAdmin, int(layer)); clazzId {
 	case 0x9a98ad68:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_rights", m.AdminRights, layer); err != nil {
 			return err
 		}
 
 		return nil
 	case 0xd33c8902:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_rights", m.AdminRights, layer); err != nil {
 			return err
 		}
 
@@ -52514,7 +52572,7 @@ type TLChannelsEditTitle struct {
 }
 
 func (m *TLChannelsEditTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editTitle", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52522,7 +52580,7 @@ func (m *TLChannelsEditTitle) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editTitle", m)
 }
 
 func (m *TLChannelsEditTitle) CalcSize(layer int32) int {
@@ -52541,7 +52599,7 @@ func (m *TLChannelsEditTitle) CalcSize(layer int32) int {
 func (m *TLChannelsEditTitle) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editTitle, int(layer)); clazzId {
 	case 0x566decd0:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -52609,7 +52667,7 @@ type TLChannelsEditPhoto struct {
 }
 
 func (m *TLChannelsEditPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editPhoto", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52617,7 +52675,7 @@ func (m *TLChannelsEditPhoto) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editPhoto", m)
 }
 
 func (m *TLChannelsEditPhoto) CalcSize(layer int32) int {
@@ -52636,11 +52694,11 @@ func (m *TLChannelsEditPhoto) CalcSize(layer int32) int {
 func (m *TLChannelsEditPhoto) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editPhoto, int(layer)); clazzId {
 	case 0xf12e57c9:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("photo", m.Photo); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("photo", m.Photo, layer); err != nil {
 			return err
 		}
 
@@ -52707,7 +52765,7 @@ type TLChannelsCheckUsername struct {
 }
 
 func (m *TLChannelsCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_checkUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52715,7 +52773,7 @@ func (m *TLChannelsCheckUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_checkUsername", m)
 }
 
 func (m *TLChannelsCheckUsername) CalcSize(layer int32) int {
@@ -52734,7 +52792,7 @@ func (m *TLChannelsCheckUsername) CalcSize(layer int32) int {
 func (m *TLChannelsCheckUsername) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_checkUsername, int(layer)); clazzId {
 	case 0x10e6bd2c:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -52802,7 +52860,7 @@ type TLChannelsUpdateUsername struct {
 }
 
 func (m *TLChannelsUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52810,7 +52868,7 @@ func (m *TLChannelsUpdateUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_updateUsername", m)
 }
 
 func (m *TLChannelsUpdateUsername) CalcSize(layer int32) int {
@@ -52829,7 +52887,7 @@ func (m *TLChannelsUpdateUsername) CalcSize(layer int32) int {
 func (m *TLChannelsUpdateUsername) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateUsername, int(layer)); clazzId {
 	case 0x3514b3de:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -52896,7 +52954,7 @@ type TLChannelsJoinChannel struct {
 }
 
 func (m *TLChannelsJoinChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_joinChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52904,7 +52962,7 @@ func (m *TLChannelsJoinChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_joinChannel", m)
 }
 
 func (m *TLChannelsJoinChannel) CalcSize(layer int32) int {
@@ -52922,7 +52980,7 @@ func (m *TLChannelsJoinChannel) CalcSize(layer int32) int {
 func (m *TLChannelsJoinChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_joinChannel, int(layer)); clazzId {
 	case 0x24b524c5:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -52979,7 +53037,7 @@ type TLChannelsLeaveChannel struct {
 }
 
 func (m *TLChannelsLeaveChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_leaveChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -52987,7 +53045,7 @@ func (m *TLChannelsLeaveChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_leaveChannel", m)
 }
 
 func (m *TLChannelsLeaveChannel) CalcSize(layer int32) int {
@@ -53005,7 +53063,7 @@ func (m *TLChannelsLeaveChannel) CalcSize(layer int32) int {
 func (m *TLChannelsLeaveChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_leaveChannel, int(layer)); clazzId {
 	case 0xf836aa95:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -53063,7 +53121,7 @@ type TLChannelsInviteToChannel struct {
 }
 
 func (m *TLChannelsInviteToChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_inviteToChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53071,7 +53129,7 @@ func (m *TLChannelsInviteToChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_inviteToChannel", m)
 }
 
 func (m *TLChannelsInviteToChannel) CalcSize(layer int32) int {
@@ -53090,11 +53148,11 @@ func (m *TLChannelsInviteToChannel) CalcSize(layer int32) int {
 func (m *TLChannelsInviteToChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_inviteToChannel, int(layer)); clazzId {
 	case 0xc9e33d54:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("users", m.Users, layer); err != nil {
 			return err
 		}
 
@@ -53176,7 +53234,7 @@ type TLChannelsDeleteChannel struct {
 }
 
 func (m *TLChannelsDeleteChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteChannel", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53184,7 +53242,7 @@ func (m *TLChannelsDeleteChannel) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_deleteChannel", m)
 }
 
 func (m *TLChannelsDeleteChannel) CalcSize(layer int32) int {
@@ -53202,7 +53260,7 @@ func (m *TLChannelsDeleteChannel) CalcSize(layer int32) int {
 func (m *TLChannelsDeleteChannel) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteChannel, int(layer)); clazzId {
 	case 0xc0111fe3:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -53262,7 +53320,7 @@ type TLChannelsExportMessageLink struct {
 }
 
 func (m *TLChannelsExportMessageLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_exportMessageLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53270,7 +53328,7 @@ func (m *TLChannelsExportMessageLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_exportMessageLink", m)
 }
 
 func (m *TLChannelsExportMessageLink) CalcSize(layer int32) int {
@@ -53290,7 +53348,7 @@ func (m *TLChannelsExportMessageLink) CalcSize(layer int32) int {
 func (m *TLChannelsExportMessageLink) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_exportMessageLink, int(layer)); clazzId {
 	case 0xe63fadeb:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -53383,7 +53441,7 @@ type TLChannelsToggleSignatures struct {
 }
 
 func (m *TLChannelsToggleSignatures) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleSignatures", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53391,7 +53449,7 @@ func (m *TLChannelsToggleSignatures) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleSignatures", m)
 }
 
 func (m *TLChannelsToggleSignatures) CalcSize(layer int32) int {
@@ -53410,7 +53468,7 @@ func (m *TLChannelsToggleSignatures) CalcSize(layer int32) int {
 func (m *TLChannelsToggleSignatures) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSignatures, int(layer)); clazzId {
 	case 0x418d549c:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -53497,7 +53555,7 @@ type TLChannelsGetAdminedPublicChannels struct {
 }
 
 func (m *TLChannelsGetAdminedPublicChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getAdminedPublicChannels", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53505,7 +53563,7 @@ func (m *TLChannelsGetAdminedPublicChannels) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getAdminedPublicChannels", m)
 }
 
 func (m *TLChannelsGetAdminedPublicChannels) CalcSize(layer int32) int {
@@ -53604,7 +53662,7 @@ type TLChannelsEditBanned struct {
 }
 
 func (m *TLChannelsEditBanned) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editBanned", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53612,7 +53670,7 @@ func (m *TLChannelsEditBanned) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editBanned", m)
 }
 
 func (m *TLChannelsEditBanned) CalcSize(layer int32) int {
@@ -53632,15 +53690,15 @@ func (m *TLChannelsEditBanned) CalcSize(layer int32) int {
 func (m *TLChannelsEditBanned) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editBanned, int(layer)); clazzId {
 	case 0x96e6cd81:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("banned_rights", m.BannedRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("banned_rights", m.BannedRights, layer); err != nil {
 			return err
 		}
 
@@ -53721,7 +53779,7 @@ type TLChannelsGetAdminLog struct {
 }
 
 func (m *TLChannelsGetAdminLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getAdminLog", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53729,7 +53787,7 @@ func (m *TLChannelsGetAdminLog) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getAdminLog", m)
 }
 
 func (m *TLChannelsGetAdminLog) CalcSize(layer int32) int {
@@ -53760,7 +53818,7 @@ func (m *TLChannelsGetAdminLog) CalcSize(layer int32) int {
 func (m *TLChannelsGetAdminLog) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getAdminLog, int(layer)); clazzId {
 	case 0x33ddf480:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -53905,7 +53963,7 @@ type TLChannelsSetStickers struct {
 }
 
 func (m *TLChannelsSetStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_setStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -53913,7 +53971,7 @@ func (m *TLChannelsSetStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_setStickers", m)
 }
 
 func (m *TLChannelsSetStickers) CalcSize(layer int32) int {
@@ -53932,11 +53990,11 @@ func (m *TLChannelsSetStickers) CalcSize(layer int32) int {
 func (m *TLChannelsSetStickers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setStickers, int(layer)); clazzId {
 	case 0xea8ca4f9:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -54003,7 +54061,7 @@ type TLChannelsReadMessageContents struct {
 }
 
 func (m *TLChannelsReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_readMessageContents", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54011,7 +54069,7 @@ func (m *TLChannelsReadMessageContents) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_readMessageContents", m)
 }
 
 func (m *TLChannelsReadMessageContents) CalcSize(layer int32) int {
@@ -54030,11 +54088,11 @@ func (m *TLChannelsReadMessageContents) CalcSize(layer int32) int {
 func (m *TLChannelsReadMessageContents) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_readMessageContents, int(layer)); clazzId {
 	case 0xeab5dc38:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -54097,7 +54155,7 @@ type TLChannelsDeleteHistory struct {
 }
 
 func (m *TLChannelsDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54105,7 +54163,7 @@ func (m *TLChannelsDeleteHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_deleteHistory", m)
 }
 
 func (m *TLChannelsDeleteHistory) CalcSize(layer int32) int {
@@ -54125,7 +54183,7 @@ func (m *TLChannelsDeleteHistory) CalcSize(layer int32) int {
 func (m *TLChannelsDeleteHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteHistory, int(layer)); clazzId {
 	case 0x9baa9647:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -54211,7 +54269,7 @@ type TLChannelsTogglePreHistoryHidden struct {
 }
 
 func (m *TLChannelsTogglePreHistoryHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_togglePreHistoryHidden", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54219,7 +54277,7 @@ func (m *TLChannelsTogglePreHistoryHidden) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_togglePreHistoryHidden", m)
 }
 
 func (m *TLChannelsTogglePreHistoryHidden) CalcSize(layer int32) int {
@@ -54238,11 +54296,11 @@ func (m *TLChannelsTogglePreHistoryHidden) CalcSize(layer int32) int {
 func (m *TLChannelsTogglePreHistoryHidden) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_togglePreHistoryHidden, int(layer)); clazzId {
 	case 0xeabbb94c:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -54308,7 +54366,7 @@ type TLChannelsGetLeftChannels struct {
 }
 
 func (m *TLChannelsGetLeftChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getLeftChannels", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54316,7 +54374,7 @@ func (m *TLChannelsGetLeftChannels) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getLeftChannels", m)
 }
 
 func (m *TLChannelsGetLeftChannels) CalcSize(layer int32) int {
@@ -54383,7 +54441,7 @@ type TLChannelsGetGroupsForDiscussion struct {
 }
 
 func (m *TLChannelsGetGroupsForDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getGroupsForDiscussion", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54391,7 +54449,7 @@ func (m *TLChannelsGetGroupsForDiscussion) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getGroupsForDiscussion", m)
 }
 
 func (m *TLChannelsGetGroupsForDiscussion) CalcSize(layer int32) int {
@@ -54453,7 +54511,7 @@ type TLChannelsSetDiscussionGroup struct {
 }
 
 func (m *TLChannelsSetDiscussionGroup) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_setDiscussionGroup", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54461,7 +54519,7 @@ func (m *TLChannelsSetDiscussionGroup) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_setDiscussionGroup", m)
 }
 
 func (m *TLChannelsSetDiscussionGroup) CalcSize(layer int32) int {
@@ -54480,11 +54538,11 @@ func (m *TLChannelsSetDiscussionGroup) CalcSize(layer int32) int {
 func (m *TLChannelsSetDiscussionGroup) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setDiscussionGroup, int(layer)); clazzId {
 	case 0x40582bb2:
-		if err := iface.ValidateRequiredObject("broadcast", m.Broadcast); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("broadcast", m.Broadcast, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("group", m.Group); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("group", m.Group, layer); err != nil {
 			return err
 		}
 
@@ -54552,7 +54610,7 @@ type TLChannelsEditLocation struct {
 }
 
 func (m *TLChannelsEditLocation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editLocation", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54560,7 +54618,7 @@ func (m *TLChannelsEditLocation) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editLocation", m)
 }
 
 func (m *TLChannelsEditLocation) CalcSize(layer int32) int {
@@ -54580,11 +54638,11 @@ func (m *TLChannelsEditLocation) CalcSize(layer int32) int {
 func (m *TLChannelsEditLocation) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editLocation, int(layer)); clazzId {
 	case 0x58e63f6d:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("geo_point", m.GeoPoint); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("geo_point", m.GeoPoint, layer); err != nil {
 			return err
 		}
 
@@ -54661,7 +54719,7 @@ type TLChannelsToggleSlowMode struct {
 }
 
 func (m *TLChannelsToggleSlowMode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleSlowMode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54669,7 +54727,7 @@ func (m *TLChannelsToggleSlowMode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleSlowMode", m)
 }
 
 func (m *TLChannelsToggleSlowMode) CalcSize(layer int32) int {
@@ -54688,7 +54746,7 @@ func (m *TLChannelsToggleSlowMode) CalcSize(layer int32) int {
 func (m *TLChannelsToggleSlowMode) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleSlowMode, int(layer)); clazzId {
 	case 0xedd49ef0:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -54750,7 +54808,7 @@ type TLChannelsGetInactiveChannels struct {
 }
 
 func (m *TLChannelsGetInactiveChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getInactiveChannels", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54758,7 +54816,7 @@ func (m *TLChannelsGetInactiveChannels) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getInactiveChannels", m)
 }
 
 func (m *TLChannelsGetInactiveChannels) CalcSize(layer int32) int {
@@ -54819,7 +54877,7 @@ type TLChannelsConvertToGigagroup struct {
 }
 
 func (m *TLChannelsConvertToGigagroup) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_convertToGigagroup", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54827,7 +54885,7 @@ func (m *TLChannelsConvertToGigagroup) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_convertToGigagroup", m)
 }
 
 func (m *TLChannelsConvertToGigagroup) CalcSize(layer int32) int {
@@ -54845,7 +54903,7 @@ func (m *TLChannelsConvertToGigagroup) CalcSize(layer int32) int {
 func (m *TLChannelsConvertToGigagroup) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_convertToGigagroup, int(layer)); clazzId {
 	case 0xb290c69:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -54904,7 +54962,7 @@ type TLChannelsGetSendAs struct {
 }
 
 func (m *TLChannelsGetSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getSendAs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -54912,7 +54970,7 @@ func (m *TLChannelsGetSendAs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getSendAs", m)
 }
 
 func (m *TLChannelsGetSendAs) CalcSize(layer int32) int {
@@ -54931,7 +54989,7 @@ func (m *TLChannelsGetSendAs) CalcSize(layer int32) int {
 func (m *TLChannelsGetSendAs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getSendAs, int(layer)); clazzId {
 	case 0xe785a43f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -55017,7 +55075,7 @@ type TLChannelsDeleteParticipantHistory struct {
 }
 
 func (m *TLChannelsDeleteParticipantHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteParticipantHistory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55025,7 +55083,7 @@ func (m *TLChannelsDeleteParticipantHistory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_deleteParticipantHistory", m)
 }
 
 func (m *TLChannelsDeleteParticipantHistory) CalcSize(layer int32) int {
@@ -55044,11 +55102,11 @@ func (m *TLChannelsDeleteParticipantHistory) CalcSize(layer int32) int {
 func (m *TLChannelsDeleteParticipantHistory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deleteParticipantHistory, int(layer)); clazzId {
 	case 0x367544db:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
@@ -55115,7 +55173,7 @@ type TLChannelsToggleJoinToSend struct {
 }
 
 func (m *TLChannelsToggleJoinToSend) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleJoinToSend", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55123,7 +55181,7 @@ func (m *TLChannelsToggleJoinToSend) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleJoinToSend", m)
 }
 
 func (m *TLChannelsToggleJoinToSend) CalcSize(layer int32) int {
@@ -55142,11 +55200,11 @@ func (m *TLChannelsToggleJoinToSend) CalcSize(layer int32) int {
 func (m *TLChannelsToggleJoinToSend) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinToSend, int(layer)); clazzId {
 	case 0xe4cb9580:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -55213,7 +55271,7 @@ type TLChannelsToggleJoinRequest struct {
 }
 
 func (m *TLChannelsToggleJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleJoinRequest", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55221,7 +55279,7 @@ func (m *TLChannelsToggleJoinRequest) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleJoinRequest", m)
 }
 
 func (m *TLChannelsToggleJoinRequest) CalcSize(layer int32) int {
@@ -55240,11 +55298,11 @@ func (m *TLChannelsToggleJoinRequest) CalcSize(layer int32) int {
 func (m *TLChannelsToggleJoinRequest) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleJoinRequest, int(layer)); clazzId {
 	case 0x4c2985b6:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -55311,7 +55369,7 @@ type TLChannelsReorderUsernames struct {
 }
 
 func (m *TLChannelsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_reorderUsernames", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55319,7 +55377,7 @@ func (m *TLChannelsReorderUsernames) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_reorderUsernames", m)
 }
 
 func (m *TLChannelsReorderUsernames) CalcSize(layer int32) int {
@@ -55338,11 +55396,11 @@ func (m *TLChannelsReorderUsernames) CalcSize(layer int32) int {
 func (m *TLChannelsReorderUsernames) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reorderUsernames, int(layer)); clazzId {
 	case 0xb45ced1d:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -55405,7 +55463,7 @@ type TLChannelsToggleUsername struct {
 }
 
 func (m *TLChannelsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55413,7 +55471,7 @@ func (m *TLChannelsToggleUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleUsername", m)
 }
 
 func (m *TLChannelsToggleUsername) CalcSize(layer int32) int {
@@ -55433,7 +55491,7 @@ func (m *TLChannelsToggleUsername) CalcSize(layer int32) int {
 func (m *TLChannelsToggleUsername) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleUsername, int(layer)); clazzId {
 	case 0x50f24105:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -55441,7 +55499,7 @@ func (m *TLChannelsToggleUsername) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("active", m.Active, layer); err != nil {
 			return err
 		}
 
@@ -55513,7 +55571,7 @@ type TLChannelsDeactivateAllUsernames struct {
 }
 
 func (m *TLChannelsDeactivateAllUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_deactivateAllUsernames", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55521,7 +55579,7 @@ func (m *TLChannelsDeactivateAllUsernames) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_deactivateAllUsernames", m)
 }
 
 func (m *TLChannelsDeactivateAllUsernames) CalcSize(layer int32) int {
@@ -55539,7 +55597,7 @@ func (m *TLChannelsDeactivateAllUsernames) CalcSize(layer int32) int {
 func (m *TLChannelsDeactivateAllUsernames) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_deactivateAllUsernames, int(layer)); clazzId {
 	case 0xa245dd3:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -55598,7 +55656,7 @@ type TLChannelsToggleForum struct {
 }
 
 func (m *TLChannelsToggleForum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleForum", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55606,7 +55664,7 @@ func (m *TLChannelsToggleForum) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleForum", m)
 }
 
 func (m *TLChannelsToggleForum) CalcSize(layer int32) int {
@@ -55626,15 +55684,15 @@ func (m *TLChannelsToggleForum) CalcSize(layer int32) int {
 func (m *TLChannelsToggleForum) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleForum, int(layer)); clazzId {
 	case 0x3ff75734:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("tabs", m.Tabs); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("tabs", m.Tabs, layer); err != nil {
 			return err
 		}
 
@@ -55710,7 +55768,7 @@ type TLChannelsToggleAntiSpam struct {
 }
 
 func (m *TLChannelsToggleAntiSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleAntiSpam", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55718,7 +55776,7 @@ func (m *TLChannelsToggleAntiSpam) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleAntiSpam", m)
 }
 
 func (m *TLChannelsToggleAntiSpam) CalcSize(layer int32) int {
@@ -55737,11 +55795,11 @@ func (m *TLChannelsToggleAntiSpam) CalcSize(layer int32) int {
 func (m *TLChannelsToggleAntiSpam) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAntiSpam, int(layer)); clazzId {
 	case 0x68f3e4eb:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -55808,7 +55866,7 @@ type TLChannelsReportAntiSpamFalsePositive struct {
 }
 
 func (m *TLChannelsReportAntiSpamFalsePositive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_reportAntiSpamFalsePositive", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55816,7 +55874,7 @@ func (m *TLChannelsReportAntiSpamFalsePositive) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_reportAntiSpamFalsePositive", m)
 }
 
 func (m *TLChannelsReportAntiSpamFalsePositive) CalcSize(layer int32) int {
@@ -55835,7 +55893,7 @@ func (m *TLChannelsReportAntiSpamFalsePositive) CalcSize(layer int32) int {
 func (m *TLChannelsReportAntiSpamFalsePositive) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_reportAntiSpamFalsePositive, int(layer)); clazzId {
 	case 0xa850a693:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -55899,7 +55957,7 @@ type TLChannelsToggleParticipantsHidden struct {
 }
 
 func (m *TLChannelsToggleParticipantsHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleParticipantsHidden", TLObject: m}
 	return wrapper.String()
 }
 
@@ -55907,7 +55965,7 @@ func (m *TLChannelsToggleParticipantsHidden) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleParticipantsHidden", m)
 }
 
 func (m *TLChannelsToggleParticipantsHidden) CalcSize(layer int32) int {
@@ -55926,11 +55984,11 @@ func (m *TLChannelsToggleParticipantsHidden) CalcSize(layer int32) int {
 func (m *TLChannelsToggleParticipantsHidden) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleParticipantsHidden, int(layer)); clazzId {
 	case 0x6a6e7854:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -55999,7 +56057,7 @@ type TLChannelsUpdateColor struct {
 }
 
 func (m *TLChannelsUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateColor", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56007,7 +56065,7 @@ func (m *TLChannelsUpdateColor) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_updateColor", m)
 }
 
 func (m *TLChannelsUpdateColor) CalcSize(layer int32) int {
@@ -56033,7 +56091,7 @@ func (m *TLChannelsUpdateColor) CalcSize(layer int32) int {
 func (m *TLChannelsUpdateColor) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateColor, int(layer)); clazzId {
 	case 0xd8aa3671:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -56142,7 +56200,7 @@ type TLChannelsToggleViewForumAsMessages struct {
 }
 
 func (m *TLChannelsToggleViewForumAsMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleViewForumAsMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56150,7 +56208,7 @@ func (m *TLChannelsToggleViewForumAsMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleViewForumAsMessages", m)
 }
 
 func (m *TLChannelsToggleViewForumAsMessages) CalcSize(layer int32) int {
@@ -56169,11 +56227,11 @@ func (m *TLChannelsToggleViewForumAsMessages) CalcSize(layer int32) int {
 func (m *TLChannelsToggleViewForumAsMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleViewForumAsMessages, int(layer)); clazzId {
 	case 0x9738bb15:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -56239,7 +56297,7 @@ type TLChannelsGetChannelRecommendations struct {
 }
 
 func (m *TLChannelsGetChannelRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getChannelRecommendations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56247,7 +56305,7 @@ func (m *TLChannelsGetChannelRecommendations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getChannelRecommendations", m)
 }
 
 func (m *TLChannelsGetChannelRecommendations) CalcSize(layer int32) int {
@@ -56345,7 +56403,7 @@ type TLChannelsUpdateEmojiStatus struct {
 }
 
 func (m *TLChannelsUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateEmojiStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56353,7 +56411,7 @@ func (m *TLChannelsUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_updateEmojiStatus", m)
 }
 
 func (m *TLChannelsUpdateEmojiStatus) CalcSize(layer int32) int {
@@ -56372,11 +56430,11 @@ func (m *TLChannelsUpdateEmojiStatus) CalcSize(layer int32) int {
 func (m *TLChannelsUpdateEmojiStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updateEmojiStatus, int(layer)); clazzId {
 	case 0xf0d3e6a8:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("emoji_status", m.EmojiStatus, layer); err != nil {
 			return err
 		}
 
@@ -56443,7 +56501,7 @@ type TLChannelsSetBoostsToUnblockRestrictions struct {
 }
 
 func (m *TLChannelsSetBoostsToUnblockRestrictions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_setBoostsToUnblockRestrictions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56451,7 +56509,7 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) MarshalJSON() ([]byte, error)
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_setBoostsToUnblockRestrictions", m)
 }
 
 func (m *TLChannelsSetBoostsToUnblockRestrictions) CalcSize(layer int32) int {
@@ -56470,7 +56528,7 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) CalcSize(layer int32) int {
 func (m *TLChannelsSetBoostsToUnblockRestrictions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setBoostsToUnblockRestrictions, int(layer)); clazzId {
 	case 0xad399cee:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -56534,7 +56592,7 @@ type TLChannelsSetEmojiStickers struct {
 }
 
 func (m *TLChannelsSetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_setEmojiStickers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56542,7 +56600,7 @@ func (m *TLChannelsSetEmojiStickers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_setEmojiStickers", m)
 }
 
 func (m *TLChannelsSetEmojiStickers) CalcSize(layer int32) int {
@@ -56561,11 +56619,11 @@ func (m *TLChannelsSetEmojiStickers) CalcSize(layer int32) int {
 func (m *TLChannelsSetEmojiStickers) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setEmojiStickers, int(layer)); clazzId {
 	case 0x3cd930b7:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -56632,7 +56690,7 @@ type TLChannelsRestrictSponsoredMessages struct {
 }
 
 func (m *TLChannelsRestrictSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_restrictSponsoredMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56640,7 +56698,7 @@ func (m *TLChannelsRestrictSponsoredMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_restrictSponsoredMessages", m)
 }
 
 func (m *TLChannelsRestrictSponsoredMessages) CalcSize(layer int32) int {
@@ -56659,11 +56717,11 @@ func (m *TLChannelsRestrictSponsoredMessages) CalcSize(layer int32) int {
 func (m *TLChannelsRestrictSponsoredMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_restrictSponsoredMessages, int(layer)); clazzId {
 	case 0x9ae91519:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("restricted", m.Restricted); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("restricted", m.Restricted, layer); err != nil {
 			return err
 		}
 
@@ -56735,7 +56793,7 @@ type TLChannelsSearchPosts struct {
 }
 
 func (m *TLChannelsSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_searchPosts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56743,7 +56801,7 @@ func (m *TLChannelsSearchPosts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_searchPosts", m)
 }
 
 func (m *TLChannelsSearchPosts) CalcSize(layer int32) int {
@@ -56777,7 +56835,7 @@ func (m *TLChannelsSearchPosts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_searchPosts, int(layer)); clazzId {
 	case 0xf2c4f24d:
 
-		if err := iface.ValidateRequiredObject("offset_peer", m.OffsetPeer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("offset_peer", m.OffsetPeer, layer); err != nil {
 			return err
 		}
 
@@ -56912,7 +56970,7 @@ type TLChannelsUpdatePaidMessagesPrice struct {
 }
 
 func (m *TLChannelsUpdatePaidMessagesPrice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_updatePaidMessagesPrice", TLObject: m}
 	return wrapper.String()
 }
 
@@ -56920,7 +56978,7 @@ func (m *TLChannelsUpdatePaidMessagesPrice) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_updatePaidMessagesPrice", m)
 }
 
 func (m *TLChannelsUpdatePaidMessagesPrice) CalcSize(layer int32) int {
@@ -56940,7 +56998,7 @@ func (m *TLChannelsUpdatePaidMessagesPrice) CalcSize(layer int32) int {
 func (m *TLChannelsUpdatePaidMessagesPrice) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_updatePaidMessagesPrice, int(layer)); clazzId {
 	case 0x4b12327b:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -57026,7 +57084,7 @@ type TLChannelsToggleAutotranslation struct {
 }
 
 func (m *TLChannelsToggleAutotranslation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleAutotranslation", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57034,7 +57092,7 @@ func (m *TLChannelsToggleAutotranslation) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_toggleAutotranslation", m)
 }
 
 func (m *TLChannelsToggleAutotranslation) CalcSize(layer int32) int {
@@ -57053,11 +57111,11 @@ func (m *TLChannelsToggleAutotranslation) CalcSize(layer int32) int {
 func (m *TLChannelsToggleAutotranslation) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_toggleAutotranslation, int(layer)); clazzId {
 	case 0x167fc0a1:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -57124,7 +57182,7 @@ type TLChannelsGetMessageAuthor struct {
 }
 
 func (m *TLChannelsGetMessageAuthor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getMessageAuthor", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57132,7 +57190,7 @@ func (m *TLChannelsGetMessageAuthor) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getMessageAuthor", m)
 }
 
 func (m *TLChannelsGetMessageAuthor) CalcSize(layer int32) int {
@@ -57151,7 +57209,7 @@ func (m *TLChannelsGetMessageAuthor) CalcSize(layer int32) int {
 func (m *TLChannelsGetMessageAuthor) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getMessageAuthor, int(layer)); clazzId {
 	case 0xece2a0e6:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -57214,7 +57272,7 @@ type TLChannelsCheckSearchPostsFlood struct {
 }
 
 func (m *TLChannelsCheckSearchPostsFlood) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_checkSearchPostsFlood", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57222,7 +57280,7 @@ func (m *TLChannelsCheckSearchPostsFlood) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_checkSearchPostsFlood", m)
 }
 
 func (m *TLChannelsCheckSearchPostsFlood) CalcSize(layer int32) int {
@@ -57318,7 +57376,7 @@ type TLChannelsSetMainProfileTab struct {
 }
 
 func (m *TLChannelsSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_setMainProfileTab", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57326,7 +57384,7 @@ func (m *TLChannelsSetMainProfileTab) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_setMainProfileTab", m)
 }
 
 func (m *TLChannelsSetMainProfileTab) CalcSize(layer int32) int {
@@ -57345,11 +57403,11 @@ func (m *TLChannelsSetMainProfileTab) CalcSize(layer int32) int {
 func (m *TLChannelsSetMainProfileTab) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_setMainProfileTab, int(layer)); clazzId {
 	case 0x3583fcb1:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("tab", m.Tab); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("tab", m.Tab, layer); err != nil {
 			return err
 		}
 
@@ -57416,7 +57474,7 @@ type TLBotsSendCustomRequest struct {
 }
 
 func (m *TLBotsSendCustomRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_sendCustomRequest", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57424,7 +57482,7 @@ func (m *TLBotsSendCustomRequest) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_sendCustomRequest", m)
 }
 
 func (m *TLBotsSendCustomRequest) CalcSize(layer int32) int {
@@ -57447,7 +57505,7 @@ func (m *TLBotsSendCustomRequest) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("params", m.Params, layer); err != nil {
 			return err
 		}
 
@@ -57510,7 +57568,7 @@ type TLBotsAnswerWebhookJSONQuery struct {
 }
 
 func (m *TLBotsAnswerWebhookJSONQuery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_answerWebhookJSONQuery", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57518,7 +57576,7 @@ func (m *TLBotsAnswerWebhookJSONQuery) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_answerWebhookJSONQuery", m)
 }
 
 func (m *TLBotsAnswerWebhookJSONQuery) CalcSize(layer int32) int {
@@ -57537,7 +57595,7 @@ func (m *TLBotsAnswerWebhookJSONQuery) CalcSize(layer int32) int {
 func (m *TLBotsAnswerWebhookJSONQuery) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_answerWebhookJSONQuery, int(layer)); clazzId {
 	case 0xe6213f4d:
-		if err := iface.ValidateRequiredObject("data", m.Data); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("data", m.Data, layer); err != nil {
 			return err
 		}
 
@@ -57601,7 +57659,7 @@ type TLBotsSetBotCommands struct {
 }
 
 func (m *TLBotsSetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotCommands", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57609,7 +57667,7 @@ func (m *TLBotsSetBotCommands) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setBotCommands", m)
 }
 
 func (m *TLBotsSetBotCommands) CalcSize(layer int32) int {
@@ -57629,7 +57687,7 @@ func (m *TLBotsSetBotCommands) CalcSize(layer int32) int {
 func (m *TLBotsSetBotCommands) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotCommands, int(layer)); clazzId {
 	case 0x517165a:
-		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("scope", m.Scope, layer); err != nil {
 			return err
 		}
 
@@ -57637,7 +57695,7 @@ func (m *TLBotsSetBotCommands) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("commands", m.Commands); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("commands", m.Commands, layer); err != nil {
 			return err
 		}
 
@@ -57725,7 +57783,7 @@ type TLBotsResetBotCommands struct {
 }
 
 func (m *TLBotsResetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_resetBotCommands", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57733,7 +57791,7 @@ func (m *TLBotsResetBotCommands) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_resetBotCommands", m)
 }
 
 func (m *TLBotsResetBotCommands) CalcSize(layer int32) int {
@@ -57752,7 +57810,7 @@ func (m *TLBotsResetBotCommands) CalcSize(layer int32) int {
 func (m *TLBotsResetBotCommands) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_resetBotCommands, int(layer)); clazzId {
 	case 0x3d8de0f9:
-		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("scope", m.Scope, layer); err != nil {
 			return err
 		}
 
@@ -57820,7 +57878,7 @@ type TLBotsGetBotCommands struct {
 }
 
 func (m *TLBotsGetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotCommands", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57828,7 +57886,7 @@ func (m *TLBotsGetBotCommands) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getBotCommands", m)
 }
 
 func (m *TLBotsGetBotCommands) CalcSize(layer int32) int {
@@ -57847,7 +57905,7 @@ func (m *TLBotsGetBotCommands) CalcSize(layer int32) int {
 func (m *TLBotsGetBotCommands) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotCommands, int(layer)); clazzId {
 	case 0xe34c0dd6:
-		if err := iface.ValidateRequiredObject("scope", m.Scope); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("scope", m.Scope, layer); err != nil {
 			return err
 		}
 
@@ -57915,7 +57973,7 @@ type TLBotsSetBotMenuButton struct {
 }
 
 func (m *TLBotsSetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotMenuButton", TLObject: m}
 	return wrapper.String()
 }
 
@@ -57923,7 +57981,7 @@ func (m *TLBotsSetBotMenuButton) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setBotMenuButton", m)
 }
 
 func (m *TLBotsSetBotMenuButton) CalcSize(layer int32) int {
@@ -57942,11 +58000,11 @@ func (m *TLBotsSetBotMenuButton) CalcSize(layer int32) int {
 func (m *TLBotsSetBotMenuButton) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotMenuButton, int(layer)); clazzId {
 	case 0x4504d54f:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("button", m.Button); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("button", m.Button, layer); err != nil {
 			return err
 		}
 
@@ -58012,7 +58070,7 @@ type TLBotsGetBotMenuButton struct {
 }
 
 func (m *TLBotsGetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotMenuButton", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58020,7 +58078,7 @@ func (m *TLBotsGetBotMenuButton) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getBotMenuButton", m)
 }
 
 func (m *TLBotsGetBotMenuButton) CalcSize(layer int32) int {
@@ -58038,7 +58096,7 @@ func (m *TLBotsGetBotMenuButton) CalcSize(layer int32) int {
 func (m *TLBotsGetBotMenuButton) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotMenuButton, int(layer)); clazzId {
 	case 0x9c60eb28:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -58095,7 +58153,7 @@ type TLBotsSetBotBroadcastDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotBroadcastDefaultAdminRights", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58103,7 +58161,7 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) MarshalJSON() ([]byte, error) 
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setBotBroadcastDefaultAdminRights", m)
 }
 
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) CalcSize(layer int32) int {
@@ -58121,7 +58179,7 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) CalcSize(layer int32) int {
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotBroadcastDefaultAdminRights, int(layer)); clazzId {
 	case 0x788464e1:
-		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_rights", m.AdminRights, layer); err != nil {
 			return err
 		}
 
@@ -58178,7 +58236,7 @@ type TLBotsSetBotGroupDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotGroupDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotGroupDefaultAdminRights", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58186,7 +58244,7 @@ func (m *TLBotsSetBotGroupDefaultAdminRights) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setBotGroupDefaultAdminRights", m)
 }
 
 func (m *TLBotsSetBotGroupDefaultAdminRights) CalcSize(layer int32) int {
@@ -58204,7 +58262,7 @@ func (m *TLBotsSetBotGroupDefaultAdminRights) CalcSize(layer int32) int {
 func (m *TLBotsSetBotGroupDefaultAdminRights) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setBotGroupDefaultAdminRights, int(layer)); clazzId {
 	case 0x925ec9ea:
-		if err := iface.ValidateRequiredObject("admin_rights", m.AdminRights); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("admin_rights", m.AdminRights, layer); err != nil {
 			return err
 		}
 
@@ -58265,7 +58323,7 @@ type TLBotsSetBotInfo struct {
 }
 
 func (m *TLBotsSetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58273,7 +58331,7 @@ func (m *TLBotsSetBotInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setBotInfo", m)
 }
 
 func (m *TLBotsSetBotInfo) CalcSize(layer int32) int {
@@ -58438,7 +58496,7 @@ type TLBotsGetBotInfo struct {
 }
 
 func (m *TLBotsGetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58446,7 +58504,7 @@ func (m *TLBotsGetBotInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getBotInfo", m)
 }
 
 func (m *TLBotsGetBotInfo) CalcSize(layer int32) int {
@@ -58556,7 +58614,7 @@ type TLBotsReorderUsernames struct {
 }
 
 func (m *TLBotsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_reorderUsernames", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58564,7 +58622,7 @@ func (m *TLBotsReorderUsernames) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_reorderUsernames", m)
 }
 
 func (m *TLBotsReorderUsernames) CalcSize(layer int32) int {
@@ -58583,11 +58641,11 @@ func (m *TLBotsReorderUsernames) CalcSize(layer int32) int {
 func (m *TLBotsReorderUsernames) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderUsernames, int(layer)); clazzId {
 	case 0x9709b1c2:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -58650,7 +58708,7 @@ type TLBotsToggleUsername struct {
 }
 
 func (m *TLBotsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_toggleUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58658,7 +58716,7 @@ func (m *TLBotsToggleUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_toggleUsername", m)
 }
 
 func (m *TLBotsToggleUsername) CalcSize(layer int32) int {
@@ -58678,7 +58736,7 @@ func (m *TLBotsToggleUsername) CalcSize(layer int32) int {
 func (m *TLBotsToggleUsername) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUsername, int(layer)); clazzId {
 	case 0x53ca973:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -58686,7 +58744,7 @@ func (m *TLBotsToggleUsername) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("active", m.Active); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("active", m.Active, layer); err != nil {
 			return err
 		}
 
@@ -58758,7 +58816,7 @@ type TLBotsCanSendMessage struct {
 }
 
 func (m *TLBotsCanSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_canSendMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58766,7 +58824,7 @@ func (m *TLBotsCanSendMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_canSendMessage", m)
 }
 
 func (m *TLBotsCanSendMessage) CalcSize(layer int32) int {
@@ -58784,7 +58842,7 @@ func (m *TLBotsCanSendMessage) CalcSize(layer int32) int {
 func (m *TLBotsCanSendMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_canSendMessage, int(layer)); clazzId {
 	case 0x1359f4e6:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -58841,7 +58899,7 @@ type TLBotsAllowSendMessage struct {
 }
 
 func (m *TLBotsAllowSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_allowSendMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58849,7 +58907,7 @@ func (m *TLBotsAllowSendMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_allowSendMessage", m)
 }
 
 func (m *TLBotsAllowSendMessage) CalcSize(layer int32) int {
@@ -58867,7 +58925,7 @@ func (m *TLBotsAllowSendMessage) CalcSize(layer int32) int {
 func (m *TLBotsAllowSendMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_allowSendMessage, int(layer)); clazzId {
 	case 0xf132e3ef:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -58926,7 +58984,7 @@ type TLBotsInvokeWebViewCustomMethod struct {
 }
 
 func (m *TLBotsInvokeWebViewCustomMethod) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_invokeWebViewCustomMethod", TLObject: m}
 	return wrapper.String()
 }
 
@@ -58934,7 +58992,7 @@ func (m *TLBotsInvokeWebViewCustomMethod) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_invokeWebViewCustomMethod", m)
 }
 
 func (m *TLBotsInvokeWebViewCustomMethod) CalcSize(layer int32) int {
@@ -58954,7 +59012,7 @@ func (m *TLBotsInvokeWebViewCustomMethod) CalcSize(layer int32) int {
 func (m *TLBotsInvokeWebViewCustomMethod) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_invokeWebViewCustomMethod, int(layer)); clazzId {
 	case 0x87fc5e7:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -58962,7 +59020,7 @@ func (m *TLBotsInvokeWebViewCustomMethod) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("params", m.Params, layer); err != nil {
 			return err
 		}
 
@@ -59035,7 +59093,7 @@ type TLBotsGetPopularAppBots struct {
 }
 
 func (m *TLBotsGetPopularAppBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPopularAppBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59043,7 +59101,7 @@ func (m *TLBotsGetPopularAppBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getPopularAppBots", m)
 }
 
 func (m *TLBotsGetPopularAppBots) CalcSize(layer int32) int {
@@ -59122,7 +59180,7 @@ type TLBotsAddPreviewMedia struct {
 }
 
 func (m *TLBotsAddPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_addPreviewMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59130,7 +59188,7 @@ func (m *TLBotsAddPreviewMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_addPreviewMedia", m)
 }
 
 func (m *TLBotsAddPreviewMedia) CalcSize(layer int32) int {
@@ -59150,7 +59208,7 @@ func (m *TLBotsAddPreviewMedia) CalcSize(layer int32) int {
 func (m *TLBotsAddPreviewMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_addPreviewMedia, int(layer)); clazzId {
 	case 0x17aeb75a:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59158,7 +59216,7 @@ func (m *TLBotsAddPreviewMedia) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -59233,7 +59291,7 @@ type TLBotsEditPreviewMedia struct {
 }
 
 func (m *TLBotsEditPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_editPreviewMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59241,7 +59299,7 @@ func (m *TLBotsEditPreviewMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_editPreviewMedia", m)
 }
 
 func (m *TLBotsEditPreviewMedia) CalcSize(layer int32) int {
@@ -59262,7 +59320,7 @@ func (m *TLBotsEditPreviewMedia) CalcSize(layer int32) int {
 func (m *TLBotsEditPreviewMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_editPreviewMedia, int(layer)); clazzId {
 	case 0x8525606f:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59270,11 +59328,11 @@ func (m *TLBotsEditPreviewMedia) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("new_media", m.NewMedia); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("new_media", m.NewMedia, layer); err != nil {
 			return err
 		}
 
@@ -59357,7 +59415,7 @@ type TLBotsDeletePreviewMedia struct {
 }
 
 func (m *TLBotsDeletePreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_deletePreviewMedia", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59365,7 +59423,7 @@ func (m *TLBotsDeletePreviewMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_deletePreviewMedia", m)
 }
 
 func (m *TLBotsDeletePreviewMedia) CalcSize(layer int32) int {
@@ -59385,7 +59443,7 @@ func (m *TLBotsDeletePreviewMedia) CalcSize(layer int32) int {
 func (m *TLBotsDeletePreviewMedia) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_deletePreviewMedia, int(layer)); clazzId {
 	case 0x2d0135b3:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59393,7 +59451,7 @@ func (m *TLBotsDeletePreviewMedia) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
@@ -59482,7 +59540,7 @@ type TLBotsReorderPreviewMedias struct {
 }
 
 func (m *TLBotsReorderPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_reorderPreviewMedias", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59490,7 +59548,7 @@ func (m *TLBotsReorderPreviewMedias) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_reorderPreviewMedias", m)
 }
 
 func (m *TLBotsReorderPreviewMedias) CalcSize(layer int32) int {
@@ -59510,7 +59568,7 @@ func (m *TLBotsReorderPreviewMedias) CalcSize(layer int32) int {
 func (m *TLBotsReorderPreviewMedias) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_reorderPreviewMedias, int(layer)); clazzId {
 	case 0xb627f3aa:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59518,7 +59576,7 @@ func (m *TLBotsReorderPreviewMedias) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -59606,7 +59664,7 @@ type TLBotsGetPreviewInfo struct {
 }
 
 func (m *TLBotsGetPreviewInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPreviewInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59614,7 +59672,7 @@ func (m *TLBotsGetPreviewInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getPreviewInfo", m)
 }
 
 func (m *TLBotsGetPreviewInfo) CalcSize(layer int32) int {
@@ -59633,7 +59691,7 @@ func (m *TLBotsGetPreviewInfo) CalcSize(layer int32) int {
 func (m *TLBotsGetPreviewInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewInfo, int(layer)); clazzId {
 	case 0x423ab3ad:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59700,7 +59758,7 @@ type TLBotsGetPreviewMedias struct {
 }
 
 func (m *TLBotsGetPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPreviewMedias", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59708,7 +59766,7 @@ func (m *TLBotsGetPreviewMedias) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getPreviewMedias", m)
 }
 
 func (m *TLBotsGetPreviewMedias) CalcSize(layer int32) int {
@@ -59726,7 +59784,7 @@ func (m *TLBotsGetPreviewMedias) CalcSize(layer int32) int {
 func (m *TLBotsGetPreviewMedias) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getPreviewMedias, int(layer)); clazzId {
 	case 0xa2a5594d:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -59784,7 +59842,7 @@ type TLBotsUpdateUserEmojiStatus struct {
 }
 
 func (m *TLBotsUpdateUserEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_updateUserEmojiStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59792,7 +59850,7 @@ func (m *TLBotsUpdateUserEmojiStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_updateUserEmojiStatus", m)
 }
 
 func (m *TLBotsUpdateUserEmojiStatus) CalcSize(layer int32) int {
@@ -59811,11 +59869,11 @@ func (m *TLBotsUpdateUserEmojiStatus) CalcSize(layer int32) int {
 func (m *TLBotsUpdateUserEmojiStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateUserEmojiStatus, int(layer)); clazzId {
 	case 0xed9f30c5:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("emoji_status", m.EmojiStatus); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("emoji_status", m.EmojiStatus, layer); err != nil {
 			return err
 		}
 
@@ -59882,7 +59940,7 @@ type TLBotsToggleUserEmojiStatusPermission struct {
 }
 
 func (m *TLBotsToggleUserEmojiStatusPermission) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_toggleUserEmojiStatusPermission", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59890,7 +59948,7 @@ func (m *TLBotsToggleUserEmojiStatusPermission) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_toggleUserEmojiStatusPermission", m)
 }
 
 func (m *TLBotsToggleUserEmojiStatusPermission) CalcSize(layer int32) int {
@@ -59909,11 +59967,11 @@ func (m *TLBotsToggleUserEmojiStatusPermission) CalcSize(layer int32) int {
 func (m *TLBotsToggleUserEmojiStatusPermission) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_toggleUserEmojiStatusPermission, int(layer)); clazzId {
 	case 0x6de6392:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("enabled", m.Enabled); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("enabled", m.Enabled, layer); err != nil {
 			return err
 		}
 
@@ -59981,7 +60039,7 @@ type TLBotsCheckDownloadFileParams struct {
 }
 
 func (m *TLBotsCheckDownloadFileParams) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_checkDownloadFileParams", TLObject: m}
 	return wrapper.String()
 }
 
@@ -59989,7 +60047,7 @@ func (m *TLBotsCheckDownloadFileParams) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_checkDownloadFileParams", m)
 }
 
 func (m *TLBotsCheckDownloadFileParams) CalcSize(layer int32) int {
@@ -60009,7 +60067,7 @@ func (m *TLBotsCheckDownloadFileParams) CalcSize(layer int32) int {
 func (m *TLBotsCheckDownloadFileParams) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkDownloadFileParams, int(layer)); clazzId {
 	case 0x50077589:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -60084,7 +60142,7 @@ type TLBotsGetAdminedBots struct {
 }
 
 func (m *TLBotsGetAdminedBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getAdminedBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60092,7 +60150,7 @@ func (m *TLBotsGetAdminedBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getAdminedBots", m)
 }
 
 func (m *TLBotsGetAdminedBots) CalcSize(layer int32) int {
@@ -60155,7 +60213,7 @@ type TLBotsUpdateStarRefProgram struct {
 }
 
 func (m *TLBotsUpdateStarRefProgram) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_updateStarRefProgram", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60163,7 +60221,7 @@ func (m *TLBotsUpdateStarRefProgram) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_updateStarRefProgram", m)
 }
 
 func (m *TLBotsUpdateStarRefProgram) CalcSize(layer int32) int {
@@ -60186,7 +60244,7 @@ func (m *TLBotsUpdateStarRefProgram) CalcSize(layer int32) int {
 func (m *TLBotsUpdateStarRefProgram) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_updateStarRefProgram, int(layer)); clazzId {
 	case 0x778b5ab3:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -60281,7 +60339,7 @@ type TLBotsSetCustomVerification struct {
 }
 
 func (m *TLBotsSetCustomVerification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_setCustomVerification", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60289,7 +60347,7 @@ func (m *TLBotsSetCustomVerification) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_setCustomVerification", m)
 }
 
 func (m *TLBotsSetCustomVerification) CalcSize(layer int32) int {
@@ -60316,7 +60374,7 @@ func (m *TLBotsSetCustomVerification) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_setCustomVerification, int(layer)); clazzId {
 	case 0x8b89dfbd:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -60426,7 +60484,7 @@ type TLBotsGetBotRecommendations struct {
 }
 
 func (m *TLBotsGetBotRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotRecommendations", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60434,7 +60492,7 @@ func (m *TLBotsGetBotRecommendations) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("bots_getBotRecommendations", m)
 }
 
 func (m *TLBotsGetBotRecommendations) CalcSize(layer int32) int {
@@ -60452,7 +60510,7 @@ func (m *TLBotsGetBotRecommendations) CalcSize(layer int32) int {
 func (m *TLBotsGetBotRecommendations) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getBotRecommendations, int(layer)); clazzId {
 	case 0xa1b70815:
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -60510,7 +60568,7 @@ type TLPaymentsGetPaymentForm struct {
 }
 
 func (m *TLPaymentsGetPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPaymentForm", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60518,7 +60576,7 @@ func (m *TLPaymentsGetPaymentForm) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getPaymentForm", m)
 }
 
 func (m *TLPaymentsGetPaymentForm) CalcSize(layer int32) int {
@@ -60540,7 +60598,7 @@ func (m *TLPaymentsGetPaymentForm) CalcSize(layer int32) int {
 func (m *TLPaymentsGetPaymentForm) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentForm, int(layer)); clazzId {
 	case 0x37148dbb:
-		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("invoice", m.Invoice, layer); err != nil {
 			return err
 		}
 
@@ -60630,7 +60688,7 @@ type TLPaymentsGetPaymentReceipt struct {
 }
 
 func (m *TLPaymentsGetPaymentReceipt) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPaymentReceipt", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60638,7 +60696,7 @@ func (m *TLPaymentsGetPaymentReceipt) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getPaymentReceipt", m)
 }
 
 func (m *TLPaymentsGetPaymentReceipt) CalcSize(layer int32) int {
@@ -60657,7 +60715,7 @@ func (m *TLPaymentsGetPaymentReceipt) CalcSize(layer int32) int {
 func (m *TLPaymentsGetPaymentReceipt) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getPaymentReceipt, int(layer)); clazzId {
 	case 0x2478d1cc:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -60722,7 +60780,7 @@ type TLPaymentsValidateRequestedInfo struct {
 }
 
 func (m *TLPaymentsValidateRequestedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_validateRequestedInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60730,7 +60788,7 @@ func (m *TLPaymentsValidateRequestedInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_validateRequestedInfo", m)
 }
 
 func (m *TLPaymentsValidateRequestedInfo) CalcSize(layer int32) int {
@@ -60750,11 +60808,11 @@ func (m *TLPaymentsValidateRequestedInfo) CalcSize(layer int32) int {
 func (m *TLPaymentsValidateRequestedInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_validateRequestedInfo, int(layer)); clazzId {
 	case 0xb6c8f12b:
-		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("invoice", m.Invoice, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("info", m.Info); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("info", m.Info, layer); err != nil {
 			return err
 		}
 
@@ -60847,7 +60905,7 @@ type TLPaymentsSendPaymentForm struct {
 }
 
 func (m *TLPaymentsSendPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendPaymentForm", TLObject: m}
 	return wrapper.String()
 }
 
@@ -60855,7 +60913,7 @@ func (m *TLPaymentsSendPaymentForm) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_sendPaymentForm", m)
 }
 
 func (m *TLPaymentsSendPaymentForm) CalcSize(layer int32) int {
@@ -60887,11 +60945,11 @@ func (m *TLPaymentsSendPaymentForm) CalcSize(layer int32) int {
 func (m *TLPaymentsSendPaymentForm) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendPaymentForm, int(layer)); clazzId {
 	case 0x2d03522f:
-		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("invoice", m.Invoice, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("credentials", m.Credentials); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("credentials", m.Credentials, layer); err != nil {
 			return err
 		}
 
@@ -61022,7 +61080,7 @@ type TLPaymentsGetSavedInfo struct {
 }
 
 func (m *TLPaymentsGetSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61030,7 +61088,7 @@ func (m *TLPaymentsGetSavedInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getSavedInfo", m)
 }
 
 func (m *TLPaymentsGetSavedInfo) CalcSize(layer int32) int {
@@ -61092,7 +61150,7 @@ type TLPaymentsClearSavedInfo struct {
 }
 
 func (m *TLPaymentsClearSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_clearSavedInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61100,7 +61158,7 @@ func (m *TLPaymentsClearSavedInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_clearSavedInfo", m)
 }
 
 func (m *TLPaymentsClearSavedInfo) CalcSize(layer int32) int {
@@ -61191,7 +61249,7 @@ type TLPaymentsGetBankCardData struct {
 }
 
 func (m *TLPaymentsGetBankCardData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getBankCardData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61199,7 +61257,7 @@ func (m *TLPaymentsGetBankCardData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getBankCardData", m)
 }
 
 func (m *TLPaymentsGetBankCardData) CalcSize(layer int32) int {
@@ -61270,7 +61328,7 @@ type TLPaymentsExportInvoice struct {
 }
 
 func (m *TLPaymentsExportInvoice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_exportInvoice", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61278,7 +61336,7 @@ func (m *TLPaymentsExportInvoice) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_exportInvoice", m)
 }
 
 func (m *TLPaymentsExportInvoice) CalcSize(layer int32) int {
@@ -61296,7 +61354,7 @@ func (m *TLPaymentsExportInvoice) CalcSize(layer int32) int {
 func (m *TLPaymentsExportInvoice) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_exportInvoice, int(layer)); clazzId {
 	case 0xf91b065:
-		if err := iface.ValidateRequiredObject("invoice_media", m.InvoiceMedia); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("invoice_media", m.InvoiceMedia, layer); err != nil {
 			return err
 		}
 
@@ -61354,7 +61412,7 @@ type TLPaymentsAssignAppStoreTransaction struct {
 }
 
 func (m *TLPaymentsAssignAppStoreTransaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_assignAppStoreTransaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61362,7 +61420,7 @@ func (m *TLPaymentsAssignAppStoreTransaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_assignAppStoreTransaction", m)
 }
 
 func (m *TLPaymentsAssignAppStoreTransaction) CalcSize(layer int32) int {
@@ -61385,7 +61443,7 @@ func (m *TLPaymentsAssignAppStoreTransaction) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
@@ -61448,7 +61506,7 @@ type TLPaymentsAssignPlayMarketTransaction struct {
 }
 
 func (m *TLPaymentsAssignPlayMarketTransaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_assignPlayMarketTransaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61456,7 +61514,7 @@ func (m *TLPaymentsAssignPlayMarketTransaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_assignPlayMarketTransaction", m)
 }
 
 func (m *TLPaymentsAssignPlayMarketTransaction) CalcSize(layer int32) int {
@@ -61475,11 +61533,11 @@ func (m *TLPaymentsAssignPlayMarketTransaction) CalcSize(layer int32) int {
 func (m *TLPaymentsAssignPlayMarketTransaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_assignPlayMarketTransaction, int(layer)); clazzId {
 	case 0xdffd50d3:
-		if err := iface.ValidateRequiredObject("receipt", m.Receipt); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("receipt", m.Receipt, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
@@ -61545,7 +61603,7 @@ type TLPaymentsGetPremiumGiftCodeOptions struct {
 }
 
 func (m *TLPaymentsGetPremiumGiftCodeOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPremiumGiftCodeOptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61553,7 +61611,7 @@ func (m *TLPaymentsGetPremiumGiftCodeOptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getPremiumGiftCodeOptions", m)
 }
 
 func (m *TLPaymentsGetPremiumGiftCodeOptions) CalcSize(layer int32) int {
@@ -61650,7 +61708,7 @@ type TLPaymentsCheckGiftCode struct {
 }
 
 func (m *TLPaymentsCheckGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_checkGiftCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61658,7 +61716,7 @@ func (m *TLPaymentsCheckGiftCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_checkGiftCode", m)
 }
 
 func (m *TLPaymentsCheckGiftCode) CalcSize(layer int32) int {
@@ -61729,7 +61787,7 @@ type TLPaymentsApplyGiftCode struct {
 }
 
 func (m *TLPaymentsApplyGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_applyGiftCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61737,7 +61795,7 @@ func (m *TLPaymentsApplyGiftCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_applyGiftCode", m)
 }
 
 func (m *TLPaymentsApplyGiftCode) CalcSize(layer int32) int {
@@ -61809,7 +61867,7 @@ type TLPaymentsGetGiveawayInfo struct {
 }
 
 func (m *TLPaymentsGetGiveawayInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getGiveawayInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61817,7 +61875,7 @@ func (m *TLPaymentsGetGiveawayInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getGiveawayInfo", m)
 }
 
 func (m *TLPaymentsGetGiveawayInfo) CalcSize(layer int32) int {
@@ -61836,7 +61894,7 @@ func (m *TLPaymentsGetGiveawayInfo) CalcSize(layer int32) int {
 func (m *TLPaymentsGetGiveawayInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getGiveawayInfo, int(layer)); clazzId {
 	case 0xf4239425:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -61901,7 +61959,7 @@ type TLPaymentsLaunchPrepaidGiveaway struct {
 }
 
 func (m *TLPaymentsLaunchPrepaidGiveaway) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_launchPrepaidGiveaway", TLObject: m}
 	return wrapper.String()
 }
 
@@ -61909,7 +61967,7 @@ func (m *TLPaymentsLaunchPrepaidGiveaway) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_launchPrepaidGiveaway", m)
 }
 
 func (m *TLPaymentsLaunchPrepaidGiveaway) CalcSize(layer int32) int {
@@ -61929,11 +61987,11 @@ func (m *TLPaymentsLaunchPrepaidGiveaway) CalcSize(layer int32) int {
 func (m *TLPaymentsLaunchPrepaidGiveaway) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_launchPrepaidGiveaway, int(layer)); clazzId {
 	case 0x5ff58f20:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
@@ -62004,7 +62062,7 @@ type TLPaymentsGetStarsTopupOptions struct {
 }
 
 func (m *TLPaymentsGetStarsTopupOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTopupOptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62012,7 +62070,7 @@ func (m *TLPaymentsGetStarsTopupOptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsTopupOptions", m)
 }
 
 func (m *TLPaymentsGetStarsTopupOptions) CalcSize(layer int32) int {
@@ -62074,7 +62132,7 @@ type TLPaymentsGetStarsStatus struct {
 }
 
 func (m *TLPaymentsGetStarsStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62082,7 +62140,7 @@ func (m *TLPaymentsGetStarsStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsStatus", m)
 }
 
 func (m *TLPaymentsGetStarsStatus) CalcSize(layer int32) int {
@@ -62101,7 +62159,7 @@ func (m *TLPaymentsGetStarsStatus) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsStatus, int(layer)); clazzId {
 	case 0x4ea9b3bf:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -62187,7 +62245,7 @@ type TLPaymentsGetStarsTransactions struct {
 }
 
 func (m *TLPaymentsGetStarsTransactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTransactions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62195,7 +62253,7 @@ func (m *TLPaymentsGetStarsTransactions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsTransactions", m)
 }
 
 func (m *TLPaymentsGetStarsTransactions) CalcSize(layer int32) int {
@@ -62221,7 +62279,7 @@ func (m *TLPaymentsGetStarsTransactions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactions, int(layer)); clazzId {
 	case 0x69da4557:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -62348,7 +62406,7 @@ type TLPaymentsSendStarsForm struct {
 }
 
 func (m *TLPaymentsSendStarsForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendStarsForm", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62356,7 +62414,7 @@ func (m *TLPaymentsSendStarsForm) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_sendStarsForm", m)
 }
 
 func (m *TLPaymentsSendStarsForm) CalcSize(layer int32) int {
@@ -62375,7 +62433,7 @@ func (m *TLPaymentsSendStarsForm) CalcSize(layer int32) int {
 func (m *TLPaymentsSendStarsForm) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarsForm, int(layer)); clazzId {
 	case 0x7998c914:
-		if err := iface.ValidateRequiredObject("invoice", m.Invoice); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("invoice", m.Invoice, layer); err != nil {
 			return err
 		}
 
@@ -62438,7 +62496,7 @@ type TLPaymentsRefundStarsCharge struct {
 }
 
 func (m *TLPaymentsRefundStarsCharge) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_refundStarsCharge", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62446,7 +62504,7 @@ func (m *TLPaymentsRefundStarsCharge) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_refundStarsCharge", m)
 }
 
 func (m *TLPaymentsRefundStarsCharge) CalcSize(layer int32) int {
@@ -62465,7 +62523,7 @@ func (m *TLPaymentsRefundStarsCharge) CalcSize(layer int32) int {
 func (m *TLPaymentsRefundStarsCharge) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_refundStarsCharge, int(layer)); clazzId {
 	case 0x25ae8f4a:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -62534,7 +62592,7 @@ type TLPaymentsGetStarsRevenueStats struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueStats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62542,7 +62600,7 @@ func (m *TLPaymentsGetStarsRevenueStats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsRevenueStats", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueStats) CalcSize(layer int32) int {
@@ -62561,7 +62619,7 @@ func (m *TLPaymentsGetStarsRevenueStats) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsRevenueStats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueStats, int(layer)); clazzId {
 	case 0xd91ffad6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -62649,7 +62707,7 @@ type TLPaymentsGetStarsRevenueWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueWithdrawalUrl", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62657,7 +62715,7 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsRevenueWithdrawalUrl", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) CalcSize(layer int32) int {
@@ -62681,11 +62739,11 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueWithdrawalUrl, int(layer)); clazzId {
 	case 0x2433dc92:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -62789,7 +62847,7 @@ type TLPaymentsGetStarsRevenueAdsAccountUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueAdsAccountUrl", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62797,7 +62855,7 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsRevenueAdsAccountUrl", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) CalcSize(layer int32) int {
@@ -62815,7 +62873,7 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsRevenueAdsAccountUrl, int(layer)); clazzId {
 	case 0xd1d7efc5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -62874,7 +62932,7 @@ type TLPaymentsGetStarsTransactionsByID struct {
 }
 
 func (m *TLPaymentsGetStarsTransactionsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTransactionsByID", TLObject: m}
 	return wrapper.String()
 }
 
@@ -62882,7 +62940,7 @@ func (m *TLPaymentsGetStarsTransactionsByID) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsTransactionsByID", m)
 }
 
 func (m *TLPaymentsGetStarsTransactionsByID) CalcSize(layer int32) int {
@@ -62902,11 +62960,11 @@ func (m *TLPaymentsGetStarsTransactionsByID) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsTransactionsByID) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsTransactionsByID, int(layer)); clazzId {
 	case 0x2dca16b8:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -63010,7 +63068,7 @@ type TLPaymentsGetStarsGiftOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiftOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsGiftOptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63018,7 +63076,7 @@ func (m *TLPaymentsGetStarsGiftOptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsGiftOptions", m)
 }
 
 func (m *TLPaymentsGetStarsGiftOptions) CalcSize(layer int32) int {
@@ -63117,7 +63175,7 @@ type TLPaymentsGetStarsSubscriptions struct {
 }
 
 func (m *TLPaymentsGetStarsSubscriptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsSubscriptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63125,7 +63183,7 @@ func (m *TLPaymentsGetStarsSubscriptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsSubscriptions", m)
 }
 
 func (m *TLPaymentsGetStarsSubscriptions) CalcSize(layer int32) int {
@@ -63145,7 +63203,7 @@ func (m *TLPaymentsGetStarsSubscriptions) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarsSubscriptions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarsSubscriptions, int(layer)); clazzId {
 	case 0x32512c5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -63236,7 +63294,7 @@ type TLPaymentsChangeStarsSubscription struct {
 }
 
 func (m *TLPaymentsChangeStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_changeStarsSubscription", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63244,7 +63302,7 @@ func (m *TLPaymentsChangeStarsSubscription) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_changeStarsSubscription", m)
 }
 
 func (m *TLPaymentsChangeStarsSubscription) CalcSize(layer int32) int {
@@ -63267,7 +63325,7 @@ func (m *TLPaymentsChangeStarsSubscription) CalcSize(layer int32) int {
 func (m *TLPaymentsChangeStarsSubscription) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_changeStarsSubscription, int(layer)); clazzId {
 	case 0xc7770878:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -63366,7 +63424,7 @@ type TLPaymentsFulfillStarsSubscription struct {
 }
 
 func (m *TLPaymentsFulfillStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_fulfillStarsSubscription", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63374,7 +63432,7 @@ func (m *TLPaymentsFulfillStarsSubscription) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_fulfillStarsSubscription", m)
 }
 
 func (m *TLPaymentsFulfillStarsSubscription) CalcSize(layer int32) int {
@@ -63393,7 +63451,7 @@ func (m *TLPaymentsFulfillStarsSubscription) CalcSize(layer int32) int {
 func (m *TLPaymentsFulfillStarsSubscription) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_fulfillStarsSubscription, int(layer)); clazzId {
 	case 0xcc5bebb3:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -63459,7 +63517,7 @@ type TLPaymentsGetStarsGiveawayOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiveawayOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsGiveawayOptions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63467,7 +63525,7 @@ func (m *TLPaymentsGetStarsGiveawayOptions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarsGiveawayOptions", m)
 }
 
 func (m *TLPaymentsGetStarsGiveawayOptions) CalcSize(layer int32) int {
@@ -63528,7 +63586,7 @@ type TLPaymentsGetStarGifts struct {
 }
 
 func (m *TLPaymentsGetStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGifts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63536,7 +63594,7 @@ func (m *TLPaymentsGetStarGifts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGifts", m)
 }
 
 func (m *TLPaymentsGetStarGifts) CalcSize(layer int32) int {
@@ -63605,7 +63663,7 @@ type TLPaymentsSaveStarGift struct {
 }
 
 func (m *TLPaymentsSaveStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_saveStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63613,7 +63671,7 @@ func (m *TLPaymentsSaveStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_saveStarGift", m)
 }
 
 func (m *TLPaymentsSaveStarGift) CalcSize(layer int32) int {
@@ -63632,7 +63690,7 @@ func (m *TLPaymentsSaveStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsSaveStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_saveStarGift, int(layer)); clazzId {
 	case 0x2a2a697c:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -63711,7 +63769,7 @@ type TLPaymentsConvertStarGift struct {
 }
 
 func (m *TLPaymentsConvertStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_convertStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63719,7 +63777,7 @@ func (m *TLPaymentsConvertStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_convertStarGift", m)
 }
 
 func (m *TLPaymentsConvertStarGift) CalcSize(layer int32) int {
@@ -63737,7 +63795,7 @@ func (m *TLPaymentsConvertStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsConvertStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_convertStarGift, int(layer)); clazzId {
 	case 0x74bf076b:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -63796,7 +63854,7 @@ type TLPaymentsBotCancelStarsSubscription struct {
 }
 
 func (m *TLPaymentsBotCancelStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_botCancelStarsSubscription", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63804,7 +63862,7 @@ func (m *TLPaymentsBotCancelStarsSubscription) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_botCancelStarsSubscription", m)
 }
 
 func (m *TLPaymentsBotCancelStarsSubscription) CalcSize(layer int32) int {
@@ -63824,7 +63882,7 @@ func (m *TLPaymentsBotCancelStarsSubscription) CalcSize(layer int32) int {
 func (m *TLPaymentsBotCancelStarsSubscription) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_botCancelStarsSubscription, int(layer)); clazzId {
 	case 0x6dfa0622:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -63916,7 +63974,7 @@ type TLPaymentsGetConnectedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getConnectedStarRefBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -63924,7 +63982,7 @@ func (m *TLPaymentsGetConnectedStarRefBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getConnectedStarRefBots", m)
 }
 
 func (m *TLPaymentsGetConnectedStarRefBots) CalcSize(layer int32) int {
@@ -63952,7 +64010,7 @@ func (m *TLPaymentsGetConnectedStarRefBots) CalcSize(layer int32) int {
 func (m *TLPaymentsGetConnectedStarRefBots) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBots, int(layer)); clazzId {
 	case 0x5869a553:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -64061,7 +64119,7 @@ type TLPaymentsGetConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getConnectedStarRefBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64069,7 +64127,7 @@ func (m *TLPaymentsGetConnectedStarRefBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getConnectedStarRefBot", m)
 }
 
 func (m *TLPaymentsGetConnectedStarRefBot) CalcSize(layer int32) int {
@@ -64088,11 +64146,11 @@ func (m *TLPaymentsGetConnectedStarRefBot) CalcSize(layer int32) int {
 func (m *TLPaymentsGetConnectedStarRefBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getConnectedStarRefBot, int(layer)); clazzId {
 	case 0xb7d998f0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -64162,7 +64220,7 @@ type TLPaymentsGetSuggestedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetSuggestedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSuggestedStarRefBots", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64170,7 +64228,7 @@ func (m *TLPaymentsGetSuggestedStarRefBots) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getSuggestedStarRefBots", m)
 }
 
 func (m *TLPaymentsGetSuggestedStarRefBots) CalcSize(layer int32) int {
@@ -64191,7 +64249,7 @@ func (m *TLPaymentsGetSuggestedStarRefBots) CalcSize(layer int32) int {
 func (m *TLPaymentsGetSuggestedStarRefBots) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSuggestedStarRefBots, int(layer)); clazzId {
 	case 0xd6b48f7:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -64292,7 +64350,7 @@ type TLPaymentsConnectStarRefBot struct {
 }
 
 func (m *TLPaymentsConnectStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_connectStarRefBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64300,7 +64358,7 @@ func (m *TLPaymentsConnectStarRefBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_connectStarRefBot", m)
 }
 
 func (m *TLPaymentsConnectStarRefBot) CalcSize(layer int32) int {
@@ -64319,11 +64377,11 @@ func (m *TLPaymentsConnectStarRefBot) CalcSize(layer int32) int {
 func (m *TLPaymentsConnectStarRefBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_connectStarRefBot, int(layer)); clazzId {
 	case 0x7ed5348a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("bot", m.Bot); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
 			return err
 		}
 
@@ -64391,7 +64449,7 @@ type TLPaymentsEditConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsEditConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_editConnectedStarRefBot", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64399,7 +64457,7 @@ func (m *TLPaymentsEditConnectedStarRefBot) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_editConnectedStarRefBot", m)
 }
 
 func (m *TLPaymentsEditConnectedStarRefBot) CalcSize(layer int32) int {
@@ -64419,7 +64477,7 @@ func (m *TLPaymentsEditConnectedStarRefBot) CalcSize(layer int32) int {
 func (m *TLPaymentsEditConnectedStarRefBot) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_editConnectedStarRefBot, int(layer)); clazzId {
 	case 0xe4fca4a3:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -64508,7 +64566,7 @@ type TLPaymentsGetStarGiftUpgradePreview struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradePreview) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftUpgradePreview", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64516,7 +64574,7 @@ func (m *TLPaymentsGetStarGiftUpgradePreview) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftUpgradePreview", m)
 }
 
 func (m *TLPaymentsGetStarGiftUpgradePreview) CalcSize(layer int32) int {
@@ -64585,7 +64643,7 @@ type TLPaymentsUpgradeStarGift struct {
 }
 
 func (m *TLPaymentsUpgradeStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_upgradeStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64593,7 +64651,7 @@ func (m *TLPaymentsUpgradeStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_upgradeStarGift", m)
 }
 
 func (m *TLPaymentsUpgradeStarGift) CalcSize(layer int32) int {
@@ -64612,7 +64670,7 @@ func (m *TLPaymentsUpgradeStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsUpgradeStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_upgradeStarGift, int(layer)); clazzId {
 	case 0xaed6e4f5:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -64692,7 +64750,7 @@ type TLPaymentsTransferStarGift struct {
 }
 
 func (m *TLPaymentsTransferStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_transferStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64700,7 +64758,7 @@ func (m *TLPaymentsTransferStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_transferStarGift", m)
 }
 
 func (m *TLPaymentsTransferStarGift) CalcSize(layer int32) int {
@@ -64719,11 +64777,11 @@ func (m *TLPaymentsTransferStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsTransferStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_transferStarGift, int(layer)); clazzId {
 	case 0x7f18176a:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("to_id", m.ToId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("to_id", m.ToId, layer); err != nil {
 			return err
 		}
 
@@ -64789,7 +64847,7 @@ type TLPaymentsGetUniqueStarGift struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getUniqueStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64797,7 +64855,7 @@ func (m *TLPaymentsGetUniqueStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getUniqueStarGift", m)
 }
 
 func (m *TLPaymentsGetUniqueStarGift) CalcSize(layer int32) int {
@@ -64880,7 +64938,7 @@ type TLPaymentsGetSavedStarGifts struct {
 }
 
 func (m *TLPaymentsGetSavedStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedStarGifts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -64888,7 +64946,7 @@ func (m *TLPaymentsGetSavedStarGifts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getSavedStarGifts", m)
 }
 
 func (m *TLPaymentsGetSavedStarGifts) CalcSize(layer int32) int {
@@ -64913,7 +64971,7 @@ func (m *TLPaymentsGetSavedStarGifts) CalcSize(layer int32) int {
 func (m *TLPaymentsGetSavedStarGifts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGifts, int(layer)); clazzId {
 	case 0xa319e569:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -65070,7 +65128,7 @@ type TLPaymentsGetSavedStarGift struct {
 }
 
 func (m *TLPaymentsGetSavedStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65078,7 +65136,7 @@ func (m *TLPaymentsGetSavedStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getSavedStarGift", m)
 }
 
 func (m *TLPaymentsGetSavedStarGift) CalcSize(layer int32) int {
@@ -65096,7 +65154,7 @@ func (m *TLPaymentsGetSavedStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsGetSavedStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getSavedStarGift, int(layer)); clazzId {
 	case 0xb455a106:
-		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -65168,7 +65226,7 @@ type TLPaymentsGetStarGiftWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftWithdrawalUrl", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65176,7 +65234,7 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftWithdrawalUrl", m)
 }
 
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) CalcSize(layer int32) int {
@@ -65195,11 +65253,11 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftWithdrawalUrl, int(layer)); clazzId {
 	case 0xd06e93a8:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -65266,7 +65324,7 @@ type TLPaymentsToggleChatStarGiftNotifications struct {
 }
 
 func (m *TLPaymentsToggleChatStarGiftNotifications) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_toggleChatStarGiftNotifications", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65274,7 +65332,7 @@ func (m *TLPaymentsToggleChatStarGiftNotifications) MarshalJSON() ([]byte, error
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_toggleChatStarGiftNotifications", m)
 }
 
 func (m *TLPaymentsToggleChatStarGiftNotifications) CalcSize(layer int32) int {
@@ -65293,7 +65351,7 @@ func (m *TLPaymentsToggleChatStarGiftNotifications) CalcSize(layer int32) int {
 func (m *TLPaymentsToggleChatStarGiftNotifications) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleChatStarGiftNotifications, int(layer)); clazzId {
 	case 0x60eaefa1:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -65373,7 +65431,7 @@ type TLPaymentsToggleStarGiftsPinnedToTop struct {
 }
 
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_toggleStarGiftsPinnedToTop", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65381,7 +65439,7 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_toggleStarGiftsPinnedToTop", m)
 }
 
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) CalcSize(layer int32) int {
@@ -65400,11 +65458,11 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) CalcSize(layer int32) int {
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_toggleStarGiftsPinnedToTop, int(layer)); clazzId {
 	case 0x1513e7b0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -65486,7 +65544,7 @@ type TLPaymentsCanPurchaseStore struct {
 }
 
 func (m *TLPaymentsCanPurchaseStore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_canPurchaseStore", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65494,7 +65552,7 @@ func (m *TLPaymentsCanPurchaseStore) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_canPurchaseStore", m)
 }
 
 func (m *TLPaymentsCanPurchaseStore) CalcSize(layer int32) int {
@@ -65512,7 +65570,7 @@ func (m *TLPaymentsCanPurchaseStore) CalcSize(layer int32) int {
 func (m *TLPaymentsCanPurchaseStore) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_canPurchaseStore, int(layer)); clazzId {
 	case 0x4fdc5ea7:
-		if err := iface.ValidateRequiredObject("purpose", m.Purpose); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("purpose", m.Purpose, layer); err != nil {
 			return err
 		}
 
@@ -65576,7 +65634,7 @@ type TLPaymentsGetResaleStarGifts struct {
 }
 
 func (m *TLPaymentsGetResaleStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getResaleStarGifts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65584,7 +65642,7 @@ func (m *TLPaymentsGetResaleStarGifts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getResaleStarGifts", m)
 }
 
 func (m *TLPaymentsGetResaleStarGifts) CalcSize(layer int32) int {
@@ -65758,7 +65816,7 @@ type TLPaymentsUpdateStarGiftPrice struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftPrice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_updateStarGiftPrice", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65766,7 +65824,7 @@ func (m *TLPaymentsUpdateStarGiftPrice) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_updateStarGiftPrice", m)
 }
 
 func (m *TLPaymentsUpdateStarGiftPrice) CalcSize(layer int32) int {
@@ -65785,11 +65843,11 @@ func (m *TLPaymentsUpdateStarGiftPrice) CalcSize(layer int32) int {
 func (m *TLPaymentsUpdateStarGiftPrice) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftPrice, int(layer)); clazzId {
 	case 0xedbe6ccb:
-		if err := iface.ValidateRequiredObject("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("resell_amount", m.ResellAmount); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("resell_amount", m.ResellAmount, layer); err != nil {
 			return err
 		}
 
@@ -65857,7 +65915,7 @@ type TLPaymentsCreateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsCreateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_createStarGiftCollection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65865,7 +65923,7 @@ func (m *TLPaymentsCreateStarGiftCollection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_createStarGiftCollection", m)
 }
 
 func (m *TLPaymentsCreateStarGiftCollection) CalcSize(layer int32) int {
@@ -65885,7 +65943,7 @@ func (m *TLPaymentsCreateStarGiftCollection) CalcSize(layer int32) int {
 func (m *TLPaymentsCreateStarGiftCollection) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_createStarGiftCollection, int(layer)); clazzId {
 	case 0x1f4a0e87:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -65893,7 +65951,7 @@ func (m *TLPaymentsCreateStarGiftCollection) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -65985,7 +66043,7 @@ type TLPaymentsUpdateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_updateStarGiftCollection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -65993,7 +66051,7 @@ func (m *TLPaymentsUpdateStarGiftCollection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_updateStarGiftCollection", m)
 }
 
 func (m *TLPaymentsUpdateStarGiftCollection) CalcSize(layer int32) int {
@@ -66028,7 +66086,7 @@ func (m *TLPaymentsUpdateStarGiftCollection) CalcSize(layer int32) int {
 func (m *TLPaymentsUpdateStarGiftCollection) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_updateStarGiftCollection, int(layer)); clazzId {
 	case 0x4fddbee7:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -66213,7 +66271,7 @@ type TLPaymentsReorderStarGiftCollections struct {
 }
 
 func (m *TLPaymentsReorderStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_reorderStarGiftCollections", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66221,7 +66279,7 @@ func (m *TLPaymentsReorderStarGiftCollections) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_reorderStarGiftCollections", m)
 }
 
 func (m *TLPaymentsReorderStarGiftCollections) CalcSize(layer int32) int {
@@ -66240,11 +66298,11 @@ func (m *TLPaymentsReorderStarGiftCollections) CalcSize(layer int32) int {
 func (m *TLPaymentsReorderStarGiftCollections) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_reorderStarGiftCollections, int(layer)); clazzId {
 	case 0xc32af4cc:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -66306,7 +66364,7 @@ type TLPaymentsDeleteStarGiftCollection struct {
 }
 
 func (m *TLPaymentsDeleteStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_deleteStarGiftCollection", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66314,7 +66372,7 @@ func (m *TLPaymentsDeleteStarGiftCollection) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_deleteStarGiftCollection", m)
 }
 
 func (m *TLPaymentsDeleteStarGiftCollection) CalcSize(layer int32) int {
@@ -66333,7 +66391,7 @@ func (m *TLPaymentsDeleteStarGiftCollection) CalcSize(layer int32) int {
 func (m *TLPaymentsDeleteStarGiftCollection) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_deleteStarGiftCollection, int(layer)); clazzId {
 	case 0xad5648e8:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -66397,7 +66455,7 @@ type TLPaymentsGetStarGiftCollections struct {
 }
 
 func (m *TLPaymentsGetStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftCollections", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66405,7 +66463,7 @@ func (m *TLPaymentsGetStarGiftCollections) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftCollections", m)
 }
 
 func (m *TLPaymentsGetStarGiftCollections) CalcSize(layer int32) int {
@@ -66424,7 +66482,7 @@ func (m *TLPaymentsGetStarGiftCollections) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarGiftCollections) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftCollections, int(layer)); clazzId {
 	case 0x981b91dd:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -66487,7 +66545,7 @@ type TLPaymentsGetUniqueStarGiftValueInfo struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getUniqueStarGiftValueInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66495,7 +66553,7 @@ func (m *TLPaymentsGetUniqueStarGiftValueInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getUniqueStarGiftValueInfo", m)
 }
 
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) CalcSize(layer int32) int {
@@ -66566,7 +66624,7 @@ type TLPaymentsCheckCanSendGift struct {
 }
 
 func (m *TLPaymentsCheckCanSendGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_checkCanSendGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66574,7 +66632,7 @@ func (m *TLPaymentsCheckCanSendGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_checkCanSendGift", m)
 }
 
 func (m *TLPaymentsCheckCanSendGift) CalcSize(layer int32) int {
@@ -66643,7 +66701,7 @@ type TLPaymentsGetStarGiftAuctionState struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionState) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftAuctionState", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66651,7 +66709,7 @@ func (m *TLPaymentsGetStarGiftAuctionState) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftAuctionState", m)
 }
 
 func (m *TLPaymentsGetStarGiftAuctionState) CalcSize(layer int32) int {
@@ -66670,7 +66728,7 @@ func (m *TLPaymentsGetStarGiftAuctionState) CalcSize(layer int32) int {
 func (m *TLPaymentsGetStarGiftAuctionState) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_getStarGiftAuctionState, int(layer)); clazzId {
 	case 0x5c9ff4d6:
-		if err := iface.ValidateRequiredObject("auction", m.Auction); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("auction", m.Auction, layer); err != nil {
 			return err
 		}
 
@@ -66733,7 +66791,7 @@ type TLPaymentsGetStarGiftAuctionAcquiredGifts struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftAuctionAcquiredGifts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66741,7 +66799,7 @@ func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) MarshalJSON() ([]byte, error
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftAuctionAcquiredGifts", m)
 }
 
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) CalcSize(layer int32) int {
@@ -66809,7 +66867,7 @@ type TLPaymentsGetStarGiftActiveAuctions struct {
 }
 
 func (m *TLPaymentsGetStarGiftActiveAuctions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftActiveAuctions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66817,7 +66875,7 @@ func (m *TLPaymentsGetStarGiftActiveAuctions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftActiveAuctions", m)
 }
 
 func (m *TLPaymentsGetStarGiftActiveAuctions) CalcSize(layer int32) int {
@@ -66886,7 +66944,7 @@ type TLPaymentsResolveStarGiftOffer struct {
 }
 
 func (m *TLPaymentsResolveStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_resolveStarGiftOffer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66894,7 +66952,7 @@ func (m *TLPaymentsResolveStarGiftOffer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_resolveStarGiftOffer", m)
 }
 
 func (m *TLPaymentsResolveStarGiftOffer) CalcSize(layer int32) int {
@@ -66990,7 +67048,7 @@ type TLPaymentsSendStarGiftOffer struct {
 }
 
 func (m *TLPaymentsSendStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendStarGiftOffer", TLObject: m}
 	return wrapper.String()
 }
 
@@ -66998,7 +67056,7 @@ func (m *TLPaymentsSendStarGiftOffer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_sendStarGiftOffer", m)
 }
 
 func (m *TLPaymentsSendStarGiftOffer) CalcSize(layer int32) int {
@@ -67024,7 +67082,7 @@ func (m *TLPaymentsSendStarGiftOffer) CalcSize(layer int32) int {
 func (m *TLPaymentsSendStarGiftOffer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_sendStarGiftOffer, int(layer)); clazzId {
 	case 0x8fb86b41:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -67032,7 +67090,7 @@ func (m *TLPaymentsSendStarGiftOffer) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("price", m.Price); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("price", m.Price, layer); err != nil {
 			return err
 		}
 
@@ -67144,7 +67202,7 @@ type TLPaymentsGetStarGiftUpgradeAttributes struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftUpgradeAttributes", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67152,7 +67210,7 @@ func (m *TLPaymentsGetStarGiftUpgradeAttributes) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getStarGiftUpgradeAttributes", m)
 }
 
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) CalcSize(layer int32) int {
@@ -67222,7 +67280,7 @@ type TLPaymentsGetCraftStarGifts struct {
 }
 
 func (m *TLPaymentsGetCraftStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_getCraftStarGifts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67230,7 +67288,7 @@ func (m *TLPaymentsGetCraftStarGifts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_getCraftStarGifts", m)
 }
 
 func (m *TLPaymentsGetCraftStarGifts) CalcSize(layer int32) int {
@@ -67313,7 +67371,7 @@ type TLPaymentsCraftStarGift struct {
 }
 
 func (m *TLPaymentsCraftStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "payments_craftStarGift", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67321,7 +67379,7 @@ func (m *TLPaymentsCraftStarGift) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("payments_craftStarGift", m)
 }
 
 func (m *TLPaymentsCraftStarGift) CalcSize(layer int32) int {
@@ -67339,7 +67397,7 @@ func (m *TLPaymentsCraftStarGift) CalcSize(layer int32) int {
 func (m *TLPaymentsCraftStarGift) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_payments_craftStarGift, int(layer)); clazzId {
 	case 0xb0f9684f:
-		if err := iface.ValidateRequiredSlice("stargift", m.Stargift); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stargift", m.Stargift, layer); err != nil {
 			return err
 		}
 
@@ -67418,7 +67476,7 @@ type TLStickersCreateStickerSet struct {
 }
 
 func (m *TLStickersCreateStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_createStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67426,7 +67484,7 @@ func (m *TLStickersCreateStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_createStickerSet", m)
 }
 
 func (m *TLStickersCreateStickerSet) CalcSize(layer int32) int {
@@ -67455,7 +67513,7 @@ func (m *TLStickersCreateStickerSet) CalcSize(layer int32) int {
 func (m *TLStickersCreateStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_createStickerSet, int(layer)); clazzId {
 	case 0x9021ab67:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -67467,7 +67525,7 @@ func (m *TLStickersCreateStickerSet) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("stickers", m.Stickers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stickers", m.Stickers, layer); err != nil {
 			return err
 		}
 
@@ -67625,7 +67683,7 @@ type TLStickersRemoveStickerFromSet struct {
 }
 
 func (m *TLStickersRemoveStickerFromSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_removeStickerFromSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67633,7 +67691,7 @@ func (m *TLStickersRemoveStickerFromSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_removeStickerFromSet", m)
 }
 
 func (m *TLStickersRemoveStickerFromSet) CalcSize(layer int32) int {
@@ -67651,7 +67709,7 @@ func (m *TLStickersRemoveStickerFromSet) CalcSize(layer int32) int {
 func (m *TLStickersRemoveStickerFromSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_removeStickerFromSet, int(layer)); clazzId {
 	case 0xf7760f51:
-		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("sticker", m.Sticker, layer); err != nil {
 			return err
 		}
 
@@ -67709,7 +67767,7 @@ type TLStickersChangeStickerPosition struct {
 }
 
 func (m *TLStickersChangeStickerPosition) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_changeStickerPosition", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67717,7 +67775,7 @@ func (m *TLStickersChangeStickerPosition) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_changeStickerPosition", m)
 }
 
 func (m *TLStickersChangeStickerPosition) CalcSize(layer int32) int {
@@ -67736,7 +67794,7 @@ func (m *TLStickersChangeStickerPosition) CalcSize(layer int32) int {
 func (m *TLStickersChangeStickerPosition) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeStickerPosition, int(layer)); clazzId {
 	case 0xffb6d4ca:
-		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("sticker", m.Sticker, layer); err != nil {
 			return err
 		}
 
@@ -67800,7 +67858,7 @@ type TLStickersAddStickerToSet struct {
 }
 
 func (m *TLStickersAddStickerToSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_addStickerToSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67808,7 +67866,7 @@ func (m *TLStickersAddStickerToSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_addStickerToSet", m)
 }
 
 func (m *TLStickersAddStickerToSet) CalcSize(layer int32) int {
@@ -67827,11 +67885,11 @@ func (m *TLStickersAddStickerToSet) CalcSize(layer int32) int {
 func (m *TLStickersAddStickerToSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_addStickerToSet, int(layer)); clazzId {
 	case 0x8653febe:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("sticker", m.Sticker, layer); err != nil {
 			return err
 		}
 
@@ -67899,7 +67957,7 @@ type TLStickersSetStickerSetThumb struct {
 }
 
 func (m *TLStickersSetStickerSetThumb) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_setStickerSetThumb", TLObject: m}
 	return wrapper.String()
 }
 
@@ -67907,7 +67965,7 @@ func (m *TLStickersSetStickerSetThumb) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_setStickerSetThumb", m)
 }
 
 func (m *TLStickersSetStickerSetThumb) CalcSize(layer int32) int {
@@ -67933,7 +67991,7 @@ func (m *TLStickersSetStickerSetThumb) CalcSize(layer int32) int {
 func (m *TLStickersSetStickerSetThumb) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_setStickerSetThumb, int(layer)); clazzId {
 	case 0xa76a5392:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -68036,7 +68094,7 @@ type TLStickersCheckShortName struct {
 }
 
 func (m *TLStickersCheckShortName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_checkShortName", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68044,7 +68102,7 @@ func (m *TLStickersCheckShortName) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_checkShortName", m)
 }
 
 func (m *TLStickersCheckShortName) CalcSize(layer int32) int {
@@ -68115,7 +68173,7 @@ type TLStickersSuggestShortName struct {
 }
 
 func (m *TLStickersSuggestShortName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_suggestShortName", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68123,7 +68181,7 @@ func (m *TLStickersSuggestShortName) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_suggestShortName", m)
 }
 
 func (m *TLStickersSuggestShortName) CalcSize(layer int32) int {
@@ -68197,7 +68255,7 @@ type TLStickersChangeSticker struct {
 }
 
 func (m *TLStickersChangeSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_changeSticker", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68205,7 +68263,7 @@ func (m *TLStickersChangeSticker) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_changeSticker", m)
 }
 
 func (m *TLStickersChangeSticker) CalcSize(layer int32) int {
@@ -68235,7 +68293,7 @@ func (m *TLStickersChangeSticker) CalcSize(layer int32) int {
 func (m *TLStickersChangeSticker) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_changeSticker, int(layer)); clazzId {
 	case 0xf5537ebc:
-		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("sticker", m.Sticker, layer); err != nil {
 			return err
 		}
 
@@ -68354,7 +68412,7 @@ type TLStickersRenameStickerSet struct {
 }
 
 func (m *TLStickersRenameStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_renameStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68362,7 +68420,7 @@ func (m *TLStickersRenameStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_renameStickerSet", m)
 }
 
 func (m *TLStickersRenameStickerSet) CalcSize(layer int32) int {
@@ -68381,7 +68439,7 @@ func (m *TLStickersRenameStickerSet) CalcSize(layer int32) int {
 func (m *TLStickersRenameStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_renameStickerSet, int(layer)); clazzId {
 	case 0x124b1c00:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -68448,7 +68506,7 @@ type TLStickersDeleteStickerSet struct {
 }
 
 func (m *TLStickersDeleteStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_deleteStickerSet", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68456,7 +68514,7 @@ func (m *TLStickersDeleteStickerSet) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_deleteStickerSet", m)
 }
 
 func (m *TLStickersDeleteStickerSet) CalcSize(layer int32) int {
@@ -68474,7 +68532,7 @@ func (m *TLStickersDeleteStickerSet) CalcSize(layer int32) int {
 func (m *TLStickersDeleteStickerSet) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_deleteStickerSet, int(layer)); clazzId {
 	case 0x87704394:
-		if err := iface.ValidateRequiredObject("stickerset", m.Stickerset); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("stickerset", m.Stickerset, layer); err != nil {
 			return err
 		}
 
@@ -68532,7 +68590,7 @@ type TLStickersReplaceSticker struct {
 }
 
 func (m *TLStickersReplaceSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stickers_replaceSticker", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68540,7 +68598,7 @@ func (m *TLStickersReplaceSticker) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stickers_replaceSticker", m)
 }
 
 func (m *TLStickersReplaceSticker) CalcSize(layer int32) int {
@@ -68559,11 +68617,11 @@ func (m *TLStickersReplaceSticker) CalcSize(layer int32) int {
 func (m *TLStickersReplaceSticker) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stickers_replaceSticker, int(layer)); clazzId {
 	case 0x4696459a:
-		if err := iface.ValidateRequiredObject("sticker", m.Sticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("sticker", m.Sticker, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("new_sticker", m.NewSticker); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("new_sticker", m.NewSticker, layer); err != nil {
 			return err
 		}
 
@@ -68628,7 +68686,7 @@ type TLPhoneGetCallConfig struct {
 }
 
 func (m *TLPhoneGetCallConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getCallConfig", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68636,7 +68694,7 @@ func (m *TLPhoneGetCallConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getCallConfig", m)
 }
 
 func (m *TLPhoneGetCallConfig) CalcSize(layer int32) int {
@@ -68701,7 +68759,7 @@ type TLPhoneRequestCall struct {
 }
 
 func (m *TLPhoneRequestCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_requestCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68709,7 +68767,7 @@ func (m *TLPhoneRequestCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_requestCall", m)
 }
 
 func (m *TLPhoneRequestCall) CalcSize(layer int32) int {
@@ -68731,7 +68789,7 @@ func (m *TLPhoneRequestCall) CalcSize(layer int32) int {
 func (m *TLPhoneRequestCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_requestCall, int(layer)); clazzId {
 	case 0x42ff96ed:
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -68739,7 +68797,7 @@ func (m *TLPhoneRequestCall) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("protocol", m.Protocol, layer); err != nil {
 			return err
 		}
 
@@ -68840,7 +68898,7 @@ type TLPhoneAcceptCall struct {
 }
 
 func (m *TLPhoneAcceptCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_acceptCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68848,7 +68906,7 @@ func (m *TLPhoneAcceptCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_acceptCall", m)
 }
 
 func (m *TLPhoneAcceptCall) CalcSize(layer int32) int {
@@ -68868,7 +68926,7 @@ func (m *TLPhoneAcceptCall) CalcSize(layer int32) int {
 func (m *TLPhoneAcceptCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_acceptCall, int(layer)); clazzId {
 	case 0x3bd2b4a0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -68876,7 +68934,7 @@ func (m *TLPhoneAcceptCall) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("protocol", m.Protocol, layer); err != nil {
 			return err
 		}
 
@@ -68951,7 +69009,7 @@ type TLPhoneConfirmCall struct {
 }
 
 func (m *TLPhoneConfirmCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_confirmCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -68959,7 +69017,7 @@ func (m *TLPhoneConfirmCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_confirmCall", m)
 }
 
 func (m *TLPhoneConfirmCall) CalcSize(layer int32) int {
@@ -68980,7 +69038,7 @@ func (m *TLPhoneConfirmCall) CalcSize(layer int32) int {
 func (m *TLPhoneConfirmCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_confirmCall, int(layer)); clazzId {
 	case 0x2efe1722:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -68988,7 +69046,7 @@ func (m *TLPhoneConfirmCall) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("protocol", m.Protocol); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("protocol", m.Protocol, layer); err != nil {
 			return err
 		}
 
@@ -69065,7 +69123,7 @@ type TLPhoneReceivedCall struct {
 }
 
 func (m *TLPhoneReceivedCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_receivedCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69073,7 +69131,7 @@ func (m *TLPhoneReceivedCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_receivedCall", m)
 }
 
 func (m *TLPhoneReceivedCall) CalcSize(layer int32) int {
@@ -69091,7 +69149,7 @@ func (m *TLPhoneReceivedCall) CalcSize(layer int32) int {
 func (m *TLPhoneReceivedCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_receivedCall, int(layer)); clazzId {
 	case 0x17d54f61:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -69152,7 +69210,7 @@ type TLPhoneDiscardCall struct {
 }
 
 func (m *TLPhoneDiscardCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_discardCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69160,7 +69218,7 @@ func (m *TLPhoneDiscardCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_discardCall", m)
 }
 
 func (m *TLPhoneDiscardCall) CalcSize(layer int32) int {
@@ -69182,11 +69240,11 @@ func (m *TLPhoneDiscardCall) CalcSize(layer int32) int {
 func (m *TLPhoneDiscardCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardCall, int(layer)); clazzId {
 	case 0xb2cbc1c0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reason", m.Reason); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reason", m.Reason, layer); err != nil {
 			return err
 		}
 
@@ -69289,7 +69347,7 @@ type TLPhoneSetCallRating struct {
 }
 
 func (m *TLPhoneSetCallRating) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_setCallRating", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69297,7 +69355,7 @@ func (m *TLPhoneSetCallRating) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_setCallRating", m)
 }
 
 func (m *TLPhoneSetCallRating) CalcSize(layer int32) int {
@@ -69318,7 +69376,7 @@ func (m *TLPhoneSetCallRating) CalcSize(layer int32) int {
 func (m *TLPhoneSetCallRating) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_setCallRating, int(layer)); clazzId {
 	case 0x59ead627:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -69413,7 +69471,7 @@ type TLPhoneSaveCallDebug struct {
 }
 
 func (m *TLPhoneSaveCallDebug) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveCallDebug", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69421,7 +69479,7 @@ func (m *TLPhoneSaveCallDebug) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_saveCallDebug", m)
 }
 
 func (m *TLPhoneSaveCallDebug) CalcSize(layer int32) int {
@@ -69440,11 +69498,11 @@ func (m *TLPhoneSaveCallDebug) CalcSize(layer int32) int {
 func (m *TLPhoneSaveCallDebug) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallDebug, int(layer)); clazzId {
 	case 0x277add7e:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("debug", m.Debug); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("debug", m.Debug, layer); err != nil {
 			return err
 		}
 
@@ -69511,7 +69569,7 @@ type TLPhoneSendSignalingData struct {
 }
 
 func (m *TLPhoneSendSignalingData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendSignalingData", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69519,7 +69577,7 @@ func (m *TLPhoneSendSignalingData) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_sendSignalingData", m)
 }
 
 func (m *TLPhoneSendSignalingData) CalcSize(layer int32) int {
@@ -69538,7 +69596,7 @@ func (m *TLPhoneSendSignalingData) CalcSize(layer int32) int {
 func (m *TLPhoneSendSignalingData) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendSignalingData, int(layer)); clazzId {
 	case 0xff7a9383:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -69609,7 +69667,7 @@ type TLPhoneCreateGroupCall struct {
 }
 
 func (m *TLPhoneCreateGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_createGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69617,7 +69675,7 @@ func (m *TLPhoneCreateGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_createGroupCall", m)
 }
 
 func (m *TLPhoneCreateGroupCall) CalcSize(layer int32) int {
@@ -69644,7 +69702,7 @@ func (m *TLPhoneCreateGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneCreateGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_createGroupCall, int(layer)); clazzId {
 	case 0x48cdc6d8:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -69765,7 +69823,7 @@ type TLPhoneJoinGroupCall struct {
 }
 
 func (m *TLPhoneJoinGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_joinGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69773,7 +69831,7 @@ func (m *TLPhoneJoinGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_joinGroupCall", m)
 }
 
 func (m *TLPhoneJoinGroupCall) CalcSize(layer int32) int {
@@ -69806,15 +69864,15 @@ func (m *TLPhoneJoinGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneJoinGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCall, int(layer)); clazzId {
 	case 0x8fb53057:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("join_as", m.JoinAs); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("join_as", m.JoinAs, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("params", m.Params, layer); err != nil {
 			return err
 		}
 
@@ -69963,7 +70021,7 @@ type TLPhoneLeaveGroupCall struct {
 }
 
 func (m *TLPhoneLeaveGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_leaveGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -69971,7 +70029,7 @@ func (m *TLPhoneLeaveGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_leaveGroupCall", m)
 }
 
 func (m *TLPhoneLeaveGroupCall) CalcSize(layer int32) int {
@@ -69990,7 +70048,7 @@ func (m *TLPhoneLeaveGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneLeaveGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCall, int(layer)); clazzId {
 	case 0x500377f9:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -70054,7 +70112,7 @@ type TLPhoneInviteToGroupCall struct {
 }
 
 func (m *TLPhoneInviteToGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_inviteToGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70062,7 +70120,7 @@ func (m *TLPhoneInviteToGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_inviteToGroupCall", m)
 }
 
 func (m *TLPhoneInviteToGroupCall) CalcSize(layer int32) int {
@@ -70081,11 +70139,11 @@ func (m *TLPhoneInviteToGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneInviteToGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteToGroupCall, int(layer)); clazzId {
 	case 0x7b393160:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("users", m.Users, layer); err != nil {
 			return err
 		}
 
@@ -70167,7 +70225,7 @@ type TLPhoneDiscardGroupCall struct {
 }
 
 func (m *TLPhoneDiscardGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_discardGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70175,7 +70233,7 @@ func (m *TLPhoneDiscardGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_discardGroupCall", m)
 }
 
 func (m *TLPhoneDiscardGroupCall) CalcSize(layer int32) int {
@@ -70193,7 +70251,7 @@ func (m *TLPhoneDiscardGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneDiscardGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_discardGroupCall, int(layer)); clazzId {
 	case 0x7a777135:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -70254,7 +70312,7 @@ type TLPhoneToggleGroupCallSettings struct {
 }
 
 func (m *TLPhoneToggleGroupCallSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70262,7 +70320,7 @@ func (m *TLPhoneToggleGroupCallSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_toggleGroupCallSettings", m)
 }
 
 func (m *TLPhoneToggleGroupCallSettings) CalcSize(layer int32) int {
@@ -70292,7 +70350,7 @@ func (m *TLPhoneToggleGroupCallSettings) CalcSize(layer int32) int {
 func (m *TLPhoneToggleGroupCallSettings) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallSettings, int(layer)); clazzId {
 	case 0x974392f2:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -70419,7 +70477,7 @@ type TLPhoneGetGroupCall struct {
 }
 
 func (m *TLPhoneGetGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70427,7 +70485,7 @@ func (m *TLPhoneGetGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCall", m)
 }
 
 func (m *TLPhoneGetGroupCall) CalcSize(layer int32) int {
@@ -70446,7 +70504,7 @@ func (m *TLPhoneGetGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCall, int(layer)); clazzId {
 	case 0x41845db:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -70513,7 +70571,7 @@ type TLPhoneGetGroupParticipants struct {
 }
 
 func (m *TLPhoneGetGroupParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupParticipants", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70521,7 +70579,7 @@ func (m *TLPhoneGetGroupParticipants) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupParticipants", m)
 }
 
 func (m *TLPhoneGetGroupParticipants) CalcSize(layer int32) int {
@@ -70543,15 +70601,15 @@ func (m *TLPhoneGetGroupParticipants) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupParticipants) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupParticipants, int(layer)); clazzId {
 	case 0xc558d8ab:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("ids", m.Ids, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("sources", m.Sources); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("sources", m.Sources, layer); err != nil {
 			return err
 		}
 
@@ -70654,7 +70712,7 @@ type TLPhoneCheckGroupCall struct {
 }
 
 func (m *TLPhoneCheckGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_checkGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70662,7 +70720,7 @@ func (m *TLPhoneCheckGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_checkGroupCall", m)
 }
 
 func (m *TLPhoneCheckGroupCall) CalcSize(layer int32) int {
@@ -70681,11 +70739,11 @@ func (m *TLPhoneCheckGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneCheckGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_checkGroupCall, int(layer)); clazzId {
 	case 0xb59cf977:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("sources", m.Sources); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("sources", m.Sources, layer); err != nil {
 			return err
 		}
 
@@ -70750,7 +70808,7 @@ type TLPhoneToggleGroupCallRecord struct {
 }
 
 func (m *TLPhoneToggleGroupCallRecord) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallRecord", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70758,7 +70816,7 @@ func (m *TLPhoneToggleGroupCallRecord) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_toggleGroupCallRecord", m)
 }
 
 func (m *TLPhoneToggleGroupCallRecord) CalcSize(layer int32) int {
@@ -70784,7 +70842,7 @@ func (m *TLPhoneToggleGroupCallRecord) CalcSize(layer int32) int {
 func (m *TLPhoneToggleGroupCallRecord) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallRecord, int(layer)); clazzId {
 	case 0xf128c708:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -70908,7 +70966,7 @@ type TLPhoneEditGroupCallParticipant struct {
 }
 
 func (m *TLPhoneEditGroupCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_editGroupCallParticipant", TLObject: m}
 	return wrapper.String()
 }
 
@@ -70916,7 +70974,7 @@ func (m *TLPhoneEditGroupCallParticipant) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_editGroupCallParticipant", m)
 }
 
 func (m *TLPhoneEditGroupCallParticipant) CalcSize(layer int32) int {
@@ -70959,11 +71017,11 @@ func (m *TLPhoneEditGroupCallParticipant) CalcSize(layer int32) int {
 func (m *TLPhoneEditGroupCallParticipant) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallParticipant, int(layer)); clazzId {
 	case 0xa5273abf:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
@@ -71140,7 +71198,7 @@ type TLPhoneEditGroupCallTitle struct {
 }
 
 func (m *TLPhoneEditGroupCallTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_editGroupCallTitle", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71148,7 +71206,7 @@ func (m *TLPhoneEditGroupCallTitle) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_editGroupCallTitle", m)
 }
 
 func (m *TLPhoneEditGroupCallTitle) CalcSize(layer int32) int {
@@ -71167,7 +71225,7 @@ func (m *TLPhoneEditGroupCallTitle) CalcSize(layer int32) int {
 func (m *TLPhoneEditGroupCallTitle) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_editGroupCallTitle, int(layer)); clazzId {
 	case 0x1ca6ac0a:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -71234,7 +71292,7 @@ type TLPhoneGetGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneGetGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallJoinAs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71242,7 +71300,7 @@ func (m *TLPhoneGetGroupCallJoinAs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCallJoinAs", m)
 }
 
 func (m *TLPhoneGetGroupCallJoinAs) CalcSize(layer int32) int {
@@ -71260,7 +71318,7 @@ func (m *TLPhoneGetGroupCallJoinAs) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCallJoinAs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallJoinAs, int(layer)); clazzId {
 	case 0xef7c213a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -71318,7 +71376,7 @@ type TLPhoneExportGroupCallInvite struct {
 }
 
 func (m *TLPhoneExportGroupCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_exportGroupCallInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71326,7 +71384,7 @@ func (m *TLPhoneExportGroupCallInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_exportGroupCallInvite", m)
 }
 
 func (m *TLPhoneExportGroupCallInvite) CalcSize(layer int32) int {
@@ -71345,7 +71403,7 @@ func (m *TLPhoneExportGroupCallInvite) CalcSize(layer int32) int {
 func (m *TLPhoneExportGroupCallInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_exportGroupCallInvite, int(layer)); clazzId {
 	case 0xe6aa647f:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -71425,7 +71483,7 @@ type TLPhoneToggleGroupCallStartSubscription struct {
 }
 
 func (m *TLPhoneToggleGroupCallStartSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallStartSubscription", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71433,7 +71491,7 @@ func (m *TLPhoneToggleGroupCallStartSubscription) MarshalJSON() ([]byte, error) 
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_toggleGroupCallStartSubscription", m)
 }
 
 func (m *TLPhoneToggleGroupCallStartSubscription) CalcSize(layer int32) int {
@@ -71452,11 +71510,11 @@ func (m *TLPhoneToggleGroupCallStartSubscription) CalcSize(layer int32) int {
 func (m *TLPhoneToggleGroupCallStartSubscription) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_toggleGroupCallStartSubscription, int(layer)); clazzId {
 	case 0x219c34e6:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("subscribed", m.Subscribed); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("subscribed", m.Subscribed, layer); err != nil {
 			return err
 		}
 
@@ -71522,7 +71580,7 @@ type TLPhoneStartScheduledGroupCall struct {
 }
 
 func (m *TLPhoneStartScheduledGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_startScheduledGroupCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71530,7 +71588,7 @@ func (m *TLPhoneStartScheduledGroupCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_startScheduledGroupCall", m)
 }
 
 func (m *TLPhoneStartScheduledGroupCall) CalcSize(layer int32) int {
@@ -71548,7 +71606,7 @@ func (m *TLPhoneStartScheduledGroupCall) CalcSize(layer int32) int {
 func (m *TLPhoneStartScheduledGroupCall) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_startScheduledGroupCall, int(layer)); clazzId {
 	case 0x5680e342:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -71606,7 +71664,7 @@ type TLPhoneSaveDefaultGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveDefaultGroupCallJoinAs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71614,7 +71672,7 @@ func (m *TLPhoneSaveDefaultGroupCallJoinAs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_saveDefaultGroupCallJoinAs", m)
 }
 
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) CalcSize(layer int32) int {
@@ -71633,11 +71691,11 @@ func (m *TLPhoneSaveDefaultGroupCallJoinAs) CalcSize(layer int32) int {
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultGroupCallJoinAs, int(layer)); clazzId {
 	case 0x575e1f8c:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("join_as", m.JoinAs); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("join_as", m.JoinAs, layer); err != nil {
 			return err
 		}
 
@@ -71704,7 +71762,7 @@ type TLPhoneJoinGroupCallPresentation struct {
 }
 
 func (m *TLPhoneJoinGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_joinGroupCallPresentation", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71712,7 +71770,7 @@ func (m *TLPhoneJoinGroupCallPresentation) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_joinGroupCallPresentation", m)
 }
 
 func (m *TLPhoneJoinGroupCallPresentation) CalcSize(layer int32) int {
@@ -71731,11 +71789,11 @@ func (m *TLPhoneJoinGroupCallPresentation) CalcSize(layer int32) int {
 func (m *TLPhoneJoinGroupCallPresentation) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_joinGroupCallPresentation, int(layer)); clazzId {
 	case 0xcbea6bc4:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("params", m.Params); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("params", m.Params, layer); err != nil {
 			return err
 		}
 
@@ -71801,7 +71859,7 @@ type TLPhoneLeaveGroupCallPresentation struct {
 }
 
 func (m *TLPhoneLeaveGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_leaveGroupCallPresentation", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71809,7 +71867,7 @@ func (m *TLPhoneLeaveGroupCallPresentation) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_leaveGroupCallPresentation", m)
 }
 
 func (m *TLPhoneLeaveGroupCallPresentation) CalcSize(layer int32) int {
@@ -71827,7 +71885,7 @@ func (m *TLPhoneLeaveGroupCallPresentation) CalcSize(layer int32) int {
 func (m *TLPhoneLeaveGroupCallPresentation) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_leaveGroupCallPresentation, int(layer)); clazzId {
 	case 0x1c50d144:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -71884,7 +71942,7 @@ type TLPhoneGetGroupCallStreamChannels struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStreamChannels", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71892,7 +71950,7 @@ func (m *TLPhoneGetGroupCallStreamChannels) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCallStreamChannels", m)
 }
 
 func (m *TLPhoneGetGroupCallStreamChannels) CalcSize(layer int32) int {
@@ -71910,7 +71968,7 @@ func (m *TLPhoneGetGroupCallStreamChannels) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCallStreamChannels) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamChannels, int(layer)); clazzId {
 	case 0x1ab21940:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -71969,7 +72027,7 @@ type TLPhoneGetGroupCallStreamRtmpUrl struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStreamRtmpUrl", TLObject: m}
 	return wrapper.String()
 }
 
@@ -71977,7 +72035,7 @@ func (m *TLPhoneGetGroupCallStreamRtmpUrl) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCallStreamRtmpUrl", m)
 }
 
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) CalcSize(layer int32) int {
@@ -71997,11 +72055,11 @@ func (m *TLPhoneGetGroupCallStreamRtmpUrl) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStreamRtmpUrl, int(layer)); clazzId {
 	case 0x5af4c73a:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("revoke", m.Revoke); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("revoke", m.Revoke, layer); err != nil {
 			return err
 		}
 
@@ -72090,7 +72148,7 @@ type TLPhoneSaveCallLog struct {
 }
 
 func (m *TLPhoneSaveCallLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveCallLog", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72098,7 +72156,7 @@ func (m *TLPhoneSaveCallLog) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_saveCallLog", m)
 }
 
 func (m *TLPhoneSaveCallLog) CalcSize(layer int32) int {
@@ -72117,11 +72175,11 @@ func (m *TLPhoneSaveCallLog) CalcSize(layer int32) int {
 func (m *TLPhoneSaveCallLog) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveCallLog, int(layer)); clazzId {
 	case 0x41248786:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("file", m.File); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("file", m.File, layer); err != nil {
 			return err
 		}
 
@@ -72193,7 +72251,7 @@ type TLPhoneCreateConferenceCall struct {
 }
 
 func (m *TLPhoneCreateConferenceCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_createConferenceCall", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72201,7 +72259,7 @@ func (m *TLPhoneCreateConferenceCall) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_createConferenceCall", m)
 }
 
 func (m *TLPhoneCreateConferenceCall) CalcSize(layer int32) int {
@@ -72364,7 +72422,7 @@ type TLPhoneDeleteConferenceCallParticipants struct {
 }
 
 func (m *TLPhoneDeleteConferenceCallParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteConferenceCallParticipants", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72372,7 +72430,7 @@ func (m *TLPhoneDeleteConferenceCallParticipants) MarshalJSON() ([]byte, error) 
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_deleteConferenceCallParticipants", m)
 }
 
 func (m *TLPhoneDeleteConferenceCallParticipants) CalcSize(layer int32) int {
@@ -72393,11 +72451,11 @@ func (m *TLPhoneDeleteConferenceCallParticipants) CalcSize(layer int32) int {
 func (m *TLPhoneDeleteConferenceCallParticipants) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteConferenceCallParticipants, int(layer)); clazzId {
 	case 0x8ca60525:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("ids", m.Ids); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("ids", m.Ids, layer); err != nil {
 			return err
 		}
 
@@ -72498,7 +72556,7 @@ type TLPhoneSendConferenceCallBroadcast struct {
 }
 
 func (m *TLPhoneSendConferenceCallBroadcast) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendConferenceCallBroadcast", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72506,7 +72564,7 @@ func (m *TLPhoneSendConferenceCallBroadcast) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_sendConferenceCallBroadcast", m)
 }
 
 func (m *TLPhoneSendConferenceCallBroadcast) CalcSize(layer int32) int {
@@ -72525,7 +72583,7 @@ func (m *TLPhoneSendConferenceCallBroadcast) CalcSize(layer int32) int {
 func (m *TLPhoneSendConferenceCallBroadcast) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendConferenceCallBroadcast, int(layer)); clazzId {
 	case 0xc6701900:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -72594,7 +72652,7 @@ type TLPhoneInviteConferenceCallParticipant struct {
 }
 
 func (m *TLPhoneInviteConferenceCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_inviteConferenceCallParticipant", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72602,7 +72660,7 @@ func (m *TLPhoneInviteConferenceCallParticipant) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_inviteConferenceCallParticipant", m)
 }
 
 func (m *TLPhoneInviteConferenceCallParticipant) CalcSize(layer int32) int {
@@ -72622,11 +72680,11 @@ func (m *TLPhoneInviteConferenceCallParticipant) CalcSize(layer int32) int {
 func (m *TLPhoneInviteConferenceCallParticipant) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_inviteConferenceCallParticipant, int(layer)); clazzId {
 	case 0xbcf22685:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -72714,7 +72772,7 @@ type TLPhoneDeclineConferenceCallInvite struct {
 }
 
 func (m *TLPhoneDeclineConferenceCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_declineConferenceCallInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72722,7 +72780,7 @@ func (m *TLPhoneDeclineConferenceCallInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_declineConferenceCallInvite", m)
 }
 
 func (m *TLPhoneDeclineConferenceCallInvite) CalcSize(layer int32) int {
@@ -72793,7 +72851,7 @@ type TLPhoneGetGroupCallChainBlocks struct {
 }
 
 func (m *TLPhoneGetGroupCallChainBlocks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallChainBlocks", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72801,7 +72859,7 @@ func (m *TLPhoneGetGroupCallChainBlocks) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCallChainBlocks", m)
 }
 
 func (m *TLPhoneGetGroupCallChainBlocks) CalcSize(layer int32) int {
@@ -72822,7 +72880,7 @@ func (m *TLPhoneGetGroupCallChainBlocks) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCallChainBlocks) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallChainBlocks, int(layer)); clazzId {
 	case 0xee9f88a6:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -72899,7 +72957,7 @@ type TLPhoneSendGroupCallMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendGroupCallMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -72907,7 +72965,7 @@ func (m *TLPhoneSendGroupCallMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_sendGroupCallMessage", m)
 }
 
 func (m *TLPhoneSendGroupCallMessage) CalcSize(layer int32) int {
@@ -72935,11 +72993,11 @@ func (m *TLPhoneSendGroupCallMessage) CalcSize(layer int32) int {
 func (m *TLPhoneSendGroupCallMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallMessage, int(layer)); clazzId {
 	case 0xb1d11410:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("message", m.Message); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("message", m.Message, layer); err != nil {
 			return err
 		}
 
@@ -73059,7 +73117,7 @@ type TLPhoneSendGroupCallEncryptedMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallEncryptedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendGroupCallEncryptedMessage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73067,7 +73125,7 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_sendGroupCallEncryptedMessage", m)
 }
 
 func (m *TLPhoneSendGroupCallEncryptedMessage) CalcSize(layer int32) int {
@@ -73086,7 +73144,7 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) CalcSize(layer int32) int {
 func (m *TLPhoneSendGroupCallEncryptedMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_sendGroupCallEncryptedMessage, int(layer)); clazzId {
 	case 0xe5afa56d:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -73155,7 +73213,7 @@ type TLPhoneDeleteGroupCallMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteGroupCallMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73163,7 +73221,7 @@ func (m *TLPhoneDeleteGroupCallMessages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_deleteGroupCallMessages", m)
 }
 
 func (m *TLPhoneDeleteGroupCallMessages) CalcSize(layer int32) int {
@@ -73183,11 +73241,11 @@ func (m *TLPhoneDeleteGroupCallMessages) CalcSize(layer int32) int {
 func (m *TLPhoneDeleteGroupCallMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallMessages, int(layer)); clazzId {
 	case 0xf64f54f7:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("messages", m.Messages); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("messages", m.Messages, layer); err != nil {
 			return err
 		}
 
@@ -73272,7 +73330,7 @@ type TLPhoneDeleteGroupCallParticipantMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallParticipantMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteGroupCallParticipantMessages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73280,7 +73338,7 @@ func (m *TLPhoneDeleteGroupCallParticipantMessages) MarshalJSON() ([]byte, error
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_deleteGroupCallParticipantMessages", m)
 }
 
 func (m *TLPhoneDeleteGroupCallParticipantMessages) CalcSize(layer int32) int {
@@ -73300,11 +73358,11 @@ func (m *TLPhoneDeleteGroupCallParticipantMessages) CalcSize(layer int32) int {
 func (m *TLPhoneDeleteGroupCallParticipantMessages) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_deleteGroupCallParticipantMessages, int(layer)); clazzId {
 	case 0x1dbfeca0:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("participant", m.Participant); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("participant", m.Participant, layer); err != nil {
 			return err
 		}
 
@@ -73392,7 +73450,7 @@ type TLPhoneGetGroupCallStars struct {
 }
 
 func (m *TLPhoneGetGroupCallStars) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStars", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73400,7 +73458,7 @@ func (m *TLPhoneGetGroupCallStars) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_getGroupCallStars", m)
 }
 
 func (m *TLPhoneGetGroupCallStars) CalcSize(layer int32) int {
@@ -73418,7 +73476,7 @@ func (m *TLPhoneGetGroupCallStars) CalcSize(layer int32) int {
 func (m *TLPhoneGetGroupCallStars) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_getGroupCallStars, int(layer)); clazzId {
 	case 0x6f636302:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
@@ -73476,7 +73534,7 @@ type TLPhoneSaveDefaultSendAs struct {
 }
 
 func (m *TLPhoneSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveDefaultSendAs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73484,7 +73542,7 @@ func (m *TLPhoneSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("phone_saveDefaultSendAs", m)
 }
 
 func (m *TLPhoneSaveDefaultSendAs) CalcSize(layer int32) int {
@@ -73503,11 +73561,11 @@ func (m *TLPhoneSaveDefaultSendAs) CalcSize(layer int32) int {
 func (m *TLPhoneSaveDefaultSendAs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_phone_saveDefaultSendAs, int(layer)); clazzId {
 	case 0x4167add1:
-		if err := iface.ValidateRequiredObject("call", m.Call); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("call", m.Call, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("send_as", m.SendAs); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("send_as", m.SendAs, layer); err != nil {
 			return err
 		}
 
@@ -73574,7 +73632,7 @@ type TLLangpackGetLangPack struct {
 }
 
 func (m *TLLangpackGetLangPack) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLangPack", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73582,7 +73640,7 @@ func (m *TLLangpackGetLangPack) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("langpack_getLangPack", m)
 }
 
 func (m *TLLangpackGetLangPack) CalcSize(layer int32) int {
@@ -73689,7 +73747,7 @@ type TLLangpackGetStrings struct {
 }
 
 func (m *TLLangpackGetStrings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getStrings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73697,7 +73755,7 @@ func (m *TLLangpackGetStrings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("langpack_getStrings", m)
 }
 
 func (m *TLLangpackGetStrings) CalcSize(layer int32) int {
@@ -73731,7 +73789,7 @@ func (m *TLLangpackGetStrings) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("keys", m.Keys); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("keys", m.Keys, layer); err != nil {
 			return err
 		}
 
@@ -73741,7 +73799,7 @@ func (m *TLLangpackGetStrings) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("keys", m.Keys); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("keys", m.Keys, layer); err != nil {
 			return err
 		}
 
@@ -73822,7 +73880,7 @@ type TLLangpackGetDifference struct {
 }
 
 func (m *TLLangpackGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getDifference", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73830,7 +73888,7 @@ func (m *TLLangpackGetDifference) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("langpack_getDifference", m)
 }
 
 func (m *TLLangpackGetDifference) CalcSize(layer int32) int {
@@ -73917,7 +73975,7 @@ type TLLangpackGetLanguages struct {
 }
 
 func (m *TLLangpackGetLanguages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLanguages", TLObject: m}
 	return wrapper.String()
 }
 
@@ -73925,7 +73983,7 @@ func (m *TLLangpackGetLanguages) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("langpack_getLanguages", m)
 }
 
 func (m *TLLangpackGetLanguages) CalcSize(layer int32) int {
@@ -74011,7 +74069,7 @@ type TLLangpackGetLanguage struct {
 }
 
 func (m *TLLangpackGetLanguage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLanguage", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74019,7 +74077,7 @@ func (m *TLLangpackGetLanguage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("langpack_getLanguage", m)
 }
 
 func (m *TLLangpackGetLanguage) CalcSize(layer int32) int {
@@ -74100,7 +74158,7 @@ type TLFoldersEditPeerFolders struct {
 }
 
 func (m *TLFoldersEditPeerFolders) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "folders_editPeerFolders", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74108,7 +74166,7 @@ func (m *TLFoldersEditPeerFolders) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("folders_editPeerFolders", m)
 }
 
 func (m *TLFoldersEditPeerFolders) CalcSize(layer int32) int {
@@ -74126,7 +74184,7 @@ func (m *TLFoldersEditPeerFolders) CalcSize(layer int32) int {
 func (m *TLFoldersEditPeerFolders) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_folders_editPeerFolders, int(layer)); clazzId {
 	case 0x6847d0ab:
-		if err := iface.ValidateRequiredSlice("folder_peers", m.FolderPeers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("folder_peers", m.FolderPeers, layer); err != nil {
 			return err
 		}
 
@@ -74198,7 +74256,7 @@ type TLStatsGetBroadcastStats struct {
 }
 
 func (m *TLStatsGetBroadcastStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getBroadcastStats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74206,7 +74264,7 @@ func (m *TLStatsGetBroadcastStats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getBroadcastStats", m)
 }
 
 func (m *TLStatsGetBroadcastStats) CalcSize(layer int32) int {
@@ -74225,7 +74283,7 @@ func (m *TLStatsGetBroadcastStats) CalcSize(layer int32) int {
 func (m *TLStatsGetBroadcastStats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getBroadcastStats, int(layer)); clazzId {
 	case 0xab42441a:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -74305,7 +74363,7 @@ type TLStatsLoadAsyncGraph struct {
 }
 
 func (m *TLStatsLoadAsyncGraph) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_loadAsyncGraph", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74313,7 +74371,7 @@ func (m *TLStatsLoadAsyncGraph) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_loadAsyncGraph", m)
 }
 
 func (m *TLStatsLoadAsyncGraph) CalcSize(layer int32) int {
@@ -74418,7 +74476,7 @@ type TLStatsGetMegagroupStats struct {
 }
 
 func (m *TLStatsGetMegagroupStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMegagroupStats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74426,7 +74484,7 @@ func (m *TLStatsGetMegagroupStats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getMegagroupStats", m)
 }
 
 func (m *TLStatsGetMegagroupStats) CalcSize(layer int32) int {
@@ -74445,7 +74503,7 @@ func (m *TLStatsGetMegagroupStats) CalcSize(layer int32) int {
 func (m *TLStatsGetMegagroupStats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMegagroupStats, int(layer)); clazzId {
 	case 0xdcdf8607:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -74527,7 +74585,7 @@ type TLStatsGetMessagePublicForwards struct {
 }
 
 func (m *TLStatsGetMessagePublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMessagePublicForwards", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74535,7 +74593,7 @@ func (m *TLStatsGetMessagePublicForwards) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getMessagePublicForwards", m)
 }
 
 func (m *TLStatsGetMessagePublicForwards) CalcSize(layer int32) int {
@@ -74556,7 +74614,7 @@ func (m *TLStatsGetMessagePublicForwards) CalcSize(layer int32) int {
 func (m *TLStatsGetMessagePublicForwards) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessagePublicForwards, int(layer)); clazzId {
 	case 0x5f150144:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -74635,7 +74693,7 @@ type TLStatsGetMessageStats struct {
 }
 
 func (m *TLStatsGetMessageStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMessageStats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74643,7 +74701,7 @@ func (m *TLStatsGetMessageStats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getMessageStats", m)
 }
 
 func (m *TLStatsGetMessageStats) CalcSize(layer int32) int {
@@ -74663,7 +74721,7 @@ func (m *TLStatsGetMessageStats) CalcSize(layer int32) int {
 func (m *TLStatsGetMessageStats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getMessageStats, int(layer)); clazzId {
 	case 0xb6e0a3f5:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -74750,7 +74808,7 @@ type TLStatsGetStoryStats struct {
 }
 
 func (m *TLStatsGetStoryStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getStoryStats", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74758,7 +74816,7 @@ func (m *TLStatsGetStoryStats) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getStoryStats", m)
 }
 
 func (m *TLStatsGetStoryStats) CalcSize(layer int32) int {
@@ -74778,7 +74836,7 @@ func (m *TLStatsGetStoryStats) CalcSize(layer int32) int {
 func (m *TLStatsGetStoryStats) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryStats, int(layer)); clazzId {
 	case 0x374fef40:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -74866,7 +74924,7 @@ type TLStatsGetStoryPublicForwards struct {
 }
 
 func (m *TLStatsGetStoryPublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stats_getStoryPublicForwards", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74874,7 +74932,7 @@ func (m *TLStatsGetStoryPublicForwards) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stats_getStoryPublicForwards", m)
 }
 
 func (m *TLStatsGetStoryPublicForwards) CalcSize(layer int32) int {
@@ -74895,7 +74953,7 @@ func (m *TLStatsGetStoryPublicForwards) CalcSize(layer int32) int {
 func (m *TLStatsGetStoryPublicForwards) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stats_getStoryPublicForwards, int(layer)); clazzId {
 	case 0xa6437ef6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -74974,7 +75032,7 @@ type TLChatlistsExportChatlistInvite struct {
 }
 
 func (m *TLChatlistsExportChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_exportChatlistInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -74982,7 +75040,7 @@ func (m *TLChatlistsExportChatlistInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_exportChatlistInvite", m)
 }
 
 func (m *TLChatlistsExportChatlistInvite) CalcSize(layer int32) int {
@@ -75002,7 +75060,7 @@ func (m *TLChatlistsExportChatlistInvite) CalcSize(layer int32) int {
 func (m *TLChatlistsExportChatlistInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_exportChatlistInvite, int(layer)); clazzId {
 	case 0x8472478e:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75010,7 +75068,7 @@ func (m *TLChatlistsExportChatlistInvite) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("peers", m.Peers, layer); err != nil {
 			return err
 		}
 
@@ -75098,7 +75156,7 @@ type TLChatlistsDeleteExportedInvite struct {
 }
 
 func (m *TLChatlistsDeleteExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_deleteExportedInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75106,7 +75164,7 @@ func (m *TLChatlistsDeleteExportedInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_deleteExportedInvite", m)
 }
 
 func (m *TLChatlistsDeleteExportedInvite) CalcSize(layer int32) int {
@@ -75125,7 +75183,7 @@ func (m *TLChatlistsDeleteExportedInvite) CalcSize(layer int32) int {
 func (m *TLChatlistsDeleteExportedInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_deleteExportedInvite, int(layer)); clazzId {
 	case 0x719c5c5e:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75195,7 +75253,7 @@ type TLChatlistsEditExportedInvite struct {
 }
 
 func (m *TLChatlistsEditExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_editExportedInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75203,7 +75261,7 @@ func (m *TLChatlistsEditExportedInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_editExportedInvite", m)
 }
 
 func (m *TLChatlistsEditExportedInvite) CalcSize(layer int32) int {
@@ -75230,7 +75288,7 @@ func (m *TLChatlistsEditExportedInvite) CalcSize(layer int32) int {
 func (m *TLChatlistsEditExportedInvite) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_editExportedInvite, int(layer)); clazzId {
 	case 0x653db63d:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75358,7 +75416,7 @@ type TLChatlistsGetExportedInvites struct {
 }
 
 func (m *TLChatlistsGetExportedInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getExportedInvites", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75366,7 +75424,7 @@ func (m *TLChatlistsGetExportedInvites) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_getExportedInvites", m)
 }
 
 func (m *TLChatlistsGetExportedInvites) CalcSize(layer int32) int {
@@ -75384,7 +75442,7 @@ func (m *TLChatlistsGetExportedInvites) CalcSize(layer int32) int {
 func (m *TLChatlistsGetExportedInvites) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getExportedInvites, int(layer)); clazzId {
 	case 0xce03da83:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75441,7 +75499,7 @@ type TLChatlistsCheckChatlistInvite struct {
 }
 
 func (m *TLChatlistsCheckChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_checkChatlistInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75449,7 +75507,7 @@ func (m *TLChatlistsCheckChatlistInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_checkChatlistInvite", m)
 }
 
 func (m *TLChatlistsCheckChatlistInvite) CalcSize(layer int32) int {
@@ -75521,7 +75579,7 @@ type TLChatlistsJoinChatlistInvite struct {
 }
 
 func (m *TLChatlistsJoinChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_joinChatlistInvite", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75529,7 +75587,7 @@ func (m *TLChatlistsJoinChatlistInvite) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_joinChatlistInvite", m)
 }
 
 func (m *TLChatlistsJoinChatlistInvite) CalcSize(layer int32) int {
@@ -75552,7 +75610,7 @@ func (m *TLChatlistsJoinChatlistInvite) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("peers", m.Peers, layer); err != nil {
 			return err
 		}
 
@@ -75629,7 +75687,7 @@ type TLChatlistsGetChatlistUpdates struct {
 }
 
 func (m *TLChatlistsGetChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getChatlistUpdates", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75637,7 +75695,7 @@ func (m *TLChatlistsGetChatlistUpdates) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_getChatlistUpdates", m)
 }
 
 func (m *TLChatlistsGetChatlistUpdates) CalcSize(layer int32) int {
@@ -75655,7 +75713,7 @@ func (m *TLChatlistsGetChatlistUpdates) CalcSize(layer int32) int {
 func (m *TLChatlistsGetChatlistUpdates) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getChatlistUpdates, int(layer)); clazzId {
 	case 0x89419521:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75713,7 +75771,7 @@ type TLChatlistsJoinChatlistUpdates struct {
 }
 
 func (m *TLChatlistsJoinChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_joinChatlistUpdates", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75721,7 +75779,7 @@ func (m *TLChatlistsJoinChatlistUpdates) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_joinChatlistUpdates", m)
 }
 
 func (m *TLChatlistsJoinChatlistUpdates) CalcSize(layer int32) int {
@@ -75740,11 +75798,11 @@ func (m *TLChatlistsJoinChatlistUpdates) CalcSize(layer int32) int {
 func (m *TLChatlistsJoinChatlistUpdates) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_joinChatlistUpdates, int(layer)); clazzId {
 	case 0xe089f8f5:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("peers", m.Peers, layer); err != nil {
 			return err
 		}
 
@@ -75826,7 +75884,7 @@ type TLChatlistsHideChatlistUpdates struct {
 }
 
 func (m *TLChatlistsHideChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_hideChatlistUpdates", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75834,7 +75892,7 @@ func (m *TLChatlistsHideChatlistUpdates) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_hideChatlistUpdates", m)
 }
 
 func (m *TLChatlistsHideChatlistUpdates) CalcSize(layer int32) int {
@@ -75852,7 +75910,7 @@ func (m *TLChatlistsHideChatlistUpdates) CalcSize(layer int32) int {
 func (m *TLChatlistsHideChatlistUpdates) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_hideChatlistUpdates, int(layer)); clazzId {
 	case 0x66e486fb:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75909,7 +75967,7 @@ type TLChatlistsGetLeaveChatlistSuggestions struct {
 }
 
 func (m *TLChatlistsGetLeaveChatlistSuggestions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getLeaveChatlistSuggestions", TLObject: m}
 	return wrapper.String()
 }
 
@@ -75917,7 +75975,7 @@ func (m *TLChatlistsGetLeaveChatlistSuggestions) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_getLeaveChatlistSuggestions", m)
 }
 
 func (m *TLChatlistsGetLeaveChatlistSuggestions) CalcSize(layer int32) int {
@@ -75935,7 +75993,7 @@ func (m *TLChatlistsGetLeaveChatlistSuggestions) CalcSize(layer int32) int {
 func (m *TLChatlistsGetLeaveChatlistSuggestions) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_getLeaveChatlistSuggestions, int(layer)); clazzId {
 	case 0xfdbcd714:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
@@ -75993,7 +76051,7 @@ type TLChatlistsLeaveChatlist struct {
 }
 
 func (m *TLChatlistsLeaveChatlist) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_leaveChatlist", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76001,7 +76059,7 @@ func (m *TLChatlistsLeaveChatlist) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("chatlists_leaveChatlist", m)
 }
 
 func (m *TLChatlistsLeaveChatlist) CalcSize(layer int32) int {
@@ -76020,11 +76078,11 @@ func (m *TLChatlistsLeaveChatlist) CalcSize(layer int32) int {
 func (m *TLChatlistsLeaveChatlist) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chatlists_leaveChatlist, int(layer)); clazzId {
 	case 0x74fae13a:
-		if err := iface.ValidateRequiredObject("chatlist", m.Chatlist); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("chatlist", m.Chatlist, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("peers", m.Peers); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("peers", m.Peers, layer); err != nil {
 			return err
 		}
 
@@ -76106,7 +76164,7 @@ type TLStoriesCanSendStory struct {
 }
 
 func (m *TLStoriesCanSendStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_canSendStory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76114,7 +76172,7 @@ func (m *TLStoriesCanSendStory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_canSendStory", m)
 }
 
 func (m *TLStoriesCanSendStory) CalcSize(layer int32) int {
@@ -76132,7 +76190,7 @@ func (m *TLStoriesCanSendStory) CalcSize(layer int32) int {
 func (m *TLStoriesCanSendStory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_canSendStory, int(layer)); clazzId {
 	case 0x30eb63f0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -76202,7 +76260,7 @@ type TLStoriesSendStory struct {
 }
 
 func (m *TLStoriesSendStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_sendStory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76210,7 +76268,7 @@ func (m *TLStoriesSendStory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_sendStory", m)
 }
 
 func (m *TLStoriesSendStory) CalcSize(layer int32) int {
@@ -76259,15 +76317,15 @@ func (m *TLStoriesSendStory) CalcSize(layer int32) int {
 func (m *TLStoriesSendStory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
 	case 0x737fc2ec:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("media", m.Media); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("privacy_rules", m.PrivacyRules); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("privacy_rules", m.PrivacyRules, layer); err != nil {
 			return err
 		}
 
@@ -76535,7 +76593,7 @@ type TLStoriesEditStory struct {
 }
 
 func (m *TLStoriesEditStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_editStory", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76543,7 +76601,7 @@ func (m *TLStoriesEditStory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_editStory", m)
 }
 
 func (m *TLStoriesEditStory) CalcSize(layer int32) int {
@@ -76582,7 +76640,7 @@ func (m *TLStoriesEditStory) CalcSize(layer int32) int {
 func (m *TLStoriesEditStory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
 	case 0xb583ba46:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -76783,7 +76841,7 @@ type TLStoriesDeleteStories struct {
 }
 
 func (m *TLStoriesDeleteStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_deleteStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76791,7 +76849,7 @@ func (m *TLStoriesDeleteStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_deleteStories", m)
 }
 
 func (m *TLStoriesDeleteStories) CalcSize(layer int32) int {
@@ -76810,11 +76868,11 @@ func (m *TLStoriesDeleteStories) CalcSize(layer int32) int {
 func (m *TLStoriesDeleteStories) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteStories, int(layer)); clazzId {
 	case 0xae59db5f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -76877,7 +76935,7 @@ type TLStoriesTogglePinned struct {
 }
 
 func (m *TLStoriesTogglePinned) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePinned", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76885,7 +76943,7 @@ func (m *TLStoriesTogglePinned) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_togglePinned", m)
 }
 
 func (m *TLStoriesTogglePinned) CalcSize(layer int32) int {
@@ -76905,15 +76963,15 @@ func (m *TLStoriesTogglePinned) CalcSize(layer int32) int {
 func (m *TLStoriesTogglePinned) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinned, int(layer)); clazzId {
 	case 0x9a75a1ef:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("pinned", m.Pinned); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("pinned", m.Pinned, layer); err != nil {
 			return err
 		}
 
@@ -76986,7 +77044,7 @@ type TLStoriesGetAllStories struct {
 }
 
 func (m *TLStoriesGetAllStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAllStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -76994,7 +77052,7 @@ func (m *TLStoriesGetAllStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getAllStories", m)
 }
 
 func (m *TLStoriesGetAllStories) CalcSize(layer int32) int {
@@ -77103,7 +77161,7 @@ type TLStoriesGetPinnedStories struct {
 }
 
 func (m *TLStoriesGetPinnedStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPinnedStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77111,7 +77169,7 @@ func (m *TLStoriesGetPinnedStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getPinnedStories", m)
 }
 
 func (m *TLStoriesGetPinnedStories) CalcSize(layer int32) int {
@@ -77131,7 +77189,7 @@ func (m *TLStoriesGetPinnedStories) CalcSize(layer int32) int {
 func (m *TLStoriesGetPinnedStories) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPinnedStories, int(layer)); clazzId {
 	case 0x5821a5dc:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -77201,7 +77259,7 @@ type TLStoriesGetStoriesArchive struct {
 }
 
 func (m *TLStoriesGetStoriesArchive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesArchive", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77209,7 +77267,7 @@ func (m *TLStoriesGetStoriesArchive) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getStoriesArchive", m)
 }
 
 func (m *TLStoriesGetStoriesArchive) CalcSize(layer int32) int {
@@ -77229,7 +77287,7 @@ func (m *TLStoriesGetStoriesArchive) CalcSize(layer int32) int {
 func (m *TLStoriesGetStoriesArchive) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesArchive, int(layer)); clazzId {
 	case 0xb4352016:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -77298,7 +77356,7 @@ type TLStoriesGetStoriesByID struct {
 }
 
 func (m *TLStoriesGetStoriesByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesByID", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77306,7 +77364,7 @@ func (m *TLStoriesGetStoriesByID) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getStoriesByID", m)
 }
 
 func (m *TLStoriesGetStoriesByID) CalcSize(layer int32) int {
@@ -77325,11 +77383,11 @@ func (m *TLStoriesGetStoriesByID) CalcSize(layer int32) int {
 func (m *TLStoriesGetStoriesByID) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesByID, int(layer)); clazzId {
 	case 0x5774ca74:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -77390,7 +77448,7 @@ type TLStoriesToggleAllStoriesHidden struct {
 }
 
 func (m *TLStoriesToggleAllStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_toggleAllStoriesHidden", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77398,7 +77456,7 @@ func (m *TLStoriesToggleAllStoriesHidden) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_toggleAllStoriesHidden", m)
 }
 
 func (m *TLStoriesToggleAllStoriesHidden) CalcSize(layer int32) int {
@@ -77416,7 +77474,7 @@ func (m *TLStoriesToggleAllStoriesHidden) CalcSize(layer int32) int {
 func (m *TLStoriesToggleAllStoriesHidden) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_toggleAllStoriesHidden, int(layer)); clazzId {
 	case 0x7c2557c4:
-		if err := iface.ValidateRequiredObject("hidden", m.Hidden); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("hidden", m.Hidden, layer); err != nil {
 			return err
 		}
 
@@ -77474,7 +77532,7 @@ type TLStoriesReadStories struct {
 }
 
 func (m *TLStoriesReadStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_readStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77482,7 +77540,7 @@ func (m *TLStoriesReadStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_readStories", m)
 }
 
 func (m *TLStoriesReadStories) CalcSize(layer int32) int {
@@ -77501,7 +77559,7 @@ func (m *TLStoriesReadStories) CalcSize(layer int32) int {
 func (m *TLStoriesReadStories) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_readStories, int(layer)); clazzId {
 	case 0xa556dac8:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -77565,7 +77623,7 @@ type TLStoriesIncrementStoryViews struct {
 }
 
 func (m *TLStoriesIncrementStoryViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_incrementStoryViews", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77573,7 +77631,7 @@ func (m *TLStoriesIncrementStoryViews) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_incrementStoryViews", m)
 }
 
 func (m *TLStoriesIncrementStoryViews) CalcSize(layer int32) int {
@@ -77592,11 +77650,11 @@ func (m *TLStoriesIncrementStoryViews) CalcSize(layer int32) int {
 func (m *TLStoriesIncrementStoryViews) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_incrementStoryViews, int(layer)); clazzId {
 	case 0xb2028afb:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -77664,7 +77722,7 @@ type TLStoriesGetStoryViewsList struct {
 }
 
 func (m *TLStoriesGetStoryViewsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoryViewsList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77672,7 +77730,7 @@ func (m *TLStoriesGetStoryViewsList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getStoryViewsList", m)
 }
 
 func (m *TLStoriesGetStoryViewsList) CalcSize(layer int32) int {
@@ -77698,7 +77756,7 @@ func (m *TLStoriesGetStoryViewsList) CalcSize(layer int32) int {
 func (m *TLStoriesGetStoryViewsList) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryViewsList, int(layer)); clazzId {
 	case 0x7ed23c57:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -77826,7 +77884,7 @@ type TLStoriesGetStoriesViews struct {
 }
 
 func (m *TLStoriesGetStoriesViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesViews", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77834,7 +77892,7 @@ func (m *TLStoriesGetStoriesViews) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getStoriesViews", m)
 }
 
 func (m *TLStoriesGetStoriesViews) CalcSize(layer int32) int {
@@ -77853,11 +77911,11 @@ func (m *TLStoriesGetStoriesViews) CalcSize(layer int32) int {
 func (m *TLStoriesGetStoriesViews) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoriesViews, int(layer)); clazzId {
 	case 0x28e16cc8:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -77919,7 +77977,7 @@ type TLStoriesExportStoryLink struct {
 }
 
 func (m *TLStoriesExportStoryLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_exportStoryLink", TLObject: m}
 	return wrapper.String()
 }
 
@@ -77927,7 +77985,7 @@ func (m *TLStoriesExportStoryLink) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_exportStoryLink", m)
 }
 
 func (m *TLStoriesExportStoryLink) CalcSize(layer int32) int {
@@ -77946,7 +78004,7 @@ func (m *TLStoriesExportStoryLink) CalcSize(layer int32) int {
 func (m *TLStoriesExportStoryLink) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_exportStoryLink, int(layer)); clazzId {
 	case 0x7b8def20:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -78012,7 +78070,7 @@ type TLStoriesReport struct {
 }
 
 func (m *TLStoriesReport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_report", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78020,7 +78078,7 @@ func (m *TLStoriesReport) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_report", m)
 }
 
 func (m *TLStoriesReport) CalcSize(layer int32) int {
@@ -78041,11 +78099,11 @@ func (m *TLStoriesReport) CalcSize(layer int32) int {
 func (m *TLStoriesReport) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_report, int(layer)); clazzId {
 	case 0x19d8eb45:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -78127,7 +78185,7 @@ type TLStoriesActivateStealthMode struct {
 }
 
 func (m *TLStoriesActivateStealthMode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_activateStealthMode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78135,7 +78193,7 @@ func (m *TLStoriesActivateStealthMode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_activateStealthMode", m)
 }
 
 func (m *TLStoriesActivateStealthMode) CalcSize(layer int32) int {
@@ -78229,7 +78287,7 @@ type TLStoriesSendReaction struct {
 }
 
 func (m *TLStoriesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_sendReaction", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78237,7 +78295,7 @@ func (m *TLStoriesSendReaction) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_sendReaction", m)
 }
 
 func (m *TLStoriesSendReaction) CalcSize(layer int32) int {
@@ -78258,11 +78316,11 @@ func (m *TLStoriesSendReaction) CalcSize(layer int32) int {
 func (m *TLStoriesSendReaction) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendReaction, int(layer)); clazzId {
 	case 0x7fd736b2:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("reaction", m.Reaction); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("reaction", m.Reaction, layer); err != nil {
 			return err
 		}
 
@@ -78356,7 +78414,7 @@ type TLStoriesGetPeerStories struct {
 }
 
 func (m *TLStoriesGetPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPeerStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78364,7 +78422,7 @@ func (m *TLStoriesGetPeerStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getPeerStories", m)
 }
 
 func (m *TLStoriesGetPeerStories) CalcSize(layer int32) int {
@@ -78382,7 +78440,7 @@ func (m *TLStoriesGetPeerStories) CalcSize(layer int32) int {
 func (m *TLStoriesGetPeerStories) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerStories, int(layer)); clazzId {
 	case 0x2c4ada50:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -78438,7 +78496,7 @@ type TLStoriesGetAllReadPeerStories struct {
 }
 
 func (m *TLStoriesGetAllReadPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAllReadPeerStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78446,7 +78504,7 @@ func (m *TLStoriesGetAllReadPeerStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getAllReadPeerStories", m)
 }
 
 func (m *TLStoriesGetAllReadPeerStories) CalcSize(layer int32) int {
@@ -78507,7 +78565,7 @@ type TLStoriesGetPeerMaxIDs struct {
 }
 
 func (m *TLStoriesGetPeerMaxIDs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPeerMaxIDs", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78515,7 +78573,7 @@ func (m *TLStoriesGetPeerMaxIDs) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getPeerMaxIDs", m)
 }
 
 func (m *TLStoriesGetPeerMaxIDs) CalcSize(layer int32) int {
@@ -78533,7 +78591,7 @@ func (m *TLStoriesGetPeerMaxIDs) CalcSize(layer int32) int {
 func (m *TLStoriesGetPeerMaxIDs) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getPeerMaxIDs, int(layer)); clazzId {
 	case 0x78499170:
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -78603,7 +78661,7 @@ type TLStoriesGetChatsToSend struct {
 }
 
 func (m *TLStoriesGetChatsToSend) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getChatsToSend", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78611,7 +78669,7 @@ func (m *TLStoriesGetChatsToSend) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getChatsToSend", m)
 }
 
 func (m *TLStoriesGetChatsToSend) CalcSize(layer int32) int {
@@ -78673,7 +78731,7 @@ type TLStoriesTogglePeerStoriesHidden struct {
 }
 
 func (m *TLStoriesTogglePeerStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePeerStoriesHidden", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78681,7 +78739,7 @@ func (m *TLStoriesTogglePeerStoriesHidden) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_togglePeerStoriesHidden", m)
 }
 
 func (m *TLStoriesTogglePeerStoriesHidden) CalcSize(layer int32) int {
@@ -78700,11 +78758,11 @@ func (m *TLStoriesTogglePeerStoriesHidden) CalcSize(layer int32) int {
 func (m *TLStoriesTogglePeerStoriesHidden) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePeerStoriesHidden, int(layer)); clazzId {
 	case 0xbd0415c4:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("hidden", m.Hidden); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("hidden", m.Hidden, layer); err != nil {
 			return err
 		}
 
@@ -78775,7 +78833,7 @@ type TLStoriesGetStoryReactionsList struct {
 }
 
 func (m *TLStoriesGetStoryReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoryReactionsList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78783,7 +78841,7 @@ func (m *TLStoriesGetStoryReactionsList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getStoryReactionsList", m)
 }
 
 func (m *TLStoriesGetStoryReactionsList) CalcSize(layer int32) int {
@@ -78812,7 +78870,7 @@ func (m *TLStoriesGetStoryReactionsList) CalcSize(layer int32) int {
 func (m *TLStoriesGetStoryReactionsList) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getStoryReactionsList, int(layer)); clazzId {
 	case 0xb9b2881f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -78935,7 +78993,7 @@ type TLStoriesTogglePinnedToTop struct {
 }
 
 func (m *TLStoriesTogglePinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePinnedToTop", TLObject: m}
 	return wrapper.String()
 }
 
@@ -78943,7 +79001,7 @@ func (m *TLStoriesTogglePinnedToTop) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_togglePinnedToTop", m)
 }
 
 func (m *TLStoriesTogglePinnedToTop) CalcSize(layer int32) int {
@@ -78962,11 +79020,11 @@ func (m *TLStoriesTogglePinnedToTop) CalcSize(layer int32) int {
 func (m *TLStoriesTogglePinnedToTop) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_togglePinnedToTop, int(layer)); clazzId {
 	case 0xb297e9b:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("id", m.Id); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("id", m.Id, layer); err != nil {
 			return err
 		}
 
@@ -79031,7 +79089,7 @@ type TLStoriesSearchPosts struct {
 }
 
 func (m *TLStoriesSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_searchPosts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79039,7 +79097,7 @@ func (m *TLStoriesSearchPosts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_searchPosts", m)
 }
 
 func (m *TLStoriesSearchPosts) CalcSize(layer int32) int {
@@ -79195,7 +79253,7 @@ type TLStoriesCreateAlbum struct {
 }
 
 func (m *TLStoriesCreateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_createAlbum", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79203,7 +79261,7 @@ func (m *TLStoriesCreateAlbum) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_createAlbum", m)
 }
 
 func (m *TLStoriesCreateAlbum) CalcSize(layer int32) int {
@@ -79223,7 +79281,7 @@ func (m *TLStoriesCreateAlbum) CalcSize(layer int32) int {
 func (m *TLStoriesCreateAlbum) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_createAlbum, int(layer)); clazzId {
 	case 0xa36396e5:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -79231,7 +79289,7 @@ func (m *TLStoriesCreateAlbum) Validate(layer int32) error {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("stories", m.Stories); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("stories", m.Stories, layer); err != nil {
 			return err
 		}
 
@@ -79303,7 +79361,7 @@ type TLStoriesUpdateAlbum struct {
 }
 
 func (m *TLStoriesUpdateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_updateAlbum", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79311,7 +79369,7 @@ func (m *TLStoriesUpdateAlbum) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_updateAlbum", m)
 }
 
 func (m *TLStoriesUpdateAlbum) CalcSize(layer int32) int {
@@ -79346,7 +79404,7 @@ func (m *TLStoriesUpdateAlbum) CalcSize(layer int32) int {
 func (m *TLStoriesUpdateAlbum) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_updateAlbum, int(layer)); clazzId {
 	case 0x5e5259b6:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -79468,7 +79526,7 @@ type TLStoriesReorderAlbums struct {
 }
 
 func (m *TLStoriesReorderAlbums) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_reorderAlbums", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79476,7 +79534,7 @@ func (m *TLStoriesReorderAlbums) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_reorderAlbums", m)
 }
 
 func (m *TLStoriesReorderAlbums) CalcSize(layer int32) int {
@@ -79495,11 +79553,11 @@ func (m *TLStoriesReorderAlbums) CalcSize(layer int32) int {
 func (m *TLStoriesReorderAlbums) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_reorderAlbums, int(layer)); clazzId {
 	case 0x8535fbd9:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("order", m.Order); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("order", m.Order, layer); err != nil {
 			return err
 		}
 
@@ -79561,7 +79619,7 @@ type TLStoriesDeleteAlbum struct {
 }
 
 func (m *TLStoriesDeleteAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_deleteAlbum", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79569,7 +79627,7 @@ func (m *TLStoriesDeleteAlbum) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_deleteAlbum", m)
 }
 
 func (m *TLStoriesDeleteAlbum) CalcSize(layer int32) int {
@@ -79588,7 +79646,7 @@ func (m *TLStoriesDeleteAlbum) CalcSize(layer int32) int {
 func (m *TLStoriesDeleteAlbum) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_deleteAlbum, int(layer)); clazzId {
 	case 0x8d3456d0:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -79652,7 +79710,7 @@ type TLStoriesGetAlbums struct {
 }
 
 func (m *TLStoriesGetAlbums) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAlbums", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79660,7 +79718,7 @@ func (m *TLStoriesGetAlbums) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getAlbums", m)
 }
 
 func (m *TLStoriesGetAlbums) CalcSize(layer int32) int {
@@ -79679,7 +79737,7 @@ func (m *TLStoriesGetAlbums) CalcSize(layer int32) int {
 func (m *TLStoriesGetAlbums) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbums, int(layer)); clazzId {
 	case 0x25b3eac7:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -79745,7 +79803,7 @@ type TLStoriesGetAlbumStories struct {
 }
 
 func (m *TLStoriesGetAlbumStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAlbumStories", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79753,7 +79811,7 @@ func (m *TLStoriesGetAlbumStories) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_getAlbumStories", m)
 }
 
 func (m *TLStoriesGetAlbumStories) CalcSize(layer int32) int {
@@ -79774,7 +79832,7 @@ func (m *TLStoriesGetAlbumStories) CalcSize(layer int32) int {
 func (m *TLStoriesGetAlbumStories) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_getAlbumStories, int(layer)); clazzId {
 	case 0xac806d61:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -79856,7 +79914,7 @@ type TLStoriesStartLive struct {
 }
 
 func (m *TLStoriesStartLive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "stories_startLive", TLObject: m}
 	return wrapper.String()
 }
 
@@ -79864,7 +79922,7 @@ func (m *TLStoriesStartLive) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("stories_startLive", m)
 }
 
 func (m *TLStoriesStartLive) CalcSize(layer int32) int {
@@ -79900,11 +79958,11 @@ func (m *TLStoriesStartLive) CalcSize(layer int32) int {
 func (m *TLStoriesStartLive) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_startLive, int(layer)); clazzId {
 	case 0xd069ccde:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredSlice("privacy_rules", m.PrivacyRules); err != nil {
+		if err := iface.ValidateRequiredSliceWithLayer("privacy_rules", m.PrivacyRules, layer); err != nil {
 			return err
 		}
 
@@ -80106,7 +80164,7 @@ type TLPremiumGetBoostsList struct {
 }
 
 func (m *TLPremiumGetBoostsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "premium_getBoostsList", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80114,7 +80172,7 @@ func (m *TLPremiumGetBoostsList) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("premium_getBoostsList", m)
 }
 
 func (m *TLPremiumGetBoostsList) CalcSize(layer int32) int {
@@ -80135,7 +80193,7 @@ func (m *TLPremiumGetBoostsList) CalcSize(layer int32) int {
 func (m *TLPremiumGetBoostsList) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsList, int(layer)); clazzId {
 	case 0x60f67660:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -80228,7 +80286,7 @@ type TLPremiumGetMyBoosts struct {
 }
 
 func (m *TLPremiumGetMyBoosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "premium_getMyBoosts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80236,7 +80294,7 @@ func (m *TLPremiumGetMyBoosts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("premium_getMyBoosts", m)
 }
 
 func (m *TLPremiumGetMyBoosts) CalcSize(layer int32) int {
@@ -80298,7 +80356,7 @@ type TLPremiumApplyBoost struct {
 }
 
 func (m *TLPremiumApplyBoost) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "premium_applyBoost", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80306,7 +80364,7 @@ func (m *TLPremiumApplyBoost) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("premium_applyBoost", m)
 }
 
 func (m *TLPremiumApplyBoost) CalcSize(layer int32) int {
@@ -80330,7 +80388,7 @@ func (m *TLPremiumApplyBoost) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_applyBoost, int(layer)); clazzId {
 	case 0x6b7da746:
 
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -80412,7 +80470,7 @@ type TLPremiumGetBoostsStatus struct {
 }
 
 func (m *TLPremiumGetBoostsStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "premium_getBoostsStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80420,7 +80478,7 @@ func (m *TLPremiumGetBoostsStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("premium_getBoostsStatus", m)
 }
 
 func (m *TLPremiumGetBoostsStatus) CalcSize(layer int32) int {
@@ -80438,7 +80496,7 @@ func (m *TLPremiumGetBoostsStatus) CalcSize(layer int32) int {
 func (m *TLPremiumGetBoostsStatus) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getBoostsStatus, int(layer)); clazzId {
 	case 0x42f1f61:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
@@ -80496,7 +80554,7 @@ type TLPremiumGetUserBoosts struct {
 }
 
 func (m *TLPremiumGetUserBoosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "premium_getUserBoosts", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80504,7 +80562,7 @@ func (m *TLPremiumGetUserBoosts) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("premium_getUserBoosts", m)
 }
 
 func (m *TLPremiumGetUserBoosts) CalcSize(layer int32) int {
@@ -80523,11 +80581,11 @@ func (m *TLPremiumGetUserBoosts) CalcSize(layer int32) int {
 func (m *TLPremiumGetUserBoosts) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_premium_getUserBoosts, int(layer)); clazzId {
 	case 0x39854d1f:
-		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
@@ -80592,7 +80650,7 @@ type TLSmsjobsIsEligibleToJoin struct {
 }
 
 func (m *TLSmsjobsIsEligibleToJoin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_isEligibleToJoin", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80600,7 +80658,7 @@ func (m *TLSmsjobsIsEligibleToJoin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_isEligibleToJoin", m)
 }
 
 func (m *TLSmsjobsIsEligibleToJoin) CalcSize(layer int32) int {
@@ -80660,7 +80718,7 @@ type TLSmsjobsJoin struct {
 }
 
 func (m *TLSmsjobsJoin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_join", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80668,7 +80726,7 @@ func (m *TLSmsjobsJoin) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_join", m)
 }
 
 func (m *TLSmsjobsJoin) CalcSize(layer int32) int {
@@ -80728,7 +80786,7 @@ type TLSmsjobsLeave struct {
 }
 
 func (m *TLSmsjobsLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_leave", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80736,7 +80794,7 @@ func (m *TLSmsjobsLeave) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_leave", m)
 }
 
 func (m *TLSmsjobsLeave) CalcSize(layer int32) int {
@@ -80797,7 +80855,7 @@ type TLSmsjobsUpdateSettings struct {
 }
 
 func (m *TLSmsjobsUpdateSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_updateSettings", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80805,7 +80863,7 @@ func (m *TLSmsjobsUpdateSettings) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_updateSettings", m)
 }
 
 func (m *TLSmsjobsUpdateSettings) CalcSize(layer int32) int {
@@ -80889,7 +80947,7 @@ type TLSmsjobsGetStatus struct {
 }
 
 func (m *TLSmsjobsGetStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_getStatus", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80897,7 +80955,7 @@ func (m *TLSmsjobsGetStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_getStatus", m)
 }
 
 func (m *TLSmsjobsGetStatus) CalcSize(layer int32) int {
@@ -80958,7 +81016,7 @@ type TLSmsjobsGetSmsJob struct {
 }
 
 func (m *TLSmsjobsGetSmsJob) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_getSmsJob", TLObject: m}
 	return wrapper.String()
 }
 
@@ -80966,7 +81024,7 @@ func (m *TLSmsjobsGetSmsJob) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_getSmsJob", m)
 }
 
 func (m *TLSmsjobsGetSmsJob) CalcSize(layer int32) int {
@@ -81038,7 +81096,7 @@ type TLSmsjobsFinishJob struct {
 }
 
 func (m *TLSmsjobsFinishJob) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_finishJob", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81046,7 +81104,7 @@ func (m *TLSmsjobsFinishJob) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("smsjobs_finishJob", m)
 }
 
 func (m *TLSmsjobsFinishJob) CalcSize(layer int32) int {
@@ -81150,7 +81208,7 @@ type TLFragmentGetCollectibleInfo struct {
 }
 
 func (m *TLFragmentGetCollectibleInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "fragment_getCollectibleInfo", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81158,7 +81216,7 @@ func (m *TLFragmentGetCollectibleInfo) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("fragment_getCollectibleInfo", m)
 }
 
 func (m *TLFragmentGetCollectibleInfo) CalcSize(layer int32) int {
@@ -81176,7 +81234,7 @@ func (m *TLFragmentGetCollectibleInfo) CalcSize(layer int32) int {
 func (m *TLFragmentGetCollectibleInfo) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_fragment_getCollectibleInfo, int(layer)); clazzId {
 	case 0xbe1e85ba:
-		if err := iface.ValidateRequiredObject("collectible", m.Collectible); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("collectible", m.Collectible, layer); err != nil {
 			return err
 		}
 
@@ -81235,7 +81293,7 @@ type TLChannelsEditCreator struct {
 }
 
 func (m *TLChannelsEditCreator) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_editCreator", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81243,7 +81301,7 @@ func (m *TLChannelsEditCreator) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_editCreator", m)
 }
 
 func (m *TLChannelsEditCreator) CalcSize(layer int32) int {
@@ -81263,15 +81321,15 @@ func (m *TLChannelsEditCreator) CalcSize(layer int32) int {
 func (m *TLChannelsEditCreator) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_editCreator, int(layer)); clazzId {
 	case 0x8f38cd1f:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("user_id", m.UserId); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
 			return err
 		}
 
-		if err := iface.ValidateRequiredObject("password", m.Password); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("password", m.Password, layer); err != nil {
 			return err
 		}
 
@@ -81346,7 +81404,7 @@ type TLChannelsGetFutureCreatorAfterLeave struct {
 }
 
 func (m *TLChannelsGetFutureCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "channels_getFutureCreatorAfterLeave", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81354,7 +81412,7 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("channels_getFutureCreatorAfterLeave", m)
 }
 
 func (m *TLChannelsGetFutureCreatorAfterLeave) CalcSize(layer int32) int {
@@ -81372,7 +81430,7 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) CalcSize(layer int32) int {
 func (m *TLChannelsGetFutureCreatorAfterLeave) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_channels_getFutureCreatorAfterLeave, int(layer)); clazzId {
 	case 0xa00918af:
-		if err := iface.ValidateRequiredObject("channel", m.Channel); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("channel", m.Channel, layer); err != nil {
 			return err
 		}
 
@@ -81428,7 +81486,7 @@ type TLTestParseInputAppEvent struct {
 }
 
 func (m *TLTestParseInputAppEvent) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "test_parseInputAppEvent", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81436,7 +81494,7 @@ func (m *TLTestParseInputAppEvent) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("test_parseInputAppEvent", m)
 }
 
 func (m *TLTestParseInputAppEvent) CalcSize(layer int32) int {
@@ -81496,7 +81554,7 @@ type TLHelpTest struct {
 }
 
 func (m *TLHelpTest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "help_test", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81504,7 +81562,7 @@ func (m *TLHelpTest) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("help_test", m)
 }
 
 func (m *TLHelpTest) CalcSize(layer int32) int {
@@ -81570,7 +81628,7 @@ type TLPredefinedCreatePredefinedUser struct {
 }
 
 func (m *TLPredefinedCreatePredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_createPredefinedUser", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81578,7 +81636,7 @@ func (m *TLPredefinedCreatePredefinedUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_createPredefinedUser", m)
 }
 
 func (m *TLPredefinedCreatePredefinedUser) CalcSize(layer int32) int {
@@ -81741,7 +81799,7 @@ type TLPredefinedUpdatePredefinedUsername struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedUsername", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81749,7 +81807,7 @@ func (m *TLPredefinedUpdatePredefinedUsername) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_updatePredefinedUsername", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedUsername) CalcSize(layer int32) int {
@@ -81833,7 +81891,7 @@ type TLPredefinedUpdatePredefinedProfile struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedProfile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedProfile", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81841,7 +81899,7 @@ func (m *TLPredefinedUpdatePredefinedProfile) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_updatePredefinedProfile", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedProfile) CalcSize(layer int32) int {
@@ -81984,7 +82042,7 @@ type TLPredefinedUpdatePredefinedVerified struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedVerified) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedVerified", TLObject: m}
 	return wrapper.String()
 }
 
@@ -81992,7 +82050,7 @@ func (m *TLPredefinedUpdatePredefinedVerified) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_updatePredefinedVerified", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedVerified) CalcSize(layer int32) int {
@@ -82087,7 +82145,7 @@ type TLPredefinedUpdatePredefinedCode struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedCode", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82095,7 +82153,7 @@ func (m *TLPredefinedUpdatePredefinedCode) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_updatePredefinedCode", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedCode) CalcSize(layer int32) int {
@@ -82176,7 +82234,7 @@ type TLPredefinedGetPredefinedUser struct {
 }
 
 func (m *TLPredefinedGetPredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_getPredefinedUser", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82184,7 +82242,7 @@ func (m *TLPredefinedGetPredefinedUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_getPredefinedUser", m)
 }
 
 func (m *TLPredefinedGetPredefinedUser) CalcSize(layer int32) int {
@@ -82254,7 +82312,7 @@ type TLPredefinedGetPredefinedUsers struct {
 }
 
 func (m *TLPredefinedGetPredefinedUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "predefined_getPredefinedUsers", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82262,7 +82320,7 @@ func (m *TLPredefinedGetPredefinedUsers) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("predefined_getPredefinedUsers", m)
 }
 
 func (m *TLPredefinedGetPredefinedUsers) CalcSize(layer int32) int {
@@ -82324,7 +82382,7 @@ type TLUsersGetMe struct {
 }
 
 func (m *TLUsersGetMe) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "users_getMe", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82332,7 +82390,7 @@ func (m *TLUsersGetMe) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("users_getMe", m)
 }
 
 func (m *TLUsersGetMe) CalcSize(layer int32) int {
@@ -82410,7 +82468,7 @@ type TLAccountUpdateVerified struct {
 }
 
 func (m *TLAccountUpdateVerified) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "account_updateVerified", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82418,7 +82476,7 @@ func (m *TLAccountUpdateVerified) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("account_updateVerified", m)
 }
 
 func (m *TLAccountUpdateVerified) CalcSize(layer int32) int {
@@ -82512,7 +82570,7 @@ type TLAuthToggleBan struct {
 }
 
 func (m *TLAuthToggleBan) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "auth_toggleBan", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82520,7 +82578,7 @@ func (m *TLAuthToggleBan) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("auth_toggleBan", m)
 }
 
 func (m *TLAuthToggleBan) CalcSize(layer int32) int {
@@ -82648,7 +82706,7 @@ type TLBizInvokeBizDataRaw struct {
 }
 
 func (m *TLBizInvokeBizDataRaw) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: "biz_invokeBizDataRaw", TLObject: m}
 	return wrapper.String()
 }
 
@@ -82656,7 +82714,7 @@ func (m *TLBizInvokeBizDataRaw) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return iface.MarshalWithName("", m)
+	return iface.MarshalWithName("biz_invokeBizDataRaw", m)
 }
 
 func (m *TLBizInvokeBizDataRaw) CalcSize(layer int32) int {
@@ -82674,7 +82732,7 @@ func (m *TLBizInvokeBizDataRaw) CalcSize(layer int32) int {
 func (m *TLBizInvokeBizDataRaw) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_biz_invokeBizDataRaw, int(layer)); clazzId {
 	case 0x5a191146:
-		if err := iface.ValidateRequiredObject("biz_data", m.BizData); err != nil {
+		if err := iface.ValidateRequiredObjectWithLayer("biz_data", m.BizData, layer); err != nil {
 			return err
 		}
 
@@ -82754,7 +82812,8 @@ func (m *VectorSecureValue) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorSecureValue is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -82797,7 +82856,8 @@ func (m *VectorWallPaper) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorWallPaper is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -82840,7 +82900,8 @@ func (m *VectorUser) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorUser is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -82883,7 +82944,8 @@ func (m *VectorRequirementToContact) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorRequirementToContact is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -82927,6 +82989,7 @@ func (m *VectorInt) Validate(layer int32) error {
 		return fmt.Errorf("VectorInt is required")
 	}
 	return iface.ValidateRequiredSlice("_datas", m.Datas)
+
 }
 
 // Encode <--
@@ -82969,7 +83032,8 @@ func (m *VectorContactStatus) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorContactStatus is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83012,7 +83076,8 @@ func (m *VectorSavedContact) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorSavedContact is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83055,7 +83120,8 @@ func (m *VectorReceivedNotifyMessage) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorReceivedNotifyMessage is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83099,6 +83165,7 @@ func (m *VectorLong) Validate(layer int32) error {
 		return fmt.Errorf("VectorLong is required")
 	}
 	return iface.ValidateRequiredSlice("_datas", m.Datas)
+
 }
 
 // Encode <--
@@ -83141,7 +83208,8 @@ func (m *VectorStickerSetCovered) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorStickerSetCovered is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83184,7 +83252,8 @@ func (m *VectorMessageRange) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorMessageRange is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83227,7 +83296,8 @@ func (m *VectorDialogPeer) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorDialogPeer is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83270,7 +83340,8 @@ func (m *VectorEmojiLanguage) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorEmojiLanguage is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83313,7 +83384,8 @@ func (m *VectorMessagesSearchCounter) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorMessagesSearchCounter is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83356,7 +83428,8 @@ func (m *VectorDialogFilterSuggested) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorDialogFilterSuggested is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83399,7 +83472,8 @@ func (m *VectorReadParticipantDate) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorReadParticipantDate is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83442,7 +83516,8 @@ func (m *VectorDocument) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorDocument is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83485,7 +83560,8 @@ func (m *VectorFactCheck) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorFactCheck is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83528,7 +83604,8 @@ func (m *VectorFileHash) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorFileHash is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83571,7 +83648,8 @@ func (m *VectorBotCommand) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorBotCommand is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83614,7 +83692,8 @@ func (m *VectorBotPreviewMedia) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorBotPreviewMedia is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83657,7 +83736,8 @@ func (m *VectorPremiumGiftCodeOption) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorPremiumGiftCodeOption is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83700,7 +83780,8 @@ func (m *VectorStarsTopupOption) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorStarsTopupOption is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83743,7 +83824,8 @@ func (m *VectorStarsGiftOption) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorStarsGiftOption is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83786,7 +83868,8 @@ func (m *VectorStarsGiveawayOption) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorStarsGiveawayOption is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83829,7 +83912,8 @@ func (m *VectorLangPackString) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorLangPackString is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83872,7 +83956,8 @@ func (m *VectorLangPackLanguage) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorLangPackLanguage is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83915,7 +84000,8 @@ func (m *VectorPeer) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorPeer is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -83958,7 +84044,8 @@ func (m *VectorRecentStory) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorRecentStory is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
@@ -84001,7 +84088,8 @@ func (m *VectorPredefinedUser) Validate(layer int32) error {
 	if m == nil {
 		return fmt.Errorf("VectorPredefinedUser is required")
 	}
-	return iface.ValidateRequiredSlice("_datas", m.Datas)
+	return iface.ValidateRequiredSliceWithLayer("_datas", m.Datas, layer)
+
 }
 
 // Encode <--
