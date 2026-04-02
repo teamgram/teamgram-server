@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // SyncUpdatesMe
 // sync.updatesMe flags:# user_id:long perm_auth_key_id:long server_id:flags.0?string auth_key_id:flags.1?long session_id:flags.1?long updates:Updates = Void;
 func (c *SyncCore) SyncUpdatesMe(in *sync.TLSyncUpdatesMe) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("sync.updatesMe blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("sync.updatesMe not implemented")
+	// TODO: route self-directed updates through the real sync/session fanout pipeline.
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }

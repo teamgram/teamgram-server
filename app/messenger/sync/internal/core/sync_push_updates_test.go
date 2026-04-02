@@ -38,3 +38,35 @@ func TestSyncPushUpdatesIfNotReturnsVoidPlaceholder(t *testing.T) {
 		t.Fatal("expected void result, got nil")
 	}
 }
+
+func TestSyncUpdatesMeReturnsVoidPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.SyncUpdatesMe(&sync.TLSyncUpdatesMe{
+		UserId:        1,
+		PermAuthKeyId: 2,
+		Updates:       &tg.Updates{},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+}
+
+func TestSyncUpdatesNotMeReturnsVoidPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.SyncUpdatesNotMe(&sync.TLSyncUpdatesNotMe{
+		UserId:        1,
+		PermAuthKeyId: 2,
+		Updates:       &tg.Updates{},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+}
