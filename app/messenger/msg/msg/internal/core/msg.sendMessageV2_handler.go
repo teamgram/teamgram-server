@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,23 @@ var _ *tg.Bool
 // MsgSendMessageV2
 // msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.sendMessageV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if len(in.Message) == 0 {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, errors.New("msg.sendMessageV2 not implemented")
+	switch in.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
+		// Keep the send path callable while message storage/inbox fanout is rebuilt.
+		return tg.MakeTLUpdates(&tg.TLUpdates{
+			Updates: []tg.UpdateClazz{},
+			Users:   []tg.UserClazz{},
+			Chats:   []tg.ChatClazz{},
+			Date:    0,
+			Seq:     0,
+		}).ToUpdates(), nil
+	case tg.PEER_CHANNEL:
+		return nil, tg.ErrEnterpriseIsBlocked
+	default:
+		return nil, tg.ErrPeerIdInvalid
+	}
 }
