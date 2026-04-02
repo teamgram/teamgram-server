@@ -26,8 +26,13 @@ var _ *tg.Bool
 // DialogGetMyDialogsData
 // dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
+	var users []int64
+	if in != nil && in.User && in.UserId != 0 {
+		users = []int64{in.UserId}
+	}
+
 	return dialog.MakeTLSimpleDialogsData(&dialog.TLSimpleDialogsData{
-		Users:    []int64{},
+		Users:    users,
 		Chats:    []int64{},
 		Channels: []int64{},
 	}).ToDialogsData(), nil
