@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // UpdatesGetStateV2
 // updates.getStateV2 auth_key_id:long user_id:long = updates.State;
 func (c *UpdatesCore) UpdatesGetStateV2(in *updates.TLUpdatesGetStateV2) (*tg.UpdatesState, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getStateV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("updates.getStateV2 not implemented")
+	// TODO: return the persisted updates state once the updates storage layer is wired.
+	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{}).ToUpdatesState(), nil
 }
