@@ -86720,16 +86720,12 @@ type RPCMessages interface {
 	MessagesSearchSentMedia(ctx context.Context, in *TLMessagesSearchSentMedia) (*MessagesMessages, error)
 	MessagesGetOutboxReadDate(ctx context.Context, in *TLMessagesGetOutboxReadDate) (*OutboxReadDate, error)
 	MessagesSummarizeText(ctx context.Context, in *TLMessagesSummarizeText) (*TextWithEntities, error)
-	ChannelsGetSendAs(ctx context.Context, in *TLChannelsGetSendAs) (*ChannelsSendAsPeers, error)
-	ChannelsSearchPosts(ctx context.Context, in *TLChannelsSearchPosts) (*MessagesMessages, error)
-	ChannelsCheckSearchPostsFlood(ctx context.Context, in *TLChannelsCheckSearchPostsFlood) (*SearchPostsFlood, error)
 	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
 	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
 	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
-	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
-	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
-	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
-	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
+	ChannelsGetSendAs(ctx context.Context, in *TLChannelsGetSendAs) (*ChannelsSendAsPeers, error)
+	ChannelsSearchPosts(ctx context.Context, in *TLChannelsSearchPosts) (*MessagesMessages, error)
+	ChannelsCheckSearchPostsFlood(ctx context.Context, in *TLChannelsCheckSearchPostsFlood) (*SearchPostsFlood, error)
 }
 
 type RPCDialogs interface {
@@ -86895,6 +86891,10 @@ type RPCPolls interface {
 	MessagesSendVote(ctx context.Context, in *TLMessagesSendVote) (*Updates, error)
 	MessagesGetPollResults(ctx context.Context, in *TLMessagesGetPollResults) (*Updates, error)
 	MessagesGetPollVotes(ctx context.Context, in *TLMessagesGetPollVotes) (*MessagesVotesList, error)
+	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
+	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
+	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
+	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
 }
 
 type RPCEmoji interface {
@@ -86994,6 +86994,8 @@ type RPCMiniBotApps interface {
 	BotsAllowSendMessage(ctx context.Context, in *TLBotsAllowSendMessage) (*Updates, error)
 	BotsInvokeWebViewCustomMethod(ctx context.Context, in *TLBotsInvokeWebViewCustomMethod) (*DataJSON, error)
 	BotsCheckDownloadFileParams(ctx context.Context, in *TLBotsCheckDownloadFileParams) (*Bool, error)
+	BotsRequestWebViewButton(ctx context.Context, in *TLBotsRequestWebViewButton) (*BotsRequestedButton, error)
+	BotsGetRequestedWebViewButton(ctx context.Context, in *TLBotsGetRequestedWebViewButton) (*KeyboardButton, error)
 }
 
 type RPCTranscription interface {
@@ -87094,16 +87096,6 @@ type RPCForums interface {
 	MessagesDeleteTopicHistory(ctx context.Context, in *TLMessagesDeleteTopicHistory) (*MessagesAffectedHistory, error)
 	ChannelsToggleForum(ctx context.Context, in *TLChannelsToggleForum) (*Updates, error)
 	ChannelsToggleViewForumAsMessages(ctx context.Context, in *TLChannelsToggleViewForumAsMessages) (*Updates, error)
-}
-
-type RPCmessages interface {
-	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
-	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
-	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
-	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
-	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
-	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
-	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
 }
 
 type RPCUpdates interface {
@@ -87222,6 +87214,9 @@ type RPCBots interface {
 	BotsSetBotInfo(ctx context.Context, in *TLBotsSetBotInfo) (*Bool, error)
 	BotsGetBotInfo(ctx context.Context, in *TLBotsGetBotInfo) (*BotsBotInfo, error)
 	BotsGetAdminedBots(ctx context.Context, in *TLBotsGetAdminedBots) (*VectorUser, error)
+	BotsCheckUsername(ctx context.Context, in *TLBotsCheckUsername) (*Bool, error)
+	BotsCreateBot(ctx context.Context, in *TLBotsCreateBot) (*User, error)
+	BotsExportBotToken(ctx context.Context, in *TLBotsExportBotToken) (*BotsExportedBotToken, error)
 }
 
 type RPCBotMenuButton interface {
@@ -87246,14 +87241,6 @@ type RPCAffiliatePrograms interface {
 type RPCBotVerificationIcons interface {
 	BotsSetCustomVerification(ctx context.Context, in *TLBotsSetCustomVerification) (*Bool, error)
 	BotsGetBotRecommendations(ctx context.Context, in *TLBotsGetBotRecommendations) (*UsersUsers, error)
-}
-
-type RPCbots interface {
-	BotsCheckUsername(ctx context.Context, in *TLBotsCheckUsername) (*Bool, error)
-	BotsCreateBot(ctx context.Context, in *TLBotsCreateBot) (*User, error)
-	BotsExportBotToken(ctx context.Context, in *TLBotsExportBotToken) (*BotsExportedBotToken, error)
-	BotsRequestWebViewButton(ctx context.Context, in *TLBotsRequestWebViewButton) (*BotsRequestedButton, error)
-	BotsGetRequestedWebViewButton(ctx context.Context, in *TLBotsGetRequestedWebViewButton) (*KeyboardButton, error)
 }
 
 type RPCGiveaways interface {
