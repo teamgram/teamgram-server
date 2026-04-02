@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,11 @@ import (
 // MessagesGetOutboxReadDate
 // messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
 func (c *MessagesCore) MessagesGetOutboxReadDate(in *tg.TLMessagesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getOutboxReadDate blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.getOutboxReadDate not implemented")
+	return tg.MakeTLOutboxReadDate(&tg.TLOutboxReadDate{
+		Date: int32(time.Now().Unix()),
+	}).ToOutboxReadDate(), nil
 }

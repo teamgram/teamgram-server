@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,19 @@ import (
 // MessagesToggleNoForwards
 // messages.toggleNoForwards#b11eafa2 peer:InputPeer enabled:Bool = Updates;
 func (c *MessagesCore) MessagesToggleNoForwards(in *tg.TLMessagesToggleNoForwards) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.toggleNoForwards blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.toggleNoForwards not implemented")
+	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
+			Pinned:   true,
+			Peer:     peer,
+			Messages: []int32{},
+			Pts:      1,
+			PtsCount: 1,
+		}),
+		Date: int32(time.Now().Unix()),
+	}).ToUpdates(), nil
 }

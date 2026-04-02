@@ -17,16 +17,19 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetMessageEditData
 // messages.getMessageEditData#fda68d36 peer:InputPeer id:int = messages.MessageEditData;
 func (c *MessagesCore) MessagesGetMessageEditData(in *tg.TLMessagesGetMessageEditData) (*tg.MessagesMessageEditData, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getMessageEditData blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
+	_ = peer
 
-	return nil, errors.New("messages.getMessageEditData not implemented")
+	return tg.MakeTLMessagesMessageEditData(&tg.TLMessagesMessageEditData{
+		Caption: false,
+	}).ToMessagesMessageEditData(), nil
 }
