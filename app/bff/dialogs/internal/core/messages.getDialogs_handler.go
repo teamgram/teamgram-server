@@ -16,17 +16,17 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetDialogs
 // messages.getDialogs#a0f4cb4f flags:# exclude_pinned:flags.0?true folder_id:flags.1?int offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.Dialogs;
 func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.MessagesDialogs, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getDialogs not implemented")
+	// Keep the dialogs path callable while dialog service wiring catches up.
+	return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
+		Count:    0,
+		Dialogs:  []tg.DialogClazz{},
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesDialogs(), nil
 }

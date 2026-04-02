@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,7 @@ var _ *tg.Bool
 // DialogGetDialogs
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getDialogs not implemented")
+	return &dialog.VectorDialogExt{
+		Datas: []dialog.DialogExtClazz{},
+	}, nil
 }
