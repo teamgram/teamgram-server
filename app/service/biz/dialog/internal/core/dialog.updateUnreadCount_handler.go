@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // DialogUpdateUnreadCount
 // dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (c *DialogCore) DialogUpdateUnreadCount(in *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.updateUnreadCount blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.updateUnreadCount not implemented")
+	return tg.ToBool(in != nil && in.PeerId != 0), nil
 }

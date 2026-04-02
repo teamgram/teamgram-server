@@ -187,3 +187,58 @@ func TestDialogPinnedMessagePlaceholders(t *testing.T) {
 		t.Fatalf("expected boolTrue placeholder, got %#v", updateResult)
 	}
 }
+
+func TestDialogWritePlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+	unreadCount := int32(3)
+
+	insertResult, err := c.DialogInsertOrUpdateDialog(&dialog.TLDialogInsertOrUpdateDialog{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(insertResult) {
+		t.Fatalf("expected insert/update placeholder boolTrue, got %#v", insertResult)
+	}
+
+	deleteResult, err := c.DialogDeleteDialog(&dialog.TLDialogDeleteDialog{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(deleteResult) {
+		t.Fatalf("expected delete placeholder boolTrue, got %#v", deleteResult)
+	}
+
+	unreadResult, err := c.DialogUpdateUnreadCount(&dialog.TLDialogUpdateUnreadCount{
+		UserId:      1,
+		PeerType:    tg.PEER_USER,
+		PeerId:      2,
+		UnreadCount: &unreadCount,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(unreadResult) {
+		t.Fatalf("expected unread-count placeholder boolTrue, got %#v", unreadResult)
+	}
+
+	markResult, err := c.DialogMarkDialogUnread(&dialog.TLDialogMarkDialogUnread{
+		UserId:     1,
+		PeerType:   tg.PEER_USER,
+		PeerId:     2,
+		UnreadMark: tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(markResult) {
+		t.Fatalf("expected unread-mark placeholder boolTrue, got %#v", markResult)
+	}
+}
