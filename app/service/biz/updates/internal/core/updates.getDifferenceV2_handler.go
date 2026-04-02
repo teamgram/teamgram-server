@@ -26,16 +26,28 @@ var _ *tg.Bool
 // UpdatesGetDifferenceV2
 // updates.getDifferenceV2 flags:# auth_key_id:long user_id:long pts:int pts_total_limit:flags.0?int date:long = Difference;
 func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error) {
-	state := tg.MakeTLUpdatesState(&tg.TLUpdatesState{
-		Pts:         in.Pts,
-		Qts:         0,
-		Date:        int32(in.Date),
-		Seq:         0,
-		UnreadCount: 0,
-	}).ToUpdatesState()
+	pts := in.Pts
+	if pts <= 0 {
+		pts = 1
+	}
+
+	date := int32(in.Date)
+	if date <= 0 {
+		date = 10
+	}
 
 	// TODO: return real merged updates once the updates storage layer is wired.
 	return updates.MakeTLDifferenceEmpty(&updates.TLDifferenceEmpty{
-		State: state,
+		State: makePlaceholderUpdatesState(pts, date),
 	}).ToDifference(), nil
+}
+
+func makePlaceholderUpdatesState(pts int32, date int32) *tg.UpdatesState {
+	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+		Pts:         pts,
+		Qts:         0,
+		Date:        date,
+		Seq:         0,
+		UnreadCount: 0,
+	}).ToUpdatesState()
 }

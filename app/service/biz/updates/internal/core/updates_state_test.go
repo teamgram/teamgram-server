@@ -20,6 +20,12 @@ func TestUpdatesGetStateV2ReturnsPlaceholderState(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected updates state, got nil")
 	}
+	if result.Pts != 1 {
+		t.Fatalf("expected placeholder pts=1, got %d", result.Pts)
+	}
+	if result.Date != 10 {
+		t.Fatalf("expected placeholder date=10, got %d", result.Date)
+	}
 }
 
 func TestUpdatesGetDifferenceV2ReturnsEmptyDifference(t *testing.T) {
@@ -39,6 +45,43 @@ func TestUpdatesGetDifferenceV2ReturnsEmptyDifference(t *testing.T) {
 	}
 	if _, ok := result.ToDifferenceEmpty(); !ok {
 		t.Fatalf("expected differenceEmpty, got %T", result.Clazz)
+	}
+	diff, _ := result.ToDifferenceEmpty()
+	if diff.State == nil {
+		t.Fatal("expected placeholder state, got nil")
+	}
+	if diff.State.Pts != 1 {
+		t.Fatalf("expected placeholder pts=1 for zero input, got %d", diff.State.Pts)
+	}
+	if diff.State.Date != 10 {
+		t.Fatalf("expected placeholder date=10 for zero input, got %d", diff.State.Date)
+	}
+}
+
+func TestUpdatesGetDifferenceV2PreservesForwardProgressFromRequest(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
+		AuthKeyId: 1,
+		UserId:    2,
+		Pts:       7,
+		Date:      99,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	diff, ok := result.ToDifferenceEmpty()
+	if !ok {
+		t.Fatalf("expected differenceEmpty, got %T", result.Clazz)
+	}
+	if diff.State == nil {
+		t.Fatal("expected placeholder state, got nil")
+	}
+	if diff.State.Pts != 7 {
+		t.Fatalf("expected pts=7, got %d", diff.State.Pts)
+	}
+	if diff.State.Date != 99 {
+		t.Fatalf("expected date=99, got %d", diff.State.Date)
 	}
 }
 
