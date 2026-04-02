@@ -17,6 +17,8 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -32,17 +34,44 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 
 	switch in.PeerType {
 	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
-		// Keep the send path callable while message storage/inbox fanout is rebuilt.
-		return tg.MakeTLUpdates(&tg.TLUpdates{
-			Updates: []tg.UpdateClazz{},
-			Users:   []tg.UserClazz{},
-			Chats:   []tg.ChatClazz{},
-			Date:    0,
-			Seq:     0,
+		outbox, _ := in.Message[0].ToOutboxMessage()
+		if outbox == nil {
+			return nil, tg.ErrInputRequestInvalid
+		}
+
+		date := int32(time.Now().Unix())
+		var entities []tg.MessageEntityClazz
+		if outbox.Message != nil {
+			if msg2, ok := outbox.Message.ToMessage(); ok {
+				if msg2.Date != 0 {
+					date = msg2.Date
+				}
+				entities = msg2.Entities
+			}
+		}
+
+		return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+			Out:      true,
+			Id:       placeholderMessageID(outbox.RandomId),
+			Pts:      1,
+			PtsCount: 1,
+			Date:     date,
+			Entities: entities,
 		}).ToUpdates(), nil
 	case tg.PEER_CHANNEL:
 		return nil, tg.ErrEnterpriseIsBlocked
 	default:
 		return nil, tg.ErrPeerIdInvalid
 	}
+}
+
+func placeholderMessageID(randomID int64) int32 {
+	if randomID < 0 {
+		randomID = -randomID
+	}
+	id := int32(randomID % 0x7fffffff)
+	if id == 0 {
+		id = 1
+	}
+	return id
 }

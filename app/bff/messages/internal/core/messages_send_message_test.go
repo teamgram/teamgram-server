@@ -23,13 +23,13 @@ func TestMessagesSendMessageRejectsEmptyMessage(t *testing.T) {
 	}
 }
 
-func TestMessagesSendMessageReturnsEmptyUpdatesPlaceholderForUserPeer(t *testing.T) {
+func TestMessagesSendMessageReturnsShortSentMessagePlaceholderForUserPeer(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
 		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2, AccessHash: 0}),
 		Message:  "hello",
-		RandomId: 2,
+		RandomId: 22,
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -38,13 +38,21 @@ func TestMessagesSendMessageReturnsEmptyUpdatesPlaceholderForUserPeer(t *testing
 		t.Fatal("expected updates result, got nil")
 	}
 
-	updates, ok := result.Clazz.(*tg.TLUpdates)
+	updates, ok := result.ToUpdateShortSentMessage()
 	if !ok {
-		t.Fatalf("expected updates placeholder, got %T", result.Clazz)
+		t.Fatalf("expected updateShortSentMessage placeholder, got %T", result.Clazz)
 	}
-	if len(updates.Updates) != 0 || len(updates.Users) != 0 || len(updates.Chats) != 0 {
-		t.Fatalf("expected empty updates payload, got updates=%d users=%d chats=%d",
-			len(updates.Updates), len(updates.Users), len(updates.Chats))
+	if !updates.Out {
+		t.Fatal("expected out=true")
+	}
+	if updates.Id != 22 {
+		t.Fatalf("expected placeholder id=22, got %d", updates.Id)
+	}
+	if updates.Pts != 1 || updates.PtsCount != 1 {
+		t.Fatalf("expected pts/pts_count to be 1/1, got %d/%d", updates.Pts, updates.PtsCount)
+	}
+	if updates.Date == 0 {
+		t.Fatal("expected non-zero date")
 	}
 }
 

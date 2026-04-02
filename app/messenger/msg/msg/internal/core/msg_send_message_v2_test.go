@@ -25,7 +25,7 @@ func TestMsgSendMessageV2RejectsEmptyOutboxList(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2ReturnsEmptyUpdatesPlaceholderForUserPeer(t *testing.T) {
+func TestMsgSendMessageV2ReturnsShortSentMessagePlaceholderForUserPeer(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.MsgSendMessageV2(&msg.TLMsgSendMessageV2{
@@ -34,7 +34,10 @@ func TestMsgSendMessageV2ReturnsEmptyUpdatesPlaceholderForUserPeer(t *testing.T)
 		PeerType:  tg.PEER_USER,
 		PeerId:    3,
 		Message: []*msg.OutboxMessage{
-			msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 1001}),
+			msg.MakeOutboxMessage(&msg.TLOutboxMessage{
+				RandomId: 1001,
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Date: 12345}).ToMessage(),
+			}),
 		},
 	})
 	if err != nil {
@@ -44,13 +47,18 @@ func TestMsgSendMessageV2ReturnsEmptyUpdatesPlaceholderForUserPeer(t *testing.T)
 		t.Fatal("expected updates result, got nil")
 	}
 
-	updates, ok := result.Clazz.(*tg.TLUpdates)
+	updates, ok := result.ToUpdateShortSentMessage()
 	if !ok {
-		t.Fatalf("expected updates placeholder, got %T", result.Clazz)
+		t.Fatalf("expected updateShortSentMessage placeholder, got %T", result.Clazz)
 	}
-	if len(updates.Updates) != 0 || len(updates.Users) != 0 || len(updates.Chats) != 0 {
-		t.Fatalf("expected empty updates payload, got updates=%d users=%d chats=%d",
-			len(updates.Updates), len(updates.Users), len(updates.Chats))
+	if !updates.Out {
+		t.Fatal("expected out=true")
+	}
+	if updates.Id != 1001 {
+		t.Fatalf("expected placeholder id=1001, got %d", updates.Id)
+	}
+	if updates.Date != 12345 {
+		t.Fatalf("expected date=12345 from outbox message, got %d", updates.Date)
 	}
 }
 
