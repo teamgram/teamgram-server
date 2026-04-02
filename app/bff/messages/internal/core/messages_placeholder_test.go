@@ -101,3 +101,76 @@ func TestMessagesPlaceholderRejectsChannelPeer(t *testing.T) {
 		t.Fatalf("expected ErrEnterpriseIsBlocked, got %v", err)
 	}
 }
+
+func TestMessagesQueryPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	history, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId: 20,
+		Limit:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	historyMsgs, ok := history.ToMessagesMessages()
+	if !ok || len(historyMsgs.Messages) != 2 {
+		t.Fatalf("expected 2 history placeholders, got %#v", history)
+	}
+
+	first, ok := historyMsgs.Messages[0].(*tg.TLMessage)
+	if !ok || first.Id != 20 {
+		t.Fatalf("expected first placeholder id=20, got %#v", historyMsgs.Messages[0])
+	}
+
+	getMessages, err := c.MessagesGetMessages(&tg.TLMessagesGetMessages{
+		Id_VECTORINPUTMESSAGE: []tg.InputMessageClazz{
+			tg.MakeTLInputMessageID(&tg.TLInputMessageID{Id: 7}),
+			tg.MakeTLInputMessageReplyTo(&tg.TLInputMessageReplyTo{Id: 9}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	getMsgs, ok := getMessages.ToMessagesMessages()
+	if !ok || len(getMsgs.Messages) != 2 {
+		t.Fatalf("expected 2 getMessages placeholders, got %#v", getMessages)
+	}
+
+	second, ok := getMsgs.Messages[1].(*tg.TLMessage)
+	if !ok || second.Id != 9 {
+		t.Fatalf("expected second placeholder id=9, got %#v", getMsgs.Messages[1])
+	}
+
+	unread, err := c.MessagesGetUnreadMentions(&tg.TLMessagesGetUnreadMentions{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId: 30,
+		Limit:    1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	unreadMsgs, ok := unread.ToMessagesMessages()
+	if !ok || len(unreadMsgs.Messages) != 1 {
+		t.Fatalf("expected 1 unread mention placeholder, got %#v", unread)
+	}
+
+	unreadMsg, ok := unreadMsgs.Messages[0].(*tg.TLMessage)
+	if !ok || !unreadMsg.Mentioned {
+		t.Fatalf("expected mentioned placeholder message, got %#v", unreadMsgs.Messages[0])
+	}
+
+	search, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Q:        "hi",
+		OffsetId: 40,
+		Limit:    1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	searchMsgs, ok := search.ToMessagesMessages()
+	if !ok || len(searchMsgs.Messages) != 1 {
+		t.Fatalf("expected 1 search placeholder, got %#v", search)
+	}
+}
