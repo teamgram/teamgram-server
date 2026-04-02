@@ -34,6 +34,11 @@ func (c *AuthorizationCore) AuthSignIn(in *tg.TLAuthSignIn) (*tg.AuthAuthorizati
 		return nil, err
 	}
 
+	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+		c.Logger.Errorf("auth.signIn - invalid phone_number(%s): %v", in.PhoneNumber, err)
+		return nil, tg.Err406PhoneNumberInvalid
+	}
+
 	// TODO: continue implementing the full sign-in path.
 	return nil, tg.ErrInternalServerError
 }
