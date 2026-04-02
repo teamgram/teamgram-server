@@ -27,6 +27,14 @@ var _ *tg.Bool
 // message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUserMessageList(in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error) {
 	return &message.VectorMessageBox{
-		Datas: []tg.MessageBoxClazz{},
+		Datas: collectPlaceholderMessageBoxes(in.UserId, in.IdList),
 	}, nil
+}
+
+func collectPlaceholderMessageBoxes(userID int64, ids []int32) []tg.MessageBoxClazz {
+	boxes := make([]tg.MessageBoxClazz, 0, len(ids))
+	for _, id := range ids {
+		boxes = append(boxes, makePlaceholderMessageBox(userID, id))
+	}
+	return boxes
 }
