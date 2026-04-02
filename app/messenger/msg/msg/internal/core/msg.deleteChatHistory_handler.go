@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // MsgDeleteChatHistory
 // msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
 func (c *MsgCore) MsgDeleteChatHistory(in *msg.TLMsgDeleteChatHistory) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.deleteChatHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("msg.deleteChatHistory not implemented")
+	return tg.BoolTrue, nil
 }

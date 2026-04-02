@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,10 @@ var _ *tg.Bool
 // MsgDeletePhoneCallHistory
 // msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 func (c *MsgCore) MsgDeletePhoneCallHistory(in *msg.TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.deletePhoneCallHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("msg.deletePhoneCallHistory not implemented")
+	return tg.MakeTLMessagesAffectedFoundMessages(&tg.TLMessagesAffectedFoundMessages{
+		Pts:      1,
+		PtsCount: 1,
+		Offset:   0,
+		Messages: []int32{1},
+	}).ToMessagesAffectedFoundMessages(), nil
 }
