@@ -17,16 +17,22 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReadMessageContents
 // messages.readMessageContents#36a73f77 id:Vector<int> = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadMessageContents(in *tg.TLMessagesReadMessageContents) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.readMessageContents blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	pts := int32(1)
+	ptsCount := int32(1)
+	if len(in.Id) > 0 {
+		ptsCount = int32(len(in.Id))
+		for _, id := range in.Id {
+			if id > pts {
+				pts = id
+			}
+		}
+	}
 
-	return nil, errors.New("messages.readMessageContents not implemented")
+	return makeBffAffectedMessagesPlaceholder(pts, ptsCount), nil
 }

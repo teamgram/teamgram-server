@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,19 @@ import (
 // MessagesUpdatePinnedMessage
 // messages.updatePinnedMessage#d2aaf7ec flags:# silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer:InputPeer id:int = Updates;
 func (c *MessagesCore) MessagesUpdatePinnedMessage(in *tg.TLMessagesUpdatePinnedMessage) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.updatePinnedMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.updatePinnedMessage not implemented")
+	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
+			Pinned:   !in.Unpin,
+			Peer:     peer,
+			Messages: []int32{in.Id},
+			Pts:      1,
+			PtsCount: 1,
+		}),
+		Date: int32(time.Now().Unix()),
+	}).ToUpdates(), nil
 }
