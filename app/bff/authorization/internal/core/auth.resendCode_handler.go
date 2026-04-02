@@ -17,7 +17,8 @@
 package core
 
 import (
-	"errors"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +26,67 @@ import (
 // AuthResendCode
 // auth.resendCode#cae47523 flags:# phone_number:string phone_code_hash:string reason:flags.0?string = auth.SentCode;
 func (c *AuthorizationCore) AuthResendCode(in *tg.TLAuthResendCode) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.resendCode blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.PhoneCodeHash == "" {
+		err := tg.ErrPhoneCodeHashEmpty
+		c.Logger.Errorf("auth.resendCode - error: %v", err)
+		return nil, err
+	}
 
-	return nil, errors.New("auth.resendCode not implemented")
+	_, phoneNumber, err := checkPhoneNumberInvalid(in.PhoneNumber)
+	if err != nil {
+		c.Logger.Errorf("auth.resendCode - invalid phone_number(%s): %v", in.PhoneNumber, err)
+		return nil, tg.Err406PhoneNumberInvalid
+	}
+
+	if c.svcCtx == nil || c.svcCtx.Dao == nil || c.svcCtx.AuthLogic == nil || c.MD == nil {
+		err = tg.ErrInternalServerError
+		c.Logger.Errorf("auth.resendCode - missing service context or metadata: %v", err)
+		return nil, err
+	}
+
+	actionType := logic.GetActionType(in)
+	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.PermAuthKeyId, phoneNumber, actionType); err != nil {
+		c.Logger.Errorf("auth.resendCode - check can do action failed, phone_number(%s): %v", phoneNumber, err)
+		return nil, err
+	}
+
+	codeData, err := c.svcCtx.AuthLogic.DoAuthReSendCode(
+		c.ctx,
+		c.MD.PermAuthKeyId,
+		phoneNumber,
+		in.PhoneCodeHash,
+		func(codeData *model.PhoneCodeTransaction) error {
+			if c.svcCtx.AuthLogic.VerifyCodeInterface != nil {
+				extraData, err := c.svcCtx.AuthLogic.VerifyCodeInterface.SendSmsVerifyCode(
+					c.ctx,
+					phoneNumber,
+					codeData.PhoneCode,
+					codeData.PhoneCodeHash)
+				if err != nil {
+					return err
+				}
+				codeData.PhoneCodeExtraData = extraData
+			}
+
+			codeData.SentCodeType = model.SentCodeTypeSms
+			codeData.NextCodeType = model.CodeTypeSms
+			codeData.State = model.CodeStateSent
+			return nil
+		})
+	if err != nil {
+		c.Logger.Errorf("auth.resendCode - resend failed, phone_number(%s): %v", phoneNumber, err)
+		return nil, err
+	}
+
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.PermAuthKeyId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			actionType,
+			"auth.resendCode")
+	}
+
+	return codeData.ToAuthSentCode(), nil
 }
