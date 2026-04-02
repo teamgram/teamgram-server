@@ -285,14 +285,6 @@ func (m *AuthLogic) DoAuthSignUp(ctx context.Context, authKeyId int64, phoneNumb
 	}
 
 	codeData.State = model.CodeStateOk
-
-	/*
-		if !m.AuthCore.UpdatePhoneCodeData(ctx, authKeyId, phoneNumber, phoneCodeHash, codeData) {
-			err = mtproto.ErrInternalServerError
-			return
-		}
-
-		m.PhoneCodeTransaction = codeData
-	*/
+	err = m.Dao.UpdatePhoneCodeData(ctx, authKeyId, phoneNumber, phoneCodeHash, codeData)
 	return
 }
