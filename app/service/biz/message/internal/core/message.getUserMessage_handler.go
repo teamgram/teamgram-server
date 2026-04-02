@@ -26,5 +26,24 @@ var _ *tg.Bool
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
 func (c *MessageCore) MessageGetUserMessage(in *message.TLMessageGetUserMessage) (*tg.MessageBox, error) {
-	return tg.MakeTLMessageBox(&tg.TLMessageBox{}).ToMessageBox(), nil
+	return makePlaceholderMessageBox(in.UserId, in.Id), nil
+}
+
+func makePlaceholderMessageBox(userID int64, messageID int32) *tg.MessageBox {
+	return tg.MakeTLMessageBox(&tg.TLMessageBox{
+		UserId:       userID,
+		MessageId:    messageID,
+		SenderUserId: userID,
+		PeerType:     tg.PEER_USER,
+		PeerId:       userID,
+		Message: tg.MakeTLMessage(&tg.TLMessage{
+			Out:     true,
+			Id:      messageID,
+			Date:    int32(messageID),
+			Message: "placeholder",
+		}),
+		Pts:      1,
+		PtsCount: 1,
+		Reaction: "",
+	}).ToMessageBox()
 }

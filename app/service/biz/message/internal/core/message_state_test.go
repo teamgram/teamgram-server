@@ -7,7 +7,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 )
 
-func TestMessageGetUserMessageListReturnsEmptyPlaceholder(t *testing.T) {
+func TestMessageGetUserMessageListReturnsStablePlaceholderBoxes(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.MessageGetUserMessageList(&message.TLMessageGetUserMessageList{
@@ -20,8 +20,17 @@ func TestMessageGetUserMessageListReturnsEmptyPlaceholder(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected message box vector, got nil")
 	}
-	if len(result.Datas) != 0 {
-		t.Fatalf("expected empty placeholder list, got %d items", len(result.Datas))
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected 2 placeholder boxes, got %d items", len(result.Datas))
+	}
+
+	first := result.Datas[0]
+	if first.MessageId != 10 {
+		t.Fatalf("expected first message_id=10, got %d", first.MessageId)
+	}
+	second := result.Datas[1]
+	if second.MessageId != 11 {
+		t.Fatalf("expected second message_id=11, got %d", second.MessageId)
 	}
 }
 
@@ -37,5 +46,11 @@ func TestMessageGetUserMessageReturnsPlaceholderMessageBox(t *testing.T) {
 	}
 	if result == nil {
 		t.Fatal("expected message box, got nil")
+	}
+	if result.MessageId != 10 {
+		t.Fatalf("expected message_id=10, got %d", result.MessageId)
+	}
+	if result.UserId != 1 {
+		t.Fatalf("expected user_id=1, got %d", result.UserId)
 	}
 }
