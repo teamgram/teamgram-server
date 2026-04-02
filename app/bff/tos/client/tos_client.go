@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -22,6 +22,7 @@ import (
 type TosClient interface {
 	HelpGetTermsOfServiceUpdate(ctx context.Context, in *tg.TLHelpGetTermsOfServiceUpdate) (*tg.HelpTermsOfServiceUpdate, error)
 	HelpAcceptTermsOfService(ctx context.Context, in *tg.TLHelpAcceptTermsOfService) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultTosClient struct {
@@ -32,6 +33,13 @@ func NewTosClient(cli client.Client) TosClient {
 	return &defaultTosClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultTosClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // HelpGetTermsOfServiceUpdate
