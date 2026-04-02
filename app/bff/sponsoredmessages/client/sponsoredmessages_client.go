@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -27,6 +27,7 @@ type SponsoredMessagesClient interface {
 	MessagesReportSponsoredMessage(ctx context.Context, in *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error)
 	MessagesGetSponsoredMessages(ctx context.Context, in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error)
 	ChannelsRestrictSponsoredMessages(ctx context.Context, in *tg.TLChannelsRestrictSponsoredMessages) (*tg.Updates, error)
+	Close() error
 }
 
 type defaultSponsoredMessagesClient struct {
@@ -37,6 +38,13 @@ func NewSponsoredMessagesClient(cli client.Client) SponsoredMessagesClient {
 	return &defaultSponsoredMessagesClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultSponsoredMessagesClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountToggleSponsoredMessages

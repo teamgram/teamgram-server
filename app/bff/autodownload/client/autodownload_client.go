@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -22,6 +22,7 @@ import (
 type AutoDownloadClient interface {
 	AccountGetAutoDownloadSettings(ctx context.Context, in *tg.TLAccountGetAutoDownloadSettings) (*tg.AccountAutoDownloadSettings, error)
 	AccountSaveAutoDownloadSettings(ctx context.Context, in *tg.TLAccountSaveAutoDownloadSettings) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultAutoDownloadClient struct {
@@ -32,6 +33,13 @@ func NewAutoDownloadClient(cli client.Client) AutoDownloadClient {
 	return &defaultAutoDownloadClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultAutoDownloadClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountGetAutoDownloadSettings

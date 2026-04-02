@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package userchannelprofilesservice
@@ -275,8 +275,13 @@ func (p *AccountUpdateProfileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateProfileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateProfile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -401,8 +406,13 @@ func (p *AccountUpdateStatusArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateStatusArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateStatus)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -527,8 +537,13 @@ func (p *AccountUpdateBirthdayArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateBirthdayArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateBirthday)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -653,8 +668,13 @@ func (p *AccountUpdatePersonalChannelArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountUpdatePersonalChannelArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdatePersonalChannel)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -779,8 +799,13 @@ func (p *AccountSetMainProfileTabArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *AccountSetMainProfileTabArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSetMainProfileTab)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -905,8 +930,13 @@ func (p *AccountSaveMusicArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSaveMusicArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSaveMusic)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1031,8 +1061,13 @@ func (p *AccountGetSavedMusicIdsArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountGetSavedMusicIdsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetSavedMusicIds)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1157,8 +1192,13 @@ func (p *UsersGetSavedMusicArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetSavedMusicArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetSavedMusic)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1283,8 +1323,13 @@ func (p *UsersGetSavedMusicByIDArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetSavedMusicByIDArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetSavedMusicByID)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1409,8 +1454,13 @@ func (p *UsersSuggestBirthdayArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersSuggestBirthdayArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersSuggestBirthday)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1535,8 +1585,13 @@ func (p *ContactsGetBirthdaysArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetBirthdaysArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetBirthdays)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1661,8 +1716,13 @@ func (p *PhotosUpdateProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *PhotosUpdateProfilePhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPhotosUpdateProfilePhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1787,8 +1847,13 @@ func (p *PhotosUploadProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *PhotosUploadProfilePhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPhotosUploadProfilePhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1913,8 +1978,13 @@ func (p *PhotosDeletePhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PhotosDeletePhotosArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPhotosDeletePhotos)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2039,8 +2109,13 @@ func (p *PhotosGetUserPhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PhotosGetUserPhotosArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPhotosGetUserPhotos)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2165,8 +2240,13 @@ func (p *PhotosUploadContactProfilePhotoArgs) Encode(x *bin.Encoder, layer int32
 
 func (p *PhotosUploadContactProfilePhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPhotosUploadContactProfilePhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2291,8 +2371,13 @@ func (p *ChannelsSetMainProfileTabArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *ChannelsSetMainProfileTabArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLChannelsSetMainProfileTab)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2417,8 +2502,13 @@ func (p *AccountUpdateVerifiedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateVerifiedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateVerified)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

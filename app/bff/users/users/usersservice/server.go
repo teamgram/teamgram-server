@@ -2,23 +2,27 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package usersservice
 
 import (
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/server"
 )
 
+// Deprecated: prefer pkg/net/kitex.NewServer via the generated internal server bootstrap for TL-aware transport setup.
 // NewServer creates a server.Server with the given handler and options.
 func NewServer(handler tg.RPCUsers, opts ...server.Option) server.Server {
 	var options []server.Option
+
+	options = append(options, server.WithCodec(codec.NewZRpcCodec(false)))
 
 	options = append(options, opts...)
 

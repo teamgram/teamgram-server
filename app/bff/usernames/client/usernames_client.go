@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ type UsernamesClient interface {
 	ContactsResolveUsername(ctx context.Context, in *tg.TLContactsResolveUsername) (*tg.ContactsResolvedPeer, error)
 	ChannelsCheckUsername(ctx context.Context, in *tg.TLChannelsCheckUsername) (*tg.Bool, error)
 	ChannelsUpdateUsername(ctx context.Context, in *tg.TLChannelsUpdateUsername) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultUsernamesClient struct {
@@ -35,6 +36,13 @@ func NewUsernamesClient(cli client.Client) UsernamesClient {
 	return &defaultUsernamesClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultUsernamesClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountCheckUsername

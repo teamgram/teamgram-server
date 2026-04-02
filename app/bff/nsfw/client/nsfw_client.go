@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -22,6 +22,7 @@ import (
 type NsfwClient interface {
 	AccountSetContentSettings(ctx context.Context, in *tg.TLAccountSetContentSettings) (*tg.Bool, error)
 	AccountGetContentSettings(ctx context.Context, in *tg.TLAccountGetContentSettings) (*tg.AccountContentSettings, error)
+	Close() error
 }
 
 type defaultNsfwClient struct {
@@ -32,6 +33,13 @@ func NewNsfwClient(cli client.Client) NsfwClient {
 	return &defaultNsfwClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultNsfwClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountSetContentSettings

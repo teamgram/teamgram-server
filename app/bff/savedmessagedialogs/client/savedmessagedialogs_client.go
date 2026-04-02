@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -29,6 +29,7 @@ type SavedMessageDialogsClient interface {
 	MessagesGetSavedDialogsByID(ctx context.Context, in *tg.TLMessagesGetSavedDialogsByID) (*tg.MessagesSavedDialogs, error)
 	MessagesReadSavedHistory(ctx context.Context, in *tg.TLMessagesReadSavedHistory) (*tg.Bool, error)
 	ChannelsGetMessageAuthor(ctx context.Context, in *tg.TLChannelsGetMessageAuthor) (*tg.User, error)
+	Close() error
 }
 
 type defaultSavedMessageDialogsClient struct {
@@ -39,6 +40,13 @@ func NewSavedMessageDialogsClient(cli client.Client) SavedMessageDialogsClient {
 	return &defaultSavedMessageDialogsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultSavedMessageDialogsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesGetSavedDialogs

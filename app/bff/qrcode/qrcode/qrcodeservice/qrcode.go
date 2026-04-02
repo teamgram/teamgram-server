@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package qrcodeservice
@@ -170,8 +170,13 @@ func (p *AuthExportLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthExportLoginTokenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAuthExportLoginToken)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -296,8 +301,13 @@ func (p *AuthImportLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthImportLoginTokenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAuthImportLoginToken)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -422,8 +432,13 @@ func (p *AuthAcceptLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthAcceptLoginTokenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAuthAcceptLoginToken)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

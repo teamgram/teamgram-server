@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,6 +23,7 @@ type QrCodeClient interface {
 	AuthExportLoginToken(ctx context.Context, in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error)
 	AuthImportLoginToken(ctx context.Context, in *tg.TLAuthImportLoginToken) (*tg.AuthLoginToken, error)
 	AuthAcceptLoginToken(ctx context.Context, in *tg.TLAuthAcceptLoginToken) (*tg.Authorization, error)
+	Close() error
 }
 
 type defaultQrCodeClient struct {
@@ -33,6 +34,13 @@ func NewQrCodeClient(cli client.Client) QrCodeClient {
 	return &defaultQrCodeClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultQrCodeClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AuthExportLoginToken

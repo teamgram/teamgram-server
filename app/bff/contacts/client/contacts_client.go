@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -43,6 +43,7 @@ type ContactsClient interface {
 	ContactsEditCloseFriends(ctx context.Context, in *tg.TLContactsEditCloseFriends) (*tg.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *tg.TLContactsSetBlocked) (*tg.Bool, error)
 	ContactsUpdateContactNote(ctx context.Context, in *tg.TLContactsUpdateContactNote) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultContactsClient struct {
@@ -53,6 +54,13 @@ func NewContactsClient(cli client.Client) ContactsClient {
 	return &defaultContactsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultContactsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountGetContactSignUpNotification

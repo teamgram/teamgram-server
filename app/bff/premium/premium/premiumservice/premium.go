@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package premiumservice
@@ -177,8 +177,13 @@ func (p *HelpGetPremiumPromoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetPremiumPromoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLHelpGetPremiumPromo)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -303,8 +308,13 @@ func (p *PaymentsAssignAppStoreTransactionArgs) Encode(x *bin.Encoder, layer int
 
 func (p *PaymentsAssignAppStoreTransactionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPaymentsAssignAppStoreTransaction)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -429,8 +439,13 @@ func (p *PaymentsAssignPlayMarketTransactionArgs) Encode(x *bin.Encoder, layer i
 
 func (p *PaymentsAssignPlayMarketTransactionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPaymentsAssignPlayMarketTransaction)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -555,8 +570,13 @@ func (p *PaymentsCanPurchaseStoreArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *PaymentsCanPurchaseStoreArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLPaymentsCanPurchaseStore)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

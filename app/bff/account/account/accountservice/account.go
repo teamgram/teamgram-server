@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package accountservice
@@ -205,8 +205,13 @@ func (p *AccountDeleteAccountArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountDeleteAccountArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountDeleteAccount)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -331,8 +336,13 @@ func (p *AccountGetAccountTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountGetAccountTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetAccountTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -457,8 +467,13 @@ func (p *AccountSetAccountTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSetAccountTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSetAccountTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -583,8 +598,13 @@ func (p *AccountSendChangePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountSendChangePhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSendChangePhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -709,8 +729,13 @@ func (p *AccountChangePhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountChangePhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountChangePhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -835,8 +860,13 @@ func (p *AccountResetAuthorizationArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *AccountResetAuthorizationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountResetAuthorization)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -961,8 +991,13 @@ func (p *AccountSendConfirmPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountSendConfirmPhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSendConfirmPhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1087,8 +1122,13 @@ func (p *AccountConfirmPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountConfirmPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountConfirmPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

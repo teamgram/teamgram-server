@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chatsservice
@@ -13,6 +13,7 @@ package chatsservice
 import (
 	"context"
 
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -35,14 +36,19 @@ type Client interface {
 	MessagesEditChatDefaultBannedRights(ctx context.Context, req *tg.TLMessagesEditChatDefaultBannedRights, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	MessagesDeleteChat(ctx context.Context, req *tg.TLMessagesDeleteChat, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesGetMessageReadParticipants(ctx context.Context, req *tg.TLMessagesGetMessageReadParticipants, callOptions ...callopt.Option) (r *tg.VectorReadParticipantDate, err error)
+	MessagesEditChatCreator(ctx context.Context, req *tg.TLMessagesEditChatCreator, callOptions ...callopt.Option) (r *tg.Updates, err error)
+	MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, req *tg.TLMessagesGetFutureChatCreatorAfterLeave, callOptions ...callopt.Option) (r *tg.User, err error)
+	MessagesEditChatParticipantRank(ctx context.Context, req *tg.TLMessagesEditChatParticipantRank, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	ChannelsConvertToGigagroup(ctx context.Context, req *tg.TLChannelsConvertToGigagroup, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	ChannelsSetEmojiStickers(ctx context.Context, req *tg.TLChannelsSetEmojiStickers, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
+// Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
 // NewClient creates a client for the service defined in IDL.
 func NewClient(destService string, opts ...client.Option) (Client, error) {
 	var options []client.Option
 	options = append(options, client.WithDestService(destService))
+	options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 
 	options = append(options, opts...)
 
@@ -142,6 +148,21 @@ func (p *kChatsClient) MessagesDeleteChat(ctx context.Context, req *tg.TLMessage
 func (p *kChatsClient) MessagesGetMessageReadParticipants(ctx context.Context, req *tg.TLMessagesGetMessageReadParticipants, callOptions ...callopt.Option) (r *tg.VectorReadParticipantDate, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MessagesGetMessageReadParticipants(ctx, req)
+}
+
+func (p *kChatsClient) MessagesEditChatCreator(ctx context.Context, req *tg.TLMessagesEditChatCreator, callOptions ...callopt.Option) (r *tg.Updates, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MessagesEditChatCreator(ctx, req)
+}
+
+func (p *kChatsClient) MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, req *tg.TLMessagesGetFutureChatCreatorAfterLeave, callOptions ...callopt.Option) (r *tg.User, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MessagesGetFutureChatCreatorAfterLeave(ctx, req)
+}
+
+func (p *kChatsClient) MessagesEditChatParticipantRank(ctx context.Context, req *tg.TLMessagesEditChatParticipantRank, callOptions ...callopt.Option) (r *tg.Updates, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MessagesEditChatParticipantRank(ctx, req)
 }
 
 func (p *kChatsClient) ChannelsConvertToGigagroup(ctx context.Context, req *tg.TLChannelsConvertToGigagroup, callOptions ...callopt.Option) (r *tg.Updates, err error) {

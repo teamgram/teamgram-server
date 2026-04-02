@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ type AccountClient interface {
 	AccountResetAuthorization(ctx context.Context, in *tg.TLAccountResetAuthorization) (*tg.Bool, error)
 	AccountSendConfirmPhoneCode(ctx context.Context, in *tg.TLAccountSendConfirmPhoneCode) (*tg.AuthSentCode, error)
 	AccountConfirmPhone(ctx context.Context, in *tg.TLAccountConfirmPhone) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultAccountClient struct {
@@ -38,6 +39,13 @@ func NewAccountClient(cli client.Client) AccountClient {
 	return &defaultAccountClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultAccountClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountDeleteAccount

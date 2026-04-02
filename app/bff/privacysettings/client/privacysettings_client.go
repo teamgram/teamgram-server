@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -27,6 +27,7 @@ type PrivacySettingsClient interface {
 	UsersGetRequirementsToContact(ctx context.Context, in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesSetDefaultHistoryTTL) (*tg.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error)
+	Close() error
 }
 
 type defaultPrivacySettingsClient struct {
@@ -37,6 +38,13 @@ func NewPrivacySettingsClient(cli client.Client) PrivacySettingsClient {
 	return &defaultPrivacySettingsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultPrivacySettingsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountGetPrivacy

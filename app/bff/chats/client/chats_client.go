@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -34,8 +34,12 @@ type ChatsClient interface {
 	MessagesEditChatDefaultBannedRights(ctx context.Context, in *tg.TLMessagesEditChatDefaultBannedRights) (*tg.Updates, error)
 	MessagesDeleteChat(ctx context.Context, in *tg.TLMessagesDeleteChat) (*tg.Bool, error)
 	MessagesGetMessageReadParticipants(ctx context.Context, in *tg.TLMessagesGetMessageReadParticipants) (*tg.VectorReadParticipantDate, error)
+	MessagesEditChatCreator(ctx context.Context, in *tg.TLMessagesEditChatCreator) (*tg.Updates, error)
+	MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, in *tg.TLMessagesGetFutureChatCreatorAfterLeave) (*tg.User, error)
+	MessagesEditChatParticipantRank(ctx context.Context, in *tg.TLMessagesEditChatParticipantRank) (*tg.Updates, error)
 	ChannelsConvertToGigagroup(ctx context.Context, in *tg.TLChannelsConvertToGigagroup) (*tg.Updates, error)
 	ChannelsSetEmojiStickers(ctx context.Context, in *tg.TLChannelsSetEmojiStickers) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultChatsClient struct {
@@ -46,6 +50,13 @@ func NewChatsClient(cli client.Client) ChatsClient {
 	return &defaultChatsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultChatsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesGetChats
@@ -144,6 +155,27 @@ func (m *defaultChatsClient) MessagesDeleteChat(ctx context.Context, in *tg.TLMe
 func (m *defaultChatsClient) MessagesGetMessageReadParticipants(ctx context.Context, in *tg.TLMessagesGetMessageReadParticipants) (*tg.VectorReadParticipantDate, error) {
 	cli := chatsservice.NewRPCChatsClient(m.cli)
 	return cli.MessagesGetMessageReadParticipants(ctx, in)
+}
+
+// MessagesEditChatCreator
+// messages.editChatCreator#f743b857 peer:InputPeer user_id:InputUser password:InputCheckPasswordSRP = Updates;
+func (m *defaultChatsClient) MessagesEditChatCreator(ctx context.Context, in *tg.TLMessagesEditChatCreator) (*tg.Updates, error) {
+	cli := chatsservice.NewRPCChatsClient(m.cli)
+	return cli.MessagesEditChatCreator(ctx, in)
+}
+
+// MessagesGetFutureChatCreatorAfterLeave
+// messages.getFutureChatCreatorAfterLeave#3b7d0ea6 peer:InputPeer = User;
+func (m *defaultChatsClient) MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, in *tg.TLMessagesGetFutureChatCreatorAfterLeave) (*tg.User, error) {
+	cli := chatsservice.NewRPCChatsClient(m.cli)
+	return cli.MessagesGetFutureChatCreatorAfterLeave(ctx, in)
+}
+
+// MessagesEditChatParticipantRank
+// messages.editChatParticipantRank#a00f32b0 peer:InputPeer participant:InputPeer rank:string = Updates;
+func (m *defaultChatsClient) MessagesEditChatParticipantRank(ctx context.Context, in *tg.TLMessagesEditChatParticipantRank) (*tg.Updates, error) {
+	cli := chatsservice.NewRPCChatsClient(m.cli)
+	return cli.MessagesEditChatParticipantRank(ctx, in)
 }
 
 // ChannelsConvertToGigagroup

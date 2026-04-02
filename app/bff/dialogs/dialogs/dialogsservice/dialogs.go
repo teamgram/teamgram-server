@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dialogsservice
@@ -240,8 +240,13 @@ func (p *MessagesGetDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -366,8 +371,13 @@ func (p *MessagesSetTypingArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesSetTypingArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesSetTyping)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -492,8 +502,13 @@ func (p *MessagesGetPeerSettingsArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesGetPeerSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetPeerSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -618,8 +633,13 @@ func (p *MessagesGetPeerDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetPeerDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetPeerDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -744,8 +764,13 @@ func (p *MessagesToggleDialogPinArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesToggleDialogPinArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesToggleDialogPin)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -870,8 +895,13 @@ func (p *MessagesReorderPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesReorderPinnedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesReorderPinnedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -996,8 +1026,13 @@ func (p *MessagesGetPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesGetPinnedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetPinnedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1122,8 +1157,13 @@ func (p *MessagesSendScreenshotNotificationArgs) Encode(x *bin.Encoder, layer in
 
 func (p *MessagesSendScreenshotNotificationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesSendScreenshotNotification)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1248,8 +1288,13 @@ func (p *MessagesMarkDialogUnreadArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesMarkDialogUnreadArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesMarkDialogUnread)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1374,8 +1419,13 @@ func (p *MessagesGetDialogUnreadMarksArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesGetDialogUnreadMarksArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetDialogUnreadMarks)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1500,8 +1550,13 @@ func (p *MessagesGetOnlinesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetOnlinesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetOnlines)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1626,8 +1681,13 @@ func (p *MessagesHidePeerSettingsBarArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *MessagesHidePeerSettingsBarArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesHidePeerSettingsBar)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1752,8 +1812,13 @@ func (p *MessagesSetHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesSetHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesSetHistoryTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

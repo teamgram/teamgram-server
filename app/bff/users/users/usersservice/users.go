@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package usersservice
@@ -177,8 +177,13 @@ func (p *UsersGetUsersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetUsersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetUsers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -303,8 +308,13 @@ func (p *UsersGetFullUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetFullUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetFullUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -429,8 +439,13 @@ func (p *ContactsResolvePhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsResolvePhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsResolvePhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -555,8 +570,13 @@ func (p *UsersGetMeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetMeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetMe)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

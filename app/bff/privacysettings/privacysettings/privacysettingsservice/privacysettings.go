@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package privacysettingsservice
@@ -198,8 +198,13 @@ func (p *AccountGetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountGetPrivacyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetPrivacy)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -324,8 +329,13 @@ func (p *AccountSetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSetPrivacyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSetPrivacy)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -450,8 +460,13 @@ func (p *AccountGetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32
 
 func (p *AccountGetGlobalPrivacySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetGlobalPrivacySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -576,8 +591,13 @@ func (p *AccountSetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32
 
 func (p *AccountSetGlobalPrivacySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSetGlobalPrivacySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -702,8 +722,13 @@ func (p *UsersGetRequirementsToContactArgs) Encode(x *bin.Encoder, layer int32) 
 
 func (p *UsersGetRequirementsToContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersGetRequirementsToContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -828,8 +853,13 @@ func (p *MessagesSetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesSetDefaultHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesSetDefaultHistoryTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -954,8 +984,13 @@ func (p *MessagesGetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesGetDefaultHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetDefaultHistoryTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package sponsoredmessagesservice
@@ -198,8 +198,13 @@ func (p *AccountToggleSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int32)
 
 func (p *AccountToggleSponsoredMessagesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountToggleSponsoredMessages)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -324,8 +329,13 @@ func (p *ContactsGetSponsoredPeersArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *ContactsGetSponsoredPeersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetSponsoredPeers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -450,8 +460,13 @@ func (p *MessagesViewSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesViewSponsoredMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesViewSponsoredMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -576,8 +591,13 @@ func (p *MessagesClickSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32) 
 
 func (p *MessagesClickSponsoredMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesClickSponsoredMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -702,8 +722,13 @@ func (p *MessagesReportSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesReportSponsoredMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesReportSponsoredMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -828,8 +853,13 @@ func (p *MessagesGetSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesGetSponsoredMessagesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetSponsoredMessages)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -954,8 +984,13 @@ func (p *ChannelsRestrictSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int
 
 func (p *ChannelsRestrictSponsoredMessagesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLChannelsRestrictSponsoredMessages)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
