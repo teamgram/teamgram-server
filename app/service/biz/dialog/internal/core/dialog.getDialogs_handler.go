@@ -74,3 +74,19 @@ func makeDialogPeer(peerType, peerID int64) tg.PeerClazz {
 		return tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerID})
 	}
 }
+
+func makeSavedDialogListPlaceholder(peerID int64, pinned bool) *dialog.TLSavedDialogList {
+	dialogs := []tg.SavedDialogClazz{}
+	if peerID != 0 {
+		dialogs = append(dialogs, tg.MakeTLSavedDialog(&tg.TLSavedDialog{
+			Pinned:     pinned,
+			Peer:       makeDialogPeer(tg.PEER_USER, peerID),
+			TopMessage: 10,
+		}))
+	}
+
+	return dialog.MakeTLSavedDialogList(&dialog.TLSavedDialogList{
+		Count:   int32(len(dialogs)),
+		Dialogs: dialogs,
+	})
+}

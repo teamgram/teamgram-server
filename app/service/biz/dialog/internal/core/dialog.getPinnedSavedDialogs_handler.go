@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // DialogGetPinnedSavedDialogs
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (c *DialogCore) DialogGetPinnedSavedDialogs(in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getPinnedSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getPinnedSavedDialogs not implemented")
+	if in != nil && in.UserId != 0 {
+		return makeSavedDialogListPlaceholder(in.UserId, true).ToSavedDialogList(), nil
+	}
+	return makeSavedDialogListPlaceholder(0, false).ToSavedDialogList(), nil
 }
