@@ -26,7 +26,33 @@ var _ *tg.Bool
 // DialogGetDialogs
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
+	if in != nil && in.UserId != 0 {
+		return &dialog.VectorDialogExt{
+			Datas: []dialog.DialogExtClazz{
+				dialog.MakeTLDialogExt(&dialog.TLDialogExt{
+					Order:          10,
+					Dialog:         makeDialogPlaceholder(in.UserId, 10),
+					AvailableMinId: 1,
+					Date:           10,
+				}),
+			},
+		}, nil
+	}
+
 	return &dialog.VectorDialogExt{
 		Datas: []dialog.DialogExtClazz{},
 	}, nil
+}
+
+func makeDialogPlaceholder(peerID int64, topMessage int32) tg.DialogClazz {
+	return tg.MakeTLDialog(&tg.TLDialog{
+		Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: peerID,
+		}),
+		TopMessage:      topMessage,
+		ReadInboxMaxId:  topMessage,
+		ReadOutboxMaxId: topMessage,
+		UnreadCount:     0,
+		NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+	})
 }
