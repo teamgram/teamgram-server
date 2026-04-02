@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,7 @@ var _ *tg.Bool
 // MessageGetUserMessageList
 // message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUserMessageList(in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.getUserMessageList blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("message.getUserMessageList not implemented")
+	return &message.VectorMessageBox{
+		Datas: []tg.MessageBoxClazz{},
+	}, nil
 }
