@@ -476,3 +476,84 @@ func TestDialogDraftPlaceholders(t *testing.T) {
 		t.Fatalf("expected one cleared draft placeholder, got %#v", clearedDrafts)
 	}
 }
+
+func TestDialogFolderAndFilterPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	folderResult, err := c.DialogGetDialogFolder(&dialog.TLDialogGetDialogFolder{
+		UserId:   1,
+		FolderId: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if folderResult == nil || len(folderResult.Datas) != 1 {
+		t.Fatalf("expected one folder placeholder, got %#v", folderResult)
+	}
+
+	editFoldersResult, err := c.DialogEditPeerFolders(&dialog.TLDialogEditPeerFolders{
+		UserId:         1,
+		PeerDialogList: []int64{2, 3},
+		FolderId:       1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if editFoldersResult == nil || len(editFoldersResult.Datas) != 2 {
+		t.Fatalf("expected two pinned placeholders, got %#v", editFoldersResult)
+	}
+
+	filterResult, err := c.DialogGetDialogFilter(&dialog.TLDialogGetDialogFilter{
+		UserId: 1,
+		Id:     9,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if filterResult == nil || filterResult.Clazz == nil {
+		t.Fatal("expected dialog filter placeholder, got nil")
+	}
+	filterExt, ok := filterResult.Clazz.(*dialog.TLDialogFilterExt)
+	if !ok || filterExt.Id != 9 {
+		t.Fatalf("expected dialog filter id=9, got %#v", filterResult.Clazz)
+	}
+
+	filtersResult, err := c.DialogGetDialogFilters(&dialog.TLDialogGetDialogFilters{UserId: 1})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if filtersResult == nil || len(filtersResult.Datas) != 1 {
+		t.Fatalf("expected one filter placeholder, got %#v", filtersResult)
+	}
+
+	filterBySlugResult, err := c.DialogGetDialogFilterBySlug(&dialog.TLDialogGetDialogFilterBySlug{
+		UserId: 1,
+		Slug:   "demo",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	filterBySlug, ok := filterBySlugResult.Clazz.(*dialog.TLDialogFilterExt)
+	if !ok || filterBySlug.Slug != "demo" {
+		t.Fatalf("expected slug=demo placeholder, got %#v", filterBySlugResult.Clazz)
+	}
+
+	tagsResult, err := c.DialogGetDialogFilterTags(&dialog.TLDialogGetDialogFilterTags{UserId: 1})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(tagsResult) {
+		t.Fatalf("expected get tags boolTrue, got %#v", tagsResult)
+	}
+
+	toggleTagsResult, err := c.DialogToggleDialogFilterTags(&dialog.TLDialogToggleDialogFilterTags{
+		UserId:  1,
+		Enabled: tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(toggleTagsResult) {
+		t.Fatalf("expected toggle tags boolTrue, got %#v", toggleTagsResult)
+	}
+}
