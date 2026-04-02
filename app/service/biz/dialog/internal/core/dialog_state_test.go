@@ -431,3 +431,48 @@ func TestDialogThemeWallpaperAndTTLPlaceholders(t *testing.T) {
 		t.Fatalf("expected chat wallpaper boolTrue, got %#v", wallpaperResult)
 	}
 }
+
+func TestDialogDraftPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	saveResult, err := c.DialogSaveDraftMessage(&dialog.TLDialogSaveDraftMessage{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+		Message:  tg.MakeTLDraftMessageEmpty(&tg.TLDraftMessageEmpty{}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(saveResult) {
+		t.Fatalf("expected save draft boolTrue, got %#v", saveResult)
+	}
+
+	clearResult, err := c.DialogClearDraftMessage(&dialog.TLDialogClearDraftMessage{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(clearResult) {
+		t.Fatalf("expected clear draft boolTrue, got %#v", clearResult)
+	}
+
+	allDrafts, err := c.DialogGetAllDrafts(&dialog.TLDialogGetAllDrafts{UserId: 1})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if allDrafts == nil || len(allDrafts.Datas) != 1 {
+		t.Fatalf("expected one draft placeholder, got %#v", allDrafts)
+	}
+
+	clearedDrafts, err := c.DialogClearAllDrafts(&dialog.TLDialogClearAllDrafts{UserId: 1})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if clearedDrafts == nil || len(clearedDrafts.Datas) != 1 {
+		t.Fatalf("expected one cleared draft placeholder, got %#v", clearedDrafts)
+	}
+}

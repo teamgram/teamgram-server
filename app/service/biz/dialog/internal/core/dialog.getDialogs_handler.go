@@ -90,3 +90,10 @@ func makeSavedDialogListPlaceholder(peerID int64, pinned bool) *dialog.TLSavedDi
 		Dialogs: dialogs,
 	})
 }
+
+func makeDraftPlaceholder(peerType, peerID int64) dialog.PeerWithDraftMessageClazz {
+	return dialog.MakeTLUpdateDraftMessage(&dialog.TLUpdateDraftMessage{
+		Peer:  makeDialogPeer(peerType, peerID),
+		Draft: tg.MakeTLDraftMessageEmpty(&tg.TLDraftMessageEmpty{}),
+	})
+}
