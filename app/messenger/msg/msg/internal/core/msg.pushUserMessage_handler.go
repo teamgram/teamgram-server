@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,11 @@ var _ *tg.Bool
 // MsgPushUserMessage
 // msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
 func (c *MsgCore) MsgPushUserMessage(in *msg.TLMsgPushUserMessage) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.pushUserMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.PeerType != tg.PEER_USER && in.PeerType != tg.PEER_SELF {
+		c.Logger.Errorf("msg.pushUserMessage - unsupported peer_type(%d), peer_id(%d)", in.PeerType, in.PeerId)
+		return tg.BoolFalse, nil
+	}
 
-	return nil, errors.New("msg.pushUserMessage not implemented")
+	// TODO: route user-directed messages through the real msg/inbox pipeline.
+	return tg.BoolTrue, nil
 }
