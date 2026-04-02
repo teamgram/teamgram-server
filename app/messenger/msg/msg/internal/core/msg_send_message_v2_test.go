@@ -101,3 +101,38 @@ func TestMsgSendMessageV2RejectsChannelPeerPlaceholder(t *testing.T) {
 		t.Fatalf("expected nil result, got %v", result)
 	}
 }
+
+func TestMsgSendMessageV2ReusesPlaceholderIDForSameRandomID(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	req := &msg.TLMsgSendMessageV2{
+		UserId:    1,
+		AuthKeyId: 2,
+		PeerType:  tg.PEER_USER,
+		PeerId:    3,
+		Message: []*msg.OutboxMessage{
+			msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 2007}),
+		},
+	}
+
+	first, err := c.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("first send: expected nil error, got %v", err)
+	}
+	second, err := c.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("second send: expected nil error, got %v", err)
+	}
+
+	firstShort, ok := first.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected first result to be updateShortSentMessage, got %T", first.Clazz)
+	}
+	secondShort, ok := second.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected second result to be updateShortSentMessage, got %T", second.Clazz)
+	}
+	if firstShort.Id != secondShort.Id {
+		t.Fatalf("expected same placeholder id for repeated random_id, got %d vs %d", firstShort.Id, secondShort.Id)
+	}
+}
