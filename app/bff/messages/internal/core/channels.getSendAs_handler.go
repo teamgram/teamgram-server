@@ -17,16 +17,24 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChannelsGetSendAs
 // channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
 func (c *MessagesCore) ChannelsGetSendAs(in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("channels.getSendAs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("channels.getSendAs not implemented")
+	return tg.MakeTLChannelsSendAsPeers(&tg.TLChannelsSendAsPeers{
+		Peers: []tg.SendAsPeerClazz{
+			tg.MakeTLSendAsPeer(&tg.TLSendAsPeer{
+				Peer: peer,
+			}),
+		},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{},
+	}).ToChannelsSendAsPeers(), nil
 }

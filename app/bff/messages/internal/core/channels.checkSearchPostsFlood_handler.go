@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChannelsCheckSearchPostsFlood
 // channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
 func (c *MessagesCore) ChannelsCheckSearchPostsFlood(in *tg.TLChannelsCheckSearchPostsFlood) (*tg.SearchPostsFlood, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("channels.checkSearchPostsFlood blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("channels.checkSearchPostsFlood not implemented")
+	return tg.MakeTLSearchPostsFlood(&tg.TLSearchPostsFlood{
+		QueryIsFree: true,
+		TotalDaily:  1,
+		Remains:     1,
+		StarsAmount: 0,
+	}).ToSearchPostsFlood(), nil
 }

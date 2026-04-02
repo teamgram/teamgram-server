@@ -398,3 +398,51 @@ func TestMessagesMediaAndForwardPlaceholders(t *testing.T) {
 		t.Fatalf("expected forwardMessages shortSent placeholder, got %#v", forwardMessages)
 	}
 }
+
+func TestMessagesLastPlaceholderTail(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	summarizeText, err := c.MessagesSummarizeText(&tg.TLMessagesSummarizeText{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Id:   5,
+	})
+	if err != nil || summarizeText == nil || summarizeText.Text == "" {
+		t.Fatalf("expected summarizeText placeholder, got result=%#v err=%v", summarizeText, err)
+	}
+
+	composeText := tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+		Text:     "hello",
+		Entities: []tg.MessageEntityClazz{},
+	})
+	composeWithAI, err := c.MessagesComposeMessageWithAI(&tg.TLMessagesComposeMessageWithAI{
+		Text: composeText,
+	})
+	if err != nil || composeWithAI == nil || composeWithAI.ResultText == nil {
+		t.Fatalf("expected composeMessageWithAI placeholder, got result=%#v err=%v", composeWithAI, err)
+	}
+
+	sendAsPeers, err := c.ChannelsGetSendAs(&tg.TLChannelsGetSendAs{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+	})
+	if err != nil || sendAsPeers == nil || len(sendAsPeers.Peers) != 1 {
+		t.Fatalf("expected channels.getSendAs placeholder, got result=%#v err=%v", sendAsPeers, err)
+	}
+
+	searchPostsFlood, err := c.ChannelsCheckSearchPostsFlood(&tg.TLChannelsCheckSearchPostsFlood{})
+	if err != nil || searchPostsFlood == nil || !searchPostsFlood.QueryIsFree {
+		t.Fatalf("expected searchPostsFlood placeholder, got result=%#v err=%v", searchPostsFlood, err)
+	}
+
+	searchPosts, err := c.ChannelsSearchPosts(&tg.TLChannelsSearchPosts{
+		OffsetPeer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId:   12,
+		Limit:      1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	searchPostsMsgs, ok := searchPosts.ToMessagesMessages()
+	if !ok || len(searchPostsMsgs.Messages) != 1 {
+		t.Fatalf("expected channels.searchPosts placeholder, got %#v", searchPosts)
+	}
+}

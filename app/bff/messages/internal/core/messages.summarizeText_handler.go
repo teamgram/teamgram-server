@@ -17,16 +17,18 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSummarizeText
 // messages.summarizeText#9d4104e2 flags:# peer:InputPeer id:int to_lang:flags.0?string = TextWithEntities;
 func (c *MessagesCore) MessagesSummarizeText(in *tg.TLMessagesSummarizeText) (*tg.TextWithEntities, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.summarizeText blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.summarizeText not implemented")
+	return tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+		Text:     "placeholder summary",
+		Entities: []tg.MessageEntityClazz{},
+	}).ToTextWithEntities(), nil
 }

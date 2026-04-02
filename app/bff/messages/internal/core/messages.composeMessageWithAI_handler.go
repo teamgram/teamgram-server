@@ -17,16 +17,21 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesComposeMessageWithAI
 // messages.composeMessageWithAI#fd426afe flags:# proofread:flags.0?true emojify:flags.3?true text:TextWithEntities translate_to_lang:flags.1?string change_tone:flags.2?string = messages.ComposedMessageWithAI;
 func (c *MessagesCore) MessagesComposeMessageWithAI(in *tg.TLMessagesComposeMessageWithAI) (*tg.MessagesComposedMessageWithAI, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.composeMessageWithAI blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	text := ""
+	if in.Text != nil {
+		text = in.Text.Text
+	}
 
-	return nil, errors.New("messages.composeMessageWithAI not implemented")
+	return &tg.MessagesComposedMessageWithAI{
+		ResultText: tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+			Text:     text,
+			Entities: []tg.MessageEntityClazz{},
+		}),
+	}, nil
 }
