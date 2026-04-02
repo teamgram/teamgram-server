@@ -194,8 +194,8 @@ func (c *session) changeConnState(ctx context.Context, state int) {
 func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	if c.connState != kStateOnline {
 		c.changeConnState(ctx, kStateOnline)
-		c.setGatewayId(id)
 	}
+	c.setGatewayId(id)
 }
 
 func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp string, salt int64, msg *mt.TLMessage2) {
