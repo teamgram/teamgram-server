@@ -84465,6 +84465,13 @@ type RPCProfileLinks interface {
 }
 
 type RPCMessages interface {
+	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
+	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
+	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
+	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
+	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
+	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
+	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
 	MessagesGetMessages(ctx context.Context, in *TLMessagesGetMessages) (*MessagesMessages, error)
 	MessagesGetHistory(ctx context.Context, in *TLMessagesGetHistory) (*MessagesMessages, error)
 	MessagesSearch(ctx context.Context, in *TLMessagesSearch) (*MessagesMessages, error)
