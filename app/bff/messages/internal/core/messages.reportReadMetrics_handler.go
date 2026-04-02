@@ -17,16 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReportReadMetrics
 // messages.reportReadMetrics#4067c5e6 peer:InputPeer metrics:Vector<InputMessageReadMetric> = Bool;
 func (c *MessagesCore) MessagesReportReadMetrics(in *tg.TLMessagesReportReadMetrics) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.reportReadMetrics blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.reportReadMetrics not implemented")
+	return tg.BoolTrue, nil
 }

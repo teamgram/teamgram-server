@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReportMusicListen
 // messages.reportMusicListen#ddbcd819 id:InputDocument listened_duration:int = Bool;
 func (c *MessagesCore) MessagesReportMusicListen(in *tg.TLMessagesReportMusicListen) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.reportMusicListen blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.reportMusicListen not implemented")
+	return tg.BoolTrue, nil
 }

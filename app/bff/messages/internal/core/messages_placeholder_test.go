@@ -268,4 +268,24 @@ func TestMessagesEditMetaPlaceholders(t *testing.T) {
 	if err != nil || saveDefaultSendAs == nil {
 		t.Fatalf("expected bool placeholder, got result=%#v err=%v", saveDefaultSendAs, err)
 	}
+
+	reportReadMetrics, err := c.MessagesReportReadMetrics(&tg.TLMessagesReportReadMetrics{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+	})
+	if err != nil || reportReadMetrics == nil {
+		t.Fatalf("expected reportReadMetrics bool placeholder, got result=%#v err=%v", reportReadMetrics, err)
+	}
+
+	reportMusicListen, err := c.MessagesReportMusicListen(&tg.TLMessagesReportMusicListen{})
+	if err != nil || reportMusicListen == nil {
+		t.Fatalf("expected reportMusicListen bool placeholder, got result=%#v err=%v", reportMusicListen, err)
+	}
+
+	reportMessagesDelivery, err := c.MessagesReportMessagesDelivery(&tg.TLMessagesReportMessagesDelivery{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Id:   []int32{1, 2},
+	})
+	if err != nil || reportMessagesDelivery == nil {
+		t.Fatalf("expected reportMessagesDelivery bool placeholder, got result=%#v err=%v", reportMessagesDelivery, err)
+	}
 }
