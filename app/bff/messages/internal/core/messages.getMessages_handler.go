@@ -17,16 +17,24 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetMessages
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 func (c *MessagesCore) MessagesGetMessages(in *tg.TLMessagesGetMessages) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	ids := make([]int32, 0, len(in.Id_VECTORINPUTMESSAGE)+len(in.Id_VECTORINT32))
+	for _, msg := range in.Id_VECTORINPUTMESSAGE {
+		switch x := msg.(type) {
+		case *tg.TLInputMessageID:
+			ids = append(ids, x.Id)
+		case *tg.TLInputMessageReplyTo:
+			ids = append(ids, x.Id)
+		case *tg.TLInputMessagePinned:
+			ids = append(ids, 1)
+		}
+	}
+	ids = append(ids, in.Id_VECTORINT32...)
 
-	return nil, errors.New("messages.getMessages not implemented")
+	return makeBffMessagesMessagesByIDs(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 0}), ids, false), nil
 }

@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetHistory
 // messages.getHistory#4423e6c5 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.getHistory not implemented")
+	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, in.MaxId, in.MinId), historyPlaceholderCount(in.Limit), false), nil
 }

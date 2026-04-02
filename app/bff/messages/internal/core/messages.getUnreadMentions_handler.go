@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetUnreadMentions
 // messages.getUnreadMentions#f107e790 flags:# peer:InputPeer top_msg_id:flags.0?int offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
 func (c *MessagesCore) MessagesGetUnreadMentions(in *tg.TLMessagesGetUnreadMentions) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getUnreadMentions blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.getUnreadMentions not implemented")
+	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, in.MaxId, in.MinId), historyPlaceholderCount(in.Limit), true), nil
 }

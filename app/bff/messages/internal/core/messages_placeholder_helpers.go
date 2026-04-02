@@ -1,6 +1,10 @@
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 func makeBffAffectedMessagesPlaceholder(pts int32, ptsCount int32) *tg.MessagesAffectedMessages {
 	if pts <= 0 {
@@ -47,4 +51,62 @@ func bffPeerFromInput(c *MessagesCore, input tg.InputPeerClazz) (tg.PeerClazz, e
 	default:
 		return nil, tg.ErrPeerIdInvalid
 	}
+}
+
+func historyPlaceholderStartID(offsetID, maxID, minID int32) int32 {
+	switch {
+	case offsetID > 0:
+		return offsetID
+	case maxID > 0:
+		return maxID
+	case minID > 0:
+		return minID
+	default:
+		return 1
+	}
+}
+
+func historyPlaceholderCount(limit int32) int {
+	switch {
+	case limit <= 0:
+		return 0
+	case limit > 3:
+		return 3
+	default:
+		return int(limit)
+	}
+}
+
+func makeBffMessagesMessagesPlaceholder(peer tg.PeerClazz, startID int32, count int, mentioned bool) *tg.MessagesMessages {
+	ids := make([]int32, 0, count)
+	for i := 0; i < count; i++ {
+		id := startID + int32(i)
+		if id <= 0 {
+			id = int32(i + 1)
+		}
+		ids = append(ids, id)
+	}
+	return makeBffMessagesMessagesByIDs(peer, ids, mentioned)
+}
+
+func makeBffMessagesMessagesByIDs(peer tg.PeerClazz, ids []int32, mentioned bool) *tg.MessagesMessages {
+	messages := make([]tg.MessageClazz, 0, len(ids))
+	now := int32(time.Now().Unix())
+	for _, id := range ids {
+		if id <= 0 {
+			id = 1
+		}
+		messages = append(messages, tg.MakeTLMessage(&tg.TLMessage{
+			Id:        id,
+			Out:       true,
+			Mentioned: mentioned,
+			Date:      now,
+			Message:   "placeholder",
+			PeerId:    peer,
+		}))
+	}
+
+	return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: messages,
+	}).ToMessagesMessages()
 }
