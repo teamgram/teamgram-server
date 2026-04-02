@@ -16,7 +16,11 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesSendMessage
 // messages.sendMessage#983f9745 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
@@ -38,11 +42,23 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		return nil, tg.ErrMessageEmpty
 	}
 
-	return tg.MakeTLUpdates(&tg.TLUpdates{
-		Updates: []tg.UpdateClazz{},
-		Users:   []tg.UserClazz{},
-		Chats:   []tg.ChatClazz{},
-		Date:    0,
-		Seq:     0,
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       makePlaceholderMessageID(in.RandomId),
+		Pts:      1,
+		PtsCount: 1,
+		Date:     int32(time.Now().Unix()),
+		Entities: in.Entities,
 	}).ToUpdates(), nil
+}
+
+func makePlaceholderMessageID(randomID int64) int32 {
+	if randomID < 0 {
+		randomID = -randomID
+	}
+	id := int32(randomID % 0x7fffffff)
+	if id == 0 {
+		id = 1
+	}
+	return id
 }
