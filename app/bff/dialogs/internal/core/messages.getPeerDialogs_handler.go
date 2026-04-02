@@ -16,17 +16,22 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetPeerDialogs
 // messages.getPeerDialogs#e470bcfd peers:Vector<InputDialogPeer> = messages.PeerDialogs;
 func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*tg.MessagesPeerDialogs, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getPeerDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getPeerDialogs not implemented")
+	// Return an empty peer-dialogs envelope until dialog/update stores are wired.
+	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+		Dialogs:  []tg.DialogClazz{},
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+		State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+			Pts:  0,
+			Qts:  0,
+			Date: 0,
+			Seq:  0,
+		}),
+	}).ToMessagesPeerDialogs(), nil
 }
