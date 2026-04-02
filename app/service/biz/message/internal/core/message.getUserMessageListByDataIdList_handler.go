@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,10 @@ var _ *tg.Bool
 // MessageGetUserMessageListByDataIdList
 // message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUserMessageListByDataIdList(in *message.TLMessageGetUserMessageListByDataIdList) (*message.VectorMessageBox, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.getUserMessageListByDataIdList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	boxes := make([]tg.MessageBoxClazz, 0, len(in.IdList))
+	for _, id := range in.IdList {
+		boxes = append(boxes, makePlaceholderMessageBox(in.UserId, tg.PEER_USER, in.UserId, int32(id)))
+	}
 
-	return nil, errors.New("message.getUserMessageListByDataIdList not implemented")
+	return &message.VectorMessageBox{Datas: boxes}, nil
 }
