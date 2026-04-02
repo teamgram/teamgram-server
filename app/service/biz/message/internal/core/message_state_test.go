@@ -108,3 +108,25 @@ func TestMessageGetHistoryMessagesReturnsEmptyForZeroLimit(t *testing.T) {
 		t.Fatalf("expected empty history for zero limit, got %d items", len(result.Datas))
 	}
 }
+
+func TestMessageGetPeerUserMessageReturnsPeerScopedPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetPeerUserMessage(&message.TLMessageGetPeerUserMessage{
+		UserId:     1,
+		PeerUserId: 42,
+		MsgId:      88,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected peer-scoped message box, got nil")
+	}
+	if result.MessageId != 88 {
+		t.Fatalf("expected message_id=88, got %d", result.MessageId)
+	}
+	if result.PeerType != 2 || result.PeerId != 42 {
+		t.Fatalf("expected peer=2/42, got %d/%d", result.PeerType, result.PeerId)
+	}
+}
