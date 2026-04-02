@@ -36,7 +36,9 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 					makePlaceholderDialogMessage(peer.PeerId, 10),
 				},
 				Chats: []tg.ChatClazz{},
-				Users: []tg.UserClazz{},
+				Users: []tg.UserClazz{
+					makePlaceholderUser(peer.PeerId),
+				},
 			}).ToMessagesDialogs(), nil
 		}
 	}
