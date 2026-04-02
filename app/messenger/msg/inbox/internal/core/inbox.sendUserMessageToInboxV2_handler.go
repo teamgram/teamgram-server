@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // InboxSendUserMessageToInboxV2
 // inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long auth_key_id:flags.7?long= Void;
 func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessageToInboxV2) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("inbox.sendUserMessageToInboxV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("inbox.sendUserMessageToInboxV2 not implemented")
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }

@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // InboxEditMessageToInboxV2
 // inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long new_message:MessageBox dst_message:flags.1?MessageBox users:flags.2?Vector<User> chats:flags.3?Vector<Chat> = Void;
 func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInboxV2) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("inbox.editMessageToInboxV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("inbox.editMessageToInboxV2 not implemented")
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
