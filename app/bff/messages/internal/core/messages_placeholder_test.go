@@ -348,3 +348,53 @@ func TestMessagesSearchTailPlaceholders(t *testing.T) {
 		t.Fatalf("expected search positions placeholder, got result=%#v err=%v", searchPositions, err)
 	}
 }
+
+func TestMessagesMediaAndForwardPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	sendMedia, err := c.MessagesSendMedia(&tg.TLMessagesSendMedia{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Media:    tg.MakeTLInputMediaEmpty(&tg.TLInputMediaEmpty{}),
+		Message:  "photo",
+		RandomId: 21,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	sendMediaShort, ok := sendMedia.ToUpdateShortSentMessage()
+	if !ok || sendMediaShort.Id != 21 {
+		t.Fatalf("expected sendMedia shortSent placeholder, got %#v", sendMedia)
+	}
+
+	sendMultiMedia, err := c.MessagesSendMultiMedia(&tg.TLMessagesSendMultiMedia{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		MultiMedia: []tg.InputSingleMediaClazz{
+			tg.MakeTLInputSingleMedia(&tg.TLInputSingleMedia{
+				Media:    tg.MakeTLInputMediaEmpty(&tg.TLInputMediaEmpty{}),
+				RandomId: 31,
+				Message:  "album",
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	sendMultiShort, ok := sendMultiMedia.ToUpdateShortSentMessage()
+	if !ok || sendMultiShort.Id != 31 {
+		t.Fatalf("expected sendMultiMedia shortSent placeholder, got %#v", sendMultiMedia)
+	}
+
+	forwardMessages, err := c.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Id:       []int32{7},
+		RandomId: []int64{41},
+		ToPeer:   tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 3}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	forwardShort, ok := forwardMessages.ToUpdateShortSentMessage()
+	if !ok || forwardShort.Id != 41 {
+		t.Fatalf("expected forwardMessages shortSent placeholder, got %#v", forwardMessages)
+	}
+}
