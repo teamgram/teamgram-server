@@ -65,24 +65,7 @@ func TestAuthSignInReturnsSignUpRequiredForUnregisteredPhone(t *testing.T) {
 		Layer:         181,
 	})
 	code := "12345"
-	_, phoneNumber, err := checkPhoneNumberInvalid("+8613812345678")
-	if err != nil {
-		t.Fatalf("normalize phone: %v", err)
-	}
-
-	err = d.UpdatePhoneCodeData(ctx, 101, phoneNumber, "hash", &model.PhoneCodeTransaction{
-		AuthKeyId:             101,
-		SessionId:             202,
-		PhoneNumber:           phoneNumber,
-		PhoneNumberRegistered: false,
-		PhoneCode:             code,
-		PhoneCodeHash:         "hash",
-		PhoneCodeExpired:      int32(time.Now().Add(time.Minute).Unix()),
-		State:                 model.CodeStateSent,
-	})
-	if err != nil {
-		t.Fatalf("seed phone code: %v", err)
-	}
+	phoneNumber := seedPhoneCodeTransaction(t, ctx, d, 101, 202, false, code, "hash")
 
 	result, err := c.AuthSignIn(&tg.TLAuthSignIn{
 		PhoneNumber:   "+8613812345678",
@@ -104,6 +87,49 @@ func TestAuthSignInReturnsSignUpRequiredForUnregisteredPhone(t *testing.T) {
 	if codeData.State != model.CodeStateSignIn {
 		t.Fatalf("expected state %d, got %d", model.CodeStateSignIn, codeData.State)
 	}
+}
+
+func TestAuthSignInReturnsPhoneCodeInvalidWhenCodeDoesNotMatch(t *testing.T) {
+	c, ctx, d := newAuthorizationCoreForSignInTest(t, &kitexmetadata.RpcMetadata{
+		PermAuthKeyId: 101,
+		SessionId:     202,
+		Layer:         181,
+	})
+	seedPhoneCodeTransaction(t, ctx, d, 101, 202, false, "12345", "hash")
+	wrongCode := "54321"
+
+	_, err := c.AuthSignIn(&tg.TLAuthSignIn{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+		PhoneCode:     &wrongCode,
+	})
+	if err != tg.ErrPhoneCodeInvalid {
+		t.Fatalf("expected ErrPhoneCodeInvalid, got %v", err)
+	}
+}
+
+func seedPhoneCodeTransaction(t *testing.T, ctx context.Context, d *dao.Dao, authKeyID, sessionID int64, registered bool, code, hash string) string {
+	t.Helper()
+
+	_, phoneNumber, err := checkPhoneNumberInvalid("+8613812345678")
+	if err != nil {
+		t.Fatalf("normalize phone: %v", err)
+	}
+
+	err = d.UpdatePhoneCodeData(ctx, authKeyID, phoneNumber, hash, &model.PhoneCodeTransaction{
+		AuthKeyId:             authKeyID,
+		SessionId:             sessionID,
+		PhoneNumber:           phoneNumber,
+		PhoneNumberRegistered: registered,
+		PhoneCode:             code,
+		PhoneCodeHash:         hash,
+		PhoneCodeExpired:      int32(time.Now().Add(time.Minute).Unix()),
+		State:                 model.CodeStateSent,
+	})
+	if err != nil {
+		t.Fatalf("seed phone code: %v", err)
+	}
+	return phoneNumber
 }
 
 func newAuthorizationCoreForSignInTest(t *testing.T, md *kitexmetadata.RpcMetadata) (*AuthorizationCore, context.Context, *dao.Dao) {
