@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -28,8 +28,45 @@ var _ *tg.Bool
 // MsgEditMessageV2
 // msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
 func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.editMessageV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.NewMessage == nil || in.DstMessage == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, errors.New("msg.editMessageV2 not implemented")
+	switch in.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
+	case tg.PEER_CHANNEL:
+		return nil, tg.ErrEnterpriseIsBlocked
+	default:
+		return nil, tg.ErrPeerIdInvalid
+	}
+
+	outbox, _ := in.NewMessage.ToOutboxMessage()
+	if outbox == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	date := int32(time.Now().Unix())
+	var entities []tg.MessageEntityClazz
+	if outbox.Message != nil {
+		if msg2, ok := outbox.Message.ToMessage(); ok {
+			if msg2.Date != 0 {
+				date = msg2.Date
+			}
+			entities = msg2.Entities
+		}
+	}
+
+	messageID := in.DstMessage.MessageId
+	if messageID <= 0 {
+		messageID = placeholderMessageID(outbox.RandomId)
+	}
+
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       messageID,
+		Pts:      1,
+		PtsCount: 1,
+		Date:     date,
+		Entities: entities,
+	}).ToUpdates(), nil
 }
