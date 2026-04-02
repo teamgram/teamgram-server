@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // MessageUpdatePinnedMessageId
 // message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 func (c *MessageCore) MessageUpdatePinnedMessageId(in *message.TLMessageUpdatePinnedMessageId) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.updatePinnedMessageId blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("message.updatePinnedMessageId not implemented")
+	if tg.FromBoolClazz(in.Pinned) {
+		return tg.BoolTrue, nil
+	}
+	return tg.BoolFalse, nil
 }

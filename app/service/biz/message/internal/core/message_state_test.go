@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func TestMessageGetUserMessageListReturnsStablePlaceholderBoxes(t *testing.T) {
@@ -351,5 +352,71 @@ func TestMessageGetUnreadMentionsReturnsScopedPlaceholderBoxes(t *testing.T) {
 	}
 	if len(result.Datas) != 2 || result.Datas[0].MessageId != 5 || result.Datas[1].MessageId != 6 {
 		t.Fatalf("expected message ids 5/6, got %#v", result.Datas)
+	}
+}
+
+func TestMessageUpdatePinnedMessageIdReturnsPinnedBool(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageUpdatePinnedMessageId(&message.TLMessageUpdatePinnedMessageId{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+		Id:       7,
+		Pinned:   tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result != tg.BoolTrue {
+		t.Fatalf("expected BoolTrue, got %v", result)
+	}
+}
+
+func TestMessageGetPinnedMessageIdListReturnsPlaceholderIDs(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetPinnedMessageIdList(&message.TLMessageGetPinnedMessageIdList{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 1 || result.Datas[0] != 1 {
+		t.Fatalf("expected pinned ids [1], got %#v", result.Datas)
+	}
+}
+
+func TestMessageGetLastTwoPinnedMessageIdReturnsPlaceholderIDs(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetLastTwoPinnedMessageId(&message.TLMessageGetLastTwoPinnedMessageId{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 2 || result.Datas[0] != 1 || result.Datas[1] != 2 {
+		t.Fatalf("expected pinned ids [1 2], got %#v", result.Datas)
+	}
+}
+
+func TestMessageUnPinAllMessagesReturnsEmptyPlaceholderList(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageUnPinAllMessages(&message.TLMessageUnPinAllMessages{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 0 {
+		t.Fatalf("expected empty list, got %#v", result.Datas)
 	}
 }
