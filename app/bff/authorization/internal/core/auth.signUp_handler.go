@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,43 @@ import (
 // AuthSignUp
 // auth.signUp#aac7b717 flags:# no_joined_notifications:flags.0?true phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
 func (c *AuthorizationCore) AuthSignUp(in *tg.TLAuthSignUp) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.signUp blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_, phoneNumber, err := checkPhoneNumberInvalid(in.PhoneNumber)
+	if err != nil {
+		c.Logger.Errorf("auth.signUp - invalid phone_number(%s): %v", in.PhoneNumber, err)
+		return nil, tg.Err406PhoneNumberInvalid
+	}
 
-	return nil, errors.New("auth.signUp not implemented")
+	if in.PhoneCodeHash == "" {
+		c.Logger.Errorf("auth.signUp - phone_code_hash is empty")
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
+
+	if in.FirstName == "" {
+		c.Logger.Errorf("auth.signUp - first_name is empty")
+		return nil, tg.ErrFirstnameInvalid
+	}
+
+	if c.svcCtx == nil || c.svcCtx.AuthLogic == nil || c.MD == nil {
+		err = tg.ErrInternalServerError
+		c.Logger.Errorf("auth.signUp - missing service context or metadata: %v", err)
+		return nil, err
+	}
+
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.PermAuthKeyId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			logic.GetActionType(in),
+			"auth.signUp")
+	}
+
+	if _, err = c.svcCtx.AuthLogic.DoAuthSignUp(c.ctx, c.MD.PermAuthKeyId, phoneNumber, nil, in.PhoneCodeHash); err != nil {
+		c.Logger.Errorf("auth.signUp - sign up failed, phone_number(%s): %v", phoneNumber, err)
+		return nil, err
+	}
+
+	// TODO: continue implementing user creation and authorization binding.
+	return nil, tg.ErrInternalServerError
 }
