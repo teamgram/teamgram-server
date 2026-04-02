@@ -194,3 +194,52 @@ func TestMessageGetUserMessageListByDataIdUserIdListReturnsPeerScopedPlaceholder
 		t.Fatalf("expected shared message id 60, got %d/%d", result.Datas[0].MessageId, result.Datas[1].MessageId)
 	}
 }
+
+func TestMessageGetHistoryMessagesCountReturnsPlaceholderCount(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetHistoryMessagesCount(&message.TLMessageGetHistoryMessagesCount{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.V != 1 {
+		t.Fatalf("expected placeholder count=1, got %#v", result)
+	}
+}
+
+func TestMessageGetSearchCounterReturnsPlaceholderCount(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetSearchCounter(&message.TLMessageGetSearchCounter{
+		UserId:    1,
+		PeerType:  2,
+		PeerId:    42,
+		MediaType: 0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.V != 1 {
+		t.Fatalf("expected placeholder count=1, got %#v", result)
+	}
+}
+
+func TestMessageGetUnreadMentionsCountReturnsPlaceholderCount(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetUnreadMentionsCount(&message.TLMessageGetUnreadMentionsCount{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.V != 1 {
+		t.Fatalf("expected placeholder count=1, got %#v", result)
+	}
+}
