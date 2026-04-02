@@ -34,4 +34,25 @@ func TestInboxPlaceholderVoids(t *testing.T) {
 	if result, err := c.InboxReadChatMediaUnreadToInbox(&inbox.TLInboxReadChatMediaUnreadToInbox{}); err != nil || result == nil {
 		t.Fatalf("expected readChatMediaUnreadToInbox void placeholder, got result=%#v err=%v", result, err)
 	}
+	if result, err := c.InboxEditUserMessageToInbox(&inbox.TLInboxEditUserMessageToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected editUserMessageToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxEditChatMessageToInbox(&inbox.TLInboxEditChatMessageToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected editChatMessageToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxUpdatePinnedMessage(&inbox.TLInboxUpdatePinnedMessage{}); err != nil || result == nil {
+		t.Fatalf("expected updatePinnedMessage void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxUpdatePinnedMessageV2(&inbox.TLInboxUpdatePinnedMessageV2{}); err != nil || result == nil {
+		t.Fatalf("expected updatePinnedMessageV2 void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxUnpinAllMessages(&inbox.TLInboxUnpinAllMessages{}); err != nil || result == nil {
+		t.Fatalf("expected unpinAllMessages void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxDeleteUserHistoryToInbox(&inbox.TLInboxDeleteUserHistoryToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected deleteUserHistoryToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxDeleteChatHistoryToInbox(&inbox.TLInboxDeleteChatHistoryToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected deleteChatHistoryToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
 }
