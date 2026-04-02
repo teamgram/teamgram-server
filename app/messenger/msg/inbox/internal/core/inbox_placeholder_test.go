@@ -22,4 +22,16 @@ func TestInboxPlaceholderVoids(t *testing.T) {
 	if result, err := c.InboxReadInboxHistory(&inbox.TLInboxReadInboxHistory{}); err != nil || result == nil {
 		t.Fatalf("expected readInboxHistory void placeholder, got result=%#v err=%v", result, err)
 	}
+	if result, err := c.InboxReadOutboxHistory(&inbox.TLInboxReadOutboxHistory{}); err != nil || result == nil {
+		t.Fatalf("expected readOutboxHistory void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxUpdateHistoryReaded(&inbox.TLInboxUpdateHistoryReaded{}); err != nil || result == nil {
+		t.Fatalf("expected updateHistoryReaded void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxReadUserMediaUnreadToInbox(&inbox.TLInboxReadUserMediaUnreadToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected readUserMediaUnreadToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
+	if result, err := c.InboxReadChatMediaUnreadToInbox(&inbox.TLInboxReadChatMediaUnreadToInbox{}); err != nil || result == nil {
+		t.Fatalf("expected readChatMediaUnreadToInbox void placeholder, got result=%#v err=%v", result, err)
+	}
 }

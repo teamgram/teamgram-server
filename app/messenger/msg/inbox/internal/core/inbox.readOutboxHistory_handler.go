@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // InboxReadOutboxHistory
 // inbox.readOutboxHistory user_id:long peer_type:int peer_id:long max_dialog_message_id:long = Void;
 func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("inbox.readOutboxHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("inbox.readOutboxHistory not implemented")
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
