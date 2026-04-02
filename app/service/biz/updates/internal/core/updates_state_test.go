@@ -28,7 +28,7 @@ func TestUpdatesGetStateV2ReturnsPlaceholderState(t *testing.T) {
 	}
 }
 
-func TestUpdatesGetDifferenceV2ReturnsEmptyDifference(t *testing.T) {
+func TestUpdatesGetDifferenceV2ReturnsCatchUpDifferenceForBehindClient(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
@@ -43,12 +43,15 @@ func TestUpdatesGetDifferenceV2ReturnsEmptyDifference(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected difference, got nil")
 	}
-	if _, ok := result.ToDifferenceEmpty(); !ok {
-		t.Fatalf("expected differenceEmpty, got %T", result.Clazz)
+	diff, ok := result.ToDifference()
+	if !ok {
+		t.Fatalf("expected difference, got %T", result.Clazz)
 	}
-	diff, _ := result.ToDifferenceEmpty()
 	if diff.State == nil {
 		t.Fatal("expected placeholder state, got nil")
+	}
+	if len(diff.NewMessages) != 1 || len(diff.OtherUpdates) != 1 {
+		t.Fatalf("expected single catch-up payload, got messages=%d updates=%d", len(diff.NewMessages), len(diff.OtherUpdates))
 	}
 	if diff.State.Pts != 1 {
 		t.Fatalf("expected placeholder pts=1 for zero input, got %d", diff.State.Pts)

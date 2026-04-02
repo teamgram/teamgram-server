@@ -36,6 +36,23 @@ func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV
 		date = 10
 	}
 
+	if in.Pts < 1 {
+		message := makePlaceholderDifferenceMessage(in.UserId, pts, date)
+		return updates.MakeTLDifference(&updates.TLDifference{
+			NewMessages: []tg.MessageClazz{
+				message,
+			},
+			OtherUpdates: []tg.UpdateClazz{
+				tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+					Message:  message,
+					Pts:      pts,
+					PtsCount: 1,
+				}),
+			},
+			State: makePlaceholderUpdatesState(pts, date),
+		}).ToDifference(), nil
+	}
+
 	// TODO: return real merged updates once the updates storage layer is wired.
 	return updates.MakeTLDifferenceEmpty(&updates.TLDifferenceEmpty{
 		State: makePlaceholderUpdatesState(pts, date),
@@ -50,4 +67,19 @@ func makePlaceholderUpdatesState(pts int32, date int32) *tg.UpdatesState {
 		Seq:         0,
 		UnreadCount: 0,
 	}).ToUpdatesState()
+}
+
+func makePlaceholderDifferenceMessage(userID int64, messageID int32, date int32) tg.MessageClazz {
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out: true,
+		Id:  messageID,
+		FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: userID,
+		}),
+		PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: userID,
+		}),
+		Date:    date,
+		Message: "placeholder",
+	})
 }
