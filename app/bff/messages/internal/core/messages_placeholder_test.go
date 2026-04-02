@@ -226,3 +226,46 @@ func TestMessagesCountersAndViewsPlaceholders(t *testing.T) {
 		t.Fatalf("expected received notify id=9, got %#v", received.Datas[0])
 	}
 }
+
+func TestMessagesEditMetaPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	editData, err := c.MessagesGetMessageEditData(&tg.TLMessagesGetMessageEditData{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Id:   5,
+	})
+	if err != nil || editData == nil {
+		t.Fatalf("expected editData placeholder, got result=%#v err=%v", editData, err)
+	}
+
+	outboxReadDate, err := c.MessagesGetOutboxReadDate(&tg.TLMessagesGetOutboxReadDate{
+		Peer:  tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		MsgId: 5,
+	})
+	if err != nil || outboxReadDate == nil || outboxReadDate.Date == 0 {
+		t.Fatalf("expected outboxReadDate placeholder, got result=%#v err=%v", outboxReadDate, err)
+	}
+
+	toggleNoForwards, err := c.MessagesToggleNoForwards(&tg.TLMessagesToggleNoForwards{
+		Peer:    tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Enabled: tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	short, ok := toggleNoForwards.ToUpdateShort()
+	if !ok {
+		t.Fatalf("expected updateShort placeholder, got %T", toggleNoForwards.Clazz)
+	}
+	if short.Update == nil {
+		t.Fatal("expected nested update")
+	}
+
+	saveDefaultSendAs, err := c.MessagesSaveDefaultSendAs(&tg.TLMessagesSaveDefaultSendAs{
+		Peer:   tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		SendAs: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 3}),
+	})
+	if err != nil || saveDefaultSendAs == nil {
+		t.Fatalf("expected bool placeholder, got result=%#v err=%v", saveDefaultSendAs, err)
+	}
+}
