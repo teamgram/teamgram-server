@@ -376,3 +376,58 @@ func TestDialogPinnedAndSavedPlaceholders(t *testing.T) {
 		t.Fatalf("expected reorder saved boolTrue, got %#v", reorderSavedResult)
 	}
 }
+
+func TestDialogThemeWallpaperAndTTLPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	readParticipants, err := c.DialogGetChannelMessageReadParticipants(&dialog.TLDialogGetChannelMessageReadParticipants{
+		UserId:    1,
+		ChannelId: 100,
+		MsgId:     10,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(readParticipants.Datas) != 1 || readParticipants.Datas[0] != 1 {
+		t.Fatalf("expected single read participant=1, got %#v", readParticipants.Datas)
+	}
+
+	ttlResult, err := c.DialogSetHistoryTTL(&dialog.TLDialogSetHistoryTTL{
+		UserId:    1,
+		PeerType:  tg.PEER_USER,
+		PeerId:    2,
+		TtlPeriod: 86400,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(ttlResult) {
+		t.Fatalf("expected history ttl boolTrue, got %#v", ttlResult)
+	}
+
+	themeResult, err := c.DialogSetChatTheme(&dialog.TLDialogSetChatTheme{
+		UserId:        1,
+		PeerType:      tg.PEER_USER,
+		PeerId:        2,
+		ThemeEmoticon: "🙂",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(themeResult) {
+		t.Fatalf("expected chat theme boolTrue, got %#v", themeResult)
+	}
+
+	wallpaperResult, err := c.DialogSetChatWallpaper(&dialog.TLDialogSetChatWallpaper{
+		UserId:      1,
+		PeerType:    tg.PEER_USER,
+		PeerId:      2,
+		WallpaperId: 9,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(wallpaperResult) {
+		t.Fatalf("expected chat wallpaper boolTrue, got %#v", wallpaperResult)
+	}
+}

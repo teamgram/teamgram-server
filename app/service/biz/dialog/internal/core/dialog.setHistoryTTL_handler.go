@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // DialogSetHistoryTTL
 // dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
 func (c *DialogCore) DialogSetHistoryTTL(in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.setHistoryTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.setHistoryTTL not implemented")
+	return tg.ToBool(in != nil && in.PeerId != 0 && in.TtlPeriod >= 0), nil
 }
