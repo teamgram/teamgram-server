@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSearchSentMedia
 // messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
 func (c *MessagesCore) MessagesSearchSentMedia(in *tg.TLMessagesSearchSentMedia) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.searchSentMedia blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.searchSentMedia not implemented")
+	return makeBffMessagesMessagesByIDs(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 0}), []int32{1}, false), nil
 }

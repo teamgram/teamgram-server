@@ -289,3 +289,62 @@ func TestMessagesEditMetaPlaceholders(t *testing.T) {
 		t.Fatalf("expected reportMessagesDelivery bool placeholder, got result=%#v err=%v", reportMessagesDelivery, err)
 	}
 }
+
+func TestMessagesSearchTailPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	searchGlobal, err := c.MessagesSearchGlobal(&tg.TLMessagesSearchGlobal{
+		Q:          "hi",
+		OffsetPeer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId:   6,
+		Limit:      1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	searchGlobalMsgs, ok := searchGlobal.ToMessagesMessages()
+	if !ok || len(searchGlobalMsgs.Messages) != 1 {
+		t.Fatalf("expected 1 global search placeholder, got %#v", searchGlobal)
+	}
+
+	searchSentMedia, err := c.MessagesSearchSentMedia(&tg.TLMessagesSearchSentMedia{
+		Q:     "img",
+		Limit: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	searchSentMediaMsgs, ok := searchSentMedia.ToMessagesMessages()
+	if !ok || len(searchSentMediaMsgs.Messages) != 1 {
+		t.Fatalf("expected 1 sent media placeholder, got %#v", searchSentMedia)
+	}
+
+	recentLocations, err := c.MessagesGetRecentLocations(&tg.TLMessagesGetRecentLocations{
+		Peer:  tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Limit: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	recentLocationsMsgs, ok := recentLocations.ToMessagesMessages()
+	if !ok || len(recentLocationsMsgs.Messages) != 1 {
+		t.Fatalf("expected 1 recent locations placeholder, got %#v", recentLocations)
+	}
+
+	searchCalendar, err := c.MessagesGetSearchResultsCalendar(&tg.TLMessagesGetSearchResultsCalendar{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId: 9,
+	})
+	if err != nil || searchCalendar == nil || len(searchCalendar.Messages) != 1 || len(searchCalendar.Periods) != 1 {
+		t.Fatalf("expected search calendar placeholder, got result=%#v err=%v", searchCalendar, err)
+	}
+
+	searchPositions, err := c.MessagesGetSearchResultsPositions(&tg.TLMessagesGetSearchResultsPositions{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId: 10,
+		Limit:    1,
+	})
+	if err != nil || searchPositions == nil || len(searchPositions.Positions) != 1 {
+		t.Fatalf("expected search positions placeholder, got result=%#v err=%v", searchPositions, err)
+	}
+}

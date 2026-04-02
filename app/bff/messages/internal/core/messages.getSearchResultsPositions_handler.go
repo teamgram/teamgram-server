@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,15 @@ import (
 // MessagesGetSearchResultsPositions
 // messages.getSearchResultsPositions#9c7f2f10 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (c *MessagesCore) MessagesGetSearchResultsPositions(in *tg.TLMessagesGetSearchResultsPositions) (*tg.MessagesSearchResultsPositions, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getSearchResultsPositions blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getSearchResultsPositions not implemented")
+	startID := historyPlaceholderStartID(in.OffsetId, 0, 0)
+	return tg.MakeTLMessagesSearchResultsPositions(&tg.TLMessagesSearchResultsPositions{
+		Count: 1,
+		Positions: []tg.SearchResultsPositionClazz{
+			tg.MakeTLSearchResultPosition(&tg.TLSearchResultPosition{
+				MsgId:  startID,
+				Date:   int32(time.Now().Unix()),
+				Offset: 0,
+			}),
+		},
+	}).ToMessagesSearchResultsPositions(), nil
 }

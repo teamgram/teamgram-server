@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetRecentLocations
 // messages.getRecentLocations#702a40e0 peer:InputPeer limit:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetRecentLocations(in *tg.TLMessagesGetRecentLocations) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getRecentLocations blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.getRecentLocations not implemented")
+	return makeBffMessagesMessagesPlaceholder(peer, 1, historyPlaceholderCount(in.Limit), false), nil
 }
