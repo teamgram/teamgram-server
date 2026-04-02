@@ -67,3 +67,24 @@ func TestOnSyncRpcResultDataRemovesPendingAndQueuesResult(t *testing.T) {
 		t.Fatal("expected queued message to be TLMessageRawData")
 	}
 }
+
+func TestOnSyncRpcResultDataDoesNotDuplicateQueuedResultOnRetry(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const reqMsgID int64 = 2002
+	s.pendingQueue.Add(reqMsgID)
+	s.onSyncRpcResultData(context.Background(), reqMsgID, []byte{4, 5, 6})
+	s.onSyncRpcResultData(context.Background(), reqMsgID, []byte{7, 8, 9})
+
+	if got := s.outQueue.oMsgs.Len(); got != 1 {
+		t.Fatalf("expected exactly one queued rpc result after retry, got %d", got)
+	}
+
+	oMsg := s.outQueue.Lookup(reqMsgID)
+	if oMsg == nil {
+		t.Fatal("expected queued rpc result after retry")
+	}
+	if string(oMsg.msg.Body) != string([]byte{4, 5, 6}) {
+		t.Fatalf("expected first queued payload to be retained on retry")
+	}
+}
