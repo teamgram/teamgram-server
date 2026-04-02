@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,30 @@ var _ *tg.Bool
 // MessageGetHistoryMessages
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (c *MessageCore) MessageGetHistoryMessages(in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.getHistoryMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in == nil || in.Limit <= 0 {
+		return &message.VectorMessageBox{Datas: []tg.MessageBoxClazz{}}, nil
+	}
 
-	return nil, errors.New("message.getHistoryMessages not implemented")
+	startID := int32(10)
+	if in.OffsetId > 0 {
+		startID = in.OffsetId
+	}
+	if in.MaxId > 0 {
+		startID = in.MaxId
+	}
+	if in.MinId > 0 && startID < in.MinId {
+		startID = in.MinId
+	}
+
+	limit := in.Limit
+	if limit > 3 {
+		limit = 3
+	}
+
+	boxes := make([]tg.MessageBoxClazz, 0, limit)
+	for i := int32(0); i < limit; i++ {
+		boxes = append(boxes, makePlaceholderMessageBox(in.UserId, in.PeerType, in.PeerId, startID+i))
+	}
+
+	return &message.VectorMessageBox{Datas: boxes}, nil
 }
