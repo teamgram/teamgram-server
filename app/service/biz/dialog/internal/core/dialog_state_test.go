@@ -242,3 +242,42 @@ func TestDialogWritePlaceholders(t *testing.T) {
 		t.Fatalf("expected unread-mark placeholder boolTrue, got %#v", markResult)
 	}
 }
+
+func TestDialogGetDialogsByOffsetDateReturnsPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetDialogsByOffsetDate(&dialog.TLDialogGetDialogsByOffsetDate{
+		UserId:        1,
+		ExcludePinned: tg.BoolFalseClazz,
+		OffsetDate:    0,
+		Limit:         10,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || len(result.Datas) != 1 {
+		t.Fatalf("expected one offset-date placeholder, got %#v", result)
+	}
+}
+
+func TestDialogGetDialogUnreadMarkListReturnsPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetDialogUnreadMarkList(&dialog.TLDialogGetDialogUnreadMarkList{
+		UserId: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || len(result.Datas) != 1 {
+		t.Fatalf("expected one unread-mark placeholder, got %#v", result)
+	}
+	peer, ok := result.Datas[0].(*tg.TLDialogPeer)
+	if !ok {
+		t.Fatalf("expected dialogPeer placeholder, got %T", result.Datas[0])
+	}
+	userPeer, ok := peer.Peer.(*tg.TLPeerUser)
+	if !ok || userPeer.UserId != 1 {
+		t.Fatalf("expected peerUser(1), got %#v", peer.Peer)
+	}
+}

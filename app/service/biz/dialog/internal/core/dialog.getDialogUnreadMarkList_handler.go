@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,15 @@ var _ *tg.Bool
 // DialogGetDialogUnreadMarkList
 // dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 func (c *DialogCore) DialogGetDialogUnreadMarkList(in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.VectorDialogPeer, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogUnreadMarkList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in != nil && in.UserId != 0 {
+		return &dialog.VectorDialogPeer{
+			Datas: []tg.DialogPeerClazz{
+				tg.MakeTLDialogPeer(&tg.TLDialogPeer{
+					Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: in.UserId}),
+				}),
+			},
+		}, nil
+	}
 
-	return nil, errors.New("dialog.getDialogUnreadMarkList not implemented")
+	return &dialog.VectorDialogPeer{Datas: []tg.DialogPeerClazz{}}, nil
 }

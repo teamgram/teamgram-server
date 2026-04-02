@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,13 @@ var _ *tg.Bool
 // DialogGetDialogsByOffsetDate
 // dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogsByOffsetDate(in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogsByOffsetDate blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in != nil && in.UserId != 0 && in.Limit > 0 {
+		return &dialog.VectorDialogExt{
+			Datas: []dialog.DialogExtClazz{
+				makeDialogExtPlaceholder(in.UserId, tg.PEER_USER, in.UserId, 10),
+			},
+		}, nil
+	}
 
-	return nil, errors.New("dialog.getDialogsByOffsetDate not implemented")
+	return &dialog.VectorDialogExt{Datas: []dialog.DialogExtClazz{}}, nil
 }
