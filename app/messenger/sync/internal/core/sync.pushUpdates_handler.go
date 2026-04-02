@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // SyncPushUpdates
 // sync.pushUpdates user_id:long updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("sync.pushUpdates blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("sync.pushUpdates not implemented")
+	// TODO: push updates through the real sync/session fanout pipeline.
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
