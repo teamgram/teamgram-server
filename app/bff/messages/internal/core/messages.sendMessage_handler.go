@@ -16,17 +16,33 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesSendMessage
 // messages.sendMessage#983f9745 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.sendMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer := tg.FromInputPeer2(0, in.Peer)
+	if c.MD != nil {
+		peer = tg.FromInputPeer2(c.MD.UserId, in.Peer)
+	}
 
-	return nil, errors.New("messages.sendMessage not implemented")
+	switch peer.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
+	case tg.PEER_CHANNEL:
+		return nil, tg.ErrEnterpriseIsBlocked
+	default:
+		return nil, tg.ErrPeerIdInvalid
+	}
+
+	if in.Message == "" {
+		return nil, tg.ErrMessageEmpty
+	}
+
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{},
+		Users:   []tg.UserClazz{},
+		Chats:   []tg.ChatClazz{},
+		Date:    0,
+		Seq:     0,
+	}).ToUpdates(), nil
 }
