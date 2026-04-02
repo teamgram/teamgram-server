@@ -17,16 +17,22 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReceivedMessages
 // messages.receivedMessages#5a954c0 max_id:int = Vector<ReceivedNotifyMessage>;
 func (c *MessagesCore) MessagesReceivedMessages(in *tg.TLMessagesReceivedMessages) (*tg.VectorReceivedNotifyMessage, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.receivedMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.MaxId <= 0 {
+		return &tg.VectorReceivedNotifyMessage{Datas: []tg.ReceivedNotifyMessageClazz{}}, nil
+	}
 
-	return nil, errors.New("messages.receivedMessages not implemented")
+	return &tg.VectorReceivedNotifyMessage{
+		Datas: []tg.ReceivedNotifyMessageClazz{
+			tg.MakeTLReceivedNotifyMessage(&tg.TLReceivedNotifyMessage{
+				Id:    in.MaxId,
+				Flags: 0,
+			}),
+		},
+	}, nil
 }

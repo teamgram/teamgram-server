@@ -174,3 +174,55 @@ func TestMessagesQueryPlaceholders(t *testing.T) {
 		t.Fatalf("expected 1 search placeholder, got %#v", search)
 	}
 }
+
+func TestMessagesCountersAndViewsPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	topMsgID := int32(12)
+	readMentions, err := c.MessagesReadMentions(&tg.TLMessagesReadMentions{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		TopMsgId: &topMsgID,
+	})
+	if err != nil || readMentions == nil || readMentions.Pts != 12 {
+		t.Fatalf("expected readMentions affectedHistory placeholder, got result=%#v err=%v", readMentions, err)
+	}
+
+	searchCounters, err := c.MessagesGetSearchCounters(&tg.TLMessagesGetSearchCounters{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Filters: []tg.MessagesFilterClazz{
+			tg.MakeTLInputMessagesFilterEmpty(&tg.TLInputMessagesFilterEmpty{}),
+		},
+	})
+	if err != nil || searchCounters == nil || len(searchCounters.Datas) != 1 {
+		t.Fatalf("expected 1 search counter placeholder, got result=%#v err=%v", searchCounters, err)
+	}
+
+	counter := searchCounters.Datas[0]
+	if counter == nil || counter.Count != 1 {
+		t.Fatalf("expected search counter count=1, got %#v", searchCounters.Datas[0])
+	}
+
+	views, err := c.MessagesGetMessagesViews(&tg.TLMessagesGetMessagesViews{
+		Peer:      tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		Id:        []int32{3, 4},
+		Increment: tg.BoolFalseClazz,
+	})
+	if err != nil || views == nil || len(views.Views) != 2 {
+		t.Fatalf("expected 2 message views placeholders, got result=%#v err=%v", views, err)
+	}
+
+	view0 := views.Views[0]
+	if view0 == nil || view0.Views == nil || *view0.Views != 3 {
+		t.Fatalf("expected first view placeholder=3, got %#v", views.Views[0])
+	}
+
+	received, err := c.MessagesReceivedMessages(&tg.TLMessagesReceivedMessages{MaxId: 9})
+	if err != nil || received == nil || len(received.Datas) != 1 {
+		t.Fatalf("expected 1 received notify placeholder, got result=%#v err=%v", received, err)
+	}
+
+	notify := received.Datas[0]
+	if notify == nil || notify.Id != 9 {
+		t.Fatalf("expected received notify id=9, got %#v", received.Datas[0])
+	}
+}
