@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgram Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package tg
@@ -694,6 +694,15 @@ func init() {
 	iface.RegisterRPCContextTuple("TLChannelsToggleForum", "/tg.RPCForums/channels.toggleForum", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsToggleViewForumAsMessages", "/tg.RPCForums/channels.toggleViewForumAsMessages", func() interface{} { return new(Updates) })
 
+	// RPCMessages
+	iface.RegisterRPCContextTuple("TLMessagesComposeMessageWithAI", "/tg.RPCMessages/messages.composeMessageWithAI", func() interface{} { return new(MessagesComposedMessageWithAI) })
+	iface.RegisterRPCContextTuple("TLMessagesReportReadMetrics", "/tg.RPCMessages/messages.reportReadMetrics", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLMessagesReportMusicListen", "/tg.RPCMessages/messages.reportMusicListen", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLMessagesAddPollAnswer", "/tg.RPCMessages/messages.addPollAnswer", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLMessagesDeletePollAnswer", "/tg.RPCMessages/messages.deletePollAnswer", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLMessagesGetUnreadPollVotes", "/tg.RPCMessages/messages.getUnreadPollVotes", func() interface{} { return new(MessagesMessages) })
+	iface.RegisterRPCContextTuple("TLMessagesReadPollVotes", "/tg.RPCMessages/messages.readPollVotes", func() interface{} { return new(MessagesAffectedHistory) })
+
 	// RPCUpdates
 	iface.RegisterRPCContextTuple("TLUpdatesGetState", "/tg.RPCUpdates/updates.getState", func() interface{} { return new(UpdatesState) })
 	iface.RegisterRPCContextTuple("TLUpdatesGetDifference", "/tg.RPCUpdates/updates.getDifference", func() interface{} { return new(UpdatesDifference) })
@@ -817,6 +826,13 @@ func init() {
 	// RPCBotVerificationIcons
 	iface.RegisterRPCContextTuple("TLBotsSetCustomVerification", "/tg.RPCBotVerificationIcons/bots.setCustomVerification", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLBotsGetBotRecommendations", "/tg.RPCBotVerificationIcons/bots.getBotRecommendations", func() interface{} { return new(UsersUsers) })
+
+	// RPCBots
+	iface.RegisterRPCContextTuple("TLBotsCheckUsername", "/tg.RPCBots/bots.checkUsername", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLBotsCreateBot", "/tg.RPCBots/bots.createBot", func() interface{} { return new(User) })
+	iface.RegisterRPCContextTuple("TLBotsExportBotToken", "/tg.RPCBots/bots.exportBotToken", func() interface{} { return new(BotsExportedBotToken) })
+	iface.RegisterRPCContextTuple("TLBotsRequestWebViewButton", "/tg.RPCBots/bots.requestWebViewButton", func() interface{} { return new(BotsRequestedButton) })
+	iface.RegisterRPCContextTuple("TLBotsGetRequestedWebViewButton", "/tg.RPCBots/bots.getRequestedWebViewButton", func() interface{} { return new(KeyboardButton) })
 
 	// RPCGiveaways
 	iface.RegisterRPCContextTuple("TLPaymentsGetPremiumGiftCodeOptions", "/tg.RPCGiveaways/payments.getPremiumGiftCodeOptions", func() interface{} { return new(VectorPremiumGiftCodeOption) })
