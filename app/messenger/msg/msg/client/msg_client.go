@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -35,6 +35,7 @@ type MsgClient interface {
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
+	Close() error
 }
 
 type defaultMsgClient struct {
@@ -45,6 +46,13 @@ func NewMsgClient(cli client.Client) MsgClient {
 	return &defaultMsgClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultMsgClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MsgPushUserMessage

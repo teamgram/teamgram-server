@@ -15,8 +15,8 @@
 package main
 
 import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo/internal/server"
 	"github.com/teamgram/marmota/pkg/commands"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo/internal/server"
 )
 
 func main() {

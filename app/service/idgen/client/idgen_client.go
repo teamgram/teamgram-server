@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -31,6 +31,7 @@ type IdgenClient interface {
 	IdgenGetNextNSeqId(ctx context.Context, in *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error)
 	IdgenGetNextIdValList(ctx context.Context, in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error)
 	IdgenGetCurrentSeqIdList(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error)
+	Close() error
 }
 
 type defaultIdgenClient struct {
@@ -41,6 +42,13 @@ func NewIdgenClient(cli client.Client) IdgenClient {
 	return &defaultIdgenClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultIdgenClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // IdgenNextId

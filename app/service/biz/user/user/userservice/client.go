@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package userservice
@@ -14,6 +14,7 @@ import (
 	"context"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -102,12 +103,34 @@ type Client interface {
 	UserGetAuthorizationTTL(ctx context.Context, req *user.TLUserGetAuthorizationTTL, callOptions ...callopt.Option) (r *tg.AccountDaysTTL, err error)
 	UserUpdatePremium(ctx context.Context, req *user.TLUserUpdatePremium, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotInfoV2, callOptions ...callopt.Option) (r *user.BotInfoData, err error)
+	UserSaveMusic(ctx context.Context, req *user.TLUserSaveMusic, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserGetSavedMusicIdList(ctx context.Context, req *user.TLUserGetSavedMusicIdList, callOptions ...callopt.Option) (r *user.VectorLong, err error)
+	UserSetMainProfileTab(ctx context.Context, req *user.TLUserSetMainProfileTab, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserSetDefaultHistoryTTL(ctx context.Context, req *user.TLUserSetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserGetDefaultHistoryTTL(ctx context.Context, req *user.TLUserGetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.DefaultHistoryTTL, err error)
+	UserGetAccountUsername(ctx context.Context, req *user.TLUserGetAccountUsername, callOptions ...callopt.Option) (r *user.UsernameData, err error)
+	UserCheckAccountUsername(ctx context.Context, req *user.TLUserCheckAccountUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error)
+	UserGetChannelUsername(ctx context.Context, req *user.TLUserGetChannelUsername, callOptions ...callopt.Option) (r *user.UsernameData, err error)
+	UserCheckChannelUsername(ctx context.Context, req *user.TLUserCheckChannelUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error)
+	UserUpdateUsernameByPeer(ctx context.Context, req *user.TLUserUpdateUsernameByPeer, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserCheckUsername(ctx context.Context, req *user.TLUserCheckUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error)
+	UserUpdateUsernameByUsername(ctx context.Context, req *user.TLUserUpdateUsernameByUsername, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserDeleteUsername(ctx context.Context, req *user.TLUserDeleteUsername, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserResolveUsername(ctx context.Context, req *user.TLUserResolveUsername, callOptions ...callopt.Option) (r *tg.Peer, err error)
+	UserGetListByUsernameList(ctx context.Context, req *user.TLUserGetListByUsernameList, callOptions ...callopt.Option) (r *user.VectorUsernameData, err error)
+	UserDeleteUsernameByPeer(ctx context.Context, req *user.TLUserDeleteUsernameByPeer, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserSearchUsername(ctx context.Context, req *user.TLUserSearchUsername, callOptions ...callopt.Option) (r *user.VectorUsernameData, err error)
+	UserToggleUsername(ctx context.Context, req *user.TLUserToggleUsername, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserReorderUsernames(ctx context.Context, req *user.TLUserReorderUsernames, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserDeactivateAllChannelUsernames(ctx context.Context, req *user.TLUserDeactivateAllChannelUsernames, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
+// Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
 // NewClient creates a client for the service defined in IDL.
 func NewClient(destService string, opts ...client.Option) (Client, error) {
 	var options []client.Option
 	options = append(options, client.WithDestService(destService))
+	options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 
 	options = append(options, opts...)
 
@@ -527,4 +550,104 @@ func (p *kUserClient) UserUpdatePremium(ctx context.Context, req *user.TLUserUpd
 func (p *kUserClient) UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotInfoV2, callOptions ...callopt.Option) (r *user.BotInfoData, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserGetBotInfoV2(ctx, req)
+}
+
+func (p *kUserClient) UserSaveMusic(ctx context.Context, req *user.TLUserSaveMusic, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserSaveMusic(ctx, req)
+}
+
+func (p *kUserClient) UserGetSavedMusicIdList(ctx context.Context, req *user.TLUserGetSavedMusicIdList, callOptions ...callopt.Option) (r *user.VectorLong, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetSavedMusicIdList(ctx, req)
+}
+
+func (p *kUserClient) UserSetMainProfileTab(ctx context.Context, req *user.TLUserSetMainProfileTab, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserSetMainProfileTab(ctx, req)
+}
+
+func (p *kUserClient) UserSetDefaultHistoryTTL(ctx context.Context, req *user.TLUserSetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserSetDefaultHistoryTTL(ctx, req)
+}
+
+func (p *kUserClient) UserGetDefaultHistoryTTL(ctx context.Context, req *user.TLUserGetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.DefaultHistoryTTL, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetDefaultHistoryTTL(ctx, req)
+}
+
+func (p *kUserClient) UserGetAccountUsername(ctx context.Context, req *user.TLUserGetAccountUsername, callOptions ...callopt.Option) (r *user.UsernameData, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetAccountUsername(ctx, req)
+}
+
+func (p *kUserClient) UserCheckAccountUsername(ctx context.Context, req *user.TLUserCheckAccountUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserCheckAccountUsername(ctx, req)
+}
+
+func (p *kUserClient) UserGetChannelUsername(ctx context.Context, req *user.TLUserGetChannelUsername, callOptions ...callopt.Option) (r *user.UsernameData, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetChannelUsername(ctx, req)
+}
+
+func (p *kUserClient) UserCheckChannelUsername(ctx context.Context, req *user.TLUserCheckChannelUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserCheckChannelUsername(ctx, req)
+}
+
+func (p *kUserClient) UserUpdateUsernameByPeer(ctx context.Context, req *user.TLUserUpdateUsernameByPeer, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserUpdateUsernameByPeer(ctx, req)
+}
+
+func (p *kUserClient) UserCheckUsername(ctx context.Context, req *user.TLUserCheckUsername, callOptions ...callopt.Option) (r *user.UsernameExist, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserCheckUsername(ctx, req)
+}
+
+func (p *kUserClient) UserUpdateUsernameByUsername(ctx context.Context, req *user.TLUserUpdateUsernameByUsername, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserUpdateUsernameByUsername(ctx, req)
+}
+
+func (p *kUserClient) UserDeleteUsername(ctx context.Context, req *user.TLUserDeleteUsername, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserDeleteUsername(ctx, req)
+}
+
+func (p *kUserClient) UserResolveUsername(ctx context.Context, req *user.TLUserResolveUsername, callOptions ...callopt.Option) (r *tg.Peer, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserResolveUsername(ctx, req)
+}
+
+func (p *kUserClient) UserGetListByUsernameList(ctx context.Context, req *user.TLUserGetListByUsernameList, callOptions ...callopt.Option) (r *user.VectorUsernameData, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetListByUsernameList(ctx, req)
+}
+
+func (p *kUserClient) UserDeleteUsernameByPeer(ctx context.Context, req *user.TLUserDeleteUsernameByPeer, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserDeleteUsernameByPeer(ctx, req)
+}
+
+func (p *kUserClient) UserSearchUsername(ctx context.Context, req *user.TLUserSearchUsername, callOptions ...callopt.Option) (r *user.VectorUsernameData, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserSearchUsername(ctx, req)
+}
+
+func (p *kUserClient) UserToggleUsername(ctx context.Context, req *user.TLUserToggleUsername, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserToggleUsername(ctx, req)
+}
+
+func (p *kUserClient) UserReorderUsernames(ctx context.Context, req *user.TLUserReorderUsernames, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserReorderUsernames(ctx, req)
+}
+
+func (p *kUserClient) UserDeactivateAllChannelUsernames(ctx context.Context, req *user.TLUserDeactivateAllChannelUsernames, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserDeactivateAllChannelUsernames(ctx, req)
 }

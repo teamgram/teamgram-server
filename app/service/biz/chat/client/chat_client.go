@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -57,6 +57,7 @@ type ChatClient interface {
 	ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error)
 	ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error)
 	ChatImportChatInvite2(ctx context.Context, in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error)
+	Close() error
 }
 
 type defaultChatClient struct {
@@ -67,6 +68,13 @@ func NewChatClient(cli client.Client) ChatClient {
 	return &defaultChatClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultChatClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // ChatGetMutableChat
@@ -91,7 +99,7 @@ func (m *defaultChatClient) ChatGetChatBySelfId(ctx context.Context, in *chat.TL
 }
 
 // ChatCreateChat2
-// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> = MutableChat;
+// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
 func (m *defaultChatClient) ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*tg.MutableChat, error) {
 	cli := chatservice.NewRPCChatClient(m.cli)
 	return cli.ChatCreateChat2(ctx, in)

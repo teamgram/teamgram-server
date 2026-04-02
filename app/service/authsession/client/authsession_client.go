@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -44,6 +44,7 @@ type AuthsessionClient interface {
 	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error)
 	AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*tg.Bool, error)
 	AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultAuthsessionClient struct {
@@ -54,6 +55,13 @@ func NewAuthsessionClient(cli client.Client) AuthsessionClient {
 	return &defaultAuthsessionClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultAuthsessionClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AuthsessionGetAuthorizations

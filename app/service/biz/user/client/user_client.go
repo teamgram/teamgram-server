@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -101,6 +101,27 @@ type UserClient interface {
 	UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*tg.AccountDaysTTL, error)
 	UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*tg.Bool, error)
 	UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error)
+	UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*tg.Bool, error)
+	UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.VectorLong, error)
+	UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*tg.Bool, error)
+	UserSetDefaultHistoryTTL(ctx context.Context, in *user.TLUserSetDefaultHistoryTTL) (*tg.Bool, error)
+	UserGetDefaultHistoryTTL(ctx context.Context, in *user.TLUserGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error)
+	UserGetAccountUsername(ctx context.Context, in *user.TLUserGetAccountUsername) (*user.UsernameData, error)
+	UserCheckAccountUsername(ctx context.Context, in *user.TLUserCheckAccountUsername) (*user.UsernameExist, error)
+	UserGetChannelUsername(ctx context.Context, in *user.TLUserGetChannelUsername) (*user.UsernameData, error)
+	UserCheckChannelUsername(ctx context.Context, in *user.TLUserCheckChannelUsername) (*user.UsernameExist, error)
+	UserUpdateUsernameByPeer(ctx context.Context, in *user.TLUserUpdateUsernameByPeer) (*tg.Bool, error)
+	UserCheckUsername(ctx context.Context, in *user.TLUserCheckUsername) (*user.UsernameExist, error)
+	UserUpdateUsernameByUsername(ctx context.Context, in *user.TLUserUpdateUsernameByUsername) (*tg.Bool, error)
+	UserDeleteUsername(ctx context.Context, in *user.TLUserDeleteUsername) (*tg.Bool, error)
+	UserResolveUsername(ctx context.Context, in *user.TLUserResolveUsername) (*tg.Peer, error)
+	UserGetListByUsernameList(ctx context.Context, in *user.TLUserGetListByUsernameList) (*user.VectorUsernameData, error)
+	UserDeleteUsernameByPeer(ctx context.Context, in *user.TLUserDeleteUsernameByPeer) (*tg.Bool, error)
+	UserSearchUsername(ctx context.Context, in *user.TLUserSearchUsername) (*user.VectorUsernameData, error)
+	UserToggleUsername(ctx context.Context, in *user.TLUserToggleUsername) (*tg.Bool, error)
+	UserReorderUsernames(ctx context.Context, in *user.TLUserReorderUsernames) (*tg.Bool, error)
+	UserDeactivateAllChannelUsernames(ctx context.Context, in *user.TLUserDeactivateAllChannelUsernames) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultUserClient struct {
@@ -111,6 +132,13 @@ func NewUserClient(cli client.Client) UserClient {
 	return &defaultUserClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultUserClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // UserGetLastSeens
@@ -657,4 +685,144 @@ func (m *defaultUserClient) UserUpdatePremium(ctx context.Context, in *user.TLUs
 func (m *defaultUserClient) UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error) {
 	cli := userservice.NewRPCUserClient(m.cli)
 	return cli.UserGetBotInfoV2(ctx, in)
+}
+
+// UserSaveMusic
+// user.saveMusic flags:# unsave:flags.0?true user_id:long id:long after_id:flags.15?long = Bool;
+func (m *defaultUserClient) UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserSaveMusic(ctx, in)
+}
+
+// UserGetSavedMusicIdList
+// user.getSavedMusicIdList user_id:long = Vector<long>;
+func (m *defaultUserClient) UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.VectorLong, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetSavedMusicIdList(ctx, in)
+}
+
+// UserSetMainProfileTab
+// user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
+func (m *defaultUserClient) UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserSetMainProfileTab(ctx, in)
+}
+
+// UserSetDefaultHistoryTTL
+// user.setDefaultHistoryTTL user_id:long ttl:int = Bool;
+func (m *defaultUserClient) UserSetDefaultHistoryTTL(ctx context.Context, in *user.TLUserSetDefaultHistoryTTL) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserSetDefaultHistoryTTL(ctx, in)
+}
+
+// UserGetDefaultHistoryTTL
+// user.getDefaultHistoryTTL user_id:long = DefaultHistoryTTL;
+func (m *defaultUserClient) UserGetDefaultHistoryTTL(ctx context.Context, in *user.TLUserGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetDefaultHistoryTTL(ctx, in)
+}
+
+// UserGetAccountUsername
+// user.getAccountUsername user_id:long = UsernameData;
+func (m *defaultUserClient) UserGetAccountUsername(ctx context.Context, in *user.TLUserGetAccountUsername) (*user.UsernameData, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetAccountUsername(ctx, in)
+}
+
+// UserCheckAccountUsername
+// user.checkAccountUsername user_id:long username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckAccountUsername(ctx context.Context, in *user.TLUserCheckAccountUsername) (*user.UsernameExist, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserCheckAccountUsername(ctx, in)
+}
+
+// UserGetChannelUsername
+// user.getChannelUsername channel_id:long = UsernameData;
+func (m *defaultUserClient) UserGetChannelUsername(ctx context.Context, in *user.TLUserGetChannelUsername) (*user.UsernameData, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetChannelUsername(ctx, in)
+}
+
+// UserCheckChannelUsername
+// user.checkChannelUsername channel_id:long username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckChannelUsername(ctx context.Context, in *user.TLUserCheckChannelUsername) (*user.UsernameExist, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserCheckChannelUsername(ctx, in)
+}
+
+// UserUpdateUsernameByPeer
+// user.updateUsernameByPeer peer_type:int peer_id:long username:string = Bool;
+func (m *defaultUserClient) UserUpdateUsernameByPeer(ctx context.Context, in *user.TLUserUpdateUsernameByPeer) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserUpdateUsernameByPeer(ctx, in)
+}
+
+// UserCheckUsername
+// user.checkUsername username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckUsername(ctx context.Context, in *user.TLUserCheckUsername) (*user.UsernameExist, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserCheckUsername(ctx, in)
+}
+
+// UserUpdateUsernameByUsername
+// user.updateUsernameByUsername peer_type:int peer_id:long username:string = Bool;
+func (m *defaultUserClient) UserUpdateUsernameByUsername(ctx context.Context, in *user.TLUserUpdateUsernameByUsername) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserUpdateUsernameByUsername(ctx, in)
+}
+
+// UserDeleteUsername
+// user.deleteUsername username:string = Bool;
+func (m *defaultUserClient) UserDeleteUsername(ctx context.Context, in *user.TLUserDeleteUsername) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserDeleteUsername(ctx, in)
+}
+
+// UserResolveUsername
+// user.resolveUsername username:string = Peer;
+func (m *defaultUserClient) UserResolveUsername(ctx context.Context, in *user.TLUserResolveUsername) (*tg.Peer, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserResolveUsername(ctx, in)
+}
+
+// UserGetListByUsernameList
+// user.getListByUsernameList names:Vector<string> = Vector<UsernameData>;
+func (m *defaultUserClient) UserGetListByUsernameList(ctx context.Context, in *user.TLUserGetListByUsernameList) (*user.VectorUsernameData, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetListByUsernameList(ctx, in)
+}
+
+// UserDeleteUsernameByPeer
+// user.deleteUsernameByPeer peer_type:int peer_id:long = Bool;
+func (m *defaultUserClient) UserDeleteUsernameByPeer(ctx context.Context, in *user.TLUserDeleteUsernameByPeer) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserDeleteUsernameByPeer(ctx, in)
+}
+
+// UserSearchUsername
+// user.searchUsername q:string excluded_contacts:Vector<long> limit:int = Vector<UsernameData>;
+func (m *defaultUserClient) UserSearchUsername(ctx context.Context, in *user.TLUserSearchUsername) (*user.VectorUsernameData, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserSearchUsername(ctx, in)
+}
+
+// UserToggleUsername
+// user.toggleUsername peer_type:int peer_id:long username:string active:Bool = Bool;
+func (m *defaultUserClient) UserToggleUsername(ctx context.Context, in *user.TLUserToggleUsername) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserToggleUsername(ctx, in)
+}
+
+// UserReorderUsernames
+// user.reorderUsernames peer_type:int peer_id:long username_list:Vector<string> = Bool;
+func (m *defaultUserClient) UserReorderUsernames(ctx context.Context, in *user.TLUserReorderUsernames) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserReorderUsernames(ctx, in)
+}
+
+// UserDeactivateAllChannelUsernames
+// user.deactivateAllChannelUsernames channel_id:long = Bool;
+func (m *defaultUserClient) UserDeactivateAllChannelUsernames(ctx context.Context, in *user.TLUserDeactivateAllChannelUsernames) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserDeactivateAllChannelUsernames(ctx, in)
 }

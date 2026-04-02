@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,6 +24,7 @@ var _ *tg.Bool
 
 type GnetwayClient interface {
 	GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultGnetwayClient struct {
@@ -34,6 +35,13 @@ func NewGnetwayClient(cli client.Client) GnetwayClient {
 	return &defaultGnetwayClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultGnetwayClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // GnetwaySendDataToGateway

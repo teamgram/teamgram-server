@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package statusservice
@@ -222,8 +222,13 @@ func (p *SetSessionOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetSessionOnlineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetSessionOnline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -348,8 +353,13 @@ func (p *SetSessionOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetSessionOfflineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetSessionOffline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -474,8 +484,13 @@ func (p *GetUserOnlineSessionsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserOnlineSessionsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusGetUserOnlineSessions)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -600,8 +615,13 @@ func (p *GetUsersOnlineSessionsListArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *GetUsersOnlineSessionsListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusGetUsersOnlineSessionsList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -726,8 +746,13 @@ func (p *GetChannelOnlineUsersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetChannelOnlineUsersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusGetChannelOnlineUsers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -852,8 +877,13 @@ func (p *SetUserChannelsOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetUserChannelsOnlineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetUserChannelsOnline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -978,8 +1008,13 @@ func (p *SetUserChannelsOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetUserChannelsOfflineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetUserChannelsOffline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1104,8 +1139,13 @@ func (p *SetChannelUserOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChannelUserOfflineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetChannelUserOffline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1230,8 +1270,13 @@ func (p *SetChannelUsersOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChannelUsersOnlineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetChannelUsersOnline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1356,8 +1401,13 @@ func (p *SetChannelOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChannelOfflineArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.TLStatusSetChannelOffline)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

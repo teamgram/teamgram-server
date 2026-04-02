@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -39,6 +39,7 @@ type MediaClient interface {
 	MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*tg.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*tg.Document, error)
 	MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*tg.Photo, error)
+	Close() error
 }
 
 type defaultMediaClient struct {
@@ -51,6 +52,13 @@ func NewMediaClient(cli client.Client) MediaClient {
 	}
 }
 
+func (m *defaultMediaClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
+}
+
 // MediaUploadPhotoFile
 // media.uploadPhotoFile flags:# owner_id:long file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = Photo;
 func (m *defaultMediaClient) MediaUploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error) {
@@ -59,7 +67,7 @@ func (m *defaultMediaClient) MediaUploadPhotoFile(ctx context.Context, in *media
 }
 
 // MediaUploadProfilePhotoFile
-// media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
+// media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = Photo;
 func (m *defaultMediaClient) MediaUploadProfilePhotoFile(ctx context.Context, in *media.TLMediaUploadProfilePhotoFile) (*tg.Photo, error) {
 	cli := mediaservice.NewRPCMediaClient(m.cli)
 	return cli.MediaUploadProfilePhotoFile(ctx, in)

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dialogservice
@@ -432,8 +432,13 @@ func (p *SaveDraftMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SaveDraftMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogSaveDraftMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -558,8 +563,13 @@ func (p *ClearDraftMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ClearDraftMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogClearDraftMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -684,8 +694,13 @@ func (p *GetAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAllDraftsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetAllDrafts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -810,8 +825,13 @@ func (p *ClearAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ClearAllDraftsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogClearAllDrafts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -936,8 +956,13 @@ func (p *MarkDialogUnreadArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MarkDialogUnreadArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogMarkDialogUnread)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1062,8 +1087,13 @@ func (p *ToggleDialogPinArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleDialogPinArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogToggleDialogPin)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1188,8 +1218,13 @@ func (p *GetDialogUnreadMarkListArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetDialogUnreadMarkListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogUnreadMarkList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1314,8 +1349,13 @@ func (p *GetDialogsByOffsetDateArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsByOffsetDateArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogsByOffsetDate)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1440,8 +1480,13 @@ func (p *GetDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1566,8 +1611,13 @@ func (p *GetDialogsByIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsByIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogsByIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1692,8 +1742,13 @@ func (p *GetDialogsCountArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsCountArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogsCount)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1818,8 +1873,13 @@ func (p *GetPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPinnedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetPinnedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1944,8 +2004,13 @@ func (p *ReorderPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReorderPinnedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogReorderPinnedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2070,8 +2135,13 @@ func (p *GetDialogByIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogByIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogById)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2196,8 +2266,13 @@ func (p *GetTopMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetTopMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetTopMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2322,8 +2397,13 @@ func (p *InsertOrUpdateDialogArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *InsertOrUpdateDialogArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogInsertOrUpdateDialog)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2448,8 +2528,13 @@ func (p *DeleteDialogArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteDialogArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogDeleteDialog)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2574,8 +2659,13 @@ func (p *GetUserPinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserPinnedMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetUserPinnedMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2700,8 +2790,13 @@ func (p *UpdateUserPinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *UpdateUserPinnedMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogUpdateUserPinnedMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2826,8 +2921,13 @@ func (p *InsertOrUpdateDialogFilterArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *InsertOrUpdateDialogFilterArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogInsertOrUpdateDialogFilter)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2952,8 +3052,13 @@ func (p *DeleteDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteDialogFilterArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogDeleteDialogFilter)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3078,8 +3183,13 @@ func (p *UpdateDialogFiltersOrderArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *UpdateDialogFiltersOrderArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogUpdateDialogFiltersOrder)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3204,8 +3314,13 @@ func (p *GetDialogFiltersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFiltersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogFilters)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3330,8 +3445,13 @@ func (p *GetDialogFolderArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFolderArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogFolder)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3456,8 +3576,13 @@ func (p *EditPeerFoldersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditPeerFoldersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogEditPeerFolders)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3582,8 +3707,13 @@ func (p *GetChannelMessageReadParticipantsArgs) Encode(x *bin.Encoder, layer int
 
 func (p *GetChannelMessageReadParticipantsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetChannelMessageReadParticipants)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3708,8 +3838,13 @@ func (p *SetChatThemeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChatThemeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogSetChatTheme)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3834,8 +3969,13 @@ func (p *SetHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogSetHistoryTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3960,8 +4100,13 @@ func (p *GetMyDialogsDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMyDialogsDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetMyDialogsData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4086,8 +4231,13 @@ func (p *GetSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4212,8 +4362,13 @@ func (p *GetPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPinnedSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetPinnedSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4338,8 +4493,13 @@ func (p *ToggleSavedDialogPinArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleSavedDialogPinArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogToggleSavedDialogPin)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4464,8 +4624,13 @@ func (p *ReorderPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *ReorderPinnedSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogReorderPinnedSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4590,8 +4755,13 @@ func (p *GetDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFilterArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogFilter)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4716,8 +4886,13 @@ func (p *GetDialogFilterBySlugArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFilterBySlugArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogFilterBySlug)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4842,8 +5017,13 @@ func (p *CreateDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateDialogFilterArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogCreateDialogFilter)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4968,8 +5148,13 @@ func (p *UpdateUnreadCountArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateUnreadCountArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogUpdateUnreadCount)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5094,8 +5279,13 @@ func (p *ToggleDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleDialogFilterTagsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogToggleDialogFilterTags)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5220,8 +5410,13 @@ func (p *GetDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFilterTagsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogGetDialogFilterTags)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5346,8 +5541,13 @@ func (p *SetChatWallpaperArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChatWallpaperArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.TLDialogSetChatWallpaper)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

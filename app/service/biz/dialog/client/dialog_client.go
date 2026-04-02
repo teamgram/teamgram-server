@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -63,6 +63,7 @@ type DialogClient interface {
 	DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error)
 	DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error)
 	DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultDialogClient struct {
@@ -73,6 +74,13 @@ func NewDialogClient(cli client.Client) DialogClient {
 	return &defaultDialogClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultDialogClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // DialogSaveDraftMessage

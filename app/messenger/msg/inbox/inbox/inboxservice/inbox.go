@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package inboxservice
@@ -264,8 +264,13 @@ func (p *EditUserMessageToInboxArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditUserMessageToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxEditUserMessageToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -390,8 +395,13 @@ func (p *EditChatMessageToInboxArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditChatMessageToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxEditChatMessageToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -516,8 +526,13 @@ func (p *DeleteMessagesToInboxArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteMessagesToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxDeleteMessagesToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -642,8 +657,13 @@ func (p *DeleteUserHistoryToInboxArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *DeleteUserHistoryToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxDeleteUserHistoryToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -768,8 +788,13 @@ func (p *DeleteChatHistoryToInboxArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *DeleteChatHistoryToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxDeleteChatHistoryToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -894,8 +919,13 @@ func (p *ReadUserMediaUnreadToInboxArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ReadUserMediaUnreadToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxReadUserMediaUnreadToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1020,8 +1050,13 @@ func (p *ReadChatMediaUnreadToInboxArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ReadChatMediaUnreadToInboxArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxReadChatMediaUnreadToInbox)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1146,8 +1181,13 @@ func (p *UpdateHistoryReadedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateHistoryReadedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxUpdateHistoryReaded)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1272,8 +1312,13 @@ func (p *UpdatePinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePinnedMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxUpdatePinnedMessage)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1398,8 +1443,13 @@ func (p *UnpinAllMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UnpinAllMessagesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxUnpinAllMessages)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1524,8 +1574,13 @@ func (p *SendUserMessageToInboxV2Args) Encode(x *bin.Encoder, layer int32) error
 
 func (p *SendUserMessageToInboxV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxSendUserMessageToInboxV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1650,8 +1705,13 @@ func (p *EditMessageToInboxV2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditMessageToInboxV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxEditMessageToInboxV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1776,8 +1836,13 @@ func (p *ReadInboxHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReadInboxHistoryArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxReadInboxHistory)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1902,8 +1967,13 @@ func (p *ReadOutboxHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReadOutboxHistoryArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxReadOutboxHistory)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2028,8 +2098,13 @@ func (p *ReadMediaUnreadToInboxV2Args) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ReadMediaUnreadToInboxV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxReadMediaUnreadToInboxV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2154,8 +2229,13 @@ func (p *UpdatePinnedMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePinnedMessageV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(inbox.TLInboxUpdatePinnedMessageV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

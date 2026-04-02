@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package sessionservice
@@ -215,8 +215,13 @@ func (p *QueryAuthKeyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *QueryAuthKeyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionQueryAuthKey)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -341,8 +346,13 @@ func (p *SetAuthKeyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetAuthKeyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionSetAuthKey)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -467,8 +477,13 @@ func (p *CreateSessionArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateSessionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionCreateSession)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -593,8 +608,13 @@ func (p *SendDataToSessionArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SendDataToSessionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionSendDataToSession)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -719,8 +739,13 @@ func (p *SendHttpDataToSessionArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SendHttpDataToSessionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionSendHttpDataToSession)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -845,8 +870,13 @@ func (p *CloseSessionArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CloseSessionArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionCloseSession)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -971,8 +1001,13 @@ func (p *PushUpdatesDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushUpdatesDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionPushUpdatesData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1097,8 +1132,13 @@ func (p *PushSessionUpdatesDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushSessionUpdatesDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionPushSessionUpdatesData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1223,8 +1263,13 @@ func (p *PushRpcResultDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushRpcResultDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(session.TLSessionPushRpcResultData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

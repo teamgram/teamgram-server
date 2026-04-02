@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -35,6 +35,7 @@ type DfsClient interface {
 	DfsUploadThemeFile(ctx context.Context, in *dfs.TLDfsUploadThemeFile) (*tg.Document, error)
 	DfsUploadRingtoneFile(ctx context.Context, in *dfs.TLDfsUploadRingtoneFile) (*tg.Document, error)
 	DfsUploadedProfilePhoto(ctx context.Context, in *dfs.TLDfsUploadedProfilePhoto) (*tg.Photo, error)
+	Close() error
 }
 
 type defaultDfsClient struct {
@@ -45,6 +46,13 @@ func NewDfsClient(cli client.Client) DfsClient {
 	return &defaultDfsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultDfsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // DfsWriteFilePartData
@@ -62,7 +70,7 @@ func (m *defaultDfsClient) DfsUploadPhotoFileV2(ctx context.Context, in *dfs.TLD
 }
 
 // DfsUploadProfilePhotoFileV2
-// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
+// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = Photo;
 func (m *defaultDfsClient) DfsUploadProfilePhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error) {
 	cli := dfsservice.NewRPCDfsClient(m.cli)
 	return cli.DfsUploadProfilePhotoFileV2(ctx, in)

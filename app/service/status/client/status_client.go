@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -33,6 +33,7 @@ type StatusClient interface {
 	StatusSetChannelUserOffline(ctx context.Context, in *status.TLStatusSetChannelUserOffline) (*tg.Bool, error)
 	StatusSetChannelUsersOnline(ctx context.Context, in *status.TLStatusSetChannelUsersOnline) (*tg.Bool, error)
 	StatusSetChannelOffline(ctx context.Context, in *status.TLStatusSetChannelOffline) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultStatusClient struct {
@@ -43,6 +44,13 @@ func NewStatusClient(cli client.Client) StatusClient {
 	return &defaultStatusClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultStatusClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // StatusSetSessionOnline

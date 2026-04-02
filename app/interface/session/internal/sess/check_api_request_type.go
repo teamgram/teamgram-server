@@ -76,8 +76,8 @@ func checkRpcWithoutLogin(tl iface.TLObject) bool {
 		*tg.TLAuthExportAuthorization,
 		*tg.TLAuthImportAuthorization,
 		*tg.TLAuthCancelCode,
-	// *tg.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
-	// *tg.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
+		// *tg.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
+		// *tg.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
 		*tg.TLAuthExportLoginToken,
 		*tg.TLAuthAcceptLoginToken,
 		*tg.TLAuthLogOut, // TODO: before process, try fetch usrId

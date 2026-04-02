@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -39,6 +39,7 @@ type InboxClient interface {
 	InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*tg.Void, error)
 	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error)
 	InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*tg.Void, error)
+	Close() error
 }
 
 type defaultInboxClient struct {
@@ -49,6 +50,13 @@ func NewInboxClient(cli client.Client) InboxClient {
 	return &defaultInboxClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultInboxClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // InboxEditUserMessageToInbox

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package codeservice
@@ -180,8 +180,13 @@ func (p *CreatePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreatePhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.TLCodeCreatePhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -306,8 +311,13 @@ func (p *GetPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.TLCodeGetPhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -432,8 +442,13 @@ func (p *DeletePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeletePhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.TLCodeDeletePhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -558,8 +573,13 @@ func (p *UpdatePhoneCodeDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePhoneCodeDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.TLCodeUpdatePhoneCodeData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
