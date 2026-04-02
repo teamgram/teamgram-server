@@ -34,7 +34,7 @@ func (c *MessageCore) MessageGetUserMessageList(in *message.TLMessageGetUserMess
 func collectPlaceholderMessageBoxes(userID int64, ids []int32) []tg.MessageBoxClazz {
 	boxes := make([]tg.MessageBoxClazz, 0, len(ids))
 	for _, id := range ids {
-		boxes = append(boxes, makePlaceholderMessageBox(userID, id))
+		boxes = append(boxes, makePlaceholderMessageBox(userID, tg.PEER_USER, userID, id))
 	}
 	return boxes
 }
