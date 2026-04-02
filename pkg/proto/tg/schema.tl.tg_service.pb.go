@@ -86723,6 +86723,13 @@ type RPCMessages interface {
 	ChannelsGetSendAs(ctx context.Context, in *TLChannelsGetSendAs) (*ChannelsSendAsPeers, error)
 	ChannelsSearchPosts(ctx context.Context, in *TLChannelsSearchPosts) (*MessagesMessages, error)
 	ChannelsCheckSearchPostsFlood(ctx context.Context, in *TLChannelsCheckSearchPostsFlood) (*SearchPostsFlood, error)
+	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
+	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
+	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
+	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
+	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
+	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
+	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
 }
 
 type RPCDialogs interface {

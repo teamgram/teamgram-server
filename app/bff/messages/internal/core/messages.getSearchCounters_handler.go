@@ -17,16 +17,19 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSearchCounters
 // messages.getSearchCounters#1bbcf300 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (c *MessagesCore) MessagesGetSearchCounters(in *tg.TLMessagesGetSearchCounters) (*tg.VectorMessagesSearchCounter, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getSearchCounters blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	datas := make([]tg.MessagesSearchCounterClazz, 0, len(in.Filters))
+	for _, filter := range in.Filters {
+		datas = append(datas, tg.MakeTLMessagesSearchCounter(&tg.TLMessagesSearchCounter{
+			Filter: filter,
+			Count:  1,
+		}))
+	}
 
-	return nil, errors.New("messages.getSearchCounters not implemented")
+	return &tg.VectorMessagesSearchCounter{Datas: datas}, nil
 }

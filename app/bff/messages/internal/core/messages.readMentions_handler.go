@@ -17,16 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReadMentions
 // messages.readMentions#36e5bf4d flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesReadMentions(in *tg.TLMessagesReadMentions) (*tg.MessagesAffectedHistory, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.readMentions blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.readMentions not implemented")
+	pts := int32(1)
+	if in.TopMsgId != nil && *in.TopMsgId > 0 {
+		pts = *in.TopMsgId
+	}
+	return makeBffAffectedHistoryPlaceholder(pts, 0), nil
 }

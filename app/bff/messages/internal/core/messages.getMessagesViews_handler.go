@@ -17,16 +17,23 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetMessagesViews
 // messages.getMessagesViews#5784d3e1 peer:InputPeer id:Vector<int> increment:Bool = messages.MessageViews;
 func (c *MessagesCore) MessagesGetMessagesViews(in *tg.TLMessagesGetMessagesViews) (*tg.MessagesMessageViews, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getMessagesViews blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	views := make([]tg.MessageViewsClazz, 0, len(in.Id))
+	for _, id := range in.Id {
+		v := id
+		views = append(views, tg.MakeTLMessageViews(&tg.TLMessageViews{
+			Views: &v,
+		}))
+	}
 
-	return nil, errors.New("messages.getMessagesViews not implemented")
+	return tg.MakeTLMessagesMessageViews(&tg.TLMessagesMessageViews{
+		Views: views,
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{},
+	}).ToMessagesMessageViews(), nil
 }
