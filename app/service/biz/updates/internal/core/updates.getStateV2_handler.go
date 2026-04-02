@@ -26,8 +26,6 @@ var _ *tg.Bool
 // UpdatesGetStateV2
 // updates.getStateV2 auth_key_id:long user_id:long = updates.State;
 func (c *UpdatesCore) UpdatesGetStateV2(in *updates.TLUpdatesGetStateV2) (*tg.UpdatesState, error) {
-	_ = in
-
 	// TODO: return the persisted updates state once the updates storage layer is wired.
-	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{}).ToUpdatesState(), nil
+	return makePlaceholderUpdatesState(1, 10), nil
 }
