@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,17 @@ var _ *tg.Bool
 // MsgReadHistoryV2
 // msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.readHistoryV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	return makeAffectedMessagesPlaceholder(in.MaxId), nil
+}
 
-	return nil, errors.New("msg.readHistoryV2 not implemented")
+func makeAffectedMessagesPlaceholder(maxID int32) *tg.MessagesAffectedMessages {
+	pts := maxID
+	if pts <= 0 {
+		pts = 1
+	}
+
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      pts,
+		PtsCount: 1,
+	}).ToMessagesAffectedMessages()
 }
