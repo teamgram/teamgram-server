@@ -17,16 +17,23 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthSignIn
 // auth.signIn#8d52a951 flags:# phone_number:string phone_code_hash:string phone_code:flags.0?string email_verification:flags.1?EmailVerification = auth.Authorization;
 func (c *AuthorizationCore) AuthSignIn(in *tg.TLAuthSignIn) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.signIn blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	var phoneCode string
+	if in.PhoneCode != nil {
+		phoneCode = *in.PhoneCode
+	}
 
-	return nil, errors.New("auth.signIn not implemented")
+	if phoneCode == "" || in.PhoneCodeHash == "" {
+		err := tg.ErrPhoneCodeEmpty
+		c.Logger.Errorf("auth.signIn - error: %v", err)
+		return nil, err
+	}
+
+	// TODO: continue implementing the full sign-in path.
+	return nil, tg.ErrInternalServerError
 }
