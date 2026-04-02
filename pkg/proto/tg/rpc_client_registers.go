@@ -363,6 +363,9 @@ func init() {
 	iface.RegisterRPCContextTuple("TLMessagesSearchSentMedia", "/tg.RPCMessages/messages.searchSentMedia", func() interface{} { return new(MessagesMessages) })
 	iface.RegisterRPCContextTuple("TLMessagesGetOutboxReadDate", "/tg.RPCMessages/messages.getOutboxReadDate", func() interface{} { return new(OutboxReadDate) })
 	iface.RegisterRPCContextTuple("TLMessagesSummarizeText", "/tg.RPCMessages/messages.summarizeText", func() interface{} { return new(TextWithEntities) })
+	iface.RegisterRPCContextTuple("TLMessagesComposeMessageWithAI", "/tg.RPCMessages/messages.composeMessageWithAI", func() interface{} { return new(MessagesComposedMessageWithAI) })
+	iface.RegisterRPCContextTuple("TLMessagesReportReadMetrics", "/tg.RPCMessages/messages.reportReadMetrics", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLMessagesReportMusicListen", "/tg.RPCMessages/messages.reportMusicListen", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLChannelsGetSendAs", "/tg.RPCMessages/channels.getSendAs", func() interface{} { return new(ChannelsSendAsPeers) })
 	iface.RegisterRPCContextTuple("TLChannelsSearchPosts", "/tg.RPCMessages/channels.searchPosts", func() interface{} { return new(MessagesMessages) })
 	iface.RegisterRPCContextTuple("TLChannelsCheckSearchPostsFlood", "/tg.RPCMessages/channels.checkSearchPostsFlood", func() interface{} { return new(SearchPostsFlood) })
@@ -518,6 +521,10 @@ func init() {
 	iface.RegisterRPCContextTuple("TLMessagesSendVote", "/tg.RPCPolls/messages.sendVote", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLMessagesGetPollResults", "/tg.RPCPolls/messages.getPollResults", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLMessagesGetPollVotes", "/tg.RPCPolls/messages.getPollVotes", func() interface{} { return new(MessagesVotesList) })
+	iface.RegisterRPCContextTuple("TLMessagesAddPollAnswer", "/tg.RPCPolls/messages.addPollAnswer", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLMessagesDeletePollAnswer", "/tg.RPCPolls/messages.deletePollAnswer", func() interface{} { return new(Updates) })
+	iface.RegisterRPCContextTuple("TLMessagesGetUnreadPollVotes", "/tg.RPCPolls/messages.getUnreadPollVotes", func() interface{} { return new(MessagesMessages) })
+	iface.RegisterRPCContextTuple("TLMessagesReadPollVotes", "/tg.RPCPolls/messages.readPollVotes", func() interface{} { return new(MessagesAffectedHistory) })
 
 	// RPCEmoji
 	iface.RegisterRPCContextTuple("TLMessagesGetEmojiKeywords", "/tg.RPCEmoji/messages.getEmojiKeywords", func() interface{} { return new(EmojiKeywordsDifference) })
@@ -608,6 +615,8 @@ func init() {
 	iface.RegisterRPCContextTuple("TLBotsAllowSendMessage", "/tg.RPCMiniBotApps/bots.allowSendMessage", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLBotsInvokeWebViewCustomMethod", "/tg.RPCMiniBotApps/bots.invokeWebViewCustomMethod", func() interface{} { return new(DataJSON) })
 	iface.RegisterRPCContextTuple("TLBotsCheckDownloadFileParams", "/tg.RPCMiniBotApps/bots.checkDownloadFileParams", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLBotsRequestWebViewButton", "/tg.RPCMiniBotApps/bots.requestWebViewButton", func() interface{} { return new(BotsRequestedButton) })
+	iface.RegisterRPCContextTuple("TLBotsGetRequestedWebViewButton", "/tg.RPCMiniBotApps/bots.getRequestedWebViewButton", func() interface{} { return new(KeyboardButton) })
 
 	// RPCTranscription
 	iface.RegisterRPCContextTuple("TLMessagesTranscribeAudio", "/tg.RPCTranscription/messages.transcribeAudio", func() interface{} { return new(MessagesTranscribedAudio) })
@@ -693,15 +702,6 @@ func init() {
 	iface.RegisterRPCContextTuple("TLMessagesDeleteTopicHistory", "/tg.RPCForums/messages.deleteTopicHistory", func() interface{} { return new(MessagesAffectedHistory) })
 	iface.RegisterRPCContextTuple("TLChannelsToggleForum", "/tg.RPCForums/channels.toggleForum", func() interface{} { return new(Updates) })
 	iface.RegisterRPCContextTuple("TLChannelsToggleViewForumAsMessages", "/tg.RPCForums/channels.toggleViewForumAsMessages", func() interface{} { return new(Updates) })
-
-	// RPCMessages
-	iface.RegisterRPCContextTuple("TLMessagesComposeMessageWithAI", "/tg.RPCMessages/messages.composeMessageWithAI", func() interface{} { return new(MessagesComposedMessageWithAI) })
-	iface.RegisterRPCContextTuple("TLMessagesReportReadMetrics", "/tg.RPCMessages/messages.reportReadMetrics", func() interface{} { return new(Bool) })
-	iface.RegisterRPCContextTuple("TLMessagesReportMusicListen", "/tg.RPCMessages/messages.reportMusicListen", func() interface{} { return new(Bool) })
-	iface.RegisterRPCContextTuple("TLMessagesAddPollAnswer", "/tg.RPCMessages/messages.addPollAnswer", func() interface{} { return new(Updates) })
-	iface.RegisterRPCContextTuple("TLMessagesDeletePollAnswer", "/tg.RPCMessages/messages.deletePollAnswer", func() interface{} { return new(Updates) })
-	iface.RegisterRPCContextTuple("TLMessagesGetUnreadPollVotes", "/tg.RPCMessages/messages.getUnreadPollVotes", func() interface{} { return new(MessagesMessages) })
-	iface.RegisterRPCContextTuple("TLMessagesReadPollVotes", "/tg.RPCMessages/messages.readPollVotes", func() interface{} { return new(MessagesAffectedHistory) })
 
 	// RPCUpdates
 	iface.RegisterRPCContextTuple("TLUpdatesGetState", "/tg.RPCUpdates/updates.getState", func() interface{} { return new(UpdatesState) })
@@ -806,6 +806,9 @@ func init() {
 	iface.RegisterRPCContextTuple("TLBotsSetBotInfo", "/tg.RPCBots/bots.setBotInfo", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLBotsGetBotInfo", "/tg.RPCBots/bots.getBotInfo", func() interface{} { return new(BotsBotInfo) })
 	iface.RegisterRPCContextTuple("TLBotsGetAdminedBots", "/tg.RPCBots/bots.getAdminedBots", func() interface{} { return new(VectorUser) })
+	iface.RegisterRPCContextTuple("TLBotsCheckUsername", "/tg.RPCBots/bots.checkUsername", func() interface{} { return new(Bool) })
+	iface.RegisterRPCContextTuple("TLBotsCreateBot", "/tg.RPCBots/bots.createBot", func() interface{} { return new(User) })
+	iface.RegisterRPCContextTuple("TLBotsExportBotToken", "/tg.RPCBots/bots.exportBotToken", func() interface{} { return new(BotsExportedBotToken) })
 
 	// RPCBotMenuButton
 	iface.RegisterRPCContextTuple("TLBotsSetBotMenuButton", "/tg.RPCBotMenuButton/bots.setBotMenuButton", func() interface{} { return new(Bool) })
@@ -826,13 +829,6 @@ func init() {
 	// RPCBotVerificationIcons
 	iface.RegisterRPCContextTuple("TLBotsSetCustomVerification", "/tg.RPCBotVerificationIcons/bots.setCustomVerification", func() interface{} { return new(Bool) })
 	iface.RegisterRPCContextTuple("TLBotsGetBotRecommendations", "/tg.RPCBotVerificationIcons/bots.getBotRecommendations", func() interface{} { return new(UsersUsers) })
-
-	// RPCBots
-	iface.RegisterRPCContextTuple("TLBotsCheckUsername", "/tg.RPCBots/bots.checkUsername", func() interface{} { return new(Bool) })
-	iface.RegisterRPCContextTuple("TLBotsCreateBot", "/tg.RPCBots/bots.createBot", func() interface{} { return new(User) })
-	iface.RegisterRPCContextTuple("TLBotsExportBotToken", "/tg.RPCBots/bots.exportBotToken", func() interface{} { return new(BotsExportedBotToken) })
-	iface.RegisterRPCContextTuple("TLBotsRequestWebViewButton", "/tg.RPCBots/bots.requestWebViewButton", func() interface{} { return new(BotsRequestedButton) })
-	iface.RegisterRPCContextTuple("TLBotsGetRequestedWebViewButton", "/tg.RPCBots/bots.getRequestedWebViewButton", func() interface{} { return new(KeyboardButton) })
 
 	// RPCGiveaways
 	iface.RegisterRPCContextTuple("TLPaymentsGetPremiumGiftCodeOptions", "/tg.RPCGiveaways/payments.getPremiumGiftCodeOptions", func() interface{} { return new(VectorPremiumGiftCodeOption) })
