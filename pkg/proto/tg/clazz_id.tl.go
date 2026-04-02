@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgram Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package tg
@@ -32,8 +32,10 @@ const (
 	ClazzID_inputFileBig                                       = 0xfa4f0bb5 // fa4f0bb5
 	ClazzID_inputFileStoryDocument                             = 0x62dc8b48 // 62dc8b48
 	ClazzID_inputMediaEmpty                                    = 0x9664f57f // 9664f57f
-	ClazzID_inputMediaUploadedPhoto                            = 0x1e287d04 // 1e287d04
-	ClazzID_inputMediaPhoto                                    = 0xb3ba0635 // b3ba0635
+	ClazzID_inputMediaUploadedPhoto_7d8375da                   = 0x7d8375da // 7d8375da
+	ClazzID_inputMediaUploadedPhoto_1e287d04                   = 0x1e287d04 // 1e287d04
+	ClazzID_inputMediaPhoto_e3af4434                           = 0xe3af4434 // e3af4434
+	ClazzID_inputMediaPhoto_b3ba0635                           = 0xb3ba0635 // b3ba0635
 	ClazzID_inputMediaGeoPoint                                 = 0xf9c44144 // f9c44144
 	ClazzID_inputMediaContact                                  = 0xf8ab7dfb // f8ab7dfb
 	ClazzID_inputMediaUploadedDocument                         = 0x37c9330  // 37c9330
@@ -44,7 +46,8 @@ const (
 	ClazzID_inputMediaGame                                     = 0xd33f43f3 // d33f43f3
 	ClazzID_inputMediaInvoice                                  = 0x405fef0d // 405fef0d
 	ClazzID_inputMediaGeoLive                                  = 0x971fa843 // 971fa843
-	ClazzID_inputMediaPoll                                     = 0xf94e5f1  // f94e5f1
+	ClazzID_inputMediaPoll_883a4108                            = 0x883a4108 // 883a4108
+	ClazzID_inputMediaPoll_f94e5f1                             = 0xf94e5f1  // f94e5f1
 	ClazzID_inputMediaDice                                     = 0xe66fbf7b // e66fbf7b
 	ClazzID_inputMediaStory                                    = 0x89fdd778 // 89fdd778
 	ClazzID_inputMediaWebPage                                  = 0xc21b8849 // c21b8849
@@ -114,7 +117,8 @@ const (
 	ClazzID_message_b92f76cf                                   = 0xb92f76cf // b92f76cf
 	ClazzID_messageService                                     = 0x7a800e0a // 7a800e0a
 	ClazzID_messageMediaEmpty                                  = 0x3ded6320 // 3ded6320
-	ClazzID_messageMediaPhoto                                  = 0x695150d7 // 695150d7
+	ClazzID_messageMediaPhoto_e216eb63                         = 0xe216eb63 // e216eb63
+	ClazzID_messageMediaPhoto_695150d7                         = 0x695150d7 // 695150d7
 	ClazzID_messageMediaGeo                                    = 0x56e0d474 // 56e0d474
 	ClazzID_messageMediaContact                                = 0x70322949 // 70322949
 	ClazzID_messageMediaUnsupported                            = 0x9f84f49e // 9f84f49e
@@ -124,7 +128,8 @@ const (
 	ClazzID_messageMediaGame                                   = 0xfdb19008 // fdb19008
 	ClazzID_messageMediaInvoice                                = 0xf6a548d3 // f6a548d3
 	ClazzID_messageMediaGeoLive                                = 0xb940c666 // b940c666
-	ClazzID_messageMediaPoll                                   = 0x4bd6e798 // 4bd6e798
+	ClazzID_messageMediaPoll_773f4e66                          = 0x773f4e66 // 773f4e66
+	ClazzID_messageMediaPoll_4bd6e798                          = 0x4bd6e798 // 4bd6e798
 	ClazzID_messageMediaDice_8cbec07                           = 0x8cbec07  // 8cbec07
 	ClazzID_messageMediaDice_3f7ee58b                          = 0x3f7ee58b // 3f7ee58b
 	ClazzID_messageMediaStory                                  = 0x68cb6283 // 68cb6283
@@ -198,7 +203,11 @@ const (
 	ClazzID_messageActionChangeCreator                         = 0xe188503b // e188503b
 	ClazzID_messageActionNoForwardsToggle                      = 0xbf7d6572 // bf7d6572
 	ClazzID_messageActionNoForwardsRequest                     = 0x3e2793ba // 3e2793ba
-	ClazzID_dialog                                             = 0xd58a08c6 // d58a08c6
+	ClazzID_messageActionPollAppendAnswer                      = 0x9da1cd6c // 9da1cd6c
+	ClazzID_messageActionPollDeleteAnswer                      = 0x399674dc // 399674dc
+	ClazzID_messageActionManagedBotCreated                     = 0x16605e3e // 16605e3e
+	ClazzID_dialog_fc89f7f3                                    = 0xfc89f7f3 // fc89f7f3
+	ClazzID_dialog_d58a08c6                                    = 0xd58a08c6 // d58a08c6
 	ClazzID_dialogFolder                                       = 0x71bd134c // 71bd134c
 	ClazzID_photoEmpty                                         = 0x2331b22d // 2331b22d
 	ClazzID_photo                                              = 0xfb197a65 // fb197a65
@@ -236,7 +245,8 @@ const (
 	ClazzID_inputReportReasonFake                              = 0xf5ddd6e7 // f5ddd6e7
 	ClazzID_inputReportReasonIllegalDrugs                      = 0xa8eb2be  // a8eb2be
 	ClazzID_inputReportReasonPersonalDetails                   = 0x9ec7863d // 9ec7863d
-	ClazzID_userFull                                           = 0xa02bc13e // a02bc13e
+	ClazzID_userFull_6cbe645                                   = 0x6cbe645  // 6cbe645
+	ClazzID_userFull_a02bc13e                                  = 0xa02bc13e // a02bc13e
 	ClazzID_contact                                            = 0x145ade0b // 145ade0b
 	ClazzID_importedContact                                    = 0xc13e3c50 // c13e3c50
 	ClazzID_contactStatus                                      = 0x16d9703b // 16d9703b
@@ -273,6 +283,7 @@ const (
 	ClazzID_inputMessagesFilterGeo                             = 0xe7026d0d // e7026d0d
 	ClazzID_inputMessagesFilterContacts                        = 0xe062db83 // e062db83
 	ClazzID_inputMessagesFilterPinned                          = 0x1bb00451 // 1bb00451
+	ClazzID_inputMessagesFilterPoll                            = 0xfa2bc90a // fa2bc90a
 	ClazzID_updateNewMessage                                   = 0x1f2b0afd // 1f2b0afd
 	ClazzID_updateMessageID                                    = 0x4e90bfd6 // 4e90bfd6
 	ClazzID_updateDeleteMessages                               = 0xa20db0e5 // a20db0e5
@@ -335,7 +346,8 @@ const (
 	ClazzID_updateContactsReset                                = 0x7084a7be // 7084a7be
 	ClazzID_updateChannelAvailableMessages                     = 0xb23fc698 // b23fc698
 	ClazzID_updateDialogUnreadMark                             = 0xb658f23e // b658f23e
-	ClazzID_updateMessagePoll                                  = 0xaca1657b // aca1657b
+	ClazzID_updateMessagePoll_d64c522b                         = 0xd64c522b // d64c522b
+	ClazzID_updateMessagePoll_aca1657b                         = 0xaca1657b // aca1657b
 	ClazzID_updateChatDefaultBannedRights                      = 0x54c01850 // 54c01850
 	ClazzID_updateFolderPeers                                  = 0x19360dc0 // 19360dc0
 	ClazzID_updatePeerSettings                                 = 0x6a7e7366 // 6a7e7366
@@ -345,7 +357,8 @@ const (
 	ClazzID_updateTheme                                        = 0x8216fba3 // 8216fba3
 	ClazzID_updateGeoLiveViewed                                = 0x871fb939 // 871fb939
 	ClazzID_updateLoginToken                                   = 0x564fe691 // 564fe691
-	ClazzID_updateMessagePollVote                              = 0x24f40e77 // 24f40e77
+	ClazzID_updateMessagePollVote_7699f014                     = 0x7699f014 // 7699f014
+	ClazzID_updateMessagePollVote_24f40e77                     = 0x24f40e77 // 24f40e77
 	ClazzID_updateDialogFilter                                 = 0x26ffde7d // 26ffde7d
 	ClazzID_updateDialogFilterOrder                            = 0xa5d72105 // a5d72105
 	ClazzID_updateDialogFilters                                = 0x3504914f // 3504914f
@@ -426,6 +439,7 @@ const (
 	ClazzID_updateEmojiGameInfo                                = 0xfb9c547a // fb9c547a
 	ClazzID_updateStarGiftCraftFail                            = 0xac072444 // ac072444
 	ClazzID_updateChatParticipantRank                          = 0xbd8367b9 // bd8367b9
+	ClazzID_updateManagedBot                                   = 0x4880ed9a // 4880ed9a
 	ClazzID_updates_state                                      = 0xa56c2a3e // a56c2a3e
 	ClazzID_updates_differenceEmpty                            = 0x5d75a138 // 5d75a138
 	ClazzID_updates_difference                                 = 0xf49ca0   // f49ca0
@@ -661,6 +675,9 @@ const (
 	ClazzID_messageEntityCustomEmoji                           = 0xc8cf05f8 // c8cf05f8
 	ClazzID_messageEntityBlockquote                            = 0xf1ccaaac // f1ccaaac
 	ClazzID_messageEntityFormattedDate                         = 0x904ac7c7 // 904ac7c7
+	ClazzID_messageEntityDiffInsert                            = 0x71777116 // 71777116
+	ClazzID_messageEntityDiffReplace                           = 0xc6c1e5a7 // c6c1e5a7
+	ClazzID_messageEntityDiffDelete                            = 0x652c1c5  // 652c1c5
 	ClazzID_inputChannelEmpty                                  = 0xee8c1e86 // ee8c1e86
 	ClazzID_inputChannel                                       = 0xf35aec28 // f35aec28
 	ClazzID_inputChannelFromMessage                            = 0x5b934f9d // 5b934f9d
@@ -1027,10 +1044,15 @@ const (
 	ClazzID_help_supportName                                   = 0x8c05f1c9 // 8c05f1c9
 	ClazzID_help_userInfoEmpty                                 = 0xf3ae2eed // f3ae2eed
 	ClazzID_help_userInfo                                      = 0x1eb3758  // 1eb3758
-	ClazzID_pollAnswer                                         = 0xff16e2ca // ff16e2ca
-	ClazzID_poll                                               = 0x58747131 // 58747131
-	ClazzID_pollAnswerVoters                                   = 0x3b6ddad2 // 3b6ddad2
-	ClazzID_pollResults                                        = 0x7adf2420 // 7adf2420
+	ClazzID_pollAnswer_4b7d786a                                = 0x4b7d786a // 4b7d786a
+	ClazzID_pollAnswer_ff16e2ca                                = 0xff16e2ca // ff16e2ca
+	ClazzID_inputPollAnswer                                    = 0x199fed96 // 199fed96
+	ClazzID_poll_b8425be9                                      = 0xb8425be9 // b8425be9
+	ClazzID_poll_58747131                                      = 0x58747131 // 58747131
+	ClazzID_pollAnswerVoters_3645230a                          = 0x3645230a // 3645230a
+	ClazzID_pollAnswerVoters_3b6ddad2                          = 0x3b6ddad2 // 3b6ddad2
+	ClazzID_pollResults_ba7bb15e                               = 0xba7bb15e // ba7bb15e
+	ClazzID_pollResults_7adf2420                               = 0x7adf2420 // 7adf2420
 	ClazzID_chatOnlines                                        = 0xf041e250 // f041e250
 	ClazzID_statsURL                                           = 0x47a971e0 // 47a971e0
 	ClazzID_chatAdminRights                                    = 0x5fb224d5 // 5fb224d5
@@ -1053,6 +1075,7 @@ const (
 	ClazzID_inputFolderPeer                                    = 0xfbd2c296 // fbd2c296
 	ClazzID_folderPeer                                         = 0xe9baa668 // e9baa668
 	ClazzID_messages_searchCounter                             = 0xe844ebff // e844ebff
+	ClazzID_urlAuthResultRequest_3cd623ec                      = 0x3cd623ec // 3cd623ec
 	ClazzID_urlAuthResultRequest_f8f8eb1e                      = 0xf8f8eb1e // f8f8eb1e
 	ClazzID_urlAuthResultRequest_32fabf1a                      = 0x32fabf1a // 32fabf1a
 	ClazzID_urlAuthResultRequest_92d33a0e                      = 0x92d33a0e // 92d33a0e
@@ -1118,7 +1141,8 @@ const (
 	ClazzID_messageViews                                       = 0x455b853d // 455b853d
 	ClazzID_messages_messageViews                              = 0xb6c4f543 // b6c4f543
 	ClazzID_messages_discussionMessage                         = 0xa6341782 // a6341782
-	ClazzID_messageReplyHeader                                 = 0x6917560b // 6917560b
+	ClazzID_messageReplyHeader_1b97dd66                        = 0x1b97dd66 // 1b97dd66
+	ClazzID_messageReplyHeader_6917560b                        = 0x6917560b // 6917560b
 	ClazzID_messageReplyStoryHeader                            = 0xe5af939  // e5af939
 	ClazzID_messageReplies                                     = 0x83d60fc2 // 83d60fc2
 	ClazzID_peerBlocked                                        = 0xe8fd8014 // e8fd8014
@@ -1269,13 +1293,15 @@ const (
 	ClazzID_stickerKeyword                                     = 0xfcfeb29c // fcfeb29c
 	ClazzID_username                                           = 0xb4073647 // b4073647
 	ClazzID_forumTopicDeleted                                  = 0x23f109b  // 23f109b
-	ClazzID_forumTopic                                         = 0xcdff0eca // cdff0eca
+	ClazzID_forumTopic_fcdad815                                = 0xfcdad815 // fcdad815
+	ClazzID_forumTopic_cdff0eca                                = 0xcdff0eca // cdff0eca
 	ClazzID_messages_forumTopics                               = 0x367617d3 // 367617d3
 	ClazzID_defaultHistoryTTL                                  = 0x43b46b20 // 43b46b20
 	ClazzID_exportedContactToken                               = 0x41bf109b // 41bf109b
 	ClazzID_requestPeerTypeUser                                = 0x5f3b8a00 // 5f3b8a00
 	ClazzID_requestPeerTypeChat                                = 0xc9f06e1b // c9f06e1b
 	ClazzID_requestPeerTypeBroadcast                           = 0x339bef6c // 339bef6c
+	ClazzID_requestPeerTypeCreateBot                           = 0x3e81e078 // 3e81e078
 	ClazzID_emojiListNotModified                               = 0x481eadfa // 481eadfa
 	ClazzID_emojiList                                          = 0x7a1e11d1 // 7a1e11d1
 	ClazzID_emojiGroup                                         = 0x7a9abda9 // 7a9abda9
@@ -1311,7 +1337,8 @@ const (
 	ClazzID_storyViews                                         = 0x8d595cd6 // 8d595cd6
 	ClazzID_storyItemDeleted                                   = 0x51e6ee4f // 51e6ee4f
 	ClazzID_storyItemSkipped                                   = 0xffadc913 // ffadc913
-	ClazzID_storyItem                                          = 0xedf164f1 // edf164f1
+	ClazzID_storyItem_16a4b93c                                 = 0x16a4b93c // 16a4b93c
+	ClazzID_storyItem_edf164f1                                 = 0xedf164f1 // edf164f1
 	ClazzID_stories_allStoriesNotModified                      = 0x1158fe3e // 1158fe3e
 	ClazzID_stories_allStories                                 = 0x6efc5e81 // 6efc5e81
 	ClazzID_stories_stories                                    = 0x63c3dd0a // 63c3dd0a
@@ -1320,7 +1347,8 @@ const (
 	ClazzID_storyViewPublicRepost                              = 0xbd74cf49 // bd74cf49
 	ClazzID_stories_storyViewsList                             = 0x59d78fc5 // 59d78fc5
 	ClazzID_stories_storyViews                                 = 0xde9eed1d // de9eed1d
-	ClazzID_inputReplyToMessage                                = 0x869fbe10 // 869fbe10
+	ClazzID_inputReplyToMessage_3bd4b7c2                       = 0x3bd4b7c2 // 3bd4b7c2
+	ClazzID_inputReplyToMessage_869fbe10                       = 0x869fbe10 // 869fbe10
 	ClazzID_inputReplyToStory                                  = 0x5881323a // 5881323a
 	ClazzID_inputReplyToMonoForum                              = 0x69d66c45 // 69d66c45
 	ClazzID_exportedStoryLink                                  = 0x3fc9053b // 3fc9053b
@@ -1430,7 +1458,8 @@ const (
 	ClazzID_channels_sponsoredMessageReportResultReported      = 0xad798849 // ad798849
 	ClazzID_reactionNotificationsFromContacts                  = 0xbac3a61a // bac3a61a
 	ClazzID_reactionNotificationsFromAll                       = 0x4b9e22a0 // 4b9e22a0
-	ClazzID_reactionsNotifySettings                            = 0x56e34970 // 56e34970
+	ClazzID_reactionsNotifySettings_71e4ea58                   = 0x71e4ea58 // 71e4ea58
+	ClazzID_reactionsNotifySettings_56e34970                   = 0x56e34970 // 56e34970
 	ClazzID_availableEffect                                    = 0x93c3e27e // 93c3e27e
 	ClazzID_messages_availableEffectsNotModified               = 0xd1ed9a5b // d1ed9a5b
 	ClazzID_messages_availableEffects                          = 0xbddb616e // bddb616e
@@ -1592,6 +1621,10 @@ const (
 	ClazzID_starGiftAttributeRarityEpic                        = 0x78fbf3a8 // 78fbf3a8
 	ClazzID_starGiftAttributeRarityLegendary                   = 0xcef7e7a8 // cef7e7a8
 	ClazzID_keyboardButtonStyle                                = 0x4fdd3430 // 4fdd3430
+	ClazzID_inputMessageReadMetric                             = 0x402b4495 // 402b4495
+	ClazzID_bots_exportedBotToken                              = 0x3c60b621 // 3c60b621
+	ClazzID_bots_requestedButton                               = 0xf13bbcd7 // f13bbcd7
+	ClazzID_messages_composedMessageWithAI                     = 0x90d7adfa // 90d7adfa
 	ClazzID_int32                                              = 0x8ccffa3f // 8ccffa3f
 	ClazzID_long                                               = 0x4ab29f6d // 4ab29f6d
 	ClazzID_int64                                              = 0xa2813660 // a2813660
@@ -1920,7 +1953,8 @@ const (
 	ClazzID_messages_clearAllDrafts                            = 0x7e58ee9c // 7e58ee9c
 	ClazzID_messages_updatePinnedMessage                       = 0xd2aaf7ec // d2aaf7ec
 	ClazzID_messages_sendVote                                  = 0x10ea6184 // 10ea6184
-	ClazzID_messages_getPollResults                            = 0x73bb643b // 73bb643b
+	ClazzID_messages_getPollResults_eda3e33b                   = 0xeda3e33b // eda3e33b
+	ClazzID_messages_getPollResults_73bb643b                   = 0x73bb643b // 73bb643b
 	ClazzID_messages_getOnlines                                = 0x6e2be050 // 6e2be050
 	ClazzID_messages_editChatAbout                             = 0xdef60797 // def60797
 	ClazzID_messages_editChatDefaultBannedRights               = 0xa5866b41 // a5866b41
@@ -1979,7 +2013,8 @@ const (
 	ClazzID_messages_setChatAvailableReactions                 = 0x864b2581 // 864b2581
 	ClazzID_messages_getAvailableReactions                     = 0x18dea0ac // 18dea0ac
 	ClazzID_messages_setDefaultReaction                        = 0x4f47a016 // 4f47a016
-	ClazzID_messages_translateText                             = 0x63183030 // 63183030
+	ClazzID_messages_translateText_a5eec345                    = 0xa5eec345 // a5eec345
+	ClazzID_messages_translateText_63183030                    = 0x63183030 // 63183030
 	ClazzID_messages_getUnreadReactions                        = 0xbd7f90ac // bd7f90ac
 	ClazzID_messages_readReactions                             = 0x9ec44f93 // 9ec44f93
 	ClazzID_messages_searchSentMedia                           = 0x107e31a0 // 107e31a0
@@ -2003,7 +2038,8 @@ const (
 	ClazzID_messages_getExtendedMedia                          = 0x84f80814 // 84f80814
 	ClazzID_messages_setDefaultHistoryTTL                      = 0x9eb51445 // 9eb51445
 	ClazzID_messages_getDefaultHistoryTTL                      = 0x658b7188 // 658b7188
-	ClazzID_messages_sendBotRequestedPeer                      = 0x91b2d060 // 91b2d060
+	ClazzID_messages_sendBotRequestedPeer_6c5cf2a7             = 0x6c5cf2a7 // 6c5cf2a7
+	ClazzID_messages_sendBotRequestedPeer_91b2d060             = 0x91b2d060 // 91b2d060
 	ClazzID_messages_getEmojiGroups                            = 0x7488ce5b // 7488ce5b
 	ClazzID_messages_getEmojiStatusGroups                      = 0x2ecd56cd // 2ecd56cd
 	ClazzID_messages_getEmojiProfilePhotoGroups                = 0x21a548f3 // 21a548f3
@@ -2063,12 +2099,20 @@ const (
 	ClazzID_messages_createForumTopic                          = 0x2f98c3d5 // 2f98c3d5
 	ClazzID_messages_deleteTopicHistory                        = 0xd2816f10 // d2816f10
 	ClazzID_messages_getEmojiGameInfo                          = 0xfb7e8ca7 // fb7e8ca7
-	ClazzID_messages_summarizeText                             = 0x9d4104e2 // 9d4104e2
+	ClazzID_messages_summarizeText_abbbd346                    = 0xabbbd346 // abbbd346
+	ClazzID_messages_summarizeText_9d4104e2                    = 0x9d4104e2 // 9d4104e2
 	ClazzID_messages_editChatCreator                           = 0xf743b857 // f743b857
 	ClazzID_messages_getFutureChatCreatorAfterLeave            = 0x3b7d0ea6 // 3b7d0ea6
 	ClazzID_messages_editChatParticipantRank                   = 0xa00f32b0 // a00f32b0
 	ClazzID_messages_declineUrlAuth                            = 0x35436bbc // 35436bbc
 	ClazzID_messages_checkUrlAuthMatchCode                     = 0xc9a47b0b // c9a47b0b
+	ClazzID_messages_composeMessageWithAI                      = 0xfd426afe // fd426afe
+	ClazzID_messages_reportReadMetrics                         = 0x4067c5e6 // 4067c5e6
+	ClazzID_messages_reportMusicListen                         = 0xddbcd819 // ddbcd819
+	ClazzID_messages_addPollAnswer                             = 0x19bc4b6d // 19bc4b6d
+	ClazzID_messages_deletePollAnswer                          = 0xac8505a5 // ac8505a5
+	ClazzID_messages_getUnreadPollVotes                        = 0x43286cf2 // 43286cf2
+	ClazzID_messages_readPollVotes                             = 0x1720b4d8 // 1720b4d8
 	ClazzID_updates_getState                                   = 0xedd4882a // edd4882a
 	ClazzID_updates_getDifference                              = 0x19c2f763 // 19c2f763
 	ClazzID_updates_getChannelDifference                       = 0x3173d78  // 3173d78
@@ -2200,6 +2244,11 @@ const (
 	ClazzID_bots_updateStarRefProgram                          = 0x778b5ab3 // 778b5ab3
 	ClazzID_bots_setCustomVerification                         = 0x8b89dfbd // 8b89dfbd
 	ClazzID_bots_getBotRecommendations                         = 0xa1b70815 // a1b70815
+	ClazzID_bots_checkUsername                                 = 0x87f2219b // 87f2219b
+	ClazzID_bots_createBot                                     = 0xe5b17f2b // e5b17f2b
+	ClazzID_bots_exportBotToken                                = 0xbd0d99eb // bd0d99eb
+	ClazzID_bots_requestWebViewButton                          = 0x31a2a35e // 31a2a35e
+	ClazzID_bots_getRequestedWebViewButton                     = 0xbf25b7f3 // bf25b7f3
 	ClazzID_payments_getPaymentForm                            = 0x37148dbb // 37148dbb
 	ClazzID_payments_getPaymentReceipt                         = 0x2478d1cc // 2478d1cc
 	ClazzID_payments_validateRequestedInfo                     = 0xb6c8f12b // b6c8f12b
@@ -2347,8 +2396,10 @@ const (
 	ClazzID_chatlists_getLeaveChatlistSuggestions              = 0xfdbcd714 // fdbcd714
 	ClazzID_chatlists_leaveChatlist                            = 0x74fae13a // 74fae13a
 	ClazzID_stories_canSendStory                               = 0x30eb63f0 // 30eb63f0
-	ClazzID_stories_sendStory                                  = 0x737fc2ec // 737fc2ec
-	ClazzID_stories_editStory                                  = 0xb583ba46 // b583ba46
+	ClazzID_stories_sendStory_8f9e6898                         = 0x8f9e6898 // 8f9e6898
+	ClazzID_stories_sendStory_737fc2ec                         = 0x737fc2ec // 737fc2ec
+	ClazzID_stories_editStory_2c63a72b                         = 0x2c63a72b // 2c63a72b
+	ClazzID_stories_editStory_b583ba46                         = 0xb583ba46 // b583ba46
 	ClazzID_stories_deleteStories                              = 0xae59db5f // ae59db5f
 	ClazzID_stories_togglePinned                               = 0x9a75a1ef // 9a75a1ef
 	ClazzID_stories_getAllStories                              = 0xeeb0d625 // eeb0d625

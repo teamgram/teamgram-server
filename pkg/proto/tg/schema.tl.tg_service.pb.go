@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgram Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package tg
@@ -31041,9 +31041,10 @@ func (m *TLMessagesSendVote) Decode(d *bin.Decoder) (err error) {
 
 // TLMessagesGetPollResults <--
 type TLMessagesGetPollResults struct {
-	ClazzID uint32         `json:"_id"`
-	Peer    InputPeerClazz `json:"peer"`
-	MsgId   int32          `json:"msg_id"`
+	ClazzID  uint32         `json:"_id"`
+	Peer     InputPeerClazz `json:"peer"`
+	MsgId    int32          `json:"msg_id"`
+	PollHash int64          `json:"poll_hash"`
 }
 
 func (m *TLMessagesGetPollResults) String() string {
@@ -31060,6 +31061,13 @@ func (m *TLMessagesGetPollResults) MarshalJSON() ([]byte, error) {
 
 func (m *TLMessagesGetPollResults) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
+	case 0xeda3e33b:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += 8
+
+		return size
 	case 0x73bb643b:
 		size := 4
 		size += iface.CalcObjectSize(m.Peer, layer)
@@ -31073,6 +31081,12 @@ func (m *TLMessagesGetPollResults) CalcSize(layer int32) int {
 
 func (m *TLMessagesGetPollResults) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
+	case 0xeda3e33b:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		return nil
 	case 0x73bb643b:
 		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
@@ -31087,6 +31101,14 @@ func (m *TLMessagesGetPollResults) Validate(layer int32) error {
 // Encode <--
 func (m *TLMessagesGetPollResults) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getPollResults, int(layer)); clazzId {
+	case 0xeda3e33b:
+		x.PutClazzID(0xeda3e33b)
+
+		_ = m.Peer.Encode(x, layer)
+		x.PutInt32(m.MsgId)
+		x.PutInt64(m.PollHash)
+
+		return nil
 	case 0x73bb643b:
 		x.PutClazzID(0x73bb643b)
 
@@ -31109,6 +31131,26 @@ func (m *TLMessagesGetPollResults) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
+	case 0xeda3e33b:
+
+		// m1 := &InputPeer{}
+		// _ = m1.Decode(d)
+		// m.Peer = m1
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MsgId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PollHash, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
 	case 0x73bb643b:
 
 		// m1 := &InputPeer{}
@@ -37520,6 +37562,7 @@ type TLMessagesTranslateText struct {
 	Id      []int32                 `json:"id"`
 	Text    []TextWithEntitiesClazz `json:"text"`
 	ToLang  string                  `json:"to_lang"`
+	Tone    *string                 `json:"tone"`
 }
 
 func (m *TLMessagesTranslateText) String() string {
@@ -37536,6 +37579,27 @@ func (m *TLMessagesTranslateText) MarshalJSON() ([]byte, error) {
 
 func (m *TLMessagesTranslateText) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_translateText, int(layer)); clazzId {
+	case 0xa5eec345:
+		size := 4
+		size += 4
+		if m.Peer != nil {
+			size += iface.CalcObjectSize(m.Peer, layer)
+		}
+
+		if m.Id != nil {
+			size += iface.CalcInt32ListSize(m.Id)
+		}
+
+		if m.Text != nil {
+			size += iface.CalcObjectListSize(m.Text, layer)
+		}
+
+		size += iface.CalcStringSize(m.ToLang)
+		if m.Tone != nil {
+			size += iface.CalcStringSize(*m.Tone)
+		}
+
+		return size
 	case 0x63183030:
 		size := 4
 		size += 4
@@ -37561,6 +37625,13 @@ func (m *TLMessagesTranslateText) CalcSize(layer int32) int {
 
 func (m *TLMessagesTranslateText) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_translateText, int(layer)); clazzId {
+	case 0xa5eec345:
+
+		if err := iface.ValidateRequiredString("to_lang", m.ToLang); err != nil {
+			return err
+		}
+
+		return nil
 	case 0x63183030:
 
 		if err := iface.ValidateRequiredString("to_lang", m.ToLang); err != nil {
@@ -37576,6 +37647,49 @@ func (m *TLMessagesTranslateText) Validate(layer int32) error {
 // Encode <--
 func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_translateText, int(layer)); clazzId {
+	case 0xa5eec345:
+		x.PutClazzID(0xa5eec345)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.Peer != nil {
+				flags |= 1 << 0
+			}
+			if m.Id != nil {
+				flags |= 1 << 0
+			}
+			if m.Text != nil {
+				flags |= 1 << 1
+			}
+
+			if m.Tone != nil {
+				flags |= 1 << 2
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		if m.Peer != nil {
+			_ = m.Peer.Encode(x, layer)
+		}
+
+		if m.Id != nil {
+			iface.EncodeInt32List(x, m.Id)
+		}
+		if m.Text != nil {
+			_ = iface.EncodeObjectList(x, m.Text, layer)
+		}
+		x.PutString(m.ToLang)
+		if m.Tone != nil {
+			x.PutString(*m.Tone)
+		}
+
+		return nil
 	case 0x63183030:
 		x.PutClazzID(0x63183030)
 
@@ -37627,6 +37741,61 @@ func (m *TLMessagesTranslateText) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
+	case 0xa5eec345:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			// m2 := &InputPeer{}
+			// _ = m2.Decode(d)
+			// m.Peer = m2
+			m.Peer, err = DecodeInputPeerClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Id, err = iface.DecodeInt32List(d)
+		}
+		if (flags & (1 << 1)) != 0 {
+			c4, err2 := d.ClazzID()
+			if c4 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+				return err2
+			}
+			l4, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v4 := make([]*TextWithEntities, l4)
+			v4 := make([]TextWithEntitiesClazz, l4)
+			for i := 0; i < l4; i++ {
+				// vv := new(TextWithEntities)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v4[i] = vv
+				v4[i], err3 = DecodeTextWithEntitiesClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.Text = v4
+		}
+		m.ToLang, err = d.String()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.Tone = new(string)
+			*m.Tone, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	case 0x63183030:
 		flags, err := d.Uint32()
 		if err != nil {
@@ -40228,11 +40397,13 @@ func (m *TLMessagesGetDefaultHistoryTTL) Decode(d *bin.Decoder) (err error) {
 
 // TLMessagesSendBotRequestedPeer <--
 type TLMessagesSendBotRequestedPeer struct {
-	ClazzID        uint32           `json:"_id"`
-	Peer           InputPeerClazz   `json:"peer"`
-	MsgId          int32            `json:"msg_id"`
-	ButtonId       int32            `json:"button_id"`
-	RequestedPeers []InputPeerClazz `json:"requested_peers"`
+	ClazzID         uint32           `json:"_id"`
+	Peer            InputPeerClazz   `json:"peer"`
+	MsgId_FLAGINT32 *int32           `json:"msg_id_FLAGINT32"`
+	WebappReqId     *string          `json:"webapp_req_id"`
+	ButtonId        int32            `json:"button_id"`
+	RequestedPeers  []InputPeerClazz `json:"requested_peers"`
+	MsgId_INT32     int32            `json:"msg_id_INT32"`
 }
 
 func (m *TLMessagesSendBotRequestedPeer) String() string {
@@ -40249,6 +40420,22 @@ func (m *TLMessagesSendBotRequestedPeer) MarshalJSON() ([]byte, error) {
 
 func (m *TLMessagesSendBotRequestedPeer) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
+	case 0x6c5cf2a7:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.MsgId_FLAGINT32 != nil {
+			size += 4
+		}
+
+		if m.WebappReqId != nil {
+			size += iface.CalcStringSize(*m.WebappReqId)
+		}
+
+		size += 4
+		size += iface.CalcObjectListSize(m.RequestedPeers, layer)
+
+		return size
 	case 0x91b2d060:
 		size := 4
 		size += iface.CalcObjectSize(m.Peer, layer)
@@ -40264,6 +40451,16 @@ func (m *TLMessagesSendBotRequestedPeer) CalcSize(layer int32) int {
 
 func (m *TLMessagesSendBotRequestedPeer) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
+	case 0x6c5cf2a7:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSliceWithLayer("requested_peers", m.RequestedPeers, layer); err != nil {
+			return err
+		}
+
+		return nil
 	case 0x91b2d060:
 		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
@@ -40282,11 +40479,45 @@ func (m *TLMessagesSendBotRequestedPeer) Validate(layer int32) error {
 // Encode <--
 func (m *TLMessagesSendBotRequestedPeer) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_sendBotRequestedPeer, int(layer)); clazzId {
+	case 0x6c5cf2a7:
+		x.PutClazzID(0x6c5cf2a7)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.MsgId_FLAGINT32 != nil {
+				flags |= 1 << 0
+			}
+			if m.WebappReqId != nil {
+				flags |= 1 << 1
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		if m.MsgId_FLAGINT32 != nil {
+			x.PutInt32(*m.MsgId_FLAGINT32)
+		}
+
+		if m.WebappReqId != nil {
+			x.PutString(*m.WebappReqId)
+		}
+
+		x.PutInt32(m.ButtonId)
+
+		_ = iface.EncodeObjectList(x, m.RequestedPeers, layer)
+
+		return nil
 	case 0x91b2d060:
 		x.PutClazzID(0x91b2d060)
 
 		_ = m.Peer.Encode(x, layer)
-		x.PutInt32(m.MsgId)
+		x.PutInt32(m.MsgId_INT32)
 		x.PutInt32(m.ButtonId)
 
 		_ = iface.EncodeObjectList(x, m.RequestedPeers, layer)
@@ -40307,17 +40538,75 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0x91b2d060:
+	case 0x6c5cf2a7:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
 
-		// m1 := &InputPeer{}
-		// _ = m1.Decode(d)
-		// m.Peer = m1
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
 		m.Peer, err = DecodeInputPeerClazz(d)
 		if err != nil {
 			return err
 		}
 
-		m.MsgId, err = d.Int32()
+		if (flags & (1 << 0)) != 0 {
+			m.MsgId_FLAGINT32 = new(int32)
+			*m.MsgId_FLAGINT32, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.WebappReqId = new(string)
+			*m.WebappReqId, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		m.ButtonId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		c6, err2 := d.ClazzID()
+		if c6 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+			return err2
+		}
+		l6, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		// v6 := make([]*InputPeer, l6)
+		v6 := make([]InputPeerClazz, l6)
+		for i := 0; i < l6; i++ {
+			// vv := new(InputPeer)
+			// err3 = vv.Decode(d)
+			// _ = err3
+			// v6[i] = vv
+			v6[i], err3 = DecodeInputPeerClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.RequestedPeers = v6
+
+		return nil
+	case 0x91b2d060:
+
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MsgId_INT32, err = d.Int32()
 		if err != nil {
 			return err
 		}
@@ -40325,28 +40614,28 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return err
 		}
-		c4, err2 := d.ClazzID()
-		if c4 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+		c6, err2 := d.ClazzID()
+		if c6 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
 			return err2
 		}
-		l4, err3 := d.Int()
+		l6, err3 := d.Int()
 		if err3 != nil {
 			return err3
 		}
-		// v4 := make([]*InputPeer, l4)
-		v4 := make([]InputPeerClazz, l4)
-		for i := 0; i < l4; i++ {
+		// v6 := make([]*InputPeer, l6)
+		v6 := make([]InputPeerClazz, l6)
+		for i := 0; i < l6; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
-			// v4[i] = vv
-			v4[i], err3 = DecodeInputPeerClazz(d)
+			// v6[i] = vv
+			v6[i], err3 = DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return err3
 			}
 		}
-		m.RequestedPeers = v4
+		m.RequestedPeers = v6
 
 		return nil
 	default:
@@ -46880,6 +47169,7 @@ type TLMessagesSummarizeText struct {
 	Peer    InputPeerClazz `json:"peer"`
 	Id      int32          `json:"id"`
 	ToLang  *string        `json:"to_lang"`
+	Tone    *string        `json:"tone"`
 }
 
 func (m *TLMessagesSummarizeText) String() string {
@@ -46896,6 +47186,20 @@ func (m *TLMessagesSummarizeText) MarshalJSON() ([]byte, error) {
 
 func (m *TLMessagesSummarizeText) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
+	case 0xabbbd346:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.ToLang != nil {
+			size += iface.CalcStringSize(*m.ToLang)
+		}
+
+		if m.Tone != nil {
+			size += iface.CalcStringSize(*m.Tone)
+		}
+
+		return size
 	case 0x9d4104e2:
 		size := 4
 		size += 4
@@ -46913,6 +47217,12 @@ func (m *TLMessagesSummarizeText) CalcSize(layer int32) int {
 
 func (m *TLMessagesSummarizeText) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
+	case 0xabbbd346:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		return nil
 	case 0x9d4104e2:
 		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
@@ -46927,6 +47237,37 @@ func (m *TLMessagesSummarizeText) Validate(layer int32) error {
 // Encode <--
 func (m *TLMessagesSummarizeText) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_summarizeText, int(layer)); clazzId {
+	case 0xabbbd346:
+		x.PutClazzID(0xabbbd346)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.ToLang != nil {
+				flags |= 1 << 0
+			}
+			if m.Tone != nil {
+				flags |= 1 << 2
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		x.PutInt32(m.Id)
+		if m.ToLang != nil {
+			x.PutString(*m.ToLang)
+		}
+
+		if m.Tone != nil {
+			x.PutString(*m.Tone)
+		}
+
+		return nil
 	case 0x9d4104e2:
 		x.PutClazzID(0x9d4104e2)
 
@@ -46966,6 +47307,42 @@ func (m *TLMessagesSummarizeText) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
+	case 0xabbbd346:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.ToLang = new(string)
+			*m.ToLang, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.Tone = new(string)
+			*m.Tone, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	case 0x9d4104e2:
 		flags, err := d.Uint32()
 		if err != nil {
@@ -47466,6 +47843,845 @@ func (m *TLMessagesCheckUrlAuthMatchCode) Decode(d *bin.Decoder) (err error) {
 		m.MatchCode, err = d.String()
 		if err != nil {
 			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesComposeMessageWithAI <--
+type TLMessagesComposeMessageWithAI struct {
+	ClazzID         uint32                `json:"_id"`
+	Proofread       bool                  `json:"proofread"`
+	Emojify         bool                  `json:"emojify"`
+	Text            TextWithEntitiesClazz `json:"text"`
+	TranslateToLang *string               `json:"translate_to_lang"`
+	ChangeTone      *string               `json:"change_tone"`
+}
+
+func (m *TLMessagesComposeMessageWithAI) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_composeMessageWithAI", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesComposeMessageWithAI) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_composeMessageWithAI", m)
+}
+
+func (m *TLMessagesComposeMessageWithAI) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_composeMessageWithAI, int(layer)); clazzId {
+	case 0xfd426afe:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Text, layer)
+		if m.TranslateToLang != nil {
+			size += iface.CalcStringSize(*m.TranslateToLang)
+		}
+
+		if m.ChangeTone != nil {
+			size += iface.CalcStringSize(*m.ChangeTone)
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesComposeMessageWithAI) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_composeMessageWithAI, int(layer)); clazzId {
+	case 0xfd426afe:
+		if err := iface.ValidateRequiredObjectWithLayer("text", m.Text, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_composeMessageWithAI, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesComposeMessageWithAI) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_composeMessageWithAI, int(layer)); clazzId {
+	case 0xfd426afe:
+		x.PutClazzID(0xfd426afe)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.Proofread == true {
+				flags |= 1 << 0
+			}
+			if m.Emojify == true {
+				flags |= 1 << 3
+			}
+
+			if m.TranslateToLang != nil {
+				flags |= 1 << 1
+			}
+			if m.ChangeTone != nil {
+				flags |= 1 << 2
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Text.Encode(x, layer)
+		if m.TranslateToLang != nil {
+			x.PutString(*m.TranslateToLang)
+		}
+
+		if m.ChangeTone != nil {
+			x.PutString(*m.ChangeTone)
+		}
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_composeMessageWithAI, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesComposeMessageWithAI) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xfd426afe:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.Proofread = true
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.Emojify = true
+		}
+
+		// m4 := &TextWithEntities{}
+		// _ = m4.Decode(d)
+		// m.Text = m4
+		m.Text, err = DecodeTextWithEntitiesClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			m.TranslateToLang = new(string)
+			*m.TranslateToLang, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.ChangeTone = new(string)
+			*m.ChangeTone, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesReportReadMetrics <--
+type TLMessagesReportReadMetrics struct {
+	ClazzID uint32                        `json:"_id"`
+	Peer    InputPeerClazz                `json:"peer"`
+	Metrics []InputMessageReadMetricClazz `json:"metrics"`
+}
+
+func (m *TLMessagesReportReadMetrics) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportReadMetrics", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesReportReadMetrics) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_reportReadMetrics", m)
+}
+
+func (m *TLMessagesReportReadMetrics) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReadMetrics, int(layer)); clazzId {
+	case 0x4067c5e6:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectListSize(m.Metrics, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportReadMetrics) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReadMetrics, int(layer)); clazzId {
+	case 0x4067c5e6:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSliceWithLayer("metrics", m.Metrics, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportReadMetrics, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesReportReadMetrics) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportReadMetrics, int(layer)); clazzId {
+	case 0x4067c5e6:
+		x.PutClazzID(0x4067c5e6)
+
+		_ = m.Peer.Encode(x, layer)
+
+		_ = iface.EncodeObjectList(x, m.Metrics, layer)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportReadMetrics, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesReportReadMetrics) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x4067c5e6:
+
+		// m1 := &InputPeer{}
+		// _ = m1.Decode(d)
+		// m.Peer = m1
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		c2, err2 := d.ClazzID()
+		if c2 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+			return err2
+		}
+		l2, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		// v2 := make([]*InputMessageReadMetric, l2)
+		v2 := make([]InputMessageReadMetricClazz, l2)
+		for i := 0; i < l2; i++ {
+			// vv := new(InputMessageReadMetric)
+			// err3 = vv.Decode(d)
+			// _ = err3
+			// v2[i] = vv
+			v2[i], err3 = DecodeInputMessageReadMetricClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.Metrics = v2
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesReportMusicListen <--
+type TLMessagesReportMusicListen struct {
+	ClazzID          uint32             `json:"_id"`
+	Id               InputDocumentClazz `json:"id"`
+	ListenedDuration int32              `json:"listened_duration"`
+}
+
+func (m *TLMessagesReportMusicListen) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportMusicListen", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesReportMusicListen) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_reportMusicListen", m)
+}
+
+func (m *TLMessagesReportMusicListen) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMusicListen, int(layer)); clazzId {
+	case 0xddbcd819:
+		size := 4
+		size += iface.CalcObjectSize(m.Id, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReportMusicListen) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMusicListen, int(layer)); clazzId {
+	case 0xddbcd819:
+		if err := iface.ValidateRequiredObjectWithLayer("id", m.Id, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportMusicListen, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesReportMusicListen) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_reportMusicListen, int(layer)); clazzId {
+	case 0xddbcd819:
+		x.PutClazzID(0xddbcd819)
+
+		_ = m.Id.Encode(x, layer)
+		x.PutInt32(m.ListenedDuration)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_reportMusicListen, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesReportMusicListen) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xddbcd819:
+
+		// m1 := &InputDocument{}
+		// _ = m1.Decode(d)
+		// m.Id = m1
+		m.Id, err = DecodeInputDocumentClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.ListenedDuration, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesAddPollAnswer <--
+type TLMessagesAddPollAnswer struct {
+	ClazzID uint32          `json:"_id"`
+	Peer    InputPeerClazz  `json:"peer"`
+	MsgId   int32           `json:"msg_id"`
+	Answer  PollAnswerClazz `json:"answer"`
+}
+
+func (m *TLMessagesAddPollAnswer) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_addPollAnswer", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesAddPollAnswer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_addPollAnswer", m)
+}
+
+func (m *TLMessagesAddPollAnswer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addPollAnswer, int(layer)); clazzId {
+	case 0x19bc4b6d:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcObjectSize(m.Answer, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesAddPollAnswer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addPollAnswer, int(layer)); clazzId {
+	case 0x19bc4b6d:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObjectWithLayer("answer", m.Answer, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_addPollAnswer, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesAddPollAnswer) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_addPollAnswer, int(layer)); clazzId {
+	case 0x19bc4b6d:
+		x.PutClazzID(0x19bc4b6d)
+
+		_ = m.Peer.Encode(x, layer)
+		x.PutInt32(m.MsgId)
+		_ = m.Answer.Encode(x, layer)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_addPollAnswer, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesAddPollAnswer) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x19bc4b6d:
+
+		// m1 := &InputPeer{}
+		// _ = m1.Decode(d)
+		// m.Peer = m1
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MsgId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		// m3 := &PollAnswer{}
+		// _ = m3.Decode(d)
+		// m.Answer = m3
+		m.Answer, err = DecodePollAnswerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesDeletePollAnswer <--
+type TLMessagesDeletePollAnswer struct {
+	ClazzID uint32         `json:"_id"`
+	Peer    InputPeerClazz `json:"peer"`
+	MsgId   int32          `json:"msg_id"`
+	Option  []byte         `json:"option"`
+}
+
+func (m *TLMessagesDeletePollAnswer) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_deletePollAnswer", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesDeletePollAnswer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_deletePollAnswer", m)
+}
+
+func (m *TLMessagesDeletePollAnswer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deletePollAnswer, int(layer)); clazzId {
+	case 0xac8505a5:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		size += iface.CalcBytesSize(m.Option)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesDeletePollAnswer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deletePollAnswer, int(layer)); clazzId {
+	case 0xac8505a5:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("option", m.Option); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deletePollAnswer, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesDeletePollAnswer) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_deletePollAnswer, int(layer)); clazzId {
+	case 0xac8505a5:
+		x.PutClazzID(0xac8505a5)
+
+		_ = m.Peer.Encode(x, layer)
+		x.PutInt32(m.MsgId)
+		x.PutBytes(m.Option)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_deletePollAnswer, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesDeletePollAnswer) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xac8505a5:
+
+		// m1 := &InputPeer{}
+		// _ = m1.Decode(d)
+		// m.Peer = m1
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MsgId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Option, err = d.Bytes()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesGetUnreadPollVotes <--
+type TLMessagesGetUnreadPollVotes struct {
+	ClazzID   uint32         `json:"_id"`
+	Peer      InputPeerClazz `json:"peer"`
+	TopMsgId  *int32         `json:"top_msg_id"`
+	OffsetId  int32          `json:"offset_id"`
+	AddOffset int32          `json:"add_offset"`
+	Limit     int32          `json:"limit"`
+	MaxId     int32          `json:"max_id"`
+	MinId     int32          `json:"min_id"`
+}
+
+func (m *TLMessagesGetUnreadPollVotes) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadPollVotes", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesGetUnreadPollVotes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_getUnreadPollVotes", m)
+}
+
+func (m *TLMessagesGetUnreadPollVotes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadPollVotes, int(layer)); clazzId {
+	case 0x43286cf2:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesGetUnreadPollVotes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadPollVotes, int(layer)); clazzId {
+	case 0x43286cf2:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getUnreadPollVotes, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesGetUnreadPollVotes) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_getUnreadPollVotes, int(layer)); clazzId {
+	case 0x43286cf2:
+		x.PutClazzID(0x43286cf2)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.TopMsgId != nil {
+				flags |= 1 << 0
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		if m.TopMsgId != nil {
+			x.PutInt32(*m.TopMsgId)
+		}
+
+		x.PutInt32(m.OffsetId)
+		x.PutInt32(m.AddOffset)
+		x.PutInt32(m.Limit)
+		x.PutInt32(m.MaxId)
+		x.PutInt32(m.MinId)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_getUnreadPollVotes, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesGetUnreadPollVotes) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x43286cf2:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 0)) != 0 {
+			m.TopMsgId = new(int32)
+			*m.TopMsgId, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		m.OffsetId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.AddOffset, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.MaxId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.MinId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLMessagesReadPollVotes <--
+type TLMessagesReadPollVotes struct {
+	ClazzID  uint32         `json:"_id"`
+	Peer     InputPeerClazz `json:"peer"`
+	TopMsgId *int32         `json:"top_msg_id"`
+}
+
+func (m *TLMessagesReadPollVotes) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "messages_readPollVotes", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLMessagesReadPollVotes) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messages_readPollVotes", m)
+}
+
+func (m *TLMessagesReadPollVotes) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readPollVotes, int(layer)); clazzId {
+	case 0x1720b4d8:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		if m.TopMsgId != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessagesReadPollVotes) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readPollVotes, int(layer)); clazzId {
+	case 0x1720b4d8:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readPollVotes, layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessagesReadPollVotes) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messages_readPollVotes, int(layer)); clazzId {
+	case 0x1720b4d8:
+		x.PutClazzID(0x1720b4d8)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.TopMsgId != nil {
+				flags |= 1 << 0
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		if m.TopMsgId != nil {
+			x.PutInt32(*m.TopMsgId)
+		}
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_messages_readPollVotes, layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessagesReadPollVotes) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x1720b4d8:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 0)) != 0 {
+			m.TopMsgId = new(int32)
+			*m.TopMsgId, err = d.Int32()
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -60560,6 +61776,505 @@ func (m *TLBotsGetBotRecommendations) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLBotsCheckUsername <--
+type TLBotsCheckUsername struct {
+	ClazzID  uint32 `json:"_id"`
+	Username string `json:"username"`
+}
+
+func (m *TLBotsCheckUsername) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_checkUsername", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLBotsCheckUsername) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("bots_checkUsername", m)
+}
+
+func (m *TLBotsCheckUsername) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkUsername, int(layer)); clazzId {
+	case 0x87f2219b:
+		size := 4
+		size += iface.CalcStringSize(m.Username)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsCheckUsername) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkUsername, int(layer)); clazzId {
+	case 0x87f2219b:
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_checkUsername, layer)
+	}
+}
+
+// Encode <--
+func (m *TLBotsCheckUsername) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_checkUsername, int(layer)); clazzId {
+	case 0x87f2219b:
+		x.PutClazzID(0x87f2219b)
+
+		x.PutString(m.Username)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_checkUsername, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotsCheckUsername) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x87f2219b:
+		m.Username, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLBotsCreateBot <--
+type TLBotsCreateBot struct {
+	ClazzID     uint32         `json:"_id"`
+	ViaDeeplink bool           `json:"via_deeplink"`
+	Name        string         `json:"name"`
+	Username    string         `json:"username"`
+	ManagerId   InputUserClazz `json:"manager_id"`
+}
+
+func (m *TLBotsCreateBot) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_createBot", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLBotsCreateBot) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("bots_createBot", m)
+}
+
+func (m *TLBotsCreateBot) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_createBot, int(layer)); clazzId {
+	case 0xe5b17f2b:
+		size := 4
+		size += 4
+		size += iface.CalcStringSize(m.Name)
+		size += iface.CalcStringSize(m.Username)
+		size += iface.CalcObjectSize(m.ManagerId, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsCreateBot) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_createBot, int(layer)); clazzId {
+	case 0xe5b17f2b:
+		if err := iface.ValidateRequiredString("name", m.Name); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("username", m.Username); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObjectWithLayer("manager_id", m.ManagerId, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_createBot, layer)
+	}
+}
+
+// Encode <--
+func (m *TLBotsCreateBot) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_createBot, int(layer)); clazzId {
+	case 0xe5b17f2b:
+		x.PutClazzID(0xe5b17f2b)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.ViaDeeplink == true {
+				flags |= 1 << 0
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutString(m.Name)
+		x.PutString(m.Username)
+		_ = m.ManagerId.Encode(x, layer)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_createBot, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotsCreateBot) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xe5b17f2b:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.ViaDeeplink = true
+		}
+		m.Name, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.Username, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		// m5 := &InputUser{}
+		// _ = m5.Decode(d)
+		// m.ManagerId = m5
+		m.ManagerId, err = DecodeInputUserClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLBotsExportBotToken <--
+type TLBotsExportBotToken struct {
+	ClazzID uint32         `json:"_id"`
+	Bot     InputUserClazz `json:"bot"`
+	Revoke  BoolClazz      `json:"revoke"`
+}
+
+func (m *TLBotsExportBotToken) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_exportBotToken", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLBotsExportBotToken) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("bots_exportBotToken", m)
+}
+
+func (m *TLBotsExportBotToken) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_exportBotToken, int(layer)); clazzId {
+	case 0xbd0d99eb:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcObjectSize(m.Revoke, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsExportBotToken) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_exportBotToken, int(layer)); clazzId {
+	case 0xbd0d99eb:
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObjectWithLayer("revoke", m.Revoke, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_exportBotToken, layer)
+	}
+}
+
+// Encode <--
+func (m *TLBotsExportBotToken) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_exportBotToken, int(layer)); clazzId {
+	case 0xbd0d99eb:
+		x.PutClazzID(0xbd0d99eb)
+
+		_ = m.Bot.Encode(x, layer)
+		_ = m.Revoke.Encode(x, layer)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_exportBotToken, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotsExportBotToken) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xbd0d99eb:
+
+		// m1 := &InputUser{}
+		// _ = m1.Decode(d)
+		// m.Bot = m1
+		m.Bot, err = DecodeInputUserClazz(d)
+		if err != nil {
+			return err
+		}
+
+		// m2 := &Bool{}
+		// _ = m2.Decode(d)
+		// m.Revoke = m2
+		m.Revoke, err = DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLBotsRequestWebViewButton <--
+type TLBotsRequestWebViewButton struct {
+	ClazzID uint32              `json:"_id"`
+	UserId  InputUserClazz      `json:"user_id"`
+	Button  KeyboardButtonClazz `json:"button"`
+}
+
+func (m *TLBotsRequestWebViewButton) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_requestWebViewButton", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLBotsRequestWebViewButton) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("bots_requestWebViewButton", m)
+}
+
+func (m *TLBotsRequestWebViewButton) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_requestWebViewButton, int(layer)); clazzId {
+	case 0x31a2a35e:
+		size := 4
+		size += iface.CalcObjectSize(m.UserId, layer)
+		size += iface.CalcObjectSize(m.Button, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsRequestWebViewButton) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_requestWebViewButton, int(layer)); clazzId {
+	case 0x31a2a35e:
+		if err := iface.ValidateRequiredObjectWithLayer("user_id", m.UserId, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObjectWithLayer("button", m.Button, layer); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_requestWebViewButton, layer)
+	}
+}
+
+// Encode <--
+func (m *TLBotsRequestWebViewButton) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_requestWebViewButton, int(layer)); clazzId {
+	case 0x31a2a35e:
+		x.PutClazzID(0x31a2a35e)
+
+		_ = m.UserId.Encode(x, layer)
+		_ = m.Button.Encode(x, layer)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_requestWebViewButton, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotsRequestWebViewButton) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0x31a2a35e:
+
+		// m1 := &InputUser{}
+		// _ = m1.Decode(d)
+		// m.UserId = m1
+		m.UserId, err = DecodeInputUserClazz(d)
+		if err != nil {
+			return err
+		}
+
+		// m2 := &KeyboardButton{}
+		// _ = m2.Decode(d)
+		// m.Button = m2
+		m.Button, err = DecodeKeyboardButtonClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLBotsGetRequestedWebViewButton <--
+type TLBotsGetRequestedWebViewButton struct {
+	ClazzID     uint32         `json:"_id"`
+	Bot         InputUserClazz `json:"bot"`
+	WebappReqId string         `json:"webapp_req_id"`
+}
+
+func (m *TLBotsGetRequestedWebViewButton) String() string {
+	wrapper := iface.WithNameWrapper{ClazzName: "bots_getRequestedWebViewButton", TLObject: m}
+	return wrapper.String()
+}
+
+func (m *TLBotsGetRequestedWebViewButton) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("bots_getRequestedWebViewButton", m)
+}
+
+func (m *TLBotsGetRequestedWebViewButton) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getRequestedWebViewButton, int(layer)); clazzId {
+	case 0xbf25b7f3:
+		size := 4
+		size += iface.CalcObjectSize(m.Bot, layer)
+		size += iface.CalcStringSize(m.WebappReqId)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLBotsGetRequestedWebViewButton) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getRequestedWebViewButton, int(layer)); clazzId {
+	case 0xbf25b7f3:
+		if err := iface.ValidateRequiredObjectWithLayer("bot", m.Bot, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("webapp_req_id", m.WebappReqId); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getRequestedWebViewButton, layer)
+	}
+}
+
+// Encode <--
+func (m *TLBotsGetRequestedWebViewButton) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_bots_getRequestedWebViewButton, int(layer)); clazzId {
+	case 0xbf25b7f3:
+		x.PutClazzID(0xbf25b7f3)
+
+		_ = m.Bot.Encode(x, layer)
+		x.PutString(m.WebappReqId)
+
+		return nil
+	default:
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_bots_getRequestedWebViewButton, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotsGetRequestedWebViewButton) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
+	}
+	switch m.ClazzID {
+	case 0xbf25b7f3:
+
+		// m1 := &InputUser{}
+		// _ = m1.Decode(d)
+		// m.Bot = m1
+		m.Bot, err = DecodeInputUserClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.WebappReqId, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
 // TLPaymentsGetPaymentForm <--
 type TLPaymentsGetPaymentForm struct {
 	ClazzID     uint32            `json:"_id"`
@@ -65626,6 +67341,7 @@ type TLPaymentsGetResaleStarGifts struct {
 	SortByPrice    bool                       `json:"sort_by_price"`
 	SortByNum      bool                       `json:"sort_by_num"`
 	ForCraft       bool                       `json:"for_craft"`
+	StarsOnly      bool                       `json:"stars_only"`
 	AttributesHash *int64                     `json:"attributes_hash"`
 	GiftId         int64                      `json:"gift_id"`
 	Attributes     []StarGiftAttributeIdClazz `json:"attributes"`
@@ -65701,6 +67417,9 @@ func (m *TLPaymentsGetResaleStarGifts) Encode(x *bin.Encoder, layer int32) error
 			if m.ForCraft == true {
 				flags |= 1 << 4
 			}
+			if m.StarsOnly == true {
+				flags |= 1 << 5
+			}
 			if m.AttributesHash != nil {
 				flags |= 1 << 0
 			}
@@ -65757,6 +67476,9 @@ func (m *TLPaymentsGetResaleStarGifts) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 4)) != 0 {
 			m.ForCraft = true
 		}
+		if (flags & (1 << 5)) != 0 {
+			m.StarsOnly = true
+		}
 		if (flags & (1 << 0)) != 0 {
 			m.AttributesHash = new(int64)
 			*m.AttributesHash, err = d.Int64()
@@ -65770,28 +67492,28 @@ func (m *TLPaymentsGetResaleStarGifts) Decode(d *bin.Decoder) (err error) {
 			return err
 		}
 		if (flags & (1 << 3)) != 0 {
-			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			c8, err2 := d.ClazzID()
+			if c8 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
 				return err2
 			}
-			l7, err3 := d.Int()
+			l8, err3 := d.Int()
 			if err3 != nil {
 				return err3
 			}
-			// v7 := make([]*StarGiftAttributeId, l7)
-			v7 := make([]StarGiftAttributeIdClazz, l7)
-			for i := 0; i < l7; i++ {
+			// v8 := make([]*StarGiftAttributeId, l8)
+			v8 := make([]StarGiftAttributeIdClazz, l8)
+			for i := 0; i < l8; i++ {
 				// vv := new(StarGiftAttributeId)
 				// err3 = vv.Decode(d)
 				// _ = err3
-				// v7[i] = vv
-				v7[i], err3 = DecodeStarGiftAttributeIdClazz(d)
+				// v8[i] = vv
+				v8[i], err3 = DecodeStarGiftAttributeIdClazz(d)
 				if err3 != nil {
 					return err3
 				}
 			}
-			m.Attributes = v7
+			m.Attributes = v8
 		}
 		m.Offset, err = d.String()
 		if err != nil {
@@ -76257,6 +77979,7 @@ type TLStoriesSendStory struct {
 	FwdFromId    InputPeerClazz          `json:"fwd_from_id"`
 	FwdFromStory *int32                  `json:"fwd_from_story"`
 	Albums       []int32                 `json:"albums"`
+	Music        InputDocumentClazz      `json:"music"`
 }
 
 func (m *TLStoriesSendStory) String() string {
@@ -76273,6 +77996,46 @@ func (m *TLStoriesSendStory) MarshalJSON() ([]byte, error) {
 
 func (m *TLStoriesSendStory) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
+	case 0x8f9e6898:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Media, layer)
+		if m.MediaAreas != nil {
+			size += iface.CalcObjectListSize(m.MediaAreas, layer)
+		}
+
+		if m.Caption != nil {
+			size += iface.CalcStringSize(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.PrivacyRules, layer)
+		size += 8
+		if m.Period != nil {
+			size += 4
+		}
+
+		if m.FwdFromId != nil {
+			size += iface.CalcObjectSize(m.FwdFromId, layer)
+		}
+
+		if m.FwdFromStory != nil {
+			size += 4
+		}
+
+		if m.Albums != nil {
+			size += iface.CalcInt32ListSize(m.Albums)
+		}
+
+		if m.Music != nil {
+			size += iface.CalcObjectSize(m.Music, layer)
+		}
+
+		return size
 	case 0x737fc2ec:
 		size := 4
 		size += 4
@@ -76316,6 +78079,20 @@ func (m *TLStoriesSendStory) CalcSize(layer int32) int {
 
 func (m *TLStoriesSendStory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
+	case 0x8f9e6898:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObjectWithLayer("media", m.Media, layer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSliceWithLayer("privacy_rules", m.PrivacyRules, layer); err != nil {
+			return err
+		}
+
+		return nil
 	case 0x737fc2ec:
 		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
@@ -76338,6 +78115,91 @@ func (m *TLStoriesSendStory) Validate(layer int32) error {
 // Encode <--
 func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_sendStory, int(layer)); clazzId {
+	case 0x8f9e6898:
+		x.PutClazzID(0x8f9e6898)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.Pinned == true {
+				flags |= 1 << 2
+			}
+			if m.Noforwards == true {
+				flags |= 1 << 4
+			}
+			if m.FwdModified == true {
+				flags |= 1 << 7
+			}
+
+			if m.MediaAreas != nil {
+				flags |= 1 << 5
+			}
+			if m.Caption != nil {
+				flags |= 1 << 0
+			}
+			if m.Entities != nil {
+				flags |= 1 << 1
+			}
+
+			if m.Period != nil {
+				flags |= 1 << 3
+			}
+			if m.FwdFromId != nil {
+				flags |= 1 << 6
+			}
+			if m.FwdFromStory != nil {
+				flags |= 1 << 6
+			}
+			if m.Albums != nil {
+				flags |= 1 << 8
+			}
+			if m.Music != nil {
+				flags |= 1 << 9
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		_ = m.Media.Encode(x, layer)
+		if m.MediaAreas != nil {
+			_ = iface.EncodeObjectList(x, m.MediaAreas, layer)
+		}
+		if m.Caption != nil {
+			x.PutString(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			_ = iface.EncodeObjectList(x, m.Entities, layer)
+		}
+
+		_ = iface.EncodeObjectList(x, m.PrivacyRules, layer)
+
+		x.PutInt64(m.RandomId)
+		if m.Period != nil {
+			x.PutInt32(*m.Period)
+		}
+
+		if m.FwdFromId != nil {
+			_ = m.FwdFromId.Encode(x, layer)
+		}
+
+		if m.FwdFromStory != nil {
+			x.PutInt32(*m.FwdFromStory)
+		}
+
+		if m.Albums != nil {
+			iface.EncodeInt32List(x, m.Albums)
+		}
+		if m.Music != nil {
+			_ = m.Music.Encode(x, layer)
+		}
+
+		return nil
 	case 0x737fc2ec:
 		x.PutClazzID(0x737fc2ec)
 
@@ -76432,6 +78294,158 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
+	case 0x8f9e6898:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 2)) != 0 {
+			m.Pinned = true
+		}
+		if (flags & (1 << 4)) != 0 {
+			m.Noforwards = true
+		}
+		if (flags & (1 << 7)) != 0 {
+			m.FwdModified = true
+		}
+
+		// m5 := &InputPeer{}
+		// _ = m5.Decode(d)
+		// m.Peer = m5
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		// m6 := &InputMedia{}
+		// _ = m6.Decode(d)
+		// m.Media = m6
+		m.Media, err = DecodeInputMediaClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 5)) != 0 {
+			c7, err2 := d.ClazzID()
+			if c7 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+				return err2
+			}
+			l7, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v7 := make([]*MediaArea, l7)
+			v7 := make([]MediaAreaClazz, l7)
+			for i := 0; i < l7; i++ {
+				// vv := new(MediaArea)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v7[i] = vv
+				v7[i], err3 = DecodeMediaAreaClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.MediaAreas = v7
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Caption = new(string)
+			*m.Caption, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			c9, err2 := d.ClazzID()
+			if c9 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+				return err2
+			}
+			l9, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v9 := make([]*MessageEntity, l9)
+			v9 := make([]MessageEntityClazz, l9)
+			for i := 0; i < l9; i++ {
+				// vv := new(MessageEntity)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v9[i] = vv
+				v9[i], err3 = DecodeMessageEntityClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.Entities = v9
+		}
+		c10, err2 := d.ClazzID()
+		if c10 != iface.ClazzID_vector {
+			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
+			return err2
+		}
+		l10, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		// v10 := make([]*InputPrivacyRule, l10)
+		v10 := make([]InputPrivacyRuleClazz, l10)
+		for i := 0; i < l10; i++ {
+			// vv := new(InputPrivacyRule)
+			// err3 = vv.Decode(d)
+			// _ = err3
+			// v10[i] = vv
+			v10[i], err3 = DecodeInputPrivacyRuleClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.PrivacyRules = v10
+
+		m.RandomId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.Period = new(int32)
+			*m.Period, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 6)) != 0 {
+			// m13 := &InputPeer{}
+			// _ = m13.Decode(d)
+			// m.FwdFromId = m13
+			m.FwdFromId, err = DecodeInputPeerClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 6)) != 0 {
+			m.FwdFromStory = new(int32)
+			*m.FwdFromStory, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 8)) != 0 {
+			m.Albums, err = iface.DecodeInt32List(d)
+		}
+		if (flags & (1 << 9)) != 0 {
+			// m16 := &InputDocument{}
+			// _ = m16.Decode(d)
+			// m.Music = m16
+			m.Music, err = DecodeInputDocumentClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	case 0x737fc2ec:
 		flags, err := d.Uint32()
 		if err != nil {
@@ -76590,6 +78604,7 @@ type TLStoriesEditStory struct {
 	Caption      *string                 `json:"caption"`
 	Entities     []MessageEntityClazz    `json:"entities"`
 	PrivacyRules []InputPrivacyRuleClazz `json:"privacy_rules"`
+	Music        InputDocumentClazz      `json:"music"`
 }
 
 func (m *TLStoriesEditStory) String() string {
@@ -76606,6 +78621,36 @@ func (m *TLStoriesEditStory) MarshalJSON() ([]byte, error) {
 
 func (m *TLStoriesEditStory) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
+	case 0x2c63a72b:
+		size := 4
+		size += 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += 4
+		if m.Media != nil {
+			size += iface.CalcObjectSize(m.Media, layer)
+		}
+
+		if m.MediaAreas != nil {
+			size += iface.CalcObjectListSize(m.MediaAreas, layer)
+		}
+
+		if m.Caption != nil {
+			size += iface.CalcStringSize(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			size += iface.CalcObjectListSize(m.Entities, layer)
+		}
+
+		if m.PrivacyRules != nil {
+			size += iface.CalcObjectListSize(m.PrivacyRules, layer)
+		}
+
+		if m.Music != nil {
+			size += iface.CalcObjectSize(m.Music, layer)
+		}
+
+		return size
 	case 0xb583ba46:
 		size := 4
 		size += 4
@@ -76639,6 +78684,12 @@ func (m *TLStoriesEditStory) CalcSize(layer int32) int {
 
 func (m *TLStoriesEditStory) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
+	case 0x2c63a72b:
+		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
+			return err
+		}
+
+		return nil
 	case 0xb583ba46:
 		if err := iface.ValidateRequiredObjectWithLayer("peer", m.Peer, layer); err != nil {
 			return err
@@ -76653,6 +78704,62 @@ func (m *TLStoriesEditStory) Validate(layer int32) error {
 // Encode <--
 func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_stories_editStory, int(layer)); clazzId {
+	case 0x2c63a72b:
+		x.PutClazzID(0x2c63a72b)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.Media != nil {
+				flags |= 1 << 0
+			}
+			if m.MediaAreas != nil {
+				flags |= 1 << 3
+			}
+			if m.Caption != nil {
+				flags |= 1 << 1
+			}
+			if m.Entities != nil {
+				flags |= 1 << 1
+			}
+			if m.PrivacyRules != nil {
+				flags |= 1 << 2
+			}
+			if m.Music != nil {
+				flags |= 1 << 4
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		_ = m.Peer.Encode(x, layer)
+		x.PutInt32(m.Id)
+		if m.Media != nil {
+			_ = m.Media.Encode(x, layer)
+		}
+
+		if m.MediaAreas != nil {
+			_ = iface.EncodeObjectList(x, m.MediaAreas, layer)
+		}
+		if m.Caption != nil {
+			x.PutString(*m.Caption)
+		}
+
+		if m.Entities != nil {
+			_ = iface.EncodeObjectList(x, m.Entities, layer)
+		}
+		if m.PrivacyRules != nil {
+			_ = iface.EncodeObjectList(x, m.PrivacyRules, layer)
+		}
+		if m.Music != nil {
+			_ = m.Music.Encode(x, layer)
+		}
+
+		return nil
 	case 0xb583ba46:
 		x.PutClazzID(0xb583ba46)
 
@@ -76718,6 +78825,125 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
+	case 0x2c63a72b:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+
+		// m2 := &InputPeer{}
+		// _ = m2.Decode(d)
+		// m.Peer = m2
+		m.Peer, err = DecodeInputPeerClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			// m4 := &InputMedia{}
+			// _ = m4.Decode(d)
+			// m.Media = m4
+			m.Media, err = DecodeInputMediaClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 3)) != 0 {
+			c5, err2 := d.ClazzID()
+			if c5 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+				return err2
+			}
+			l5, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v5 := make([]*MediaArea, l5)
+			v5 := make([]MediaAreaClazz, l5)
+			for i := 0; i < l5; i++ {
+				// vv := new(MediaArea)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v5[i] = vv
+				v5[i], err3 = DecodeMediaAreaClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.MediaAreas = v5
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Caption = new(string)
+			*m.Caption, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			c7, err2 := d.ClazzID()
+			if c7 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+				return err2
+			}
+			l7, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v7 := make([]*MessageEntity, l7)
+			v7 := make([]MessageEntityClazz, l7)
+			for i := 0; i < l7; i++ {
+				// vv := new(MessageEntity)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v7[i] = vv
+				v7[i], err3 = DecodeMessageEntityClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.Entities = v7
+		}
+		if (flags & (1 << 2)) != 0 {
+			c8, err2 := d.ClazzID()
+			if c8 != iface.ClazzID_vector {
+				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+				return err2
+			}
+			l8, err3 := d.Int()
+			if err3 != nil {
+				return err3
+			}
+			// v8 := make([]*InputPrivacyRule, l8)
+			v8 := make([]InputPrivacyRuleClazz, l8)
+			for i := 0; i < l8; i++ {
+				// vv := new(InputPrivacyRule)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v8[i] = vv
+				v8[i], err3 = DecodeInputPrivacyRuleClazz(d)
+				if err3 != nil {
+					return err3
+				}
+			}
+			m.PrivacyRules = v8
+		}
+		if (flags & (1 << 4)) != 0 {
+			// m9 := &InputDocument{}
+			// _ = m9.Decode(d)
+			// m.Music = m9
+			m.Music, err = DecodeInputDocumentClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	case 0xb583ba46:
 		flags, err := d.Uint32()
 		if err != nil {
@@ -84465,13 +86691,6 @@ type RPCProfileLinks interface {
 }
 
 type RPCMessages interface {
-	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
-	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
-	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
-	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
-	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
-	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
-	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
 	MessagesGetMessages(ctx context.Context, in *TLMessagesGetMessages) (*MessagesMessages, error)
 	MessagesGetHistory(ctx context.Context, in *TLMessagesGetHistory) (*MessagesMessages, error)
 	MessagesSearch(ctx context.Context, in *TLMessagesSearch) (*MessagesMessages, error)
@@ -84870,6 +87089,16 @@ type RPCForums interface {
 	ChannelsToggleViewForumAsMessages(ctx context.Context, in *TLChannelsToggleViewForumAsMessages) (*Updates, error)
 }
 
+type RPCmessages interface {
+	MessagesComposeMessageWithAI(ctx context.Context, in *TLMessagesComposeMessageWithAI) (*MessagesComposedMessageWithAI, error)
+	MessagesReportReadMetrics(ctx context.Context, in *TLMessagesReportReadMetrics) (*Bool, error)
+	MessagesReportMusicListen(ctx context.Context, in *TLMessagesReportMusicListen) (*Bool, error)
+	MessagesAddPollAnswer(ctx context.Context, in *TLMessagesAddPollAnswer) (*Updates, error)
+	MessagesDeletePollAnswer(ctx context.Context, in *TLMessagesDeletePollAnswer) (*Updates, error)
+	MessagesGetUnreadPollVotes(ctx context.Context, in *TLMessagesGetUnreadPollVotes) (*MessagesMessages, error)
+	MessagesReadPollVotes(ctx context.Context, in *TLMessagesReadPollVotes) (*MessagesAffectedHistory, error)
+}
+
 type RPCUpdates interface {
 	UpdatesGetState(ctx context.Context, in *TLUpdatesGetState) (*UpdatesState, error)
 	UpdatesGetDifference(ctx context.Context, in *TLUpdatesGetDifference) (*UpdatesDifference, error)
@@ -85010,6 +87239,14 @@ type RPCAffiliatePrograms interface {
 type RPCBotVerificationIcons interface {
 	BotsSetCustomVerification(ctx context.Context, in *TLBotsSetCustomVerification) (*Bool, error)
 	BotsGetBotRecommendations(ctx context.Context, in *TLBotsGetBotRecommendations) (*UsersUsers, error)
+}
+
+type RPCbots interface {
+	BotsCheckUsername(ctx context.Context, in *TLBotsCheckUsername) (*Bool, error)
+	BotsCreateBot(ctx context.Context, in *TLBotsCreateBot) (*User, error)
+	BotsExportBotToken(ctx context.Context, in *TLBotsExportBotToken) (*BotsExportedBotToken, error)
+	BotsRequestWebViewButton(ctx context.Context, in *TLBotsRequestWebViewButton) (*BotsRequestedButton, error)
+	BotsGetRequestedWebViewButton(ctx context.Context, in *TLBotsGetRequestedWebViewButton) (*KeyboardButton, error)
 }
 
 type RPCGiveaways interface {
