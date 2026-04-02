@@ -17,6 +17,10 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -34,11 +38,65 @@ func (c *AuthorizationCore) AuthSignIn(in *tg.TLAuthSignIn) (*tg.AuthAuthorizati
 		return nil, err
 	}
 
-	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+	_, phoneNumber, err := checkPhoneNumberInvalid(in.PhoneNumber)
+	if err != nil {
 		c.Logger.Errorf("auth.signIn - invalid phone_number(%s): %v", in.PhoneNumber, err)
 		return nil, tg.Err406PhoneNumberInvalid
 	}
 
-	// TODO: continue implementing the full sign-in path.
+	if c.svcCtx == nil || c.svcCtx.Dao == nil || c.svcCtx.AuthLogic == nil || c.MD == nil {
+		err := tg.ErrInternalServerError
+		c.Logger.Errorf("auth.signIn - missing service context or metadata: %v", err)
+		return nil, err
+	}
+
+	actionType := logic.GetActionType(in)
+	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.PermAuthKeyId, phoneNumber, actionType); err != nil {
+		c.Logger.Errorf("auth.signIn - check can do action failed, phone_number(%s): %v", phoneNumber, err)
+		return nil, err
+	}
+
+	codeData, err := c.svcCtx.AuthLogic.DoAuthSignIn(
+		c.ctx,
+		c.MD.PermAuthKeyId,
+		phoneNumber,
+		phoneCode,
+		in.PhoneCodeHash,
+		func(codeData *model.PhoneCodeTransaction) error {
+			if c.svcCtx.AuthLogic.VerifyCodeInterface != nil {
+				return c.svcCtx.AuthLogic.VerifyCodeInterface.VerifySmsCode(
+					c.ctx,
+					codeData.PhoneCodeHash,
+					phoneCode,
+					codeData.PhoneCodeExtraData)
+			}
+			if codeData.PhoneCode != phoneCode {
+				return errors.New("phone code mismatch")
+			}
+			return nil
+		})
+	if err != nil {
+		c.Logger.Errorf("auth.signIn - sign in failed, phone_number(%s): %v", phoneNumber, err)
+		return nil, err
+	}
+
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.PermAuthKeyId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			actionType,
+			"auth.signIn")
+	}
+
+	if !codeData.PhoneNumberRegistered {
+		if c.MD.Layer >= 104 {
+			return tg.MakeTLAuthAuthorizationSignUpRequired(&tg.TLAuthAuthorizationSignUpRequired{}).ToAuthAuthorization(), nil
+		}
+		return nil, tg.ErrPhoneNumberUnoccupied
+	}
+
+	// TODO: continue implementing the registered-user sign-in path.
 	return nil, tg.ErrInternalServerError
 }
