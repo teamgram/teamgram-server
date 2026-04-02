@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -31,6 +31,7 @@ type PassportClient interface {
 	AccountVerifyPhone(ctx context.Context, in *tg.TLAccountVerifyPhone) (*tg.Bool, error)
 	UsersSetSecureValueErrors(ctx context.Context, in *tg.TLUsersSetSecureValueErrors) (*tg.Bool, error)
 	HelpGetPassportConfig(ctx context.Context, in *tg.TLHelpGetPassportConfig) (*tg.HelpPassportConfig, error)
+	Close() error
 }
 
 type defaultPassportClient struct {
@@ -41,6 +42,13 @@ func NewPassportClient(cli client.Client) PassportClient {
 	return &defaultPassportClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultPassportClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountGetAuthorizations

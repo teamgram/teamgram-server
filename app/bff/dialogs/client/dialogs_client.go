@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -33,6 +33,7 @@ type DialogsClient interface {
 	MessagesGetOnlines(ctx context.Context, in *tg.TLMessagesGetOnlines) (*tg.ChatOnlines, error)
 	MessagesHidePeerSettingsBar(ctx context.Context, in *tg.TLMessagesHidePeerSettingsBar) (*tg.Bool, error)
 	MessagesSetHistoryTTL(ctx context.Context, in *tg.TLMessagesSetHistoryTTL) (*tg.Updates, error)
+	Close() error
 }
 
 type defaultDialogsClient struct {
@@ -43,6 +44,13 @@ func NewDialogsClient(cli client.Client) DialogsClient {
 	return &defaultDialogsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultDialogsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesGetDialogs

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ type FilesClient interface {
 	UploadGetCdnFileHashes(ctx context.Context, in *tg.TLUploadGetCdnFileHashes) (*tg.VectorFileHash, error)
 	UploadGetFileHashes(ctx context.Context, in *tg.TLUploadGetFileHashes) (*tg.VectorFileHash, error)
 	HelpGetCdnConfig(ctx context.Context, in *tg.TLHelpGetCdnConfig) (*tg.CdnConfig, error)
+	Close() error
 }
 
 type defaultFilesClient struct {
@@ -42,6 +43,13 @@ func NewFilesClient(cli client.Client) FilesClient {
 	return &defaultFilesClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultFilesClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesGetDocumentByHash

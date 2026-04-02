@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package notificationservice
@@ -198,8 +198,13 @@ func (p *AccountRegisterDeviceArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountRegisterDeviceArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountRegisterDevice)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -324,8 +329,13 @@ func (p *AccountUnregisterDeviceArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountUnregisterDeviceArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUnregisterDevice)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -450,8 +460,13 @@ func (p *AccountUpdateNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountUpdateNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -576,8 +591,13 @@ func (p *AccountGetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *AccountGetNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -702,8 +722,13 @@ func (p *AccountResetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountResetNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountResetNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -828,8 +853,13 @@ func (p *AccountUpdateDeviceLockedArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *AccountUpdateDeviceLockedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountUpdateDeviceLocked)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -954,8 +984,13 @@ func (p *AccountGetNotifyExceptionsArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountGetNotifyExceptionsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetNotifyExceptions)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

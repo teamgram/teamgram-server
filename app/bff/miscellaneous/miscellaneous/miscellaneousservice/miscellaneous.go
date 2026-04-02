@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package miscellaneousservice
@@ -163,8 +163,13 @@ func (p *HelpSaveAppLogArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpSaveAppLogArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLHelpSaveAppLog)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -289,8 +294,13 @@ func (p *HelpTestArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpTestArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLHelpTest)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,6 +24,7 @@ type UsersClient interface {
 	UsersGetFullUser(ctx context.Context, in *tg.TLUsersGetFullUser) (*tg.UsersUserFull, error)
 	ContactsResolvePhone(ctx context.Context, in *tg.TLContactsResolvePhone) (*tg.ContactsResolvedPeer, error)
 	UsersGetMe(ctx context.Context, in *tg.TLUsersGetMe) (*tg.User, error)
+	Close() error
 }
 
 type defaultUsersClient struct {
@@ -34,6 +35,13 @@ func NewUsersClient(cli client.Client) UsersClient {
 	return &defaultUsersClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultUsersClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // UsersGetUsers

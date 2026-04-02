@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package updatesservice
@@ -170,8 +170,13 @@ func (p *UpdatesGetStateArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesGetStateArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUpdatesGetState)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -296,8 +301,13 @@ func (p *UpdatesGetDifferenceArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesGetDifferenceArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUpdatesGetDifference)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -422,8 +432,13 @@ func (p *UpdatesGetChannelDifferenceArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *UpdatesGetChannelDifferenceArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUpdatesGetChannelDifference)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,6 +24,7 @@ type PremiumClient interface {
 	PaymentsAssignAppStoreTransaction(ctx context.Context, in *tg.TLPaymentsAssignAppStoreTransaction) (*tg.Updates, error)
 	PaymentsAssignPlayMarketTransaction(ctx context.Context, in *tg.TLPaymentsAssignPlayMarketTransaction) (*tg.Updates, error)
 	PaymentsCanPurchaseStore(ctx context.Context, in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultPremiumClient struct {
@@ -34,6 +35,13 @@ func NewPremiumClient(cli client.Client) PremiumClient {
 	return &defaultPremiumClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultPremiumClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // HelpGetPremiumPromo

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -29,6 +29,7 @@ type ConfigurationClient interface {
 	HelpGetSupportName(ctx context.Context, in *tg.TLHelpGetSupportName) (*tg.HelpSupportName, error)
 	HelpDismissSuggestion(ctx context.Context, in *tg.TLHelpDismissSuggestion) (*tg.Bool, error)
 	HelpGetCountriesList(ctx context.Context, in *tg.TLHelpGetCountriesList) (*tg.HelpCountriesList, error)
+	Close() error
 }
 
 type defaultConfigurationClient struct {
@@ -39,6 +40,13 @@ func NewConfigurationClient(cli client.Client) ConfigurationClient {
 	return &defaultConfigurationClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultConfigurationClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // HelpGetConfig

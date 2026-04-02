@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package passportservice
@@ -226,8 +226,13 @@ func (p *AccountGetAuthorizationsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *AccountGetAuthorizationsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetAuthorizations)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -352,8 +357,13 @@ func (p *AccountGetAllSecureValuesArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *AccountGetAllSecureValuesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetAllSecureValues)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -478,8 +488,13 @@ func (p *AccountGetSecureValueArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountGetSecureValueArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetSecureValue)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -604,8 +619,13 @@ func (p *AccountSaveSecureValueArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSaveSecureValueArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSaveSecureValue)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -730,8 +750,13 @@ func (p *AccountDeleteSecureValueArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *AccountDeleteSecureValueArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountDeleteSecureValue)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -856,8 +881,13 @@ func (p *AccountGetAuthorizationFormArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountGetAuthorizationFormArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetAuthorizationForm)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -982,8 +1012,13 @@ func (p *AccountAcceptAuthorizationArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountAcceptAuthorizationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountAcceptAuthorization)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1108,8 +1143,13 @@ func (p *AccountSendVerifyPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountSendVerifyPhoneCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSendVerifyPhoneCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1234,8 +1274,13 @@ func (p *AccountVerifyPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountVerifyPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountVerifyPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1360,8 +1405,13 @@ func (p *UsersSetSecureValueErrorsArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *UsersSetSecureValueErrorsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUsersSetSecureValueErrors)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1486,8 +1536,13 @@ func (p *HelpGetPassportConfigArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetPassportConfigArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLHelpGetPassportConfig)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

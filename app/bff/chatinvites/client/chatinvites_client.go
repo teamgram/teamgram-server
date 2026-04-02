@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -34,6 +34,7 @@ type ChatInvitesClient interface {
 	MessagesHideAllChatJoinRequests(ctx context.Context, in *tg.TLMessagesHideAllChatJoinRequests) (*tg.Updates, error)
 	ChannelsToggleJoinToSend(ctx context.Context, in *tg.TLChannelsToggleJoinToSend) (*tg.Updates, error)
 	ChannelsToggleJoinRequest(ctx context.Context, in *tg.TLChannelsToggleJoinRequest) (*tg.Updates, error)
+	Close() error
 }
 
 type defaultChatInvitesClient struct {
@@ -44,6 +45,13 @@ func NewChatInvitesClient(cli client.Client) ChatInvitesClient {
 	return &defaultChatInvitesClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultChatInvitesClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesExportChatInvite

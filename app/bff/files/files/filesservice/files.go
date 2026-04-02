@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package filesservice
@@ -233,8 +233,13 @@ func (p *MessagesGetDocumentByHashArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *MessagesGetDocumentByHashArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetDocumentByHash)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -359,8 +364,13 @@ func (p *MessagesUploadMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesUploadMediaArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesUploadMedia)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -485,8 +495,13 @@ func (p *MessagesUploadEncryptedFileArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *MessagesUploadEncryptedFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesUploadEncryptedFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -611,8 +626,13 @@ func (p *UploadSaveFilePartArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadSaveFilePartArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadSaveFilePart)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -737,8 +757,13 @@ func (p *UploadGetFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadGetFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadGetFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -863,8 +888,13 @@ func (p *UploadSaveBigFilePartArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadSaveBigFilePartArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadSaveBigFilePart)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -989,8 +1019,13 @@ func (p *UploadGetWebFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadGetWebFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadGetWebFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1115,8 +1150,13 @@ func (p *UploadGetCdnFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadGetCdnFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadGetCdnFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1241,8 +1281,13 @@ func (p *UploadReuploadCdnFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadReuploadCdnFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadReuploadCdnFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1367,8 +1412,13 @@ func (p *UploadGetCdnFileHashesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadGetCdnFileHashesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadGetCdnFileHashes)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1493,8 +1543,13 @@ func (p *UploadGetFileHashesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadGetFileHashesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLUploadGetFileHashes)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1619,8 +1674,13 @@ func (p *HelpGetCdnConfigArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetCdnConfigArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLHelpGetCdnConfig)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

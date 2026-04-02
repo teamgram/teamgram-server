@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package contactsservice
@@ -310,8 +310,13 @@ func (p *AccountGetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer i
 
 func (p *AccountGetContactSignUpNotificationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountGetContactSignUpNotification)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -436,8 +441,13 @@ func (p *AccountSetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer i
 
 func (p *AccountSetContactSignUpNotificationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLAccountSetContactSignUpNotification)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -562,8 +572,13 @@ func (p *ContactsGetContactIDsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetContactIDsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetContactIDs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -688,8 +703,13 @@ func (p *ContactsGetStatusesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetStatusesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetStatuses)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -814,8 +834,13 @@ func (p *ContactsGetContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetContactsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetContacts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -940,8 +965,13 @@ func (p *ContactsImportContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsImportContactsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsImportContacts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1066,8 +1096,13 @@ func (p *ContactsDeleteContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsDeleteContactsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsDeleteContacts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1192,8 +1227,13 @@ func (p *ContactsDeleteByPhonesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsDeleteByPhonesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsDeleteByPhones)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1318,8 +1358,13 @@ func (p *ContactsBlockArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsBlockArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsBlock)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1444,8 +1489,13 @@ func (p *ContactsUnblockArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsUnblockArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsUnblock)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1570,8 +1620,13 @@ func (p *ContactsGetBlockedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetBlockedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetBlocked)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1696,8 +1751,13 @@ func (p *ContactsSearchArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsSearchArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsSearch)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1822,8 +1882,13 @@ func (p *ContactsGetTopPeersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetTopPeersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetTopPeers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1948,8 +2013,13 @@ func (p *ContactsResetTopPeerRatingArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ContactsResetTopPeerRatingArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsResetTopPeerRating)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2074,8 +2144,13 @@ func (p *ContactsResetSavedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsResetSavedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsResetSaved)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2200,8 +2275,13 @@ func (p *ContactsGetSavedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetSavedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetSaved)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2326,8 +2406,13 @@ func (p *ContactsToggleTopPeersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsToggleTopPeersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsToggleTopPeers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2452,8 +2537,13 @@ func (p *ContactsAddContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsAddContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsAddContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2578,8 +2668,13 @@ func (p *ContactsAcceptContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsAcceptContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsAcceptContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2704,8 +2799,13 @@ func (p *ContactsGetLocatedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetLocatedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsGetLocated)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2830,8 +2930,13 @@ func (p *ContactsEditCloseFriendsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ContactsEditCloseFriendsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsEditCloseFriends)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2956,8 +3061,13 @@ func (p *ContactsSetBlockedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsSetBlockedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsSetBlocked)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3082,8 +3192,13 @@ func (p *ContactsUpdateContactNoteArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *ContactsUpdateContactNoteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLContactsUpdateContactNote)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

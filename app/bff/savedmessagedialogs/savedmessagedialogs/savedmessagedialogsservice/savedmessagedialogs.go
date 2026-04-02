@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package savedmessagedialogsservice
@@ -212,8 +212,13 @@ func (p *MessagesGetSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesGetSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -338,8 +343,13 @@ func (p *MessagesGetSavedHistoryArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesGetSavedHistoryArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetSavedHistory)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -464,8 +474,13 @@ func (p *MessagesDeleteSavedHistoryArgs) Encode(x *bin.Encoder, layer int32) err
 
 func (p *MessagesDeleteSavedHistoryArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesDeleteSavedHistory)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -590,8 +605,13 @@ func (p *MessagesGetPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) 
 
 func (p *MessagesGetPinnedSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetPinnedSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -716,8 +736,13 @@ func (p *MessagesToggleSavedDialogPinArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesToggleSavedDialogPinArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesToggleSavedDialogPin)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -842,8 +867,13 @@ func (p *MessagesReorderPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int
 
 func (p *MessagesReorderPinnedSavedDialogsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesReorderPinnedSavedDialogs)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -968,8 +998,13 @@ func (p *MessagesGetSavedDialogsByIDArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *MessagesGetSavedDialogsByIDArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetSavedDialogsByID)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1094,8 +1129,13 @@ func (p *MessagesReadSavedHistoryArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesReadSavedHistoryArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesReadSavedHistory)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1220,8 +1260,13 @@ func (p *ChannelsGetMessageAuthorArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ChannelsGetMessageAuthorArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLChannelsGetMessageAuthor)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

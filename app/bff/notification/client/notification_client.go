@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -27,6 +27,7 @@ type NotificationClient interface {
 	AccountResetNotifySettings(ctx context.Context, in *tg.TLAccountResetNotifySettings) (*tg.Bool, error)
 	AccountUpdateDeviceLocked(ctx context.Context, in *tg.TLAccountUpdateDeviceLocked) (*tg.Bool, error)
 	AccountGetNotifyExceptions(ctx context.Context, in *tg.TLAccountGetNotifyExceptions) (*tg.Updates, error)
+	Close() error
 }
 
 type defaultNotificationClient struct {
@@ -37,6 +38,13 @@ func NewNotificationClient(cli client.Client) NotificationClient {
 	return &defaultNotificationClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultNotificationClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountRegisterDevice

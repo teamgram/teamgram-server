@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chatinvitesservice
@@ -247,8 +247,13 @@ func (p *MessagesExportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesExportChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesExportChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -373,8 +378,13 @@ func (p *MessagesCheckChatInviteArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesCheckChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesCheckChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -499,8 +509,13 @@ func (p *MessagesImportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesImportChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesImportChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -625,8 +640,13 @@ func (p *MessagesGetExportedChatInvitesArgs) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetExportedChatInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetExportedChatInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -751,8 +771,13 @@ func (p *MessagesGetExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) 
 
 func (p *MessagesGetExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -877,8 +902,13 @@ func (p *MessagesEditExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesEditExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesEditExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1003,8 +1033,13 @@ func (p *MessagesDeleteRevokedExportedChatInvitesArgs) Encode(x *bin.Encoder, la
 
 func (p *MessagesDeleteRevokedExportedChatInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesDeleteRevokedExportedChatInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1129,8 +1164,13 @@ func (p *MessagesDeleteExportedChatInviteArgs) Encode(x *bin.Encoder, layer int3
 
 func (p *MessagesDeleteExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesDeleteExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1255,8 +1295,13 @@ func (p *MessagesGetAdminsWithInvitesArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *MessagesGetAdminsWithInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetAdminsWithInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1381,8 +1426,13 @@ func (p *MessagesGetChatInviteImportersArgs) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetChatInviteImportersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesGetChatInviteImporters)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1507,8 +1557,13 @@ func (p *MessagesHideChatJoinRequestArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *MessagesHideChatJoinRequestArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesHideChatJoinRequest)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1633,8 +1688,13 @@ func (p *MessagesHideAllChatJoinRequestsArgs) Encode(x *bin.Encoder, layer int32
 
 func (p *MessagesHideAllChatJoinRequestsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLMessagesHideAllChatJoinRequests)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1759,8 +1819,13 @@ func (p *ChannelsToggleJoinToSendArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ChannelsToggleJoinToSendArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLChannelsToggleJoinToSend)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1885,8 +1950,13 @@ func (p *ChannelsToggleJoinRequestArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *ChannelsToggleJoinRequestArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.TLChannelsToggleJoinRequest)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

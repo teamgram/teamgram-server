@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -38,6 +38,7 @@ type UserChannelProfilesClient interface {
 	PhotosUploadContactProfilePhoto(ctx context.Context, in *tg.TLPhotosUploadContactProfilePhoto) (*tg.PhotosPhoto, error)
 	ChannelsSetMainProfileTab(ctx context.Context, in *tg.TLChannelsSetMainProfileTab) (*tg.Bool, error)
 	AccountUpdateVerified(ctx context.Context, in *tg.TLAccountUpdateVerified) (*tg.User, error)
+	Close() error
 }
 
 type defaultUserChannelProfilesClient struct {
@@ -48,6 +49,13 @@ func NewUserChannelProfilesClient(cli client.Client) UserChannelProfilesClient {
 	return &defaultUserChannelProfilesClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultUserChannelProfilesClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AccountUpdateProfile

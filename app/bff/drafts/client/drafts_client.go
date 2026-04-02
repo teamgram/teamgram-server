@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,6 +23,7 @@ type DraftsClient interface {
 	MessagesSaveDraft(ctx context.Context, in *tg.TLMessagesSaveDraft) (*tg.Bool, error)
 	MessagesGetAllDrafts(ctx context.Context, in *tg.TLMessagesGetAllDrafts) (*tg.Updates, error)
 	MessagesClearAllDrafts(ctx context.Context, in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultDraftsClient struct {
@@ -33,6 +34,13 @@ func NewDraftsClient(cli client.Client) DraftsClient {
 	return &defaultDraftsClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultDraftsClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessagesSaveDraft

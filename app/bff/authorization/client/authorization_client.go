@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -48,6 +48,7 @@ type AuthorizationClient interface {
 	AccountChangeAuthorizationSettings(ctx context.Context, in *tg.TLAccountChangeAuthorizationSettings) (*tg.Bool, error)
 	AccountInvalidateSignInCodes(ctx context.Context, in *tg.TLAccountInvalidateSignInCodes) (*tg.Bool, error)
 	AuthToggleBan(ctx context.Context, in *tg.TLAuthToggleBan) (*tg.PredefinedUser, error)
+	Close() error
 }
 
 type defaultAuthorizationClient struct {
@@ -58,6 +59,13 @@ func NewAuthorizationClient(cli client.Client) AuthorizationClient {
 	return &defaultAuthorizationClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultAuthorizationClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // AuthSendCode
