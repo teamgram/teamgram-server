@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // InboxReadMediaUnreadToInboxV2
 // inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long dialog_message_id:long = Void;
 func (c *InboxCore) InboxReadMediaUnreadToInboxV2(in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("inbox.readMediaUnreadToInboxV2 not implemented")
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
