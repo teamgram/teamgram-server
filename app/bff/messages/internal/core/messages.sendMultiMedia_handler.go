@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,24 @@ import (
 // MessagesSendMultiMedia
 // messages.sendMultiMedia#37b74355 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.sendMultiMedia blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
+	if len(in.MultiMedia) == 0 {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, errors.New("messages.sendMultiMedia not implemented")
+	first := in.MultiMedia[0]
+	if first == nil || first.Media == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       makePlaceholderMessageID(first.RandomId),
+		Pts:      1,
+		PtsCount: int32(len(in.MultiMedia)),
+		Date:     int32(time.Now().Unix()),
+		Entities: first.Entities,
+	}).ToUpdates(), nil
 }
