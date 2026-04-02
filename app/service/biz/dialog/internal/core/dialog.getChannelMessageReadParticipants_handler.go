@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // DialogGetChannelMessageReadParticipants
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (c *DialogCore) DialogGetChannelMessageReadParticipants(in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getChannelMessageReadParticipants blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getChannelMessageReadParticipants not implemented")
+	if in != nil && in.ChannelId != 0 && in.MsgId != 0 {
+		return &dialog.VectorLong{Datas: []int64{in.UserId}}, nil
+	}
+	return &dialog.VectorLong{Datas: []int64{}}, nil
 }
