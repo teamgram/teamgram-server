@@ -130,3 +130,67 @@ func TestMessageGetPeerUserMessageReturnsPeerScopedPlaceholder(t *testing.T) {
 		t.Fatalf("expected peer=2/42, got %d/%d", result.PeerType, result.PeerId)
 	}
 }
+
+func TestMessageGetPeerUserMessageIdReturnsMsgIDPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetPeerUserMessageId(&message.TLMessageGetPeerUserMessageId{
+		UserId:     1,
+		PeerUserId: 42,
+		MsgId:      88,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected int32 placeholder, got nil")
+	}
+	if result.V != 88 {
+		t.Fatalf("expected msg_id passthrough=88, got %d", result.V)
+	}
+}
+
+func TestMessageGetUserMessageListByDataIdListReturnsStablePlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetUserMessageListByDataIdList(&message.TLMessageGetUserMessageListByDataIdList{
+		UserId: 1,
+		IdList: []int64{50, 51},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected message box vector, got nil")
+	}
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected 2 placeholders, got %d", len(result.Datas))
+	}
+	if result.Datas[0].MessageId != 50 || result.Datas[1].MessageId != 51 {
+		t.Fatalf("expected message ids 50/51, got %d/%d", result.Datas[0].MessageId, result.Datas[1].MessageId)
+	}
+}
+
+func TestMessageGetUserMessageListByDataIdUserIdListReturnsPeerScopedPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetUserMessageListByDataIdUserIdList(&message.TLMessageGetUserMessageListByDataIdUserIdList{
+		Id:         60,
+		UserIdList: []int64{7, 8},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected message box vector, got nil")
+	}
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected 2 placeholders, got %d", len(result.Datas))
+	}
+	if result.Datas[0].UserId != 7 || result.Datas[1].UserId != 8 {
+		t.Fatalf("expected user ids 7/8, got %d/%d", result.Datas[0].UserId, result.Datas[1].UserId)
+	}
+	if result.Datas[0].MessageId != 60 || result.Datas[1].MessageId != 60 {
+		t.Fatalf("expected shared message id 60, got %d/%d", result.Datas[0].MessageId, result.Datas[1].MessageId)
+	}
+}
