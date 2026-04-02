@@ -87,3 +87,34 @@ func TestMessagesSendMessageRejectsEmptyPeerPlaceholder(t *testing.T) {
 		t.Fatalf("expected nil result, got %v", result)
 	}
 }
+
+func TestMessagesSendMessageReusesPlaceholderIDForSameRandomID(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	req := &tg.TLMessagesSendMessage{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2, AccessHash: 0}),
+		Message:  "hello",
+		RandomId: 77,
+	}
+
+	first, err := c.MessagesSendMessage(req)
+	if err != nil {
+		t.Fatalf("first send: expected nil error, got %v", err)
+	}
+	second, err := c.MessagesSendMessage(req)
+	if err != nil {
+		t.Fatalf("second send: expected nil error, got %v", err)
+	}
+
+	firstShort, ok := first.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected first result to be updateShortSentMessage, got %T", first.Clazz)
+	}
+	secondShort, ok := second.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected second result to be updateShortSentMessage, got %T", second.Clazz)
+	}
+	if firstShort.Id != secondShort.Id {
+		t.Fatalf("expected same placeholder id for repeated random_id, got %d vs %d", firstShort.Id, secondShort.Id)
+	}
+}
