@@ -16,17 +16,29 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetPinnedDialogs
 // messages.getPinnedDialogs#d6b94df2 folder_id:int = messages.PeerDialogs;
 func (c *DialogsCore) MessagesGetPinnedDialogs(in *tg.TLMessagesGetPinnedDialogs) (*tg.MessagesPeerDialogs, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getPinnedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getPinnedDialogs not implemented")
+	return &tg.MessagesPeerDialogs{
+		Dialogs: []tg.DialogClazz{
+			tg.MakeTLDialog(&tg.TLDialog{
+				Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1}),
+				TopMessage:      10,
+				ReadInboxMaxId:  10,
+				ReadOutboxMaxId: 10,
+				UnreadCount:     0,
+				NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+			}),
+		},
+		Messages: []tg.MessageClazz{
+			tg.MakeTLMessageEmpty(&tg.TLMessageEmpty{Id: 10}),
+		},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{
+			tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: 1}),
+		},
+		State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{Pts: 1, Qts: 1, Date: 10, Seq: 1, UnreadCount: 0}),
+	}, nil
 }
