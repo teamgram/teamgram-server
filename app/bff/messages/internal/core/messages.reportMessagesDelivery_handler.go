@@ -17,16 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReportMessagesDelivery
 // messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
 func (c *MessagesCore) MessagesReportMessagesDelivery(in *tg.TLMessagesReportMessagesDelivery) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.reportMessagesDelivery blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.reportMessagesDelivery not implemented")
+	return tg.BoolTrue, nil
 }
