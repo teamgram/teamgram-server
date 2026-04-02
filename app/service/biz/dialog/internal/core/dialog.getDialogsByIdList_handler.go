@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,9 @@ var _ *tg.Bool
 // DialogGetDialogsByIdList
 // dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogsByIdList(in *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogsByIdList blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getDialogsByIdList not implemented")
+	result := &dialog.VectorDialogExt{Datas: make([]dialog.DialogExtClazz, 0, len(in.IdList))}
+	for _, id := range in.IdList {
+		result.Datas = append(result.Datas, makeDialogExtPlaceholder(in.UserId, tg.PEER_USER, id, 10))
+	}
+	return result, nil
 }

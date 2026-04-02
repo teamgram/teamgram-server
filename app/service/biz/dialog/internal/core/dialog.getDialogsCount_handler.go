@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,9 @@ var _ *tg.Bool
 // DialogGetDialogsCount
 // dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 func (c *DialogCore) DialogGetDialogsCount(in *dialog.TLDialogGetDialogsCount) (*tg.Int32, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogsCount blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getDialogsCount not implemented")
+	count := int32(0)
+	if in != nil && in.UserId != 0 {
+		count = 1
+	}
+	return tg.MakeInt32Helper(count), nil
 }

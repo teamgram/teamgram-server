@@ -65,3 +65,125 @@ func TestDialogGetMyDialogsDataReturnsUserPlaceholder(t *testing.T) {
 			len(simpleData.Chats), len(simpleData.Channels))
 	}
 }
+
+func TestDialogGetDialogByIdReturnsPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetDialogById(&dialog.TLDialogGetDialogById{
+		UserId:   1,
+		PeerType: tg.PEER_CHAT,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.Clazz == nil {
+		t.Fatal("expected dialogExt placeholder, got nil")
+	}
+	dialogExt, ok := result.Clazz.(*dialog.TLDialogExt)
+	if !ok {
+		t.Fatalf("expected dialogExt, got %T", result.Clazz)
+	}
+	placeholderDialog, ok := dialogExt.Dialog.(*tg.TLDialog)
+	if !ok {
+		t.Fatalf("expected embedded dialog placeholder, got %T", dialogExt.Dialog)
+	}
+	peer, ok := placeholderDialog.Peer.(*tg.TLPeerChat)
+	if !ok || peer.ChatId != 42 {
+		t.Fatalf("expected peerChat(42), got %#v", placeholderDialog.Peer)
+	}
+}
+
+func TestDialogGetDialogsByIdListReturnsPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetDialogsByIdList(&dialog.TLDialogGetDialogsByIdList{
+		UserId: 1,
+		IdList: []int64{11, 22},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected vector, got nil")
+	}
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected two placeholders, got %d", len(result.Datas))
+	}
+}
+
+func TestDialogGetDialogsCountReturnsPlaceholderCount(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetDialogsCount(&dialog.TLDialogGetDialogsCount{
+		UserId:        1,
+		ExcludePinned: tg.BoolFalseClazz,
+		FolderId:      0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.V != 1 {
+		t.Fatalf("expected placeholder count=1, got %#v", result)
+	}
+}
+
+func TestDialogGetPinnedDialogsReturnsPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetPinnedDialogs(&dialog.TLDialogGetPinnedDialogs{
+		UserId:   1,
+		FolderId: 0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || len(result.Datas) != 1 {
+		t.Fatalf("expected one pinned placeholder, got %#v", result)
+	}
+}
+
+func TestDialogGetTopMessageReturnsPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.DialogGetTopMessage(&dialog.TLDialogGetTopMessage{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil || result.V != 10 {
+		t.Fatalf("expected top message=10, got %#v", result)
+	}
+}
+
+func TestDialogPinnedMessagePlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	getResult, err := c.DialogGetUserPinnedMessage(&dialog.TLDialogGetUserPinnedMessage{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if getResult == nil || getResult.V != 1 {
+		t.Fatalf("expected pinned placeholder id=1, got %#v", getResult)
+	}
+
+	updateResult, err := c.DialogUpdateUserPinnedMessage(&dialog.TLDialogUpdateUserPinnedMessage{
+		UserId:      1,
+		PeerType:    tg.PEER_USER,
+		PeerId:      2,
+		PinnedMsgId: 9,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(updateResult) {
+		t.Fatalf("expected boolTrue placeholder, got %#v", updateResult)
+	}
+}

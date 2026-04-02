@@ -29,12 +29,7 @@ func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Ve
 	if in != nil && in.UserId != 0 {
 		return &dialog.VectorDialogExt{
 			Datas: []dialog.DialogExtClazz{
-				dialog.MakeTLDialogExt(&dialog.TLDialogExt{
-					Order:          10,
-					Dialog:         makeDialogPlaceholder(in.UserId, 10),
-					AvailableMinId: 1,
-					Date:           10,
-				}),
+				makeDialogExtPlaceholder(in.UserId, tg.PEER_USER, in.UserId, 10),
 			},
 		}, nil
 	}
@@ -44,15 +39,38 @@ func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Ve
 	}, nil
 }
 
-func makeDialogPlaceholder(peerID int64, topMessage int32) tg.DialogClazz {
+func makeDialogExtPlaceholder(userID, peerType, peerID int64, topMessage int32) dialog.DialogExtClazz {
+	return dialog.MakeTLDialogExt(&dialog.TLDialogExt{
+		Order:          10,
+		Dialog:         makeDialogPlaceholder(peerType, peerID, topMessage),
+		AvailableMinId: 1,
+		Date:           10,
+		ThemeEmoticon:  "",
+		TtlPeriod:      0,
+		WallpaperId:    0,
+	})
+}
+
+func makeDialogPlaceholder(peerType, peerID int64, topMessage int32) tg.DialogClazz {
 	return tg.MakeTLDialog(&tg.TLDialog{
-		Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{
-			UserId: peerID,
-		}),
+		Peer:            makeDialogPeer(peerType, peerID),
 		TopMessage:      topMessage,
 		ReadInboxMaxId:  topMessage,
 		ReadOutboxMaxId: topMessage,
 		UnreadCount:     0,
 		NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
 	})
+}
+
+func makeDialogPeer(peerType, peerID int64) tg.PeerClazz {
+	switch peerType {
+	case tg.PEER_SELF, tg.PEER_USER:
+		return tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerID})
+	case tg.PEER_CHAT:
+		return tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: peerID})
+	case tg.PEER_CHANNEL:
+		return tg.MakeTLPeerChannel(&tg.TLPeerChannel{ChannelId: peerID})
+	default:
+		return tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerID})
+	}
 }
