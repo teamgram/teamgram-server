@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,19 @@ var _ *tg.Bool
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.deleteMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	pts := int32(1)
+	ptsCount := int32(1)
+	if len(in.Id) > 0 {
+		ptsCount = int32(len(in.Id))
+		for _, id := range in.Id {
+			if id > pts {
+				pts = id
+			}
+		}
+	}
 
-	return nil, errors.New("msg.deleteMessages not implemented")
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      pts,
+		PtsCount: ptsCount,
+	}).ToMessagesAffectedMessages(), nil
 }
