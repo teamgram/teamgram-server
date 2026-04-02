@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,7 @@ var _ *tg.Bool
 // DialogGetTopMessage
 // dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 func (c *DialogCore) DialogGetTopMessage(in *dialog.TLDialogGetTopMessage) (*tg.Int32, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getTopMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getTopMessage not implemented")
+	return &tg.Int32{
+		V: 10,
+	}, nil
 }

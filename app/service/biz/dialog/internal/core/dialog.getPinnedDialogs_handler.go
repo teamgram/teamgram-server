@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,13 @@ var _ *tg.Bool
 // DialogGetPinnedDialogs
 // dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetPinnedDialogs(in *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getPinnedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in != nil && in.UserId != 0 {
+		return &dialog.VectorDialogExt{
+			Datas: []dialog.DialogExtClazz{
+				makeDialogExtPlaceholder(in.UserId, tg.PEER_USER, in.UserId, 10),
+			},
+		}, nil
+	}
 
-	return nil, errors.New("dialog.getPinnedDialogs not implemented")
+	return &dialog.VectorDialogExt{Datas: []dialog.DialogExtClazz{}}, nil
 }

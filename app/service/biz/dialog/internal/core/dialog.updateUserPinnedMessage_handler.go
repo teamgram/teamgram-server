@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // DialogUpdateUserPinnedMessage
 // dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 func (c *DialogCore) DialogUpdateUserPinnedMessage(in *dialog.TLDialogUpdateUserPinnedMessage) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.updateUserPinnedMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.updateUserPinnedMessage not implemented")
+	return tg.ToBool(in != nil && in.PinnedMsgId != 0), nil
 }

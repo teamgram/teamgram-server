@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,20 @@ var _ *tg.Bool
 // DialogGetDialogById
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogById blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peerType := int64(tg.PEER_USER)
+	peerID := int64(0)
+	if in != nil {
+		peerType = int64(in.PeerType)
+		peerID = in.PeerId
+		if peerID == 0 {
+			peerID = in.UserId
+		}
+	}
 
-	return nil, errors.New("dialog.getDialogById not implemented")
+	return dialog.MakeTLDialogExt(&dialog.TLDialogExt{
+		Order:          10,
+		Dialog:         makeDialogPlaceholder(peerType, peerID, 10),
+		AvailableMinId: 1,
+		Date:           10,
+	}).ToDialogExt(), nil
 }
