@@ -52,3 +52,34 @@ func TestMessagesGetPeerDialogsReturnsEmptyPeerDialogsPlaceholder(t *testing.T) 
 		t.Fatal("expected placeholder updates state, got nil")
 	}
 }
+
+func TestMessagesGetPeerDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessagesGetPeerDialogs(&tg.TLMessagesGetPeerDialogs{
+		Peers: []tg.InputDialogPeerClazz{
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+				Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 42, AccessHash: 0}),
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected peer dialogs result, got nil")
+	}
+	if len(result.Dialogs) != 1 {
+		t.Fatalf("expected 1 dialog placeholder, got %d", len(result.Dialogs))
+	}
+	if len(result.Messages) != 1 {
+		t.Fatalf("expected 1 message placeholder, got %d", len(result.Messages))
+	}
+	dialog, ok := result.Dialogs[0].(*tg.TLDialog)
+	if !ok {
+		t.Fatalf("expected dialog placeholder, got %T", result.Dialogs[0])
+	}
+	if dialog.TopMessage != 10 {
+		t.Fatalf("expected top_message=10, got %d", dialog.TopMessage)
+	}
+}
