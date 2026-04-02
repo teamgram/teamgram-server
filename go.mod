@@ -3,6 +3,7 @@ module github.com/teamgram/teamgram-server/v2
 go 1.24.0
 
 require (
+	github.com/alicebob/miniredis/v2 v2.36.1
 	github.com/apache/thrift v0.16.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/gopkg v0.1.3
@@ -114,6 +115,7 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	github.com/yuin/gopher-lua v1.1.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.2 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.2 // indirect
