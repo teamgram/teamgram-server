@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,35 @@ import (
 // MessagesGetSearchResultsCalendar
 // messages.getSearchResultsCalendar#6aa3f6bd flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
 func (c *MessagesCore) MessagesGetSearchResultsCalendar(in *tg.TLMessagesGetSearchResultsCalendar) (*tg.MessagesSearchResultsCalendar, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getSearchResultsCalendar blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.Peer)
+	if err != nil {
+		return nil, err
+	}
+	startID := historyPlaceholderStartID(in.OffsetId, 0, 0)
+	now := int32(time.Now().Unix())
 
-	return nil, errors.New("messages.getSearchResultsCalendar not implemented")
+	return tg.MakeTLMessagesSearchResultsCalendar(&tg.TLMessagesSearchResultsCalendar{
+		Count:    1,
+		MinDate:  now,
+		MinMsgId: startID,
+		Periods: []tg.SearchResultsCalendarPeriodClazz{
+			tg.MakeTLSearchResultsCalendarPeriod(&tg.TLSearchResultsCalendarPeriod{
+				Date:     now,
+				MinMsgId: startID,
+				MaxMsgId: startID,
+				Count:    1,
+			}),
+		},
+		Messages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{
+				Id:      startID,
+				Out:     true,
+				Date:    now,
+				Message: "placeholder",
+				PeerId:  peer,
+			}),
+		},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{},
+	}).ToMessagesSearchResultsCalendar(), nil
 }

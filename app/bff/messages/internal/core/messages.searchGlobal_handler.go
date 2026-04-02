@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSearchGlobal
 // messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (c *MessagesCore) MessagesSearchGlobal(in *tg.TLMessagesSearchGlobal) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.searchGlobal blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.OffsetPeer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.searchGlobal not implemented")
+	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, 0, 0), historyPlaceholderCount(in.Limit), false), nil
 }
