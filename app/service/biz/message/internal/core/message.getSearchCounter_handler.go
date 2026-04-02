@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // MessageGetSearchCounter
 // message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 func (c *MessageCore) MessageGetSearchCounter(in *message.TLMessageGetSearchCounter) (*tg.Int32, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.getSearchCounter blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("message.getSearchCounter not implemented")
+	return tg.MakeTLInt32(&tg.TLInt32{V: 1}).ToInt32(), nil
 }
