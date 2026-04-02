@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,16 @@ var _ *tg.Bool
 // UpdatesGetDifferenceV2
 // updates.getDifferenceV2 flags:# auth_key_id:long user_id:long pts:int pts_total_limit:flags.0?int date:long = Difference;
 func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getDifferenceV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	state := tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+		Pts:         in.Pts,
+		Qts:         0,
+		Date:        int32(in.Date),
+		Seq:         0,
+		UnreadCount: 0,
+	}).ToUpdatesState()
 
-	return nil, errors.New("updates.getDifferenceV2 not implemented")
+	// TODO: return real merged updates once the updates storage layer is wired.
+	return updates.MakeTLDifferenceEmpty(&updates.TLDifferenceEmpty{
+		State: state,
+	}).ToDifference(), nil
 }
