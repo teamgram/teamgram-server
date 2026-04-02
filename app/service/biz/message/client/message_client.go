@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -43,6 +43,7 @@ type MessageClient interface {
 	MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.VectorInt, error)
 	MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.VectorMessageBox, error)
 	MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*tg.Int32, error)
+	Close() error
 }
 
 type defaultMessageClient struct {
@@ -53,6 +54,13 @@ func NewMessageClient(cli client.Client) MessageClient {
 	return &defaultMessageClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultMessageClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // MessageGetUserMessage

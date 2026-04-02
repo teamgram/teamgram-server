@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package syncservice
@@ -201,8 +201,13 @@ func (p *UpdatesMeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesMeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncUpdatesMe)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -327,8 +332,13 @@ func (p *UpdatesNotMeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesNotMeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncUpdatesNotMe)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -453,8 +463,13 @@ func (p *PushUpdatesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushUpdatesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncPushUpdates)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -579,8 +594,13 @@ func (p *PushUpdatesIfNotArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushUpdatesIfNotArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncPushUpdatesIfNot)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -705,8 +725,13 @@ func (p *PushBotUpdatesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushBotUpdatesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncPushBotUpdates)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -831,8 +856,13 @@ func (p *PushRpcResultArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushRpcResultArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncPushRpcResult)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -957,8 +987,13 @@ func (p *BroadcastUpdatesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *BroadcastUpdatesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(sync.TLSyncBroadcastUpdates)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

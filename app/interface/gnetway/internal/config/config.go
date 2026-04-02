@@ -10,8 +10,8 @@
 package config
 
 import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/marmota/pkg/container2"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {

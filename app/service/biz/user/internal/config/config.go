@@ -17,8 +17,8 @@
 package config
 
 import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 )
 

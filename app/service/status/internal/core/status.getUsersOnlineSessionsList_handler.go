@@ -19,9 +19,9 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/stores/kv"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 )

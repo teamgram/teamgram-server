@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/marmota/pkg/threading2"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 )
 
 const (

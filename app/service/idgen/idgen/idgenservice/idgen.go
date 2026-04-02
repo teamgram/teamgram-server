@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package idgenservice
@@ -208,8 +208,13 @@ func (p *NextIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *NextIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenNextId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -334,8 +339,13 @@ func (p *NextIdsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *NextIdsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenNextIds)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -460,8 +470,13 @@ func (p *GetCurrentSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetCurrentSeqIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenGetCurrentSeqId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -586,8 +601,13 @@ func (p *SetCurrentSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetCurrentSeqIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenSetCurrentSeqId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -712,8 +732,13 @@ func (p *GetNextSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextSeqIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenGetNextSeqId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -838,8 +863,13 @@ func (p *GetNextNSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextNSeqIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenGetNextNSeqId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -964,8 +994,13 @@ func (p *GetNextIdValListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextIdValListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenGetNextIdValList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1090,8 +1125,13 @@ func (p *GetCurrentSeqIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetCurrentSeqIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.TLIdgenGetCurrentSeqIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

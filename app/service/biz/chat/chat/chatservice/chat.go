@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chatservice
@@ -390,8 +390,13 @@ func (p *GetMutableChatArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMutableChatArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetMutableChat)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -516,8 +521,13 @@ func (p *GetChatListByIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetChatListByIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetChatListByIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -642,8 +652,13 @@ func (p *GetChatBySelfIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetChatBySelfIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetChatBySelfId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -768,8 +783,13 @@ func (p *CreateChat2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateChat2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatCreateChat2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -894,8 +914,13 @@ func (p *DeleteChatArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteChatArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatDeleteChat)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1020,8 +1045,13 @@ func (p *DeleteChatUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteChatUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatDeleteChatUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1146,8 +1176,13 @@ func (p *EditChatTitleArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditChatTitleArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditChatTitle)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1272,8 +1307,13 @@ func (p *EditChatAboutArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditChatAboutArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditChatAbout)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1398,8 +1438,13 @@ func (p *EditChatPhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditChatPhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditChatPhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1524,8 +1569,13 @@ func (p *EditChatAdminArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditChatAdminArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditChatAdmin)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1650,8 +1700,13 @@ func (p *EditChatDefaultBannedRightsArgs) Encode(x *bin.Encoder, layer int32) er
 
 func (p *EditChatDefaultBannedRightsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditChatDefaultBannedRights)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1776,8 +1831,13 @@ func (p *AddChatUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AddChatUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatAddChatUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1902,8 +1962,13 @@ func (p *GetMutableChatByLinkArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMutableChatByLinkArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetMutableChatByLink)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2028,8 +2093,13 @@ func (p *ToggleNoForwardsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleNoForwardsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatToggleNoForwards)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2154,8 +2224,13 @@ func (p *MigratedToChannelArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MigratedToChannelArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatMigratedToChannel)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2280,8 +2355,13 @@ func (p *GetChatParticipantIdListArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *GetChatParticipantIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetChatParticipantIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2406,8 +2486,13 @@ func (p *GetUsersChatIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUsersChatIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetUsersChatIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2532,8 +2617,13 @@ func (p *GetMyChatListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMyChatListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetMyChatList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2658,8 +2748,13 @@ func (p *ExportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ExportChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatExportChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2784,8 +2879,13 @@ func (p *GetAdminsWithInvitesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAdminsWithInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetAdminsWithInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2910,8 +3010,13 @@ func (p *GetExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3036,8 +3141,13 @@ func (p *GetExportedChatInvitesArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetExportedChatInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetExportedChatInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3162,8 +3272,13 @@ func (p *CheckChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CheckChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatCheckChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3288,8 +3403,13 @@ func (p *ImportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ImportChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatImportChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3414,8 +3534,13 @@ func (p *GetChatInviteImportersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetChatInviteImportersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetChatInviteImporters)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3540,8 +3665,13 @@ func (p *DeleteExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *DeleteExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatDeleteExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3666,8 +3796,13 @@ func (p *DeleteRevokedExportedChatInvitesArgs) Encode(x *bin.Encoder, layer int3
 
 func (p *DeleteRevokedExportedChatInvitesArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatDeleteRevokedExportedChatInvites)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3792,8 +3927,13 @@ func (p *EditExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditExportedChatInviteArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatEditExportedChatInvite)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3918,8 +4058,13 @@ func (p *SetChatAvailableReactionsArgs) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *SetChatAvailableReactionsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatSetChatAvailableReactions)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4044,8 +4189,13 @@ func (p *SetHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatSetHistoryTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4170,8 +4320,13 @@ func (p *SearchArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SearchArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatSearch)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4296,8 +4451,13 @@ func (p *GetRecentChatInviteRequestersArgs) Encode(x *bin.Encoder, layer int32) 
 
 func (p *GetRecentChatInviteRequestersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatGetRecentChatInviteRequesters)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4422,8 +4582,13 @@ func (p *HideChatJoinRequestsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HideChatJoinRequestsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatHideChatJoinRequests)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4548,8 +4713,13 @@ func (p *ImportChatInvite2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ImportChatInvite2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(chat.TLChatImportChatInvite2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

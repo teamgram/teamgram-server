@@ -23,11 +23,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/mr"

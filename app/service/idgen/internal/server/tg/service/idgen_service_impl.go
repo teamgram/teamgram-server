@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,7 +24,7 @@ var _ *tg.Bool
 // idgen.nextId = Int64;
 func (s *Service) IdgenNextId(ctx context.Context, request *idgen.TLIdgenNextId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.nextId - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.nextId - request: %s", request)
 
 	r, err := c.IdgenNextId(request)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Service) IdgenNextId(ctx context.Context, request *idgen.TLIdgenNextId)
 // idgen.nextIds num:int = Vector<long>;
 func (s *Service) IdgenNextIds(ctx context.Context, request *idgen.TLIdgenNextIds) (*idgen.VectorLong, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.nextIds - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.nextIds - request: %s", request)
 
 	r, err := c.IdgenNextIds(request)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *Service) IdgenNextIds(ctx context.Context, request *idgen.TLIdgenNextId
 // idgen.getCurrentSeqId key:string = Int64;
 func (s *Service) IdgenGetCurrentSeqId(ctx context.Context, request *idgen.TLIdgenGetCurrentSeqId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.getCurrentSeqId - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.getCurrentSeqId - request: %s", request)
 
 	r, err := c.IdgenGetCurrentSeqId(request)
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *Service) IdgenGetCurrentSeqId(ctx context.Context, request *idgen.TLIdg
 // idgen.setCurrentSeqId key:string id:long = Bool;
 func (s *Service) IdgenSetCurrentSeqId(ctx context.Context, request *idgen.TLIdgenSetCurrentSeqId) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.setCurrentSeqId - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.setCurrentSeqId - request: %s", request)
 
 	r, err := c.IdgenSetCurrentSeqId(request)
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *Service) IdgenSetCurrentSeqId(ctx context.Context, request *idgen.TLIdg
 // idgen.getNextSeqId key:string = Int64;
 func (s *Service) IdgenGetNextSeqId(ctx context.Context, request *idgen.TLIdgenGetNextSeqId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.getNextSeqId - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.getNextSeqId - request: %s", request)
 
 	r, err := c.IdgenGetNextSeqId(request)
 	if err != nil {
@@ -99,7 +99,7 @@ func (s *Service) IdgenGetNextSeqId(ctx context.Context, request *idgen.TLIdgenG
 // idgen.getNextNSeqId key:string n:int = Int64;
 func (s *Service) IdgenGetNextNSeqId(ctx context.Context, request *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.getNextNSeqId - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.getNextNSeqId - request: %s", request)
 
 	r, err := c.IdgenGetNextNSeqId(request)
 	if err != nil {
@@ -114,7 +114,7 @@ func (s *Service) IdgenGetNextNSeqId(ctx context.Context, request *idgen.TLIdgen
 // idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
 func (s *Service) IdgenGetNextIdValList(ctx context.Context, request *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.getNextIdValList - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.getNextIdValList - request: %s", request)
 
 	r, err := c.IdgenGetNextIdValList(request)
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *Service) IdgenGetNextIdValList(ctx context.Context, request *idgen.TLId
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (s *Service) IdgenGetCurrentSeqIdList(ctx context.Context, request *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("idgen.getCurrentSeqIdList - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("idgen.getCurrentSeqIdList - request: %s", request)
 
 	r, err := c.IdgenGetCurrentSeqIdList(request)
 	if err != nil {

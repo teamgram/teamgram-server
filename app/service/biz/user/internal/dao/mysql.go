@@ -6,8 +6,8 @@
 package dao
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dao/mysql_dao"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dao/mysql_dao"
 )
 
 type Mysql struct {

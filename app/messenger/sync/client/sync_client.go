@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -30,6 +30,7 @@ type SyncClient interface {
 	SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*tg.Void, error)
 	SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*tg.Void, error)
 	SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*tg.Void, error)
+	Close() error
 }
 
 type defaultSyncClient struct {
@@ -40,6 +41,13 @@ func NewSyncClient(cli client.Client) SyncClient {
 	return &defaultSyncClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultSyncClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // SyncUpdatesMe

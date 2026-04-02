@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -11,22 +11,19 @@
 package service
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/svc"
 )
 
 type Service struct {
 	svcCtx *svc.ServiceContext
-	gnetway.RPCGnetway
 }
 
 func (s *Service) GetServiceContext() *svc.ServiceContext {
 	return s.svcCtx
 }
 
-func New(ctx *svc.ServiceContext, srv gnetway.RPCGnetway) *Service {
+func New(ctx *svc.ServiceContext) *Service {
 	return &Service{
-		svcCtx:     ctx,
-		RPCGnetway: srv,
+		svcCtx: ctx,
 	}
 }

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package userservice
@@ -576,6 +576,146 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/user.RPCUser/user.saveMusic": kitex.NewMethodInfo(
+		saveMusicHandler,
+		newSaveMusicArgs,
+		newSaveMusicResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.getSavedMusicIdList": kitex.NewMethodInfo(
+		getSavedMusicIdListHandler,
+		newGetSavedMusicIdListArgs,
+		newGetSavedMusicIdListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.setMainProfileTab": kitex.NewMethodInfo(
+		setMainProfileTabHandler,
+		newSetMainProfileTabArgs,
+		newSetMainProfileTabResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.setDefaultHistoryTTL": kitex.NewMethodInfo(
+		setDefaultHistoryTTLHandler,
+		newSetDefaultHistoryTTLArgs,
+		newSetDefaultHistoryTTLResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.getDefaultHistoryTTL": kitex.NewMethodInfo(
+		getDefaultHistoryTTLHandler,
+		newGetDefaultHistoryTTLArgs,
+		newGetDefaultHistoryTTLResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.getAccountUsername": kitex.NewMethodInfo(
+		getAccountUsernameHandler,
+		newGetAccountUsernameArgs,
+		newGetAccountUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.checkAccountUsername": kitex.NewMethodInfo(
+		checkAccountUsernameHandler,
+		newCheckAccountUsernameArgs,
+		newCheckAccountUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.getChannelUsername": kitex.NewMethodInfo(
+		getChannelUsernameHandler,
+		newGetChannelUsernameArgs,
+		newGetChannelUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.checkChannelUsername": kitex.NewMethodInfo(
+		checkChannelUsernameHandler,
+		newCheckChannelUsernameArgs,
+		newCheckChannelUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.updateUsernameByPeer": kitex.NewMethodInfo(
+		updateUsernameByPeerHandler,
+		newUpdateUsernameByPeerArgs,
+		newUpdateUsernameByPeerResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.checkUsername": kitex.NewMethodInfo(
+		checkUsernameHandler,
+		newCheckUsernameArgs,
+		newCheckUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.updateUsernameByUsername": kitex.NewMethodInfo(
+		updateUsernameByUsernameHandler,
+		newUpdateUsernameByUsernameArgs,
+		newUpdateUsernameByUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.deleteUsername": kitex.NewMethodInfo(
+		deleteUsernameHandler,
+		newDeleteUsernameArgs,
+		newDeleteUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.resolveUsername": kitex.NewMethodInfo(
+		resolveUsernameHandler,
+		newResolveUsernameArgs,
+		newResolveUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.getListByUsernameList": kitex.NewMethodInfo(
+		getListByUsernameListHandler,
+		newGetListByUsernameListArgs,
+		newGetListByUsernameListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.deleteUsernameByPeer": kitex.NewMethodInfo(
+		deleteUsernameByPeerHandler,
+		newDeleteUsernameByPeerArgs,
+		newDeleteUsernameByPeerResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.searchUsername": kitex.NewMethodInfo(
+		searchUsernameHandler,
+		newSearchUsernameArgs,
+		newSearchUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.toggleUsername": kitex.NewMethodInfo(
+		toggleUsernameHandler,
+		newToggleUsernameArgs,
+		newToggleUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.reorderUsernames": kitex.NewMethodInfo(
+		reorderUsernamesHandler,
+		newReorderUsernamesArgs,
+		newReorderUsernamesResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/user.RPCUser/user.deactivateAllChannelUsernames": kitex.NewMethodInfo(
+		deactivateAllChannelUsernamesHandler,
+		newDeactivateAllChannelUsernamesArgs,
+		newDeactivateAllChannelUsernamesResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -698,8 +838,13 @@ func (p *GetLastSeensArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetLastSeensArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetLastSeens)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -824,8 +969,13 @@ func (p *UpdateLastSeenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateLastSeenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateLastSeen)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -950,8 +1100,13 @@ func (p *GetLastSeenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetLastSeenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetLastSeen)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1076,8 +1231,13 @@ func (p *GetImmutableUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetImmutableUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetImmutableUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1202,8 +1362,13 @@ func (p *GetMutableUsersArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMutableUsersArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetMutableUsers)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1328,8 +1493,13 @@ func (p *GetImmutableUserByPhoneArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetImmutableUserByPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetImmutableUserByPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1454,8 +1624,13 @@ func (p *GetImmutableUserByTokenArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetImmutableUserByTokenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetImmutableUserByToken)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1580,8 +1755,13 @@ func (p *SetAccountDaysTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetAccountDaysTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetAccountDaysTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1706,8 +1886,13 @@ func (p *GetAccountDaysTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAccountDaysTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetAccountDaysTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1832,8 +2017,13 @@ func (p *GetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1958,8 +2148,13 @@ func (p *GetNotifySettingsListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNotifySettingsListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetNotifySettingsList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2084,8 +2279,13 @@ func (p *SetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2210,8 +2410,13 @@ func (p *ResetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ResetNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserResetNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2336,8 +2541,13 @@ func (p *GetAllNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAllNotifySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetAllNotifySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2462,8 +2672,13 @@ func (p *GetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *GetGlobalPrivacySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetGlobalPrivacySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2588,8 +2803,13 @@ func (p *SetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32) error
 
 func (p *SetGlobalPrivacySettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetGlobalPrivacySettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2714,8 +2934,13 @@ func (p *GetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPrivacyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetPrivacy)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2840,8 +3065,13 @@ func (p *SetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetPrivacyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetPrivacy)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2966,8 +3196,13 @@ func (p *CheckPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CheckPrivacyArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCheckPrivacy)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3092,8 +3327,13 @@ func (p *AddPeerSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AddPeerSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserAddPeerSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3218,8 +3458,13 @@ func (p *GetPeerSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPeerSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetPeerSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3344,8 +3589,13 @@ func (p *DeletePeerSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeletePeerSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserDeletePeerSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3470,8 +3720,13 @@ func (p *ChangePhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ChangePhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserChangePhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3596,8 +3851,13 @@ func (p *CreateNewUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateNewUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCreateNewUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3722,8 +3982,13 @@ func (p *DeleteUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserDeleteUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3848,8 +4113,13 @@ func (p *BlockPeerArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *BlockPeerArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserBlockPeer)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -3974,8 +4244,13 @@ func (p *UnBlockPeerArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UnBlockPeerArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUnBlockPeer)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4100,8 +4375,13 @@ func (p *BlockedByUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *BlockedByUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserBlockedByUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4226,8 +4506,13 @@ func (p *IsBlockedByUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *IsBlockedByUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserIsBlockedByUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4352,8 +4637,13 @@ func (p *CheckBlockUserListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CheckBlockUserListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCheckBlockUserList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4478,8 +4768,13 @@ func (p *GetBlockedListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetBlockedListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetBlockedList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4604,8 +4899,13 @@ func (p *GetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *GetContactSignUpNotificationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetContactSignUpNotification)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4730,8 +5030,13 @@ func (p *SetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer int32) e
 
 func (p *SetContactSignUpNotificationArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetContactSignUpNotification)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4856,8 +5161,13 @@ func (p *GetContentSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetContentSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetContentSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -4982,8 +5292,13 @@ func (p *SetContentSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetContentSettingsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetContentSettings)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5108,8 +5423,13 @@ func (p *DeleteContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserDeleteContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5234,8 +5554,13 @@ func (p *GetContactListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetContactListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetContactList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5360,8 +5685,13 @@ func (p *GetContactIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetContactIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetContactIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5486,8 +5816,13 @@ func (p *GetContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5612,8 +5947,13 @@ func (p *AddContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AddContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserAddContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5738,8 +6078,13 @@ func (p *CheckContactArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CheckContactArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCheckContact)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5864,8 +6209,13 @@ func (p *GetImportersByPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetImportersByPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetImportersByPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -5990,8 +6340,13 @@ func (p *DeleteImportersByPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteImportersByPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserDeleteImportersByPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6116,8 +6471,13 @@ func (p *ImportContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ImportContactsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserImportContacts)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6242,8 +6602,13 @@ func (p *GetCountryCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetCountryCodeArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetCountryCode)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6368,8 +6733,13 @@ func (p *UpdateAboutArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateAboutArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateAbout)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6494,8 +6864,13 @@ func (p *UpdateFirstAndLastNameArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateFirstAndLastNameArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateFirstAndLastName)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6620,8 +6995,13 @@ func (p *UpdateVerifiedArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateVerifiedArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateVerified)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6746,8 +7126,13 @@ func (p *UpdateUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateUsernameArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateUsername)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6872,8 +7257,13 @@ func (p *UpdateProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateProfilePhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateProfilePhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -6998,8 +7388,13 @@ func (p *DeleteProfilePhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteProfilePhotosArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserDeleteProfilePhotos)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7124,8 +7519,13 @@ func (p *GetProfilePhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetProfilePhotosArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetProfilePhotos)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7250,8 +7650,13 @@ func (p *SetBotCommandsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetBotCommandsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetBotCommands)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7376,8 +7781,13 @@ func (p *IsBotArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *IsBotArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserIsBot)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7502,8 +7912,13 @@ func (p *GetBotInfoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetBotInfoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetBotInfo)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7628,8 +8043,13 @@ func (p *CheckBotsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CheckBotsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCheckBots)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7754,8 +8174,13 @@ func (p *GetFullUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetFullUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetFullUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -7880,8 +8305,13 @@ func (p *UpdateEmojiStatusArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateEmojiStatusArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateEmojiStatus)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8006,8 +8436,13 @@ func (p *GetUserDataByIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserDataByIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetUserDataById)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8132,8 +8567,13 @@ func (p *GetUserDataListByIdListArgs) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetUserDataListByIdListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetUserDataListByIdList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8258,8 +8698,13 @@ func (p *GetUserDataByTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserDataByTokenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetUserDataByToken)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8384,8 +8829,13 @@ func (p *SearchArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SearchArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSearch)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8510,8 +8960,13 @@ func (p *UpdateBotDataArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateBotDataArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateBotData)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8636,8 +9091,13 @@ func (p *GetImmutableUserV2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetImmutableUserV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetImmutableUserV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8762,8 +9222,13 @@ func (p *GetMutableUsersV2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMutableUsersV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetMutableUsersV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -8888,8 +9353,13 @@ func (p *CreateNewTestUserArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateNewTestUserArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserCreateNewTestUser)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9014,8 +9484,13 @@ func (p *EditCloseFriendsArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditCloseFriendsArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserEditCloseFriends)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9140,8 +9615,13 @@ func (p *SetStoriesMaxIdArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetStoriesMaxIdArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetStoriesMaxId)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9266,8 +9746,13 @@ func (p *SetColorArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetColorArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetColor)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9392,8 +9877,13 @@ func (p *UpdateBirthdayArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateBirthdayArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdateBirthday)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9518,8 +10008,13 @@ func (p *GetBirthdaysArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetBirthdaysArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetBirthdays)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9644,8 +10139,13 @@ func (p *SetStoriesHiddenArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetStoriesHiddenArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetStoriesHidden)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9770,8 +10270,13 @@ func (p *UpdatePersonalChannelArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePersonalChannelArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdatePersonalChannel)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -9896,8 +10401,13 @@ func (p *GetUserIdByPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserIdByPhoneArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetUserIdByPhone)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -10022,8 +10532,13 @@ func (p *SetAuthorizationTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetAuthorizationTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserSetAuthorizationTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -10148,8 +10663,13 @@ func (p *GetAuthorizationTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAuthorizationTTLArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetAuthorizationTTL)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -10274,8 +10794,13 @@ func (p *UpdatePremiumArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePremiumArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserUpdatePremium)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -10400,8 +10925,13 @@ func (p *GetBotInfoV2Args) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetBotInfoV2Args) Decode(d *bin.Decoder) (err error) {
 	msg := new(user.TLUserGetBotInfoV2)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -10474,6 +11004,2626 @@ func (p *GetBotInfoV2Result) IsSetSuccess() bool {
 }
 
 func (p *GetBotInfoV2Result) GetResult() interface{} {
+	return p.Success
+}
+
+func saveMusicHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SaveMusicArgs)
+	realResult := result.(*SaveMusicResult)
+	success, err := handler.(user.RPCUser).UserSaveMusic(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSaveMusicArgs() interface{} {
+	return &SaveMusicArgs{}
+}
+
+func newSaveMusicResult() interface{} {
+	return &SaveMusicResult{}
+}
+
+type SaveMusicArgs struct {
+	Req *user.TLUserSaveMusic
+}
+
+func (p *SaveMusicArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in SaveMusicArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SaveMusicArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserSaveMusic)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SaveMusicArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in SaveMusicArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SaveMusicArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserSaveMusic)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SaveMusicArgs_Req_DEFAULT *user.TLUserSaveMusic
+
+func (p *SaveMusicArgs) GetReq() *user.TLUserSaveMusic {
+	if !p.IsSetReq() {
+		return SaveMusicArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SaveMusicArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SaveMusicResult struct {
+	Success *tg.Bool
+}
+
+var SaveMusicResult_Success_DEFAULT *tg.Bool
+
+func (p *SaveMusicResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in SaveMusicResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SaveMusicResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SaveMusicResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in SaveMusicResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SaveMusicResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SaveMusicResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return SaveMusicResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SaveMusicResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *SaveMusicResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SaveMusicResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getSavedMusicIdListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetSavedMusicIdListArgs)
+	realResult := result.(*GetSavedMusicIdListResult)
+	success, err := handler.(user.RPCUser).UserGetSavedMusicIdList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetSavedMusicIdListArgs() interface{} {
+	return &GetSavedMusicIdListArgs{}
+}
+
+func newGetSavedMusicIdListResult() interface{} {
+	return &GetSavedMusicIdListResult{}
+}
+
+type GetSavedMusicIdListArgs struct {
+	Req *user.TLUserGetSavedMusicIdList
+}
+
+func (p *GetSavedMusicIdListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetSavedMusicIdListArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetSavedMusicIdListArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetSavedMusicIdList)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetSavedMusicIdListArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetSavedMusicIdListArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetSavedMusicIdListArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetSavedMusicIdList)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetSavedMusicIdListArgs_Req_DEFAULT *user.TLUserGetSavedMusicIdList
+
+func (p *GetSavedMusicIdListArgs) GetReq() *user.TLUserGetSavedMusicIdList {
+	if !p.IsSetReq() {
+		return GetSavedMusicIdListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetSavedMusicIdListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetSavedMusicIdListResult struct {
+	Success *user.VectorLong
+}
+
+var GetSavedMusicIdListResult_Success_DEFAULT *user.VectorLong
+
+func (p *GetSavedMusicIdListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetSavedMusicIdListResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetSavedMusicIdListResult) Unmarshal(in []byte) error {
+	msg := new(user.VectorLong)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetSavedMusicIdListResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetSavedMusicIdListResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetSavedMusicIdListResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.VectorLong)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetSavedMusicIdListResult) GetSuccess() *user.VectorLong {
+	if !p.IsSetSuccess() {
+		return GetSavedMusicIdListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetSavedMusicIdListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.VectorLong)
+}
+
+func (p *GetSavedMusicIdListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetSavedMusicIdListResult) GetResult() interface{} {
+	return p.Success
+}
+
+func setMainProfileTabHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SetMainProfileTabArgs)
+	realResult := result.(*SetMainProfileTabResult)
+	success, err := handler.(user.RPCUser).UserSetMainProfileTab(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSetMainProfileTabArgs() interface{} {
+	return &SetMainProfileTabArgs{}
+}
+
+func newSetMainProfileTabResult() interface{} {
+	return &SetMainProfileTabResult{}
+}
+
+type SetMainProfileTabArgs struct {
+	Req *user.TLUserSetMainProfileTab
+}
+
+func (p *SetMainProfileTabArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in SetMainProfileTabArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SetMainProfileTabArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserSetMainProfileTab)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SetMainProfileTabArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in SetMainProfileTabArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SetMainProfileTabArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserSetMainProfileTab)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SetMainProfileTabArgs_Req_DEFAULT *user.TLUserSetMainProfileTab
+
+func (p *SetMainProfileTabArgs) GetReq() *user.TLUserSetMainProfileTab {
+	if !p.IsSetReq() {
+		return SetMainProfileTabArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SetMainProfileTabArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SetMainProfileTabResult struct {
+	Success *tg.Bool
+}
+
+var SetMainProfileTabResult_Success_DEFAULT *tg.Bool
+
+func (p *SetMainProfileTabResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in SetMainProfileTabResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SetMainProfileTabResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetMainProfileTabResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in SetMainProfileTabResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SetMainProfileTabResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetMainProfileTabResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return SetMainProfileTabResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SetMainProfileTabResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *SetMainProfileTabResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SetMainProfileTabResult) GetResult() interface{} {
+	return p.Success
+}
+
+func setDefaultHistoryTTLHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SetDefaultHistoryTTLArgs)
+	realResult := result.(*SetDefaultHistoryTTLResult)
+	success, err := handler.(user.RPCUser).UserSetDefaultHistoryTTL(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSetDefaultHistoryTTLArgs() interface{} {
+	return &SetDefaultHistoryTTLArgs{}
+}
+
+func newSetDefaultHistoryTTLResult() interface{} {
+	return &SetDefaultHistoryTTLResult{}
+}
+
+type SetDefaultHistoryTTLArgs struct {
+	Req *user.TLUserSetDefaultHistoryTTL
+}
+
+func (p *SetDefaultHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in SetDefaultHistoryTTLArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SetDefaultHistoryTTLArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserSetDefaultHistoryTTL)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in SetDefaultHistoryTTLArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SetDefaultHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserSetDefaultHistoryTTL)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SetDefaultHistoryTTLArgs_Req_DEFAULT *user.TLUserSetDefaultHistoryTTL
+
+func (p *SetDefaultHistoryTTLArgs) GetReq() *user.TLUserSetDefaultHistoryTTL {
+	if !p.IsSetReq() {
+		return SetDefaultHistoryTTLArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SetDefaultHistoryTTLArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SetDefaultHistoryTTLResult struct {
+	Success *tg.Bool
+}
+
+var SetDefaultHistoryTTLResult_Success_DEFAULT *tg.Bool
+
+func (p *SetDefaultHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in SetDefaultHistoryTTLResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SetDefaultHistoryTTLResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in SetDefaultHistoryTTLResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SetDefaultHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetDefaultHistoryTTLResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return SetDefaultHistoryTTLResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SetDefaultHistoryTTLResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *SetDefaultHistoryTTLResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SetDefaultHistoryTTLResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getDefaultHistoryTTLHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetDefaultHistoryTTLArgs)
+	realResult := result.(*GetDefaultHistoryTTLResult)
+	success, err := handler.(user.RPCUser).UserGetDefaultHistoryTTL(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetDefaultHistoryTTLArgs() interface{} {
+	return &GetDefaultHistoryTTLArgs{}
+}
+
+func newGetDefaultHistoryTTLResult() interface{} {
+	return &GetDefaultHistoryTTLResult{}
+}
+
+type GetDefaultHistoryTTLArgs struct {
+	Req *user.TLUserGetDefaultHistoryTTL
+}
+
+func (p *GetDefaultHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetDefaultHistoryTTLArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetDefaultHistoryTTLArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetDefaultHistoryTTL)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetDefaultHistoryTTLArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetDefaultHistoryTTLArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetDefaultHistoryTTL)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetDefaultHistoryTTLArgs_Req_DEFAULT *user.TLUserGetDefaultHistoryTTL
+
+func (p *GetDefaultHistoryTTLArgs) GetReq() *user.TLUserGetDefaultHistoryTTL {
+	if !p.IsSetReq() {
+		return GetDefaultHistoryTTLArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetDefaultHistoryTTLArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetDefaultHistoryTTLResult struct {
+	Success *tg.DefaultHistoryTTL
+}
+
+var GetDefaultHistoryTTLResult_Success_DEFAULT *tg.DefaultHistoryTTL
+
+func (p *GetDefaultHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetDefaultHistoryTTLResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetDefaultHistoryTTLResult) Unmarshal(in []byte) error {
+	msg := new(tg.DefaultHistoryTTL)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetDefaultHistoryTTLResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetDefaultHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.DefaultHistoryTTL)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDefaultHistoryTTLResult) GetSuccess() *tg.DefaultHistoryTTL {
+	if !p.IsSetSuccess() {
+		return GetDefaultHistoryTTLResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetDefaultHistoryTTLResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.DefaultHistoryTTL)
+}
+
+func (p *GetDefaultHistoryTTLResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetDefaultHistoryTTLResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getAccountUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetAccountUsernameArgs)
+	realResult := result.(*GetAccountUsernameResult)
+	success, err := handler.(user.RPCUser).UserGetAccountUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetAccountUsernameArgs() interface{} {
+	return &GetAccountUsernameArgs{}
+}
+
+func newGetAccountUsernameResult() interface{} {
+	return &GetAccountUsernameResult{}
+}
+
+type GetAccountUsernameArgs struct {
+	Req *user.TLUserGetAccountUsername
+}
+
+func (p *GetAccountUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetAccountUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetAccountUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetAccountUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetAccountUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetAccountUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetAccountUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetAccountUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetAccountUsernameArgs_Req_DEFAULT *user.TLUserGetAccountUsername
+
+func (p *GetAccountUsernameArgs) GetReq() *user.TLUserGetAccountUsername {
+	if !p.IsSetReq() {
+		return GetAccountUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetAccountUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetAccountUsernameResult struct {
+	Success *user.UsernameData
+}
+
+var GetAccountUsernameResult_Success_DEFAULT *user.UsernameData
+
+func (p *GetAccountUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetAccountUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetAccountUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.UsernameData)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetAccountUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetAccountUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetAccountUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UsernameData)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetAccountUsernameResult) GetSuccess() *user.UsernameData {
+	if !p.IsSetSuccess() {
+		return GetAccountUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetAccountUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UsernameData)
+}
+
+func (p *GetAccountUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetAccountUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkAccountUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CheckAccountUsernameArgs)
+	realResult := result.(*CheckAccountUsernameResult)
+	success, err := handler.(user.RPCUser).UserCheckAccountUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCheckAccountUsernameArgs() interface{} {
+	return &CheckAccountUsernameArgs{}
+}
+
+func newCheckAccountUsernameResult() interface{} {
+	return &CheckAccountUsernameResult{}
+}
+
+type CheckAccountUsernameArgs struct {
+	Req *user.TLUserCheckAccountUsername
+}
+
+func (p *CheckAccountUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in CheckAccountUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CheckAccountUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserCheckAccountUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CheckAccountUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in CheckAccountUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CheckAccountUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserCheckAccountUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckAccountUsernameArgs_Req_DEFAULT *user.TLUserCheckAccountUsername
+
+func (p *CheckAccountUsernameArgs) GetReq() *user.TLUserCheckAccountUsername {
+	if !p.IsSetReq() {
+		return CheckAccountUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckAccountUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CheckAccountUsernameResult struct {
+	Success *user.UsernameExist
+}
+
+var CheckAccountUsernameResult_Success_DEFAULT *user.UsernameExist
+
+func (p *CheckAccountUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in CheckAccountUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CheckAccountUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.UsernameExist)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckAccountUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in CheckAccountUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CheckAccountUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UsernameExist)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckAccountUsernameResult) GetSuccess() *user.UsernameExist {
+	if !p.IsSetSuccess() {
+		return CheckAccountUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckAccountUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UsernameExist)
+}
+
+func (p *CheckAccountUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckAccountUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getChannelUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetChannelUsernameArgs)
+	realResult := result.(*GetChannelUsernameResult)
+	success, err := handler.(user.RPCUser).UserGetChannelUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetChannelUsernameArgs() interface{} {
+	return &GetChannelUsernameArgs{}
+}
+
+func newGetChannelUsernameResult() interface{} {
+	return &GetChannelUsernameResult{}
+}
+
+type GetChannelUsernameArgs struct {
+	Req *user.TLUserGetChannelUsername
+}
+
+func (p *GetChannelUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetChannelUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetChannelUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetChannelUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetChannelUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetChannelUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetChannelUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetChannelUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetChannelUsernameArgs_Req_DEFAULT *user.TLUserGetChannelUsername
+
+func (p *GetChannelUsernameArgs) GetReq() *user.TLUserGetChannelUsername {
+	if !p.IsSetReq() {
+		return GetChannelUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetChannelUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetChannelUsernameResult struct {
+	Success *user.UsernameData
+}
+
+var GetChannelUsernameResult_Success_DEFAULT *user.UsernameData
+
+func (p *GetChannelUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetChannelUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetChannelUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.UsernameData)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetChannelUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetChannelUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetChannelUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UsernameData)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetChannelUsernameResult) GetSuccess() *user.UsernameData {
+	if !p.IsSetSuccess() {
+		return GetChannelUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetChannelUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UsernameData)
+}
+
+func (p *GetChannelUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetChannelUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkChannelUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CheckChannelUsernameArgs)
+	realResult := result.(*CheckChannelUsernameResult)
+	success, err := handler.(user.RPCUser).UserCheckChannelUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCheckChannelUsernameArgs() interface{} {
+	return &CheckChannelUsernameArgs{}
+}
+
+func newCheckChannelUsernameResult() interface{} {
+	return &CheckChannelUsernameResult{}
+}
+
+type CheckChannelUsernameArgs struct {
+	Req *user.TLUserCheckChannelUsername
+}
+
+func (p *CheckChannelUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in CheckChannelUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CheckChannelUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserCheckChannelUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CheckChannelUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in CheckChannelUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CheckChannelUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserCheckChannelUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckChannelUsernameArgs_Req_DEFAULT *user.TLUserCheckChannelUsername
+
+func (p *CheckChannelUsernameArgs) GetReq() *user.TLUserCheckChannelUsername {
+	if !p.IsSetReq() {
+		return CheckChannelUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckChannelUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CheckChannelUsernameResult struct {
+	Success *user.UsernameExist
+}
+
+var CheckChannelUsernameResult_Success_DEFAULT *user.UsernameExist
+
+func (p *CheckChannelUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in CheckChannelUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CheckChannelUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.UsernameExist)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckChannelUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in CheckChannelUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CheckChannelUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UsernameExist)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckChannelUsernameResult) GetSuccess() *user.UsernameExist {
+	if !p.IsSetSuccess() {
+		return CheckChannelUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckChannelUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UsernameExist)
+}
+
+func (p *CheckChannelUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckChannelUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func updateUsernameByPeerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UpdateUsernameByPeerArgs)
+	realResult := result.(*UpdateUsernameByPeerResult)
+	success, err := handler.(user.RPCUser).UserUpdateUsernameByPeer(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUpdateUsernameByPeerArgs() interface{} {
+	return &UpdateUsernameByPeerArgs{}
+}
+
+func newUpdateUsernameByPeerResult() interface{} {
+	return &UpdateUsernameByPeerResult{}
+}
+
+type UpdateUsernameByPeerArgs struct {
+	Req *user.TLUserUpdateUsernameByPeer
+}
+
+func (p *UpdateUsernameByPeerArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in UpdateUsernameByPeerArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UpdateUsernameByPeerArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserUpdateUsernameByPeer)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UpdateUsernameByPeerArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in UpdateUsernameByPeerArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UpdateUsernameByPeerArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserUpdateUsernameByPeer)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateUsernameByPeerArgs_Req_DEFAULT *user.TLUserUpdateUsernameByPeer
+
+func (p *UpdateUsernameByPeerArgs) GetReq() *user.TLUserUpdateUsernameByPeer {
+	if !p.IsSetReq() {
+		return UpdateUsernameByPeerArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateUsernameByPeerArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UpdateUsernameByPeerResult struct {
+	Success *tg.Bool
+}
+
+var UpdateUsernameByPeerResult_Success_DEFAULT *tg.Bool
+
+func (p *UpdateUsernameByPeerResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in UpdateUsernameByPeerResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UpdateUsernameByPeerResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUsernameByPeerResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in UpdateUsernameByPeerResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UpdateUsernameByPeerResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUsernameByPeerResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return UpdateUsernameByPeerResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateUsernameByPeerResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *UpdateUsernameByPeerResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateUsernameByPeerResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CheckUsernameArgs)
+	realResult := result.(*CheckUsernameResult)
+	success, err := handler.(user.RPCUser).UserCheckUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCheckUsernameArgs() interface{} {
+	return &CheckUsernameArgs{}
+}
+
+func newCheckUsernameResult() interface{} {
+	return &CheckUsernameResult{}
+}
+
+type CheckUsernameArgs struct {
+	Req *user.TLUserCheckUsername
+}
+
+func (p *CheckUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in CheckUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CheckUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserCheckUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CheckUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in CheckUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CheckUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserCheckUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckUsernameArgs_Req_DEFAULT *user.TLUserCheckUsername
+
+func (p *CheckUsernameArgs) GetReq() *user.TLUserCheckUsername {
+	if !p.IsSetReq() {
+		return CheckUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CheckUsernameResult struct {
+	Success *user.UsernameExist
+}
+
+var CheckUsernameResult_Success_DEFAULT *user.UsernameExist
+
+func (p *CheckUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in CheckUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CheckUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.UsernameExist)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in CheckUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CheckUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UsernameExist)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckUsernameResult) GetSuccess() *user.UsernameExist {
+	if !p.IsSetSuccess() {
+		return CheckUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UsernameExist)
+}
+
+func (p *CheckUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func updateUsernameByUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UpdateUsernameByUsernameArgs)
+	realResult := result.(*UpdateUsernameByUsernameResult)
+	success, err := handler.(user.RPCUser).UserUpdateUsernameByUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUpdateUsernameByUsernameArgs() interface{} {
+	return &UpdateUsernameByUsernameArgs{}
+}
+
+func newUpdateUsernameByUsernameResult() interface{} {
+	return &UpdateUsernameByUsernameResult{}
+}
+
+type UpdateUsernameByUsernameArgs struct {
+	Req *user.TLUserUpdateUsernameByUsername
+}
+
+func (p *UpdateUsernameByUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in UpdateUsernameByUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UpdateUsernameByUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserUpdateUsernameByUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UpdateUsernameByUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in UpdateUsernameByUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UpdateUsernameByUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserUpdateUsernameByUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateUsernameByUsernameArgs_Req_DEFAULT *user.TLUserUpdateUsernameByUsername
+
+func (p *UpdateUsernameByUsernameArgs) GetReq() *user.TLUserUpdateUsernameByUsername {
+	if !p.IsSetReq() {
+		return UpdateUsernameByUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateUsernameByUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UpdateUsernameByUsernameResult struct {
+	Success *tg.Bool
+}
+
+var UpdateUsernameByUsernameResult_Success_DEFAULT *tg.Bool
+
+func (p *UpdateUsernameByUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in UpdateUsernameByUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UpdateUsernameByUsernameResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUsernameByUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in UpdateUsernameByUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UpdateUsernameByUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUsernameByUsernameResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return UpdateUsernameByUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateUsernameByUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *UpdateUsernameByUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateUsernameByUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func deleteUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*DeleteUsernameArgs)
+	realResult := result.(*DeleteUsernameResult)
+	success, err := handler.(user.RPCUser).UserDeleteUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newDeleteUsernameArgs() interface{} {
+	return &DeleteUsernameArgs{}
+}
+
+func newDeleteUsernameResult() interface{} {
+	return &DeleteUsernameResult{}
+}
+
+type DeleteUsernameArgs struct {
+	Req *user.TLUserDeleteUsername
+}
+
+func (p *DeleteUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in DeleteUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *DeleteUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserDeleteUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *DeleteUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in DeleteUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *DeleteUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserDeleteUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeleteUsernameArgs_Req_DEFAULT *user.TLUserDeleteUsername
+
+func (p *DeleteUsernameArgs) GetReq() *user.TLUserDeleteUsername {
+	if !p.IsSetReq() {
+		return DeleteUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeleteUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type DeleteUsernameResult struct {
+	Success *tg.Bool
+}
+
+var DeleteUsernameResult_Success_DEFAULT *tg.Bool
+
+func (p *DeleteUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in DeleteUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *DeleteUsernameResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in DeleteUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *DeleteUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteUsernameResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return DeleteUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *DeleteUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func resolveUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ResolveUsernameArgs)
+	realResult := result.(*ResolveUsernameResult)
+	success, err := handler.(user.RPCUser).UserResolveUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newResolveUsernameArgs() interface{} {
+	return &ResolveUsernameArgs{}
+}
+
+func newResolveUsernameResult() interface{} {
+	return &ResolveUsernameResult{}
+}
+
+type ResolveUsernameArgs struct {
+	Req *user.TLUserResolveUsername
+}
+
+func (p *ResolveUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ResolveUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ResolveUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserResolveUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ResolveUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ResolveUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ResolveUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserResolveUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ResolveUsernameArgs_Req_DEFAULT *user.TLUserResolveUsername
+
+func (p *ResolveUsernameArgs) GetReq() *user.TLUserResolveUsername {
+	if !p.IsSetReq() {
+		return ResolveUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ResolveUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ResolveUsernameResult struct {
+	Success *tg.Peer
+}
+
+var ResolveUsernameResult_Success_DEFAULT *tg.Peer
+
+func (p *ResolveUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ResolveUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ResolveUsernameResult) Unmarshal(in []byte) error {
+	msg := new(tg.Peer)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ResolveUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ResolveUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Peer)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveUsernameResult) GetSuccess() *tg.Peer {
+	if !p.IsSetSuccess() {
+		return ResolveUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ResolveUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Peer)
+}
+
+func (p *ResolveUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ResolveUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getListByUsernameListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetListByUsernameListArgs)
+	realResult := result.(*GetListByUsernameListResult)
+	success, err := handler.(user.RPCUser).UserGetListByUsernameList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetListByUsernameListArgs() interface{} {
+	return &GetListByUsernameListArgs{}
+}
+
+func newGetListByUsernameListResult() interface{} {
+	return &GetListByUsernameListResult{}
+}
+
+type GetListByUsernameListArgs struct {
+	Req *user.TLUserGetListByUsernameList
+}
+
+func (p *GetListByUsernameListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetListByUsernameListArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetListByUsernameListArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetListByUsernameList)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetListByUsernameListArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetListByUsernameListArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetListByUsernameListArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetListByUsernameList)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetListByUsernameListArgs_Req_DEFAULT *user.TLUserGetListByUsernameList
+
+func (p *GetListByUsernameListArgs) GetReq() *user.TLUserGetListByUsernameList {
+	if !p.IsSetReq() {
+		return GetListByUsernameListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetListByUsernameListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetListByUsernameListResult struct {
+	Success *user.VectorUsernameData
+}
+
+var GetListByUsernameListResult_Success_DEFAULT *user.VectorUsernameData
+
+func (p *GetListByUsernameListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetListByUsernameListResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetListByUsernameListResult) Unmarshal(in []byte) error {
+	msg := new(user.VectorUsernameData)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetListByUsernameListResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetListByUsernameListResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetListByUsernameListResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.VectorUsernameData)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetListByUsernameListResult) GetSuccess() *user.VectorUsernameData {
+	if !p.IsSetSuccess() {
+		return GetListByUsernameListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetListByUsernameListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.VectorUsernameData)
+}
+
+func (p *GetListByUsernameListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetListByUsernameListResult) GetResult() interface{} {
+	return p.Success
+}
+
+func deleteUsernameByPeerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*DeleteUsernameByPeerArgs)
+	realResult := result.(*DeleteUsernameByPeerResult)
+	success, err := handler.(user.RPCUser).UserDeleteUsernameByPeer(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newDeleteUsernameByPeerArgs() interface{} {
+	return &DeleteUsernameByPeerArgs{}
+}
+
+func newDeleteUsernameByPeerResult() interface{} {
+	return &DeleteUsernameByPeerResult{}
+}
+
+type DeleteUsernameByPeerArgs struct {
+	Req *user.TLUserDeleteUsernameByPeer
+}
+
+func (p *DeleteUsernameByPeerArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in DeleteUsernameByPeerArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *DeleteUsernameByPeerArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserDeleteUsernameByPeer)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *DeleteUsernameByPeerArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in DeleteUsernameByPeerArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *DeleteUsernameByPeerArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserDeleteUsernameByPeer)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeleteUsernameByPeerArgs_Req_DEFAULT *user.TLUserDeleteUsernameByPeer
+
+func (p *DeleteUsernameByPeerArgs) GetReq() *user.TLUserDeleteUsernameByPeer {
+	if !p.IsSetReq() {
+		return DeleteUsernameByPeerArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeleteUsernameByPeerArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type DeleteUsernameByPeerResult struct {
+	Success *tg.Bool
+}
+
+var DeleteUsernameByPeerResult_Success_DEFAULT *tg.Bool
+
+func (p *DeleteUsernameByPeerResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in DeleteUsernameByPeerResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *DeleteUsernameByPeerResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteUsernameByPeerResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in DeleteUsernameByPeerResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *DeleteUsernameByPeerResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteUsernameByPeerResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return DeleteUsernameByPeerResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteUsernameByPeerResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *DeleteUsernameByPeerResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteUsernameByPeerResult) GetResult() interface{} {
+	return p.Success
+}
+
+func searchUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SearchUsernameArgs)
+	realResult := result.(*SearchUsernameResult)
+	success, err := handler.(user.RPCUser).UserSearchUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSearchUsernameArgs() interface{} {
+	return &SearchUsernameArgs{}
+}
+
+func newSearchUsernameResult() interface{} {
+	return &SearchUsernameResult{}
+}
+
+type SearchUsernameArgs struct {
+	Req *user.TLUserSearchUsername
+}
+
+func (p *SearchUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in SearchUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SearchUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserSearchUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SearchUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in SearchUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SearchUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserSearchUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SearchUsernameArgs_Req_DEFAULT *user.TLUserSearchUsername
+
+func (p *SearchUsernameArgs) GetReq() *user.TLUserSearchUsername {
+	if !p.IsSetReq() {
+		return SearchUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SearchUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SearchUsernameResult struct {
+	Success *user.VectorUsernameData
+}
+
+var SearchUsernameResult_Success_DEFAULT *user.VectorUsernameData
+
+func (p *SearchUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in SearchUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SearchUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.VectorUsernameData)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SearchUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in SearchUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SearchUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.VectorUsernameData)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SearchUsernameResult) GetSuccess() *user.VectorUsernameData {
+	if !p.IsSetSuccess() {
+		return SearchUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SearchUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.VectorUsernameData)
+}
+
+func (p *SearchUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SearchUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func toggleUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ToggleUsernameArgs)
+	realResult := result.(*ToggleUsernameResult)
+	success, err := handler.(user.RPCUser).UserToggleUsername(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newToggleUsernameArgs() interface{} {
+	return &ToggleUsernameArgs{}
+}
+
+func newToggleUsernameResult() interface{} {
+	return &ToggleUsernameResult{}
+}
+
+type ToggleUsernameArgs struct {
+	Req *user.TLUserToggleUsername
+}
+
+func (p *ToggleUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ToggleUsernameArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ToggleUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserToggleUsername)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ToggleUsernameArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ToggleUsernameArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ToggleUsernameArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserToggleUsername)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ToggleUsernameArgs_Req_DEFAULT *user.TLUserToggleUsername
+
+func (p *ToggleUsernameArgs) GetReq() *user.TLUserToggleUsername {
+	if !p.IsSetReq() {
+		return ToggleUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ToggleUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ToggleUsernameResult struct {
+	Success *tg.Bool
+}
+
+var ToggleUsernameResult_Success_DEFAULT *tg.Bool
+
+func (p *ToggleUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ToggleUsernameResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ToggleUsernameResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ToggleUsernameResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ToggleUsernameResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ToggleUsernameResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ToggleUsernameResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return ToggleUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ToggleUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *ToggleUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ToggleUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
+func reorderUsernamesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ReorderUsernamesArgs)
+	realResult := result.(*ReorderUsernamesResult)
+	success, err := handler.(user.RPCUser).UserReorderUsernames(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newReorderUsernamesArgs() interface{} {
+	return &ReorderUsernamesArgs{}
+}
+
+func newReorderUsernamesResult() interface{} {
+	return &ReorderUsernamesResult{}
+}
+
+type ReorderUsernamesArgs struct {
+	Req *user.TLUserReorderUsernames
+}
+
+func (p *ReorderUsernamesArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ReorderUsernamesArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ReorderUsernamesArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserReorderUsernames)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ReorderUsernamesArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ReorderUsernamesArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ReorderUsernamesArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserReorderUsernames)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ReorderUsernamesArgs_Req_DEFAULT *user.TLUserReorderUsernames
+
+func (p *ReorderUsernamesArgs) GetReq() *user.TLUserReorderUsernames {
+	if !p.IsSetReq() {
+		return ReorderUsernamesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ReorderUsernamesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ReorderUsernamesResult struct {
+	Success *tg.Bool
+}
+
+var ReorderUsernamesResult_Success_DEFAULT *tg.Bool
+
+func (p *ReorderUsernamesResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ReorderUsernamesResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ReorderUsernamesResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ReorderUsernamesResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ReorderUsernamesResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ReorderUsernamesResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ReorderUsernamesResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return ReorderUsernamesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ReorderUsernamesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *ReorderUsernamesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ReorderUsernamesResult) GetResult() interface{} {
+	return p.Success
+}
+
+func deactivateAllChannelUsernamesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*DeactivateAllChannelUsernamesArgs)
+	realResult := result.(*DeactivateAllChannelUsernamesResult)
+	success, err := handler.(user.RPCUser).UserDeactivateAllChannelUsernames(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newDeactivateAllChannelUsernamesArgs() interface{} {
+	return &DeactivateAllChannelUsernamesArgs{}
+}
+
+func newDeactivateAllChannelUsernamesResult() interface{} {
+	return &DeactivateAllChannelUsernamesResult{}
+}
+
+type DeactivateAllChannelUsernamesArgs struct {
+	Req *user.TLUserDeactivateAllChannelUsernames
+}
+
+func (p *DeactivateAllChannelUsernamesArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in DeactivateAllChannelUsernamesArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *DeactivateAllChannelUsernamesArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserDeactivateAllChannelUsernames)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *DeactivateAllChannelUsernamesArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in DeactivateAllChannelUsernamesArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *DeactivateAllChannelUsernamesArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserDeactivateAllChannelUsernames)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeactivateAllChannelUsernamesArgs_Req_DEFAULT *user.TLUserDeactivateAllChannelUsernames
+
+func (p *DeactivateAllChannelUsernamesArgs) GetReq() *user.TLUserDeactivateAllChannelUsernames {
+	if !p.IsSetReq() {
+		return DeactivateAllChannelUsernamesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeactivateAllChannelUsernamesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type DeactivateAllChannelUsernamesResult struct {
+	Success *tg.Bool
+}
+
+var DeactivateAllChannelUsernamesResult_Success_DEFAULT *tg.Bool
+
+func (p *DeactivateAllChannelUsernamesResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in DeactivateAllChannelUsernamesResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *DeactivateAllChannelUsernamesResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeactivateAllChannelUsernamesResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in DeactivateAllChannelUsernamesResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *DeactivateAllChannelUsernamesResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeactivateAllChannelUsernamesResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return DeactivateAllChannelUsernamesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeactivateAllChannelUsernamesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *DeactivateAllChannelUsernamesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeactivateAllChannelUsernamesResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -11650,6 +14800,306 @@ func (p *kClient) UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotIn
 	_result := new(user.BotInfoData)
 
 	if err = p.c.Call(ctx, "/user.RPCUser/user.getBotInfoV2", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserSaveMusic(ctx context.Context, req *user.TLUserSaveMusic) (r *tg.Bool, err error) {
+	// var _args SaveMusicArgs
+	// _args.Req = req
+	// var _result SaveMusicResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.saveMusic", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetSavedMusicIdList(ctx context.Context, req *user.TLUserGetSavedMusicIdList) (r *user.VectorLong, err error) {
+	// var _args GetSavedMusicIdListArgs
+	// _args.Req = req
+	// var _result GetSavedMusicIdListResult
+
+	_result := new(user.VectorLong)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getSavedMusicIdList", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserSetMainProfileTab(ctx context.Context, req *user.TLUserSetMainProfileTab) (r *tg.Bool, err error) {
+	// var _args SetMainProfileTabArgs
+	// _args.Req = req
+	// var _result SetMainProfileTabResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setMainProfileTab", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserSetDefaultHistoryTTL(ctx context.Context, req *user.TLUserSetDefaultHistoryTTL) (r *tg.Bool, err error) {
+	// var _args SetDefaultHistoryTTLArgs
+	// _args.Req = req
+	// var _result SetDefaultHistoryTTLResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setDefaultHistoryTTL", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetDefaultHistoryTTL(ctx context.Context, req *user.TLUserGetDefaultHistoryTTL) (r *tg.DefaultHistoryTTL, err error) {
+	// var _args GetDefaultHistoryTTLArgs
+	// _args.Req = req
+	// var _result GetDefaultHistoryTTLResult
+
+	_result := new(tg.DefaultHistoryTTL)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getDefaultHistoryTTL", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetAccountUsername(ctx context.Context, req *user.TLUserGetAccountUsername) (r *user.UsernameData, err error) {
+	// var _args GetAccountUsernameArgs
+	// _args.Req = req
+	// var _result GetAccountUsernameResult
+
+	_result := new(user.UsernameData)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getAccountUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserCheckAccountUsername(ctx context.Context, req *user.TLUserCheckAccountUsername) (r *user.UsernameExist, err error) {
+	// var _args CheckAccountUsernameArgs
+	// _args.Req = req
+	// var _result CheckAccountUsernameResult
+
+	_result := new(user.UsernameExist)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkAccountUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetChannelUsername(ctx context.Context, req *user.TLUserGetChannelUsername) (r *user.UsernameData, err error) {
+	// var _args GetChannelUsernameArgs
+	// _args.Req = req
+	// var _result GetChannelUsernameResult
+
+	_result := new(user.UsernameData)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getChannelUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserCheckChannelUsername(ctx context.Context, req *user.TLUserCheckChannelUsername) (r *user.UsernameExist, err error) {
+	// var _args CheckChannelUsernameArgs
+	// _args.Req = req
+	// var _result CheckChannelUsernameResult
+
+	_result := new(user.UsernameExist)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkChannelUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserUpdateUsernameByPeer(ctx context.Context, req *user.TLUserUpdateUsernameByPeer) (r *tg.Bool, err error) {
+	// var _args UpdateUsernameByPeerArgs
+	// _args.Req = req
+	// var _result UpdateUsernameByPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateUsernameByPeer", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserCheckUsername(ctx context.Context, req *user.TLUserCheckUsername) (r *user.UsernameExist, err error) {
+	// var _args CheckUsernameArgs
+	// _args.Req = req
+	// var _result CheckUsernameResult
+
+	_result := new(user.UsernameExist)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserUpdateUsernameByUsername(ctx context.Context, req *user.TLUserUpdateUsernameByUsername) (r *tg.Bool, err error) {
+	// var _args UpdateUsernameByUsernameArgs
+	// _args.Req = req
+	// var _result UpdateUsernameByUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateUsernameByUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserDeleteUsername(ctx context.Context, req *user.TLUserDeleteUsername) (r *tg.Bool, err error) {
+	// var _args DeleteUsernameArgs
+	// _args.Req = req
+	// var _result DeleteUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserResolveUsername(ctx context.Context, req *user.TLUserResolveUsername) (r *tg.Peer, err error) {
+	// var _args ResolveUsernameArgs
+	// _args.Req = req
+	// var _result ResolveUsernameResult
+
+	_result := new(tg.Peer)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.resolveUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetListByUsernameList(ctx context.Context, req *user.TLUserGetListByUsernameList) (r *user.VectorUsernameData, err error) {
+	// var _args GetListByUsernameListArgs
+	// _args.Req = req
+	// var _result GetListByUsernameListResult
+
+	_result := new(user.VectorUsernameData)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getListByUsernameList", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserDeleteUsernameByPeer(ctx context.Context, req *user.TLUserDeleteUsernameByPeer) (r *tg.Bool, err error) {
+	// var _args DeleteUsernameByPeerArgs
+	// _args.Req = req
+	// var _result DeleteUsernameByPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteUsernameByPeer", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserSearchUsername(ctx context.Context, req *user.TLUserSearchUsername) (r *user.VectorUsernameData, err error) {
+	// var _args SearchUsernameArgs
+	// _args.Req = req
+	// var _result SearchUsernameResult
+
+	_result := new(user.VectorUsernameData)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.searchUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserToggleUsername(ctx context.Context, req *user.TLUserToggleUsername) (r *tg.Bool, err error) {
+	// var _args ToggleUsernameArgs
+	// _args.Req = req
+	// var _result ToggleUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.toggleUsername", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserReorderUsernames(ctx context.Context, req *user.TLUserReorderUsernames) (r *tg.Bool, err error) {
+	// var _args ReorderUsernamesArgs
+	// _args.Req = req
+	// var _result ReorderUsernamesResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.reorderUsernames", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserDeactivateAllChannelUsernames(ctx context.Context, req *user.TLUserDeactivateAllChannelUsernames) (r *tg.Bool, err error) {
+	// var _args DeactivateAllChannelUsernamesArgs
+	// _args.Req = req
+	// var _result DeactivateAllChannelUsernamesResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deactivateAllChannelUsernames", req, _result); err != nil {
 		return
 	}
 

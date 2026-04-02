@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -27,6 +27,7 @@ type CodeClient interface {
 	CodeGetPhoneCode(ctx context.Context, in *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error)
 	CodeDeletePhoneCode(ctx context.Context, in *code.TLCodeDeletePhoneCode) (*tg.Bool, error)
 	CodeUpdatePhoneCodeData(ctx context.Context, in *code.TLCodeUpdatePhoneCodeData) (*tg.Bool, error)
+	Close() error
 }
 
 type defaultCodeClient struct {
@@ -37,6 +38,13 @@ func NewCodeClient(cli client.Client) CodeClient {
 	return &defaultCodeClient{
 		cli: cli,
 	}
+}
+
+func (m *defaultCodeClient) Close() error {
+	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }
 
 // CodeCreatePhoneCode

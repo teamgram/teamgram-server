@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package sessionservice
@@ -14,6 +14,7 @@ import (
 	"context"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -35,10 +36,12 @@ type Client interface {
 	SessionPushRpcResultData(ctx context.Context, req *session.TLSessionPushRpcResultData, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
+// Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
 // NewClient creates a client for the service defined in IDL.
 func NewClient(destService string, opts ...client.Option) (Client, error) {
 	var options []client.Option
 	options = append(options, client.WithDestService(destService))
+	options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 
 	options = append(options, opts...)
 

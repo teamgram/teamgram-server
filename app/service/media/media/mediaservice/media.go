@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package mediaservice
@@ -264,8 +264,13 @@ func (p *UploadPhotoFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadPhotoFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadPhotoFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -390,8 +395,13 @@ func (p *UploadProfilePhotoFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadProfilePhotoFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadProfilePhotoFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -516,8 +526,13 @@ func (p *GetPhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetPhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -642,8 +657,13 @@ func (p *GetPhotoSizeListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoSizeListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetPhotoSizeList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -768,8 +788,13 @@ func (p *GetPhotoSizeListListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoSizeListListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetPhotoSizeListList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -894,8 +919,13 @@ func (p *GetVideoSizeListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetVideoSizeListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetVideoSizeList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1020,8 +1050,13 @@ func (p *UploadedDocumentMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadedDocumentMediaArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadedDocumentMedia)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1146,8 +1181,13 @@ func (p *GetDocumentArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDocumentArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetDocument)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1272,8 +1312,13 @@ func (p *GetDocumentListArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDocumentListArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetDocumentList)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1398,8 +1443,13 @@ func (p *UploadEncryptedFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadEncryptedFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadEncryptedFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1524,8 +1574,13 @@ func (p *GetEncryptedFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetEncryptedFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaGetEncryptedFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1650,8 +1705,13 @@ func (p *UploadWallPaperFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadWallPaperFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadWallPaperFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1776,8 +1836,13 @@ func (p *UploadThemeFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadThemeFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadThemeFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -1902,8 +1967,13 @@ func (p *UploadStickerFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadStickerFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadStickerFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2028,8 +2098,13 @@ func (p *UploadRingtoneFileArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadRingtoneFileArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadRingtoneFile)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }
@@ -2154,8 +2229,13 @@ func (p *UploadedProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadedProfilePhotoArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.TLMediaUploadedProfilePhoto)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
 	p.Req = msg
 	return nil
 }

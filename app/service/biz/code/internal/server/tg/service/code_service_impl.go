@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgooo Authors.
+ * Copyright 2026 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -24,7 +24,7 @@ var _ *tg.Bool
 // code.createPhoneCode flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true sent_code_type:int next_code_type:int state:int = PhoneCodeTransaction;
 func (s *Service) CodeCreatePhoneCode(ctx context.Context, request *code.TLCodeCreatePhoneCode) (*code.PhoneCodeTransaction, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("code.createPhoneCode - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("code.createPhoneCode - request: %s", request)
 
 	r, err := c.CodeCreatePhoneCode(request)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Service) CodeCreatePhoneCode(ctx context.Context, request *code.TLCodeC
 // code.getPhoneCode auth_key_id:long phone:string phone_code_hash:string = PhoneCodeTransaction;
 func (s *Service) CodeGetPhoneCode(ctx context.Context, request *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("code.getPhoneCode - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("code.getPhoneCode - request: %s", request)
 
 	r, err := c.CodeGetPhoneCode(request)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *Service) CodeGetPhoneCode(ctx context.Context, request *code.TLCodeGetP
 // code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 func (s *Service) CodeDeletePhoneCode(ctx context.Context, request *code.TLCodeDeletePhoneCode) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("code.deletePhoneCode - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("code.deletePhoneCode - request: %s", request)
 
 	r, err := c.CodeDeletePhoneCode(request)
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *Service) CodeDeletePhoneCode(ctx context.Context, request *code.TLCodeD
 // code.updatePhoneCodeData auth_key_id:long phone:string phone_code_hash:string code_data:PhoneCodeTransaction = Bool;
 func (s *Service) CodeUpdatePhoneCodeData(ctx context.Context, request *code.TLCodeUpdatePhoneCodeData) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("code.updatePhoneCodeData - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("code.updatePhoneCodeData - request: %s", request)
 
 	r, err := c.CodeUpdatePhoneCodeData(request)
 	if err != nil {
