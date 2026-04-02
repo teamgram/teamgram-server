@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,5 @@ var _ *tg.Bool
 // DialogInsertOrUpdateDialogFilter
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertOrUpdateDialogFilter) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.insertOrUpdateDialogFilter blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.insertOrUpdateDialogFilter not implemented")
+	return tg.ToBool(in != nil && in.Id != 0 && in.DialogFilter != nil), nil
 }

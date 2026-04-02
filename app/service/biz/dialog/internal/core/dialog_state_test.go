@@ -557,3 +557,62 @@ func TestDialogFolderAndFilterPlaceholders(t *testing.T) {
 		t.Fatalf("expected toggle tags boolTrue, got %#v", toggleTagsResult)
 	}
 }
+
+func TestDialogFilterWritePlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	insertResult, err := c.DialogInsertOrUpdateDialogFilter(&dialog.TLDialogInsertOrUpdateDialogFilter{
+		UserId: 1,
+		Id:     7,
+		DialogFilter: tg.MakeTLDialogFilter(&tg.TLDialogFilter{
+			Id: 7,
+			Title: tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+				Text:     "placeholder",
+				Entities: []tg.MessageEntityClazz{},
+			}),
+			PinnedPeers:  []tg.InputPeerClazz{},
+			IncludePeers: []tg.InputPeerClazz{},
+			ExcludePeers: []tg.InputPeerClazz{},
+		}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(insertResult) {
+		t.Fatalf("expected insert/update filter boolTrue, got %#v", insertResult)
+	}
+
+	createResult, err := c.DialogCreateDialogFilter(&dialog.TLDialogCreateDialogFilter{
+		UserId:       1,
+		DialogFilter: makeDialogFilterExtPlaceholder(8, "placeholder-8"),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	createdFilter, ok := createResult.Clazz.(*dialog.TLDialogFilterExt)
+	if !ok || createdFilter.Id != 8 {
+		t.Fatalf("expected created filter id=8, got %#v", createResult.Clazz)
+	}
+
+	orderResult, err := c.DialogUpdateDialogFiltersOrder(&dialog.TLDialogUpdateDialogFiltersOrder{
+		UserId: 1,
+		Order:  []int32{8, 7},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(orderResult) {
+		t.Fatalf("expected update order boolTrue, got %#v", orderResult)
+	}
+
+	deleteResult, err := c.DialogDeleteDialogFilter(&dialog.TLDialogDeleteDialogFilter{
+		UserId: 1,
+		Id:     8,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(deleteResult) {
+		t.Fatalf("expected delete filter boolTrue, got %#v", deleteResult)
+	}
+}
