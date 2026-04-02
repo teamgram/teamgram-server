@@ -25,10 +25,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -140,31 +140,32 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*tg.TLAuthKe
 				})
 			if err != nil && errors.Is(err, sqlc.ErrNotFound) {
 				kInfo2, _ := d.getAuthKey(ctx, authKeyId)
-				kInfo2.Match(
-					func(c *tg.TLAuthKeyInfo) interface{} {
-						kInfo.AuthKeyType = c.AuthKeyType
-						kInfo.AuthKey = c.AuthKey
-						kInfo.TempAuthKeyId = c.TempAuthKeyId
-						kInfo.PermAuthKeyId = c.PermAuthKeyId
-						kInfo.MediaTempAuthKeyId = c.MediaTempAuthKeyId
+				c := kInfo2.ToAuthKeyInfo()
+				// kInfo2.Match(
+				// 	func(c *tg.TLAuthKeyInfo) interface{} {
+				kInfo.AuthKeyType = c.AuthKeyType
+				kInfo.AuthKey = c.AuthKey
+				kInfo.TempAuthKeyId = c.TempAuthKeyId
+				kInfo.PermAuthKeyId = c.PermAuthKeyId
+				kInfo.MediaTempAuthKeyId = c.MediaTempAuthKeyId
 
-						threading.GoSafe(func() {
-							_, _, _ = d.AuthKeyInfosDAO.Insert(
-								contextx.ValueOnlyFrom(ctx),
-								&dataobject.AuthKeyInfosDO{
-									AuthKeyId:          keyInfo.AuthKeyId,
-									AuthKeyType:        keyInfo.AuthKeyType,
-									PermAuthKeyId:      keyInfo.PermAuthKeyId,
-									TempAuthKeyId:      keyInfo.TempAuthKeyId,
-									MediaTempAuthKeyId: keyInfo.MediaTempAuthKeyId,
-									Deleted:            false,
-								})
+				threading.GoSafe(func() {
+					_, _, _ = d.AuthKeyInfosDAO.Insert(
+						contextx.ValueOnlyFrom(ctx),
+						&dataobject.AuthKeyInfosDO{
+							AuthKeyId:          keyInfo.AuthKeyId,
+							AuthKeyType:        keyInfo.AuthKeyType,
+							PermAuthKeyId:      keyInfo.PermAuthKeyId,
+							TempAuthKeyId:      keyInfo.TempAuthKeyId,
+							MediaTempAuthKeyId: keyInfo.MediaTempAuthKeyId,
+							Deleted:            false,
 						})
+				})
 
-						err = nil
-						return nil
-					},
-				)
+				// 	err = nil
+				// 	return nil
+				// },
+				// )
 			}
 			return err
 		})

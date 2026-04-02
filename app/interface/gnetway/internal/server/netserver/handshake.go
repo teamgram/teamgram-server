@@ -28,6 +28,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
 	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
@@ -35,7 +36,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/hack"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -216,16 +216,11 @@ func (s *Server) onHandshake(c *connection, d *bin.Decoder) error {
 		}
 		// logx.Infof("req_pq: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce[:]), hex.EncodeToString(resPQ.(*mt.TLResPQ).Nonce[:]))
 
-		resPQ.Match(
-			func(respq *mt.TLResPQ) interface{} {
-				ctx.putHandshakeStateCtx(&HandshakeStateCtx{
-					State:       STATE_pq_res,
-					Nonce:       respq.Nonce,
-					ServerNonce: respq.ServerNonce,
-				})
-
-				return nil
-			})
+		ctx.putHandshakeStateCtx(&HandshakeStateCtx{
+			State:       STATE_pq_res,
+			Nonce:       resPQ.Nonce,
+			ServerNonce: resPQ.ServerNonce,
+		})
 
 		x := bin.NewEncoder()
 		defer x.End()
@@ -244,16 +239,11 @@ func (s *Server) onHandshake(c *connection, d *bin.Decoder) error {
 		}
 		// logx.Infof("req_pq_multi: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce[:]), hex.EncodeToString(resPQ.(*mt.TLResPQ).Nonce[:]))
 
-		resPQ.Match(
-			func(respq *mt.TLResPQ) interface{} {
-				ctx.putHandshakeStateCtx(&HandshakeStateCtx{
-					State:       STATE_pq_res,
-					Nonce:       respq.Nonce,
-					ServerNonce: respq.ServerNonce,
-				})
-
-				return nil
-			})
+		ctx.putHandshakeStateCtx(&HandshakeStateCtx{
+			State:       STATE_pq_res,
+			Nonce:       resPQ.Nonce,
+			ServerNonce: resPQ.ServerNonce,
+		})
 
 		x := bin.NewEncoder()
 		defer x.End()
@@ -814,24 +804,20 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 		GB []byte
 	)
 
-	clientDHInnerData.Match(
-		func(c *mt.TLClientDHInnerData) interface{} {
-			if c.Nonce != ctx.Nonce {
-				err = fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's Nonce")
-				// logx.Errorf("conn(%s) error: %v", c, err)
-				return nil
-			}
+	c2 := clientDHInnerData
+	if c2.Nonce != ctx.Nonce {
+		err = fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's Nonce")
+		// logx.Errorf("conn(%s) error: %v", c, err)
+		return nil, err
+	}
 
-			if c.ServerNonce != ctx.ServerNonce {
-				err = fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's ServerNonce")
-				// logx.Errorf("conn(%s) error: %v", c, err)
-				return nil
-			}
+	if c2.ServerNonce != ctx.ServerNonce {
+		err = fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's ServerNonce")
+		// logx.Errorf("conn(%s) error: %v", c, err)
+		return nil, err
+	}
 
-			GB = []byte(c.GB)
-
-			return nil
-		})
+	GB = []byte(c2.GB)
 	//
 	//if !bytes.Equal(clientDHInnerData.GetNonce(), ctx.Nonce) {
 	//	err := fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's Nonce")

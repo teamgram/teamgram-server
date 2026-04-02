@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/queue2"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/dao"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
@@ -23,7 +24,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/queue2"
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/jsonx"
@@ -1040,19 +1040,17 @@ func (m *MainAuthWrapper) onSyncData(ctx context.Context, syncMsg *syncData) {
 		//}
 
 		isMatch := false
-		updates.Match(func(c *tg.TLUpdateAccountResetAuthorization) interface{} {
-			logx.WithContext(ctx).Info("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
-			if m.AuthUserId != c.UserId {
-				logx.WithContext(ctx).Error("upds -- ", c)
-			}
-			// m.cb.Dao.PutCacheUserId(context.Background(), m.authKeyId, 0)
-			// m.cb.DeleteByAuthKeyId(m.authKeyId)
-			m.changeAuthState(ctx, tg.AuthStateDeleted, 0)
-			// m.AuthUserId = 0
+		c, _ := updates.ToUpdateAccountResetAuthorization()
+		logx.WithContext(ctx).Info("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
+		if m.AuthUserId != c.UserId {
+			logx.WithContext(ctx).Error("upds -- ", c)
+		}
+		// m.cb.Dao.PutCacheUserId(context.Background(), m.authKeyId, 0)
+		// m.cb.DeleteByAuthKeyId(m.authKeyId)
+		m.changeAuthState(ctx, tg.AuthStateDeleted, 0)
+		// m.AuthUserId = 0
 
-			isMatch = true
-			return nil
-		})
+		isMatch = true
 
 		if isMatch {
 			return

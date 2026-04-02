@@ -13,12 +13,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/stores/sqlc"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -141,8 +141,8 @@ func makePeerColor(color int32, backgroundEmojiId int64) tg.PeerColorClazz {
 	}
 
 	return tg.MakeTLPeerColor(&tg.TLPeerColor{
-		Color:                       tg.MakeFlagsInt32(color),
-		BackgroundEmojiId_FLAGINT64: tg.MakeFlagsInt64(backgroundEmojiId),
+		Color:             tg.MakeFlagsInt32(color),
+		BackgroundEmojiId: tg.MakeFlagsInt64(backgroundEmojiId),
 	})
 }
 
@@ -257,13 +257,13 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		})
 
 	if rules0 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0.Clazz)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0)
 	}
 	if rules1 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules1.Clazz)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules1)
 	}
 	if rules2 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2.Clazz)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2)
 	}
 
 	// TODO

@@ -22,9 +22,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
 const (
@@ -108,7 +108,7 @@ func (d *Dao) GetUserPeerSettings(ctx context.Context, id int64, peerType int32,
 }
 
 func (d *Dao) SetUserPeerSettings(ctx context.Context, id int64, peerType int32, peerId int64, settings *tg.PeerSettings) error {
-	settings2, _ := settings.ToPeerSettings()
+	settings2 := settings
 	_, _, err := d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {

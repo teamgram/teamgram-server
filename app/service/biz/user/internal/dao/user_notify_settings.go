@@ -22,9 +22,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
 const (
@@ -78,64 +78,56 @@ func (d *Dao) GetUserNotifySettings(ctx context.Context, id int64, peerType int3
 }
 
 func setPeerNotifySettingsByDO(settings *tg.PeerNotifySettings, do *dataobject.UserNotifySettingsDO) {
-	settings.Match(
-		func(c *tg.TLPeerNotifySettings) interface{} {
-			if do.ShowPreviews != -1 {
-				c.ShowPreviews = tg.ToBoolClazz(do.ShowPreviews == 1)
-			}
-			if do.Silent != -1 {
-				c.Silent = tg.ToBoolClazz(do.Silent == 1)
-			}
-			if do.MuteUntil != -1 {
-				c.MuteUntil = tg.MakeFlagsInt32(do.MuteUntil)
-			}
-			if do.Sound != "-1" {
-				// c.Sound = &wrapperspb.StringValue{Value: do.Sound}
-			}
-
-			return nil
-		})
+	c := settings
+	if do.ShowPreviews != -1 {
+		c.ShowPreviews = tg.ToBoolClazz(do.ShowPreviews == 1)
+	}
+	if do.Silent != -1 {
+		c.Silent = tg.ToBoolClazz(do.Silent == 1)
+	}
+	if do.MuteUntil != -1 {
+		c.MuteUntil = tg.MakeFlagsInt32(do.MuteUntil)
+	}
+	if do.Sound != "-1" {
+		// c.Sound = &wrapperspb.StringValue{Value: do.Sound}
+	}
 }
 
 func makeDOByPeerNotifySettings(settings *tg.PeerNotifySettings) (doMap map[string]interface{}) {
 	doMap = map[string]interface{}{}
 
-	settings.Match(
-		func(c *tg.TLPeerNotifySettings) interface{} {
-			if c.ShowPreviews != nil {
-				if tg.FromBoolClazz(c.ShowPreviews) {
-					doMap["show_previews"] = 1
-				} else {
-					doMap["show_previews"] = 0
-				}
-			} else {
-				doMap["show_previews"] = -1
-			}
+	c := settings
+	if c.ShowPreviews != nil {
+		if tg.FromBoolClazz(c.ShowPreviews) {
+			doMap["show_previews"] = 1
+		} else {
+			doMap["show_previews"] = 0
+		}
+	} else {
+		doMap["show_previews"] = -1
+	}
 
-			if c.Silent != nil {
-				if tg.FromBoolClazz(c.Silent) {
-					doMap["silent"] = 1
-				} else {
-					doMap["silent"] = 0
-				}
-			} else {
-				doMap["silent"] = -1
-			}
+	if c.Silent != nil {
+		if tg.FromBoolClazz(c.Silent) {
+			doMap["silent"] = 1
+		} else {
+			doMap["silent"] = 0
+		}
+	} else {
+		doMap["silent"] = -1
+	}
 
-			if c.MuteUntil != nil {
-				doMap["mute_until"] = tg.GetFlagsInt32(c.MuteUntil)
-			} else {
-				doMap["mute_until"] = -1
-			}
+	if c.MuteUntil != nil {
+		doMap["mute_until"] = tg.GetFlagsInt32(c.MuteUntil)
+	} else {
+		doMap["mute_until"] = -1
+	}
 
-			//if c.Sound != nil {
-			//	doMap["sound"] = settings.Sound.Value
-			//} else {
-			//	doMap["sound"] = "-1"
-			//}
-
-			return nil
-		})
+	//if c.Sound != nil {
+	//	doMap["sound"] = settings.Sound.Value
+	//} else {
+	//	doMap["sound"] = "-1"
+	//}
 
 	return
 }
