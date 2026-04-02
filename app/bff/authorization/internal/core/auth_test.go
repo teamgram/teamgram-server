@@ -11,12 +11,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
+	"github.com/teamgram/teamgram-server/v2/pkg/code"
 	kitexmetadata "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 func newAuthorizationCoreForAuthTest(t *testing.T, md *kitexmetadata.RpcMetadata) (*AuthorizationCore, context.Context, *dao.Dao) {
+	return newAuthorizationCoreForAuthTestWithVerifier(t, md, nil)
+}
+
+func newAuthorizationCoreForAuthTestWithVerifier(t *testing.T, md *kitexmetadata.RpcMetadata, verifier code.VerifyCodeInterface) (*AuthorizationCore, context.Context, *dao.Dao) {
 	t.Helper()
 
 	redisServer, err := miniredis.Run()
@@ -45,7 +50,7 @@ func newAuthorizationCoreForAuthTest(t *testing.T, md *kitexmetadata.RpcMetadata
 	svcCtx := &svc.ServiceContext{
 		Config:    cfg,
 		Dao:       d,
-		AuthLogic: logic.NewAuthSignLogic(d, nil),
+		AuthLogic: logic.NewAuthSignLogic(d, verifier),
 	}
 	return New(ctx, svcCtx), ctx, d
 }
@@ -72,4 +77,29 @@ func seedPhoneCodeTransaction(t *testing.T, ctx context.Context, d *dao.Dao, aut
 		t.Fatalf("seed phone code: %v", err)
 	}
 	return phoneNumber
+}
+
+type fakeVerifyCode struct {
+	sendExtraData string
+	sendErr       error
+	verifyErr     error
+}
+
+func (f *fakeVerifyCode) SendSmsVerifyCode(ctx context.Context, phoneNumber, codeValue, codeHash string) (string, error) {
+	_ = ctx
+	_ = phoneNumber
+	_ = codeValue
+	_ = codeHash
+	if f.sendErr != nil {
+		return "", f.sendErr
+	}
+	return f.sendExtraData, nil
+}
+
+func (f *fakeVerifyCode) VerifySmsCode(ctx context.Context, codeHash, codeValue, extraData string) error {
+	_ = ctx
+	_ = codeHash
+	_ = codeValue
+	_ = extraData
+	return f.verifyErr
 }
