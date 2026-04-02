@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,10 @@ var _ *tg.Bool
 // UpdatesGetChannelDifferenceV2
 // updates.getChannelDifferenceV2 auth_key_id:long user_id:long channel_id:long pts:int limit:int = ChannelDifference;
 func (c *UpdatesCore) UpdatesGetChannelDifferenceV2(in *updates.TLUpdatesGetChannelDifferenceV2) (*updates.ChannelDifference, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getChannelDifferenceV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("updates.getChannelDifferenceV2 not implemented")
+	return updates.MakeTLChannelDifference(&updates.TLChannelDifference{
+		Final:        true,
+		Pts:          in.Pts,
+		NewMessages:  []tg.MessageClazz{},
+		OtherUpdates: []tg.UpdateClazz{},
+	}).ToChannelDifference(), nil
 }
