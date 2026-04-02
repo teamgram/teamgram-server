@@ -55,4 +55,7 @@ func TestInboxPlaceholderVoids(t *testing.T) {
 	if result, err := c.InboxDeleteChatHistoryToInbox(&inbox.TLInboxDeleteChatHistoryToInbox{}); err != nil || result == nil {
 		t.Fatalf("expected deleteChatHistoryToInbox void placeholder, got result=%#v err=%v", result, err)
 	}
+	if result, err := c.InboxReadMediaUnreadToInboxV2(&inbox.TLInboxReadMediaUnreadToInboxV2{}); err != nil || result == nil {
+		t.Fatalf("expected readMediaUnreadToInboxV2 void placeholder, got result=%#v err=%v", result, err)
+	}
 }
