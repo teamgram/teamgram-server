@@ -3,6 +3,8 @@ package sess
 import (
 	"context"
 	"testing"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
 
 func TestSessionConnNewRefreshesGatewayIDWhileOnline(t *testing.T) {
@@ -34,5 +36,34 @@ func TestSessionCloseIgnoresStaleGatewayAfterSwitch(t *testing.T) {
 	}
 	if got := s.getGatewayId(); got != "gateway-b" {
 		t.Fatalf("expected active gateway to remain gateway-b, got %q", got)
+	}
+}
+
+func TestOnSyncRpcResultDataRemovesPendingAndQueuesResult(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const reqMsgID int64 = 1001
+	s.pendingQueue.Add(reqMsgID)
+	s.onSyncRpcResultData(context.Background(), reqMsgID, []byte{1, 2, 3})
+
+	if got := s.pendingQueue.q.Len(); got != 0 {
+		t.Fatalf("expected pending queue to be empty, got %d", got)
+	}
+
+	oMsg := s.outQueue.Lookup(reqMsgID)
+	if oMsg == nil {
+		t.Fatal("expected rpc result to be queued")
+	}
+	if oMsg.msg == nil {
+		t.Fatal("expected raw message payload, got nil")
+	}
+	if oMsg.msg.Bytes != 3 {
+		t.Fatalf("expected raw message bytes=3, got %d", oMsg.msg.Bytes)
+	}
+	if string(oMsg.msg.Body) != string([]byte{1, 2, 3}) {
+		t.Fatalf("expected rpc result body to match input")
+	}
+	if _, ok := any(oMsg.msg).(*mt.TLMessageRawData); !ok {
+		t.Fatal("expected queued message to be TLMessageRawData")
 	}
 }
