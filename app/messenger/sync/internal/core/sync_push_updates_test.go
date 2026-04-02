@@ -70,3 +70,40 @@ func TestSyncUpdatesNotMeReturnsVoidPlaceholder(t *testing.T) {
 		t.Fatal("expected void result, got nil")
 	}
 }
+
+func TestSyncPushRpcResultReturnsVoidPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.SyncPushRpcResult(&sync.TLSyncPushRpcResult{
+		UserId:         1,
+		AuthKeyId:      2,
+		PermAuthKeyId:  3,
+		ServerId:       "srv-1",
+		SessionId:      4,
+		ClientReqMsgId: 5,
+		RpcResult:      []byte{1, 2, 3},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+}
+
+func TestSyncBroadcastUpdatesReturnsVoidPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.SyncBroadcastUpdates(&sync.TLSyncBroadcastUpdates{
+		BroadcastType: 1,
+		ChatId:        2,
+		ExcludeIdList: []int64{3, 4},
+		Updates:       &tg.Updates{},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+}

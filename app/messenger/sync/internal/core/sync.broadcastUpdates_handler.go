@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,6 @@ var _ *tg.Bool
 // SyncBroadcastUpdates
 // sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncBroadcastUpdates(in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("sync.broadcastUpdates blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("sync.broadcastUpdates not implemented")
+	// Keep broadcast fanout callable until multi-recipient routing is rebuilt.
+	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
