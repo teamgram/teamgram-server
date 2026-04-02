@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,12 @@ var _ *tg.Bool
 // MessageGetUnreadMentions
 // message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUnreadMentions(in *message.TLMessageGetUnreadMentions) (*message.VectorMessageBox, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.getUnreadMentions blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	startID := in.OffsetId
+	if startID <= 0 {
+		startID = 1
+	}
 
-	return nil, errors.New("message.getUnreadMentions not implemented")
+	return &message.VectorMessageBox{
+		Datas: collectScopedPlaceholderMessageBoxes(in.UserId, in.PeerType, in.PeerId, startID, in.Limit),
+	}, nil
 }

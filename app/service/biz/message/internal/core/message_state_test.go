@@ -243,3 +243,113 @@ func TestMessageGetUnreadMentionsCountReturnsPlaceholderCount(t *testing.T) {
 		t.Fatalf("expected placeholder count=1, got %#v", result)
 	}
 }
+
+func TestMessageSearchReturnsScopedPlaceholderBoxes(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageSearch(&message.TLMessageSearch{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+		Offset:   3,
+		Limit:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected 2 results, got %d", len(result.Datas))
+	}
+	if result.Datas[0].MessageId != 4 || result.Datas[1].MessageId != 5 {
+		t.Fatalf("expected message ids 4/5, got %d/%d", result.Datas[0].MessageId, result.Datas[1].MessageId)
+	}
+}
+
+func TestMessageSearchV2ReturnsScopedPlaceholderBoxes(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageSearchV2(&message.TLMessageSearchV2{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+		OffsetId: 9,
+		Limit:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 2 || result.Datas[0].MessageId != 9 || result.Datas[1].MessageId != 10 {
+		t.Fatalf("expected message ids 9/10, got %#v", result.Datas)
+	}
+}
+
+func TestMessageSearchGlobalReturnsUserScopedPlaceholderBoxes(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageSearchGlobal(&message.TLMessageSearchGlobal{
+		UserId: 1,
+		Offset: 1,
+		Limit:  2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 2 {
+		t.Fatalf("expected 2 results, got %d", len(result.Datas))
+	}
+	if result.Datas[0].PeerId != 1 || result.Datas[1].PeerId != 1 {
+		t.Fatalf("expected peer id 1/1, got %d/%d", result.Datas[0].PeerId, result.Datas[1].PeerId)
+	}
+}
+
+func TestMessageSearchByMediaTypeReturnsScopedPlaceholderBoxes(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageSearchByMediaType(&message.TLMessageSearchByMediaType{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+		Offset:   2,
+		Limit:    1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 1 || result.Datas[0].MessageId != 3 {
+		t.Fatalf("expected message id 3, got %#v", result.Datas)
+	}
+}
+
+func TestMessageSearchByPinnedReturnsSingleScopedPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageSearchByPinned(&message.TLMessageSearchByPinned{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 1 || result.Datas[0].MessageId != 1 {
+		t.Fatalf("expected single message id 1, got %#v", result.Datas)
+	}
+}
+
+func TestMessageGetUnreadMentionsReturnsScopedPlaceholderBoxes(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.MessageGetUnreadMentions(&message.TLMessageGetUnreadMentions{
+		UserId:   1,
+		PeerType: 2,
+		PeerId:   42,
+		OffsetId: 5,
+		Limit:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if len(result.Datas) != 2 || result.Datas[0].MessageId != 5 || result.Datas[1].MessageId != 6 {
+		t.Fatalf("expected message ids 5/6, got %#v", result.Datas)
+	}
+}
