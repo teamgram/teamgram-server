@@ -34,7 +34,7 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 		switch id2 := id.(type) {
 		case *idgen.TLInputId:
 			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{
-				Id_INT64: c.svcCtx.Dao.Node.Generate().Int64(),
+				Id: c.svcCtx.Dao.Node.Generate().Int64(),
 			})
 		case *idgen.TLInputIds:
 			ids := make([]int64, id2.Num)
@@ -43,7 +43,7 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 				ids[j] = c.svcCtx.Node.Generate().Int64()
 			}
 			idList[i] = idgen.MakeTLIdVals(&idgen.TLIdVals{
-				Id_VECTORINT64: ids,
+				Id: ids,
 			})
 
 		case *idgen.TLInputSeqId:
@@ -53,7 +53,7 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 				// return err
 			}
 			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-				Id_INT64: sid,
+				Id: sid,
 			})
 
 		case *idgen.TLInputNSeqId:
@@ -63,7 +63,7 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 				// return err
 			}
 			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-				Id_INT64: sid,
+				Id: sid,
 			})
 		default:
 			c.Logger.Errorf("idgen.getNextIdValList - unexpected input id type: %T", id2)

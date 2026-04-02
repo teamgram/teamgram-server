@@ -14,11 +14,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"strings"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -137,13 +137,13 @@ func (dao *UserNotifySettingsDAO) SelectListWithCB(ctx context.Context, userId i
 	}
 
 	for _, peer := range peers {
-		switch peer.PeerType() {
+		switch peer.PeerType {
 		case tg.PEER_SELF, tg.PEER_USER:
-			userIdList = append(userIdList, peer.PeerId())
+			userIdList = append(userIdList, peer.PeerId)
 		case tg.PEER_CHAT:
-			chatIdList = append(chatIdList, peer.PeerId())
+			chatIdList = append(chatIdList, peer.PeerId)
 		case tg.PEER_CHANNEL:
-			channelIdList = append(channelIdList, peer.PeerId())
+			channelIdList = append(channelIdList, peer.PeerId)
 		}
 	}
 

@@ -82,7 +82,7 @@ func (d *Dao) getFutureSaltList(ctx context.Context, authKeyId int64) ([]*tg.TLF
 
 	logx.WithContext(ctx).Infof("getFutureSaltList: %s", futureSalts)
 
-	futureSalts2, _ := futureSalts.ToFutureSalts()
+	futureSalts2 := futureSalts
 	if futureSalts2 != nil {
 		saltList := futureSalts2.Salts
 

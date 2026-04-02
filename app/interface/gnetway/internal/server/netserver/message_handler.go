@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
@@ -239,7 +239,7 @@ func (s *Server) onMTPRawMessage(c *connection, authKeyId int64, needAck bool, m
 			return true // shouldClose
 		}
 
-		key4, _ := key3.ToAuthKeyInfo()
+		key4 := key3
 		s.PutAuthKey(key4)
 		authKey2 := newAuthKeyUtil(key4)
 

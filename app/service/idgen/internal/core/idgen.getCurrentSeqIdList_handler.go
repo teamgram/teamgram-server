@@ -44,12 +44,12 @@ func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdLis
 
 			if sid == "" {
 				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-					Id_INT64: 0,
+					Id: 0,
 				})
 			} else {
 				iV, _ := strconv.ParseInt(sid, 10, 64)
 				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-					Id_INT64: iV,
+					Id: iV,
 				})
 			}
 		default:

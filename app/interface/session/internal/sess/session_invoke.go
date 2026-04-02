@@ -497,13 +497,10 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			//}
 
 			if authSentCode, ok := rpcResult.rpcResult.Result.(*tg.AuthSentCode); ok {
-				authSentCode.Match(func(c2 *tg.TLAuthSentCodeSuccess) interface{} {
-					c3, _ := c2.Authorization.(*tg.TLAuthAuthorization)
-					c4, _ := c3.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c4.Id)
-
-					return nil
-				})
+				c2, _ := authSentCode.ToAuthSentCodeSuccess()
+				c3, _ := c2.Authorization.(*tg.TLAuthAuthorization)
+				c4, _ := c3.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c4.Id)
 			}
 		} else {
 			// hack
@@ -523,13 +520,10 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			// }
 
 			if authLoginToken, ok := rpcResult.rpcResult.Result.(*tg.AuthLoginToken); ok {
-				authLoginToken.Match(func(c2 *tg.TLAuthLoginTokenSuccess) interface{} {
-					c3, _ := c2.Authorization.(*tg.TLAuthAuthorization)
-					c4, _ := c3.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c4.Id)
-
-					return nil
-				})
+				c2, _ := authLoginToken.ToAuthLoginTokenSuccess()
+				c3, _ := c2.Authorization.(*tg.TLAuthAuthorization)
+				c4, _ := c3.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c4.Id)
 			}
 		} else {
 			// hack
@@ -549,12 +543,9 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			//}
 
 			if authAuthorization, ok := rpcResult.rpcResult.Result.(*tg.AuthAuthorization); ok {
-				authAuthorization.Match(func(c2 *tg.TLAuthAuthorization) interface{} {
-					c3, _ := c2.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
-
-					return nil
-				})
+				c2, _ := authAuthorization.ToAuthAuthorization()
+				c3, _ := c2.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
 			}
 		} else {
 			// hack
@@ -574,12 +565,9 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			//}
 
 			if authAuthorization, ok := rpcResult.rpcResult.Result.(*tg.AuthAuthorization); ok {
-				authAuthorization.Match(func(c2 *tg.TLAuthAuthorization) interface{} {
-					c3, _ := c2.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
-
-					return nil
-				})
+				c2, _ := authAuthorization.ToAuthAuthorization()
+				c3, _ := c2.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
 			}
 		}
 	case *tg.TLAuthImportAuthorization:
@@ -590,12 +578,9 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			//}
 
 			if authAuthorization, ok := rpcResult.rpcResult.Result.(*tg.AuthAuthorization); ok {
-				authAuthorization.Match(func(c2 *tg.TLAuthAuthorization) interface{} {
-					c3, _ := c2.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
-
-					return nil
-				})
+				c2, _ := authAuthorization.ToAuthAuthorization()
+				c3, _ := c2.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
 			}
 		}
 	case *tg.TLAuthCheckPassword:
@@ -606,12 +591,9 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			//}
 
 			if authAuthorization, ok := rpcResult.rpcResult.Result.(*tg.AuthAuthorization); ok {
-				authAuthorization.Match(func(c2 *tg.TLAuthAuthorization) interface{} {
-					c3, _ := c2.User.(*tg.TLUser)
-					c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
-
-					return nil
-				})
+				c2, _ := authAuthorization.ToAuthAuthorization()
+				c3, _ := c2.User.(*tg.TLUser)
+				c.sessList.cb.changeAuthState(ctx, tg.AuthStateNormal, c3.Id)
 			}
 		}
 	default:

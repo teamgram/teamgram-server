@@ -29,8 +29,8 @@ func (c *ConfigurationCore) HelpGetAppConfig(in *tg.TLHelpGetAppConfig) (*tg.Hel
 	rV := tg.MakeTLHelpAppConfig(&tg.TLHelpAppConfig{
 		Hash: 0,
 		Config: tg.MakeTLJsonObject(&tg.TLJsonObject{
-			ClazzID:                     0,
-			Value_VECTORJSONOBJECTVALUE: []tg.JSONObjectValueClazz{},
+			ClazzID: 0,
+			Value:   []tg.JSONObjectValueClazz{},
 		}),
 	})
 

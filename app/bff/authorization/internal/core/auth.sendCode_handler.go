@@ -220,7 +220,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	// Always crated new phoneCode
 	var (
 		// phoneRegistered = false
-		settings, _ = request.Settings.(*tg.TLCodeSettings)
+		settings = request.Settings
 		//phoneRegistered bool
 		//user            *tg.ImmutableUser
 	)
