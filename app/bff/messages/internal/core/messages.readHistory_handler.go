@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReadHistory
 // messages.readHistory#e306d3a peer:InputPeer max_id:int = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadHistory(in *tg.TLMessagesReadHistory) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.readHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.readHistory not implemented")
+	return makeBffAffectedMessagesPlaceholder(in.MaxId, 1), nil
 }

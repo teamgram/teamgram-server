@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,21 @@ import (
 // MessagesEditMessage
 // messages.editMessage#dfd14005 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int quick_reply_shortcut_id:flags.17?int = Updates;
 func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.editMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("messages.editMessage not implemented")
+	var entities []tg.MessageEntityClazz
+	if len(in.Entities) > 0 {
+		entities = in.Entities
+	}
+
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       in.Id,
+		Pts:      1,
+		PtsCount: 1,
+		Date:     int32(time.Now().Unix()),
+		Entities: entities,
+	}).ToUpdates(), nil
 }

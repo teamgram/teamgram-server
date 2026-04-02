@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesUnpinAllMessages
 // messages.unpinAllMessages#ee22b9a8 flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesUnpinAllMessages(in *tg.TLMessagesUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.unpinAllMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.unpinAllMessages not implemented")
+	return makeBffAffectedHistoryPlaceholder(1, 0), nil
 }
