@@ -21,6 +21,26 @@ import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 // MessagesGetDialogs
 // messages.getDialogs#a0f4cb4f flags:# exclude_pinned:flags.0?true folder_id:flags.1?int offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.Dialogs;
 func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.MessagesDialogs, error) {
+	if in != nil && in.Limit > 0 {
+		peer := tg.FromInputPeer2(0, in.OffsetPeer)
+		if c.MD != nil {
+			peer = tg.FromInputPeer2(c.MD.UserId, in.OffsetPeer)
+		}
+		if peer.PeerType == tg.PEER_SELF || peer.PeerType == tg.PEER_USER {
+			return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
+				Count: 1,
+				Dialogs: []tg.DialogClazz{
+					makePlaceholderDialog(peer.PeerId, 10),
+				},
+				Messages: []tg.MessageClazz{
+					makePlaceholderDialogMessage(peer.PeerId, 10),
+				},
+				Chats: []tg.ChatClazz{},
+				Users: []tg.UserClazz{},
+			}).ToMessagesDialogs(), nil
+		}
+	}
+
 	// Keep the dialogs path callable while dialog service wiring catches up.
 	return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 		Count:    0,
