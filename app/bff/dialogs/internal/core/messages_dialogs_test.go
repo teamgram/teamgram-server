@@ -28,8 +28,8 @@ func TestMessagesGetDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T) {
 	if dialogsSlice.Count != 1 {
 		t.Fatalf("expected count=1, got %d", dialogsSlice.Count)
 	}
-	if len(dialogsSlice.Dialogs) != 1 || len(dialogsSlice.Messages) != 1 || len(dialogsSlice.Chats) != 0 || len(dialogsSlice.Users) != 0 {
-		t.Fatalf("expected single placeholder dialog/message, got dialogs=%d messages=%d chats=%d users=%d",
+	if len(dialogsSlice.Dialogs) != 1 || len(dialogsSlice.Messages) != 1 || len(dialogsSlice.Chats) != 0 || len(dialogsSlice.Users) != 1 {
+		t.Fatalf("expected single placeholder dialog/message/user, got dialogs=%d messages=%d chats=%d users=%d",
 			len(dialogsSlice.Dialogs), len(dialogsSlice.Messages), len(dialogsSlice.Chats), len(dialogsSlice.Users))
 	}
 	dialog, ok := dialogsSlice.Dialogs[0].(*tg.TLDialog)
@@ -38,6 +38,13 @@ func TestMessagesGetDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T) {
 	}
 	if dialog.TopMessage != 10 {
 		t.Fatalf("expected top_message=10, got %d", dialog.TopMessage)
+	}
+	user, ok := dialogsSlice.Users[0].(*tg.TLUserEmpty)
+	if !ok {
+		t.Fatalf("expected userEmpty placeholder, got %T", dialogsSlice.Users[0])
+	}
+	if user.Id != 42 {
+		t.Fatalf("expected placeholder user id=42, got %d", user.Id)
 	}
 }
 
@@ -109,11 +116,21 @@ func TestMessagesGetPeerDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T)
 	if len(result.Messages) != 1 {
 		t.Fatalf("expected 1 message placeholder, got %d", len(result.Messages))
 	}
+	if len(result.Users) != 1 {
+		t.Fatalf("expected 1 user placeholder, got %d", len(result.Users))
+	}
 	dialog, ok := result.Dialogs[0].(*tg.TLDialog)
 	if !ok {
 		t.Fatalf("expected dialog placeholder, got %T", result.Dialogs[0])
 	}
 	if dialog.TopMessage != 10 {
 		t.Fatalf("expected top_message=10, got %d", dialog.TopMessage)
+	}
+	user, ok := result.Users[0].(*tg.TLUserEmpty)
+	if !ok {
+		t.Fatalf("expected userEmpty placeholder, got %T", result.Users[0])
+	}
+	if user.Id != 42 {
+		t.Fatalf("expected placeholder user id=42, got %d", user.Id)
 	}
 }

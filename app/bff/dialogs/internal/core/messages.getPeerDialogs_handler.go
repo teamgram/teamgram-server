@@ -36,7 +36,9 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 						makePlaceholderDialogMessage(peer.PeerId, 10),
 					},
 					Chats: []tg.ChatClazz{},
-					Users: []tg.UserClazz{},
+					Users: []tg.UserClazz{
+						makePlaceholderUser(peer.PeerId),
+					},
 					State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
 						Pts:  1,
 						Qts:  0,
@@ -85,4 +87,8 @@ func makePlaceholderDialogMessage(peerID int64, messageID int32) tg.MessageClazz
 		Date:    messageID,
 		Message: "placeholder",
 	})
+}
+
+func makePlaceholderUser(userID int64) tg.UserClazz {
+	return tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID})
 }
