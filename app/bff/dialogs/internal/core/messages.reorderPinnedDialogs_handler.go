@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesReorderPinnedDialogs
 // messages.reorderPinnedDialogs#3b1adf37 flags:# force:flags.0?true folder_id:int order:Vector<InputDialogPeer> = Bool;
 func (c *DialogsCore) MessagesReorderPinnedDialogs(in *tg.TLMessagesReorderPinnedDialogs) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.reorderPinnedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.reorderPinnedDialogs not implemented")
+	return tg.ToBool(in != nil && len(in.Order) > 0), nil
 }

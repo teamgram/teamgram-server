@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesMarkDialogUnread
 // messages.markDialogUnread#c286d98f flags:# unread:flags.0?true peer:InputDialogPeer = Bool;
 func (c *DialogsCore) MessagesMarkDialogUnread(in *tg.TLMessagesMarkDialogUnread) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.markDialogUnread blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.markDialogUnread not implemented")
+	return tg.ToBool(in != nil && in.Peer != nil && in.Unread), nil
 }

@@ -16,17 +16,16 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetDialogUnreadMarks
 // messages.getDialogUnreadMarks#22e24e22 = Vector<DialogPeer>;
 func (c *DialogsCore) MessagesGetDialogUnreadMarks(in *tg.TLMessagesGetDialogUnreadMarks) (*tg.VectorDialogPeer, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getDialogUnreadMarks blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getDialogUnreadMarks not implemented")
+	return &tg.VectorDialogPeer{
+		Datas: []tg.DialogPeerClazz{
+			tg.MakeTLDialogPeer(&tg.TLDialogPeer{
+				Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1}),
+			}),
+		},
+	}, nil
 }

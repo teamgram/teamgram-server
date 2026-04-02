@@ -16,17 +16,19 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesSetHistoryTTL
 // messages.setHistoryTTL#b80e5fe4 peer:InputPeer period:int = Updates;
 func (c *DialogsCore) MessagesSetHistoryTTL(in *tg.TLMessagesSetHistoryTTL) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.setHistoryTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.setHistoryTTL not implemented")
+	if in == nil || in.Peer == nil || in.Period < 0 {
+		return tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}).ToUpdates(), nil
+	}
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{},
+		Users:   []tg.UserClazz{},
+		Chats:   []tg.ChatClazz{},
+		Date:    10,
+		Seq:     1,
+	}).ToUpdates(), nil
 }

@@ -134,3 +134,69 @@ func TestMessagesGetPeerDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T)
 		t.Fatalf("expected placeholder user id=42, got %d", user.Id)
 	}
 }
+
+func TestDialogsPinUnreadAndTTLPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	toggleResult, err := c.MessagesToggleDialogPin(&tg.TLMessagesToggleDialogPin{
+		Peer:   tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 1})}),
+		Pinned: true,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(toggleResult) {
+		t.Fatalf("expected toggle pin boolTrue, got %#v", toggleResult)
+	}
+
+	reorderResult, err := c.MessagesReorderPinnedDialogs(&tg.TLMessagesReorderPinnedDialogs{
+		Force: true,
+		Order: []tg.InputDialogPeerClazz{
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 1})}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(reorderResult) {
+		t.Fatalf("expected reorder pin boolTrue, got %#v", reorderResult)
+	}
+
+	pinnedDialogs, err := c.MessagesGetPinnedDialogs(&tg.TLMessagesGetPinnedDialogs{FolderId: 0})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if pinnedDialogs == nil || len(pinnedDialogs.Dialogs) != 1 || len(pinnedDialogs.Messages) != 1 || len(pinnedDialogs.Users) != 1 {
+		t.Fatalf("expected single pinned dialog placeholder, got %#v", pinnedDialogs)
+	}
+
+	unreadResult, err := c.MessagesMarkDialogUnread(&tg.TLMessagesMarkDialogUnread{
+		Peer:   tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 1})}),
+		Unread: true,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(unreadResult) {
+		t.Fatalf("expected mark unread boolTrue, got %#v", unreadResult)
+	}
+
+	marks, err := c.MessagesGetDialogUnreadMarks(&tg.TLMessagesGetDialogUnreadMarks{})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if marks == nil || len(marks.Datas) != 1 {
+		t.Fatalf("expected one unread mark placeholder, got %#v", marks)
+	}
+
+	ttlUpdates, err := c.MessagesSetHistoryTTL(&tg.TLMessagesSetHistoryTTL{
+		Peer:   tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 1}),
+		Period: 86400,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if ttlUpdates == nil {
+		t.Fatal("expected ttl updates placeholder, got nil")
+	}
+}
