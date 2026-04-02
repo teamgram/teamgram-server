@@ -21,6 +21,33 @@ import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 // MessagesGetPeerDialogs
 // messages.getPeerDialogs#e470bcfd peers:Vector<InputDialogPeer> = messages.PeerDialogs;
 func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*tg.MessagesPeerDialogs, error) {
+	if len(in.Peers) == 1 {
+		if inputDialogPeer, ok := in.Peers[0].(*tg.TLInputDialogPeer); ok && inputDialogPeer.Peer != nil {
+			peer := tg.FromInputPeer2(0, inputDialogPeer.Peer)
+			if c.MD != nil {
+				peer = tg.FromInputPeer2(c.MD.UserId, inputDialogPeer.Peer)
+			}
+			if peer.PeerType == tg.PEER_SELF || peer.PeerType == tg.PEER_USER {
+				return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+					Dialogs: []tg.DialogClazz{
+						makePlaceholderDialog(peer.PeerId, 10),
+					},
+					Messages: []tg.MessageClazz{
+						makePlaceholderDialogMessage(peer.PeerId, 10),
+					},
+					Chats: []tg.ChatClazz{},
+					Users: []tg.UserClazz{},
+					State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+						Pts:  1,
+						Qts:  0,
+						Date: 10,
+						Seq:  0,
+					}),
+				}).ToMessagesPeerDialogs(), nil
+			}
+		}
+	}
+
 	// Return an empty peer-dialogs envelope until dialog/update stores are wired.
 	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
 		Dialogs:  []tg.DialogClazz{},
@@ -34,4 +61,28 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 			Seq:  0,
 		}),
 	}).ToMessagesPeerDialogs(), nil
+}
+
+func makePlaceholderDialog(peerID int64, topMessage int32) tg.DialogClazz {
+	return tg.MakeTLDialog(&tg.TLDialog{
+		Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: peerID,
+		}),
+		TopMessage:      topMessage,
+		ReadInboxMaxId:  topMessage,
+		ReadOutboxMaxId: topMessage,
+		UnreadCount:     0,
+		NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+	})
+}
+
+func makePlaceholderDialogMessage(peerID int64, messageID int32) tg.MessageClazz {
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:     true,
+		Id:      messageID,
+		FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerID}),
+		PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerID}),
+		Date:    messageID,
+		Message: "placeholder",
+	})
 }
