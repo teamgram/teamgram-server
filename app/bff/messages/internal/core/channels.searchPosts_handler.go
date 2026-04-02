@@ -17,16 +17,16 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChannelsSearchPosts
 // channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (c *MessagesCore) ChannelsSearchPosts(in *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("channels.searchPosts blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer, err := bffPeerFromInput(c, in.OffsetPeer)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, errors.New("channels.searchPosts not implemented")
+	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, 0, 0), historyPlaceholderCount(in.Limit), false), nil
 }
