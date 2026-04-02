@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -28,8 +28,8 @@ var _ *tg.Bool
 // DialogGetDialogFilter
 // dialog.getDialogFilter user_id:long id:int = DialogFilterExt;
 func (c *DialogCore) DialogGetDialogFilter(in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getDialogFilter blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getDialogFilter not implemented")
+	if in == nil {
+		return makeDialogFilterExtPlaceholder(1, "placeholder").ToDialogFilterExt(), nil
+	}
+	return makeDialogFilterExtPlaceholder(in.Id, fmt.Sprintf("placeholder-%d", in.Id)).ToDialogFilterExt(), nil
 }

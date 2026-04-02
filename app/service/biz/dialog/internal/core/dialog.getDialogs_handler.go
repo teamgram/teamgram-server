@@ -97,3 +97,29 @@ func makeDraftPlaceholder(peerType, peerID int64) dialog.PeerWithDraftMessageCla
 		Draft: tg.MakeTLDraftMessageEmpty(&tg.TLDraftMessageEmpty{}),
 	})
 }
+
+func makeDialogFilterExtPlaceholder(id int32, slug string) *dialog.TLDialogFilterExt {
+	return dialog.MakeTLDialogFilterExt(&dialog.TLDialogFilterExt{
+		Id:   id,
+		Slug: slug,
+		DialogFilter: tg.MakeTLDialogFilter(&tg.TLDialogFilter{
+			Id: id,
+			Title: tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+				Text:     "placeholder",
+				Entities: []tg.MessageEntityClazz{},
+			}),
+			PinnedPeers:  []tg.InputPeerClazz{},
+			IncludePeers: []tg.InputPeerClazz{},
+			ExcludePeers: []tg.InputPeerClazz{},
+		}),
+		Order: int64(id),
+	})
+}
+
+func makeDialogPinnedExtPlaceholder(peerType int32, peerID int64, order int64) dialog.DialogPinnedExtClazz {
+	return dialog.MakeTLDialogPinnedExt(&dialog.TLDialogPinnedExt{
+		Order:    order,
+		PeerType: peerType,
+		PeerId:   peerID,
+	})
+}

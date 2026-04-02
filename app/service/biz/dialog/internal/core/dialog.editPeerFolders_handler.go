@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,12 @@ var _ *tg.Bool
 // DialogEditPeerFolders
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.editPeerFolders blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.editPeerFolders not implemented")
+	result := &dialog.VectorDialogPinnedExt{Datas: []dialog.DialogPinnedExtClazz{}}
+	if in == nil {
+		return result, nil
+	}
+	for idx, peerID := range in.PeerDialogList {
+		result.Datas = append(result.Datas, makeDialogPinnedExtPlaceholder(tg.PEER_USER, peerID, int64(idx+1)))
+	}
+	return result, nil
 }
