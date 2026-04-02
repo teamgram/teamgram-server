@@ -17,7 +17,10 @@
 package core
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -104,13 +107,18 @@ import (
 // AuthSendCode
 // auth.sendCode#a677244f phone_number:string api_id:int api_hash:string settings:CodeSettings = auth.SentCode;
 func (c *AuthorizationCore) AuthSendCode(in *tg.TLAuthSendCode) (*tg.AuthSentCode, error) {
-	rValue, err := c.authSendCode(c.MD.PermAuthKeyId, c.MD.SessionId, in)
+	var authKeyID, sessionID int64
+	if c.MD != nil {
+		authKeyID = c.MD.PermAuthKeyId
+		sessionID = c.MD.SessionId
+	}
+	rValue, err := c.authSendCode(authKeyID, sessionID, in)
 	if err != nil {
 		c.Logger.Errorf("auth.sendCode - error: {%v}", err)
 		return nil, err
 	}
 
-	if c.svcCtx.Plugin != nil {
+	if c.MD != nil && c.svcCtx.Plugin != nil {
 		c.svcCtx.Plugin.OnAuthAction(c.ctx,
 			c.MD.PermAuthKeyId,
 			c.MD.ClientMsgId,
@@ -124,6 +132,12 @@ func (c *AuthorizationCore) AuthSendCode(in *tg.TLAuthSendCode) (*tg.AuthSentCod
 }
 
 func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg.TLAuthSendCode) (reply *tg.AuthSentCode, err error) {
+	if c.svcCtx == nil || c.svcCtx.Dao == nil || c.svcCtx.AuthLogic == nil {
+		err = tg.ErrInternalServerError
+		c.Logger.Errorf("auth.sendCode - missing service context: %v", err)
+		return
+	}
+
 	// 1. check api_id and api_hash
 	if err = c.svcCtx.Dao.CheckApiIdAndHash(request.ApiId, request.ApiHash); err != nil {
 		c.Logger.Errorf("invalid api: {api_id: %d, api_hash: %s}", request.ApiId, request.ApiHash)
@@ -219,15 +233,12 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	// logic
 	// Always crated new phoneCode
 	var (
-		// phoneRegistered = false
-		settings = request.Settings
-		//phoneRegistered bool
-		//user            *tg.ImmutableUser
+		settings        = request.Settings
+		phoneRegistered bool
 	)
 
-	if len(settings.LogoutTokens) > 0 {
-
-	} else {
+	if settings != nil && len(settings.LogoutTokens) > 0 {
+	} else if c.svcCtx.Dao.UserClient != nil {
 		_, _ = c.svcCtx.Dao.UserClient.UserGetUserIdByPhone(c.ctx, &userpb.TLUserGetUserIdByPhone{
 			Phone: phoneNumber,
 		})
@@ -419,12 +430,43 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	//		return nil
 	//	})
 	//
-	//if err2 != nil {
-	//	c.Logger.Errorf("auth.sendCode - error: %v", err2)
-	//	err = err2
-	//	return
-	//}
-	//
-	//reply = codeData.ToAuthSentCode()
+	codeData, err2 := c.svcCtx.AuthLogic.DoAuthSendCode(c.ctx,
+		authKeyId,
+		sessionId,
+		phoneNumber,
+		phoneRegistered,
+		settings.AllowFlashcall,
+		settings.CurrentNumber,
+		request.ApiId,
+		request.ApiHash,
+		func(codeData2 *model.PhoneCodeTransaction) error {
+			extraData := codeData2.PhoneCode
+			if c.svcCtx.AuthLogic.VerifyCodeInterface != nil {
+				var sendErr error
+				extraData, sendErr = c.svcCtx.AuthLogic.VerifyCodeInterface.SendSmsVerifyCode(
+					context.Background(),
+					phoneNumber,
+					codeData2.PhoneCode,
+					codeData2.PhoneCodeHash)
+				if sendErr != nil {
+					c.Logger.Errorf("send sms code error: %v", sendErr)
+					return sendErr
+				}
+			}
+
+			codeData2.SentCodeType = model.SentCodeTypeSms
+			codeData2.NextCodeType = model.CodeTypeSms
+			codeData2.State = model.CodeStateSent
+			codeData2.PhoneNumberRegistered = phoneRegistered
+			codeData2.PhoneCodeExtraData = extraData
+			return nil
+		})
+	if err2 != nil {
+		c.Logger.Errorf("auth.sendCode - error: %v", err2)
+		err = err2
+		return
+	}
+
+	reply = codeData.ToAuthSentCode()
 	return
 }
