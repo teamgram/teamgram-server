@@ -107,3 +107,18 @@ func TestSyncBroadcastUpdatesReturnsVoidPlaceholder(t *testing.T) {
 		t.Fatal("expected void result, got nil")
 	}
 }
+
+func TestSyncPushBotUpdatesReturnsVoidPlaceholder(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	result, err := c.SyncPushBotUpdates(&sync.TLSyncPushBotUpdates{
+		UserId:  1,
+		Updates: &tg.Updates{},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+}
