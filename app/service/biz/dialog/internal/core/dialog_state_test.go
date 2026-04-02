@@ -281,3 +281,98 @@ func TestDialogGetDialogUnreadMarkListReturnsPlaceholder(t *testing.T) {
 		t.Fatalf("expected peerUser(1), got %#v", peer.Peer)
 	}
 }
+
+func TestDialogPinnedAndSavedPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	pinResult, err := c.DialogToggleDialogPin(&dialog.TLDialogToggleDialogPin{
+		UserId:   1,
+		PeerType: tg.PEER_USER,
+		PeerId:   2,
+		Pinned:   tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if pinResult == nil || pinResult.V != 1 {
+		t.Fatalf("expected pinned rank placeholder=1, got %#v", pinResult)
+	}
+
+	reorderResult, err := c.DialogReorderPinnedDialogs(&dialog.TLDialogReorderPinnedDialogs{
+		UserId:   1,
+		Force:    tg.BoolTrueClazz,
+		FolderId: 0,
+		IdList:   []int64{2, 3},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(reorderResult) {
+		t.Fatalf("expected reorder pinned boolTrue, got %#v", reorderResult)
+	}
+
+	savedResult, err := c.DialogGetSavedDialogs(&dialog.TLDialogGetSavedDialogs{
+		UserId:   1,
+		Limit:    10,
+		OffsetId: 0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if savedResult == nil || savedResult.Clazz == nil {
+		t.Fatal("expected savedDialogList placeholder, got nil")
+	}
+	savedList, ok := savedResult.Clazz.(*dialog.TLSavedDialogList)
+	if !ok || savedList.Count != 1 || len(savedList.Dialogs) != 1 {
+		t.Fatalf("expected one saved dialog placeholder, got %#v", savedResult.Clazz)
+	}
+
+	pinnedSavedResult, err := c.DialogGetPinnedSavedDialogs(&dialog.TLDialogGetPinnedSavedDialogs{
+		UserId: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	pinnedSavedList, ok := pinnedSavedResult.Clazz.(*dialog.TLSavedDialogList)
+	if !ok || pinnedSavedList.Count != 1 {
+		t.Fatalf("expected pinned saved dialog placeholder, got %#v", pinnedSavedResult.Clazz)
+	}
+	savedDialog, ok := pinnedSavedList.Dialogs[0].(*tg.TLSavedDialog)
+	if !ok || !savedDialog.Pinned {
+		t.Fatalf("expected pinned savedDialog placeholder, got %#v", pinnedSavedList.Dialogs[0])
+	}
+
+	toggleSavedResult, err := c.DialogToggleSavedDialogPin(&dialog.TLDialogToggleSavedDialogPin{
+		UserId: 1,
+		Peer: tg.MakeTLPeerUtil(&tg.TLPeerUtil{
+			SelfId:   1,
+			PeerType: tg.PEER_USER,
+			PeerId:   2,
+		}),
+		Pinned: tg.BoolTrueClazz,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(toggleSavedResult) {
+		t.Fatalf("expected toggle saved boolTrue, got %#v", toggleSavedResult)
+	}
+
+	reorderSavedResult, err := c.DialogReorderPinnedSavedDialogs(&dialog.TLDialogReorderPinnedSavedDialogs{
+		UserId: 1,
+		Force:  tg.BoolTrueClazz,
+		Order: []tg.PeerUtilClazz{
+			tg.MakeTLPeerUtil(&tg.TLPeerUtil{
+				SelfId:   1,
+				PeerType: tg.PEER_USER,
+				PeerId:   2,
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(reorderSavedResult) {
+		t.Fatalf("expected reorder saved boolTrue, got %#v", reorderSavedResult)
+	}
+}

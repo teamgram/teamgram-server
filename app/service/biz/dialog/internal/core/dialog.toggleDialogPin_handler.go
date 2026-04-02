@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,8 @@ var _ *tg.Bool
 // DialogToggleDialogPin
 // dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.toggleDialogPin blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.toggleDialogPin not implemented")
+	if in == nil || in.PeerId == 0 || !tg.FromBoolClazz(in.Pinned) {
+		return tg.MakeInt32Helper(0), nil
+	}
+	return tg.MakeInt32Helper(1), nil
 }
