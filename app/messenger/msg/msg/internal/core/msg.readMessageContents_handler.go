@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,22 @@ var _ *tg.Bool
 // MsgReadMessageContents
 // msg.readMessageContents user_id:long auth_key_id:long peer_type:int peer_id:long id:Vector<ContentMessage> = messages.AffectedMessages;
 func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("msg.readMessageContents blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	pts := int32(1)
+	ptsCount := int32(1)
+	if len(in.Id) > 0 {
+		ptsCount = int32(len(in.Id))
+		for _, content := range in.Id {
+			if content == nil {
+				continue
+			}
+			if x, ok := content.ToContentMessage(); ok && x.Id > pts {
+				pts = x.Id
+			}
+		}
+	}
 
-	return nil, errors.New("msg.readMessageContents not implemented")
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      pts,
+		PtsCount: ptsCount,
+	}).ToMessagesAffectedMessages(), nil
 }
