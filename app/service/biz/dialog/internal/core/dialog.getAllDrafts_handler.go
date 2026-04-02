@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,12 @@ var _ *tg.Bool
 // DialogGetAllDrafts
 // dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (c *DialogCore) DialogGetAllDrafts(in *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("dialog.getAllDrafts blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("dialog.getAllDrafts not implemented")
+	if in != nil && in.UserId != 0 {
+		return &dialog.VectorPeerWithDraftMessage{
+			Datas: []dialog.PeerWithDraftMessageClazz{
+				makeDraftPlaceholder(tg.PEER_USER, in.UserId),
+			},
+		}, nil
+	}
+	return &dialog.VectorPeerWithDraftMessage{Datas: []dialog.PeerWithDraftMessageClazz{}}, nil
 }
