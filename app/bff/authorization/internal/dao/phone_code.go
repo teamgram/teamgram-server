@@ -22,10 +22,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/random2"
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/marmota/pkg/random2"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
