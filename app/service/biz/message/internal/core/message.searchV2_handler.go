@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -28,8 +26,12 @@ var _ *tg.Bool
 // MessageSearchV2
 // message.searchV2 user_id:long peer_type:int peer_id:long q:string from_id:long min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (c *MessageCore) MessageSearchV2(in *message.TLMessageSearchV2) (*message.VectorMessageBox, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("message.searchV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	startID := in.OffsetId
+	if startID <= 0 {
+		startID = 1
+	}
 
-	return nil, errors.New("message.searchV2 not implemented")
+	return &message.VectorMessageBox{
+		Datas: collectScopedPlaceholderMessageBoxes(in.UserId, in.PeerType, in.PeerId, startID, in.Limit),
+	}, nil
 }

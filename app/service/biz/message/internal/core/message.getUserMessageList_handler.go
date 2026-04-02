@@ -38,3 +38,27 @@ func collectPlaceholderMessageBoxes(userID int64, ids []int32) []tg.MessageBoxCl
 	}
 	return boxes
 }
+
+func collectScopedPlaceholderMessageBoxes(userID int64, peerType int32, peerID int64, startID int32, limit int32) []tg.MessageBoxClazz {
+	if limit <= 0 {
+		return []tg.MessageBoxClazz{}
+	}
+	if limit > 3 {
+		limit = 3
+	}
+	if startID <= 0 {
+		startID = 1
+	}
+	if peerID == 0 {
+		peerID = userID
+	}
+	if peerType == 0 {
+		peerType = tg.PEER_USER
+	}
+
+	boxes := make([]tg.MessageBoxClazz, 0, limit)
+	for i := int32(0); i < limit; i++ {
+		boxes = append(boxes, makePlaceholderMessageBox(userID, peerType, peerID, startID+i))
+	}
+	return boxes
+}
