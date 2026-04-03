@@ -16,17 +16,17 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthExportAuthorization
 // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 func (c *AuthorizationCore) AuthExportAuthorization(in *tg.TLAuthExportAuthorization) (*tg.AuthExportedAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.exportAuthorization blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.exportAuthorization not implemented")
+	var authID int64
+	if c.MD != nil {
+		authID = c.MD.AuthId
+	}
+	return tg.MakeTLAuthExportedAuthorization(&tg.TLAuthExportedAuthorization{
+		Id:    authID,
+		Bytes: []byte{byte(in.DcId & 0xff)},
+	}).ToAuthExportedAuthorization(), nil
 }

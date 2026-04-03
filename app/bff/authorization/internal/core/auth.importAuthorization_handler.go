@@ -16,17 +16,17 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthImportAuthorization
 // auth.importAuthorization#a57a7dad id:long bytes:bytes = auth.Authorization;
 func (c *AuthorizationCore) AuthImportAuthorization(in *tg.TLAuthImportAuthorization) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.importAuthorization blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.importAuthorization not implemented")
+	var userID int64
+	if c.MD != nil {
+		userID = c.MD.UserId
+	}
+	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
+		FutureAuthToken: append([]byte(nil), in.Bytes...),
+		User:            tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
+	}).ToAuthAuthorization(), nil
 }

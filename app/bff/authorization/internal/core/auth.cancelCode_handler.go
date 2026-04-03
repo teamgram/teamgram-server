@@ -16,17 +16,16 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthCancelCode
 // auth.cancelCode#1f040578 phone_number:string phone_code_hash:string = Bool;
 func (c *AuthorizationCore) AuthCancelCode(in *tg.TLAuthCancelCode) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.cancelCode blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.cancelCode not implemented")
+	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+		return nil, err
+	}
+	if in.PhoneCodeHash == "" {
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
+	return tg.BoolTrue, nil
 }
