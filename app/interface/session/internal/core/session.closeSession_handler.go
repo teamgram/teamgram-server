@@ -28,7 +28,7 @@ var _ *tg.Bool
 // SessionCloseSession
 // session.closeSession client:SessionClientEvent = Bool;
 func (c *SessionCore) SessionCloseSession(in *session.TLSessionCloseSession) (*tg.Bool, error) {
-	cli, _ := in.Client.(*session.TLSessionClientEvent)
+	cli := in.Client
 
 	if cli == nil {
 		err := tg.ErrInputRequestInvalid

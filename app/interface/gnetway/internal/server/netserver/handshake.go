@@ -312,7 +312,7 @@ func (s *Server) onHandshake(c *connection, d *bin.Decoder) error {
 
 // req_pq#60469778 nonce:int128 = ResPQ;
 func (s *Server) onReqPq(c *connection, request *mt.TLReqPq) (*mt.ResPQ, error) {
-	logx.Infof("req_pq#60469778 - conn(%s) request: %s", c, request)
+	logx.Infof("req_pq#60469778 - conn(%v) request: %s", c, request)
 
 	// check State and ResState
 
@@ -333,7 +333,7 @@ func (s *Server) onReqPq(c *connection, request *mt.TLReqPq) (*mt.ResPQ, error) 
 
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
 func (s *Server) onReqPqMulti(c *connection, request *mt.TLReqPqMulti) (*mt.ResPQ, error) {
-	logx.Infof("req_pq_multi#be7e8ef1 request - conn(%s) request: %s", c, request)
+	logx.Infof("req_pq_multi#be7e8ef1 request - conn(%v) request: %s", c, request)
 
 	// check State and ResState
 
@@ -354,7 +354,7 @@ func (s *Server) onReqPqMulti(c *connection, request *mt.TLReqPqMulti) (*mt.ResP
 
 // req_DH_params#d712e4be nonce:int128 server_nonce:int128 p:string q:string public_key_fingerprint:long encrypted_data:string = Server_DH_Params;
 func (s *Server) onReqDHParams(c *connection, ctx *HandshakeStateCtx, request *mt.TLReqDHParams) (*mt.ServerDHParams, error) {
-	logx.Infof("req_DH_params#d712e4be - conn(%s) state: {%s}, request: %s", c, ctx, request)
+	logx.Infof("req_DH_params#d712e4be - conn(%v) state: {%v}, request: %s", c, ctx, request)
 
 	var (
 		err            error
@@ -748,7 +748,7 @@ func (s *Server) onReqDHParams(c *connection, ctx *HandshakeStateCtx, request *m
 
 // set_client_DH_params#f5045f1f nonce:int128 server_nonce:int128 encrypted_data:string = Set_client_DH_params_answer;
 func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, request *mt.TLSetClientDHParams) (*mt.SetClientDHParamsAnswer, error) {
-	logx.Infof("set_client_DH_params#f5045f1f conn(%s) - state: {%s}, request: %s", c, ctx, request)
+	logx.Infof("set_client_DH_params#f5045f1f conn(%v) - state: {%v}, request: %s", c, ctx, request)
 
 	// TODO(@benqi): Impl SetClient_DHParams logic
 	// 客户端传输数据解析
@@ -794,11 +794,11 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 	//clientDHInnerData.Data2.Constructor = tg.TLConstructor(dBuf.Int())
 	//err = clientDHInnerData.Decode(dBuf)
 	if err != nil {
-		logx.Errorf("onSetClientDHParams conn(%s) - TLClient_DHInnerData decode error: %s", c, err)
+		logx.Errorf("onSetClientDHParams conn(%v) - TLClient_DHInnerData decode error: %s", c, err)
 		return nil, err
 	}
 
-	logx.Infof("onSetClientDHParams conn(%s) - client_DHInnerData: %s", c, clientDHInnerData)
+	logx.Infof("onSetClientDHParams conn(%v) - client_DHInnerData: %s", c, clientDHInnerData)
 
 	var (
 		GB []byte
@@ -872,7 +872,7 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 			NewNonceHash1: newNonceHash,
 		})
 
-		logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
+		logx.Infof("onSetClient_DHParams conn(%v) - ctx: {%v}, reply: %s", c, ctx, dhGen)
 	} else {
 		// TODO(@benqi): dhGenFail
 		copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x02))
@@ -882,7 +882,7 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 			NewNonceHash2: newNonceHash,
 		})
 
-		logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
+		logx.Infof("onSetClient_DHParams conn(%v) - ctx: {%v}, reply: %s", c, ctx, dhGen)
 	}
 
 	ctx.State = STATE_dh_gen_res
@@ -897,7 +897,7 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 
 // msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
 func (s *Server) onMsgsAck(c *connection, state *HandshakeStateCtx, request *mt.TLMsgsAck) error {
-	logx.Infof("msgs_ack#62d6b459 conn(%s) - state: {%s}, request: %s", c, state, request)
+	logx.Infof("msgs_ack#62d6b459 conn(%v) - state: {%v}, request: %s", c, state, request)
 
 	switch state.State {
 	case STATE_pq_res:
