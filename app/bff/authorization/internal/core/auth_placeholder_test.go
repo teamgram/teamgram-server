@@ -444,3 +444,35 @@ func TestAuthImportAndBindPlaceholders(t *testing.T) {
 		t.Fatalf("expected userEmpty id=99, got %#v", webAuthorization.User)
 	}
 }
+
+func TestAuthorizationTailPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	changed, err := c.AccountChangeAuthorizationSettings(&tg.TLAccountChangeAuthorizationSettings{
+		Hash: 1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(changed) {
+		t.Fatalf("expected changeAuthorizationSettings boolTrue, got %#v", changed)
+	}
+
+	if _, err := c.AuthToggleBan(&tg.TLAuthToggleBan{}); err != tg.ErrInputMethodInvalid {
+		t.Fatalf("expected input method invalid, got %v", err)
+	}
+
+	toggled, err := c.AuthToggleBan(&tg.TLAuthToggleBan{
+		Phone:      "+8613812345678",
+		Predefined: true,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if toggled == nil {
+		t.Fatal("expected predefinedUser placeholder, got nil")
+	}
+	if toggled.Phone != "+8613812345678" || !toggled.Banned {
+		t.Fatalf("expected banned predefinedUser placeholder, got %#v", toggled)
+	}
+}
