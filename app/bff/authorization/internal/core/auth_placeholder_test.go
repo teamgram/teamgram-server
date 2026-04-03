@@ -118,3 +118,67 @@ func TestAuthorizationBoolPlaceholders(t *testing.T) {
 		t.Fatalf("expected dropTempAuthKeys boolTrue, got %#v", dropTempKeys)
 	}
 }
+
+func TestAuthFirebaseAndPaidPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	if _, err := c.AuthRequestFirebaseSms(&tg.TLAuthRequestFirebaseSms{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "",
+	}); err != tg.ErrPhoneCodeHashEmpty {
+		t.Fatalf("expected phone code hash empty, got %v", err)
+	}
+
+	requestFirebase, err := c.AuthRequestFirebaseSms(&tg.TLAuthRequestFirebaseSms{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(requestFirebase) {
+		t.Fatalf("expected requestFirebaseSms boolTrue, got %#v", requestFirebase)
+	}
+
+	if _, err := c.AuthReportMissingCode(&tg.TLAuthReportMissingCode{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+		Mnc:           "",
+	}); err != tg.ErrInputMethodInvalid {
+		t.Fatalf("expected input method invalid, got %v", err)
+	}
+
+	reportMissing, err := c.AuthReportMissingCode(&tg.TLAuthReportMissingCode{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+		Mnc:           "460",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(reportMissing) {
+		t.Fatalf("expected reportMissingCode boolTrue, got %#v", reportMissing)
+	}
+
+	paidAuth, err := c.AuthCheckPaidAuth(&tg.TLAuthCheckPaidAuth{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+		FormId:        1,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if paidAuth == nil {
+		t.Fatal("expected sentCode placeholder, got nil")
+	}
+	sentCode, ok := paidAuth.ToAuthSentCode()
+	if !ok {
+		t.Fatalf("expected auth.sentCode, got %T", paidAuth.Clazz)
+	}
+	if sentCode.PhoneCodeHash != "hash" {
+		t.Fatalf("expected phone_code_hash=hash, got %q", sentCode.PhoneCodeHash)
+	}
+	if sentCode.Timeout == nil || *sentCode.Timeout != 60 {
+		t.Fatalf("expected timeout=60, got %#v", sentCode.Timeout)
+	}
+}

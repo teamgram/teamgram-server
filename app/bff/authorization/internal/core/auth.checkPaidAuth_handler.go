@@ -16,17 +16,22 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthCheckPaidAuth
 // auth.checkPaidAuth#56e59f9c phone_number:string phone_code_hash:string form_id:long = auth.SentCode;
 func (c *AuthorizationCore) AuthCheckPaidAuth(in *tg.TLAuthCheckPaidAuth) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.checkPaidAuth blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.checkPaidAuth not implemented")
+	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+		return nil, err
+	}
+	if in.PhoneCodeHash == "" {
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
+	timeout := int32(60)
+	return tg.MakeTLAuthSentCode(&tg.TLAuthSentCode{
+		Type:          tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{Length: 5}),
+		PhoneCodeHash: in.PhoneCodeHash,
+		NextType:      tg.MakeTLAuthCodeTypeSms(&tg.TLAuthCodeTypeSms{}),
+		Timeout:       &timeout,
+	}).ToAuthSentCode(), nil
 }

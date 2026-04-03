@@ -16,17 +16,16 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthRequestFirebaseSms
 // auth.requestFirebaseSms#8e39261e flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string play_integrity_token:flags.2?string ios_push_secret:flags.1?string = Bool;
 func (c *AuthorizationCore) AuthRequestFirebaseSms(in *tg.TLAuthRequestFirebaseSms) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.requestFirebaseSms blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.requestFirebaseSms not implemented")
+	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+		return nil, err
+	}
+	if in.PhoneCodeHash == "" {
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
+	return tg.BoolTrue, nil
 }

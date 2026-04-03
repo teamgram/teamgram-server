@@ -16,17 +16,19 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthReportMissingCode
 // auth.reportMissingCode#cb9deff6 phone_number:string phone_code_hash:string mnc:string = Bool;
 func (c *AuthorizationCore) AuthReportMissingCode(in *tg.TLAuthReportMissingCode) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.reportMissingCode blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.reportMissingCode not implemented")
+	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
+		return nil, err
+	}
+	if in.PhoneCodeHash == "" {
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
+	if in.Mnc == "" {
+		return nil, tg.ErrInputMethodInvalid
+	}
+	return tg.BoolTrue, nil
 }
