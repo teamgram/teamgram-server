@@ -17,16 +17,19 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountVerifyEmail
 // account.verifyEmail#32da4cf purpose:EmailVerifyPurpose verification:EmailVerification = account.EmailVerified;
 func (c *AuthorizationCore) AccountVerifyEmail(in *tg.TLAccountVerifyEmail) (*tg.AccountEmailVerified, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.verifyEmail blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if verification, ok := in.Verification.(*tg.TLEmailVerificationCode); ok {
+		if verification.Code == "" {
+			return nil, tg.ErrCodeEmpty
+		}
+	}
 
-	return nil, errors.New("account.verifyEmail not implemented")
+	return tg.MakeTLAccountEmailVerified(&tg.TLAccountEmailVerified{
+		Email: "t***@example.com",
+	}).ToAccountEmailVerified(), nil
 }

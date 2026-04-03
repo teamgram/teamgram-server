@@ -237,3 +237,94 @@ func TestAuthPasswordRecoveryPlaceholders(t *testing.T) {
 		t.Fatalf("expected recovered userEmpty id=42, got %#v", authRecovered.User)
 	}
 }
+
+func TestAuthEmailVerificationPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	if _, err := c.AccountSendVerifyEmailCode(&tg.TLAccountSendVerifyEmailCode{
+		Purpose: tg.MakeTLEmailVerifyPurposeLoginSetup(&tg.TLEmailVerifyPurposeLoginSetup{
+			PhoneNumber:   "+8613812345678",
+			PhoneCodeHash: "hash",
+		}),
+		Email: "bad-email",
+	}); err != tg.ErrEmailInvalid {
+		t.Fatalf("expected email invalid, got %v", err)
+	}
+
+	sentEmailCode, err := c.AccountSendVerifyEmailCode(&tg.TLAccountSendVerifyEmailCode{
+		Purpose: tg.MakeTLEmailVerifyPurposeLoginSetup(&tg.TLEmailVerifyPurposeLoginSetup{
+			PhoneNumber:   "+8613812345678",
+			PhoneCodeHash: "hash",
+		}),
+		Email: "test@example.com",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if sentEmailCode == nil || sentEmailCode.EmailPattern != "t***@example.com" || sentEmailCode.Length != 6 {
+		t.Fatalf("expected sentEmailCode placeholder, got %#v", sentEmailCode)
+	}
+
+	if _, err := c.AccountVerifyEmail(&tg.TLAccountVerifyEmail{
+		Purpose: tg.MakeTLEmailVerifyPurposeLoginSetup(&tg.TLEmailVerifyPurposeLoginSetup{
+			PhoneNumber:   "+8613812345678",
+			PhoneCodeHash: "hash",
+		}),
+		Verification: tg.MakeTLEmailVerificationCode(&tg.TLEmailVerificationCode{}),
+	}); err != tg.ErrCodeEmpty {
+		t.Fatalf("expected code empty, got %v", err)
+	}
+
+	verifiedEmail, err := c.AccountVerifyEmail(&tg.TLAccountVerifyEmail{
+		Purpose: tg.MakeTLEmailVerifyPurposeLoginSetup(&tg.TLEmailVerifyPurposeLoginSetup{
+			PhoneNumber:   "+8613812345678",
+			PhoneCodeHash: "hash",
+		}),
+		Verification: tg.MakeTLEmailVerificationCode(&tg.TLEmailVerificationCode{Code: "123456"}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	verified, ok := verifiedEmail.ToAccountEmailVerified()
+	if !ok {
+		t.Fatalf("expected account.emailVerified, got %T", verifiedEmail.Clazz)
+	}
+	if verified.Email != "t***@example.com" {
+		t.Fatalf("expected placeholder verified email, got %#v", verified)
+	}
+
+	invalidated, err := c.AccountInvalidateSignInCodes(&tg.TLAccountInvalidateSignInCodes{
+		Codes: []string{"one", "two"},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(invalidated) {
+		t.Fatalf("expected invalidateSignInCodes boolTrue, got %#v", invalidated)
+	}
+
+	if _, err := c.AuthResetLoginEmail(&tg.TLAuthResetLoginEmail{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "",
+	}); err != tg.ErrPhoneCodeHashEmpty {
+		t.Fatalf("expected phone code hash empty, got %v", err)
+	}
+
+	resetLoginEmail, err := c.AuthResetLoginEmail(&tg.TLAuthResetLoginEmail{
+		PhoneNumber:   "+8613812345678",
+		PhoneCodeHash: "hash",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	sentCode, ok := resetLoginEmail.ToAuthSentCode()
+	if !ok {
+		t.Fatalf("expected auth.sentCode, got %T", resetLoginEmail.Clazz)
+	}
+	if sentCode.PhoneCodeHash != "hash" {
+		t.Fatalf("expected phone_code_hash=hash, got %q", sentCode.PhoneCodeHash)
+	}
+	if sentCode.Timeout == nil || *sentCode.Timeout != 60 {
+		t.Fatalf("expected timeout=60, got %#v", sentCode.Timeout)
+	}
+}
