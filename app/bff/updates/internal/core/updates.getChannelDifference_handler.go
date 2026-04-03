@@ -16,17 +16,17 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // UpdatesGetChannelDifference
 // updates.getChannelDifference#3173d78 flags:# force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
 func (c *UpdatesCore) UpdatesGetChannelDifference(in *tg.TLUpdatesGetChannelDifference) (*tg.UpdatesChannelDifference, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getChannelDifference blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("updates.getChannelDifference not implemented")
+	pts := in.Pts
+	if pts <= 0 {
+		pts = 1
+	}
+	return tg.MakeTLUpdatesChannelDifferenceEmpty(&tg.TLUpdatesChannelDifferenceEmpty{
+		Final: true,
+		Pts:   pts,
+	}).ToUpdatesChannelDifference(), nil
 }
