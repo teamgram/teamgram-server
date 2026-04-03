@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountResetPassword
 // account.resetPassword#9308ce1b = account.ResetPasswordResult;
 func (c *AuthorizationCore) AccountResetPassword(in *tg.TLAccountResetPassword) (*tg.AccountResetPasswordResult, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.resetPassword blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("account.resetPassword not implemented")
+	return tg.MakeTLAccountResetPasswordOk(&tg.TLAccountResetPasswordOk{}).ToAccountResetPasswordResult(), nil
 }

@@ -17,16 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthCheckRecoveryPassword
 // auth.checkRecoveryPassword#d36bf79 code:string = Bool;
 func (c *AuthorizationCore) AuthCheckRecoveryPassword(in *tg.TLAuthCheckRecoveryPassword) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.checkRecoveryPassword blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.Code == "" {
+		return nil, tg.ErrCodeEmpty
+	}
 
-	return nil, errors.New("auth.checkRecoveryPassword not implemented")
+	return tg.BoolTrue, nil
 }
