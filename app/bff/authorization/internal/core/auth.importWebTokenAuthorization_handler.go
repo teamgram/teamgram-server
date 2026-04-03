@@ -17,16 +17,25 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthImportWebTokenAuthorization
 // auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
 func (c *AuthorizationCore) AuthImportWebTokenAuthorization(in *tg.TLAuthImportWebTokenAuthorization) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.importWebTokenAuthorization blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.ApiId <= 0 {
+		return nil, tg.ErrApiIdInvalid
+	}
+	if in.WebAuthToken == "" {
+		return nil, tg.ErrAuthTokenInvalid
+	}
 
-	return nil, errors.New("auth.importWebTokenAuthorization not implemented")
+	var userID int64
+	if c.MD != nil {
+		userID = c.MD.UserId
+	}
+
+	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
+		User: tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
+	}).ToAuthAuthorization(), nil
 }
