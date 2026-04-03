@@ -27,7 +27,6 @@ import (
 	authsession_client "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
 	chat_client "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	user_client "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
-	username_client "github.com/teamgram/teamgram-server/v2/app/service/biz/username/client"
 	status_client "github.com/teamgram/teamgram-server/v2/app/service/status/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
@@ -52,7 +51,6 @@ type Dao struct {
 	chat_client.ChatClient
 	status_client.StatusClient
 	msg_client.MsgClient
-	username_client.UsernameClient
 }
 
 func New(c config.Config) *Dao {
@@ -68,7 +66,6 @@ func New(c config.Config) *Dao {
 		ChatClient:        chat_client.NewChatClient(kitex.GetCachedKitexClient(c.ChatClient)),
 		StatusClient:      status_client.NewStatusClient(kitex.GetCachedKitexClient(c.StatusClient)),
 		MsgClient:         msg_client.NewMsgClient(kitex.GetCachedKitexClient(c.MsgClient)),
-		UsernameClient:    username_client.NewUsernameClient(kitex.GetCachedKitexClient(c.UsernameClient)),
 		// SyncClient:        sync_client.NewSyncMqClient(kitex.GetCachedKitexClient(c.SyncClient)),
 	}
 }
