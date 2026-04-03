@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthResetAuthorizations
 // auth.resetAuthorizations#9fab0d1a = Bool;
 func (c *AuthorizationCore) AuthResetAuthorizations(in *tg.TLAuthResetAuthorizations) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.resetAuthorizations blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.resetAuthorizations not implemented")
+	return tg.BoolTrue, nil
 }

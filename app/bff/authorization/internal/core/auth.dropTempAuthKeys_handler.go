@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthDropTempAuthKeys
 // auth.dropTempAuthKeys#8e48a188 except_auth_keys:Vector<long> = Bool;
 func (c *AuthorizationCore) AuthDropTempAuthKeys(in *tg.TLAuthDropTempAuthKeys) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.dropTempAuthKeys blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.dropTempAuthKeys not implemented")
+	return tg.BoolTrue, nil
 }

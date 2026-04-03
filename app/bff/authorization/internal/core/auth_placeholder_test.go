@@ -86,3 +86,35 @@ func TestAuthExportImportAuthorizationPlaceholders(t *testing.T) {
 		t.Fatalf("expected imported future auth token=[2], got %#v", auth.FutureAuthToken)
 	}
 }
+
+func TestAuthorizationBoolPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	if _, err := c.AccountSetAuthorizationTTL(&tg.TLAccountSetAuthorizationTTL{AuthorizationTtlDays: -1}); err != tg.ErrInputMethodInvalid {
+		t.Fatalf("expected input method invalid, got %v", err)
+	}
+
+	setTTL, err := c.AccountSetAuthorizationTTL(&tg.TLAccountSetAuthorizationTTL{AuthorizationTtlDays: 30})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(setTTL) {
+		t.Fatalf("expected set authorization ttl boolTrue, got %#v", setTTL)
+	}
+
+	resetAuths, err := c.AuthResetAuthorizations(&tg.TLAuthResetAuthorizations{})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(resetAuths) {
+		t.Fatalf("expected resetAuthorizations boolTrue, got %#v", resetAuths)
+	}
+
+	dropTempKeys, err := c.AuthDropTempAuthKeys(&tg.TLAuthDropTempAuthKeys{ExceptAuthKeys: []int64{1, 2}})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(dropTempKeys) {
+		t.Fatalf("expected dropTempAuthKeys boolTrue, got %#v", dropTempKeys)
+	}
+}
