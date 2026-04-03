@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dialog
@@ -38,29 +38,23 @@ type TLDialogSaveDraftMessage struct {
 }
 
 func (m *TLDialogSaveDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_saveDraftMessage, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogSaveDraftMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x4ecad99a: func() error {
-			x.PutClazzID(0x4ecad99a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_saveDraftMessage, int(layer)); clazzId {
+	case 0x4ecad99a:
+		x.PutClazzID(0x4ecad99a)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			_ = m.Message.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		_ = m.Message.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_saveDraftMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_saveDraftMessage, layer)
 	}
@@ -68,27 +62,34 @@ func (m *TLDialogSaveDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogSaveDraftMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x4ecad99a: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			// m4 := &tg.DraftMessage{}
-			// _ = m4.Decode(d)
-			// m.Message = m4
-			m.Message, _ = tg.DecodeDraftMessageClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x4ecad99a:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Message, err = tg.DecodeDraftMessageClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -102,28 +103,22 @@ type TLDialogClearDraftMessage struct {
 }
 
 func (m *TLDialogClearDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_clearDraftMessage, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogClearDraftMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xfb70b29a: func() error {
-			x.PutClazzID(0xfb70b29a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_clearDraftMessage, int(layer)); clazzId {
+	case 0xfb70b29a:
+		x.PutClazzID(0xfb70b29a)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_clearDraftMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_clearDraftMessage, layer)
 	}
@@ -131,22 +126,29 @@ func (m *TLDialogClearDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogClearDraftMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xfb70b29a: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xfb70b29a:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -158,26 +160,20 @@ type TLDialogGetAllDrafts struct {
 }
 
 func (m *TLDialogGetAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getAllDrafts, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xacde4fe6: func() error {
-			x.PutClazzID(0xacde4fe6)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getAllDrafts, int(layer)); clazzId {
+	case 0xacde4fe6:
+		x.PutClazzID(0xacde4fe6)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getAllDrafts, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getAllDrafts, layer)
 	}
@@ -185,20 +181,21 @@ func (m *TLDialogGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetAllDrafts) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xacde4fe6: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xacde4fe6:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -210,26 +207,20 @@ type TLDialogClearAllDrafts struct {
 }
 
 func (m *TLDialogClearAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_clearAllDrafts, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x41b890fc: func() error {
-			x.PutClazzID(0x41b890fc)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_clearAllDrafts, int(layer)); clazzId {
+	case 0x41b890fc:
+		x.PutClazzID(0x41b890fc)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_clearAllDrafts, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_clearAllDrafts, layer)
 	}
@@ -237,20 +228,21 @@ func (m *TLDialogClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogClearAllDrafts) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x41b890fc: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x41b890fc:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -265,29 +257,23 @@ type TLDialogMarkDialogUnread struct {
 }
 
 func (m *TLDialogMarkDialogUnread) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_markDialogUnread, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x4532910e: func() error {
-			x.PutClazzID(0x4532910e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_markDialogUnread, int(layer)); clazzId {
+	case 0x4532910e:
+		x.PutClazzID(0x4532910e)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			_ = m.UnreadMark.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		_ = m.UnreadMark.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_markDialogUnread, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_markDialogUnread, layer)
 	}
@@ -295,27 +281,34 @@ func (m *TLDialogMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x4532910e: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			// m4 := &tg.Bool{}
-			// _ = m4.Decode(d)
-			// m.UnreadMark = m4
-			m.UnreadMark, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x4532910e:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.UnreadMark, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -330,29 +323,23 @@ type TLDialogToggleDialogPin struct {
 }
 
 func (m *TLDialogToggleDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleDialogPin, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x867ee52f: func() error {
-			x.PutClazzID(0x867ee52f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogPin, int(layer)); clazzId {
+	case 0x867ee52f:
+		x.PutClazzID(0x867ee52f)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			_ = m.Pinned.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		_ = m.Pinned.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogPin, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleDialogPin, layer)
 	}
@@ -360,27 +347,34 @@ func (m *TLDialogToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x867ee52f: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			// m4 := &tg.Bool{}
-			// _ = m4.Decode(d)
-			// m.Pinned = m4
-			m.Pinned, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x867ee52f:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Pinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -392,26 +386,20 @@ type TLDialogGetDialogUnreadMarkList struct {
 }
 
 func (m *TLDialogGetDialogUnreadMarkList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogUnreadMarkList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogUnreadMarkList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xcabc38f4: func() error {
-			x.PutClazzID(0xcabc38f4)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogUnreadMarkList, int(layer)); clazzId {
+	case 0xcabc38f4:
+		x.PutClazzID(0xcabc38f4)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogUnreadMarkList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogUnreadMarkList, layer)
 	}
@@ -419,20 +407,21 @@ func (m *TLDialogGetDialogUnreadMarkList) Encode(x *bin.Encoder, layer int32) er
 
 // Decode <--
 func (m *TLDialogGetDialogUnreadMarkList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xcabc38f4: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xcabc38f4:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -447,29 +436,23 @@ type TLDialogGetDialogsByOffsetDate struct {
 }
 
 func (m *TLDialogGetDialogsByOffsetDate) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsByOffsetDate, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogsByOffsetDate) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x9d7e8604: func() error {
-			x.PutClazzID(0x9d7e8604)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByOffsetDate, int(layer)); clazzId {
+	case 0x9d7e8604:
+		x.PutClazzID(0x9d7e8604)
 
-			x.PutInt64(m.UserId)
-			_ = m.ExcludePinned.Encode(x, layer)
-			x.PutInt32(m.OffsetDate)
-			x.PutInt32(m.Limit)
+		x.PutInt64(m.UserId)
+		_ = m.ExcludePinned.Encode(x, layer)
+		x.PutInt32(m.OffsetDate)
+		x.PutInt32(m.Limit)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByOffsetDate, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsByOffsetDate, layer)
 	}
@@ -477,28 +460,35 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(x *bin.Encoder, layer int32) err
 
 // Decode <--
 func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x9d7e8604: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.ExcludePinned = m2
-			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
-
-			m.OffsetDate, err = d.Int32()
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x9d7e8604:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.OffsetDate, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -512,28 +502,22 @@ type TLDialogGetDialogs struct {
 }
 
 func (m *TLDialogGetDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x860b1e16: func() error {
-			x.PutClazzID(0x860b1e16)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogs, int(layer)); clazzId {
+	case 0x860b1e16:
+		x.PutClazzID(0x860b1e16)
 
-			x.PutInt64(m.UserId)
-			_ = m.ExcludePinned.Encode(x, layer)
-			x.PutInt32(m.FolderId)
+		x.PutInt64(m.UserId)
+		_ = m.ExcludePinned.Encode(x, layer)
+		x.PutInt32(m.FolderId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogs, layer)
 	}
@@ -541,27 +525,31 @@ func (m *TLDialogGetDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x860b1e16: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.ExcludePinned = m2
-			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
-
-			m.FolderId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x860b1e16:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -574,28 +562,22 @@ type TLDialogGetDialogsByIdList struct {
 }
 
 func (m *TLDialogGetDialogsByIdList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsByIdList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogsByIdList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xad258871: func() error {
-			x.PutClazzID(0xad258871)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByIdList, int(layer)); clazzId {
+	case 0xad258871:
+		x.PutClazzID(0xad258871)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			iface.EncodeInt64List(x, m.IdList)
+		iface.EncodeInt64List(x, m.IdList)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByIdList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsByIdList, layer)
 	}
@@ -603,22 +585,26 @@ func (m *TLDialogGetDialogsByIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogsByIdList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xad258871: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			m.IdList, err = iface.DecodeInt64List(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xad258871:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.IdList, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -632,28 +618,22 @@ type TLDialogGetDialogsCount struct {
 }
 
 func (m *TLDialogGetDialogsCount) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsCount, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogsCount) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xe039b465: func() error {
-			x.PutClazzID(0xe039b465)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsCount, int(layer)); clazzId {
+	case 0xe039b465:
+		x.PutClazzID(0xe039b465)
 
-			x.PutInt64(m.UserId)
-			_ = m.ExcludePinned.Encode(x, layer)
-			x.PutInt32(m.FolderId)
+		x.PutInt64(m.UserId)
+		_ = m.ExcludePinned.Encode(x, layer)
+		x.PutInt32(m.FolderId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsCount, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsCount, layer)
 	}
@@ -661,27 +641,31 @@ func (m *TLDialogGetDialogsCount) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogsCount) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xe039b465: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.ExcludePinned = m2
-			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
-
-			m.FolderId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xe039b465:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -694,27 +678,21 @@ type TLDialogGetPinnedDialogs struct {
 }
 
 func (m *TLDialogGetPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getPinnedDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa8c21bb5: func() error {
-			x.PutClazzID(0xa8c21bb5)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getPinnedDialogs, int(layer)); clazzId {
+	case 0xa8c21bb5:
+		x.PutClazzID(0xa8c21bb5)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.FolderId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.FolderId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getPinnedDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getPinnedDialogs, layer)
 	}
@@ -722,21 +700,25 @@ func (m *TLDialogGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa8c21bb5: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.FolderId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa8c21bb5:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -751,30 +733,24 @@ type TLDialogReorderPinnedDialogs struct {
 }
 
 func (m *TLDialogReorderPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_reorderPinnedDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xfee33567: func() error {
-			x.PutClazzID(0xfee33567)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_reorderPinnedDialogs, int(layer)); clazzId {
+	case 0xfee33567:
+		x.PutClazzID(0xfee33567)
 
-			x.PutInt64(m.UserId)
-			_ = m.Force.Encode(x, layer)
-			x.PutInt32(m.FolderId)
+		x.PutInt64(m.UserId)
+		_ = m.Force.Encode(x, layer)
+		x.PutInt32(m.FolderId)
 
-			iface.EncodeInt64List(x, m.IdList)
+		iface.EncodeInt64List(x, m.IdList)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_reorderPinnedDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_reorderPinnedDialogs, layer)
 	}
@@ -782,29 +758,36 @@ func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xfee33567: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.Force = m2
-			m.Force, _ = tg.DecodeBoolClazz(d)
-
-			m.FolderId, err = d.Int32()
-
-			m.IdList, err = iface.DecodeInt64List(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xfee33567:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Force, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		m.IdList, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -818,28 +801,22 @@ type TLDialogGetDialogById struct {
 }
 
 func (m *TLDialogGetDialogById) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogById, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogById) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa15f3bf5: func() error {
-			x.PutClazzID(0xa15f3bf5)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogById, int(layer)); clazzId {
+	case 0xa15f3bf5:
+		x.PutClazzID(0xa15f3bf5)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogById, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogById, layer)
 	}
@@ -847,22 +824,29 @@ func (m *TLDialogGetDialogById) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogById) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa15f3bf5: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa15f3bf5:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -876,28 +860,22 @@ type TLDialogGetTopMessage struct {
 }
 
 func (m *TLDialogGetTopMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getTopMessage, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetTopMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xfa7db272: func() error {
-			x.PutClazzID(0xfa7db272)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getTopMessage, int(layer)); clazzId {
+	case 0xfa7db272:
+		x.PutClazzID(0xfa7db272)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getTopMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getTopMessage, layer)
 	}
@@ -905,22 +883,29 @@ func (m *TLDialogGetTopMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetTopMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xfa7db272: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xfa7db272:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -941,83 +926,77 @@ type TLDialogInsertOrUpdateDialog struct {
 }
 
 func (m *TLDialogInsertOrUpdateDialog) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_insertOrUpdateDialog, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogInsertOrUpdateDialog) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x5d2b8822: func() error {
-			x.PutClazzID(0x5d2b8822)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_insertOrUpdateDialog, int(layer)); clazzId {
+	case 0x5d2b8822:
+		x.PutClazzID(0x5d2b8822)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.TopMessage != nil {
-					flags |= 1 << 0
-				}
-				if m.ReadOutboxMaxId != nil {
-					flags |= 1 << 1
-				}
-				if m.ReadInboxMaxId != nil {
-					flags |= 1 << 2
-				}
-				if m.UnreadCount != nil {
-					flags |= 1 << 3
-				}
-				if m.UnreadMark == true {
-					flags |= 1 << 4
-				}
-				if m.Date2 != nil {
-					flags |= 1 << 5
-				}
-				if m.PinnedMsgId != nil {
-					flags |= 1 << 6
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
 			if m.TopMessage != nil {
-				x.PutInt32(*m.TopMessage)
+				flags |= 1 << 0
 			}
-
 			if m.ReadOutboxMaxId != nil {
-				x.PutInt32(*m.ReadOutboxMaxId)
+				flags |= 1 << 1
 			}
-
 			if m.ReadInboxMaxId != nil {
-				x.PutInt32(*m.ReadInboxMaxId)
+				flags |= 1 << 2
 			}
-
 			if m.UnreadCount != nil {
-				x.PutInt32(*m.UnreadCount)
+				flags |= 1 << 3
 			}
-
+			if m.UnreadMark == true {
+				flags |= 1 << 4
+			}
 			if m.Date2 != nil {
-				x.PutInt64(*m.Date2)
+				flags |= 1 << 5
 			}
-
 			if m.PinnedMsgId != nil {
-				x.PutInt32(*m.PinnedMsgId)
+				flags |= 1 << 6
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_insertOrUpdateDialog, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		if m.TopMessage != nil {
+			x.PutInt32(*m.TopMessage)
+		}
+
+		if m.ReadOutboxMaxId != nil {
+			x.PutInt32(*m.ReadOutboxMaxId)
+		}
+
+		if m.ReadInboxMaxId != nil {
+			x.PutInt32(*m.ReadInboxMaxId)
+		}
+
+		if m.UnreadCount != nil {
+			x.PutInt32(*m.UnreadCount)
+		}
+
+		if m.Date2 != nil {
+			x.PutInt64(*m.Date2)
+		}
+
+		if m.PinnedMsgId != nil {
+			x.PutInt32(*m.PinnedMsgId)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_insertOrUpdateDialog, layer)
 	}
@@ -1025,52 +1004,80 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLDialogInsertOrUpdateDialog) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x5d2b8822: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.TopMessage = new(int32)
-				*m.TopMessage, err = d.Int32()
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.ReadOutboxMaxId = new(int32)
-				*m.ReadOutboxMaxId, err = d.Int32()
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.ReadInboxMaxId = new(int32)
-				*m.ReadInboxMaxId, err = d.Int32()
-			}
-			if (flags & (1 << 3)) != 0 {
-				m.UnreadCount = new(int32)
-				*m.UnreadCount, err = d.Int32()
-			}
-			if (flags & (1 << 4)) != 0 {
-				m.UnreadMark = true
-			}
-			if (flags & (1 << 5)) != 0 {
-				m.Date2 = new(int64)
-				*m.Date2, err = d.Int64()
-			}
-
-			if (flags & (1 << 6)) != 0 {
-				m.PinnedMsgId = new(int32)
-				*m.PinnedMsgId, err = d.Int32()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x5d2b8822:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.TopMessage = new(int32)
+			*m.TopMessage, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.ReadOutboxMaxId = new(int32)
+			*m.ReadOutboxMaxId, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.ReadInboxMaxId = new(int32)
+			*m.ReadInboxMaxId, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.UnreadCount = new(int32)
+			*m.UnreadCount, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 4)) != 0 {
+			m.UnreadMark = true
+		}
+		if (flags & (1 << 5)) != 0 {
+			m.Date2 = new(int64)
+			*m.Date2, err = d.Int64()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 6)) != 0 {
+			m.PinnedMsgId = new(int32)
+			*m.PinnedMsgId, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1084,28 +1091,22 @@ type TLDialogDeleteDialog struct {
 }
 
 func (m *TLDialogDeleteDialog) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_deleteDialog, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogDeleteDialog) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1b31de3: func() error {
-			x.PutClazzID(0x1b31de3)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_deleteDialog, int(layer)); clazzId {
+	case 0x1b31de3:
+		x.PutClazzID(0x1b31de3)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_deleteDialog, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_deleteDialog, layer)
 	}
@@ -1113,22 +1114,29 @@ func (m *TLDialogDeleteDialog) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogDeleteDialog) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1b31de3: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x1b31de3:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1142,28 +1150,22 @@ type TLDialogGetUserPinnedMessage struct {
 }
 
 func (m *TLDialogGetUserPinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getUserPinnedMessage, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetUserPinnedMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x8f9bc2b1: func() error {
-			x.PutClazzID(0x8f9bc2b1)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getUserPinnedMessage, int(layer)); clazzId {
+	case 0x8f9bc2b1:
+		x.PutClazzID(0x8f9bc2b1)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getUserPinnedMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getUserPinnedMessage, layer)
 	}
@@ -1171,22 +1173,29 @@ func (m *TLDialogGetUserPinnedMessage) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLDialogGetUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x8f9bc2b1: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x8f9bc2b1:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1201,29 +1210,23 @@ type TLDialogUpdateUserPinnedMessage struct {
 }
 
 func (m *TLDialogUpdateUserPinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateUserPinnedMessage, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogUpdateUserPinnedMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1622f22a: func() error {
-			x.PutClazzID(0x1622f22a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateUserPinnedMessage, int(layer)); clazzId {
+	case 0x1622f22a:
+		x.PutClazzID(0x1622f22a)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			x.PutInt32(m.PinnedMsgId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt32(m.PinnedMsgId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateUserPinnedMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateUserPinnedMessage, layer)
 	}
@@ -1231,23 +1234,33 @@ func (m *TLDialogUpdateUserPinnedMessage) Encode(x *bin.Encoder, layer int32) er
 
 // Decode <--
 func (m *TLDialogUpdateUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1622f22a: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			m.PinnedMsgId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x1622f22a:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PinnedMsgId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1261,28 +1274,22 @@ type TLDialogInsertOrUpdateDialogFilter struct {
 }
 
 func (m *TLDialogInsertOrUpdateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_insertOrUpdateDialogFilter, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogInsertOrUpdateDialogFilter) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xaa8a384: func() error {
-			x.PutClazzID(0xaa8a384)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_insertOrUpdateDialogFilter, int(layer)); clazzId {
+	case 0xaa8a384:
+		x.PutClazzID(0xaa8a384)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.Id)
-			_ = m.DialogFilter.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Id)
+		_ = m.DialogFilter.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_insertOrUpdateDialogFilter, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_insertOrUpdateDialogFilter, layer)
 	}
@@ -1290,26 +1297,30 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Encode(x *bin.Encoder, layer int32)
 
 // Decode <--
 func (m *TLDialogInsertOrUpdateDialogFilter) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xaa8a384: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.Id, err = d.Int32()
-
-			// m3 := &tg.DialogFilter{}
-			// _ = m3.Decode(d)
-			// m.DialogFilter = m3
-			m.DialogFilter, _ = tg.DecodeDialogFilterClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xaa8a384:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		m.DialogFilter, err = tg.DecodeDialogFilterClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1322,27 +1333,21 @@ type TLDialogDeleteDialogFilter struct {
 }
 
 func (m *TLDialogDeleteDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_deleteDialogFilter, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogDeleteDialogFilter) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1dd3e97: func() error {
-			x.PutClazzID(0x1dd3e97)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_deleteDialogFilter, int(layer)); clazzId {
+	case 0x1dd3e97:
+		x.PutClazzID(0x1dd3e97)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.Id)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Id)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_deleteDialogFilter, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_deleteDialogFilter, layer)
 	}
@@ -1350,21 +1355,25 @@ func (m *TLDialogDeleteDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogDeleteDialogFilter) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1dd3e97: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.Id, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x1dd3e97:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1377,28 +1386,22 @@ type TLDialogUpdateDialogFiltersOrder struct {
 }
 
 func (m *TLDialogUpdateDialogFiltersOrder) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateDialogFiltersOrder, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb13c0b3f: func() error {
-			x.PutClazzID(0xb13c0b3f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateDialogFiltersOrder, int(layer)); clazzId {
+	case 0xb13c0b3f:
+		x.PutClazzID(0xb13c0b3f)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			iface.EncodeInt32List(x, m.Order)
+		iface.EncodeInt32List(x, m.Order)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateDialogFiltersOrder, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateDialogFiltersOrder, layer)
 	}
@@ -1406,22 +1409,26 @@ func (m *TLDialogUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32) e
 
 // Decode <--
 func (m *TLDialogUpdateDialogFiltersOrder) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb13c0b3f: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			m.Order, err = iface.DecodeInt32List(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb13c0b3f:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Order, err = iface.DecodeInt32List(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1433,26 +1440,20 @@ type TLDialogGetDialogFilters struct {
 }
 
 func (m *TLDialogGetDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilters, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x6c676c3c: func() error {
-			x.PutClazzID(0x6c676c3c)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilters, int(layer)); clazzId {
+	case 0x6c676c3c:
+		x.PutClazzID(0x6c676c3c)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilters, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilters, layer)
 	}
@@ -1460,20 +1461,21 @@ func (m *TLDialogGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogFilters) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x6c676c3c: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x6c676c3c:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1486,27 +1488,21 @@ type TLDialogGetDialogFolder struct {
 }
 
 func (m *TLDialogGetDialogFolder) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFolder, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogFolder) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x411b8eb5: func() error {
-			x.PutClazzID(0x411b8eb5)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFolder, int(layer)); clazzId {
+	case 0x411b8eb5:
+		x.PutClazzID(0x411b8eb5)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.FolderId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.FolderId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFolder, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFolder, layer)
 	}
@@ -1514,21 +1510,25 @@ func (m *TLDialogGetDialogFolder) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogFolder) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x411b8eb5: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.FolderId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x411b8eb5:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1542,30 +1542,24 @@ type TLDialogEditPeerFolders struct {
 }
 
 func (m *TLDialogEditPeerFolders) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_editPeerFolders, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2446869a: func() error {
-			x.PutClazzID(0x2446869a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_editPeerFolders, int(layer)); clazzId {
+	case 0x2446869a:
+		x.PutClazzID(0x2446869a)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			iface.EncodeInt64List(x, m.PeerDialogList)
+		iface.EncodeInt64List(x, m.PeerDialogList)
 
-			x.PutInt32(m.FolderId)
+		x.PutInt32(m.FolderId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_editPeerFolders, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_editPeerFolders, layer)
 	}
@@ -1573,24 +1567,31 @@ func (m *TLDialogEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogEditPeerFolders) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2446869a: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			m.PeerDialogList, err = iface.DecodeInt64List(d)
-
-			m.FolderId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2446869a:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.PeerDialogList, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1604,28 +1605,22 @@ type TLDialogGetChannelMessageReadParticipants struct {
 }
 
 func (m *TLDialogGetChannelMessageReadParticipants) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getChannelMessageReadParticipants, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetChannelMessageReadParticipants) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x28bd4d3b: func() error {
-			x.PutClazzID(0x28bd4d3b)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getChannelMessageReadParticipants, int(layer)); clazzId {
+	case 0x28bd4d3b:
+		x.PutClazzID(0x28bd4d3b)
 
-			x.PutInt64(m.UserId)
-			x.PutInt64(m.ChannelId)
-			x.PutInt32(m.MsgId)
+		x.PutInt64(m.UserId)
+		x.PutInt64(m.ChannelId)
+		x.PutInt32(m.MsgId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getChannelMessageReadParticipants, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getChannelMessageReadParticipants, layer)
 	}
@@ -1633,22 +1628,29 @@ func (m *TLDialogGetChannelMessageReadParticipants) Encode(x *bin.Encoder, layer
 
 // Decode <--
 func (m *TLDialogGetChannelMessageReadParticipants) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x28bd4d3b: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.ChannelId, err = d.Int64()
-			m.MsgId, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x28bd4d3b:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChannelId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.MsgId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1663,29 +1665,23 @@ type TLDialogSetChatTheme struct {
 }
 
 func (m *TLDialogSetChatTheme) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setChatTheme, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xe9aea22a: func() error {
-			x.PutClazzID(0xe9aea22a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_setChatTheme, int(layer)); clazzId {
+	case 0xe9aea22a:
+		x.PutClazzID(0xe9aea22a)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			x.PutString(m.ThemeEmoticon)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutString(m.ThemeEmoticon)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_setChatTheme, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setChatTheme, layer)
 	}
@@ -1693,23 +1689,33 @@ func (m *TLDialogSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogSetChatTheme) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xe9aea22a: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			m.ThemeEmoticon, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xe9aea22a:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ThemeEmoticon, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1724,29 +1730,23 @@ type TLDialogSetHistoryTTL struct {
 }
 
 func (m *TLDialogSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setHistoryTTL, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x9d9b8ac: func() error {
-			x.PutClazzID(0x9d9b8ac)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_setHistoryTTL, int(layer)); clazzId {
+	case 0x9d9b8ac:
+		x.PutClazzID(0x9d9b8ac)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			x.PutInt32(m.TtlPeriod)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt32(m.TtlPeriod)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_setHistoryTTL, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setHistoryTTL, layer)
 	}
@@ -1754,23 +1754,33 @@ func (m *TLDialogSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x9d9b8ac: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			m.TtlPeriod, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x9d9b8ac:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.TtlPeriod, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1785,46 +1795,40 @@ type TLDialogGetMyDialogsData struct {
 }
 
 func (m *TLDialogGetMyDialogsData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getMyDialogsData, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetMyDialogsData) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x7ee08f03: func() error {
-			x.PutClazzID(0x7ee08f03)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getMyDialogsData, int(layer)); clazzId {
+	case 0x7ee08f03:
+		x.PutClazzID(0x7ee08f03)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.User == true {
-					flags |= 1 << 0
-				}
-				if m.Chat == true {
-					flags |= 1 << 1
-				}
-				if m.Channel == true {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.User == true {
+				flags |= 1 << 0
+			}
+			if m.Chat == true {
+				flags |= 1 << 1
+			}
+			if m.Channel == true {
+				flags |= 1 << 2
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.UserId)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.UserId)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getMyDialogsData, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getMyDialogsData, layer)
 	}
@@ -1832,31 +1836,35 @@ func (m *TLDialogGetMyDialogsData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x7ee08f03: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.UserId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.User = true
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.Chat = true
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.Channel = true
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x7ee08f03:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.User = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Chat = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.Channel = true
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1873,31 +1881,25 @@ type TLDialogGetSavedDialogs struct {
 }
 
 func (m *TLDialogGetSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getSavedDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x38c1d668: func() error {
-			x.PutClazzID(0x38c1d668)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getSavedDialogs, int(layer)); clazzId {
+	case 0x38c1d668:
+		x.PutClazzID(0x38c1d668)
 
-			x.PutInt64(m.UserId)
-			_ = m.ExcludePinned.Encode(x, layer)
-			x.PutInt32(m.OffsetDate)
-			x.PutInt32(m.OffsetId)
-			_ = m.OffsetPeer.Encode(x, layer)
-			x.PutInt32(m.Limit)
+		x.PutInt64(m.UserId)
+		_ = m.ExcludePinned.Encode(x, layer)
+		x.PutInt32(m.OffsetDate)
+		x.PutInt32(m.OffsetId)
+		_ = m.OffsetPeer.Encode(x, layer)
+		x.PutInt32(m.Limit)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getSavedDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getSavedDialogs, layer)
 	}
@@ -1905,35 +1907,45 @@ func (m *TLDialogGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetSavedDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x38c1d668: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.ExcludePinned = m2
-			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
-
-			m.OffsetDate, err = d.Int32()
-			m.OffsetId, err = d.Int32()
-
-			// m5 := &tg.PeerUtil{}
-			// _ = m5.Decode(d)
-			// m.OffsetPeer = m5
-			m.OffsetPeer, _ = tg.DecodePeerUtilClazz(d)
-
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x38c1d668:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.OffsetDate, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.OffsetId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		m.OffsetPeer, err = tg.DecodePeerUtilClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1945,26 +1957,20 @@ type TLDialogGetPinnedSavedDialogs struct {
 }
 
 func (m *TLDialogGetPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getPinnedSavedDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x40a3b7e7: func() error {
-			x.PutClazzID(0x40a3b7e7)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getPinnedSavedDialogs, int(layer)); clazzId {
+	case 0x40a3b7e7:
+		x.PutClazzID(0x40a3b7e7)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getPinnedSavedDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getPinnedSavedDialogs, layer)
 	}
@@ -1972,20 +1978,21 @@ func (m *TLDialogGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) erro
 
 // Decode <--
 func (m *TLDialogGetPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x40a3b7e7: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x40a3b7e7:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1999,28 +2006,22 @@ type TLDialogToggleSavedDialogPin struct {
 }
 
 func (m *TLDialogToggleSavedDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleSavedDialogPin, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x44f317d9: func() error {
-			x.PutClazzID(0x44f317d9)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleSavedDialogPin, int(layer)); clazzId {
+	case 0x44f317d9:
+		x.PutClazzID(0x44f317d9)
 
-			x.PutInt64(m.UserId)
-			_ = m.Peer.Encode(x, layer)
-			_ = m.Pinned.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		_ = m.Peer.Encode(x, layer)
+		_ = m.Pinned.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleSavedDialogPin, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleSavedDialogPin, layer)
 	}
@@ -2028,30 +2029,31 @@ func (m *TLDialogToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLDialogToggleSavedDialogPin) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x44f317d9: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.PeerUtil{}
-			// _ = m2.Decode(d)
-			// m.Peer = m2
-			m.Peer, _ = tg.DecodePeerUtilClazz(d)
-
-			// m3 := &tg.Bool{}
-			// _ = m3.Decode(d)
-			// m.Pinned = m3
-			m.Pinned, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x44f317d9:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Peer, err = tg.DecodePeerUtilClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Pinned, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2065,29 +2067,25 @@ type TLDialogReorderPinnedSavedDialogs struct {
 }
 
 func (m *TLDialogReorderPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_reorderPinnedSavedDialogs, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd85ccbd2: func() error {
-			x.PutClazzID(0xd85ccbd2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_reorderPinnedSavedDialogs, int(layer)); clazzId {
+	case 0xd85ccbd2:
+		x.PutClazzID(0xd85ccbd2)
 
-			x.PutInt64(m.UserId)
-			_ = m.Force.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		_ = m.Force.Encode(x, layer)
 
-			_ = iface.EncodeObjectList(x, m.Order, layer)
+		if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_reorderPinnedSavedDialogs, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_reorderPinnedSavedDialogs, layer)
 	}
@@ -2095,42 +2093,46 @@ func (m *TLDialogReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) 
 
 // Decode <--
 func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd85ccbd2: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.Force = m2
-			m.Force, _ = tg.DecodeBoolClazz(d)
-
-			c3, err2 := d.ClazzID()
-			if c3 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
-				return err2
-			}
-			l3, err3 := d.Int()
-			v3 := make([]tg.PeerUtilClazz, l3)
-			for i := 0; i < l3; i++ {
-				// vv := new(PeerUtil)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v3[i] = vv
-				v3[i], err3 = tg.DecodePeerUtilClazz(d)
-				_ = err3
-			}
-			m.Order = v3
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd85ccbd2:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Force, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		c3, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		}
+		l3, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v3 := make([]tg.PeerUtilClazz, l3)
+		for i := 0; i < l3; i++ {
+			v3[i], err3 = tg.DecodePeerUtilClazz(d)
+			if err3 != nil {
+				return err3
+			}
+		}
+		m.Order = v3
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2143,27 +2145,21 @@ type TLDialogGetDialogFilter struct {
 }
 
 func (m *TLDialogGetDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilter, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogFilter) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xf388061c: func() error {
-			x.PutClazzID(0xf388061c)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilter, int(layer)); clazzId {
+	case 0xf388061c:
+		x.PutClazzID(0xf388061c)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.Id)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Id)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilter, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilter, layer)
 	}
@@ -2171,21 +2167,25 @@ func (m *TLDialogGetDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogGetDialogFilter) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xf388061c: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.Id, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xf388061c:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2198,27 +2198,21 @@ type TLDialogGetDialogFilterBySlug struct {
 }
 
 func (m *TLDialogGetDialogFilterBySlug) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilterBySlug, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogFilterBySlug) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x4e457fef: func() error {
-			x.PutClazzID(0x4e457fef)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilterBySlug, int(layer)); clazzId {
+	case 0x4e457fef:
+		x.PutClazzID(0x4e457fef)
 
-			x.PutInt64(m.UserId)
-			x.PutString(m.Slug)
+		x.PutInt64(m.UserId)
+		x.PutString(m.Slug)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilterBySlug, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilterBySlug, layer)
 	}
@@ -2226,21 +2220,25 @@ func (m *TLDialogGetDialogFilterBySlug) Encode(x *bin.Encoder, layer int32) erro
 
 // Decode <--
 func (m *TLDialogGetDialogFilterBySlug) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x4e457fef: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.Slug, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x4e457fef:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Slug, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2253,27 +2251,21 @@ type TLDialogCreateDialogFilter struct {
 }
 
 func (m *TLDialogCreateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_createDialogFilter, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogCreateDialogFilter) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xc6cb636f: func() error {
-			x.PutClazzID(0xc6cb636f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_createDialogFilter, int(layer)); clazzId {
+	case 0xc6cb636f:
+		x.PutClazzID(0xc6cb636f)
 
-			x.PutInt64(m.UserId)
-			_ = m.DialogFilter.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		_ = m.DialogFilter.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_createDialogFilter, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_createDialogFilter, layer)
 	}
@@ -2281,25 +2273,26 @@ func (m *TLDialogCreateDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogCreateDialogFilter) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xc6cb636f: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &DialogFilterExt{}
-			// _ = m2.Decode(d)
-			// m.DialogFilter = m2
-			m.DialogFilter, _ = DecodeDialogFilterExtClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xc6cb636f:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.DialogFilter, err = DecodeDialogFilterExtClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2316,59 +2309,53 @@ type TLDialogUpdateUnreadCount struct {
 }
 
 func (m *TLDialogUpdateUnreadCount) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateUnreadCount, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogUpdateUnreadCount) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2bac334d: func() error {
-			x.PutClazzID(0x2bac334d)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateUnreadCount, int(layer)); clazzId {
+	case 0x2bac334d:
+		x.PutClazzID(0x2bac334d)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.UnreadCount != nil {
-					flags |= 1 << 0
-				}
-				if m.UnreadMentionsCount != nil {
-					flags |= 1 << 1
-				}
-				if m.UnreadReactionsCount != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
 			if m.UnreadCount != nil {
-				x.PutInt32(*m.UnreadCount)
+				flags |= 1 << 0
 			}
-
 			if m.UnreadMentionsCount != nil {
-				x.PutInt32(*m.UnreadMentionsCount)
+				flags |= 1 << 1
 			}
-
 			if m.UnreadReactionsCount != nil {
-				x.PutInt32(*m.UnreadReactionsCount)
+				flags |= 1 << 2
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_updateUnreadCount, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		if m.UnreadCount != nil {
+			x.PutInt32(*m.UnreadCount)
+		}
+
+		if m.UnreadMentionsCount != nil {
+			x.PutInt32(*m.UnreadMentionsCount)
+		}
+
+		if m.UnreadReactionsCount != nil {
+			x.PutInt32(*m.UnreadReactionsCount)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateUnreadCount, layer)
 	}
@@ -2376,36 +2363,55 @@ func (m *TLDialogUpdateUnreadCount) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogUpdateUnreadCount) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2bac334d: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.UnreadCount = new(int32)
-				*m.UnreadCount, err = d.Int32()
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.UnreadMentionsCount = new(int32)
-				*m.UnreadMentionsCount, err = d.Int32()
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.UnreadReactionsCount = new(int32)
-				*m.UnreadReactionsCount, err = d.Int32()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2bac334d:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.UnreadCount = new(int32)
+			*m.UnreadCount, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.UnreadMentionsCount = new(int32)
+			*m.UnreadMentionsCount, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.UnreadReactionsCount = new(int32)
+			*m.UnreadReactionsCount, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2418,27 +2424,21 @@ type TLDialogToggleDialogFilterTags struct {
 }
 
 func (m *TLDialogToggleDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleDialogFilterTags, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa0cd6d89: func() error {
-			x.PutClazzID(0xa0cd6d89)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogFilterTags, int(layer)); clazzId {
+	case 0xa0cd6d89:
+		x.PutClazzID(0xa0cd6d89)
 
-			x.PutInt64(m.UserId)
-			_ = m.Enabled.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		_ = m.Enabled.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogFilterTags, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleDialogFilterTags, layer)
 	}
@@ -2446,25 +2446,26 @@ func (m *TLDialogToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) err
 
 // Decode <--
 func (m *TLDialogToggleDialogFilterTags) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa0cd6d89: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.Enabled = m2
-			m.Enabled, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa0cd6d89:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Enabled, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2476,26 +2477,20 @@ type TLDialogGetDialogFilterTags struct {
 }
 
 func (m *TLDialogGetDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilterTags, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogGetDialogFilterTags) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xfaf0fa97: func() error {
-			x.PutClazzID(0xfaf0fa97)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilterTags, int(layer)); clazzId {
+	case 0xfaf0fa97:
+		x.PutClazzID(0xfaf0fa97)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilterTags, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilterTags, layer)
 	}
@@ -2503,20 +2498,21 @@ func (m *TLDialogGetDialogFilterTags) Encode(x *bin.Encoder, layer int32) error 
 
 // Decode <--
 func (m *TLDialogGetDialogFilterTags) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xfaf0fa97: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xfaf0fa97:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2532,43 +2528,37 @@ type TLDialogSetChatWallpaper struct {
 }
 
 func (m *TLDialogSetChatWallpaper) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setChatWallpaper, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDialogSetChatWallpaper) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb551db12: func() error {
-			x.PutClazzID(0xb551db12)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_setChatWallpaper, int(layer)); clazzId {
+	case 0xb551db12:
+		x.PutClazzID(0xb551db12)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.WallpaperOverridden == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.WallpaperOverridden == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
-			x.PutInt64(m.WallpaperId)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt64(m.WallpaperId)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialog_setChatWallpaper, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setChatWallpaper, layer)
 	}
@@ -2576,28 +2566,41 @@ func (m *TLDialogSetChatWallpaper) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogSetChatWallpaper) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb551db12: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.UserId, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
-			m.WallpaperId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.WallpaperOverridden = true
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb551db12:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.WallpaperId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.WallpaperOverridden = true
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }

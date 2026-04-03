@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dfs
@@ -40,49 +40,43 @@ type TLDfsWriteFilePartData struct {
 }
 
 func (m *TLDfsWriteFilePartData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_writeFilePartData, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsWriteFilePartData) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1a484107: func() error {
-			x.PutClazzID(0x1a484107)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_writeFilePartData, int(layer)); clazzId {
+	case 0x1a484107:
+		x.PutClazzID(0x1a484107)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Big == true {
-					flags |= 1 << 0
-				}
-				if m.FileTotalParts != nil {
-					flags |= 1 << 1
-				}
-
-				return flags
+			if m.Big == true {
+				flags |= 1 << 0
 			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.Creator)
-			x.PutInt64(m.FileId)
-			x.PutInt32(m.FilePart)
-			x.PutBytes(m.Bytes)
 			if m.FileTotalParts != nil {
-				x.PutInt32(*m.FileTotalParts)
+				flags |= 1 << 1
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_writeFilePartData, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.Creator)
+		x.PutInt64(m.FileId)
+		x.PutInt32(m.FilePart)
+		x.PutBytes(m.Bytes)
+		if m.FileTotalParts != nil {
+			x.PutInt32(*m.FileTotalParts)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_writeFilePartData, layer)
 	}
@@ -90,32 +84,48 @@ func (m *TLDfsWriteFilePartData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsWriteFilePartData) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1a484107: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Creator, err = d.Int64()
-			m.FileId, err = d.Int64()
-			m.FilePart, err = d.Int32()
-			m.Bytes, err = d.Bytes()
-			if (flags & (1 << 0)) != 0 {
-				m.Big = true
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.FileTotalParts = new(int32)
-				*m.FileTotalParts, err = d.Int32()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x1a484107:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.FileId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.FilePart, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Bytes, err = d.Bytes()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Big = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.FileTotalParts = new(int32)
+			*m.FileTotalParts, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -128,27 +138,21 @@ type TLDfsUploadPhotoFileV2 struct {
 }
 
 func (m *TLDfsUploadPhotoFileV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadPhotoFileV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadPhotoFileV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2410d1a2: func() error {
-			x.PutClazzID(0x2410d1a2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadPhotoFileV2, int(layer)); clazzId {
+	case 0x2410d1a2:
+		x.PutClazzID(0x2410d1a2)
 
-			x.PutInt64(m.Creator)
-			_ = m.File.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.File.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadPhotoFileV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadPhotoFileV2, layer)
 	}
@@ -156,90 +160,93 @@ func (m *TLDfsUploadPhotoFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadPhotoFileV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2410d1a2: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputFile{}
-			// _ = m2.Decode(d)
-			// m.File = m2
-			m.File, _ = tg.DecodeInputFileClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2410d1a2:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.File, err = tg.DecodeInputFileClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // TLDfsUploadProfilePhotoFileV2 <--
 type TLDfsUploadProfilePhotoFileV2 struct {
-	ClazzID      uint32            `json:"_id"`
-	Creator      int64             `json:"creator"`
-	File         tg.InputFileClazz `json:"file"`
-	Video        tg.InputFileClazz `json:"video"`
-	VideoStartTs *float64          `json:"video_start_ts"`
+	ClazzID          uint32            `json:"_id"`
+	Creator          int64             `json:"creator"`
+	File             tg.InputFileClazz `json:"file"`
+	Video            tg.InputFileClazz `json:"video"`
+	VideoStartTs     *float64          `json:"video_start_ts"`
+	VideoEmojiMarkup tg.VideoSizeClazz `json:"video_emoji_markup"`
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadProfilePhotoFileV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xcc1da2b2: func() error {
-			x.PutClazzID(0xcc1da2b2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadProfilePhotoFileV2, int(layer)); clazzId {
+	case 0x872313d8:
+		x.PutClazzID(0x872313d8)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.File != nil {
-					flags |= 1 << 0
-				}
-				if m.Video != nil {
-					flags |= 1 << 1
-				}
-				if m.VideoStartTs != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.Creator)
 			if m.File != nil {
-				_ = m.File.Encode(x, layer)
+				flags |= 1 << 0
 			}
-
 			if m.Video != nil {
-				_ = m.Video.Encode(x, layer)
+				flags |= 1 << 1
 			}
-
 			if m.VideoStartTs != nil {
-				x.PutDouble(*m.VideoStartTs)
+				flags |= 1 << 2
+			}
+			if m.VideoEmojiMarkup != nil {
+				flags |= 1 << 4
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadProfilePhotoFileV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.Creator)
+		if m.File != nil {
+			_ = m.File.Encode(x, layer)
+		}
+
+		if m.Video != nil {
+			_ = m.Video.Encode(x, layer)
+		}
+
+		if m.VideoStartTs != nil {
+			x.PutDouble(*m.VideoStartTs)
+		}
+
+		if m.VideoEmojiMarkup != nil {
+			_ = m.VideoEmojiMarkup.Encode(x, layer)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadProfilePhotoFileV2, layer)
 	}
@@ -247,38 +254,52 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *bin.Encoder, layer int32) erro
 
 // Decode <--
 func (m *TLDfsUploadProfilePhotoFileV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xcc1da2b2: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Creator, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				// m3 := &tg.InputFile{}
-				// _ = m3.Decode(d)
-				// m.File = m3
-				m.File, _ = tg.DecodeInputFileClazz(d)
-			}
-			if (flags & (1 << 1)) != 0 {
-				// m4 := &tg.InputFile{}
-				// _ = m4.Decode(d)
-				// m.Video = m4
-				m.Video, _ = tg.DecodeInputFileClazz(d)
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.VideoStartTs = new(float64)
-				*m.VideoStartTs, err = d.Double()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x872313d8:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.File, err = tg.DecodeInputFileClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Video, err = tg.DecodeInputFileClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.VideoStartTs = new(float64)
+			*m.VideoStartTs, err = d.Double()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 4)) != 0 {
+			m.VideoEmojiMarkup, err = tg.DecodeVideoSizeClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -291,27 +312,21 @@ type TLDfsUploadEncryptedFileV2 struct {
 }
 
 func (m *TLDfsUploadEncryptedFileV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadEncryptedFileV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadEncryptedFileV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x79d3c523: func() error {
-			x.PutClazzID(0x79d3c523)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadEncryptedFileV2, int(layer)); clazzId {
+	case 0x79d3c523:
+		x.PutClazzID(0x79d3c523)
 
-			x.PutInt64(m.Creator)
-			_ = m.File.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.File.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadEncryptedFileV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadEncryptedFileV2, layer)
 	}
@@ -319,25 +334,26 @@ func (m *TLDfsUploadEncryptedFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadEncryptedFileV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x79d3c523: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputEncryptedFile{}
-			// _ = m2.Decode(d)
-			// m.File = m2
-			m.File, _ = tg.DecodeInputEncryptedFileClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x79d3c523:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.File, err = tg.DecodeInputEncryptedFileClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -351,28 +367,22 @@ type TLDfsDownloadFile struct {
 }
 
 func (m *TLDfsDownloadFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_downloadFile, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsDownloadFile) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd6bfee3e: func() error {
-			x.PutClazzID(0xd6bfee3e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_downloadFile, int(layer)); clazzId {
+	case 0xd6bfee3e:
+		x.PutClazzID(0xd6bfee3e)
 
-			_ = m.Location.Encode(x, layer)
-			x.PutInt64(m.Offset)
-			x.PutInt32(m.Limit)
+		_ = m.Location.Encode(x, layer)
+		x.PutInt64(m.Offset)
+		x.PutInt32(m.Limit)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_downloadFile, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_downloadFile, layer)
 	}
@@ -380,27 +390,31 @@ func (m *TLDfsDownloadFile) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd6bfee3e: func() (err error) {
-
-			// m1 := &tg.InputFileLocation{}
-			// _ = m1.Decode(d)
-			// m.Location = m1
-			m.Location, _ = tg.DecodeInputFileLocationClazz(d)
-
-			m.Offset, err = d.Int64()
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd6bfee3e:
+
+		m.Location, err = tg.DecodeInputFileLocationClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Offset, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -413,27 +427,21 @@ type TLDfsUploadDocumentFileV2 struct {
 }
 
 func (m *TLDfsUploadDocumentFileV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadDocumentFileV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadDocumentFileV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x76336db7: func() error {
-			x.PutClazzID(0x76336db7)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadDocumentFileV2, int(layer)); clazzId {
+	case 0x76336db7:
+		x.PutClazzID(0x76336db7)
 
-			x.PutInt64(m.Creator)
-			_ = m.Media.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.Media.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadDocumentFileV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadDocumentFileV2, layer)
 	}
@@ -441,25 +449,26 @@ func (m *TLDfsUploadDocumentFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadDocumentFileV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x76336db7: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputMedia{}
-			// _ = m2.Decode(d)
-			// m.Media = m2
-			m.Media, _ = tg.DecodeInputMediaClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x76336db7:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Media, err = tg.DecodeInputMediaClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -472,27 +481,21 @@ type TLDfsUploadGifDocumentMedia struct {
 }
 
 func (m *TLDfsUploadGifDocumentMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadGifDocumentMedia, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadGifDocumentMedia) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x41c4cd00: func() error {
-			x.PutClazzID(0x41c4cd00)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadGifDocumentMedia, int(layer)); clazzId {
+	case 0x41c4cd00:
+		x.PutClazzID(0x41c4cd00)
 
-			x.PutInt64(m.Creator)
-			_ = m.Media.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.Media.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadGifDocumentMedia, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadGifDocumentMedia, layer)
 	}
@@ -500,25 +503,26 @@ func (m *TLDfsUploadGifDocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 
 // Decode <--
 func (m *TLDfsUploadGifDocumentMedia) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x41c4cd00: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputMedia{}
-			// _ = m2.Decode(d)
-			// m.Media = m2
-			m.Media, _ = tg.DecodeInputMediaClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x41c4cd00:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Media, err = tg.DecodeInputMediaClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -531,27 +535,21 @@ type TLDfsUploadMp4DocumentMedia struct {
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadMp4DocumentMedia, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadMp4DocumentMedia) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa2a4f818: func() error {
-			x.PutClazzID(0xa2a4f818)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadMp4DocumentMedia, int(layer)); clazzId {
+	case 0xa2a4f818:
+		x.PutClazzID(0xa2a4f818)
 
-			x.PutInt64(m.Creator)
-			_ = m.Media.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.Media.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadMp4DocumentMedia, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadMp4DocumentMedia, layer)
 	}
@@ -559,25 +557,26 @@ func (m *TLDfsUploadMp4DocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 
 // Decode <--
 func (m *TLDfsUploadMp4DocumentMedia) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa2a4f818: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputMedia{}
-			// _ = m2.Decode(d)
-			// m.Media = m2
-			m.Media, _ = tg.DecodeInputMediaClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa2a4f818:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Media, err = tg.DecodeInputMediaClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -592,29 +591,23 @@ type TLDfsUploadWallPaperFile struct {
 }
 
 func (m *TLDfsUploadWallPaperFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadWallPaperFile, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xc1a61056: func() error {
-			x.PutClazzID(0xc1a61056)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadWallPaperFile, int(layer)); clazzId {
+	case 0xc1a61056:
+		x.PutClazzID(0xc1a61056)
 
-			x.PutInt64(m.Creator)
-			_ = m.File.Encode(x, layer)
-			x.PutString(m.MimeType)
-			_ = m.Admin.Encode(x, layer)
+		x.PutInt64(m.Creator)
+		_ = m.File.Encode(x, layer)
+		x.PutString(m.MimeType)
+		_ = m.Admin.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadWallPaperFile, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadWallPaperFile, layer)
 	}
@@ -622,32 +615,36 @@ func (m *TLDfsUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xc1a61056: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputFile{}
-			// _ = m2.Decode(d)
-			// m.File = m2
-			m.File, _ = tg.DecodeInputFileClazz(d)
-
-			m.MimeType, err = d.String()
-
-			// m4 := &tg.Bool{}
-			// _ = m4.Decode(d)
-			// m.Admin = m4
-			m.Admin, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xc1a61056:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.File, err = tg.DecodeInputFileClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MimeType, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		m.Admin, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -663,47 +660,41 @@ type TLDfsUploadThemeFile struct {
 }
 
 func (m *TLDfsUploadThemeFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadThemeFile, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xdea64f97: func() error {
-			x.PutClazzID(0xdea64f97)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadThemeFile, int(layer)); clazzId {
+	case 0xdea64f97:
+		x.PutClazzID(0xdea64f97)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Thumb != nil {
-					flags |= 1 << 0
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.Creator)
-			_ = m.File.Encode(x, layer)
 			if m.Thumb != nil {
-				_ = m.Thumb.Encode(x, layer)
+				flags |= 1 << 0
 			}
 
-			x.PutString(m.MimeType)
-			x.PutString(m.FileName)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.Creator)
+		_ = m.File.Encode(x, layer)
+		if m.Thumb != nil {
+			_ = m.Thumb.Encode(x, layer)
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadThemeFile, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		x.PutString(m.MimeType)
+		x.PutString(m.FileName)
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadThemeFile, layer)
 	}
@@ -711,36 +702,46 @@ func (m *TLDfsUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadThemeFile) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xdea64f97: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Creator, err = d.Int64()
-
-			// m3 := &tg.InputFile{}
-			// _ = m3.Decode(d)
-			// m.File = m3
-			m.File, _ = tg.DecodeInputFileClazz(d)
-
-			if (flags & (1 << 0)) != 0 {
-				// m4 := &tg.InputFile{}
-				// _ = m4.Decode(d)
-				// m.Thumb = m4
-				m.Thumb, _ = tg.DecodeInputFileClazz(d)
-			}
-			m.MimeType, err = d.String()
-			m.FileName, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xdea64f97:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.File, err = tg.DecodeInputFileClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 0)) != 0 {
+			m.Thumb, err = tg.DecodeInputFileClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		m.MimeType, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.FileName, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -755,29 +756,23 @@ type TLDfsUploadRingtoneFile struct {
 }
 
 func (m *TLDfsUploadRingtoneFile) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadRingtoneFile, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2b3c5b1: func() error {
-			x.PutClazzID(0x2b3c5b1)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadRingtoneFile, int(layer)); clazzId {
+	case 0x2b3c5b1:
+		x.PutClazzID(0x2b3c5b1)
 
-			x.PutInt64(m.Creator)
-			_ = m.File.Encode(x, layer)
-			x.PutString(m.MimeType)
-			x.PutString(m.FileName)
+		x.PutInt64(m.Creator)
+		_ = m.File.Encode(x, layer)
+		x.PutString(m.MimeType)
+		x.PutString(m.FileName)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadRingtoneFile, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadRingtoneFile, layer)
 	}
@@ -785,28 +780,35 @@ func (m *TLDfsUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2b3c5b1: func() (err error) {
-			m.Creator, err = d.Int64()
-
-			// m2 := &tg.InputFile{}
-			// _ = m2.Decode(d)
-			// m.File = m2
-			m.File, _ = tg.DecodeInputFileClazz(d)
-
-			m.MimeType, err = d.String()
-			m.FileName, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2b3c5b1:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.File, err = tg.DecodeInputFileClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.MimeType, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.FileName, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -819,27 +821,21 @@ type TLDfsUploadedProfilePhoto struct {
 }
 
 func (m *TLDfsUploadedProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadedProfilePhoto, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLDfsUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa3aa2874: func() error {
-			x.PutClazzID(0xa3aa2874)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadedProfilePhoto, int(layer)); clazzId {
+	case 0xa3aa2874:
+		x.PutClazzID(0xa3aa2874)
 
-			x.PutInt64(m.Creator)
-			x.PutInt64(m.PhotoId)
+		x.PutInt64(m.Creator)
+		x.PutInt64(m.PhotoId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dfs_uploadedProfilePhoto, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadedProfilePhoto, layer)
 	}
@@ -847,21 +843,25 @@ func (m *TLDfsUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDfsUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa3aa2874: func() (err error) {
-			m.Creator, err = d.Int64()
-			m.PhotoId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa3aa2874:
+		m.Creator, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PhotoId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }

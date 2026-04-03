@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package gnetway
@@ -37,28 +37,22 @@ type TLGnetwaySendDataToGateway struct {
 }
 
 func (m *TLGnetwaySendDataToGateway) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_gnetway_sendDataToGateway, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLGnetwaySendDataToGateway) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x722d5ce0: func() error {
-			x.PutClazzID(0x722d5ce0)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_gnetway_sendDataToGateway, int(layer)); clazzId {
+	case 0x722d5ce0:
+		x.PutClazzID(0x722d5ce0)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.SessionId)
-			x.PutBytes(m.Payload)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.SessionId)
+		x.PutBytes(m.Payload)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_gnetway_sendDataToGateway, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_gnetway_sendDataToGateway, layer)
 	}
@@ -66,22 +60,29 @@ func (m *TLGnetwaySendDataToGateway) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLGnetwaySendDataToGateway) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x722d5ce0: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.SessionId, err = d.Int64()
-			m.Payload, err = d.Bytes()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x722d5ce0:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.SessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Payload, err = d.Bytes()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }

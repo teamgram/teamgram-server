@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dfs
@@ -33,7 +33,7 @@ func init() {
 	// RegisterClazzNameList
 	iface.RegisterClazzName(ClazzName_dfs_writeFilePartData, 0, 0x1a484107)        // 1a484107
 	iface.RegisterClazzName(ClazzName_dfs_uploadPhotoFileV2, 0, 0x2410d1a2)        // 2410d1a2
-	iface.RegisterClazzName(ClazzName_dfs_uploadProfilePhotoFileV2, 0, 0xcc1da2b2) // cc1da2b2
+	iface.RegisterClazzName(ClazzName_dfs_uploadProfilePhotoFileV2, 0, 0x872313d8) // 872313d8
 	iface.RegisterClazzName(ClazzName_dfs_uploadEncryptedFileV2, 0, 0x79d3c523)    // 79d3c523
 	iface.RegisterClazzName(ClazzName_dfs_downloadFile, 0, 0xd6bfee3e)             // d6bfee3e
 	iface.RegisterClazzName(ClazzName_dfs_uploadDocumentFileV2, 0, 0x76336db7)     // 76336db7
@@ -47,7 +47,7 @@ func init() {
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_dfs_writeFilePartData, 0x1a484107)        // 1a484107
 	iface.RegisterClazzIDName(ClazzName_dfs_uploadPhotoFileV2, 0x2410d1a2)        // 2410d1a2
-	iface.RegisterClazzIDName(ClazzName_dfs_uploadProfilePhotoFileV2, 0xcc1da2b2) // cc1da2b2
+	iface.RegisterClazzIDName(ClazzName_dfs_uploadProfilePhotoFileV2, 0x872313d8) // 872313d8
 	iface.RegisterClazzIDName(ClazzName_dfs_uploadEncryptedFileV2, 0x79d3c523)    // 79d3c523
 	iface.RegisterClazzIDName(ClazzName_dfs_downloadFile, 0xd6bfee3e)             // d6bfee3e
 	iface.RegisterClazzIDName(ClazzName_dfs_uploadDocumentFileV2, 0x76336db7)     // 76336db7

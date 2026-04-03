@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgram Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package idgen
@@ -34,7 +34,7 @@ type TLIdgenNextId struct {
 }
 
 func (m *TLIdgenNextId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_nextId, TLObject: m}
 	return wrapper.String()
 }
 
@@ -75,7 +75,7 @@ type TLIdgenNextIds struct {
 }
 
 func (m *TLIdgenNextIds) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_nextIds, TLObject: m}
 	return wrapper.String()
 }
 
@@ -122,7 +122,7 @@ type TLIdgenGetCurrentSeqId struct {
 }
 
 func (m *TLIdgenGetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getCurrentSeqId, TLObject: m}
 	return wrapper.String()
 }
 
@@ -170,7 +170,7 @@ type TLIdgenSetCurrentSeqId struct {
 }
 
 func (m *TLIdgenSetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_setCurrentSeqId, TLObject: m}
 	return wrapper.String()
 }
 
@@ -222,7 +222,7 @@ type TLIdgenGetNextSeqId struct {
 }
 
 func (m *TLIdgenGetNextSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextSeqId, TLObject: m}
 	return wrapper.String()
 }
 
@@ -270,7 +270,7 @@ type TLIdgenGetNextNSeqId struct {
 }
 
 func (m *TLIdgenGetNextNSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextNSeqId, TLObject: m}
 	return wrapper.String()
 }
 
@@ -322,7 +322,7 @@ type TLIdgenGetNextIdValList struct {
 }
 
 func (m *TLIdgenGetNextIdValList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextIdValList, TLObject: m}
 	return wrapper.String()
 }
 
@@ -386,7 +386,7 @@ type TLIdgenGetCurrentSeqIdList struct {
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "", TLObject: m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getCurrentSeqIdList, TLObject: m}
 	return wrapper.String()
 }
 

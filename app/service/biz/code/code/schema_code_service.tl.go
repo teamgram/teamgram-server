@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package code
@@ -41,45 +41,39 @@ type TLCodeCreatePhoneCode struct {
 }
 
 func (m *TLCodeCreatePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_createPhoneCode, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLCodeCreatePhoneCode) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x6023e09e: func() error {
-			x.PutClazzID(0x6023e09e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_code_createPhoneCode, int(layer)); clazzId {
+	case 0x6023e09e:
+		x.PutClazzID(0x6023e09e)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.PhoneNumberRegistered == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.PhoneNumberRegistered == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.SessionId)
-			x.PutString(m.Phone)
-			x.PutInt32(m.SentCodeType)
-			x.PutInt32(m.NextCodeType)
-			x.PutInt32(m.State)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.SessionId)
+		x.PutString(m.Phone)
+		x.PutInt32(m.SentCodeType)
+		x.PutInt32(m.NextCodeType)
+		x.PutInt32(m.State)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_code_createPhoneCode, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_createPhoneCode, layer)
 	}
@@ -87,30 +81,49 @@ func (m *TLCodeCreatePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLCodeCreatePhoneCode) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x6023e09e: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.AuthKeyId, err = d.Int64()
-			m.SessionId, err = d.Int64()
-			m.Phone, err = d.String()
-			if (flags & (1 << 0)) != 0 {
-				m.PhoneNumberRegistered = true
-			}
-			m.SentCodeType, err = d.Int32()
-			m.NextCodeType, err = d.Int32()
-			m.State, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x6023e09e:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.SessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Phone, err = d.String()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.PhoneNumberRegistered = true
+		}
+		m.SentCodeType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.NextCodeType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.State, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -124,28 +137,22 @@ type TLCodeGetPhoneCode struct {
 }
 
 func (m *TLCodeGetPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_getPhoneCode, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLCodeGetPhoneCode) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x61a4a0f9: func() error {
-			x.PutClazzID(0x61a4a0f9)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_code_getPhoneCode, int(layer)); clazzId {
+	case 0x61a4a0f9:
+		x.PutClazzID(0x61a4a0f9)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutString(m.Phone)
-			x.PutString(m.PhoneCodeHash)
+		x.PutInt64(m.AuthKeyId)
+		x.PutString(m.Phone)
+		x.PutString(m.PhoneCodeHash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_code_getPhoneCode, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_getPhoneCode, layer)
 	}
@@ -153,22 +160,29 @@ func (m *TLCodeGetPhoneCode) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLCodeGetPhoneCode) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x61a4a0f9: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.Phone, err = d.String()
-			m.PhoneCodeHash, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x61a4a0f9:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Phone, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeHash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -182,28 +196,22 @@ type TLCodeDeletePhoneCode struct {
 }
 
 func (m *TLCodeDeletePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_deletePhoneCode, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLCodeDeletePhoneCode) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa6b06a50: func() error {
-			x.PutClazzID(0xa6b06a50)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_code_deletePhoneCode, int(layer)); clazzId {
+	case 0xa6b06a50:
+		x.PutClazzID(0xa6b06a50)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutString(m.Phone)
-			x.PutString(m.PhoneCodeHash)
+		x.PutInt64(m.AuthKeyId)
+		x.PutString(m.Phone)
+		x.PutString(m.PhoneCodeHash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_code_deletePhoneCode, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_deletePhoneCode, layer)
 	}
@@ -211,22 +219,29 @@ func (m *TLCodeDeletePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLCodeDeletePhoneCode) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa6b06a50: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.Phone, err = d.String()
-			m.PhoneCodeHash, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa6b06a50:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Phone, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeHash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -241,29 +256,23 @@ type TLCodeUpdatePhoneCodeData struct {
 }
 
 func (m *TLCodeUpdatePhoneCodeData) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_updatePhoneCodeData, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLCodeUpdatePhoneCodeData) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb6950a95: func() error {
-			x.PutClazzID(0xb6950a95)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_code_updatePhoneCodeData, int(layer)); clazzId {
+	case 0xb6950a95:
+		x.PutClazzID(0xb6950a95)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutString(m.Phone)
-			x.PutString(m.PhoneCodeHash)
-			_ = m.CodeData.Encode(x, layer)
+		x.PutInt64(m.AuthKeyId)
+		x.PutString(m.Phone)
+		x.PutString(m.PhoneCodeHash)
+		_ = m.CodeData.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_code_updatePhoneCodeData, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_updatePhoneCodeData, layer)
 	}
@@ -271,27 +280,34 @@ func (m *TLCodeUpdatePhoneCodeData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLCodeUpdatePhoneCodeData) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb6950a95: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.Phone, err = d.String()
-			m.PhoneCodeHash, err = d.String()
-
-			// m4 := &PhoneCodeTransaction{}
-			// _ = m4.Decode(d)
-			// m.CodeData = m4
-			m.CodeData, _ = DecodePhoneCodeTransactionClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb6950a95:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Phone, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeHash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		m.CodeData, err = DecodePhoneCodeTransactionClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }

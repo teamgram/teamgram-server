@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 // ConstructorList
@@ -24,7 +24,7 @@ func init() {
 
 	// Method
 	iface.RegisterClazzID(0x3c2b0b17, func() iface.TLObject { return &TLMediaUploadPhotoFile{ClazzID: 0x3c2b0b17} })        // 0x3c2b0b17
-	iface.RegisterClazzID(0x973f2f24, func() iface.TLObject { return &TLMediaUploadProfilePhotoFile{ClazzID: 0x973f2f24} }) // 0x973f2f24
+	iface.RegisterClazzID(0xb6a04cc4, func() iface.TLObject { return &TLMediaUploadProfilePhotoFile{ClazzID: 0xb6a04cc4} }) // 0xb6a04cc4
 	iface.RegisterClazzID(0x657eb86b, func() iface.TLObject { return &TLMediaGetPhoto{ClazzID: 0x657eb86b} })               // 0x657eb86b
 	iface.RegisterClazzID(0xa1eb7f45, func() iface.TLObject { return &TLMediaGetPhotoSizeList{ClazzID: 0xa1eb7f45} })       // 0xa1eb7f45
 	iface.RegisterClazzID(0xfb5c80e0, func() iface.TLObject { return &TLMediaGetPhotoSizeListList{ClazzID: 0xfb5c80e0} })   // 0xfb5c80e0

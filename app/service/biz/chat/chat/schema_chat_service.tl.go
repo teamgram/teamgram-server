@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chat
@@ -35,26 +35,20 @@ type TLChatGetMutableChat struct {
 }
 
 func (m *TLChatGetMutableChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMutableChat, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetMutableChat) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2c2c25d2: func() error {
-			x.PutClazzID(0x2c2c25d2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getMutableChat, int(layer)); clazzId {
+	case 0x2c2c25d2:
+		x.PutClazzID(0x2c2c25d2)
 
-			x.PutInt64(m.ChatId)
+		x.PutInt64(m.ChatId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getMutableChat, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getMutableChat, layer)
 	}
@@ -62,20 +56,21 @@ func (m *TLChatGetMutableChat) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetMutableChat) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2c2c25d2: func() (err error) {
-			m.ChatId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2c2c25d2:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -88,28 +83,22 @@ type TLChatGetChatListByIdList struct {
 }
 
 func (m *TLChatGetChatListByIdList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatListByIdList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetChatListByIdList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xe740f539: func() error {
-			x.PutClazzID(0xe740f539)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatListByIdList, int(layer)); clazzId {
+	case 0xe740f539:
+		x.PutClazzID(0xe740f539)
 
-			x.PutInt64(m.SelfId)
+		x.PutInt64(m.SelfId)
 
-			iface.EncodeInt64List(x, m.IdList)
+		iface.EncodeInt64List(x, m.IdList)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatListByIdList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getChatListByIdList, layer)
 	}
@@ -117,22 +106,26 @@ func (m *TLChatGetChatListByIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetChatListByIdList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xe740f539: func() (err error) {
-			m.SelfId, err = d.Int64()
-
-			m.IdList, err = iface.DecodeInt64List(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xe740f539:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.IdList, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -145,27 +138,21 @@ type TLChatGetChatBySelfId struct {
 }
 
 func (m *TLChatGetChatBySelfId) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatBySelfId, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetChatBySelfId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x49b71a48: func() error {
-			x.PutClazzID(0x49b71a48)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatBySelfId, int(layer)); clazzId {
+	case 0x49b71a48:
+		x.PutClazzID(0x49b71a48)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatBySelfId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getChatBySelfId, layer)
 	}
@@ -173,21 +160,25 @@ func (m *TLChatGetChatBySelfId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetChatBySelfId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x49b71a48: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x49b71a48:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -199,50 +190,51 @@ type TLChatCreateChat2 struct {
 	UserIdList []int64 `json:"user_id_list"`
 	Title      string  `json:"title"`
 	Bots       []int64 `json:"bots"`
+	TtlPeriod  *int32  `json:"ttl_period"`
 }
 
 func (m *TLChatCreateChat2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_createChat2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xf77448d2: func() error {
-			x.PutClazzID(0xf77448d2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_createChat2, int(layer)); clazzId {
+	case 0xed17acf5:
+		x.PutClazzID(0xed17acf5)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Bots != nil {
-					flags |= 1 << 0
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.CreatorId)
-
-			iface.EncodeInt64List(x, m.UserIdList)
-
-			x.PutString(m.Title)
 			if m.Bots != nil {
-				iface.EncodeInt64List(x, m.Bots)
+				flags |= 1 << 0
+			}
+			if m.TtlPeriod != nil {
+				flags |= 1 << 1
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_createChat2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.CreatorId)
+
+		iface.EncodeInt64List(x, m.UserIdList)
+
+		x.PutString(m.Title)
+		if m.Bots != nil {
+			iface.EncodeInt64List(x, m.Bots)
+		}
+		if m.TtlPeriod != nil {
+			x.PutInt32(*m.TtlPeriod)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_createChat2, layer)
 	}
@@ -250,29 +242,49 @@ func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xf77448d2: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.CreatorId, err = d.Int64()
-
-			m.UserIdList, err = iface.DecodeInt64List(d)
-
-			m.Title, err = d.String()
-			if (flags & (1 << 0)) != 0 {
-				m.Bots, err = iface.DecodeInt64List(d)
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xed17acf5:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.CreatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.UserIdList, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		m.Title, err = d.String()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Bots, err = iface.DecodeInt64List(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.TtlPeriod = new(int32)
+			*m.TtlPeriod, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -285,27 +297,21 @@ type TLChatDeleteChat struct {
 }
 
 func (m *TLChatDeleteChat) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteChat, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatDeleteChat) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x6d11ec1e: func() error {
-			x.PutClazzID(0x6d11ec1e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteChat, int(layer)); clazzId {
+	case 0x6d11ec1e:
+		x.PutClazzID(0x6d11ec1e)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.OperatorId)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.OperatorId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteChat, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_deleteChat, layer)
 	}
@@ -313,21 +319,25 @@ func (m *TLChatDeleteChat) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatDeleteChat) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x6d11ec1e: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.OperatorId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x6d11ec1e:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.OperatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -341,28 +351,22 @@ type TLChatDeleteChatUser struct {
 }
 
 func (m *TLChatDeleteChatUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteChatUser, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatDeleteChatUser) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb270fd5: func() error {
-			x.PutClazzID(0xb270fd5)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteChatUser, int(layer)); clazzId {
+	case 0xb270fd5:
+		x.PutClazzID(0xb270fd5)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.OperatorId)
-			x.PutInt64(m.DeleteUserId)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.OperatorId)
+		x.PutInt64(m.DeleteUserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteChatUser, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_deleteChatUser, layer)
 	}
@@ -370,22 +374,29 @@ func (m *TLChatDeleteChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatDeleteChatUser) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb270fd5: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.OperatorId, err = d.Int64()
-			m.DeleteUserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb270fd5:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.OperatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.DeleteUserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -399,28 +410,22 @@ type TLChatEditChatTitle struct {
 }
 
 func (m *TLChatEditChatTitle) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatTitle, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditChatTitle) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x95c59ea7: func() error {
-			x.PutClazzID(0x95c59ea7)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatTitle, int(layer)); clazzId {
+	case 0x95c59ea7:
+		x.PutClazzID(0x95c59ea7)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.EditUserId)
-			x.PutString(m.Title)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.EditUserId)
+		x.PutString(m.Title)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatTitle, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editChatTitle, layer)
 	}
@@ -428,22 +433,29 @@ func (m *TLChatEditChatTitle) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatEditChatTitle) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x95c59ea7: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.EditUserId, err = d.Int64()
-			m.Title, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x95c59ea7:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.EditUserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Title, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -457,28 +469,22 @@ type TLChatEditChatAbout struct {
 }
 
 func (m *TLChatEditChatAbout) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatAbout, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditChatAbout) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x5c737c78: func() error {
-			x.PutClazzID(0x5c737c78)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatAbout, int(layer)); clazzId {
+	case 0x5c737c78:
+		x.PutClazzID(0x5c737c78)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.EditUserId)
-			x.PutString(m.About)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.EditUserId)
+		x.PutString(m.About)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatAbout, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editChatAbout, layer)
 	}
@@ -486,22 +492,29 @@ func (m *TLChatEditChatAbout) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatEditChatAbout) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x5c737c78: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.EditUserId, err = d.Int64()
-			m.About, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x5c737c78:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.EditUserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.About, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -515,28 +528,22 @@ type TLChatEditChatPhoto struct {
 }
 
 func (m *TLChatEditChatPhoto) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatPhoto, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditChatPhoto) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x45c2a668: func() error {
-			x.PutClazzID(0x45c2a668)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatPhoto, int(layer)); clazzId {
+	case 0x45c2a668:
+		x.PutClazzID(0x45c2a668)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.EditUserId)
-			_ = m.ChatPhoto.Encode(x, layer)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.EditUserId)
+		_ = m.ChatPhoto.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatPhoto, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editChatPhoto, layer)
 	}
@@ -544,26 +551,30 @@ func (m *TLChatEditChatPhoto) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatEditChatPhoto) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x45c2a668: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.EditUserId, err = d.Int64()
-
-			// m3 := &tg.Photo{}
-			// _ = m3.Decode(d)
-			// m.ChatPhoto = m3
-			m.ChatPhoto, _ = tg.DecodePhotoClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x45c2a668:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.EditUserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.ChatPhoto, err = tg.DecodePhotoClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -578,29 +589,23 @@ type TLChatEditChatAdmin struct {
 }
 
 func (m *TLChatEditChatAdmin) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatAdmin, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1905e5ec: func() error {
-			x.PutClazzID(0x1905e5ec)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatAdmin, int(layer)); clazzId {
+	case 0x1905e5ec:
+		x.PutClazzID(0x1905e5ec)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.OperatorId)
-			x.PutInt64(m.EditChatAdminId)
-			_ = m.IsAdmin.Encode(x, layer)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.OperatorId)
+		x.PutInt64(m.EditChatAdminId)
+		_ = m.IsAdmin.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatAdmin, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editChatAdmin, layer)
 	}
@@ -608,27 +613,34 @@ func (m *TLChatEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatEditChatAdmin) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1905e5ec: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.OperatorId, err = d.Int64()
-			m.EditChatAdminId, err = d.Int64()
-
-			// m4 := &tg.Bool{}
-			// _ = m4.Decode(d)
-			// m.IsAdmin = m4
-			m.IsAdmin, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x1905e5ec:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.OperatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.EditChatAdminId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.IsAdmin, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -642,28 +654,22 @@ type TLChatEditChatDefaultBannedRights struct {
 }
 
 func (m *TLChatEditChatDefaultBannedRights) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatDefaultBannedRights, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditChatDefaultBannedRights) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x5a34a687: func() error {
-			x.PutClazzID(0x5a34a687)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatDefaultBannedRights, int(layer)); clazzId {
+	case 0x5a34a687:
+		x.PutClazzID(0x5a34a687)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.OperatorId)
-			_ = m.BannedRights.Encode(x, layer)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.OperatorId)
+		_ = m.BannedRights.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editChatDefaultBannedRights, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editChatDefaultBannedRights, layer)
 	}
@@ -671,26 +677,30 @@ func (m *TLChatEditChatDefaultBannedRights) Encode(x *bin.Encoder, layer int32) 
 
 // Decode <--
 func (m *TLChatEditChatDefaultBannedRights) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x5a34a687: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.OperatorId, err = d.Int64()
-
-			// m3 := &tg.ChatBannedRights{}
-			// _ = m3.Decode(d)
-			// m.BannedRights = m3
-			m.BannedRights, _ = tg.DecodeChatBannedRightsClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x5a34a687:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.OperatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.BannedRights, err = tg.DecodeChatBannedRightsClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -705,42 +715,36 @@ type TLChatAddChatUser struct {
 }
 
 func (m *TLChatAddChatUser) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_addChatUser, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatAddChatUser) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xe5554168: func() error {
-			x.PutClazzID(0xe5554168)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_addChatUser, int(layer)); clazzId {
+	case 0xe5554168:
+		x.PutClazzID(0xe5554168)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.IsBot == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.IsBot == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.InviterId)
-			x.PutInt64(m.UserId)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.InviterId)
+		x.PutInt64(m.UserId)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_addChatUser, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_addChatUser, layer)
 	}
@@ -748,27 +752,37 @@ func (m *TLChatAddChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatAddChatUser) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xe5554168: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.ChatId, err = d.Int64()
-			m.InviterId, err = d.Int64()
-			m.UserId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.IsBot = true
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xe5554168:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.InviterId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.IsBot = true
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -780,26 +794,20 @@ type TLChatGetMutableChatByLink struct {
 }
 
 func (m *TLChatGetMutableChatByLink) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMutableChatByLink, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetMutableChatByLink) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa266278b: func() error {
-			x.PutClazzID(0xa266278b)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getMutableChatByLink, int(layer)); clazzId {
+	case 0xa266278b:
+		x.PutClazzID(0xa266278b)
 
-			x.PutString(m.Link)
+		x.PutString(m.Link)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getMutableChatByLink, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getMutableChatByLink, layer)
 	}
@@ -807,20 +815,21 @@ func (m *TLChatGetMutableChatByLink) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetMutableChatByLink) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa266278b: func() (err error) {
-			m.Link, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xa266278b:
+		m.Link, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -834,28 +843,22 @@ type TLChatToggleNoForwards struct {
 }
 
 func (m *TLChatToggleNoForwards) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_toggleNoForwards, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd5952af9: func() error {
-			x.PutClazzID(0xd5952af9)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_toggleNoForwards, int(layer)); clazzId {
+	case 0xd5952af9:
+		x.PutClazzID(0xd5952af9)
 
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.OperatorId)
-			_ = m.Enabled.Encode(x, layer)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.OperatorId)
+		_ = m.Enabled.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_toggleNoForwards, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_toggleNoForwards, layer)
 	}
@@ -863,26 +866,30 @@ func (m *TLChatToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatToggleNoForwards) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd5952af9: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.OperatorId, err = d.Int64()
-
-			// m3 := &tg.Bool{}
-			// _ = m3.Decode(d)
-			// m.Enabled = m3
-			m.Enabled, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd5952af9:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.OperatorId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Enabled, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -896,28 +903,22 @@ type TLChatMigratedToChannel struct {
 }
 
 func (m *TLChatMigratedToChannel) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_migratedToChannel, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatMigratedToChannel) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x83faadf: func() error {
-			x.PutClazzID(0x83faadf)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_migratedToChannel, int(layer)); clazzId {
+	case 0x83faadf:
+		x.PutClazzID(0x83faadf)
 
-			_ = m.Chat.Encode(x, layer)
-			x.PutInt64(m.Id)
-			x.PutInt64(m.AccessHash)
+		_ = m.Chat.Encode(x, layer)
+		x.PutInt64(m.Id)
+		x.PutInt64(m.AccessHash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_migratedToChannel, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_migratedToChannel, layer)
 	}
@@ -925,27 +926,31 @@ func (m *TLChatMigratedToChannel) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatMigratedToChannel) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x83faadf: func() (err error) {
-
-			// m1 := &tg.MutableChat{}
-			// _ = m1.Decode(d)
-			// m.Chat = m1
-			m.Chat, _ = tg.DecodeMutableChatClazz(d)
-
-			m.Id, err = d.Int64()
-			m.AccessHash, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x83faadf:
+
+		m.Chat, err = tg.DecodeMutableChatClazz(d)
+		if err != nil {
+			return err
+		}
+
+		m.Id, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AccessHash, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -957,26 +962,20 @@ type TLChatGetChatParticipantIdList struct {
 }
 
 func (m *TLChatGetChatParticipantIdList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatParticipantIdList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetChatParticipantIdList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x329622a9: func() error {
-			x.PutClazzID(0x329622a9)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatParticipantIdList, int(layer)); clazzId {
+	case 0x329622a9:
+		x.PutClazzID(0x329622a9)
 
-			x.PutInt64(m.ChatId)
+		x.PutInt64(m.ChatId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatParticipantIdList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getChatParticipantIdList, layer)
 	}
@@ -984,20 +983,21 @@ func (m *TLChatGetChatParticipantIdList) Encode(x *bin.Encoder, layer int32) err
 
 // Decode <--
 func (m *TLChatGetChatParticipantIdList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x329622a9: func() (err error) {
-			m.ChatId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x329622a9:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1009,26 +1009,20 @@ type TLChatGetUsersChatIdList struct {
 }
 
 func (m *TLChatGetUsersChatIdList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getUsersChatIdList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetUsersChatIdList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x2f36ab4c: func() error {
-			x.PutClazzID(0x2f36ab4c)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getUsersChatIdList, int(layer)); clazzId {
+	case 0x2f36ab4c:
+		x.PutClazzID(0x2f36ab4c)
 
-			iface.EncodeInt64List(x, m.Id)
+		iface.EncodeInt64List(x, m.Id)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getUsersChatIdList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getUsersChatIdList, layer)
 	}
@@ -1036,21 +1030,22 @@ func (m *TLChatGetUsersChatIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetUsersChatIdList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x2f36ab4c: func() (err error) {
-
-			m.Id, err = iface.DecodeInt64List(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x2f36ab4c:
+
+		m.Id, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1063,27 +1058,21 @@ type TLChatGetMyChatList struct {
 }
 
 func (m *TLChatGetMyChatList) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMyChatList, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetMyChatList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xf3756c88: func() error {
-			x.PutClazzID(0xf3756c88)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getMyChatList, int(layer)); clazzId {
+	case 0xf3756c88:
+		x.PutClazzID(0xf3756c88)
 
-			x.PutInt64(m.UserId)
-			_ = m.IsCreator.Encode(x, layer)
+		x.PutInt64(m.UserId)
+		_ = m.IsCreator.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getMyChatList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getMyChatList, layer)
 	}
@@ -1091,25 +1080,26 @@ func (m *TLChatGetMyChatList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetMyChatList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xf3756c88: func() (err error) {
-			m.UserId, err = d.Int64()
-
-			// m2 := &tg.Bool{}
-			// _ = m2.Decode(d)
-			// m.IsCreator = m2
-			m.IsCreator, _ = tg.DecodeBoolClazz(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xf3756c88:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.IsCreator, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1127,64 +1117,58 @@ type TLChatExportChatInvite struct {
 }
 
 func (m *TLChatExportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_exportChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xc5cf804b: func() error {
-			x.PutClazzID(0xc5cf804b)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_exportChatInvite, int(layer)); clazzId {
+	case 0xc5cf804b:
+		x.PutClazzID(0xc5cf804b)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.LegacyRevokePermanent == true {
-					flags |= 1 << 2
-				}
-				if m.RequestNeeded == true {
-					flags |= 1 << 3
-				}
-				if m.ExpireDate != nil {
-					flags |= 1 << 0
-				}
-				if m.UsageLimit != nil {
-					flags |= 1 << 1
-				}
-				if m.Title != nil {
-					flags |= 1 << 4
-				}
-
-				return flags
+			if m.LegacyRevokePermanent == true {
+				flags |= 1 << 2
 			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.AdminId)
+			if m.RequestNeeded == true {
+				flags |= 1 << 3
+			}
 			if m.ExpireDate != nil {
-				x.PutInt32(*m.ExpireDate)
+				flags |= 1 << 0
 			}
-
 			if m.UsageLimit != nil {
-				x.PutInt32(*m.UsageLimit)
+				flags |= 1 << 1
 			}
-
 			if m.Title != nil {
-				x.PutString(*m.Title)
+				flags |= 1 << 4
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_exportChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.AdminId)
+		if m.ExpireDate != nil {
+			x.PutInt32(*m.ExpireDate)
+		}
+
+		if m.UsageLimit != nil {
+			x.PutInt32(*m.UsageLimit)
+		}
+
+		if m.Title != nil {
+			x.PutString(*m.Title)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_exportChatInvite, layer)
 	}
@@ -1192,41 +1176,57 @@ func (m *TLChatExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatExportChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xc5cf804b: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.ChatId, err = d.Int64()
-			m.AdminId, err = d.Int64()
-			if (flags & (1 << 2)) != 0 {
-				m.LegacyRevokePermanent = true
-			}
-			if (flags & (1 << 3)) != 0 {
-				m.RequestNeeded = true
-			}
-			if (flags & (1 << 0)) != 0 {
-				m.ExpireDate = new(int32)
-				*m.ExpireDate, err = d.Int32()
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.UsageLimit = new(int32)
-				*m.UsageLimit, err = d.Int32()
-			}
-			if (flags & (1 << 4)) != 0 {
-				m.Title = new(string)
-				*m.Title, err = d.String()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xc5cf804b:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AdminId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.LegacyRevokePermanent = true
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.RequestNeeded = true
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.ExpireDate = new(int32)
+			*m.ExpireDate, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.UsageLimit = new(int32)
+			*m.UsageLimit, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 4)) != 0 {
+			m.Title = new(string)
+			*m.Title, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1239,27 +1239,21 @@ type TLChatGetAdminsWithInvites struct {
 }
 
 func (m *TLChatGetAdminsWithInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getAdminsWithInvites, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetAdminsWithInvites) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd2ea41d2: func() error {
-			x.PutClazzID(0xd2ea41d2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getAdminsWithInvites, int(layer)); clazzId {
+	case 0xd2ea41d2:
+		x.PutClazzID(0xd2ea41d2)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getAdminsWithInvites, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getAdminsWithInvites, layer)
 	}
@@ -1267,21 +1261,25 @@ func (m *TLChatGetAdminsWithInvites) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatGetAdminsWithInvites) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd2ea41d2: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd2ea41d2:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1294,27 +1292,21 @@ type TLChatGetExportedChatInvite struct {
 }
 
 func (m *TLChatGetExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getExportedChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xddea3250: func() error {
-			x.PutClazzID(0xddea3250)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getExportedChatInvite, int(layer)); clazzId {
+	case 0xddea3250:
+		x.PutClazzID(0xddea3250)
 
-			x.PutInt64(m.ChatId)
-			x.PutString(m.Link)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.Link)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getExportedChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getExportedChatInvite, layer)
 	}
@@ -1322,21 +1314,25 @@ func (m *TLChatGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) error 
 
 // Decode <--
 func (m *TLChatGetExportedChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xddea3250: func() (err error) {
-			m.ChatId, err = d.Int64()
-			m.Link, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xddea3250:
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Link, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1353,56 +1349,50 @@ type TLChatGetExportedChatInvites struct {
 }
 
 func (m *TLChatGetExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getExportedChatInvites, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetExportedChatInvites) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb48f18f6: func() error {
-			x.PutClazzID(0xb48f18f6)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getExportedChatInvites, int(layer)); clazzId {
+	case 0xb48f18f6:
+		x.PutClazzID(0xb48f18f6)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Revoked == true {
-					flags |= 1 << 3
-				}
-				if m.OffsetDate != nil {
-					flags |= 1 << 2
-				}
-				if m.OffsetLink != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.Revoked == true {
+				flags |= 1 << 3
 			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.AdminId)
 			if m.OffsetDate != nil {
-				x.PutInt32(*m.OffsetDate)
+				flags |= 1 << 2
 			}
-
 			if m.OffsetLink != nil {
-				x.PutString(*m.OffsetLink)
+				flags |= 1 << 2
 			}
 
-			x.PutInt32(m.Limit)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.AdminId)
+		if m.OffsetDate != nil {
+			x.PutInt32(*m.OffsetDate)
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getExportedChatInvites, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		if m.OffsetLink != nil {
+			x.PutString(*m.OffsetLink)
+		}
+
+		x.PutInt32(m.Limit)
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getExportedChatInvites, layer)
 	}
@@ -1410,36 +1400,52 @@ func (m *TLChatGetExportedChatInvites) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLChatGetExportedChatInvites) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb48f18f6: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.ChatId, err = d.Int64()
-			m.AdminId, err = d.Int64()
-			if (flags & (1 << 3)) != 0 {
-				m.Revoked = true
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.OffsetDate = new(int32)
-				*m.OffsetDate, err = d.Int32()
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.OffsetLink = new(string)
-				*m.OffsetLink, err = d.String()
-			}
-
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb48f18f6:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AdminId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.Revoked = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.OffsetDate = new(int32)
+			*m.OffsetDate, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.OffsetLink = new(string)
+			*m.OffsetLink, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1452,27 +1458,21 @@ type TLChatCheckChatInvite struct {
 }
 
 func (m *TLChatCheckChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_checkChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatCheckChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x7387f28c: func() error {
-			x.PutClazzID(0x7387f28c)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_checkChatInvite, int(layer)); clazzId {
+	case 0x7387f28c:
+		x.PutClazzID(0x7387f28c)
 
-			x.PutInt64(m.SelfId)
-			x.PutString(m.Hash)
+		x.PutInt64(m.SelfId)
+		x.PutString(m.Hash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_checkChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_checkChatInvite, layer)
 	}
@@ -1480,21 +1480,25 @@ func (m *TLChatCheckChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatCheckChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x7387f28c: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.Hash, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x7387f28c:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Hash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1507,27 +1511,21 @@ type TLChatImportChatInvite struct {
 }
 
 func (m *TLChatImportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_importChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatImportChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x58e660d4: func() error {
-			x.PutClazzID(0x58e660d4)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_importChatInvite, int(layer)); clazzId {
+	case 0x58e660d4:
+		x.PutClazzID(0x58e660d4)
 
-			x.PutInt64(m.SelfId)
-			x.PutString(m.Hash)
+		x.PutInt64(m.SelfId)
+		x.PutString(m.Hash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_importChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_importChatInvite, layer)
 	}
@@ -1535,21 +1533,25 @@ func (m *TLChatImportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatImportChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x58e660d4: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.Hash, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x58e660d4:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Hash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1568,58 +1570,52 @@ type TLChatGetChatInviteImporters struct {
 }
 
 func (m *TLChatGetChatInviteImporters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatInviteImporters, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x9846557f: func() error {
-			x.PutClazzID(0x9846557f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatInviteImporters, int(layer)); clazzId {
+	case 0x9846557f:
+		x.PutClazzID(0x9846557f)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Requested == true {
-					flags |= 1 << 0
-				}
-				if m.Link != nil {
-					flags |= 1 << 1
-				}
-				if m.Q != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.Requested == true {
+				flags |= 1 << 0
 			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
 			if m.Link != nil {
-				x.PutString(*m.Link)
+				flags |= 1 << 1
 			}
-
 			if m.Q != nil {
-				x.PutString(*m.Q)
+				flags |= 1 << 2
 			}
 
-			x.PutInt32(m.OffsetDate)
-			x.PutInt64(m.OffsetUser)
-			x.PutInt32(m.Limit)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		if m.Link != nil {
+			x.PutString(*m.Link)
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatInviteImporters, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		if m.Q != nil {
+			x.PutString(*m.Q)
+		}
+
+		x.PutInt32(m.OffsetDate)
+		x.PutInt64(m.OffsetUser)
+		x.PutInt32(m.Limit)
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getChatInviteImporters, layer)
 	}
@@ -1627,39 +1623,61 @@ func (m *TLChatGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLChatGetChatInviteImporters) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x9846557f: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.Requested = true
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.Link = new(string)
-				*m.Link, err = d.String()
-			}
-
-			if (flags & (1 << 2)) != 0 {
-				m.Q = new(string)
-				*m.Q, err = d.String()
-			}
-
-			m.OffsetDate, err = d.Int32()
-			m.OffsetUser, err = d.Int64()
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x9846557f:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Requested = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Link = new(string)
+			*m.Link, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.Q = new(string)
+			*m.Q, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		m.OffsetDate, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.OffsetUser, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1673,28 +1691,22 @@ type TLChatDeleteExportedChatInvite struct {
 }
 
 func (m *TLChatDeleteExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteExportedChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x562288b8: func() error {
-			x.PutClazzID(0x562288b8)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteExportedChatInvite, int(layer)); clazzId {
+	case 0x562288b8:
+		x.PutClazzID(0x562288b8)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
-			x.PutString(m.Link)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.Link)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteExportedChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_deleteExportedChatInvite, layer)
 	}
@@ -1702,22 +1714,29 @@ func (m *TLChatDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32) err
 
 // Decode <--
 func (m *TLChatDeleteExportedChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x562288b8: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			m.Link, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x562288b8:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Link, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1731,28 +1750,22 @@ type TLChatDeleteRevokedExportedChatInvites struct {
 }
 
 func (m *TLChatDeleteRevokedExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteRevokedExportedChatInvites, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xd0126269: func() error {
-			x.PutClazzID(0xd0126269)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteRevokedExportedChatInvites, int(layer)); clazzId {
+	case 0xd0126269:
+		x.PutClazzID(0xd0126269)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
-			x.PutInt64(m.AdminId)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutInt64(m.AdminId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_deleteRevokedExportedChatInvites, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_deleteRevokedExportedChatInvites, layer)
 	}
@@ -1760,22 +1773,29 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, layer in
 
 // Decode <--
 func (m *TLChatDeleteRevokedExportedChatInvites) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xd0126269: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			m.AdminId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xd0126269:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AdminId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1794,70 +1814,64 @@ type TLChatEditExportedChatInvite struct {
 }
 
 func (m *TLChatEditExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editExportedChatInvite, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xaf994c76: func() error {
-			x.PutClazzID(0xaf994c76)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_editExportedChatInvite, int(layer)); clazzId {
+	case 0xaf994c76:
+		x.PutClazzID(0xaf994c76)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Revoked == true {
-					flags |= 1 << 2
-				}
-
-				if m.ExpireDate != nil {
-					flags |= 1 << 0
-				}
-				if m.UsageLimit != nil {
-					flags |= 1 << 1
-				}
-				if m.RequestNeeded != nil {
-					flags |= 1 << 3
-				}
-				if m.Title != nil {
-					flags |= 1 << 4
-				}
-
-				return flags
+			if m.Revoked == true {
+				flags |= 1 << 2
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
-			x.PutString(m.Link)
 			if m.ExpireDate != nil {
-				x.PutInt32(*m.ExpireDate)
+				flags |= 1 << 0
 			}
-
 			if m.UsageLimit != nil {
-				x.PutInt32(*m.UsageLimit)
+				flags |= 1 << 1
 			}
-
 			if m.RequestNeeded != nil {
-				_ = m.RequestNeeded.Encode(x, layer)
+				flags |= 1 << 3
 			}
-
 			if m.Title != nil {
-				x.PutString(*m.Title)
+				flags |= 1 << 4
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_editExportedChatInvite, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.Link)
+		if m.ExpireDate != nil {
+			x.PutInt32(*m.ExpireDate)
+		}
+
+		if m.UsageLimit != nil {
+			x.PutInt32(*m.UsageLimit)
+		}
+
+		if m.RequestNeeded != nil {
+			_ = m.RequestNeeded.Encode(x, layer)
+		}
+
+		if m.Title != nil {
+			x.PutString(*m.Title)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_editExportedChatInvite, layer)
 	}
@@ -1865,45 +1879,64 @@ func (m *TLChatEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *TLChatEditExportedChatInvite) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xaf994c76: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			if (flags & (1 << 2)) != 0 {
-				m.Revoked = true
-			}
-			m.Link, err = d.String()
-			if (flags & (1 << 0)) != 0 {
-				m.ExpireDate = new(int32)
-				*m.ExpireDate, err = d.Int32()
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.UsageLimit = new(int32)
-				*m.UsageLimit, err = d.Int32()
-			}
-			if (flags & (1 << 3)) != 0 {
-				// m8 := &tg.Bool{}
-				// _ = m8.Decode(d)
-				// m.RequestNeeded = m8
-				m.RequestNeeded, _ = tg.DecodeBoolClazz(d)
-			}
-			if (flags & (1 << 4)) != 0 {
-				m.Title = new(string)
-				*m.Title, err = d.String()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xaf994c76:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.Revoked = true
+		}
+		m.Link, err = d.String()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.ExpireDate = new(int32)
+			*m.ExpireDate, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.UsageLimit = new(int32)
+			*m.UsageLimit, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.RequestNeeded, err = tg.DecodeBoolClazz(d)
+			if err != nil {
+				return err
+			}
+		}
+		if (flags & (1 << 4)) != 0 {
+			m.Title = new(string)
+			*m.Title, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1918,30 +1951,24 @@ type TLChatSetChatAvailableReactions struct {
 }
 
 func (m *TLChatSetChatAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_setChatAvailableReactions, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xc4d08972: func() error {
-			x.PutClazzID(0xc4d08972)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_setChatAvailableReactions, int(layer)); clazzId {
+	case 0xc4d08972:
+		x.PutClazzID(0xc4d08972)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
-			x.PutInt32(m.AvailableReactionsType)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutInt32(m.AvailableReactionsType)
 
-			iface.EncodeStringList(x, m.AvailableReactions)
+		iface.EncodeStringList(x, m.AvailableReactions)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_setChatAvailableReactions, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_setChatAvailableReactions, layer)
 	}
@@ -1949,24 +1976,34 @@ func (m *TLChatSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32) er
 
 // Decode <--
 func (m *TLChatSetChatAvailableReactions) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xc4d08972: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			m.AvailableReactionsType, err = d.Int32()
-
-			m.AvailableReactions, err = iface.DecodeStringList(d)
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xc4d08972:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AvailableReactionsType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		m.AvailableReactions, err = iface.DecodeStringList(d)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -1980,28 +2017,22 @@ type TLChatSetHistoryTTL struct {
 }
 
 func (m *TLChatSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_setHistoryTTL, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x3cfb6384: func() error {
-			x.PutClazzID(0x3cfb6384)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_setHistoryTTL, int(layer)); clazzId {
+	case 0x3cfb6384:
+		x.PutClazzID(0x3cfb6384)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
-			x.PutInt32(m.TtlPeriod)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutInt32(m.TtlPeriod)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_setHistoryTTL, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_setHistoryTTL, layer)
 	}
@@ -2009,22 +2040,29 @@ func (m *TLChatSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x3cfb6384: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			m.TtlPeriod, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x3cfb6384:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.TtlPeriod, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2039,29 +2077,23 @@ type TLChatSearch struct {
 }
 
 func (m *TLChatSearch) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_search, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatSearch) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x21e014fb: func() error {
-			x.PutClazzID(0x21e014fb)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_search, int(layer)); clazzId {
+	case 0x21e014fb:
+		x.PutClazzID(0x21e014fb)
 
-			x.PutInt64(m.SelfId)
-			x.PutString(m.Q)
-			x.PutInt64(m.Offset)
-			x.PutInt32(m.Limit)
+		x.PutInt64(m.SelfId)
+		x.PutString(m.Q)
+		x.PutInt64(m.Offset)
+		x.PutInt32(m.Limit)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_search, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_search, layer)
 	}
@@ -2069,23 +2101,33 @@ func (m *TLChatSearch) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatSearch) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x21e014fb: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.Q, err = d.String()
-			m.Offset, err = d.Int64()
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x21e014fb:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Q, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.Offset, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2098,27 +2140,21 @@ type TLChatGetRecentChatInviteRequesters struct {
 }
 
 func (m *TLChatGetRecentChatInviteRequesters) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getRecentChatInviteRequesters, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatGetRecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xfedc1098: func() error {
-			x.PutClazzID(0xfedc1098)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getRecentChatInviteRequesters, int(layer)); clazzId {
+	case 0xfedc1098:
+		x.PutClazzID(0xfedc1098)
 
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_getRecentChatInviteRequesters, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_getRecentChatInviteRequesters, layer)
 	}
@@ -2126,21 +2162,25 @@ func (m *TLChatGetRecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32
 
 // Decode <--
 func (m *TLChatGetRecentChatInviteRequesters) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xfedc1098: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xfedc1098:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2156,54 +2196,48 @@ type TLChatHideChatJoinRequests struct {
 }
 
 func (m *TLChatHideChatJoinRequests) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_hideChatJoinRequests, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatHideChatJoinRequests) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x3ea52cd1: func() error {
-			x.PutClazzID(0x3ea52cd1)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_hideChatJoinRequests, int(layer)); clazzId {
+	case 0x3ea52cd1:
+		x.PutClazzID(0x3ea52cd1)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Approved == true {
-					flags |= 1 << 0
-				}
-				if m.Link != nil {
-					flags |= 1 << 1
-				}
-				if m.UserId != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.Approved == true {
+				flags |= 1 << 0
 			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.SelfId)
-			x.PutInt64(m.ChatId)
 			if m.Link != nil {
-				x.PutString(*m.Link)
+				flags |= 1 << 1
 			}
-
 			if m.UserId != nil {
-				x.PutInt64(*m.UserId)
+				flags |= 1 << 2
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_hideChatJoinRequests, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		if m.Link != nil {
+			x.PutString(*m.Link)
+		}
+
+		if m.UserId != nil {
+			x.PutInt64(*m.UserId)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_hideChatJoinRequests, layer)
 	}
@@ -2211,35 +2245,48 @@ func (m *TLChatHideChatJoinRequests) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatHideChatJoinRequests) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x3ea52cd1: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.SelfId, err = d.Int64()
-			m.ChatId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.Approved = true
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.Link = new(string)
-				*m.Link, err = d.String()
-			}
-
-			if (flags & (1 << 2)) != 0 {
-				m.UserId = new(int64)
-				*m.UserId, err = d.Int64()
-			}
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x3ea52cd1:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Approved = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Link = new(string)
+			*m.Link, err = d.String()
+			if err != nil {
+				return err
+			}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.UserId = new(int64)
+			*m.UserId, err = d.Int64()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -2252,27 +2299,21 @@ type TLChatImportChatInvite2 struct {
 }
 
 func (m *TLChatImportChatInvite2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_importChatInvite2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLChatImportChatInvite2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xdcd93dbf: func() error {
-			x.PutClazzID(0xdcd93dbf)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_importChatInvite2, int(layer)); clazzId {
+	case 0xdcd93dbf:
+		x.PutClazzID(0xdcd93dbf)
 
-			x.PutInt64(m.SelfId)
-			x.PutString(m.Hash)
+		x.PutInt64(m.SelfId)
+		x.PutString(m.Hash)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_chat_importChatInvite2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_chat_importChatInvite2, layer)
 	}
@@ -2280,21 +2321,25 @@ func (m *TLChatImportChatInvite2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChatImportChatInvite2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xdcd93dbf: func() (err error) {
-			m.SelfId, err = d.Int64()
-			m.Hash, err = d.String()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xdcd93dbf:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Hash, err = d.String()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
