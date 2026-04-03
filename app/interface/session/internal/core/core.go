@@ -74,7 +74,7 @@ func (c *SessionCore) getOrFetchMainAuthWrapper(mainAuthId int64) (*sess.MainAut
 			c.Logger.Errorf("getOrFetchMainAuthWrapper - error: %v", err)
 			return nil, err
 		}
-		kData, _ = kData2.ToAuthKeyStateData()
+		kData = kData2.ToAuthKeyStateData()
 	}
 
 	mainAuth = c.svcCtx.MainAuthMgr.AllocMainAuthWrapper(

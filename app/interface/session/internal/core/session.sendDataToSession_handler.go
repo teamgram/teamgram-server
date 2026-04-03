@@ -28,7 +28,7 @@ var _ *tg.Bool
 // SessionSendDataToSession
 // session.sendDataToSession data:SessionClientData = Bool;
 func (c *SessionCore) SessionSendDataToSession(in *session.TLSessionSendDataToSession) (*tg.Bool, error) {
-	data, _ := in.Data.(*session.TLSessionClientData)
+	data := in.Data
 
 	if data == nil {
 		err := tg.ErrInputRequestInvalid

@@ -28,7 +28,7 @@ var _ *tg.Bool
 // SessionCreateSession
 // session.createSession client:SessionClientEvent = Bool;
 func (c *SessionCore) SessionCreateSession(in *session.TLSessionCreateSession) (*tg.Bool, error) {
-	cli, _ := in.Client.(*session.TLSessionClientEvent)
+	cli := in.Client
 
 	if cli == nil {
 		err := tg.ErrInputRequestInvalid
