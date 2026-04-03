@@ -328,3 +328,27 @@ func TestAuthEmailVerificationPlaceholders(t *testing.T) {
 		t.Fatalf("expected timeout=60, got %#v", sentCode.Timeout)
 	}
 }
+
+func TestAuthRecoveryResetPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+
+	if _, err := c.AuthCheckRecoveryPassword(&tg.TLAuthCheckRecoveryPassword{}); err != tg.ErrCodeEmpty {
+		t.Fatalf("expected code empty, got %v", err)
+	}
+
+	checked, err := c.AuthCheckRecoveryPassword(&tg.TLAuthCheckRecoveryPassword{Code: "123456"})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(checked) {
+		t.Fatalf("expected checkRecoveryPassword boolTrue, got %#v", checked)
+	}
+
+	resetPassword, err := c.AccountResetPassword(&tg.TLAccountResetPassword{})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if _, ok := resetPassword.ToAccountResetPasswordOk(); !ok {
+		t.Fatalf("expected account.resetPasswordOk, got %T", resetPassword.Clazz)
+	}
+}
