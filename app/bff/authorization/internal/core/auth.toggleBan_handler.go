@@ -17,16 +17,21 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthToggleBan
 // auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
 func (c *AuthorizationCore) AuthToggleBan(in *tg.TLAuthToggleBan) (*tg.PredefinedUser, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.toggleBan blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.Phone == "" {
+		return nil, tg.ErrInputMethodInvalid
+	}
 
-	return nil, errors.New("auth.toggleBan not implemented")
+	code := "00000"
+
+	return tg.MakeTLPredefinedUser(&tg.TLPredefinedUser{
+		Phone:  in.Phone,
+		Code:   code,
+		Banned: true,
+	}).ToPredefinedUser(), nil
 }

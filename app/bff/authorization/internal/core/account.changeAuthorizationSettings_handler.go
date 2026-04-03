@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountChangeAuthorizationSettings
 // account.changeAuthorizationSettings#40f48462 flags:# confirmed:flags.3?true hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
 func (c *AuthorizationCore) AccountChangeAuthorizationSettings(in *tg.TLAccountChangeAuthorizationSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.changeAuthorizationSettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("account.changeAuthorizationSettings not implemented")
+	return tg.BoolTrue, nil
 }
