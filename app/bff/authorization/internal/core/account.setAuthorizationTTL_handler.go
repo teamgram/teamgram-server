@@ -16,17 +16,13 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AccountSetAuthorizationTTL
 // account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
 func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *tg.TLAccountSetAuthorizationTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.setAuthorizationTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("account.setAuthorizationTTL not implemented")
+	if in.AuthorizationTtlDays < 0 {
+		return nil, tg.ErrInputMethodInvalid
+	}
+	return tg.BoolTrue, nil
 }
