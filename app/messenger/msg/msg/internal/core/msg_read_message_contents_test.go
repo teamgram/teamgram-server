@@ -16,8 +16,8 @@ func TestMsgReadMessageContentsReturnsAffectedMessagesPlaceholder(t *testing.T) 
 		PeerType:  2,
 		PeerId:    3,
 		Id: []*msg.ContentMessage{
-			msg.MakeContentMessage(&msg.TLContentMessage{Id: 7}),
-			msg.MakeContentMessage(&msg.TLContentMessage{Id: 9}),
+			msg.MakeTLContentMessage(&msg.TLContentMessage{Id: 7}),
+			msg.MakeTLContentMessage(&msg.TLContentMessage{Id: 9}),
 		},
 	})
 	if err != nil {

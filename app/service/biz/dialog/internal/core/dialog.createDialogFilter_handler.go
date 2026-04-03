@@ -27,9 +27,7 @@ var _ *tg.Bool
 // dialog.createDialogFilter user_id:long dialog_filter:DialogFilterExt = DialogFilterExt;
 func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
 	if in != nil && in.DialogFilter != nil {
-		if filter, ok := in.DialogFilter.(*dialog.TLDialogFilterExt); ok {
-			return filter.ToDialogFilterExt(), nil
-		}
+		return in.DialogFilter.ToDialogFilterExt(), nil
 	}
 	return makeDialogFilterExtPlaceholder(1, "placeholder-1").ToDialogFilterExt(), nil
 }

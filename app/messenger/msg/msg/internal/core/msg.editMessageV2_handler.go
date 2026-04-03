@@ -40,7 +40,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		return nil, tg.ErrPeerIdInvalid
 	}
 
-	outbox, _ := in.NewMessage.ToOutboxMessage()
+	outbox := in.NewMessage.ToOutboxMessage()
 	if outbox == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
@@ -48,7 +48,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 	date := int32(time.Now().Unix())
 	var entities []tg.MessageEntityClazz
 	if outbox.Message != nil {
-		if msg2, ok := outbox.Message.ToMessage(); ok {
+		if msg2, ok := outbox.Message.(*tg.TLMessage); ok {
 			if msg2.Date != 0 {
 				date = msg2.Date
 			}

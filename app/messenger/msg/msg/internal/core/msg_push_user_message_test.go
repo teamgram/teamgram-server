@@ -17,7 +17,9 @@ func TestMsgPushUserMessageRejectsNonUserPeer(t *testing.T) {
 		PeerType:  tg.PEER_CHAT,
 		PeerId:    3,
 		PushType:  1,
-		Message:   msg.MakeOutboxMessage(&msg.TLOutboxMessage{}),
+		Message: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{Message: "x"}),
+		}),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -36,7 +38,9 @@ func TestMsgPushUserMessageAcceptsUserPeerAsPlaceholder(t *testing.T) {
 		PeerType:  tg.PEER_USER,
 		PeerId:    3,
 		PushType:  1,
-		Message:   msg.MakeOutboxMessage(&msg.TLOutboxMessage{}),
+		Message: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{Message: "x"}),
+		}),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)

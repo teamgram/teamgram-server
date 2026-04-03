@@ -8,12 +8,22 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+func makeSyncPlaceholderUpdates() *tg.TLUpdates {
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{},
+		Users:   []tg.UserClazz{},
+		Chats:   []tg.ChatClazz{},
+		Date:    1,
+		Seq:     1,
+	})
+}
+
 func TestSyncPushUpdatesReturnsVoidPlaceholder(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.SyncPushUpdates(&sync.TLSyncPushUpdates{
 		UserId:  1,
-		Updates: &tg.Updates{},
+		Updates: makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -29,7 +39,7 @@ func TestSyncPushUpdatesIfNotReturnsVoidPlaceholder(t *testing.T) {
 	result, err := c.SyncPushUpdatesIfNot(&sync.TLSyncPushUpdatesIfNot{
 		UserId:   1,
 		Excludes: []int64{2, 3},
-		Updates:  &tg.Updates{},
+		Updates:  makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -45,7 +55,7 @@ func TestSyncUpdatesMeReturnsVoidPlaceholder(t *testing.T) {
 	result, err := c.SyncUpdatesMe(&sync.TLSyncUpdatesMe{
 		UserId:        1,
 		PermAuthKeyId: 2,
-		Updates:       &tg.Updates{},
+		Updates:       makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -61,7 +71,7 @@ func TestSyncUpdatesNotMeReturnsVoidPlaceholder(t *testing.T) {
 	result, err := c.SyncUpdatesNotMe(&sync.TLSyncUpdatesNotMe{
 		UserId:        1,
 		PermAuthKeyId: 2,
-		Updates:       &tg.Updates{},
+		Updates:       makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -98,7 +108,7 @@ func TestSyncBroadcastUpdatesReturnsVoidPlaceholder(t *testing.T) {
 		BroadcastType: 1,
 		ChatId:        2,
 		ExcludeIdList: []int64{3, 4},
-		Updates:       &tg.Updates{},
+		Updates:       makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
@@ -113,7 +123,7 @@ func TestSyncPushBotUpdatesReturnsVoidPlaceholder(t *testing.T) {
 
 	result, err := c.SyncPushBotUpdates(&sync.TLSyncPushBotUpdates{
 		UserId:  1,
-		Updates: &tg.Updates{},
+		Updates: makeSyncPlaceholderUpdates(),
 	})
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)

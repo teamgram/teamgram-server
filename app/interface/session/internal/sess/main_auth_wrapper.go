@@ -107,13 +107,11 @@ type MainAuthWrapper struct {
 }
 
 func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client authsession.ClientSessionClazz, androidPushId int64, cb *MainAuthWrapperManager) *MainAuthWrapper {
-	client2, _ := client.(*authsession.TLClientSession)
-
 	mainAuth := &MainAuthWrapper{
 		authKeyId:            mainAuthKeyId,
 		state:                state,
 		AuthUserId:           authUserId,
-		client:               client2,
+		client:               client,
 		pushSessionId:        androidPushId,
 		mainAuth:             nil,
 		tempAuth:             nil,
