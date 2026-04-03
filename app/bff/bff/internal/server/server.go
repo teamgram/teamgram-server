@@ -85,6 +85,28 @@ type Server struct {
 	kitexSrv *kitex.RpcServer
 }
 
+func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientConf {
+	c.ServiceName = serviceName
+	return c
+}
+
+func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
+	return authorizationhelper.Config{
+		RpcServerConf:             c.RpcServerConf,
+		KV:                        c.KV,
+		Code:                      c.Code,
+		UserClient:                withServiceName(c.BizServiceClient, "RPCUser"),
+		AuthsessionClient:         withServiceName(c.AuthSessionClient, "RPCAuthsession"),
+		ChatClient:                withServiceName(c.BizServiceClient, "RPCChat"),
+		StatusClient:              withServiceName(c.StatusClient, "RPCStatus"),
+		UsernameClient:            withServiceName(c.BizServiceClient, "RPCUsername"),
+		MsgClient:                 withServiceName(c.MsgClient, "RPCMsg"),
+		SyncClient:                c.SyncClient,
+		SignInServiceNotification: c.SignInServiceNotification,
+		SignInMessage:             c.SignInMessage,
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -136,21 +158,7 @@ func (s *Server) Initialize() error {
 			// authorizationhelper
 			_ = authorizationservice.RegisterService(
 				s,
-				authorizationhelper.New(
-					authorizationhelper.Config{
-						RpcServerConf: c.RpcServerConf,
-						//KV:                        c.KV,
-						//Code:                      c.Code,
-						//UserClient:                c.BizServiceClient,
-						//AuthsessionClient:         c.AuthSessionClient,
-						//ChatClient:                c.BizServiceClient,
-						//StatusClient:              c.StatusClient,
-						//SyncClient:                c.SyncClient,
-						//MsgClient:                 c.MsgClient,
-						//SignInMessage:             c.SignInMessage,
-						//SignInServiceNotification: c.SignInServiceNotification,
-						//UsernameClient:            c.BizServiceClient,
-					}))
+				authorizationhelper.New(buildAuthorizationConfig(c)))
 
 			// premiumhelper
 			_ = premiumservice.RegisterService(
