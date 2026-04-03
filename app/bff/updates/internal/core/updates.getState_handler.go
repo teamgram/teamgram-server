@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // UpdatesGetState
 // updates.getState#edd4882a = updates.State;
 func (c *UpdatesCore) UpdatesGetState(in *tg.TLUpdatesGetState) (*tg.UpdatesState, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getState blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("updates.getState not implemented")
+	return makePlaceholderUpdatesState(1, 10), nil
 }

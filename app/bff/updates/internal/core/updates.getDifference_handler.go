@@ -16,17 +16,41 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // UpdatesGetDifference
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("updates.getDifference blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	pts := in.Pts
+	if pts <= 0 {
+		pts = 1
+	}
+	date := in.Date
+	if date <= 0 {
+		date = 10
+	}
+	if in.Pts < 1 {
+		message := makePlaceholderBFFDifferenceMessage(pts, date)
+		return tg.MakeTLUpdatesDifference(&tg.TLUpdatesDifference{
+			NewMessages: []tg.MessageClazz{
+				message,
+			},
+			NewEncryptedMessages: []tg.EncryptedMessageClazz{},
+			OtherUpdates: []tg.UpdateClazz{
+				tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+					Message:  message,
+					Pts:      pts,
+					PtsCount: 1,
+				}),
+			},
+			Chats: []tg.ChatClazz{},
+			Users: []tg.UserClazz{},
+			State: makePlaceholderUpdatesState(pts, date),
+		}).ToUpdatesDifference(), nil
+	}
 
-	return nil, errors.New("updates.getDifference not implemented")
+	return tg.MakeTLUpdatesDifferenceEmpty(&tg.TLUpdatesDifferenceEmpty{
+		Date: date,
+		Seq:  0,
+	}).ToUpdatesDifference(), nil
 }
