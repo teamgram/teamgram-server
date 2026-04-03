@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesSetTyping
 // messages.setTyping#58943ee2 flags:# peer:InputPeer top_msg_id:flags.0?int action:SendMessageAction = Bool;
 func (c *DialogsCore) MessagesSetTyping(in *tg.TLMessagesSetTyping) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.setTyping blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.setTyping not implemented")
+	return tg.BoolTrue, nil
 }

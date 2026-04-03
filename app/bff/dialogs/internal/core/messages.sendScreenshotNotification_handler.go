@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,24 @@ import (
 // MessagesSendScreenshotNotification
 // messages.sendScreenshotNotification#a1405817 peer:InputPeer reply_to:InputReplyTo random_id:long = Updates;
 func (c *DialogsCore) MessagesSendScreenshotNotification(in *tg.TLMessagesSendScreenshotNotification) (*tg.Updates, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.sendScreenshotNotification blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	peer := tg.FromInputPeer2(0, in.Peer)
+	if c.MD != nil {
+		peer = tg.FromInputPeer2(c.MD.UserId, in.Peer)
+	}
+	switch peer.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
+	case tg.PEER_CHANNEL:
+		return nil, tg.ErrEnterpriseIsBlocked
+	default:
+		return nil, tg.ErrPeerIdInvalid
+	}
 
-	return nil, errors.New("messages.sendScreenshotNotification not implemented")
+	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+			Message:  makePlaceholderDialogMessage(peer.PeerId, makePlaceholderDialogMessageID(in.RandomId)),
+			Pts:      1,
+			PtsCount: 1,
+		}),
+		Date: int32(time.Now().Unix()),
+	}).ToUpdates(), nil
 }

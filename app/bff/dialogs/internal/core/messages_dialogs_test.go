@@ -200,3 +200,66 @@ func TestDialogsPinUnreadAndTTLPlaceholders(t *testing.T) {
 		t.Fatal("expected ttl updates placeholder, got nil")
 	}
 }
+
+func TestDialogsPeerMetaPlaceholders(t *testing.T) {
+	c := New(context.Background(), nil)
+	userPeer := tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 42, AccessHash: 0})
+
+	peerSettings, err := c.MessagesGetPeerSettings(&tg.TLMessagesGetPeerSettings{Peer: userPeer})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if peerSettings == nil || peerSettings.Settings == nil {
+		t.Fatalf("expected peer settings placeholder, got %#v", peerSettings)
+	}
+
+	hideBar, err := c.MessagesHidePeerSettingsBar(&tg.TLMessagesHidePeerSettingsBar{Peer: userPeer})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(hideBar) {
+		t.Fatalf("expected hide bar boolTrue, got %#v", hideBar)
+	}
+
+	setTyping, err := c.MessagesSetTyping(&tg.TLMessagesSetTyping{
+		Peer:   userPeer,
+		Action: tg.MakeTLSendMessageTypingAction(&tg.TLSendMessageTypingAction{}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(setTyping) {
+		t.Fatalf("expected set typing boolTrue, got %#v", setTyping)
+	}
+
+	onlines, err := c.MessagesGetOnlines(&tg.TLMessagesGetOnlines{Peer: userPeer})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if onlines == nil || onlines.Onlines != 1 {
+		t.Fatalf("expected onlines=1 placeholder, got %#v", onlines)
+	}
+
+	screenshot, err := c.MessagesSendScreenshotNotification(&tg.TLMessagesSendScreenshotNotification{
+		Peer:     userPeer,
+		RandomId: 42,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	short, ok := screenshot.ToUpdateShort()
+	if !ok {
+		t.Fatalf("expected updateShort placeholder, got %T", screenshot.Clazz)
+	}
+	updateNewMessage, ok := short.Update.(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("expected updateNewMessage placeholder, got %T", short.Update)
+	}
+	message, ok := updateNewMessage.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("expected tlMessage placeholder, got %T", updateNewMessage.Message)
+	}
+	if message.Id != 42 {
+		t.Fatalf("expected placeholder message id=42, got %d", message.Id)
+	}
+}

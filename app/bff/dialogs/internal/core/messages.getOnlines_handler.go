@@ -16,17 +16,12 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetOnlines
 // messages.getOnlines#6e2be050 peer:InputPeer = ChatOnlines;
 func (c *DialogsCore) MessagesGetOnlines(in *tg.TLMessagesGetOnlines) (*tg.ChatOnlines, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getOnlines blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getOnlines not implemented")
+	return tg.MakeTLChatOnlines(&tg.TLChatOnlines{
+		Onlines: 1,
+	}).ToChatOnlines(), nil
 }
