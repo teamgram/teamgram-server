@@ -36,24 +36,40 @@ const (
 )
 
 var (
-	config *tg.TLConfig
+	config = fallbackConfig()
 )
 
-func init() {
-	configData, err := os.ReadFile(configFile)
+func loadConfig(path string) *tg.TLConfig {
+	configData, err := os.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return fallbackConfig()
 	}
 
 	config2, err := iface.DecodeObject(bin.NewDecoder(configData))
 	if err != nil {
-		panic(err)
+		return fallbackConfig()
 	}
 
-	config, _ = config2.(*tg.TLConfig)
+	config, _ := config2.(*tg.TLConfig)
 	if config == nil {
-		panic("config is nil")
+		return fallbackConfig()
 	}
+
+	return config
+}
+
+func fallbackConfig() *tg.TLConfig {
+	return tg.MakeTLConfig(&tg.TLConfig{
+		TestMode:         tg.BoolFalseClazz,
+		ThisDc:           1,
+		DcOptions:        []tg.DcOptionClazz{},
+		DcTxtDomainName:  "apv3.stel.com",
+		ChatSizeMax:      200,
+		MegagroupSizeMax: 10000,
+		MessageLengthMax: 4096,
+		CaptionLengthMax: 1024,
+		MeUrlPrefix:      "https://t.me/",
+	})
 }
 
 // HelpGetConfig
@@ -61,8 +77,7 @@ func init() {
 func (c *ConfigurationCore) HelpGetConfig(in *tg.TLHelpGetConfig) (*tg.Config, error) {
 	_ = in
 
-	c2 := &tg.TLConfig{}
-	*c2 = *config
+	c2 := loadConfig(configFile)
 
 	now := int32(time.Now().Unix())
 	c2.Date = now
