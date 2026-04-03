@@ -46,6 +46,20 @@ type Server struct {
 	kitexSrv *kitex.RpcServer
 }
 
+func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientConf {
+	c.ServiceName = serviceName
+	return c
+}
+
+func buildUserConfig(c config.Config) userhelper.Config {
+	return userhelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		Mysql:         c.Mysql,
+		Cache:         c.Cache,
+		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -115,12 +129,7 @@ func (s *Server) Initialize() error {
 			// userhelper
 			_ = userservice.RegisterService(
 				s,
-				userhelper.New(userhelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//Mysql:         c.Mysql,
-					//Cache:         c.Cache,
-					//MediaClient:   c.MediaClient,
-				}))
+				userhelper.New(buildUserConfig(c)))
 			return nil
 		})
 
