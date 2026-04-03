@@ -27,7 +27,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates/updatesservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/username/usernameservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/config"
@@ -37,7 +36,6 @@ import (
 	messagehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/message"
 	updateshelper "github.com/teamgram/teamgram-server/v2/app/service/biz/updates"
 	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
-	usernamehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/username"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -123,16 +121,6 @@ func (s *Server) Initialize() error {
 					//Cache:         c.Cache,
 					//MediaClient:   c.MediaClient,
 				}))
-
-			// usernamehelper
-			_ = usernameservice.RegisterService(
-				s,
-				usernamehelper.New(usernamehelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//Mysql:         c.Mysql,
-					//Cache:         c.Cache,
-				}))
-
 			return nil
 		})
 
