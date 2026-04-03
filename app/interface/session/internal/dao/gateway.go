@@ -18,6 +18,15 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+type gatewaySubscriber interface {
+	AddListener(listener func())
+	Values() []string
+}
+
+var newSubscriber = func(endpoints []string, key string) (gatewaySubscriber, error) {
+	return discov.NewSubscriber(endpoints, key)
+}
+
 func SerializeToBuffer2(salt, sessionId int64, msg2 *mt.TLMessageRawData) []byte {
 	x := bin.NewEncoder()
 	x.End()
@@ -33,7 +42,12 @@ func SerializeToBuffer2(salt, sessionId int64, msg2 *mt.TLMessageRawData) []byte
 }
 
 func (d *Dao) watchGateway(c kitex.RpcClientConf) {
-	sub, _ := discov.NewSubscriber(c.Etcd.Hosts, c.Etcd.Key)
+	sub, err := newSubscriber(c.Etcd.Hosts, c.Etcd.Key)
+	if err != nil {
+		logx.Errorf("watchGateway NewSubscriber(%+v, %s) error(%v)", c.Etcd.Hosts, c.Etcd.Key, err)
+		return
+	}
+
 	update := func() {
 		values := sub.Values()
 		if len(values) == 0 {
@@ -50,7 +64,7 @@ func (d *Dao) watchGateway(c kitex.RpcClientConf) {
 			// cli, err := zrpc.NewClient(c)
 			cli, err := NewGateway(c)
 			if err != nil {
-				logx.Error("watchComet NewClient(%+v) error(%v)", values, err)
+				logx.Errorf("watchComet NewClient(%+v) error(%v)", values, err)
 				return
 			}
 			clients[v] = cli

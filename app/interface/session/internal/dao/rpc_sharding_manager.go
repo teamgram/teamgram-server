@@ -15,6 +15,15 @@ import (
 	"github.com/zeromicro/go-zero/core/stringx"
 )
 
+type shardingSubscriber interface {
+	AddListener(listener func())
+	Values() []string
+}
+
+var newShardingSubscriber = func(endpoints []string, key string) (shardingSubscriber, error) {
+	return discov.NewSubscriber(endpoints, key)
+}
+
 type RpcShardingManager struct {
 	pubListenOn  string
 	c            discov.EtcdConf
@@ -56,9 +65,10 @@ func (sess *RpcShardingManager) RegisterCB(cb func(sharding *RpcShardingManager,
 }
 
 func (sess *RpcShardingManager) Start() {
-	sub, err := discov.NewSubscriber(sess.c.Hosts, sess.c.Key)
+	sub, err := newShardingSubscriber(sess.c.Hosts, sess.c.Key)
 	if err != nil {
-		logx.Must(err)
+		logx.Errorf("RpcShardingManager.Start NewSubscriber(%v, %s) error(%v)", sess.c.Hosts, sess.c.Key, err)
+		return
 	}
 
 	update := func() {
