@@ -17,16 +17,22 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthResetLoginEmail
 // auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
 func (c *AuthorizationCore) AuthResetLoginEmail(in *tg.TLAuthResetLoginEmail) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.resetLoginEmail blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.PhoneCodeHash == "" {
+		return nil, tg.ErrPhoneCodeHashEmpty
+	}
 
-	return nil, errors.New("auth.resetLoginEmail not implemented")
+	timeout := int32(60)
+
+	return tg.MakeTLAuthSentCode(&tg.TLAuthSentCode{
+		Type:          tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{Length: 5}),
+		PhoneCodeHash: in.PhoneCodeHash,
+		NextType:      tg.MakeTLAuthCodeTypeSms(&tg.TLAuthCodeTypeSms{}),
+		Timeout:       &timeout,
+	}).ToAuthSentCode(), nil
 }

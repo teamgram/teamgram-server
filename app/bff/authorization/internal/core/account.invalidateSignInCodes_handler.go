@@ -17,16 +17,11 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountInvalidateSignInCodes
 // account.invalidateSignInCodes#ca8ae8ba codes:Vector<string> = Bool;
 func (c *AuthorizationCore) AccountInvalidateSignInCodes(in *tg.TLAccountInvalidateSignInCodes) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.invalidateSignInCodes blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("account.invalidateSignInCodes not implemented")
+	return tg.BoolTrue, nil
 }

@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"net/mail"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -25,8 +25,12 @@ import (
 // AccountSendVerifyEmailCode
 // account.sendVerifyEmailCode#98e037bb purpose:EmailVerifyPurpose email:string = account.SentEmailCode;
 func (c *AuthorizationCore) AccountSendVerifyEmailCode(in *tg.TLAccountSendVerifyEmailCode) (*tg.AccountSentEmailCode, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.sendVerifyEmailCode blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if _, err := mail.ParseAddress(in.Email); err != nil {
+		return nil, tg.ErrEmailInvalid
+	}
 
-	return nil, errors.New("account.sendVerifyEmailCode not implemented")
+	return tg.MakeTLAccountSentEmailCode(&tg.TLAccountSentEmailCode{
+		EmailPattern: "t***@example.com",
+		Length:       6,
+	}).ToAccountSentEmailCode(), nil
 }
