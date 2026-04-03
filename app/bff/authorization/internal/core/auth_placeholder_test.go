@@ -352,3 +352,95 @@ func TestAuthRecoveryResetPlaceholders(t *testing.T) {
 		t.Fatalf("expected account.resetPasswordOk, got %T", resetPassword.Clazz)
 	}
 }
+
+func TestAuthImportAndBindPlaceholders(t *testing.T) {
+	md := &kitexmetadata.RpcMetadata{UserId: 99}
+	ctx, err := kitexmetadata.RpcMetadataToOutgoing(context.Background(), md)
+	if err != nil {
+		t.Fatalf("attach rpc metadata: %v", err)
+	}
+	c := New(ctx, nil)
+
+	if _, err := c.AuthBindTempAuthKey(&tg.TLAuthBindTempAuthKey{}); err != tg.ErrTempAuthKeyEmpty {
+		t.Fatalf("expected temp auth key empty, got %v", err)
+	}
+
+	bound, err := c.AuthBindTempAuthKey(&tg.TLAuthBindTempAuthKey{
+		PermAuthKeyId:    1,
+		Nonce:            2,
+		ExpiresAt:        3,
+		EncryptedMessage: []byte{1, 2, 3},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if !tg.FromBool(bound) {
+		t.Fatalf("expected bindTempAuthKey boolTrue, got %#v", bound)
+	}
+
+	if _, err := c.AuthImportBotAuthorization(&tg.TLAuthImportBotAuthorization{
+		ApiId:        0,
+		ApiHash:      "hash",
+		BotAuthToken: "token",
+	}); err != tg.ErrApiIdInvalid {
+		t.Fatalf("expected api id invalid, got %v", err)
+	}
+
+	if _, err := c.AuthImportBotAuthorization(&tg.TLAuthImportBotAuthorization{
+		ApiId:        1,
+		ApiHash:      "hash",
+		BotAuthToken: "",
+	}); err != tg.ErrAuthTokenInvalid {
+		t.Fatalf("expected auth token invalid, got %v", err)
+	}
+
+	botAuth, err := c.AuthImportBotAuthorization(&tg.TLAuthImportBotAuthorization{
+		ApiId:        1,
+		ApiHash:      "hash",
+		BotAuthToken: "token",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	botAuthorization, ok := botAuth.ToAuthAuthorization()
+	if !ok {
+		t.Fatalf("expected auth.authorization, got %T", botAuth.Clazz)
+	}
+	botUser, ok := botAuthorization.User.(*tg.TLUserEmpty)
+	if !ok || botUser.Id != 99 {
+		t.Fatalf("expected userEmpty id=99, got %#v", botAuthorization.User)
+	}
+
+	if _, err := c.AuthImportWebTokenAuthorization(&tg.TLAuthImportWebTokenAuthorization{
+		ApiId:        0,
+		ApiHash:      "hash",
+		WebAuthToken: "token",
+	}); err != tg.ErrApiIdInvalid {
+		t.Fatalf("expected api id invalid, got %v", err)
+	}
+
+	if _, err := c.AuthImportWebTokenAuthorization(&tg.TLAuthImportWebTokenAuthorization{
+		ApiId:        1,
+		ApiHash:      "hash",
+		WebAuthToken: "",
+	}); err != tg.ErrAuthTokenInvalid {
+		t.Fatalf("expected auth token invalid, got %v", err)
+	}
+
+	webAuth, err := c.AuthImportWebTokenAuthorization(&tg.TLAuthImportWebTokenAuthorization{
+		ApiId:        1,
+		ApiHash:      "hash",
+		WebAuthToken: "token",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	webAuthorization, ok := webAuth.ToAuthAuthorization()
+	if !ok {
+		t.Fatalf("expected auth.authorization, got %T", webAuth.Clazz)
+	}
+	webUser, ok := webAuthorization.User.(*tg.TLUserEmpty)
+	if !ok || webUser.Id != 99 {
+		t.Fatalf("expected userEmpty id=99, got %#v", webAuthorization.User)
+	}
+}

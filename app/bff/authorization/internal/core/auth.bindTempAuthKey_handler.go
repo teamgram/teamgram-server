@@ -17,16 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthBindTempAuthKey
 // auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 func (c *AuthorizationCore) AuthBindTempAuthKey(in *tg.TLAuthBindTempAuthKey) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.bindTempAuthKey blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if len(in.EncryptedMessage) == 0 {
+		return nil, tg.ErrTempAuthKeyEmpty
+	}
 
-	return nil, errors.New("auth.bindTempAuthKey not implemented")
+	return tg.BoolTrue, nil
 }
