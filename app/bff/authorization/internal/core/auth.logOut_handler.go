@@ -16,17 +16,12 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthLogOut
 // auth.logOut#3e72ba19 = auth.LoggedOut;
 func (c *AuthorizationCore) AuthLogOut(in *tg.TLAuthLogOut) (*tg.AuthLoggedOut, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.logOut blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.logOut not implemented")
+	return tg.MakeTLAuthLoggedOut(&tg.TLAuthLoggedOut{
+		FutureAuthToken: []byte{},
+	}).ToAuthLoggedOut(), nil
 }
