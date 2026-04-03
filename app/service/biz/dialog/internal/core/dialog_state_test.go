@@ -25,10 +25,7 @@ func TestDialogGetDialogsReturnsSinglePlaceholder(t *testing.T) {
 	if len(result.Datas) != 1 {
 		t.Fatalf("expected single placeholder dialog, got %d items", len(result.Datas))
 	}
-	dialogExt, ok := result.Datas[0].(*dialog.TLDialogExt)
-	if !ok {
-		t.Fatalf("expected dialogExt placeholder, got %T", result.Datas[0])
-	}
+	dialogExt := result.Datas[0]
 	placeholderDialog, ok := dialogExt.Dialog.(*tg.TLDialog)
 	if !ok {
 		t.Fatalf("expected embedded dialog placeholder, got %T", dialogExt.Dialog)
@@ -53,10 +50,7 @@ func TestDialogGetMyDialogsDataReturnsUserPlaceholder(t *testing.T) {
 		t.Fatal("expected dialogs data, got nil")
 	}
 
-	simpleData, ok := result.Clazz.(*dialog.TLSimpleDialogsData)
-	if !ok {
-		t.Fatalf("expected simpleDialogsData placeholder, got %T", result.Clazz)
-	}
+	simpleData := result
 	if len(simpleData.Users) != 1 || simpleData.Users[0] != 1 {
 		t.Fatalf("expected user placeholder id=1, got %#v", simpleData.Users)
 	}
@@ -77,13 +71,10 @@ func TestDialogGetDialogByIdReturnsPlaceholder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	if result == nil || result.Clazz == nil {
+	if result == nil {
 		t.Fatal("expected dialogExt placeholder, got nil")
 	}
-	dialogExt, ok := result.Clazz.(*dialog.TLDialogExt)
-	if !ok {
-		t.Fatalf("expected dialogExt, got %T", result.Clazz)
-	}
+	dialogExt := result
 	placeholderDialog, ok := dialogExt.Dialog.(*tg.TLDialog)
 	if !ok {
 		t.Fatalf("expected embedded dialog placeholder, got %T", dialogExt.Dialog)
@@ -319,12 +310,12 @@ func TestDialogPinnedAndSavedPlaceholders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	if savedResult == nil || savedResult.Clazz == nil {
+	if savedResult == nil {
 		t.Fatal("expected savedDialogList placeholder, got nil")
 	}
-	savedList, ok := savedResult.Clazz.(*dialog.TLSavedDialogList)
-	if !ok || savedList.Count != 1 || len(savedList.Dialogs) != 1 {
-		t.Fatalf("expected one saved dialog placeholder, got %#v", savedResult.Clazz)
+	savedList := savedResult
+	if savedList.Count != 1 || len(savedList.Dialogs) != 1 {
+		t.Fatalf("expected one saved dialog placeholder, got %#v", savedResult)
 	}
 
 	pinnedSavedResult, err := c.DialogGetPinnedSavedDialogs(&dialog.TLDialogGetPinnedSavedDialogs{
@@ -333,9 +324,9 @@ func TestDialogPinnedAndSavedPlaceholders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	pinnedSavedList, ok := pinnedSavedResult.Clazz.(*dialog.TLSavedDialogList)
-	if !ok || pinnedSavedList.Count != 1 {
-		t.Fatalf("expected pinned saved dialog placeholder, got %#v", pinnedSavedResult.Clazz)
+	pinnedSavedList := pinnedSavedResult
+	if pinnedSavedList.Count != 1 {
+		t.Fatalf("expected pinned saved dialog placeholder, got %#v", pinnedSavedResult)
 	}
 	savedDialog, ok := pinnedSavedList.Dialogs[0].(*tg.TLSavedDialog)
 	if !ok || !savedDialog.Pinned {
@@ -510,12 +501,12 @@ func TestDialogFolderAndFilterPlaceholders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	if filterResult == nil || filterResult.Clazz == nil {
+	if filterResult == nil {
 		t.Fatal("expected dialog filter placeholder, got nil")
 	}
-	filterExt, ok := filterResult.Clazz.(*dialog.TLDialogFilterExt)
-	if !ok || filterExt.Id != 9 {
-		t.Fatalf("expected dialog filter id=9, got %#v", filterResult.Clazz)
+	filterExt := filterResult
+	if filterExt.Id != 9 {
+		t.Fatalf("expected dialog filter id=9, got %#v", filterResult)
 	}
 
 	filtersResult, err := c.DialogGetDialogFilters(&dialog.TLDialogGetDialogFilters{UserId: 1})
@@ -533,9 +524,9 @@ func TestDialogFolderAndFilterPlaceholders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	filterBySlug, ok := filterBySlugResult.Clazz.(*dialog.TLDialogFilterExt)
-	if !ok || filterBySlug.Slug != "demo" {
-		t.Fatalf("expected slug=demo placeholder, got %#v", filterBySlugResult.Clazz)
+	filterBySlug := filterBySlugResult
+	if filterBySlug.Slug != "demo" {
+		t.Fatalf("expected slug=demo placeholder, got %#v", filterBySlugResult)
 	}
 
 	tagsResult, err := c.DialogGetDialogFilterTags(&dialog.TLDialogGetDialogFilterTags{UserId: 1})
@@ -589,9 +580,9 @@ func TestDialogFilterWritePlaceholders(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected nil error, got %v", err)
 	}
-	createdFilter, ok := createResult.Clazz.(*dialog.TLDialogFilterExt)
-	if !ok || createdFilter.Id != 8 {
-		t.Fatalf("expected created filter id=8, got %#v", createResult.Clazz)
+	createdFilter := createResult
+	if createdFilter.Id != 8 {
+		t.Fatalf("expected created filter id=8, got %#v", createResult)
 	}
 
 	orderResult, err := c.DialogUpdateDialogFiltersOrder(&dialog.TLDialogUpdateDialogFiltersOrder{

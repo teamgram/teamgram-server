@@ -34,7 +34,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 
 	switch in.PeerType {
 	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
-		outbox, _ := in.Message[0].ToOutboxMessage()
+		outbox := in.Message[0].ToOutboxMessage()
 		if outbox == nil {
 			return nil, tg.ErrInputRequestInvalid
 		}
@@ -42,7 +42,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		date := int32(time.Now().Unix())
 		var entities []tg.MessageEntityClazz
 		if outbox.Message != nil {
-			if msg2, ok := outbox.Message.ToMessage(); ok {
+			if msg2, ok := outbox.Message.(*tg.TLMessage); ok {
 				if msg2.Date != 0 {
 					date = msg2.Date
 				}

@@ -16,9 +16,9 @@ func TestMsgEditMessageV2ReturnsShortSentPlaceholderForUserPeer(t *testing.T) {
 		AuthKeyId: 2,
 		PeerType:  tg.PEER_USER,
 		PeerId:    3,
-		NewMessage: msg.MakeOutboxMessage(&msg.TLOutboxMessage{
+		NewMessage: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
 			RandomId: 1005,
-			Message:  tg.MakeTLMessage(&tg.TLMessage{Date: 123, Message: "edited"}).ToMessage(),
+			Message:  tg.MakeTLMessage(&tg.TLMessage{Date: 123, Message: "edited"}),
 		}),
 		DstMessage: tg.MakeTLMessageBox(&tg.TLMessageBox{
 			UserId:    1,
@@ -46,11 +46,14 @@ func TestMsgEditMessageV2RejectsMissingTargetMessage(t *testing.T) {
 	c := New(context.Background(), nil)
 
 	result, err := c.MsgEditMessageV2(&msg.TLMsgEditMessageV2{
-		UserId:     1,
-		AuthKeyId:  2,
-		PeerType:   tg.PEER_USER,
-		PeerId:     3,
-		NewMessage: msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 1005}),
+		UserId:    1,
+		AuthKeyId: 2,
+		PeerType:  tg.PEER_USER,
+		PeerId:    3,
+		NewMessage: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+			RandomId: 1005,
+			Message:  tg.MakeTLMessage(&tg.TLMessage{Message: "edited"}),
+		}),
 	})
 	if err != tg.ErrInputRequestInvalid {
 		t.Fatalf("expected ErrInputRequestInvalid, got %v", err)
@@ -68,8 +71,9 @@ func TestMsgEditMessageV2RejectsChannelPeerPlaceholder(t *testing.T) {
 		AuthKeyId: 2,
 		PeerType:  tg.PEER_CHANNEL,
 		PeerId:    3,
-		NewMessage: msg.MakeOutboxMessage(&msg.TLOutboxMessage{
+		NewMessage: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
 			RandomId: 1006,
+			Message:  tg.MakeTLMessage(&tg.TLMessage{Message: "edited"}),
 		}),
 		DstMessage: tg.MakeTLMessageBox(&tg.TLMessageBox{
 			UserId:    1,

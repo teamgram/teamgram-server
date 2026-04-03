@@ -34,9 +34,9 @@ func TestMsgSendMessageV2ReturnsShortSentMessagePlaceholderForUserPeer(t *testin
 		PeerType:  tg.PEER_USER,
 		PeerId:    3,
 		Message: []*msg.OutboxMessage{
-			msg.MakeOutboxMessage(&msg.TLOutboxMessage{
+			msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
 				RandomId: 1001,
-				Message:  tg.MakeTLMessage(&tg.TLMessage{Date: 12345}).ToMessage(),
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Date: 12345}),
 			}),
 		},
 	})
@@ -71,7 +71,10 @@ func TestMsgSendMessageV2RejectsInvalidPeerType(t *testing.T) {
 		PeerType:  99,
 		PeerId:    3,
 		Message: []*msg.OutboxMessage{
-			msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 1002}),
+			msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+				RandomId: 1002,
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Message: "x"}),
+			}),
 		},
 	})
 	if err != tg.ErrPeerIdInvalid {
@@ -91,7 +94,10 @@ func TestMsgSendMessageV2RejectsChannelPeerPlaceholder(t *testing.T) {
 		PeerType:  tg.PEER_CHANNEL,
 		PeerId:    3,
 		Message: []*msg.OutboxMessage{
-			msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 1003}),
+			msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+				RandomId: 1003,
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Message: "x"}),
+			}),
 		},
 	})
 	if err != tg.ErrEnterpriseIsBlocked {
@@ -111,7 +117,10 @@ func TestMsgSendMessageV2ReusesPlaceholderIDForSameRandomID(t *testing.T) {
 		PeerType:  tg.PEER_USER,
 		PeerId:    3,
 		Message: []*msg.OutboxMessage{
-			msg.MakeOutboxMessage(&msg.TLOutboxMessage{RandomId: 2007}),
+			msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+				RandomId: 2007,
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Message: "x"}),
+			}),
 		},
 	}
 

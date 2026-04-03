@@ -34,7 +34,7 @@ func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*tg.
 			if content == nil {
 				continue
 			}
-			if x, ok := content.ToContentMessage(); ok && x.Id > pts {
+			if x := content.ToContentMessage(); x != nil && x.Id > pts {
 				pts = x.Id
 			}
 		}

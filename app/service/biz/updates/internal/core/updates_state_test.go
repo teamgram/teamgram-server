@@ -104,10 +104,7 @@ func TestUpdatesGetChannelDifferenceV2ReturnsPlaceholderChannelDifference(t *tes
 	if result == nil {
 		t.Fatal("expected channel difference, got nil")
 	}
-	channelDiff, ok := result.ToChannelDifference()
-	if !ok {
-		t.Fatalf("expected channelDifference, got %T", result.Clazz)
-	}
+	channelDiff := result.ToChannelDifference()
 	if channelDiff.Pts != 4 {
 		t.Fatalf("expected pts=4, got %d", channelDiff.Pts)
 	}
