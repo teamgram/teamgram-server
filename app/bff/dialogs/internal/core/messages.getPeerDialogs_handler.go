@@ -92,3 +92,14 @@ func makePlaceholderDialogMessage(peerID int64, messageID int32) tg.MessageClazz
 func makePlaceholderUser(userID int64) tg.UserClazz {
 	return tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID})
 }
+
+func makePlaceholderDialogMessageID(randomID int64) int32 {
+	if randomID < 0 {
+		randomID = -randomID
+	}
+	id := int32(randomID % 0x7fffffff)
+	if id == 0 {
+		id = 1
+	}
+	return id
+}

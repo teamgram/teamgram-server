@@ -16,17 +16,14 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesGetPeerSettings
 // messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
 func (c *DialogsCore) MessagesGetPeerSettings(in *tg.TLMessagesGetPeerSettings) (*tg.MessagesPeerSettings, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.getPeerSettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.getPeerSettings not implemented")
+	return tg.MakeTLMessagesPeerSettings(&tg.TLMessagesPeerSettings{
+		Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{}),
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesPeerSettings(), nil
 }

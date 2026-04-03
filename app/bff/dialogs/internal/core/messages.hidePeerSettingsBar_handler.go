@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // MessagesHidePeerSettingsBar
 // messages.hidePeerSettingsBar#4facb138 peer:InputPeer = Bool;
 func (c *DialogsCore) MessagesHidePeerSettingsBar(in *tg.TLMessagesHidePeerSettingsBar) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("messages.hidePeerSettingsBar blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("messages.hidePeerSettingsBar not implemented")
+	return tg.BoolTrue, nil
 }
