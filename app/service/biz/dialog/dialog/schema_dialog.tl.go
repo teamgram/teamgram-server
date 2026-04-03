@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package dialog
@@ -19,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // DialogExtClazz <--
 //   - TL_DialogExt
-type DialogExtClazz interface {
-	iface.TLObject
-	DialogExtClazzName() string
-}
+type DialogExtClazz = *TLDialogExt
 
 func DecodeDialogExtClazz(d *bin.Decoder) (DialogExtClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -38,15 +38,17 @@ func DecodeDialogExtClazz(d *bin.Decoder) (DialogExtClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_dialogExt:
+	switch id {
+	case 0x730ba93f:
 		x := &TLDialogExt{ClazzID: id, ClazzName2: ClazzName_dialogExt}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeDialogExt - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLDialogExt <--
@@ -77,6 +79,13 @@ func (m *TLDialogExt) String() string {
 	return string(data)
 }
 
+func (m *TLDialogExt) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogExt", m)
+}
+
 // DialogExtClazzName <--
 func (m *TLDialogExt) DialogExtClazzName() string {
 	return ClazzName_dialogExt
@@ -93,45 +102,76 @@ func (m *TLDialogExt) ToDialogExt() *DialogExt {
 		return nil
 	}
 
-	return &DialogExt{Clazz: m}
+	return m
+
+}
+
+func (m *TLDialogExt) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExt, int(layer)); clazzId {
+	case 0x730ba93f:
+		size := 4
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.Dialog, layer)
+		size += 4
+		size += 8
+		size += iface.CalcStringSize(m.ThemeEmoticon)
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogExt) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExt, int(layer)); clazzId {
+	case 0x730ba93f:
+		if err := iface.ValidateRequiredObject("dialog", m.Dialog); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("theme_emoticon", m.ThemeEmoticon); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogExt, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x730ba93f: func() error {
-			x.PutClazzID(0x730ba93f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExt, int(layer)); clazzId {
+	case 0x730ba93f:
+		x.PutClazzID(0x730ba93f)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.WallpaperOverridden == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.WallpaperOverridden == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.Order)
-			_ = m.Dialog.Encode(x, layer)
-			x.PutInt32(m.AvailableMinId)
-			x.PutInt64(m.Date)
-			x.PutString(m.ThemeEmoticon)
-			x.PutInt32(m.TtlPeriod)
-			x.PutInt64(m.WallpaperId)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.Order)
+		_ = m.Dialog.Encode(x, layer)
+		x.PutInt32(m.AvailableMinId)
+		x.PutInt64(m.Date)
+		x.PutString(m.ThemeEmoticon)
+		x.PutInt32(m.TtlPeriod)
+		x.PutInt64(m.WallpaperId)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialogExt, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogExt, layer)
 	}
@@ -139,112 +179,59 @@ func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x730ba93f: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Order, err = d.Int64()
+	switch m.ClazzID {
+	case 0x730ba93f:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Order, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			// m2 := &tg.Dialog{}
-			// _ = m2.Decode(d)
-			// m.Dialog = m2
-			m.Dialog, _ = tg.DecodeDialogClazz(d)
+		m.Dialog, err = tg.DecodeDialogClazz(d)
+		if err != nil {
+			return err
+		}
 
-			m.AvailableMinId, err = d.Int32()
-			m.Date, err = d.Int64()
-			m.ThemeEmoticon, err = d.String()
-			m.TtlPeriod, err = d.Int32()
-			m.WallpaperId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.WallpaperOverridden = true
-			}
+		m.AvailableMinId, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Date, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ThemeEmoticon, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.TtlPeriod, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.WallpaperId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.WallpaperOverridden = true
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // DialogExt <--
-type DialogExt struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz DialogExtClazz `json:"_clazz"`
-}
-
-func (m *DialogExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *DialogExt) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.DialogExtClazzName()
-	}
-}
-
-// Encode <--
-func (m *DialogExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("DialogExt - invalid Clazz")
-}
-
-// Decode <--
-func (m *DialogExt) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeDialogExtClazz(d)
-	return
-}
-
-// Match <--
-func (m *DialogExt) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLDialogExt:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDialogExt) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToDialogExt <--
-func (m *DialogExt) ToDialogExt() (*TLDialogExt, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLDialogExt); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type DialogExt = TLDialogExt
 
 // DialogFilterExtClazz <--
 //   - TL_DialogFilterExt
-type DialogFilterExtClazz interface {
-	iface.TLObject
-	DialogFilterExtClazzName() string
-}
+type DialogFilterExtClazz = *TLDialogFilterExt
 
 func DecodeDialogFilterExtClazz(d *bin.Decoder) (DialogFilterExtClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -253,15 +240,17 @@ func DecodeDialogFilterExtClazz(d *bin.Decoder) (DialogFilterExtClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_dialogFilterExt:
+	switch id {
+	case 0xa6d498fe:
 		x := &TLDialogFilterExt{ClazzID: id, ClazzName2: ClazzName_dialogFilterExt}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeDialogFilterExt - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLDialogFilterExt <--
@@ -289,6 +278,13 @@ func (m *TLDialogFilterExt) String() string {
 	return string(data)
 }
 
+func (m *TLDialogFilterExt) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogFilterExt", m)
+}
+
 // DialogFilterExtClazzName <--
 func (m *TLDialogFilterExt) DialogFilterExtClazzName() string {
 	return ClazzName_dialogFilterExt
@@ -305,42 +301,70 @@ func (m *TLDialogFilterExt) ToDialogFilterExt() *DialogFilterExt {
 		return nil
 	}
 
-	return &DialogFilterExt{Clazz: m}
+	return m
+
+}
+
+func (m *TLDialogFilterExt) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogFilterExt, int(layer)); clazzId {
+	case 0xa6d498fe:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.Slug)
+		size += iface.CalcObjectSize(m.DialogFilter, layer)
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogFilterExt) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogFilterExt, int(layer)); clazzId {
+	case 0xa6d498fe:
+		if err := iface.ValidateRequiredString("slug", m.Slug); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("dialog_filter", m.DialogFilter); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogFilterExt, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xa6d498fe: func() error {
-			x.PutClazzID(0xa6d498fe)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogFilterExt, int(layer)); clazzId {
+	case 0xa6d498fe:
+		x.PutClazzID(0xa6d498fe)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.JoinedBySlug == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.JoinedBySlug == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt32(m.Id)
-			x.PutString(m.Slug)
-			_ = m.DialogFilter.Encode(x, layer)
-			x.PutInt64(m.Order)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.Id)
+		x.PutString(m.Slug)
+		_ = m.DialogFilter.Encode(x, layer)
+		x.PutInt64(m.Order)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_dialogFilterExt, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogFilterExt, layer)
 	}
@@ -348,109 +372,47 @@ func (m *TLDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogFilterExt) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xa6d498fe: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Id, err = d.Int32()
-			if (flags & (1 << 0)) != 0 {
-				m.JoinedBySlug = true
-			}
-			m.Slug, err = d.String()
+	switch m.ClazzID {
+	case 0xa6d498fe:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.JoinedBySlug = true
+		}
+		m.Slug, err = d.String()
+		if err != nil {
+			return err
+		}
 
-			// m4 := &tg.DialogFilter{}
-			// _ = m4.Decode(d)
-			// m.DialogFilter = m4
-			m.DialogFilter, _ = tg.DecodeDialogFilterClazz(d)
+		m.DialogFilter, err = tg.DecodeDialogFilterClazz(d)
+		if err != nil {
+			return err
+		}
 
-			m.Order, err = d.Int64()
+		m.Order, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // DialogFilterExt <--
-type DialogFilterExt struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz DialogFilterExtClazz `json:"_clazz"`
-}
-
-func (m *DialogFilterExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *DialogFilterExt) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.DialogFilterExtClazzName()
-	}
-}
-
-// Encode <--
-func (m *DialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("DialogFilterExt - invalid Clazz")
-}
-
-// Decode <--
-func (m *DialogFilterExt) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeDialogFilterExtClazz(d)
-	return
-}
-
-// Match <--
-func (m *DialogFilterExt) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLDialogFilterExt:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDialogFilterExt) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToDialogFilterExt <--
-func (m *DialogFilterExt) ToDialogFilterExt() (*TLDialogFilterExt, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLDialogFilterExt); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type DialogFilterExt = TLDialogFilterExt
 
 // DialogPinnedExtClazz <--
 //   - TL_DialogPinnedExt
-type DialogPinnedExtClazz interface {
-	iface.TLObject
-	DialogPinnedExtClazzName() string
-}
+type DialogPinnedExtClazz = *TLDialogPinnedExt
 
 func DecodeDialogPinnedExtClazz(d *bin.Decoder) (DialogPinnedExtClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -459,15 +421,17 @@ func DecodeDialogPinnedExtClazz(d *bin.Decoder) (DialogPinnedExtClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_dialogPinnedExt:
+	switch id {
+	case 0xea7222c:
 		x := &TLDialogPinnedExt{ClazzID: id, ClazzName2: ClazzName_dialogPinnedExt}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeDialogPinnedExt - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLDialogPinnedExt <--
@@ -493,6 +457,13 @@ func (m *TLDialogPinnedExt) String() string {
 	return string(data)
 }
 
+func (m *TLDialogPinnedExt) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogPinnedExt", m)
+}
+
 // DialogPinnedExtClazzName <--
 func (m *TLDialogPinnedExt) DialogPinnedExtClazzName() string {
 	return ClazzName_dialogPinnedExt
@@ -509,27 +480,46 @@ func (m *TLDialogPinnedExt) ToDialogPinnedExt() *DialogPinnedExt {
 		return nil
 	}
 
-	return &DialogPinnedExt{Clazz: m}
+	return m
+
+}
+
+func (m *TLDialogPinnedExt) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPinnedExt, int(layer)); clazzId {
+	case 0xea7222c:
+		size := 4
+		size += 8
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogPinnedExt) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPinnedExt, int(layer)); clazzId {
+	case 0xea7222c:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogPinnedExt, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xea7222c: func() error {
-			x.PutClazzID(0xea7222c)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPinnedExt, int(layer)); clazzId {
+	case 0xea7222c:
+		x.PutClazzID(0xea7222c)
 
-			x.PutInt64(m.Order)
-			x.PutInt32(m.PeerType)
-			x.PutInt64(m.PeerId)
+		x.PutInt64(m.Order)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_dialogPinnedExt, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialogPinnedExt, layer)
 	}
@@ -537,98 +527,33 @@ func (m *TLDialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDialogPinnedExt) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xea7222c: func() (err error) {
-			m.Order, err = d.Int64()
-			m.PeerType, err = d.Int32()
-			m.PeerId, err = d.Int64()
+	switch m.ClazzID {
+	case 0xea7222c:
+		m.Order, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // DialogPinnedExt <--
-type DialogPinnedExt struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz DialogPinnedExtClazz `json:"_clazz"`
-}
-
-func (m *DialogPinnedExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *DialogPinnedExt) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.DialogPinnedExtClazzName()
-	}
-}
-
-// Encode <--
-func (m *DialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("DialogPinnedExt - invalid Clazz")
-}
-
-// Decode <--
-func (m *DialogPinnedExt) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeDialogPinnedExtClazz(d)
-	return
-}
-
-// Match <--
-func (m *DialogPinnedExt) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLDialogPinnedExt:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDialogPinnedExt) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToDialogPinnedExt <--
-func (m *DialogPinnedExt) ToDialogPinnedExt() (*TLDialogPinnedExt, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLDialogPinnedExt); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type DialogPinnedExt = TLDialogPinnedExt
 
 // DialogsDataClazz <--
 //   - TL_SimpleDialogsData
-type DialogsDataClazz interface {
-	iface.TLObject
-	DialogsDataClazzName() string
-}
+type DialogsDataClazz = *TLSimpleDialogsData
 
 func DecodeDialogsDataClazz(d *bin.Decoder) (DialogsDataClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -637,15 +562,17 @@ func DecodeDialogsDataClazz(d *bin.Decoder) (DialogsDataClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_simpleDialogsData:
+	switch id {
+	case 0x1d59b45d:
 		x := &TLSimpleDialogsData{ClazzID: id, ClazzName2: ClazzName_simpleDialogsData}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeDialogsData - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLSimpleDialogsData <--
@@ -671,6 +598,13 @@ func (m *TLSimpleDialogsData) String() string {
 	return string(data)
 }
 
+func (m *TLSimpleDialogsData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("simpleDialogsData", m)
+}
+
 // DialogsDataClazzName <--
 func (m *TLSimpleDialogsData) DialogsDataClazzName() string {
 	return ClazzName_simpleDialogsData
@@ -687,29 +621,59 @@ func (m *TLSimpleDialogsData) ToDialogsData() *DialogsData {
 		return nil
 	}
 
-	return &DialogsData{Clazz: m}
+	return m
+
+}
+
+func (m *TLSimpleDialogsData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_simpleDialogsData, int(layer)); clazzId {
+	case 0x1d59b45d:
+		size := 4
+		size += iface.CalcInt64ListSize(m.Users)
+		size += iface.CalcInt64ListSize(m.Chats)
+		size += iface.CalcInt64ListSize(m.Channels)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSimpleDialogsData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_simpleDialogsData, int(layer)); clazzId {
+	case 0x1d59b45d:
+		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("chats", m.Chats); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("channels", m.Channels); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_simpleDialogsData, layer)
+	}
 }
 
 // Encode <--
 func (m *TLSimpleDialogsData) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1d59b45d: func() error {
-			x.PutClazzID(0x1d59b45d)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_simpleDialogsData, int(layer)); clazzId {
+	case 0x1d59b45d:
+		x.PutClazzID(0x1d59b45d)
 
-			iface.EncodeInt64List(x, m.Users)
+		iface.EncodeInt64List(x, m.Users)
 
-			iface.EncodeInt64List(x, m.Chats)
+		iface.EncodeInt64List(x, m.Chats)
 
-			iface.EncodeInt64List(x, m.Channels)
+		iface.EncodeInt64List(x, m.Channels)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_simpleDialogsData, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_simpleDialogsData, layer)
 	}
@@ -717,101 +681,36 @@ func (m *TLSimpleDialogsData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLSimpleDialogsData) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1d59b45d: func() (err error) {
+	switch m.ClazzID {
+	case 0x1d59b45d:
 
-			m.Users, err = iface.DecodeInt64List(d)
+		m.Users, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
-			m.Chats, err = iface.DecodeInt64List(d)
+		m.Chats, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
-			m.Channels, err = iface.DecodeInt64List(d)
+		m.Channels, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // DialogsData <--
-type DialogsData struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz DialogsDataClazz `json:"_clazz"`
-}
-
-func (m *DialogsData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *DialogsData) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.DialogsDataClazzName()
-	}
-}
-
-// Encode <--
-func (m *DialogsData) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("DialogsData - invalid Clazz")
-}
-
-// Decode <--
-func (m *DialogsData) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeDialogsDataClazz(d)
-	return
-}
-
-// Match <--
-func (m *DialogsData) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLSimpleDialogsData:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLSimpleDialogsData) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToSimpleDialogsData <--
-func (m *DialogsData) ToSimpleDialogsData() (*TLSimpleDialogsData, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLSimpleDialogsData); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type DialogsData = TLSimpleDialogsData
 
 // PeerWithDraftMessageClazz <--
 //   - TL_UpdateDraftMessage
-type PeerWithDraftMessageClazz interface {
-	iface.TLObject
-	PeerWithDraftMessageClazzName() string
-}
+type PeerWithDraftMessageClazz = *TLUpdateDraftMessage
 
 func DecodePeerWithDraftMessageClazz(d *bin.Decoder) (PeerWithDraftMessageClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -820,15 +719,17 @@ func DecodePeerWithDraftMessageClazz(d *bin.Decoder) (PeerWithDraftMessageClazz,
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_updateDraftMessage:
+	switch id {
+	case 0xf6bdc4b2:
 		x := &TLUpdateDraftMessage{ClazzID: id, ClazzName2: ClazzName_updateDraftMessage}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodePeerWithDraftMessage - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLUpdateDraftMessage <--
@@ -853,6 +754,13 @@ func (m *TLUpdateDraftMessage) String() string {
 	return string(data)
 }
 
+func (m *TLUpdateDraftMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("updateDraftMessage", m)
+}
+
 // PeerWithDraftMessageClazzName <--
 func (m *TLUpdateDraftMessage) PeerWithDraftMessageClazzName() string {
 	return ClazzName_updateDraftMessage
@@ -869,26 +777,51 @@ func (m *TLUpdateDraftMessage) ToPeerWithDraftMessage() *PeerWithDraftMessage {
 		return nil
 	}
 
-	return &PeerWithDraftMessage{Clazz: m}
+	return m
+
+}
+
+func (m *TLUpdateDraftMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateDraftMessage, int(layer)); clazzId {
+	case 0xf6bdc4b2:
+		size := 4
+		size += iface.CalcObjectSize(m.Peer, layer)
+		size += iface.CalcObjectSize(m.Draft, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUpdateDraftMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateDraftMessage, int(layer)); clazzId {
+	case 0xf6bdc4b2:
+		if err := iface.ValidateRequiredObject("peer", m.Peer); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("draft", m.Draft); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updateDraftMessage, layer)
+	}
 }
 
 // Encode <--
 func (m *TLUpdateDraftMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xf6bdc4b2: func() error {
-			x.PutClazzID(0xf6bdc4b2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateDraftMessage, int(layer)); clazzId {
+	case 0xf6bdc4b2:
+		x.PutClazzID(0xf6bdc4b2)
 
-			_ = m.Peer.Encode(x, layer)
-			_ = m.Draft.Encode(x, layer)
+		_ = m.Peer.Encode(x, layer)
+		_ = m.Draft.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_updateDraftMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updateDraftMessage, layer)
 	}
@@ -896,105 +829,31 @@ func (m *TLUpdateDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLUpdateDraftMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xf6bdc4b2: func() (err error) {
+	switch m.ClazzID {
+	case 0xf6bdc4b2:
 
-			// m0 := &tg.Peer{}
-			// _ = m0.Decode(d)
-			// m.Peer = m0
-			m.Peer, _ = tg.DecodePeerClazz(d)
+		m.Peer, err = tg.DecodePeerClazz(d)
+		if err != nil {
+			return err
+		}
 
-			// m1 := &tg.DraftMessage{}
-			// _ = m1.Decode(d)
-			// m.Draft = m1
-			m.Draft, _ = tg.DecodeDraftMessageClazz(d)
+		m.Draft, err = tg.DecodeDraftMessageClazz(d)
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // PeerWithDraftMessage <--
-type PeerWithDraftMessage struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz PeerWithDraftMessageClazz `json:"_clazz"`
-}
-
-func (m *PeerWithDraftMessage) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *PeerWithDraftMessage) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.PeerWithDraftMessageClazzName()
-	}
-}
-
-// Encode <--
-func (m *PeerWithDraftMessage) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("PeerWithDraftMessage - invalid Clazz")
-}
-
-// Decode <--
-func (m *PeerWithDraftMessage) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodePeerWithDraftMessageClazz(d)
-	return
-}
-
-// Match <--
-func (m *PeerWithDraftMessage) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLUpdateDraftMessage:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLUpdateDraftMessage) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToUpdateDraftMessage <--
-func (m *PeerWithDraftMessage) ToUpdateDraftMessage() (*TLUpdateDraftMessage, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLUpdateDraftMessage); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type PeerWithDraftMessage = TLUpdateDraftMessage
 
 // SavedDialogListClazz <--
 //   - TL_SavedDialogList
-type SavedDialogListClazz interface {
-	iface.TLObject
-	SavedDialogListClazzName() string
-}
+type SavedDialogListClazz = *TLSavedDialogList
 
 func DecodeSavedDialogListClazz(d *bin.Decoder) (SavedDialogListClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -1003,15 +862,17 @@ func DecodeSavedDialogListClazz(d *bin.Decoder) (SavedDialogListClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_savedDialogList:
+	switch id {
+	case 0x778fe85a:
 		x := &TLSavedDialogList{ClazzID: id, ClazzName2: ClazzName_savedDialogList}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeSavedDialogList - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLSavedDialogList <--
@@ -1036,6 +897,13 @@ func (m *TLSavedDialogList) String() string {
 	return string(data)
 }
 
+func (m *TLSavedDialogList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("savedDialogList", m)
+}
+
 // SavedDialogListClazzName <--
 func (m *TLSavedDialogList) SavedDialogListClazzName() string {
 	return ClazzName_savedDialogList
@@ -1052,27 +920,50 @@ func (m *TLSavedDialogList) ToSavedDialogList() *SavedDialogList {
 		return nil
 	}
 
-	return &SavedDialogList{Clazz: m}
+	return m
+
+}
+
+func (m *TLSavedDialogList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_savedDialogList, int(layer)); clazzId {
+	case 0x778fe85a:
+		size := 4
+		size += 4
+		size += iface.CalcObjectListSize(m.Dialogs, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSavedDialogList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_savedDialogList, int(layer)); clazzId {
+	case 0x778fe85a:
+		if err := iface.ValidateRequiredSlice("dialogs", m.Dialogs); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_savedDialogList, layer)
+	}
 }
 
 // Encode <--
 func (m *TLSavedDialogList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x778fe85a: func() error {
-			x.PutClazzID(0x778fe85a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_savedDialogList, int(layer)); clazzId {
+	case 0x778fe85a:
+		x.PutClazzID(0x778fe85a)
 
-			x.PutInt32(m.Count)
+		x.PutInt32(m.Count)
 
-			_ = iface.EncodeObjectList(x, m.Dialogs, layer)
+		if err := iface.EncodeObjectList(x, m.Dialogs, layer); err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_savedDialogList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_savedDialogList, layer)
 	}
@@ -1080,102 +971,37 @@ func (m *TLSavedDialogList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x778fe85a: func() (err error) {
-			m.Count, err = d.Int32()
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0x778fe85a:
+		m.Count, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]tg.SavedDialogClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = tg.DecodeSavedDialogClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]tg.SavedDialogClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(SavedDialog)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = tg.DecodeSavedDialogClazz(d)
-				_ = err3
-			}
-			m.Dialogs = v1
+		}
+		m.Dialogs = v1
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // SavedDialogList <--
-type SavedDialogList struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz SavedDialogListClazz `json:"_clazz"`
-}
-
-func (m *SavedDialogList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *SavedDialogList) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.SavedDialogListClazzName()
-	}
-}
-
-// Encode <--
-func (m *SavedDialogList) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("SavedDialogList - invalid Clazz")
-}
-
-// Decode <--
-func (m *SavedDialogList) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeSavedDialogListClazz(d)
-	return
-}
-
-// Match <--
-func (m *SavedDialogList) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLSavedDialogList:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLSavedDialogList) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToSavedDialogList <--
-func (m *SavedDialogList) ToSavedDialogList() (*TLSavedDialogList, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLSavedDialogList); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type SavedDialogList = TLSavedDialogList

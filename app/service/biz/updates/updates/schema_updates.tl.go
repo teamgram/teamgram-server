@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package updates
@@ -19,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // ChannelDifferenceClazz <--
 //   - TL_ChannelDifference
-type ChannelDifferenceClazz interface {
-	iface.TLObject
-	ChannelDifferenceClazzName() string
-}
+type ChannelDifferenceClazz = *TLChannelDifference
 
 func DecodeChannelDifferenceClazz(d *bin.Decoder) (ChannelDifferenceClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -38,15 +38,17 @@ func DecodeChannelDifferenceClazz(d *bin.Decoder) (ChannelDifferenceClazz, error
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_channelDifference:
+	switch id {
+	case 0xcd19034a:
 		x := &TLChannelDifference{ClazzID: id, ClazzName2: ClazzName_channelDifference}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeChannelDifference - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLChannelDifference <--
@@ -73,6 +75,13 @@ func (m *TLChannelDifference) String() string {
 	return string(data)
 }
 
+func (m *TLChannelDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("channelDifference", m)
+}
+
 // ChannelDifferenceClazzName <--
 func (m *TLChannelDifference) ChannelDifferenceClazzName() string {
 	return ClazzName_channelDifference
@@ -89,43 +98,74 @@ func (m *TLChannelDifference) ToChannelDifference() *ChannelDifference {
 		return nil
 	}
 
-	return &ChannelDifference{Clazz: m}
+	return m
+
+}
+
+func (m *TLChannelDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channelDifference, int(layer)); clazzId {
+	case 0xcd19034a:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcObjectListSize(m.NewMessages, layer)
+		size += iface.CalcObjectListSize(m.OtherUpdates, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChannelDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channelDifference, int(layer)); clazzId {
+	case 0xcd19034a:
+		if err := iface.ValidateRequiredSlice("new_messages", m.NewMessages); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("other_updates", m.OtherUpdates); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channelDifference, layer)
+	}
 }
 
 // Encode <--
 func (m *TLChannelDifference) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xcd19034a: func() error {
-			x.PutClazzID(0xcd19034a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_channelDifference, int(layer)); clazzId {
+	case 0xcd19034a:
+		x.PutClazzID(0xcd19034a)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Final == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.Final == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt32(m.Pts)
+			return flags
+		}
 
-			_ = iface.EncodeObjectList(x, m.NewMessages, layer)
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.Pts)
 
-			_ = iface.EncodeObjectList(x, m.OtherUpdates, layer)
+		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
+		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
+			return err
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_channelDifference, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_channelDifference, layer)
 	}
@@ -133,127 +173,68 @@ func (m *TLChannelDifference) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xcd19034a: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			if (flags & (1 << 0)) != 0 {
-				m.Final = true
+	switch m.ClazzID {
+	case 0xcd19034a:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.Final = true
+		}
+		m.Pts, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		c3, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		}
+		l3, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v3 := make([]tg.MessageClazz, l3)
+		for i := 0; i < l3; i++ {
+			v3[i], err3 = tg.DecodeMessageClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			m.Pts, err = d.Int32()
-			c3, err2 := d.ClazzID()
-			if c3 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
-				return err2
-			}
-			l3, err3 := d.Int()
-			v3 := make([]tg.MessageClazz, l3)
-			for i := 0; i < l3; i++ {
-				// vv := new(Message)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v3[i] = vv
-				v3[i], err3 = tg.DecodeMessageClazz(d)
-				_ = err3
-			}
-			m.NewMessages = v3
+		}
+		m.NewMessages = v3
 
-			c4, err2 := d.ClazzID()
-			if c4 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
-				return err2
+		c4, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c4 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+		}
+		l4, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v4 := make([]tg.UpdateClazz, l4)
+		for i := 0; i < l4; i++ {
+			v4[i], err3 = tg.DecodeUpdateClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l4, err3 := d.Int()
-			v4 := make([]tg.UpdateClazz, l4)
-			for i := 0; i < l4; i++ {
-				// vv := new(Update)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v4[i] = vv
-				v4[i], err3 = tg.DecodeUpdateClazz(d)
-				_ = err3
-			}
-			m.OtherUpdates = v4
+		}
+		m.OtherUpdates = v4
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // ChannelDifference <--
-type ChannelDifference struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz ChannelDifferenceClazz `json:"_clazz"`
-}
-
-func (m *ChannelDifference) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *ChannelDifference) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.ChannelDifferenceClazzName()
-	}
-}
-
-// Encode <--
-func (m *ChannelDifference) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("ChannelDifference - invalid Clazz")
-}
-
-// Decode <--
-func (m *ChannelDifference) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeChannelDifferenceClazz(d)
-	return
-}
-
-// Match <--
-func (m *ChannelDifference) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLChannelDifference:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLChannelDifference) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToChannelDifference <--
-func (m *ChannelDifference) ToChannelDifference() (*TLChannelDifference, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLChannelDifference); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type ChannelDifference = TLChannelDifference
 
 // DifferenceClazz <--
 //   - TL_DifferenceEmpty
@@ -272,27 +253,35 @@ func DecodeDifferenceClazz(d *bin.Decoder) (DifferenceClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_differenceEmpty:
+	switch id {
+	case 0x8bdbda4e:
 		x := &TLDifferenceEmpty{ClazzID: id, ClazzName2: ClazzName_differenceEmpty}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
-	case ClazzName_difference:
+	case 0x5482832b:
 		x := &TLDifference{ClazzID: id, ClazzName2: ClazzName_difference}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
-	case ClazzName_differenceSlice:
+	case 0xcb965ddf:
 		x := &TLDifferenceSlice{ClazzID: id, ClazzName2: ClazzName_differenceSlice}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
-	case ClazzName_differenceTooLong:
+	case 0x3572ee30:
 		x := &TLDifferenceTooLong{ClazzID: id, ClazzName2: ClazzName_differenceTooLong}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeDifference - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLDifferenceEmpty <--
@@ -316,6 +305,13 @@ func (m *TLDifferenceEmpty) String() string {
 	return string(data)
 }
 
+func (m *TLDifferenceEmpty) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("differenceEmpty", m)
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceEmpty) DifferenceClazzName() string {
 	return ClazzName_differenceEmpty
@@ -333,24 +329,44 @@ func (m *TLDifferenceEmpty) ToDifference() *Difference {
 	}
 
 	return &Difference{Clazz: m}
+
+}
+
+func (m *TLDifferenceEmpty) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceEmpty, int(layer)); clazzId {
+	case 0x8bdbda4e:
+		size := 4
+		size += iface.CalcObjectSize(m.State, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDifferenceEmpty) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceEmpty, int(layer)); clazzId {
+	case 0x8bdbda4e:
+		if err := iface.ValidateRequiredObject("state", m.State); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceEmpty, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDifferenceEmpty) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x8bdbda4e: func() error {
-			x.PutClazzID(0x8bdbda4e)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceEmpty, int(layer)); clazzId {
+	case 0x8bdbda4e:
+		x.PutClazzID(0x8bdbda4e)
 
-			_ = m.State.Encode(x, layer)
+		_ = m.State.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_differenceEmpty, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceEmpty, layer)
 	}
@@ -358,21 +374,16 @@ func (m *TLDifferenceEmpty) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDifferenceEmpty) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x8bdbda4e: func() (err error) {
+	switch m.ClazzID {
+	case 0x8bdbda4e:
 
-			// m0 := &tg.UpdatesState{}
-			// _ = m0.Decode(d)
-			// m.State = m0
-			m.State, _ = tg.DecodeUpdatesStateClazz(d)
+		m.State, err = tg.DecodeUpdatesStateClazz(d)
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -400,6 +411,13 @@ func (m *TLDifference) String() string {
 	return string(data)
 }
 
+func (m *TLDifference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("difference", m)
+}
+
 // DifferenceClazzName <--
 func (m *TLDifference) DifferenceClazzName() string {
 	return ClazzName_difference
@@ -417,28 +435,62 @@ func (m *TLDifference) ToDifference() *Difference {
 	}
 
 	return &Difference{Clazz: m}
+
+}
+
+func (m *TLDifference) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_difference, int(layer)); clazzId {
+	case 0x5482832b:
+		size := 4
+		size += iface.CalcObjectListSize(m.NewMessages, layer)
+		size += iface.CalcObjectListSize(m.OtherUpdates, layer)
+		size += iface.CalcObjectSize(m.State, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDifference) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_difference, int(layer)); clazzId {
+	case 0x5482832b:
+		if err := iface.ValidateRequiredSlice("new_messages", m.NewMessages); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("other_updates", m.OtherUpdates); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("state", m.State); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_difference, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDifference) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x5482832b: func() error {
-			x.PutClazzID(0x5482832b)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_difference, int(layer)); clazzId {
+	case 0x5482832b:
+		x.PutClazzID(0x5482832b)
 
-			_ = iface.EncodeObjectList(x, m.NewMessages, layer)
+		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
+			return err
+		}
 
-			_ = iface.EncodeObjectList(x, m.OtherUpdates, layer)
+		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
+			return err
+		}
 
-			_ = m.State.Encode(x, layer)
+		_ = m.State.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_difference, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_difference, layer)
 	}
@@ -446,54 +498,55 @@ func (m *TLDifference) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x5482832b: func() (err error) {
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0x5482832b:
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]tg.MessageClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = tg.DecodeMessageClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]tg.MessageClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(Message)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = tg.DecodeMessageClazz(d)
-				_ = err3
+		}
+		m.NewMessages = v1
+
+		c2, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		}
+		l2, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v2 := make([]tg.UpdateClazz, l2)
+		for i := 0; i < l2; i++ {
+			v2[i], err3 = tg.DecodeUpdateClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			m.NewMessages = v1
+		}
+		m.OtherUpdates = v2
 
-			c2, err2 := d.ClazzID()
-			if c2 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-				return err2
-			}
-			l2, err3 := d.Int()
-			v2 := make([]tg.UpdateClazz, l2)
-			for i := 0; i < l2; i++ {
-				// vv := new(Update)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v2[i] = vv
-				v2[i], err3 = tg.DecodeUpdateClazz(d)
-				_ = err3
-			}
-			m.OtherUpdates = v2
+		m.State, err = tg.DecodeUpdatesStateClazz(d)
+		if err != nil {
+			return err
+		}
 
-			// m0 := &tg.UpdatesState{}
-			// _ = m0.Decode(d)
-			// m.State = m0
-			m.State, _ = tg.DecodeUpdatesStateClazz(d)
-
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -521,6 +574,13 @@ func (m *TLDifferenceSlice) String() string {
 	return string(data)
 }
 
+func (m *TLDifferenceSlice) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("differenceSlice", m)
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceSlice) DifferenceClazzName() string {
 	return ClazzName_differenceSlice
@@ -538,28 +598,62 @@ func (m *TLDifferenceSlice) ToDifference() *Difference {
 	}
 
 	return &Difference{Clazz: m}
+
+}
+
+func (m *TLDifferenceSlice) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceSlice, int(layer)); clazzId {
+	case 0xcb965ddf:
+		size := 4
+		size += iface.CalcObjectListSize(m.NewMessages, layer)
+		size += iface.CalcObjectListSize(m.OtherUpdates, layer)
+		size += iface.CalcObjectSize(m.IntermediateState, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDifferenceSlice) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceSlice, int(layer)); clazzId {
+	case 0xcb965ddf:
+		if err := iface.ValidateRequiredSlice("new_messages", m.NewMessages); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("other_updates", m.OtherUpdates); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("intermediate_state", m.IntermediateState); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceSlice, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDifferenceSlice) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xcb965ddf: func() error {
-			x.PutClazzID(0xcb965ddf)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceSlice, int(layer)); clazzId {
+	case 0xcb965ddf:
+		x.PutClazzID(0xcb965ddf)
 
-			_ = iface.EncodeObjectList(x, m.NewMessages, layer)
+		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
+			return err
+		}
 
-			_ = iface.EncodeObjectList(x, m.OtherUpdates, layer)
+		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
+			return err
+		}
 
-			_ = m.IntermediateState.Encode(x, layer)
+		_ = m.IntermediateState.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_differenceSlice, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceSlice, layer)
 	}
@@ -567,54 +661,55 @@ func (m *TLDifferenceSlice) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xcb965ddf: func() (err error) {
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0xcb965ddf:
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]tg.MessageClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = tg.DecodeMessageClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]tg.MessageClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(Message)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = tg.DecodeMessageClazz(d)
-				_ = err3
+		}
+		m.NewMessages = v1
+
+		c2, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		}
+		l2, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v2 := make([]tg.UpdateClazz, l2)
+		for i := 0; i < l2; i++ {
+			v2[i], err3 = tg.DecodeUpdateClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			m.NewMessages = v1
+		}
+		m.OtherUpdates = v2
 
-			c2, err2 := d.ClazzID()
-			if c2 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-				return err2
-			}
-			l2, err3 := d.Int()
-			v2 := make([]tg.UpdateClazz, l2)
-			for i := 0; i < l2; i++ {
-				// vv := new(Update)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v2[i] = vv
-				v2[i], err3 = tg.DecodeUpdateClazz(d)
-				_ = err3
-			}
-			m.OtherUpdates = v2
+		m.IntermediateState, err = tg.DecodeUpdatesStateClazz(d)
+		if err != nil {
+			return err
+		}
 
-			// m3 := &tg.UpdatesState{}
-			// _ = m3.Decode(d)
-			// m.IntermediateState = m3
-			m.IntermediateState, _ = tg.DecodeUpdatesStateClazz(d)
-
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -640,6 +735,13 @@ func (m *TLDifferenceTooLong) String() string {
 	return string(data)
 }
 
+func (m *TLDifferenceTooLong) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("differenceTooLong", m)
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceTooLong) DifferenceClazzName() string {
 	return ClazzName_differenceTooLong
@@ -657,24 +759,41 @@ func (m *TLDifferenceTooLong) ToDifference() *Difference {
 	}
 
 	return &Difference{Clazz: m}
+
+}
+
+func (m *TLDifferenceTooLong) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceTooLong, int(layer)); clazzId {
+	case 0x3572ee30:
+		size := 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDifferenceTooLong) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceTooLong, int(layer)); clazzId {
+	case 0x3572ee30:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceTooLong, layer)
+	}
 }
 
 // Encode <--
 func (m *TLDifferenceTooLong) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x3572ee30: func() error {
-			x.PutClazzID(0x3572ee30)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_differenceTooLong, int(layer)); clazzId {
+	case 0x3572ee30:
+		x.PutClazzID(0x3572ee30)
 
-			x.PutInt32(m.Pts)
+		x.PutInt32(m.Pts)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_differenceTooLong, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_differenceTooLong, layer)
 	}
@@ -682,17 +801,15 @@ func (m *TLDifferenceTooLong) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLDifferenceTooLong) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x3572ee30: func() (err error) {
-			m.Pts, err = d.Int32()
+	switch m.ClazzID {
+	case 0x3572ee30:
+		m.Pts, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -707,6 +824,33 @@ type Difference struct {
 func (m *Difference) String() string {
 	data, _ := json.Marshal(m)
 	return string(data)
+}
+
+func (m *Difference) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName(m.ClazzName(), m)
+}
+
+func (m *Difference) CalcSize(layer int32) int {
+	if m == nil || m.Clazz == nil {
+		return 0
+	}
+	return iface.CalcObjectSize(m.Clazz, layer)
+}
+
+func (m *Difference) Validate(layer int32) error {
+	if m == nil {
+		return fmt.Errorf("Difference is required")
+	}
+	if m.Clazz == nil {
+		return fmt.Errorf("Difference.Clazz is required")
+	}
+	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
+		return v.Validate(layer)
+	}
+	return nil
 }
 
 func (m *Difference) ClazzName() string {
@@ -730,41 +874,6 @@ func (m *Difference) Encode(x *bin.Encoder, layer int32) error {
 func (m *Difference) Decode(d *bin.Decoder) (err error) {
 	m.Clazz, err = DecodeDifferenceClazz(d)
 	return
-}
-
-// Match <--
-func (m *Difference) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLDifferenceEmpty:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDifferenceEmpty) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDifference:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDifference) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDifferenceSlice:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDifferenceSlice) interface{}); ok {
-				f1(c)
-			}
-		}
-	case *TLDifferenceTooLong:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLDifferenceTooLong) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
 }
 
 // ToDifferenceEmpty <--

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 // ConstructorList
@@ -23,7 +23,7 @@ func init() {
 	// Method
 	iface.RegisterClazzID(0x1a484107, func() iface.TLObject { return &TLDfsWriteFilePartData{ClazzID: 0x1a484107} })        // 0x1a484107
 	iface.RegisterClazzID(0x2410d1a2, func() iface.TLObject { return &TLDfsUploadPhotoFileV2{ClazzID: 0x2410d1a2} })        // 0x2410d1a2
-	iface.RegisterClazzID(0xcc1da2b2, func() iface.TLObject { return &TLDfsUploadProfilePhotoFileV2{ClazzID: 0xcc1da2b2} }) // 0xcc1da2b2
+	iface.RegisterClazzID(0x872313d8, func() iface.TLObject { return &TLDfsUploadProfilePhotoFileV2{ClazzID: 0x872313d8} }) // 0x872313d8
 	iface.RegisterClazzID(0x79d3c523, func() iface.TLObject { return &TLDfsUploadEncryptedFileV2{ClazzID: 0x79d3c523} })    // 0x79d3c523
 	iface.RegisterClazzID(0xd6bfee3e, func() iface.TLObject { return &TLDfsDownloadFile{ClazzID: 0xd6bfee3e} })             // 0xd6bfee3e
 	iface.RegisterClazzID(0x76336db7, func() iface.TLObject { return &TLDfsUploadDocumentFileV2{ClazzID: 0x76336db7} })     // 0x76336db7

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package updates
@@ -36,27 +36,21 @@ type TLUpdatesGetStateV2 struct {
 }
 
 func (m *TLUpdatesGetStateV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getStateV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLUpdatesGetStateV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x45f4cd65: func() error {
-			x.PutClazzID(0x45f4cd65)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getStateV2, int(layer)); clazzId {
+	case 0x45f4cd65:
+		x.PutClazzID(0x45f4cd65)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.UserId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_updates_getStateV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getStateV2, layer)
 	}
@@ -64,21 +58,25 @@ func (m *TLUpdatesGetStateV2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLUpdatesGetStateV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x45f4cd65: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.UserId, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x45f4cd65:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -94,47 +92,41 @@ type TLUpdatesGetDifferenceV2 struct {
 }
 
 func (m *TLUpdatesGetDifferenceV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getDifferenceV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLUpdatesGetDifferenceV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xb76b6699: func() error {
-			x.PutClazzID(0xb76b6699)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getDifferenceV2, int(layer)); clazzId {
+	case 0xb76b6699:
+		x.PutClazzID(0xb76b6699)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.PtsTotalLimit != nil {
-					flags |= 1 << 0
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.Pts)
 			if m.PtsTotalLimit != nil {
-				x.PutInt32(*m.PtsTotalLimit)
+				flags |= 1 << 0
 			}
 
-			x.PutInt64(m.Date)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Pts)
+		if m.PtsTotalLimit != nil {
+			x.PutInt32(*m.PtsTotalLimit)
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_updates_getDifferenceV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		x.PutInt64(m.Date)
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getDifferenceV2, layer)
 	}
@@ -142,29 +134,45 @@ func (m *TLUpdatesGetDifferenceV2) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLUpdatesGetDifferenceV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xb76b6699: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.AuthKeyId, err = d.Int64()
-			m.UserId, err = d.Int64()
-			m.Pts, err = d.Int32()
-			if (flags & (1 << 0)) != 0 {
-				m.PtsTotalLimit = new(int32)
-				*m.PtsTotalLimit, err = d.Int32()
-			}
-			m.Date, err = d.Int64()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0xb76b6699:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Pts, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.PtsTotalLimit = new(int32)
+			*m.PtsTotalLimit, err = d.Int32()
+			if err != nil {
+				return err
+			}
+		}
+		m.Date, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
@@ -180,30 +188,24 @@ type TLUpdatesGetChannelDifferenceV2 struct {
 }
 
 func (m *TLUpdatesGetChannelDifferenceV2) String() string {
-	wrapper := iface.WithNameWrapper{"", m}
+	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getChannelDifferenceV2, TLObject: m}
 	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLUpdatesGetChannelDifferenceV2) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x4da3318a: func() error {
-			x.PutClazzID(0x4da3318a)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifferenceV2, int(layer)); clazzId {
+	case 0x4da3318a:
+		x.PutClazzID(0x4da3318a)
 
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.UserId)
-			x.PutInt64(m.ChannelId)
-			x.PutInt32(m.Pts)
-			x.PutInt32(m.Limit)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.UserId)
+		x.PutInt64(m.ChannelId)
+		x.PutInt32(m.Pts)
+		x.PutInt32(m.Limit)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_updates_getChannelDifferenceV2, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getChannelDifferenceV2, layer)
 	}
@@ -211,24 +213,37 @@ func (m *TLUpdatesGetChannelDifferenceV2) Encode(x *bin.Encoder, layer int32) er
 
 // Decode <--
 func (m *TLUpdatesGetChannelDifferenceV2) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x4da3318a: func() (err error) {
-			m.AuthKeyId, err = d.Int64()
-			m.UserId, err = d.Int64()
-			m.ChannelId, err = d.Int64()
-			m.Pts, err = d.Int32()
-			m.Limit, err = d.Int32()
-
-			return nil
-		},
-	}
-
 	if m.ClazzID == 0 {
-		m.ClazzID, _ = d.ClazzID()
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return err
+		}
 	}
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+	switch m.ClazzID {
+	case 0x4da3318a:
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.ChannelId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Pts, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }

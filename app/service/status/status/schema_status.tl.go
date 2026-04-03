@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package status
@@ -19,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // SessionEntryClazz <--
 //   - TL_SessionEntry
-type SessionEntryClazz interface {
-	iface.TLObject
-	SessionEntryClazzName() string
-}
+type SessionEntryClazz = *TLSessionEntry
 
 func DecodeSessionEntryClazz(d *bin.Decoder) (SessionEntryClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -38,15 +38,17 @@ func DecodeSessionEntryClazz(d *bin.Decoder) (SessionEntryClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_sessionEntry:
+	switch id {
+	case 0x1764ac31:
 		x := &TLSessionEntry{ClazzID: id, ClazzName2: ClazzName_sessionEntry}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeSessionEntry - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLSessionEntry <--
@@ -76,6 +78,13 @@ func (m *TLSessionEntry) String() string {
 	return string(data)
 }
 
+func (m *TLSessionEntry) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("sessionEntry", m)
+}
+
 // SessionEntryClazzName <--
 func (m *TLSessionEntry) SessionEntryClazzName() string {
 	return ClazzName_sessionEntry
@@ -92,31 +101,61 @@ func (m *TLSessionEntry) ToSessionEntry() *SessionEntry {
 		return nil
 	}
 
-	return &SessionEntry{Clazz: m}
+	return m
+
+}
+
+func (m *TLSessionEntry) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sessionEntry, int(layer)); clazzId {
+	case 0x1764ac31:
+		size := 4
+		size += 8
+		size += 8
+		size += iface.CalcStringSize(m.Gateway)
+		size += 8
+		size += 4
+		size += 8
+		size += iface.CalcStringSize(m.Client)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSessionEntry) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sessionEntry, int(layer)); clazzId {
+	case 0x1764ac31:
+		if err := iface.ValidateRequiredString("gateway", m.Gateway); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("client", m.Client); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionEntry, layer)
+	}
 }
 
 // Encode <--
 func (m *TLSessionEntry) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x1764ac31: func() error {
-			x.PutClazzID(0x1764ac31)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sessionEntry, int(layer)); clazzId {
+	case 0x1764ac31:
+		x.PutClazzID(0x1764ac31)
 
-			x.PutInt64(m.UserId)
-			x.PutInt64(m.AuthKeyId)
-			x.PutString(m.Gateway)
-			x.PutInt64(m.Expired)
-			x.PutInt32(m.Layer)
-			x.PutInt64(m.PermAuthKeyId)
-			x.PutString(m.Client)
+		x.PutInt64(m.UserId)
+		x.PutInt64(m.AuthKeyId)
+		x.PutString(m.Gateway)
+		x.PutInt64(m.Expired)
+		x.PutInt32(m.Layer)
+		x.PutInt64(m.PermAuthKeyId)
+		x.PutString(m.Client)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_sessionEntry, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionEntry, layer)
 	}
@@ -124,102 +163,49 @@ func (m *TLSessionEntry) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLSessionEntry) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x1764ac31: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.AuthKeyId, err = d.Int64()
-			m.Gateway, err = d.String()
-			m.Expired, err = d.Int64()
-			m.Layer, err = d.Int32()
-			m.PermAuthKeyId, err = d.Int64()
-			m.Client, err = d.String()
+	switch m.ClazzID {
+	case 0x1764ac31:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Gateway, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.Expired, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Layer, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Client, err = d.String()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // SessionEntry <--
-type SessionEntry struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz SessionEntryClazz `json:"_clazz"`
-}
-
-func (m *SessionEntry) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *SessionEntry) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.SessionEntryClazzName()
-	}
-}
-
-// Encode <--
-func (m *SessionEntry) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("SessionEntry - invalid Clazz")
-}
-
-// Decode <--
-func (m *SessionEntry) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeSessionEntryClazz(d)
-	return
-}
-
-// Match <--
-func (m *SessionEntry) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLSessionEntry:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLSessionEntry) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToSessionEntry <--
-func (m *SessionEntry) ToSessionEntry() (*TLSessionEntry, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLSessionEntry); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type SessionEntry = TLSessionEntry
 
 // UserSessionEntryListClazz <--
 //   - TL_UserSessionEntryList
-type UserSessionEntryListClazz interface {
-	iface.TLObject
-	UserSessionEntryListClazzName() string
-}
+type UserSessionEntryListClazz = *TLUserSessionEntryList
 
 func DecodeUserSessionEntryListClazz(d *bin.Decoder) (UserSessionEntryListClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -228,15 +214,17 @@ func DecodeUserSessionEntryListClazz(d *bin.Decoder) (UserSessionEntryListClazz,
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_userSessionEntryList:
+	switch id {
+	case 0xefecb398:
 		x := &TLUserSessionEntryList{ClazzID: id, ClazzName2: ClazzName_userSessionEntryList}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeUserSessionEntryList - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLUserSessionEntryList <--
@@ -261,6 +249,13 @@ func (m *TLUserSessionEntryList) String() string {
 	return string(data)
 }
 
+func (m *TLUserSessionEntryList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("userSessionEntryList", m)
+}
+
 // UserSessionEntryListClazzName <--
 func (m *TLUserSessionEntryList) UserSessionEntryListClazzName() string {
 	return ClazzName_userSessionEntryList
@@ -277,27 +272,50 @@ func (m *TLUserSessionEntryList) ToUserSessionEntryList() *UserSessionEntryList 
 		return nil
 	}
 
-	return &UserSessionEntryList{Clazz: m}
+	return m
+
+}
+
+func (m *TLUserSessionEntryList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userSessionEntryList, int(layer)); clazzId {
+	case 0xefecb398:
+		size := 4
+		size += 8
+		size += iface.CalcObjectListSize(m.UserSessions, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUserSessionEntryList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userSessionEntryList, int(layer)); clazzId {
+	case 0xefecb398:
+		if err := iface.ValidateRequiredSlice("user_sessions", m.UserSessions); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_userSessionEntryList, layer)
+	}
 }
 
 // Encode <--
 func (m *TLUserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xefecb398: func() error {
-			x.PutClazzID(0xefecb398)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userSessionEntryList, int(layer)); clazzId {
+	case 0xefecb398:
+		x.PutClazzID(0xefecb398)
 
-			x.PutInt64(m.UserId)
+		x.PutInt64(m.UserId)
 
-			_ = iface.EncodeObjectList(x, m.UserSessions, layer)
+		if err := iface.EncodeObjectList(x, m.UserSessions, layer); err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_userSessionEntryList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_userSessionEntryList, layer)
 	}
@@ -305,102 +323,37 @@ func (m *TLUserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xefecb398: func() (err error) {
-			m.UserId, err = d.Int64()
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0xefecb398:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]SessionEntryClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = DecodeSessionEntryClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]SessionEntryClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(SessionEntry)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = DecodeSessionEntryClazz(d)
-				_ = err3
-			}
-			m.UserSessions = v1
+		}
+		m.UserSessions = v1
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // UserSessionEntryList <--
-type UserSessionEntryList struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz UserSessionEntryListClazz `json:"_clazz"`
-}
-
-func (m *UserSessionEntryList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *UserSessionEntryList) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.UserSessionEntryListClazzName()
-	}
-}
-
-// Encode <--
-func (m *UserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("UserSessionEntryList - invalid Clazz")
-}
-
-// Decode <--
-func (m *UserSessionEntryList) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeUserSessionEntryListClazz(d)
-	return
-}
-
-// Match <--
-func (m *UserSessionEntryList) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLUserSessionEntryList:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLUserSessionEntryList) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToUserSessionEntryList <--
-func (m *UserSessionEntryList) ToUserSessionEntryList() (*TLUserSessionEntryList, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLUserSessionEntryList); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type UserSessionEntryList = TLUserSessionEntryList

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chat
@@ -68,7 +68,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_chat_getMutableChat, 0, 0x2c2c25d2)                   // 2c2c25d2
 	iface.RegisterClazzName(ClazzName_chat_getChatListByIdList, 0, 0xe740f539)              // e740f539
 	iface.RegisterClazzName(ClazzName_chat_getChatBySelfId, 0, 0x49b71a48)                  // 49b71a48
-	iface.RegisterClazzName(ClazzName_chat_createChat2, 0, 0xf77448d2)                      // f77448d2
+	iface.RegisterClazzName(ClazzName_chat_createChat2, 0, 0xed17acf5)                      // ed17acf5
 	iface.RegisterClazzName(ClazzName_chat_deleteChat, 0, 0x6d11ec1e)                       // 6d11ec1e
 	iface.RegisterClazzName(ClazzName_chat_deleteChatUser, 0, 0xb270fd5)                    // b270fd5
 	iface.RegisterClazzName(ClazzName_chat_editChatTitle, 0, 0x95c59ea7)                    // 95c59ea7
@@ -110,7 +110,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_chat_getMutableChat, 0x2c2c25d2)                   // 2c2c25d2
 	iface.RegisterClazzIDName(ClazzName_chat_getChatListByIdList, 0xe740f539)              // e740f539
 	iface.RegisterClazzIDName(ClazzName_chat_getChatBySelfId, 0x49b71a48)                  // 49b71a48
-	iface.RegisterClazzIDName(ClazzName_chat_createChat2, 0xf77448d2)                      // f77448d2
+	iface.RegisterClazzIDName(ClazzName_chat_createChat2, 0xed17acf5)                      // ed17acf5
 	iface.RegisterClazzIDName(ClazzName_chat_deleteChat, 0x6d11ec1e)                       // 6d11ec1e
 	iface.RegisterClazzIDName(ClazzName_chat_deleteChatUser, 0xb270fd5)                    // b270fd5
 	iface.RegisterClazzIDName(ClazzName_chat_editChatTitle, 0x95c59ea7)                    // 95c59ea7

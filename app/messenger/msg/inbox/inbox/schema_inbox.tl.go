@@ -2,15 +2,16 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package inbox
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -18,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // InboxMessageDataClazz <--
 //   - TL_InboxMessageData
-type InboxMessageDataClazz interface {
-	iface.TLObject
-	InboxMessageDataClazzName() string
-}
+type InboxMessageDataClazz = *TLInboxMessageData
 
 func DecodeInboxMessageDataClazz(d *bin.Decoder) (InboxMessageDataClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -37,28 +38,47 @@ func DecodeInboxMessageDataClazz(d *bin.Decoder) (InboxMessageDataClazz, error) 
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_inboxMessageData:
-		x := &TLInboxMessageData{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0x3bbdadd4:
+		x := &TLInboxMessageData{ClazzID: id, ClazzName2: ClazzName_inboxMessageData}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeInboxMessageData - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLInboxMessageData <--
 type TLInboxMessageData struct {
-	ClazzID         uint32      `json:"_id"`
-	RandomId        int64       `json:"random_id"`
-	DialogMessageId int64       `json:"dialog_message_id"`
-	Message         *tg.Message `json:"message"`
+	ClazzID         uint32          `json:"_id"`
+	ClazzName2      string          `json:"_name"`
+	RandomId        int64           `json:"random_id"`
+	DialogMessageId int64           `json:"dialog_message_id"`
+	Message         tg.MessageClazz `json:"message"`
+}
+
+func MakeTLInboxMessageData(m *TLInboxMessageData) *TLInboxMessageData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inboxMessageData
+
+	return m
 }
 
 func (m *TLInboxMessageData) String() string {
-	wrapper := iface.WithNameWrapper{"inboxMessageData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLInboxMessageData) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("inboxMessageData", m)
 }
 
 // InboxMessageDataClazzName <--
@@ -68,7 +88,7 @@ func (m *TLInboxMessageData) InboxMessageDataClazzName() string {
 
 // ClazzName <--
 func (m *TLInboxMessageData) ClazzName() string {
-	return ClazzName_inboxMessageData
+	return m.ClazzName2
 }
 
 // ToInboxMessageData <--
@@ -77,27 +97,49 @@ func (m *TLInboxMessageData) ToInboxMessageData() *InboxMessageData {
 		return nil
 	}
 
-	return MakeInboxMessageData(m)
+	return m
+
+}
+
+func (m *TLInboxMessageData) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageData, int(layer)); clazzId {
+	case 0x3bbdadd4:
+		size := 4
+		size += 8
+		size += 8
+		size += iface.CalcObjectSize(m.Message, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInboxMessageData) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageData, int(layer)); clazzId {
+	case 0x3bbdadd4:
+		if err := iface.ValidateRequiredObject("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageData, layer)
+	}
 }
 
 // Encode <--
 func (m *TLInboxMessageData) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x3bbdadd4: func() error {
-			x.PutClazzID(0x3bbdadd4)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageData, int(layer)); clazzId {
+	case 0x3bbdadd4:
+		x.PutClazzID(0x3bbdadd4)
 
-			x.PutInt64(m.RandomId)
-			x.PutInt64(m.DialogMessageId)
-			_ = m.Message.Encode(x, layer)
+		x.PutInt64(m.RandomId)
+		x.PutInt64(m.DialogMessageId)
+		_ = m.Message.Encode(x, layer)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageData, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageData, layer)
 	}
@@ -105,99 +147,34 @@ func (m *TLInboxMessageData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLInboxMessageData) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x3bbdadd4: func() (err error) {
-			m.RandomId, err = d.Int64()
-			m.DialogMessageId, err = d.Int64()
+	switch m.ClazzID {
+	case 0x3bbdadd4:
+		m.RandomId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.DialogMessageId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			m2 := &tg.Message{}
-			_ = m2.Decode(d)
-			m.Message = m2
+		m.Message, err = tg.DecodeMessageClazz(d)
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // InboxMessageData <--
-type InboxMessageData struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	InboxMessageDataClazz `json:"_clazz"`
-}
-
-func (m *InboxMessageData) String() string {
-	wrapper := iface.WithNameWrapper{m.InboxMessageDataClazzName(), m}
-	return wrapper.String()
-}
-
-// MakeInboxMessageData <--
-func MakeInboxMessageData(c InboxMessageDataClazz) *InboxMessageData {
-	return &InboxMessageData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		InboxMessageDataClazz: c,
-	}
-}
-
-// Encode <--
-func (m *InboxMessageData) Encode(x *bin.Encoder, layer int32) error {
-	if m.InboxMessageDataClazz != nil {
-		return m.InboxMessageDataClazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("InboxMessageData - invalid Clazz")
-}
-
-// Decode <--
-func (m *InboxMessageData) Decode(d *bin.Decoder) (err error) {
-	m.InboxMessageDataClazz, err = DecodeInboxMessageDataClazz(d)
-	return
-}
-
-// Match <--
-func (m *InboxMessageData) Match(f ...interface{}) {
-	switch c := m.InboxMessageDataClazz.(type) {
-	case *TLInboxMessageData:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInboxMessageData) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToInboxMessageData <--
-func (m *InboxMessageData) ToInboxMessageData() (*TLInboxMessageData, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.InboxMessageDataClazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.InboxMessageDataClazz.(*TLInboxMessageData); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type InboxMessageData = TLInboxMessageData
 
 // InboxMessageIdClazz <--
 //   - TL_InboxMessageId
-type InboxMessageIdClazz interface {
-	iface.TLObject
-	InboxMessageIdClazzName() string
-}
+type InboxMessageIdClazz = *TLInboxMessageId
 
 func DecodeInboxMessageIdClazz(d *bin.Decoder) (InboxMessageIdClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -206,27 +183,46 @@ func DecodeInboxMessageIdClazz(d *bin.Decoder) (InboxMessageIdClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_inboxMessageId:
-		x := &TLInboxMessageId{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0xc692c19f:
+		x := &TLInboxMessageId{ClazzID: id, ClazzName2: ClazzName_inboxMessageId}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeInboxMessageId - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLInboxMessageId <--
 type TLInboxMessageId struct {
 	ClazzID         uint32 `json:"_id"`
+	ClazzName2      string `json:"_name"`
 	Id              int32  `json:"id"`
 	DialogMessageId int64  `json:"dialog_message_id"`
 }
 
+func MakeTLInboxMessageId(m *TLInboxMessageId) *TLInboxMessageId {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inboxMessageId
+
+	return m
+}
+
 func (m *TLInboxMessageId) String() string {
-	wrapper := iface.WithNameWrapper{"inboxMessageId", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLInboxMessageId) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("inboxMessageId", m)
 }
 
 // InboxMessageIdClazzName <--
@@ -236,7 +232,7 @@ func (m *TLInboxMessageId) InboxMessageIdClazzName() string {
 
 // ClazzName <--
 func (m *TLInboxMessageId) ClazzName() string {
-	return ClazzName_inboxMessageId
+	return m.ClazzName2
 }
 
 // ToInboxMessageId <--
@@ -245,26 +241,44 @@ func (m *TLInboxMessageId) ToInboxMessageId() *InboxMessageId {
 		return nil
 	}
 
-	return MakeInboxMessageId(m)
+	return m
+
+}
+
+func (m *TLInboxMessageId) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageId, int(layer)); clazzId {
+	case 0xc692c19f:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLInboxMessageId) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageId, int(layer)); clazzId {
+	case 0xc692c19f:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageId, layer)
+	}
 }
 
 // Encode <--
 func (m *TLInboxMessageId) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0xc692c19f: func() error {
-			x.PutClazzID(0xc692c19f)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageId, int(layer)); clazzId {
+	case 0xc692c19f:
+		x.PutClazzID(0xc692c19f)
 
-			x.PutInt32(m.Id)
-			x.PutInt64(m.DialogMessageId)
+		x.PutInt32(m.Id)
+		x.PutInt64(m.DialogMessageId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_inboxMessageId, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageId, layer)
 	}
@@ -272,85 +286,22 @@ func (m *TLInboxMessageId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLInboxMessageId) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0xc692c19f: func() (err error) {
-			m.Id, err = d.Int32()
-			m.DialogMessageId, err = d.Int64()
+	switch m.ClazzID {
+	case 0xc692c19f:
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.DialogMessageId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // InboxMessageId <--
-type InboxMessageId struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	InboxMessageIdClazz `json:"_clazz"`
-}
-
-func (m *InboxMessageId) String() string {
-	wrapper := iface.WithNameWrapper{m.InboxMessageIdClazzName(), m}
-	return wrapper.String()
-}
-
-// MakeInboxMessageId <--
-func MakeInboxMessageId(c InboxMessageIdClazz) *InboxMessageId {
-	return &InboxMessageId{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		InboxMessageIdClazz: c,
-	}
-}
-
-// Encode <--
-func (m *InboxMessageId) Encode(x *bin.Encoder, layer int32) error {
-	if m.InboxMessageIdClazz != nil {
-		return m.InboxMessageIdClazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("InboxMessageId - invalid Clazz")
-}
-
-// Decode <--
-func (m *InboxMessageId) Decode(d *bin.Decoder) (err error) {
-	m.InboxMessageIdClazz, err = DecodeInboxMessageIdClazz(d)
-	return
-}
-
-// Match <--
-func (m *InboxMessageId) Match(f ...interface{}) {
-	switch c := m.InboxMessageIdClazz.(type) {
-	case *TLInboxMessageId:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLInboxMessageId) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToInboxMessageId <--
-func (m *InboxMessageId) ToInboxMessageId() (*TLInboxMessageId, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.InboxMessageIdClazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.InboxMessageIdClazz.(*TLInboxMessageId); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type InboxMessageId = TLInboxMessageId

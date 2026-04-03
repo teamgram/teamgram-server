@@ -2,15 +2,16 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package msg
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -18,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // ContentMessageClazz <--
 //   - TL_ContentMessage
-type ContentMessageClazz interface {
-	iface.TLObject
-	ContentMessageClazzName() string
-}
+type ContentMessageClazz = *TLContentMessage
 
 func DecodeContentMessageClazz(d *bin.Decoder) (ContentMessageClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -37,20 +38,23 @@ func DecodeContentMessageClazz(d *bin.Decoder) (ContentMessageClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_contentMessage:
-		x := &TLContentMessage{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0x8d64b133:
+		x := &TLContentMessage{ClazzID: id, ClazzName2: ClazzName_contentMessage}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeContentMessage - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLContentMessage <--
 type TLContentMessage struct {
 	ClazzID         uint32 `json:"_id"`
+	ClazzName2      string `json:"_name"`
 	Id              int32  `json:"id"`
 	DialogMessageId int64  `json:"dialog_message_id"`
 	Mentioned       bool   `json:"mentioned"`
@@ -59,9 +63,25 @@ type TLContentMessage struct {
 	SendUserId      int64  `json:"send_user_id"`
 }
 
+func MakeTLContentMessage(m *TLContentMessage) *TLContentMessage {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_contentMessage
+
+	return m
+}
+
 func (m *TLContentMessage) String() string {
-	wrapper := iface.WithNameWrapper{"contentMessage", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLContentMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("contentMessage", m)
 }
 
 // ContentMessageClazzName <--
@@ -71,7 +91,7 @@ func (m *TLContentMessage) ContentMessageClazzName() string {
 
 // ClazzName <--
 func (m *TLContentMessage) ClazzName() string {
-	return ClazzName_contentMessage
+	return m.ClazzName2
 }
 
 // ToContentMessage <--
@@ -80,47 +100,67 @@ func (m *TLContentMessage) ToContentMessage() *ContentMessage {
 		return nil
 	}
 
-	return MakeContentMessage(m)
+	return m
+
+}
+
+func (m *TLContentMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contentMessage, int(layer)); clazzId {
+	case 0x8d64b133:
+		size := 4
+		size += 4
+		size += 4
+		size += 8
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLContentMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contentMessage, int(layer)); clazzId {
+	case 0x8d64b133:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contentMessage, layer)
+	}
 }
 
 // Encode <--
 func (m *TLContentMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x8d64b133: func() error {
-			x.PutClazzID(0x8d64b133)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_contentMessage, int(layer)); clazzId {
+	case 0x8d64b133:
+		x.PutClazzID(0x8d64b133)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.Mentioned == true {
-					flags |= 1 << 0
-				}
-				if m.MediaUnread == true {
-					flags |= 1 << 1
-				}
-				if m.Reaction == true {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.Mentioned == true {
+				flags |= 1 << 0
+			}
+			if m.MediaUnread == true {
+				flags |= 1 << 1
+			}
+			if m.Reaction == true {
+				flags |= 1 << 2
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt32(m.Id)
-			x.PutInt64(m.DialogMessageId)
-			x.PutInt64(m.SendUserId)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.Id)
+		x.PutInt64(m.DialogMessageId)
+		x.PutInt64(m.SendUserId)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_contentMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_contentMessage, layer)
 	}
@@ -128,107 +168,47 @@ func (m *TLContentMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLContentMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x8d64b133: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.Id, err = d.Int32()
-			m.DialogMessageId, err = d.Int64()
-			if (flags & (1 << 0)) != 0 {
-				m.Mentioned = true
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.MediaUnread = true
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.Reaction = true
-			}
-			m.SendUserId, err = d.Int64()
+	switch m.ClazzID {
+	case 0x8d64b133:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.Id, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.DialogMessageId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.Mentioned = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.MediaUnread = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.Reaction = true
+		}
+		m.SendUserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // ContentMessage <--
-type ContentMessage struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	ContentMessageClazz `json:"_clazz"`
-}
-
-func (m *ContentMessage) String() string {
-	wrapper := iface.WithNameWrapper{m.ContentMessageClazzName(), m}
-	return wrapper.String()
-}
-
-// MakeContentMessage <--
-func MakeContentMessage(c ContentMessageClazz) *ContentMessage {
-	return &ContentMessage{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		ContentMessageClazz: c,
-	}
-}
-
-// Encode <--
-func (m *ContentMessage) Encode(x *bin.Encoder, layer int32) error {
-	if m.ContentMessageClazz != nil {
-		return m.ContentMessageClazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("ContentMessage - invalid Clazz")
-}
-
-// Decode <--
-func (m *ContentMessage) Decode(d *bin.Decoder) (err error) {
-	m.ContentMessageClazz, err = DecodeContentMessageClazz(d)
-	return
-}
-
-// Match <--
-func (m *ContentMessage) Match(f ...interface{}) {
-	switch c := m.ContentMessageClazz.(type) {
-	case *TLContentMessage:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLContentMessage) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToContentMessage <--
-func (m *ContentMessage) ToContentMessage() (*TLContentMessage, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.ContentMessageClazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.ContentMessageClazz.(*TLContentMessage); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type ContentMessage = TLContentMessage
 
 // OutboxMessageClazz <--
 //   - TL_OutboxMessage
-type OutboxMessageClazz interface {
-	iface.TLObject
-	OutboxMessageClazzName() string
-}
+type OutboxMessageClazz = *TLOutboxMessage
 
 func DecodeOutboxMessageClazz(d *bin.Decoder) (OutboxMessageClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -237,30 +217,49 @@ func DecodeOutboxMessageClazz(d *bin.Decoder) (OutboxMessageClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_outboxMessage:
-		x := &TLOutboxMessage{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0x539524b1:
+		x := &TLOutboxMessage{ClazzID: id, ClazzName2: ClazzName_outboxMessage}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeOutboxMessage - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLOutboxMessage <--
 type TLOutboxMessage struct {
-	ClazzID      uint32      `json:"_id"`
-	NoWebpage    bool        `json:"no_webpage"`
-	Background   bool        `json:"background"`
-	RandomId     int64       `json:"random_id"`
-	Message      *tg.Message `json:"message"`
-	ScheduleDate *int32      `json:"schedule_date"`
+	ClazzID      uint32          `json:"_id"`
+	ClazzName2   string          `json:"_name"`
+	NoWebpage    bool            `json:"no_webpage"`
+	Background   bool            `json:"background"`
+	RandomId     int64           `json:"random_id"`
+	Message      tg.MessageClazz `json:"message"`
+	ScheduleDate *int32          `json:"schedule_date"`
+}
+
+func MakeTLOutboxMessage(m *TLOutboxMessage) *TLOutboxMessage {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_outboxMessage
+
+	return m
 }
 
 func (m *TLOutboxMessage) String() string {
-	wrapper := iface.WithNameWrapper{"outboxMessage", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLOutboxMessage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("outboxMessage", m)
 }
 
 // OutboxMessageClazzName <--
@@ -270,7 +269,7 @@ func (m *TLOutboxMessage) OutboxMessageClazzName() string {
 
 // ClazzName <--
 func (m *TLOutboxMessage) ClazzName() string {
-	return ClazzName_outboxMessage
+	return m.ClazzName2
 }
 
 // ToOutboxMessage <--
@@ -279,50 +278,75 @@ func (m *TLOutboxMessage) ToOutboxMessage() *OutboxMessage {
 		return nil
 	}
 
-	return MakeOutboxMessage(m)
+	return m
+
+}
+
+func (m *TLOutboxMessage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
+	case 0x539524b1:
+		size := 4
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.Message, layer)
+		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLOutboxMessage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
+	case 0x539524b1:
+		if err := iface.ValidateRequiredObject("message", m.Message); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_outboxMessage, layer)
+	}
 }
 
 // Encode <--
 func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x539524b1: func() error {
-			x.PutClazzID(0x539524b1)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
+	case 0x539524b1:
+		x.PutClazzID(0x539524b1)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.NoWebpage == true {
-					flags |= 1 << 0
-				}
-				if m.Background == true {
-					flags |= 1 << 1
-				}
-
-				if m.ScheduleDate != nil {
-					flags |= 1 << 2
-				}
-
-				return flags
+			if m.NoWebpage == true {
+				flags |= 1 << 0
+			}
+			if m.Background == true {
+				flags |= 1 << 1
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.RandomId)
-			_ = m.Message.Encode(x, layer)
 			if m.ScheduleDate != nil {
-				x.PutInt32(*m.ScheduleDate)
+				flags |= 1 << 2
 			}
 
-			return nil
-		},
-	}
+			return flags
+		}
 
-	clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.RandomId)
+		_ = m.Message.Encode(x, layer)
+		if m.ScheduleDate != nil {
+			x.PutInt32(*m.ScheduleDate)
+		}
+
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_outboxMessage, layer)
 	}
@@ -330,111 +354,49 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLOutboxMessage) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x539524b1: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			if (flags & (1 << 0)) != 0 {
-				m.NoWebpage = true
+	switch m.ClazzID {
+	case 0x539524b1:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.NoWebpage = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Background = true
+		}
+		m.RandomId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+
+		m.Message, err = tg.DecodeMessageClazz(d)
+		if err != nil {
+			return err
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.ScheduleDate = new(int32)
+			*m.ScheduleDate, err = d.Int32()
+			if err != nil {
+				return err
 			}
-			if (flags & (1 << 1)) != 0 {
-				m.Background = true
-			}
-			m.RandomId, err = d.Int64()
+		}
 
-			m4 := &tg.Message{}
-			_ = m4.Decode(d)
-			m.Message = m4
-
-			if (flags & (1 << 2)) != 0 {
-				m.ScheduleDate = new(int32)
-				*m.ScheduleDate, err = d.Int32()
-			}
-
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // OutboxMessage <--
-type OutboxMessage struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	OutboxMessageClazz `json:"_clazz"`
-}
-
-func (m *OutboxMessage) String() string {
-	wrapper := iface.WithNameWrapper{m.OutboxMessageClazzName(), m}
-	return wrapper.String()
-}
-
-// MakeOutboxMessage <--
-func MakeOutboxMessage(c OutboxMessageClazz) *OutboxMessage {
-	return &OutboxMessage{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		OutboxMessageClazz: c,
-	}
-}
-
-// Encode <--
-func (m *OutboxMessage) Encode(x *bin.Encoder, layer int32) error {
-	if m.OutboxMessageClazz != nil {
-		return m.OutboxMessageClazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("OutboxMessage - invalid Clazz")
-}
-
-// Decode <--
-func (m *OutboxMessage) Decode(d *bin.Decoder) (err error) {
-	m.OutboxMessageClazz, err = DecodeOutboxMessageClazz(d)
-	return
-}
-
-// Match <--
-func (m *OutboxMessage) Match(f ...interface{}) {
-	switch c := m.OutboxMessageClazz.(type) {
-	case *TLOutboxMessage:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLOutboxMessage) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToOutboxMessage <--
-func (m *OutboxMessage) ToOutboxMessage() (*TLOutboxMessage, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.OutboxMessageClazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.OutboxMessageClazz.(*TLOutboxMessage); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type OutboxMessage = TLOutboxMessage
 
 // SenderClazz <--
 //   - TL_Sender
-type SenderClazz interface {
-	iface.TLObject
-	SenderClazzName() string
-}
+type SenderClazz = *TLSender
 
 func DecodeSenderClazz(d *bin.Decoder) (SenderClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -443,28 +405,47 @@ func DecodeSenderClazz(d *bin.Decoder) (SenderClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_sender:
-		x := &TLSender{ClazzID: id}
-		_ = x.Decode(d)
+	switch id {
+	case 0x5a3864ba:
+		x := &TLSender{ClazzID: id, ClazzName2: ClazzName_sender}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeSender - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLSender <--
 type TLSender struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	Type      int32  `json:"type"`
-	AuthKeyId int64  `json:"auth_key_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	UserId     int64  `json:"user_id"`
+	Type       int32  `json:"type"`
+	AuthKeyId  int64  `json:"auth_key_id"`
+}
+
+func MakeTLSender(m *TLSender) *TLSender {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_sender
+
+	return m
 }
 
 func (m *TLSender) String() string {
-	wrapper := iface.WithNameWrapper{"sender", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *TLSender) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("sender", m)
 }
 
 // SenderClazzName <--
@@ -474,7 +455,7 @@ func (m *TLSender) SenderClazzName() string {
 
 // ClazzName <--
 func (m *TLSender) ClazzName() string {
-	return ClazzName_sender
+	return m.ClazzName2
 }
 
 // ToSender <--
@@ -483,27 +464,46 @@ func (m *TLSender) ToSender() *Sender {
 		return nil
 	}
 
-	return MakeSender(m)
+	return m
+
+}
+
+func (m *TLSender) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sender, int(layer)); clazzId {
+	case 0x5a3864ba:
+		size := 4
+		size += 8
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLSender) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sender, int(layer)); clazzId {
+	case 0x5a3864ba:
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sender, layer)
+	}
 }
 
 // Encode <--
 func (m *TLSender) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x5a3864ba: func() error {
-			x.PutClazzID(0x5a3864ba)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_sender, int(layer)); clazzId {
+	case 0x5a3864ba:
+		x.PutClazzID(0x5a3864ba)
 
-			x.PutInt64(m.UserId)
-			x.PutInt32(m.Type)
-			x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Type)
+		x.PutInt64(m.AuthKeyId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_sender, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sender, layer)
 	}
@@ -511,86 +511,26 @@ func (m *TLSender) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLSender) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x5a3864ba: func() (err error) {
-			m.UserId, err = d.Int64()
-			m.Type, err = d.Int32()
-			m.AuthKeyId, err = d.Int64()
+	switch m.ClazzID {
+	case 0x5a3864ba:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Type, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // Sender <--
-type Sender struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	SenderClazz `json:"_clazz"`
-}
-
-func (m *Sender) String() string {
-	wrapper := iface.WithNameWrapper{m.SenderClazzName(), m}
-	return wrapper.String()
-}
-
-// MakeSender <--
-func MakeSender(c SenderClazz) *Sender {
-	return &Sender{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		SenderClazz: c,
-	}
-}
-
-// Encode <--
-func (m *Sender) Encode(x *bin.Encoder, layer int32) error {
-	if m.SenderClazz != nil {
-		return m.SenderClazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("Sender - invalid Clazz")
-}
-
-// Decode <--
-func (m *Sender) Decode(d *bin.Decoder) (err error) {
-	m.SenderClazz, err = DecodeSenderClazz(d)
-	return
-}
-
-// Match <--
-func (m *Sender) Match(f ...interface{}) {
-	switch c := m.SenderClazz.(type) {
-	case *TLSender:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLSender) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToSender <--
-func (m *Sender) ToSender() (*TLSender, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.SenderClazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.SenderClazz.(*TLSender); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type Sender = TLSender

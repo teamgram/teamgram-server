@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package media
@@ -19,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // PhotoSizeListClazz <--
 //   - TL_PhotoSizeList
-type PhotoSizeListClazz interface {
-	iface.TLObject
-	PhotoSizeListClazzName() string
-}
+type PhotoSizeListClazz = *TLPhotoSizeList
 
 func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -38,15 +38,17 @@ func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_photoSizeList:
+	switch id {
+	case 0x67139b3:
 		x := &TLPhotoSizeList{ClazzID: id, ClazzName2: ClazzName_photoSizeList}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodePhotoSizeList - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLPhotoSizeList <--
@@ -72,6 +74,13 @@ func (m *TLPhotoSizeList) String() string {
 	return string(data)
 }
 
+func (m *TLPhotoSizeList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("photoSizeList", m)
+}
+
 // PhotoSizeListClazzName <--
 func (m *TLPhotoSizeList) PhotoSizeListClazzName() string {
 	return ClazzName_photoSizeList
@@ -88,29 +97,53 @@ func (m *TLPhotoSizeList) ToPhotoSizeList() *PhotoSizeList {
 		return nil
 	}
 
-	return &PhotoSizeList{Clazz: m}
+	return m
+
+}
+
+func (m *TLPhotoSizeList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photoSizeList, int(layer)); clazzId {
+	case 0x67139b3:
+		size := 4
+		size += 8
+		size += iface.CalcObjectListSize(m.Sizes, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhotoSizeList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photoSizeList, int(layer)); clazzId {
+	case 0x67139b3:
+		if err := iface.ValidateRequiredSlice("sizes", m.Sizes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photoSizeList, layer)
+	}
 }
 
 // Encode <--
 func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x67139b3: func() error {
-			x.PutClazzID(0x67139b3)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_photoSizeList, int(layer)); clazzId {
+	case 0x67139b3:
+		x.PutClazzID(0x67139b3)
 
-			x.PutInt64(m.SizeId)
+		x.PutInt64(m.SizeId)
 
-			_ = iface.EncodeObjectList(x, m.Sizes, layer)
+		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
+			return err
+		}
 
-			x.PutInt32(m.DcId)
+		x.PutInt32(m.DcId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_photoSizeList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photoSizeList, layer)
 	}
@@ -118,114 +151,49 @@ func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x67139b3: func() (err error) {
-			m.SizeId, err = d.Int64()
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0x67139b3:
+		m.SizeId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]tg.PhotoSizeClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = tg.DecodePhotoSizeClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]tg.PhotoSizeClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(PhotoSize)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = tg.DecodePhotoSizeClazz(d)
-				_ = err3
-			}
-			m.Sizes = v1
+		}
+		m.Sizes = v1
 
-			m.DcId, err = d.Int32()
+		m.DcId, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // PhotoSizeList <--
-type PhotoSizeList struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz PhotoSizeListClazz `json:"_clazz"`
-}
-
-func (m *PhotoSizeList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *PhotoSizeList) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.PhotoSizeListClazzName()
-	}
-}
-
-// Encode <--
-func (m *PhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("PhotoSizeList - invalid Clazz")
-}
-
-// Decode <--
-func (m *PhotoSizeList) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodePhotoSizeListClazz(d)
-	return
-}
-
-// Match <--
-func (m *PhotoSizeList) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLPhotoSizeList:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPhotoSizeList) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToPhotoSizeList <--
-func (m *PhotoSizeList) ToPhotoSizeList() (*TLPhotoSizeList, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLPhotoSizeList); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type PhotoSizeList = TLPhotoSizeList
 
 // VideoSizeListClazz <--
 //   - TL_VideoSizeList
-type VideoSizeListClazz interface {
-	iface.TLObject
-	VideoSizeListClazzName() string
-}
+type VideoSizeListClazz = *TLVideoSizeList
 
 func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -234,15 +202,17 @@ func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_videoSizeList:
+	switch id {
+	case 0x38d19bf2:
 		x := &TLVideoSizeList{ClazzID: id, ClazzName2: ClazzName_videoSizeList}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodeVideoSizeList - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLVideoSizeList <--
@@ -268,6 +238,13 @@ func (m *TLVideoSizeList) String() string {
 	return string(data)
 }
 
+func (m *TLVideoSizeList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("videoSizeList", m)
+}
+
 // VideoSizeListClazzName <--
 func (m *TLVideoSizeList) VideoSizeListClazzName() string {
 	return ClazzName_videoSizeList
@@ -284,29 +261,53 @@ func (m *TLVideoSizeList) ToVideoSizeList() *VideoSizeList {
 		return nil
 	}
 
-	return &VideoSizeList{Clazz: m}
+	return m
+
+}
+
+func (m *TLVideoSizeList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_videoSizeList, int(layer)); clazzId {
+	case 0x38d19bf2:
+		size := 4
+		size += 8
+		size += iface.CalcObjectListSize(m.Sizes, layer)
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLVideoSizeList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_videoSizeList, int(layer)); clazzId {
+	case 0x38d19bf2:
+		if err := iface.ValidateRequiredSlice("sizes", m.Sizes); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_videoSizeList, layer)
+	}
 }
 
 // Encode <--
 func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x38d19bf2: func() error {
-			x.PutClazzID(0x38d19bf2)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_videoSizeList, int(layer)); clazzId {
+	case 0x38d19bf2:
+		x.PutClazzID(0x38d19bf2)
 
-			x.PutInt64(m.SizeId)
+		x.PutInt64(m.SizeId)
 
-			_ = iface.EncodeObjectList(x, m.Sizes, layer)
+		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
+			return err
+		}
 
-			x.PutInt32(m.DcId)
+		x.PutInt32(m.DcId)
 
-			return nil
-		},
-	}
-
-	clazzId := iface.GetClazzIDByName(ClazzName_videoSizeList, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_videoSizeList, layer)
 	}
@@ -314,104 +315,42 @@ func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x38d19bf2: func() (err error) {
-			m.SizeId, err = d.Int64()
-			c1, err2 := d.ClazzID()
-			if c1 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
-				return err2
+	switch m.ClazzID {
+	case 0x38d19bf2:
+		m.SizeId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		c1, err2 := d.ClazzID()
+		if err2 != nil {
+			return err2
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		}
+		l1, err3 := d.Int()
+		if err3 != nil {
+			return err3
+		}
+		v1 := make([]tg.VideoSizeClazz, l1)
+		for i := 0; i < l1; i++ {
+			v1[i], err3 = tg.DecodeVideoSizeClazz(d)
+			if err3 != nil {
+				return err3
 			}
-			l1, err3 := d.Int()
-			v1 := make([]tg.VideoSizeClazz, l1)
-			for i := 0; i < l1; i++ {
-				// vv := new(VideoSize)
-				// err3 = vv.Decode(d)
-				// _ = err3
-				// v1[i] = vv
-				v1[i], err3 = tg.DecodeVideoSizeClazz(d)
-				_ = err3
-			}
-			m.Sizes = v1
+		}
+		m.Sizes = v1
 
-			m.DcId, err = d.Int32()
+		m.DcId, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // VideoSizeList <--
-type VideoSizeList struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz VideoSizeListClazz `json:"_clazz"`
-}
-
-func (m *VideoSizeList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *VideoSizeList) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.VideoSizeListClazzName()
-	}
-}
-
-// Encode <--
-func (m *VideoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("VideoSizeList - invalid Clazz")
-}
-
-// Decode <--
-func (m *VideoSizeList) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodeVideoSizeListClazz(d)
-	return
-}
-
-// Match <--
-func (m *VideoSizeList) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLVideoSizeList:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLVideoSizeList) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToVideoSizeList <--
-func (m *VideoSizeList) ToVideoSizeList() (*TLVideoSizeList, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLVideoSizeList); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type VideoSizeList = TLVideoSizeList

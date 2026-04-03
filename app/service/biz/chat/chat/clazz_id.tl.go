@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package chat
@@ -20,7 +20,7 @@ const (
 	ClazzID_chat_getMutableChat                   = 0x2c2c25d2 // 2c2c25d2
 	ClazzID_chat_getChatListByIdList              = 0xe740f539 // e740f539
 	ClazzID_chat_getChatBySelfId                  = 0x49b71a48 // 49b71a48
-	ClazzID_chat_createChat2                      = 0xf77448d2 // f77448d2
+	ClazzID_chat_createChat2                      = 0xed17acf5 // ed17acf5
 	ClazzID_chat_deleteChat                       = 0x6d11ec1e // 6d11ec1e
 	ClazzID_chat_deleteChatUser                   = 0xb270fd5  // b270fd5
 	ClazzID_chat_editChatTitle                    = 0x95c59ea7 // 95c59ea7

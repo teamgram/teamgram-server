@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgooo Authors.
+ * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package code
@@ -19,17 +19,17 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // PhoneCodeTransactionClazz <--
 //   - TL_PhoneCodeTransaction
-type PhoneCodeTransactionClazz interface {
-	iface.TLObject
-	PhoneCodeTransactionClazzName() string
-}
+type PhoneCodeTransactionClazz = *TLPhoneCodeTransaction
 
 func DecodePhoneCodeTransactionClazz(d *bin.Decoder) (PhoneCodeTransactionClazz, error) {
 	// id, err := d.PeekClazzID()
@@ -38,15 +38,17 @@ func DecodePhoneCodeTransactionClazz(d *bin.Decoder) (PhoneCodeTransactionClazz,
 		return nil, err
 	}
 
-	clazzName := iface.GetClazzNameByID(id)
-	switch clazzName {
-	case ClazzName_phoneCodeTransaction:
+	switch id {
+	case 0x83739698:
 		x := &TLPhoneCodeTransaction{ClazzID: id, ClazzName2: ClazzName_phoneCodeTransaction}
-		_ = x.Decode(d)
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
 		return x, nil
 	default:
 		return nil, fmt.Errorf("DecodePhoneCodeTransaction - unexpected clazzId: %d", id)
 	}
+
 }
 
 // TLPhoneCodeTransaction <--
@@ -81,6 +83,13 @@ func (m *TLPhoneCodeTransaction) String() string {
 	return string(data)
 }
 
+func (m *TLPhoneCodeTransaction) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("phoneCodeTransaction", m)
+}
+
 // PhoneCodeTransactionClazzName <--
 func (m *TLPhoneCodeTransaction) PhoneCodeTransactionClazzName() string {
 	return ClazzName_phoneCodeTransaction
@@ -97,49 +106,96 @@ func (m *TLPhoneCodeTransaction) ToPhoneCodeTransaction() *PhoneCodeTransaction 
 		return nil
 	}
 
-	return &PhoneCodeTransaction{Clazz: m}
+	return m
+
+}
+
+func (m *TLPhoneCodeTransaction) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phoneCodeTransaction, int(layer)); clazzId {
+	case 0x83739698:
+		size := 4
+		size += 4
+		size += 8
+		size += 8
+		size += iface.CalcStringSize(m.Phone)
+		size += iface.CalcStringSize(m.PhoneCode)
+		size += iface.CalcStringSize(m.PhoneCodeHash)
+		size += 4
+		size += iface.CalcStringSize(m.PhoneCodeExtraData)
+		size += 4
+		size += iface.CalcStringSize(m.FlashCallPattern)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLPhoneCodeTransaction) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phoneCodeTransaction, int(layer)); clazzId {
+	case 0x83739698:
+		if err := iface.ValidateRequiredString("phone", m.Phone); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code", m.PhoneCode); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_hash", m.PhoneCodeHash); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("phone_code_extra_data", m.PhoneCodeExtraData); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("flash_call_pattern", m.FlashCallPattern); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phoneCodeTransaction, layer)
+	}
 }
 
 // Encode <--
 func (m *TLPhoneCodeTransaction) Encode(x *bin.Encoder, layer int32) error {
-	var encodeF = map[uint32]func() error{
-		0x83739698: func() error {
-			x.PutClazzID(0x83739698)
+	switch clazzId := iface.GetClazzIDByName(ClazzName_phoneCodeTransaction, int(layer)); clazzId {
+	case 0x83739698:
+		x.PutClazzID(0x83739698)
 
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
 
-				if m.PhoneNumberRegistered == true {
-					flags |= 1 << 0
-				}
-
-				return flags
+			if m.PhoneNumberRegistered == true {
+				flags |= 1 << 0
 			}
 
-			// set flags
-			var flags = getFlags()
-			x.PutUint32(flags)
-			x.PutInt64(m.AuthKeyId)
-			x.PutInt64(m.SessionId)
-			x.PutString(m.Phone)
-			x.PutString(m.PhoneCode)
-			x.PutString(m.PhoneCodeHash)
-			x.PutInt32(m.PhoneCodeExpired)
-			x.PutString(m.PhoneCodeExtraData)
-			x.PutInt32(m.SentCodeType)
-			x.PutString(m.FlashCallPattern)
-			x.PutInt32(m.NextCodeType)
-			x.PutInt32(m.State)
+			return flags
+		}
 
-			return nil
-		},
-	}
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt64(m.SessionId)
+		x.PutString(m.Phone)
+		x.PutString(m.PhoneCode)
+		x.PutString(m.PhoneCodeHash)
+		x.PutInt32(m.PhoneCodeExpired)
+		x.PutString(m.PhoneCodeExtraData)
+		x.PutInt32(m.SentCodeType)
+		x.PutString(m.FlashCallPattern)
+		x.PutInt32(m.NextCodeType)
+		x.PutInt32(m.State)
 
-	clazzId := iface.GetClazzIDByName(ClazzName_phoneCodeTransaction, int(layer))
-	if f, ok := encodeF[clazzId]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		// TODO(@benqi): handle error
 		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_phoneCodeTransaction, layer)
 	}
@@ -147,101 +203,66 @@ func (m *TLPhoneCodeTransaction) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *TLPhoneCodeTransaction) Decode(d *bin.Decoder) (err error) {
-	var decodeF = map[uint32]func() error{
-		0x83739698: func() (err error) {
-			flags, _ := d.Uint32()
-			_ = flags
-			m.AuthKeyId, err = d.Int64()
-			m.SessionId, err = d.Int64()
-			m.Phone, err = d.String()
-			if (flags & (1 << 0)) != 0 {
-				m.PhoneNumberRegistered = true
-			}
-			m.PhoneCode, err = d.String()
-			m.PhoneCodeHash, err = d.String()
-			m.PhoneCodeExpired, err = d.Int32()
-			m.PhoneCodeExtraData, err = d.String()
-			m.SentCodeType, err = d.Int32()
-			m.FlashCallPattern, err = d.String()
-			m.NextCodeType, err = d.Int32()
-			m.State, err = d.Int32()
+	switch m.ClazzID {
+	case 0x83739698:
+		flags, err := d.Uint32()
+		if err != nil {
+			return err
+		}
+		_ = flags
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.SessionId, err = d.Int64()
+		if err != nil {
+			return err
+		}
+		m.Phone, err = d.String()
+		if err != nil {
+			return err
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.PhoneNumberRegistered = true
+		}
+		m.PhoneCode, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeHash, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeExpired, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.PhoneCodeExtraData, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.SentCodeType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.FlashCallPattern, err = d.String()
+		if err != nil {
+			return err
+		}
+		m.NextCodeType, err = d.Int32()
+		if err != nil {
+			return err
+		}
+		m.State, err = d.Int32()
+		if err != nil {
+			return err
+		}
 
-			return nil
-		},
-	}
-
-	if f, ok := decodeF[m.ClazzID]; ok {
-		return f()
-	} else {
+		return nil
+	default:
 		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
 	}
 }
 
 // PhoneCodeTransaction <--
-type PhoneCodeTransaction struct {
-	// ClazzID   uint32 `json:"_id"`
-	// ClazzName string `json:"_name"`
-	Clazz PhoneCodeTransactionClazz `json:"_clazz"`
-}
-
-func (m *PhoneCodeTransaction) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-func (m *PhoneCodeTransaction) ClazzName() string {
-	if m.Clazz == nil {
-		return ""
-	} else {
-		return m.Clazz.PhoneCodeTransactionClazzName()
-	}
-}
-
-// Encode <--
-func (m *PhoneCodeTransaction) Encode(x *bin.Encoder, layer int32) error {
-	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
-	}
-
-	return fmt.Errorf("PhoneCodeTransaction - invalid Clazz")
-}
-
-// Decode <--
-func (m *PhoneCodeTransaction) Decode(d *bin.Decoder) (err error) {
-	m.Clazz, err = DecodePhoneCodeTransactionClazz(d)
-	return
-}
-
-// Match <--
-func (m *PhoneCodeTransaction) Match(f ...interface{}) {
-	if m.Clazz == nil {
-		return
-	}
-	switch c := m.Clazz.(type) {
-	case *TLPhoneCodeTransaction:
-		for _, v := range f {
-			if f1, ok := v.(func(c *TLPhoneCodeTransaction) interface{}); ok {
-				f1(c)
-			}
-		}
-	default:
-		//
-	}
-}
-
-// ToPhoneCodeTransaction <--
-func (m *PhoneCodeTransaction) ToPhoneCodeTransaction() (*TLPhoneCodeTransaction, bool) {
-	if m == nil {
-		return nil, false
-	}
-
-	if m.Clazz == nil {
-		return nil, false
-	}
-
-	if x, ok := m.Clazz.(*TLPhoneCodeTransaction); ok {
-		return x, true
-	}
-
-	return nil, false
-}
+type PhoneCodeTransaction = TLPhoneCodeTransaction
