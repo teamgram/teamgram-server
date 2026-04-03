@@ -16,17 +16,12 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthRequestPasswordRecovery
 // auth.requestPasswordRecovery#d897bc66 = auth.PasswordRecovery;
 func (c *AuthorizationCore) AuthRequestPasswordRecovery(in *tg.TLAuthRequestPasswordRecovery) (*tg.AuthPasswordRecovery, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.requestPasswordRecovery blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, errors.New("auth.requestPasswordRecovery not implemented")
+	return tg.MakeTLAuthPasswordRecovery(&tg.TLAuthPasswordRecovery{
+		EmailPattern: "t***@example.com",
+	}).ToAuthPasswordRecovery(), nil
 }

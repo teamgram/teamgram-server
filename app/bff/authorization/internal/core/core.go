@@ -142,11 +142,11 @@ func (c *AuthorizationCore) pushSignInMessage(ctx context.Context, signInUserId 
 				PeerType:  tg.PEER_USER,
 				PeerId:    signInUserId,
 				PushType:  1,
-				Message: msgpb.MakeOutboxMessage(&msgpb.TLOutboxMessage{
+				Message: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
 					NoWebpage:    false,
 					Background:   false,
 					RandomId:     rand.Int63(),
-					Message:      message.ToMessage(),
+					Message:      message,
 					ScheduleDate: nil,
 				}),
 			})

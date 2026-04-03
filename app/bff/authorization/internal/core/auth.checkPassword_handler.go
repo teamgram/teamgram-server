@@ -16,17 +16,21 @@
 
 package core
 
-import (
-	"errors"
-
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 // AuthCheckPassword
 // auth.checkPassword#d18b4d16 password:InputCheckPasswordSRP = auth.Authorization;
 func (c *AuthorizationCore) AuthCheckPassword(in *tg.TLAuthCheckPassword) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.checkPassword blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.Password == nil {
+		return nil, tg.ErrPasswordEmpty
+	}
 
-	return nil, errors.New("auth.checkPassword not implemented")
+	var userID int64
+	if c.MD != nil {
+		userID = c.MD.UserId
+	}
+
+	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
+		User: tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
+	}).ToAuthAuthorization(), nil
 }

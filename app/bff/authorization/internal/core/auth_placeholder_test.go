@@ -182,3 +182,58 @@ func TestAuthFirebaseAndPaidPlaceholders(t *testing.T) {
 		t.Fatalf("expected timeout=60, got %#v", sentCode.Timeout)
 	}
 }
+
+func TestAuthPasswordRecoveryPlaceholders(t *testing.T) {
+	md := &kitexmetadata.RpcMetadata{UserId: 42}
+	ctx, err := kitexmetadata.RpcMetadataToOutgoing(context.Background(), md)
+	if err != nil {
+		t.Fatalf("attach rpc metadata: %v", err)
+	}
+	c := New(ctx, nil)
+
+	if _, err := c.AuthCheckPassword(&tg.TLAuthCheckPassword{}); err != tg.ErrPasswordEmpty {
+		t.Fatalf("expected password empty, got %v", err)
+	}
+
+	checkPassword, err := c.AuthCheckPassword(&tg.TLAuthCheckPassword{
+		Password: tg.MakeTLInputCheckPasswordEmpty(&tg.TLInputCheckPasswordEmpty{}),
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	authFromPassword, ok := checkPassword.ToAuthAuthorization()
+	if !ok {
+		t.Fatalf("expected auth.authorization, got %T", checkPassword.Clazz)
+	}
+	userFromPassword, ok := authFromPassword.User.(*tg.TLUserEmpty)
+	if !ok || userFromPassword.Id != 42 {
+		t.Fatalf("expected userEmpty id=42, got %#v", authFromPassword.User)
+	}
+
+	recovery, err := c.AuthRequestPasswordRecovery(&tg.TLAuthRequestPasswordRecovery{})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if recovery == nil || recovery.EmailPattern != "t***@example.com" {
+		t.Fatalf("expected placeholder email pattern, got %#v", recovery)
+	}
+
+	if _, err := c.AuthRecoverPassword(&tg.TLAuthRecoverPassword{}); err != tg.ErrCodeEmpty {
+		t.Fatalf("expected code empty, got %v", err)
+	}
+
+	recoverPassword, err := c.AuthRecoverPassword(&tg.TLAuthRecoverPassword{
+		Code: "12345",
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	authRecovered, ok := recoverPassword.ToAuthAuthorization()
+	if !ok {
+		t.Fatalf("expected auth.authorization, got %T", recoverPassword.Clazz)
+	}
+	userRecovered, ok := authRecovered.User.(*tg.TLUserEmpty)
+	if !ok || userRecovered.Id != 42 {
+		t.Fatalf("expected recovered userEmpty id=42, got %#v", authRecovered.User)
+	}
+}
