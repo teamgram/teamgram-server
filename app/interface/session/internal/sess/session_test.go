@@ -258,3 +258,43 @@ func TestOnMsgResendReqQueuesMsgsStateInfoForUnknownMessages(t *testing.T) {
 		t.Fatalf("expected msg_resend_req request to become no-ack receipt, got state=%d", ack.state)
 	}
 }
+
+func TestOnMsgsStateReqQueuesMsgsStateInfo(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const knownMsgID int64 = 12010
+	known := s.inQueue.AddMsgId(knownMsgID)
+	known.state = RECEIVED | ACKNOWLEDGED
+
+	ack := newInboxMsg(12011)
+	s.onMsgsStateReq(context.Background(), "", ack, &mt.TLMsgsStateReq{
+		MsgIds: []int64{knownMsgID, knownMsgID + 1},
+	})
+
+	queued := s.outQueue.Lookup(ack.msgId)
+	if queued == nil {
+		t.Fatal("expected msgs_state_req to queue msgs_state_info response")
+	}
+
+	msgsStateInfo, ok := mustDecodeMTObject(t, queued.msg.Body).(*mt.TLMsgsStateInfo)
+	if !ok {
+		t.Fatalf("expected queued object to be TLMsgsStateInfo")
+	}
+	if msgsStateInfo.ReqMsgId != ack.msgId {
+		t.Fatalf("expected msgs_state_info req_msg_id=%d, got %d", ack.msgId, msgsStateInfo.ReqMsgId)
+	}
+
+	info := []byte(msgsStateInfo.Info)
+	if len(info) != 2 {
+		t.Fatalf("expected 2 state bytes, got %d", len(info))
+	}
+	if info[0] != known.state {
+		t.Fatalf("expected known message state byte=%d, got %d", known.state, info[0])
+	}
+	if info[1] != NOT_RECEIVED {
+		t.Fatalf("expected future message state to be NOT_RECEIVED, got %d", info[1])
+	}
+	if ack.state != RECEIVED|NEED_NO_ACK {
+		t.Fatalf("expected msgs_state_req request to become no-ack receipt, got state=%d", ack.state)
+	}
+}
