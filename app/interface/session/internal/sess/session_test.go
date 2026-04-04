@@ -193,3 +193,29 @@ func TestSessionStringHandlesBareSession(t *testing.T) {
 		t.Fatal("expected session String output for bare session")
 	}
 }
+
+func TestOnMsgResendReqMarksKnownMessagesForResend(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const targetMsgID int64 = 10010
+	s.inQueue.AddMsgId(targetMsgID)
+
+	resendMsg := s.outQueue.AddNotifyMsg(targetMsgID, true, &mt.TLMessageRawData{
+		MsgId: targetMsgID,
+		Body:  []byte{1},
+		Bytes: 1,
+	})
+	resendMsg.sent = time.Now().Unix()
+
+	ack := newInboxMsg(10011)
+	s.onMsgResendReq(context.Background(), "", ack, &mt.TLMsgResendReq{
+		MsgIds: []int64{targetMsgID},
+	})
+
+	if resendMsg.sent != 0 {
+		t.Fatalf("expected known resend request to mark message for resend, got sent=%d", resendMsg.sent)
+	}
+	if ack.state != RECEIVED|NEED_NO_ACK {
+		t.Fatalf("expected msg_resend_req request to become no-ack receipt, got state=%d", ack.state)
+	}
+}
