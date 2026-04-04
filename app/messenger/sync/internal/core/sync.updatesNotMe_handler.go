@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -26,8 +27,15 @@ var _ *tg.Bool
 // SyncUpdatesNotMe
 // sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
 func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*tg.Void, error) {
-	_ = in
+	if c.svcCtx != nil && c.svcCtx.SessionClient != nil {
+		_, err := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
+			PermAuthKeyId: in.PermAuthKeyId,
+			Updates:       in.Updates,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
 
-	// TODO: route peer-directed updates through the real sync/session fanout pipeline.
 	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }

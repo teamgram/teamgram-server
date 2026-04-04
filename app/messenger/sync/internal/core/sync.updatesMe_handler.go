@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -26,8 +27,27 @@ var _ *tg.Bool
 // SyncUpdatesMe
 // sync.updatesMe flags:# user_id:long perm_auth_key_id:long server_id:flags.0?string auth_key_id:flags.1?long session_id:flags.1?long updates:Updates = Void;
 func (c *SyncCore) SyncUpdatesMe(in *sync.TLSyncUpdatesMe) (*tg.Void, error) {
-	_ = in
+	if c.svcCtx != nil && c.svcCtx.SessionClient != nil {
+		if in.AuthKeyId != nil && in.SessionId != nil {
+			_, err := c.svcCtx.SessionClient.SessionPushSessionUpdatesData(c.ctx, &session.TLSessionPushSessionUpdatesData{
+				PermAuthKeyId: in.PermAuthKeyId,
+				AuthKeyId:     *in.AuthKeyId,
+				SessionId:     *in.SessionId,
+				Updates:       in.Updates,
+			})
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			_, err := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
+				PermAuthKeyId: in.PermAuthKeyId,
+				Updates:       in.Updates,
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 
-	// TODO: route self-directed updates through the real sync/session fanout pipeline.
 	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
