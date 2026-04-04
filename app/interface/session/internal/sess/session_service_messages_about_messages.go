@@ -477,6 +477,10 @@ func (c *session) onMsgsStateReq(ctx context.Context, gatewayId string, msgId *i
 	msgIds := request.MsgIds
 	info := make([]byte, len(msgIds))
 	for i := 0; i < len(msgIds); i++ {
+		if c.inQueue.IsEmpty() {
+			info[i] = NOT_RECEIVED_SURE
+			continue
+		}
 		if msgIds[i] < c.inQueue.GetMinMsgId() {
 			info[i] = UNKNOWN
 			continue
@@ -711,6 +715,10 @@ func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *i
 	)
 
 	for i := 0; i < len(msgIds); i++ {
+		if c.inQueue.IsEmpty() {
+			bMsgsStateInfo = true
+			break
+		}
 		if msgIds[i] < c.inQueue.GetMinMsgId() {
 			bMsgsStateInfo = true
 			break
@@ -729,6 +737,10 @@ func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *i
 
 	if bMsgsStateInfo {
 		for i := 0; i < len(msgIds); i++ {
+			if c.inQueue.IsEmpty() {
+				info[i] = NOT_RECEIVED_SURE
+				continue
+			}
 			if msgIds[i] < c.inQueue.GetMinMsgId() {
 				info[i] = UNKNOWN
 				continue

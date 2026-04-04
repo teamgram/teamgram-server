@@ -21,7 +21,6 @@ package sess
 import (
 	"container/list"
 	"fmt"
-	"math"
 )
 
 /*
@@ -236,18 +235,23 @@ func newSessionInboundQueue() *sessionInboundQueue {
 	q.msgIds = list.New()
 	q.firstMsgId = 0
 	q.minMsgId = 0
-	q.maxMsgId = math.MaxInt64
+	q.maxMsgId = 0
 	return q
 }
 
 func (q *sessionInboundQueue) AddMsgId(msgId int64) (r *inboxMsg) {
 	// TODO(@benqi): resize 100
 
-	if msgId < q.minMsgId {
+	if q.msgIds.Len() == 0 {
 		q.minMsgId = msgId
-	}
-	if msgId > q.maxMsgId {
 		q.maxMsgId = msgId
+	} else {
+		if msgId < q.minMsgId {
+			q.minMsgId = msgId
+		}
+		if msgId > q.maxMsgId {
+			q.maxMsgId = msgId
+		}
 	}
 
 	for e := q.msgIds.Front(); e != nil; e = e.Next() {
@@ -319,4 +323,8 @@ func (q *sessionInboundQueue) FindHigherEntry(msgId int64) (iMsg *inboxMsg) {
 
 func (q *sessionInboundQueue) Length() int {
 	return q.msgIds.Len()
+}
+
+func (q *sessionInboundQueue) IsEmpty() bool {
+	return q.msgIds.Len() == 0
 }
