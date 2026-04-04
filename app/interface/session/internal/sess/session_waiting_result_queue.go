@@ -40,14 +40,15 @@ func (q *sessionRpcResultWaitingQueue) Add(msgId int64) {
 	})
 }
 
-func (q *sessionRpcResultWaitingQueue) Remove(msgId int64) {
+func (q *sessionRpcResultWaitingQueue) Remove(msgId int64) bool {
 	logx.Infof("remove msgId: %d", msgId)
 	for e := q.q.Front(); e != nil; e = e.Next() {
 		if msgId == e.Value.(*rpcResultWaiting).msgId {
 			q.q.Remove(e)
-			break
+			return true
 		}
 	}
+	return false
 }
 
 func (q *sessionRpcResultWaitingQueue) OnTimer() (msgIdList []int64) {

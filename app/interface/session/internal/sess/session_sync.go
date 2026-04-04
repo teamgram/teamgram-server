@@ -55,7 +55,10 @@ func (c *session) onSyncData(ctx context.Context, obj iface.TLObject) {
 func (c *session) onSyncRpcResultData(ctx context.Context, reqMsgId int64, data []byte) {
 	// TODO(@benqi):
 	logx.WithContext(ctx).Debugf("onSyncRpcResultData]]>> - %s", data)
-	c.pendingQueue.Remove(reqMsgId)
+	if !c.pendingQueue.Remove(reqMsgId) {
+		logx.WithContext(ctx).Errorf("onSyncRpcResultData - ignore stale rpc result, req_msg_id: %d", reqMsgId)
+		return
+	}
 	gatewayId := c.getGatewayId()
 	c.sendPushRpcResultToQueue(gatewayId, reqMsgId, data)
 }
