@@ -26,6 +26,20 @@ func (f *fakeMsgSendClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgS
 	}).ToUpdates(), nil
 }
 
+func (f *fakeMsgSendClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error) {
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      in.MaxId,
+		PtsCount: 1,
+	}).ToMessagesAffectedMessages(), nil
+}
+
+func (f *fakeMsgSendClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      in.MaxId,
+		PtsCount: 1,
+	}).ToMessagesAffectedMessages(), nil
+}
+
 var _ svc.MsgSendClient = (*fakeMsgSendClient)(nil)
 
 // --- basic tests ---
