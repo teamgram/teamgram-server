@@ -12,7 +12,9 @@ import (
 )
 
 type fakeSessionClient struct {
-	pushReq *session.TLSessionPushRpcResultData
+	pushReq            *session.TLSessionPushRpcResultData
+	pushUpdatesReq     *session.TLSessionPushUpdatesData
+	pushSessionUpdates *session.TLSessionPushSessionUpdatesData
 }
 
 func (f *fakeSessionClient) SessionQueryAuthKey(ctx context.Context, in *session.TLSessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
@@ -40,11 +42,13 @@ func (f *fakeSessionClient) SessionCloseSession(ctx context.Context, in *session
 }
 
 func (f *fakeSessionClient) SessionPushUpdatesData(ctx context.Context, in *session.TLSessionPushUpdatesData) (*tg.Bool, error) {
-	panic("unexpected call")
+	f.pushUpdatesReq = in
+	return tg.BoolTrue, nil
 }
 
 func (f *fakeSessionClient) SessionPushSessionUpdatesData(ctx context.Context, in *session.TLSessionPushSessionUpdatesData) (*tg.Bool, error) {
-	panic("unexpected call")
+	f.pushSessionUpdates = in
+	return tg.BoolTrue, nil
 }
 
 func (f *fakeSessionClient) SessionPushRpcResultData(ctx context.Context, in *session.TLSessionPushRpcResultData) (*tg.Bool, error) {
@@ -113,6 +117,62 @@ func TestSyncUpdatesMeReturnsVoidPlaceholder(t *testing.T) {
 	}
 }
 
+func TestSyncUpdatesMeForwardsSessionScopedUpdatesWhenSessionProvided(t *testing.T) {
+	fakeCli := &fakeSessionClient{}
+	c := New(context.Background(), &svc.ServiceContext{SessionClient: fakeCli})
+
+	updates := makeSyncPlaceholderUpdates()
+	authKeyID := int64(3)
+	sessionID := int64(4)
+	result, err := c.SyncUpdatesMe(&sync.TLSyncUpdatesMe{
+		PermAuthKeyId: 2,
+		AuthKeyId:     &authKeyID,
+		SessionId:     &sessionID,
+		Updates:       updates,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+	if fakeCli.pushSessionUpdates == nil {
+		t.Fatal("expected session-scoped updates to be forwarded")
+	}
+	if fakeCli.pushSessionUpdates.PermAuthKeyId != 2 || fakeCli.pushSessionUpdates.AuthKeyId != 3 || fakeCli.pushSessionUpdates.SessionId != 4 {
+		t.Fatalf("unexpected session update mapping: %+v", fakeCli.pushSessionUpdates)
+	}
+	if fakeCli.pushSessionUpdates.Updates != updates {
+		t.Fatalf("expected updates object to be forwarded unchanged")
+	}
+}
+
+func TestSyncUpdatesMeFallsBackToPermAuthPushWhenSessionMissing(t *testing.T) {
+	fakeCli := &fakeSessionClient{}
+	c := New(context.Background(), &svc.ServiceContext{SessionClient: fakeCli})
+
+	updates := makeSyncPlaceholderUpdates()
+	result, err := c.SyncUpdatesMe(&sync.TLSyncUpdatesMe{
+		PermAuthKeyId: 2,
+		Updates:       updates,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+	if fakeCli.pushUpdatesReq == nil {
+		t.Fatal("expected perm-auth updates to be forwarded")
+	}
+	if fakeCli.pushUpdatesReq.PermAuthKeyId != 2 {
+		t.Fatalf("unexpected perm auth key mapping: %+v", fakeCli.pushUpdatesReq)
+	}
+	if fakeCli.pushUpdatesReq.Updates != updates {
+		t.Fatalf("expected updates object to be forwarded unchanged")
+	}
+}
+
 func TestSyncUpdatesNotMeReturnsVoidPlaceholder(t *testing.T) {
 	c := New(context.Background(), nil)
 
@@ -126,6 +186,32 @@ func TestSyncUpdatesNotMeReturnsVoidPlaceholder(t *testing.T) {
 	}
 	if result == nil {
 		t.Fatal("expected void result, got nil")
+	}
+}
+
+func TestSyncUpdatesNotMeForwardsToPermAuthPush(t *testing.T) {
+	fakeCli := &fakeSessionClient{}
+	c := New(context.Background(), &svc.ServiceContext{SessionClient: fakeCli})
+
+	updates := makeSyncPlaceholderUpdates()
+	result, err := c.SyncUpdatesNotMe(&sync.TLSyncUpdatesNotMe{
+		PermAuthKeyId: 2,
+		Updates:       updates,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected void result, got nil")
+	}
+	if fakeCli.pushUpdatesReq == nil {
+		t.Fatal("expected updatesNotMe to be forwarded to session client")
+	}
+	if fakeCli.pushUpdatesReq.PermAuthKeyId != 2 {
+		t.Fatalf("unexpected perm auth key mapping: %+v", fakeCli.pushUpdatesReq)
+	}
+	if fakeCli.pushUpdatesReq.Updates != updates {
+		t.Fatalf("expected updates object to be forwarded unchanged")
 	}
 }
 
