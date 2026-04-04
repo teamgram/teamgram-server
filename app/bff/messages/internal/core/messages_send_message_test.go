@@ -66,6 +66,40 @@ func (f *fakeMsgSendClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgD
 	}).ToMessagesAffectedHistory(), nil
 }
 
+func (f *fakeMsgSendClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
+	pts := int32(1)
+	ptsCount := int32(1)
+	if len(in.Id) > 0 {
+		ptsCount = int32(len(in.Id))
+		for _, id := range in.Id {
+			if id > pts {
+				pts = id
+			}
+		}
+	}
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      pts,
+		PtsCount: ptsCount,
+	}).ToMessagesAffectedMessages(), nil
+}
+
+func (f *fakeMsgSendClient) MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error) {
+	pts := int32(1)
+	ptsCount := int32(1)
+	if len(in.Id) > 0 {
+		ptsCount = int32(len(in.Id))
+		for _, contentMsg := range in.Id {
+			if contentMsg != nil && contentMsg.Id > pts {
+				pts = contentMsg.Id
+			}
+		}
+	}
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      pts,
+		PtsCount: ptsCount,
+	}).ToMessagesAffectedMessages(), nil
+}
+
 var _ svc.MsgSendClient = (*fakeMsgSendClient)(nil)
 
 // --- basic tests ---
