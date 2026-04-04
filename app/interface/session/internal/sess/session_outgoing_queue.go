@@ -139,6 +139,14 @@ func (q *sessionOutgoingQueue) Remove(msgId int64) (oMsg *outboxMsg) {
 	return
 }
 
+func (q *sessionOutgoingQueue) MarkForResend(msgIds []int64) {
+	for _, msgId := range msgIds {
+		if oMsg := q.Lookup(msgId); oMsg != nil {
+			oMsg.sent = 0
+		}
+	}
+}
+
 func (q *sessionOutgoingQueue) Shrink() {
 	for q.oMsgs.Len() > maxQueueSize {
 		iMsg := q.oMsgs.Remove(q.oMsgs.Front())
