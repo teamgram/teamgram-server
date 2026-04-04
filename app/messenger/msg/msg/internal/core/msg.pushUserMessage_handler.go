@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -31,6 +32,33 @@ func (c *MsgCore) MsgPushUserMessage(in *msg.TLMsgPushUserMessage) (*tg.Bool, er
 		return tg.BoolFalse, nil
 	}
 
-	// TODO: route user-directed messages through the real msg/inbox pipeline.
+	if c.svcCtx == nil || c.svcCtx.InboxClient == nil || in.Message == nil {
+		return tg.BoolTrue, nil
+	}
+
+	var boxList []tg.MessageBoxClazz
+	if in.Message.Message != nil {
+		boxList = append(boxList, &tg.TLMessageBox{
+			MessageId: 0,
+			Pts:       0,
+			PtsCount:  1,
+			Message:   in.Message.Message,
+		})
+	}
+
+	_, err := c.svcCtx.InboxClient.InboxSendUserMessageToInboxV2(c.ctx, &inbox.TLInboxSendUserMessageToInboxV2{
+		UserId:        in.PeerId,
+		Out:           false,
+		FromId:        in.UserId,
+		FromAuthKeyId: in.AuthKeyId,
+		PeerType:      in.PeerType,
+		PeerId:        in.PeerId,
+		BoxList:       boxList,
+	})
+	if err != nil {
+		c.Logger.Errorf("msg.pushUserMessage - InboxSendUserMessageToInboxV2 error: %v", err)
+		return nil, err
+	}
+
 	return tg.BoolTrue, nil
 }

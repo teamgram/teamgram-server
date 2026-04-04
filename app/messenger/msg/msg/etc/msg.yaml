@@ -1,2 +1,18 @@
 Name: messenger.msg.msg
 ListenOn: 0.0.0.0:20380
+InboxClient:
+  DestService: messenger.msg.inbox
+  ServiceName: RPCInbox
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.msg.inbox
+SyncClient:
+  DestService: messenger.sync
+  ServiceName: RPCSync
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.sync
