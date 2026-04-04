@@ -50,6 +50,7 @@ func (s *Server) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGne
 	x.Put(mtpRawData)
 	msg := x.Bytes()
 
+	delivered := false
 	for _, connId := range connIdList {
 		// Direct synchronous connection access
 		c, ok := s.connMgr.get(connId)
@@ -58,8 +59,14 @@ func (s *Server) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGne
 			continue
 		}
 
-		if in.AuthKeyId != c.getAuthKey().AuthKeyId() {
-			logx.WithContext(ctx).Errorf("invalid state - conn(%d) c.keyId(%d) != in.keyId(%d)", connId, c.getAuthKey().AuthKeyId(), in.AuthKeyId)
+		connAuthKey := c.getAuthKey()
+		if connAuthKey == nil {
+			logx.WithContext(ctx).Errorf("invalid state - conn(%d) auth key is nil", connId)
+			continue
+		}
+
+		if in.AuthKeyId != connAuthKey.AuthKeyId() {
+			logx.WithContext(ctx).Errorf("invalid state - conn(%d) c.keyId(%d) != in.keyId(%d)", connId, connAuthKey.AuthKeyId(), in.AuthKeyId)
 			continue
 		}
 
@@ -67,9 +74,10 @@ func (s *Server) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGne
 		if err2 != nil {
 			logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
 		} else {
+			delivered = true
 			logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
 		}
 	}
 
-	return tg.BoolTrue, nil
+	return tg.ToBool(delivered), nil
 }
