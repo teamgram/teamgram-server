@@ -17,15 +17,34 @@
 package svc
 
 import (
+	"context"
+
+	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/config"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+type SessionRpcResultClient interface {
+	SessionPushRpcResultData(ctx context.Context, in *session.TLSessionPushRpcResultData) (*tg.Bool, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config        config.Config
+	SessionClient SessionRpcResultClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasSessionClient(c.SessionClient) {
+		ctx.SessionClient = sessionclient.NewSessionClient(sessionclient.MustNewKitexClient(c.SessionClient))
+	}
+	return ctx
+}
+
+func hasSessionClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

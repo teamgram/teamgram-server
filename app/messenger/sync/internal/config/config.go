@@ -16,10 +16,9 @@
 
 package config
 
-import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-)
+import "github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 type Config struct {
 	kitex.RpcServerConf
+	SessionClient kitex.RpcClientConf `json:",optional,inherit"`
 }
