@@ -40,6 +40,18 @@ func (f *fakeMsgSendClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgR
 	}).ToMessagesAffectedMessages(), nil
 }
 
+func (f *fakeMsgSendClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
+	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
+			Pinned:   !in.Unpin,
+			Messages: []int32{in.Id},
+			Pts:      in.Id,
+			PtsCount: 1,
+		}),
+		Date: 99,
+	}).ToUpdates(), nil
+}
+
 var _ svc.MsgSendClient = (*fakeMsgSendClient)(nil)
 
 // --- basic tests ---
