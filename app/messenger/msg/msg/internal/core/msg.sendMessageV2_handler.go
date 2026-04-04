@@ -19,7 +19,9 @@ package core
 import (
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	synctypes "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -50,18 +52,126 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 			}
 		}
 
-		return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		messageID := placeholderMessageID(outbox.RandomId)
+		sentUpdates := tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
 			Out:      true,
-			Id:       placeholderMessageID(outbox.RandomId),
+			Id:       messageID,
 			Pts:      1,
 			PtsCount: 1,
 			Date:     date,
 			Entities: entities,
-		}).ToUpdates(), nil
+		}).ToUpdates()
+
+		// Forward to recipient inbox and push sync updates if clients are wired.
+		c.pushSendMessageSideEffects(in, outbox, messageID, date)
+
+		return sentUpdates, nil
 	case tg.PEER_CHANNEL:
 		return nil, tg.ErrEnterpriseIsBlocked
 	default:
 		return nil, tg.ErrPeerIdInvalid
+	}
+}
+
+// pushSendMessageSideEffects pushes inbox delivery and sync updates.
+// Errors are logged but do not fail the send response.
+func (c *MsgCore) pushSendMessageSideEffects(in *msg.TLMsgSendMessageV2, outbox *msg.OutboxMessage, messageID int32, date int32) {
+	if c.svcCtx == nil {
+		return
+	}
+
+	sentMessage := tg.MakeTLMessage(&tg.TLMessage{
+		Out: true,
+		Id:  messageID,
+		FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: in.UserId,
+		}),
+		PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: in.PeerId,
+		}),
+		Date:    date,
+		Message: "",
+	})
+	if outbox.Message != nil {
+		if m, ok := outbox.Message.(*tg.TLMessage); ok {
+			sentMessage.Message = m.Message
+			sentMessage.Entities = m.Entities
+		}
+	}
+
+	// Push to recipient inbox.
+	if c.svcCtx.InboxClient != nil && in.PeerId != in.UserId {
+		boxList := []tg.MessageBoxClazz{
+			&tg.TLMessageBox{
+				MessageId: messageID,
+				Pts:       0,
+				PtsCount:  1,
+				Message:   sentMessage,
+			},
+		}
+		_, err := c.svcCtx.InboxClient.InboxSendUserMessageToInboxV2(c.ctx, &inbox.TLInboxSendUserMessageToInboxV2{
+			UserId:        in.PeerId,
+			Out:           false,
+			FromId:        in.UserId,
+			FromAuthKeyId: in.AuthKeyId,
+			PeerType:      in.PeerType,
+			PeerId:        in.PeerId,
+			BoxList:       boxList,
+		})
+		if err != nil {
+			c.Logger.Errorf("msg.sendMessageV2 - inbox push error: %v", err)
+		}
+	}
+
+	// Push sync updates to the sender's other sessions.
+	if c.svcCtx.SyncClient != nil {
+		senderUpdates := tg.MakeTLUpdates(&tg.TLUpdates{
+			Updates: []tg.UpdateClazz{
+				tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+					Message:  sentMessage,
+					Pts:      1,
+					PtsCount: 1,
+				}),
+			},
+			Users: []tg.UserClazz{},
+			Chats: []tg.ChatClazz{},
+			Date:  date,
+			Seq:   0,
+		})
+
+		_, err := c.svcCtx.SyncClient.SyncUpdatesNotMe(c.ctx, &synctypes.TLSyncUpdatesNotMe{
+			UserId:        in.UserId,
+			PermAuthKeyId: in.AuthKeyId,
+			Updates:       senderUpdates,
+		})
+		if err != nil {
+			c.Logger.Errorf("msg.sendMessageV2 - sync push error: %v", err)
+		}
+
+		// Push to recipient via sync.pushUpdates.
+		if in.PeerId != in.UserId {
+			recipientUpdates := tg.MakeTLUpdates(&tg.TLUpdates{
+				Updates: []tg.UpdateClazz{
+					tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+						Message:  sentMessage,
+						Pts:      1,
+						PtsCount: 1,
+					}),
+				},
+				Users: []tg.UserClazz{},
+				Chats: []tg.ChatClazz{},
+				Date:  date,
+				Seq:   0,
+			})
+
+			_, err = c.svcCtx.SyncClient.SyncPushUpdates(c.ctx, &synctypes.TLSyncPushUpdates{
+				UserId:  in.PeerId,
+				Updates: recipientUpdates,
+			})
+			if err != nil {
+				c.Logger.Errorf("msg.sendMessageV2 - recipient sync push error: %v", err)
+			}
+		}
 	}
 }
 
