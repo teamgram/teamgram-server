@@ -22,4 +22,5 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	SyncClient kitex.RpcClientConf `json:",optional"`
 }
