@@ -17,11 +17,44 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReadHistory
 // messages.readHistory#e306d3a peer:InputPeer max_id:int = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadHistory(in *tg.TLMessagesReadHistory) (*tg.MessagesAffectedMessages, error) {
+	var userId int64
+	if c.MD != nil {
+		userId = c.MD.UserId
+	}
+
+	peer := tg.FromInputPeer2(userId, in.Peer)
+
+	switch peer.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
+	case tg.PEER_CHANNEL:
+		return nil, tg.ErrEnterpriseIsBlocked
+	default:
+		return nil, tg.ErrPeerIdInvalid
+	}
+
+	// When MsgClient is wired, delegate to msg service.
+	if c.svcCtx != nil && c.svcCtx.MsgClient != nil {
+		var authKeyId int64
+		if c.MD != nil {
+			authKeyId = c.MD.AuthId
+		}
+
+		return c.svcCtx.MsgClient.MsgReadHistoryV2(c.ctx, &msg.TLMsgReadHistoryV2{
+			UserId:    userId,
+			AuthKeyId: authKeyId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			MaxId:     in.MaxId,
+		})
+	}
+
+	// Fallback placeholder when MsgClient is not available.
 	return makeBffAffectedMessagesPlaceholder(in.MaxId, 1), nil
 }
