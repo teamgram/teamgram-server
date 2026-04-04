@@ -24,4 +24,5 @@ type Config struct {
 	kitex.RpcServerConf
 	InboxClient kitex.RpcClientConf `json:",optional,inherit"`
 	SyncClient  kitex.RpcClientConf `json:",optional,inherit"`
+	IdgenClient kitex.RpcClientConf `json:",optional,inherit"`
 }

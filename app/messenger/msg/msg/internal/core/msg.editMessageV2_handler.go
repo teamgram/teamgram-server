@@ -58,7 +58,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 
 	messageID := in.DstMessage.MessageId
 	if messageID <= 0 {
-		messageID = placeholderMessageID(outbox.RandomId)
+		messageID = c.nextMessageId(outbox.RandomId)
 	}
 
 	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
