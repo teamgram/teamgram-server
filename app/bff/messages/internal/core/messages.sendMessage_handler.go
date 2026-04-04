@@ -54,9 +54,9 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 
 		date := int32(time.Now().Unix())
 		outboxMsg := msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
-			NoWebpage: in.NoWebpage,
+			NoWebpage:  in.NoWebpage,
 			Background: in.Background,
-			RandomId:  in.RandomId,
+			RandomId:   in.RandomId,
 			Message: tg.MakeTLMessage(&tg.TLMessage{
 				Out:      true,
 				Date:     date,

@@ -218,7 +218,7 @@ func (s *Server) Initialize() error {
 				s,
 				updateshelper.New(updateshelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					//UpdatesClient:     c.BizServiceClient,
+					UpdatesClient: withServiceName(c.BizServiceClient, "RPCUpdates"),
 					//UserClient:        c.BizServiceClient,
 					//ChatClient:        c.BizServiceClient,
 					//AuthsessionClient: c.AuthSessionClient,
@@ -241,10 +241,10 @@ func (s *Server) Initialize() error {
 				s,
 				dialogshelper.New(dialogshelper.Config{
 					RpcServerConf: c.RpcServerConf,
+					DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
 					//UpdatesClient: c.BizServiceClient,
 					//UserClient:    c.BizServiceClient,
 					//ChatClient:    c.BizServiceClient,
-					//DialogClient:  c.BizServiceClient,
 					//SyncClient:    c.SyncClient,
 					//MessageClient: c.BizServiceClient,
 				}))
@@ -272,9 +272,9 @@ func (s *Server) Initialize() error {
 				s,
 				messageshelper.New(messageshelper.Config{
 					RpcServerConf: c.RpcServerConf,
+					MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
 					//UserClient:     c.BizServiceClient,
 					//ChatClient:     c.BizServiceClient,
-					//MsgClient:      c.MsgClient,
 					//DialogClient:   c.BizServiceClient,
 					//IdgenClient:    c.IdgenClient,
 					//MessageClient:  c.BizServiceClient,
