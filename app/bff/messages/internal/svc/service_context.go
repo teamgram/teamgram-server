@@ -17,15 +17,34 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/config"
+	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+type MsgSendClient interface {
+	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config    config.Config
+	MsgClient MsgSendClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasClient(c.MsgClient) {
+		ctx.MsgClient = msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient))
+	}
+	return ctx
+}
+
+func hasClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

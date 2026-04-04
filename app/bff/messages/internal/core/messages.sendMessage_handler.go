@@ -19,16 +19,19 @@ package core
 import (
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSendMessage
 // messages.sendMessage#983f9745 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Updates, error) {
-	peer := tg.FromInputPeer2(0, in.Peer)
+	var userId int64
 	if c.MD != nil {
-		peer = tg.FromInputPeer2(c.MD.UserId, in.Peer)
+		userId = c.MD.UserId
 	}
+
+	peer := tg.FromInputPeer2(userId, in.Peer)
 
 	switch peer.PeerType {
 	case tg.PEER_SELF, tg.PEER_USER, tg.PEER_CHAT:
@@ -42,6 +45,36 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		return nil, tg.ErrMessageEmpty
 	}
 
+	// When MsgClient is wired, delegate to msg service.
+	if c.svcCtx != nil && c.svcCtx.MsgClient != nil {
+		var authKeyId int64
+		if c.MD != nil {
+			authKeyId = c.MD.AuthId
+		}
+
+		date := int32(time.Now().Unix())
+		outboxMsg := msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+			NoWebpage: in.NoWebpage,
+			Background: in.Background,
+			RandomId:  in.RandomId,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Out:      true,
+				Date:     date,
+				Message:  in.Message,
+				Entities: in.Entities,
+			}),
+		})
+
+		return c.svcCtx.MsgClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
+			UserId:    userId,
+			AuthKeyId: authKeyId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			Message:   []*msg.OutboxMessage{outboxMsg},
+		})
+	}
+
+	// Fallback placeholder when MsgClient is not available.
 	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
 		Out:      true,
 		Id:       makePlaceholderMessageID(in.RandomId),
