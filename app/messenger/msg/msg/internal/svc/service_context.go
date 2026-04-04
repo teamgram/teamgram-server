@@ -17,15 +17,46 @@
 package svc
 
 import (
+	"context"
+
+	inboxclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/config"
+	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+type InboxPushClient interface {
+	InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*tg.Void, error)
+}
+
+type SyncPushClient interface {
+	SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*tg.Void, error)
+	SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*tg.Void, error)
+	SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config      config.Config
+	InboxClient InboxPushClient
+	SyncClient  SyncPushClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasClient(c.InboxClient) {
+		ctx.InboxClient = inboxclient.NewInboxClient(inboxclient.MustNewKitexClient(c.InboxClient))
+	}
+	if hasClient(c.SyncClient) {
+		ctx.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
+	}
+	return ctx
+}
+
+func hasClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }
