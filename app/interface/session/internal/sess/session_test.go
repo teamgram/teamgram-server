@@ -88,3 +88,17 @@ func TestOnSyncRpcResultDataDoesNotDuplicateQueuedResultOnRetry(t *testing.T) {
 		t.Fatalf("expected first queued payload to be retained on retry")
 	}
 }
+
+func TestOnSyncRpcResultDataIgnoresUnknownPendingRequest(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const reqMsgID int64 = 3003
+	s.onSyncRpcResultData(context.Background(), reqMsgID, []byte{9, 8, 7})
+
+	if got := s.pendingQueue.q.Len(); got != 0 {
+		t.Fatalf("expected pending queue to stay empty, got %d", got)
+	}
+	if got := s.outQueue.oMsgs.Len(); got != 0 {
+		t.Fatalf("expected unknown rpc result not to be queued, got %d queued messages", got)
+	}
+}
