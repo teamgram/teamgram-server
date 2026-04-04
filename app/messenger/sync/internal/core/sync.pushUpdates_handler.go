@@ -17,7 +17,9 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,8 +28,29 @@ var _ *tg.Bool
 // SyncPushUpdates
 // sync.pushUpdates user_id:long updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*tg.Void, error) {
-	_ = in
+	if c.svcCtx == nil || c.svcCtx.SessionClient == nil {
+		return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	}
 
-	// TODO: push updates through the real sync/session fanout pipeline.
+	// Look up all online sessions for this user via status service.
+	if c.svcCtx.StatusClient != nil {
+		sessionList, err := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &status.TLStatusGetUserOnlineSessions{
+			UserId: in.UserId,
+		})
+		if err != nil {
+			c.Logger.Errorf("sync.pushUpdates - StatusGetUserOnlineSessions(%d) error: %v", in.UserId, err)
+		} else {
+			for _, sess := range sessionList.UserSessions {
+				_, pushErr := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
+					PermAuthKeyId: sess.PermAuthKeyId,
+					Updates:       in.Updates,
+				})
+				if pushErr != nil {
+					c.Logger.Errorf("sync.pushUpdates - push to session (permAuthKeyId=%d) error: %v", sess.PermAuthKeyId, pushErr)
+				}
+			}
+		}
+	}
+
 	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
