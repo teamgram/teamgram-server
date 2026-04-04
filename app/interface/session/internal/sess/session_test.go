@@ -184,3 +184,12 @@ func TestOnMsgsStateInfoMarksRequestedMessagesForResend(t *testing.T) {
 		t.Fatalf("expected msgs_state_info request to become no-ack receipt, got state=%d", ack.state)
 	}
 }
+
+func TestSessionStringHandlesBareSession(t *testing.T) {
+	s := newSession(42, &SessionList{})
+
+	got := s.String()
+	if got == "" {
+		t.Fatal("expected session String output for bare session")
+	}
+}

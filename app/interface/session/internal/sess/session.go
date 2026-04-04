@@ -146,9 +146,20 @@ func newSession(sessionId int64, sessList *SessionList) *session {
 }
 
 func (c *session) String() string {
+	var (
+		userID    int64
+		authKeyID int64
+	)
+	if c.sessList != nil {
+		authKeyID = c.sessList.authId
+		if c.sessList.cb != nil {
+			userID = c.sessList.cb.AuthUserId
+		}
+	}
+
 	return fmt.Sprintf("{user_id: %d, auth_key_id: %d, session_id: %d, state: %d, conn_state: %d, conn_id_list: %#v}",
-		c.sessList.cb.AuthUserId,
-		c.sessList.authId,
+		userID,
+		authKeyID,
 		c.sessionId,
 		c.sessionState,
 		c.connState,
