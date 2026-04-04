@@ -17,15 +17,35 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/config"
+	updatesclient "github.com/teamgram/teamgram-server/v2/app/service/biz/updates/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+type UpdatesStateClient interface {
+	UpdatesGetStateV2(ctx context.Context, in *updates.TLUpdatesGetStateV2) (*tg.UpdatesState, error)
+	UpdatesGetDifferenceV2(ctx context.Context, in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config        config.Config
+	UpdatesClient UpdatesStateClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasClient(c.UpdatesClient) {
+		ctx.UpdatesClient = updatesclient.NewUpdatesClient(updatesclient.MustNewKitexClient(c.UpdatesClient))
+	}
+	return ctx
+}
+
+func hasClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

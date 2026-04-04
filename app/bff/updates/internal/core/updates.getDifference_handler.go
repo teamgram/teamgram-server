@@ -16,11 +16,37 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // UpdatesGetDifference
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
+	if c.svcCtx != nil && c.svcCtx.UpdatesClient != nil {
+		var authKeyId, userId int64
+		if c.MD != nil {
+			authKeyId = c.MD.AuthId
+			userId = c.MD.UserId
+		}
+
+		diff, err := c.svcCtx.UpdatesClient.UpdatesGetDifferenceV2(c.ctx, &updates.TLUpdatesGetDifferenceV2{
+			AuthKeyId:     authKeyId,
+			UserId:        userId,
+			Pts:           in.Pts,
+			PtsTotalLimit: in.PtsTotalLimit,
+			Date:          int64(in.Date),
+		})
+		if err != nil {
+			c.Logger.Errorf("updates.getDifference - UpdatesGetDifferenceV2 error: %v", err)
+			return nil, err
+		}
+
+		return mapDifferenceToTg(diff, in.Pts, in.Date), nil
+	}
+
+	// Fallback placeholder.
 	pts := in.Pts
 	if pts <= 0 {
 		pts = 1
@@ -53,4 +79,39 @@ func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.U
 		Date: date,
 		Seq:  0,
 	}).ToUpdatesDifference(), nil
+}
+
+// mapDifferenceToTg converts biz updates.Difference to tg.UpdatesDifference.
+func mapDifferenceToTg(diff *updates.Difference, pts, date int32) *tg.UpdatesDifference {
+	if diff == nil {
+		return tg.MakeTLUpdatesDifferenceEmpty(&tg.TLUpdatesDifferenceEmpty{
+			Date: date,
+			Seq:  0,
+		}).ToUpdatesDifference()
+	}
+
+	// Check if it's an empty difference.
+	if diffEmpty, ok := diff.ToDifferenceEmpty(); ok {
+		return tg.MakeTLUpdatesDifferenceEmpty(&tg.TLUpdatesDifferenceEmpty{
+			Date: diffEmpty.State.Date,
+			Seq:  diffEmpty.State.Seq,
+		}).ToUpdatesDifference()
+	}
+
+	// Otherwise map full difference.
+	if diffFull, ok := diff.ToDifference(); ok {
+		return tg.MakeTLUpdatesDifference(&tg.TLUpdatesDifference{
+			NewMessages:          diffFull.NewMessages,
+			NewEncryptedMessages: []tg.EncryptedMessageClazz{},
+			OtherUpdates:         diffFull.OtherUpdates,
+			Chats:                []tg.ChatClazz{},
+			Users:                []tg.UserClazz{},
+			State:                diffFull.State,
+		}).ToUpdatesDifference()
+	}
+
+	return tg.MakeTLUpdatesDifferenceEmpty(&tg.TLUpdatesDifferenceEmpty{
+		Date: date,
+		Seq:  0,
+	}).ToUpdatesDifference()
 }
