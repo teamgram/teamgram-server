@@ -756,9 +756,8 @@ func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *i
 		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, msgsStateInfo)
 		msgId.state = RECEIVED | NEED_NO_ACK
 	} else {
-		for i := 0; i < len(msgIds); i++ {
-			// resend
-		}
+		c.outQueue.MarkForResend(msgIds)
+		msgId.state = RECEIVED | NEED_NO_ACK
 	}
 }
 
