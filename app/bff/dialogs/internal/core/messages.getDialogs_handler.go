@@ -16,16 +16,62 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesGetDialogs
 // messages.getDialogs#a0f4cb4f flags:# exclude_pinned:flags.0?true folder_id:flags.1?int offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.Dialogs;
 func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.MessagesDialogs, error) {
-	if in != nil && in.Limit > 0 {
-		peer := tg.FromInputPeer2(0, in.OffsetPeer)
-		if c.MD != nil {
-			peer = tg.FromInputPeer2(c.MD.UserId, in.OffsetPeer)
+	var userId int64
+	if c.MD != nil {
+		userId = c.MD.UserId
+	}
+
+	// When DialogClient is wired, delegate to dialog service.
+	if c.svcCtx != nil && c.svcCtx.DialogClient != nil && userId != 0 {
+		folderId := int32(0)
+		if in.FolderId != nil {
+			folderId = *in.FolderId
 		}
+
+		var excludePinned tg.BoolClazz
+		if in.ExcludePinned {
+			excludePinned = tg.MakeTLBoolTrue(&tg.TLBoolTrue{})
+		} else {
+			excludePinned = tg.MakeTLBoolFalse(&tg.TLBoolFalse{})
+		}
+
+		dialogExts, err := c.svcCtx.DialogClient.DialogGetDialogs(c.ctx, &dialog.TLDialogGetDialogs{
+			UserId:        userId,
+			ExcludePinned: excludePinned,
+			FolderId:      folderId,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.getDialogs - DialogGetDialogs error: %v", err)
+			return nil, err
+		}
+
+		dialogs := make([]tg.DialogClazz, 0, len(dialogExts.Datas))
+		for _, ext := range dialogExts.Datas {
+			if ext != nil && ext.Dialog != nil {
+				dialogs = append(dialogs, ext.Dialog)
+			}
+		}
+
+		return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
+			Count:    int32(len(dialogs)),
+			Dialogs:  dialogs,
+			Messages: []tg.MessageClazz{},
+			Chats:    []tg.ChatClazz{},
+			Users:    []tg.UserClazz{},
+		}).ToMessagesDialogs(), nil
+	}
+
+	// Fallback placeholder when DialogClient is not available.
+	if in != nil && in.Limit > 0 {
+		peer := tg.FromInputPeer2(userId, in.OffsetPeer)
 		if peer.PeerType == tg.PEER_SELF || peer.PeerType == tg.PEER_USER {
 			return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 				Count: 1,
@@ -43,7 +89,6 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		}
 	}
 
-	// Keep the dialogs path callable while dialog service wiring catches up.
 	return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 		Count:    0,
 		Dialogs:  []tg.DialogClazz{},

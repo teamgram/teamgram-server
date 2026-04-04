@@ -17,15 +17,33 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/config"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
+type DialogQueryClient interface {
+	DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config       config.Config
+	DialogClient DialogQueryClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasClient(c.DialogClient) {
+		ctx.DialogClient = dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
+	}
+	return ctx
+}
+
+func hasClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }
