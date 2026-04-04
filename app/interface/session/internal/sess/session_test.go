@@ -251,8 +251,8 @@ func TestOnMsgResendReqQueuesMsgsStateInfoForUnknownMessages(t *testing.T) {
 	if msgsStateInfo.ReqMsgId != ack.msgId {
 		t.Fatalf("expected msgs_state_info req_msg_id=%d, got %d", ack.msgId, msgsStateInfo.ReqMsgId)
 	}
-	if []byte(msgsStateInfo.Info)[0] != NOT_RECEIVED {
-		t.Fatalf("expected unknown resend target to be reported as NOT_RECEIVED, got %d", []byte(msgsStateInfo.Info)[0])
+	if []byte(msgsStateInfo.Info)[0] != NOT_RECEIVED_SURE {
+		t.Fatalf("expected unknown resend target to be reported as NOT_RECEIVED_SURE, got %d", []byte(msgsStateInfo.Info)[0])
 	}
 	if ack.state != RECEIVED|NEED_NO_ACK {
 		t.Fatalf("expected msg_resend_req request to become no-ack receipt, got state=%d", ack.state)
@@ -291,8 +291,8 @@ func TestOnMsgsStateReqQueuesMsgsStateInfo(t *testing.T) {
 	if info[0] != known.state {
 		t.Fatalf("expected known message state byte=%d, got %d", known.state, info[0])
 	}
-	if info[1] != NOT_RECEIVED {
-		t.Fatalf("expected future message state to be NOT_RECEIVED, got %d", info[1])
+	if info[1] != NOT_RECEIVED_SURE {
+		t.Fatalf("expected future message state to be NOT_RECEIVED_SURE, got %d", info[1])
 	}
 	if ack.state != RECEIVED|NEED_NO_ACK {
 		t.Fatalf("expected msgs_state_req request to become no-ack receipt, got state=%d", ack.state)
