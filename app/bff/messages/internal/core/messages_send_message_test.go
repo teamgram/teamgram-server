@@ -100,6 +100,16 @@ func (f *fakeMsgSendClient) MsgReadMessageContents(ctx context.Context, in *msg.
 	}).ToMessagesAffectedMessages(), nil
 }
 
+func (f *fakeMsgSendClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       in.DstMessage.MessageId,
+		Pts:      1,
+		PtsCount: 1,
+		Date:     99,
+	}).ToUpdates(), nil
+}
+
 var _ svc.MsgSendClient = (*fakeMsgSendClient)(nil)
 
 // --- basic tests ---

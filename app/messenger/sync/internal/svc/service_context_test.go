@@ -7,7 +7,7 @@ import (
 	"github.com/zeromicro/go-zero/core/discov"
 )
 
-func TestHasSessionClient(t *testing.T) {
+func TestHasClient(t *testing.T) {
 	tests := []struct {
 		name string
 		conf kitex.RpcClientConf
@@ -40,8 +40,8 @@ func TestHasSessionClient(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := hasSessionClient(tt.conf); got != tt.want {
-				t.Fatalf("hasSessionClient(%+v) = %v, want %v", tt.conf, got, tt.want)
+			if got := hasClient(tt.conf); got != tt.want {
+				t.Fatalf("hasClient(%+v) = %v, want %v", tt.conf, got, tt.want)
 			}
 		})
 	}
