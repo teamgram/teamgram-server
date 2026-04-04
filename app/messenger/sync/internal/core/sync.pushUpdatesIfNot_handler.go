@@ -17,7 +17,9 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,8 +28,36 @@ var _ *tg.Bool
 // SyncPushUpdatesIfNot
 // sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdatesIfNot(in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error) {
-	_ = in
+	if c.svcCtx == nil || c.svcCtx.SessionClient == nil {
+		return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	}
 
-	// TODO: push updates through the real filtered sync/session fanout pipeline.
+	if c.svcCtx.StatusClient != nil {
+		excludeSet := make(map[int64]struct{}, len(in.Excludes))
+		for _, id := range in.Excludes {
+			excludeSet[id] = struct{}{}
+		}
+
+		sessionList, err := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &status.TLStatusGetUserOnlineSessions{
+			UserId: in.UserId,
+		})
+		if err != nil {
+			c.Logger.Errorf("sync.pushUpdatesIfNot - StatusGetUserOnlineSessions(%d) error: %v", in.UserId, err)
+		} else {
+			for _, sess := range sessionList.UserSessions {
+				if _, excluded := excludeSet[sess.PermAuthKeyId]; excluded {
+					continue
+				}
+				_, pushErr := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
+					PermAuthKeyId: sess.PermAuthKeyId,
+					Updates:       in.Updates,
+				})
+				if pushErr != nil {
+					c.Logger.Errorf("sync.pushUpdatesIfNot - push to session (permAuthKeyId=%d) error: %v", sess.PermAuthKeyId, pushErr)
+				}
+			}
+		}
+	}
+
 	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }

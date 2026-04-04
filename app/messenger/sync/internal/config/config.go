@@ -21,4 +21,5 @@ import "github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 type Config struct {
 	kitex.RpcServerConf
 	SessionClient kitex.RpcClientConf `json:",optional,inherit"`
+	StatusClient  kitex.RpcClientConf `json:",optional,inherit"`
 }
