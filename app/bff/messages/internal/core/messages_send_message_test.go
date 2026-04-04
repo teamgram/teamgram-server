@@ -4,8 +4,31 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+// --- fake msg client ---
+
+type fakeMsgSendClient struct {
+	req *msg.TLMsgSendMessageV2
+}
+
+func (f *fakeMsgSendClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+	f.req = in
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       42,
+		Pts:      1,
+		PtsCount: 1,
+		Date:     99,
+	}).ToUpdates(), nil
+}
+
+var _ svc.MsgSendClient = (*fakeMsgSendClient)(nil)
+
+// --- basic tests ---
 
 func TestMessagesSendMessageRejectsEmptyMessage(t *testing.T) {
 	c := New(context.Background(), nil)
@@ -116,5 +139,47 @@ func TestMessagesSendMessageReusesPlaceholderIDForSameRandomID(t *testing.T) {
 	}
 	if firstShort.Id != secondShort.Id {
 		t.Fatalf("expected same placeholder id for repeated random_id, got %d vs %d", firstShort.Id, secondShort.Id)
+	}
+}
+
+// --- MsgClient delegation test ---
+
+func TestMessagesSendMessageDelegatesToMsgClient(t *testing.T) {
+	fakeMsgCli := &fakeMsgSendClient{}
+	c := New(context.Background(), &svc.ServiceContext{
+		MsgClient: fakeMsgCli,
+	})
+
+	result, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 30, AccessHash: 0}),
+		Message:  "delegated",
+		RandomId: 888,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected non-nil result")
+	}
+
+	if fakeMsgCli.req == nil {
+		t.Fatal("expected MsgSendMessageV2 to be called")
+	}
+	if fakeMsgCli.req.PeerId != 30 {
+		t.Errorf("expected peerId=30, got %d", fakeMsgCli.req.PeerId)
+	}
+	if len(fakeMsgCli.req.Message) != 1 {
+		t.Fatalf("expected 1 outbox message, got %d", len(fakeMsgCli.req.Message))
+	}
+	if fakeMsgCli.req.Message[0].RandomId != 888 {
+		t.Errorf("expected randomId=888, got %d", fakeMsgCli.req.Message[0].RandomId)
+	}
+
+	updates, ok := result.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected updateShortSentMessage, got %T", result.Clazz)
+	}
+	if updates.Id != 42 {
+		t.Errorf("expected id=42 from fake, got %d", updates.Id)
 	}
 }
