@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -26,6 +27,18 @@ var _ *tg.Bool
 // SyncPushRpcResult
 // sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
-	// Keep RPC result fanout callable until session delivery is wired.
+	if c.svcCtx != nil && c.svcCtx.SessionClient != nil {
+		_, err := c.svcCtx.SessionClient.SessionPushRpcResultData(c.ctx, &session.TLSessionPushRpcResultData{
+			PermAuthKeyId:  in.PermAuthKeyId,
+			AuthKeyId:      in.AuthKeyId,
+			SessionId:      in.SessionId,
+			ClientReqMsgId: in.ClientReqMsgId,
+			RpcResultData:  in.RpcResult,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
 }
