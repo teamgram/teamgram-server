@@ -4,8 +4,25 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+// --- fake dialog client ---
+
+type fakeDialogQueryClient struct {
+	req    *dialog.TLDialogGetDialogs
+	result *dialog.VectorDialogExt
+}
+
+func (f *fakeDialogQueryClient) DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
+	f.req = in
+	return f.result, nil
+}
+
+var _ svc.DialogQueryClient = (*fakeDialogQueryClient)(nil)
 
 func TestMessagesGetDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T) {
 	c := New(context.Background(), nil)
@@ -262,4 +279,65 @@ func TestDialogsPeerMetaPlaceholders(t *testing.T) {
 	if message.Id != 42 {
 		t.Fatalf("expected placeholder message id=42, got %d", message.Id)
 	}
+}
+
+func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
+	fakeDialogCli := &fakeDialogQueryClient{
+		result: &dialog.VectorDialogExt{
+			Datas: []dialog.DialogExtClazz{
+				dialog.MakeTLDialogExt(&dialog.TLDialogExt{
+					Order: 1,
+					Dialog: tg.MakeTLDialog(&tg.TLDialog{
+						Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 99}),
+						TopMessage:      5,
+						ReadInboxMaxId:  5,
+						ReadOutboxMaxId: 5,
+						UnreadCount:     0,
+						NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+					}),
+					AvailableMinId: 1,
+					Date:           10,
+				}),
+			},
+		},
+	}
+
+	c := newWithMD(context.Background(), &svc.ServiceContext{
+		DialogClient: fakeDialogCli,
+	}, 100)
+
+	result, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetPeer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 42}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected non-nil result")
+	}
+
+	if fakeDialogCli.req == nil {
+		t.Fatal("expected DialogGetDialogs to be called")
+	}
+	if fakeDialogCli.req.UserId != 100 {
+		t.Errorf("expected userId=100, got %d", fakeDialogCli.req.UserId)
+	}
+
+	dialogsSlice, ok := result.ToMessagesDialogsSlice()
+	if !ok {
+		t.Fatalf("expected messages.dialogsSlice, got %T", result.Clazz)
+	}
+	if dialogsSlice.Count != 1 {
+		t.Fatalf("expected count=1, got %d", dialogsSlice.Count)
+	}
+	if len(dialogsSlice.Dialogs) != 1 {
+		t.Fatalf("expected 1 dialog, got %d", len(dialogsSlice.Dialogs))
+	}
+}
+
+func newWithMD(ctx context.Context, svcCtx *svc.ServiceContext, userId int64) *DialogsCore {
+	c := New(ctx, svcCtx)
+	c.MD = &metadata.RpcMetadata{UserId: userId}
+	return c
 }
