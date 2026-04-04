@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
 
@@ -21,6 +22,16 @@ func mustEncodeMTObject(t *testing.T, obj interface{ Encode(*bin.Encoder, int32)
 		t.Fatalf("encode mt object: %v", err)
 	}
 	return append([]byte(nil), x.Bytes()...)
+}
+
+func mustDecodeMTObject(t *testing.T, body []byte) iface.TLObject {
+	t.Helper()
+
+	obj, err := iface.DecodeObject(bin.NewDecoder(body))
+	if err != nil {
+		t.Fatalf("decode mt object: %v", err)
+	}
+	return obj
 }
 
 func TestSessionConnNewRefreshesGatewayIDWhileOnline(t *testing.T) {
@@ -214,6 +225,34 @@ func TestOnMsgResendReqMarksKnownMessagesForResend(t *testing.T) {
 
 	if resendMsg.sent != 0 {
 		t.Fatalf("expected known resend request to mark message for resend, got sent=%d", resendMsg.sent)
+	}
+	if ack.state != RECEIVED|NEED_NO_ACK {
+		t.Fatalf("expected msg_resend_req request to become no-ack receipt, got state=%d", ack.state)
+	}
+}
+
+func TestOnMsgResendReqQueuesMsgsStateInfoForUnknownMessages(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	ack := newInboxMsg(11011)
+	s.onMsgResendReq(context.Background(), "", ack, &mt.TLMsgResendReq{
+		MsgIds: []int64{11010},
+	})
+
+	queued := s.outQueue.Lookup(ack.msgId)
+	if queued == nil {
+		t.Fatal("expected msg_resend_req for unknown message to queue msgs_state_info")
+	}
+
+	msgsStateInfo, ok := mustDecodeMTObject(t, queued.msg.Body).(*mt.TLMsgsStateInfo)
+	if !ok {
+		t.Fatalf("expected queued object to be TLMsgsStateInfo")
+	}
+	if msgsStateInfo.ReqMsgId != ack.msgId {
+		t.Fatalf("expected msgs_state_info req_msg_id=%d, got %d", ack.msgId, msgsStateInfo.ReqMsgId)
+	}
+	if []byte(msgsStateInfo.Info)[0] != NOT_RECEIVED {
+		t.Fatalf("expected unknown resend target to be reported as NOT_RECEIVED, got %d", []byte(msgsStateInfo.Info)[0])
 	}
 	if ack.state != RECEIVED|NEED_NO_ACK {
 		t.Fatalf("expected msg_resend_req request to become no-ack receipt, got state=%d", ack.state)

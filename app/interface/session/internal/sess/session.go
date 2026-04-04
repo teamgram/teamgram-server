@@ -73,6 +73,8 @@ const (
 var emptyMsgContainer = mt.TLMsgRawDataContainer{Messages: make([]*mt.TLMessageRawData, 0)}
 var androidPushTooLong = tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{})
 
+const defaultMTProtoLayer int32 = 223
+
 type messageData struct {
 	confirmFlag  bool
 	compressFlag bool
@@ -453,6 +455,15 @@ func (c *session) generateMessageSeqNo(increment bool) int32 {
 	}
 }
 
+func (c *session) layer() int32 {
+	if c.sessList != nil && c.sessList.cb != nil {
+		if layer := c.sessList.cb.Layer(); layer != 0 {
+			return layer
+		}
+	}
+	return defaultMTProtoLayer
+}
+
 func (c *session) sendRpcResultToQueue(ctx context.Context, gatewayId string, reqMsgId int64, result iface.TLObject) {
 	rpcResult := &mt.TLRpcResult{
 		ReqMsgId: reqMsgId,
@@ -462,7 +473,7 @@ func (c *session) sendRpcResultToQueue(ctx context.Context, gatewayId string, re
 	x := bin.NewEncoder()
 	defer x.End()
 
-	_ = rpcResult.Encode(x, c.sessList.cb.Layer())
+	_ = rpcResult.Encode(x, c.layer())
 	rawMsg := &mt.TLMessageRawData{
 		MsgId: nextMessageId(true),
 		Seqno: c.generateMessageSeqNo(true),
@@ -493,7 +504,7 @@ func (c *session) sendPushToQueue(ctx context.Context, gatewayId string, pushMsg
 	x := bin.NewEncoder()
 	defer x.End()
 
-	_ = pushMsg.Encode(x, c.sessList.cb.Layer())
+	_ = pushMsg.Encode(x, c.layer())
 	rawBytes := x.Bytes()
 	if x.Len() > 256 {
 		gzipPacked := &mt.TLGzipPacked{
@@ -502,7 +513,7 @@ func (c *session) sendPushToQueue(ctx context.Context, gatewayId string, pushMsg
 		x2 := bin.NewEncoder()
 		defer x2.End()
 
-		_ = gzipPacked.Encode(x2, c.sessList.cb.Layer())
+		_ = gzipPacked.Encode(x2, c.layer())
 		rawBytes = x2.Bytes()
 	}
 
@@ -519,7 +530,7 @@ func (c *session) sendRawToQueue(ctx context.Context, gatewayId string, msgId in
 	x := bin.NewEncoder()
 	defer x.End()
 
-	_ = rawMsg.Encode(x, c.sessList.cb.Layer())
+	_ = rawMsg.Encode(x, c.layer())
 	b := x.Bytes()
 	rawMsg2 := &mt.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -539,7 +550,7 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 	defer x.End()
 
 	salt := c.sessList.cacheSalt.Salt
-	_ = obj.Encode(x, c.sessList.cb.Layer())
+	_ = obj.Encode(x, c.layer())
 	b := x.Bytes()
 	rawMsg := &mt.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -576,7 +587,7 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 	defer x.End()
 
 	salt := c.sessList.cacheSalt.Salt
-	_ = obj.Encode(x, c.sessList.cb.Layer())
+	_ = obj.Encode(x, c.layer())
 	b := x.Bytes()
 
 	rawMsg := &mt.TLMessageRawData{
