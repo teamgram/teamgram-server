@@ -17,12 +17,43 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteMessages
 // messages.deleteMessages#e58e95d2 flags:# revoke:flags.0?true id:Vector<int> = messages.AffectedMessages;
 func (c *MessagesCore) MessagesDeleteMessages(in *tg.TLMessagesDeleteMessages) (*tg.MessagesAffectedMessages, error) {
+	var userId int64
+	if c.MD != nil {
+		userId = c.MD.UserId
+	}
+
+	// MessagesDeleteMessages is broadcast to all relevant peers, so we need
+	// at least a valid peer to route the request. Use the first message ID if available.
+	peerId := int64(0)
+	if len(in.Id) > 0 {
+		peerId = int64(in.Id[0])
+	}
+
+	// When MsgClient is wired, delegate to msg service.
+	if c.svcCtx != nil && c.svcCtx.MsgClient != nil {
+		var authKeyId int64
+		if c.MD != nil {
+			authKeyId = c.MD.AuthId
+		}
+
+		return c.svcCtx.MsgClient.MsgDeleteMessages(c.ctx, &msg.TLMsgDeleteMessages{
+			UserId:    userId,
+			AuthKeyId: authKeyId,
+			PeerType:  tg.PEER_USER, // deleteMessages is broadcast, use USER as default
+			PeerId:    peerId,
+			Revoke:    in.Revoke,
+			Id:        in.Id,
+		})
+	}
+
+	// Fallback placeholder when MsgClient is not available.
 	pts := int32(1)
 	ptsCount := int32(1)
 	if len(in.Id) > 0 {
