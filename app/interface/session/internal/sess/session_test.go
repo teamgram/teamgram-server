@@ -3,6 +3,7 @@ package sess
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
@@ -100,5 +101,29 @@ func TestOnSyncRpcResultDataIgnoresUnknownPendingRequest(t *testing.T) {
 	}
 	if got := s.outQueue.oMsgs.Len(); got != 0 {
 		t.Fatalf("expected unknown rpc result not to be queued, got %d queued messages", got)
+	}
+}
+
+func TestOnMsgsAllInfoMarksRequestedMessagesForResend(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	resendMsg := s.outQueue.AddNotifyMsg(4004, true, &mt.TLMessageRawData{
+		MsgId: 5005,
+		Body:  []byte{1},
+		Bytes: 1,
+	})
+	resendMsg.sent = time.Now().Unix()
+
+	ack := newInboxMsg(6006)
+	s.onMsgsAllInfo(context.Background(), "", ack, &mt.TLMsgsAllInfo{
+		MsgIds: []int64{4004},
+		Info:   string([]byte{NOT_RECEIVED}),
+	})
+
+	if resendMsg.sent != 0 {
+		t.Fatalf("expected NOT_RECEIVED message to be marked for resend, got sent=%d", resendMsg.sent)
+	}
+	if ack.state != RECEIVED|NEED_NO_ACK {
+		t.Fatalf("expected msgs_all_info request to become no-ack receipt, got state=%d", ack.state)
 	}
 }

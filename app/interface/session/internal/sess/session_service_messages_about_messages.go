@@ -620,7 +620,7 @@ func (c *session) onMsgsStateInfo(ctx context.Context, gatewayId string, msgId *
 
 	// TODO(@benqi): resend
 	if len(resendIds) > 0 {
-		//
+		c.outQueue.MarkForResend(resendIds)
 	}
 
 	// 2. no ack
@@ -677,7 +677,7 @@ func (c *session) onMsgsAllInfo(ctx context.Context, gatewayId string, msgId *in
 
 	// TODO(@benqi): resend
 	if len(resendIds) > 0 {
-		//
+		c.outQueue.MarkForResend(resendIds)
 	}
 
 	// 2. no ack
