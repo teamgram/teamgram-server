@@ -21,6 +21,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	synctypes "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -52,7 +53,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 			}
 		}
 
-		messageID := placeholderMessageID(outbox.RandomId)
+		messageID := c.nextMessageId(outbox.RandomId)
 		sentUpdates := tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
 			Out:      true,
 			Id:       messageID,
@@ -175,7 +176,21 @@ func (c *MsgCore) pushSendMessageSideEffects(in *msg.TLMsgSendMessageV2, outbox 
 	}
 }
 
-func placeholderMessageID(randomID int64) int32 {
+// nextMessageId returns a real message ID from IdgenClient when wired,
+// otherwise falls back to a placeholder derived from randomID.
+func (c *MsgCore) nextMessageId(randomID int64) int32 {
+	if c.svcCtx != nil && c.svcCtx.IdgenClient != nil {
+		resp, err := c.svcCtx.IdgenClient.IdgenNextId(c.ctx, &idgen.TLIdgenNextId{})
+		if err == nil && resp != nil {
+			if tlInt64, ok := resp.Clazz.(*tg.TLInt64); ok && tlInt64.V > 0 {
+				id := int32(tlInt64.V % 0x7fffffff)
+				if id > 0 {
+					return id
+				}
+			}
+		}
+	}
+	// Fallback: deterministic placeholder from randomID.
 	if randomID < 0 {
 		randomID = -randomID
 	}

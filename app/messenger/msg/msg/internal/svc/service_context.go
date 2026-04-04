@@ -22,6 +22,8 @@ import (
 	inboxclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/config"
+	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -38,10 +40,15 @@ type SyncPushClient interface {
 	SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error)
 }
 
+type IdgenClient interface {
+	IdgenNextId(ctx context.Context, in *idgen.TLIdgenNextId) (*tg.Int64, error)
+}
+
 type ServiceContext struct {
 	Config      config.Config
 	InboxClient InboxPushClient
 	SyncClient  SyncPushClient
+	IdgenClient IdgenClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -53,6 +60,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	if hasClient(c.SyncClient) {
 		ctx.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
+	}
+	if hasClient(c.IdgenClient) {
+		ctx.IdgenClient = idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.IdgenClient))
 	}
 	return ctx
 }
