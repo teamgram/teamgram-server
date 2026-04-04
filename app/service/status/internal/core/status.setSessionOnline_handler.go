@@ -34,8 +34,8 @@ var _ *tg.Bool
 // status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline) (*tg.Bool, error) {
 	var (
-		userK   = getUserKey(in.UserId)
-		sess, _ = in.Session.(*status.TLSessionEntry)
+		userK = getUserKey(in.UserId)
+		sess  = in.Session
 	)
 
 	if in.UserId <= 0 || sess == nil || sess.AuthKeyId == 0 {
