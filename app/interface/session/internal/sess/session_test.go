@@ -5,8 +5,23 @@ import (
 	"testing"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 )
+
+const testMTProtoLayer int32 = 223
+
+func mustEncodeMTObject(t *testing.T, obj interface{ Encode(*bin.Encoder, int32) error }) []byte {
+	t.Helper()
+
+	x := bin.NewEncoder()
+	defer x.End()
+
+	if err := obj.Encode(x, testMTProtoLayer); err != nil {
+		t.Fatalf("encode mt object: %v", err)
+	}
+	return append([]byte(nil), x.Bytes()...)
+}
 
 func TestSessionConnNewRefreshesGatewayIDWhileOnline(t *testing.T) {
 	s := newSession(1, &SessionList{})
@@ -125,5 +140,47 @@ func TestOnMsgsAllInfoMarksRequestedMessagesForResend(t *testing.T) {
 	}
 	if ack.state != RECEIVED|NEED_NO_ACK {
 		t.Fatalf("expected msgs_all_info request to become no-ack receipt, got state=%d", ack.state)
+	}
+}
+
+func TestOnMsgsStateInfoMarksRequestedMessagesForResend(t *testing.T) {
+	s := newSession(1, &SessionList{})
+
+	const (
+		reqMsgID    int64 = 7007
+		targetMsgID int64 = 7008
+	)
+
+	stateReqBody := mustEncodeMTObject(t, mt.MakeTLMsgsStateReq(&mt.TLMsgsStateReq{
+		MsgIds: []int64{targetMsgID},
+	}))
+	reqStateMsg := s.outQueue.AddNotifyMsg(reqMsgID, true, &mt.TLMessageRawData{
+		MsgId: reqMsgID,
+		Body:  stateReqBody,
+		Bytes: int32(len(stateReqBody)),
+	})
+	reqStateMsg.sent = time.Now().Unix()
+
+	resendMsg := s.outQueue.AddNotifyMsg(targetMsgID, true, &mt.TLMessageRawData{
+		MsgId: 8008,
+		Body:  []byte{1},
+		Bytes: 1,
+	})
+	resendMsg.sent = time.Now().Unix()
+
+	ack := newInboxMsg(9009)
+	s.onMsgsStateInfo(context.Background(), "", ack, &mt.TLMsgsStateInfo{
+		ReqMsgId: reqMsgID,
+		Info:     string([]byte{NOT_RECEIVED}),
+	})
+
+	if s.outQueue.Lookup(reqMsgID) != nil {
+		t.Fatalf("expected original msgs_state_req request to be acked and removed")
+	}
+	if resendMsg.sent != 0 {
+		t.Fatalf("expected NOT_RECEIVED state info to mark target for resend, got sent=%d", resendMsg.sent)
+	}
+	if ack.state != RECEIVED|NEED_NO_ACK {
+		t.Fatalf("expected msgs_state_info request to become no-ack receipt, got state=%d", ack.state)
 	}
 }
