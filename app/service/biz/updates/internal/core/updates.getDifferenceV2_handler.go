@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -37,7 +38,7 @@ func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV
 	}
 
 	if in.Pts < 1 {
-		message := makePlaceholderDifferenceMessage(in.UserId, pts, date)
+		message := c.makeDifferenceMessage(in.UserId, pts, date)
 		return updates.MakeTLDifference(&updates.TLDifference{
 			NewMessages: []tg.MessageClazz{
 				message,
@@ -57,6 +58,25 @@ func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV
 	return updates.MakeTLDifferenceEmpty(&updates.TLDifferenceEmpty{
 		State: makePlaceholderUpdatesState(pts, date),
 	}).ToDifference(), nil
+}
+
+func (c *UpdatesCore) makeDifferenceMessage(userID int64, pts int32, date int32) tg.MessageClazz {
+	if c != nil && c.svcCtx != nil && c.svcCtx.MessageClient != nil && userID != 0 {
+		boxes, err := c.svcCtx.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
+			UserId:   userID,
+			PeerType: tg.PEER_USER,
+			PeerId:   userID,
+			MaxId:    pts,
+			Limit:    1,
+		})
+		if err == nil && boxes != nil && len(boxes.Datas) > 0 {
+			if box := boxes.Datas[0]; box != nil && box.Message != nil {
+				return box.Message
+			}
+		}
+	}
+
+	return makePlaceholderDifferenceMessage(userID, pts, date)
 }
 
 func makePlaceholderUpdatesState(pts int32, date int32) *tg.UpdatesState {
