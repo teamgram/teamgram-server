@@ -22,6 +22,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/config"
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
+	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -38,9 +40,15 @@ type MsgSendClient interface {
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
 }
 
+type MessageQueryClient interface {
+	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error)
+	MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error)
+}
+
 type ServiceContext struct {
-	Config    config.Config
-	MsgClient MsgSendClient
+	Config        config.Config
+	MsgClient     MsgSendClient
+	MessageClient MessageQueryClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -49,6 +57,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	if hasClient(c.MsgClient) {
 		ctx.MsgClient = msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient))
+	}
+	if hasClient(c.MessageClient) {
+		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
 	}
 	return ctx
 }

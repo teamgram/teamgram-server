@@ -4,8 +4,30 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type fakeBFFMessageQueryClient struct {
+	historyReq *message.TLMessageGetHistoryMessages
+	listReq    *message.TLMessageGetUserMessageList
+	history    *message.VectorMessageBox
+	list       *message.VectorMessageBox
+}
+
+func (f *fakeBFFMessageQueryClient) MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error) {
+	f.historyReq = in
+	return f.history, nil
+}
+
+func (f *fakeBFFMessageQueryClient) MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error) {
+	f.listReq = in
+	return f.list, nil
+}
+
+var _ svc.MessageQueryClient = (*fakeBFFMessageQueryClient)(nil)
 
 func TestMessagesReadAndDeletePlaceholders(t *testing.T) {
 	c := New(context.Background(), nil)
@@ -172,6 +194,94 @@ func TestMessagesQueryPlaceholders(t *testing.T) {
 	searchMsgs, ok := search.ToMessagesMessages()
 	if !ok || len(searchMsgs.Messages) != 1 {
 		t.Fatalf("expected 1 search placeholder, got %#v", search)
+	}
+}
+
+func TestMessagesGetHistoryDelegatesToMessageService(t *testing.T) {
+	fakeCli := &fakeBFFMessageQueryClient{
+		history: &message.VectorMessageBox{
+			Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					UserId:    100,
+					MessageId: 20,
+					PeerType:  tg.PEER_USER,
+					PeerId:    2,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      20,
+						Date:    10,
+						Message: "history-from-service",
+					}),
+				}),
+			},
+		},
+	}
+	c := New(context.Background(), &svc.ServiceContext{
+		MessageClient: fakeCli,
+	})
+	c.MD = &metadata.RpcMetadata{UserId: 100}
+
+	result, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:     tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 2}),
+		OffsetId: 20,
+		Limit:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if fakeCli.historyReq == nil {
+		t.Fatal("expected MessageGetHistoryMessages to be called")
+	}
+	msgs, ok := result.ToMessagesMessages()
+	if !ok || len(msgs.Messages) != 1 {
+		t.Fatalf("expected delegated history result, got %#v", result)
+	}
+	msg, ok := msgs.Messages[0].(*tg.TLMessage)
+	if !ok || msg.Message != "history-from-service" {
+		t.Fatalf("expected delegated history message, got %#v", msgs.Messages[0])
+	}
+}
+
+func TestMessagesGetMessagesDelegatesToMessageService(t *testing.T) {
+	fakeCli := &fakeBFFMessageQueryClient{
+		list: &message.VectorMessageBox{
+			Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					UserId:    100,
+					MessageId: 7,
+					PeerType:  tg.PEER_USER,
+					PeerId:    100,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      7,
+						Date:    10,
+						Message: "message-list-from-service",
+					}),
+				}),
+			},
+		},
+	}
+	c := New(context.Background(), &svc.ServiceContext{
+		MessageClient: fakeCli,
+	})
+	c.MD = &metadata.RpcMetadata{UserId: 100}
+
+	result, err := c.MessagesGetMessages(&tg.TLMessagesGetMessages{
+		Id_VECTORINPUTMESSAGE: []tg.InputMessageClazz{
+			tg.MakeTLInputMessageID(&tg.TLInputMessageID{Id: 7}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if fakeCli.listReq == nil {
+		t.Fatal("expected MessageGetUserMessageList to be called")
+	}
+	msgs, ok := result.ToMessagesMessages()
+	if !ok || len(msgs.Messages) != 1 {
+		t.Fatalf("expected delegated getMessages result, got %#v", result)
+	}
+	msg, ok := msgs.Messages[0].(*tg.TLMessage)
+	if !ok || msg.Message != "message-list-from-service" {
+		t.Fatalf("expected delegated getMessages payload, got %#v", msgs.Messages[0])
 	}
 }
 

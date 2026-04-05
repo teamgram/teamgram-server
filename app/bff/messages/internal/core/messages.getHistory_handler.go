@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,6 +27,31 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 	peer, err := bffPeerFromInput(c, in.Peer)
 	if err != nil {
 		return nil, err
+	}
+
+	if c.svcCtx != nil && c.svcCtx.MessageClient != nil && c.MD != nil {
+		peerType, peerID, ok := bffPeerTypeAndID(peer)
+		if ok {
+			boxes, err := c.svcCtx.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
+				UserId:     c.MD.UserId,
+				PeerType:   peerType,
+				PeerId:     peerID,
+				OffsetId:   in.OffsetId,
+				OffsetDate: in.OffsetDate,
+				AddOffset:  in.AddOffset,
+				Limit:      in.Limit,
+				MaxId:      in.MaxId,
+				MinId:      in.MinId,
+				Hash:       in.Hash,
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.getHistory - MessageGetHistoryMessages error: %v", err)
+				return nil, err
+			}
+			if boxes != nil {
+				return makeBffMessagesMessagesFromBoxes(boxes.Datas), nil
+			}
+		}
 	}
 
 	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, in.MaxId, in.MinId), historyPlaceholderCount(in.Limit), false), nil
