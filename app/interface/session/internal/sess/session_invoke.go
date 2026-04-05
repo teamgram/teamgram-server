@@ -479,6 +479,10 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		// logx.WithContext(ctx).Infof("user.getUsers: %s", query)
 	}
 
+	if shouldRefreshAuthState(c.sessList.cb.state) {
+		c.sessList.cb.refreshAuthStateIfNeeded(ctx)
+	}
+
 	switch c.sessList.cb.state {
 	case mtproto.AuthStateNormal:
 		// state is ok
@@ -490,7 +494,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		}
 	default:
 		if !checkRpcWithoutLogin(query) {
-			c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, mtproto.NewRpcError(mtproto.ErrAuthKeyUnregistered))
+			c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, mtproto.NewRpcError(rpcErrorForAuthState(c.sessList.cb.state)))
 			msgId.state = RECEIVED | RESPONSE_GENERATED
 			return false
 		}

@@ -183,6 +183,45 @@ func (m *MainAuthWrapper) changeAuthState(ctx context.Context, state int, stateD
 	}
 }
 
+func (m *MainAuthWrapper) applyAuthStateData(ctx context.Context, kData *authsession.AuthKeyStateData) {
+	if kData == nil {
+		return
+	}
+
+	if client := kData.GetClient(); client != nil {
+		m.client = client
+	}
+	if pushId := kData.GetAndroidPushSessionId(); pushId != nil {
+		m.pushSessionId = pushId.GetValue()
+	}
+
+	switch nextState := int(kData.GetKeyState()); nextState {
+	case mtproto.AuthStateNormal, mtproto.AuthStateNeedPassword:
+		m.changeAuthState(ctx, nextState, kData.GetUserId())
+	case mtproto.AuthStateUnknown, mtproto.AuthStateLogout, mtproto.AuthStateDeleted:
+		m.changeAuthState(ctx, nextState, int64(0))
+	default:
+		m.state = nextState
+		m.AuthUserId = 0
+	}
+}
+
+func (m *MainAuthWrapper) refreshAuthStateIfNeeded(ctx context.Context) {
+	if m.authKeyId == 0 || !shouldRefreshAuthState(m.state) {
+		return
+	}
+
+	kData, err := m.cb.Dao.AuthsessionClient.AuthsessionGetAuthStateData(ctx, &authsession.TLAuthsessionGetAuthStateData{
+		AuthKeyId: m.authKeyId,
+	})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("refreshAuthStateIfNeeded(%d) error: %v", m.authKeyId, err)
+		return
+	}
+
+	m.applyAuthStateData(ctx, kData)
+}
+
 func (m *MainAuthWrapper) resetAuth(kType int, authId int64) (lastAuthId int64) {
 	switch kType {
 	case mtproto.AuthKeyTypeTemp:
@@ -406,6 +445,8 @@ func (m *MainAuthWrapper) onUpdateInitConnection(ctx context.Context, clientIp s
 			Params:         m.Params(),
 		})
 	}
+
+	m.refreshAuthStateIfNeeded(ctx)
 }
 
 func (m *MainAuthWrapper) onBindPushSessionId(ctx context.Context, sList *SessionList, sessionId int64) {
