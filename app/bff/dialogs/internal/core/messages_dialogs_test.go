@@ -6,6 +6,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -37,6 +38,18 @@ func (f *fakeDialogQueryClient) DialogGetMyDialogsData(ctx context.Context, in *
 }
 
 var _ svc.DialogQueryClient = (*fakeDialogQueryClient)(nil)
+
+type fakeMessageQueryClient struct {
+	req    *message.TLMessageGetHistoryMessages
+	result *message.VectorMessageBox
+}
+
+func (f *fakeMessageQueryClient) MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error) {
+	f.req = in
+	return f.result, nil
+}
+
+var _ svc.MessageQueryClient = (*fakeMessageQueryClient)(nil)
 
 func TestMessagesGetDialogsReturnsSinglePlaceholderForUserPeer(t *testing.T) {
 	c := New(context.Background(), nil)
@@ -320,9 +333,27 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 			Channels: []int64{8},
 		}).ToDialogsData(),
 	}
+	fakeMessageCli := &fakeMessageQueryClient{
+		result: &message.VectorMessageBox{
+			Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					UserId:    100,
+					MessageId: 5,
+					PeerType:  tg.PEER_USER,
+					PeerId:    99,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      5,
+						Date:    10,
+						Message: "from-service",
+					}),
+				}),
+			},
+		},
+	}
 
 	c := newWithMD(context.Background(), &svc.ServiceContext{
-		DialogClient: fakeDialogCli,
+		DialogClient:  fakeDialogCli,
+		MessageClient: fakeMessageCli,
 	}, 100)
 
 	result, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
@@ -345,6 +376,9 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 	if fakeDialogCli.dataReq == nil {
 		t.Fatal("expected DialogGetMyDialogsData to be called")
 	}
+	if fakeMessageCli.req == nil {
+		t.Fatal("expected MessageGetHistoryMessages to be called")
+	}
 
 	dialogsSlice, ok := result.ToMessagesDialogsSlice()
 	if !ok {
@@ -356,11 +390,18 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 	if len(dialogsSlice.Dialogs) != 1 {
 		t.Fatalf("expected 1 dialog, got %d", len(dialogsSlice.Dialogs))
 	}
+	if len(dialogsSlice.Messages) != 1 {
+		t.Fatalf("expected 1 delegated message, got %d", len(dialogsSlice.Messages))
+	}
 	if len(dialogsSlice.Users) != 1 {
 		t.Fatalf("expected 1 user from dialogs data, got %d", len(dialogsSlice.Users))
 	}
 	if len(dialogsSlice.Chats) != 2 {
 		t.Fatalf("expected 2 chats from dialogs data, got %d", len(dialogsSlice.Chats))
+	}
+	messageItem, ok := dialogsSlice.Messages[0].(*tg.TLMessage)
+	if !ok || messageItem.Message != "from-service" {
+		t.Fatalf("expected delegated service message, got %#v", dialogsSlice.Messages[0])
 	}
 }
 
@@ -380,9 +421,27 @@ func TestMessagesGetPeerDialogsDelegatesToDialogClient(t *testing.T) {
 			Date:           10,
 		}),
 	}
+	fakeMessageCli := &fakeMessageQueryClient{
+		result: &message.VectorMessageBox{
+			Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					UserId:    100,
+					MessageId: 77,
+					PeerType:  tg.PEER_USER,
+					PeerId:    42,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      77,
+						Date:    10,
+						Message: "peer-dialog-message",
+					}),
+				}),
+			},
+		},
+	}
 
 	c := newWithMD(context.Background(), &svc.ServiceContext{
-		DialogClient: fakeDialogCli,
+		DialogClient:  fakeDialogCli,
+		MessageClient: fakeMessageCli,
 	}, 100)
 
 	result, err := c.MessagesGetPeerDialogs(&tg.TLMessagesGetPeerDialogs{
@@ -397,6 +456,9 @@ func TestMessagesGetPeerDialogsDelegatesToDialogClient(t *testing.T) {
 	}
 	if fakeDialogCli.dialogByIDReq == nil {
 		t.Fatal("expected DialogGetDialogById to be called")
+	}
+	if fakeMessageCli.req == nil {
+		t.Fatal("expected MessageGetHistoryMessages to be called")
 	}
 	if fakeDialogCli.dialogByIDReq.UserId != 100 {
 		t.Fatalf("expected dialog lookup user_id=100, got %d", fakeDialogCli.dialogByIDReq.UserId)
@@ -414,10 +476,10 @@ func TestMessagesGetPeerDialogsDelegatesToDialogClient(t *testing.T) {
 	}
 	messageItem, ok := result.Messages[0].(*tg.TLMessage)
 	if !ok {
-		t.Fatalf("expected placeholder message, got %T", result.Messages[0])
+		t.Fatalf("expected delegated message, got %T", result.Messages[0])
 	}
-	if messageItem.Id != 77 {
-		t.Fatalf("expected placeholder message id=77, got %d", messageItem.Id)
+	if messageItem.Id != 77 || messageItem.Message != "peer-dialog-message" {
+		t.Fatalf("expected delegated message id=77, got %#v", messageItem)
 	}
 }
 
