@@ -4,8 +4,23 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type fakeUpdatesMessageClient struct {
+	req    *message.TLMessageGetHistoryMessages
+	result *message.VectorMessageBox
+}
+
+func (f *fakeUpdatesMessageClient) MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error) {
+	f.req = in
+	return f.result, nil
+}
+
+var _ svc.MessageQueryClient = (*fakeUpdatesMessageClient)(nil)
 
 func TestUpdatesGetStateV2ReturnsPlaceholderState(t *testing.T) {
 	c := New(context.Background(), nil)
@@ -85,6 +100,50 @@ func TestUpdatesGetDifferenceV2PreservesForwardProgressFromRequest(t *testing.T)
 	}
 	if diff.State.Date != 99 {
 		t.Fatalf("expected date=99, got %d", diff.State.Date)
+	}
+}
+
+func TestUpdatesGetDifferenceV2DelegatesCatchUpMessageToMessageService(t *testing.T) {
+	fakeMsgCli := &fakeUpdatesMessageClient{
+		result: &message.VectorMessageBox{
+			Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					UserId:    2,
+					MessageId: 1,
+					PeerType:  tg.PEER_USER,
+					PeerId:    2,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      1,
+						Date:    10,
+						Message: "from-message-service",
+					}),
+				}),
+			},
+		},
+	}
+	c := New(context.Background(), &svc.ServiceContext{
+		MessageClient: fakeMsgCli,
+	})
+
+	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
+		AuthKeyId: 1,
+		UserId:    2,
+		Pts:       0,
+		Date:      0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if fakeMsgCli.req == nil {
+		t.Fatal("expected MessageGetHistoryMessages to be called")
+	}
+	diff, ok := result.ToDifference()
+	if !ok {
+		t.Fatalf("expected difference, got %T", result.Clazz)
+	}
+	msg, ok := diff.NewMessages[0].(*tg.TLMessage)
+	if !ok || msg.Message != "from-message-service" {
+		t.Fatalf("expected delegated catch-up message, got %#v", diff.NewMessages[0])
 	}
 }
 

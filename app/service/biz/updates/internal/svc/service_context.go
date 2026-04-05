@@ -17,15 +17,33 @@
 package svc
 
 import (
+	"context"
+
+	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/config"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
+type MessageQueryClient interface {
+	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
+	Config        config.Config
+	MessageClient MessageQueryClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	ctx := &ServiceContext{
 		Config: c,
 	}
+	if hasClient(c.MessageClient) {
+		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
+	}
+	return ctx
+}
+
+func hasClient(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

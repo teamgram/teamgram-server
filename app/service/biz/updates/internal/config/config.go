@@ -22,4 +22,5 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	MessageClient kitex.RpcClientConf `json:",optional,inherit"`
 }
