@@ -60,12 +60,23 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 			}
 		}
 
+		dialogData, err := c.svcCtx.DialogClient.DialogGetMyDialogsData(c.ctx, &dialog.TLDialogGetMyDialogsData{
+			UserId:  userId,
+			User:    true,
+			Chat:    true,
+			Channel: true,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.getDialogs - DialogGetMyDialogsData error: %v", err)
+			return nil, err
+		}
+
 		return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 			Count:    int32(len(dialogs)),
 			Dialogs:  dialogs,
 			Messages: []tg.MessageClazz{},
-			Chats:    []tg.ChatClazz{},
-			Users:    []tg.UserClazz{},
+			Chats:    makeDialogChatsFromData(dialogData),
+			Users:    makeDialogUsersFromData(dialogData),
 		}).ToMessagesDialogs(), nil
 	}
 
@@ -96,4 +107,35 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
 	}).ToMessagesDialogs(), nil
+}
+
+func makeDialogUsersFromData(data *dialog.DialogsData) []tg.UserClazz {
+	if data == nil || len(data.Users) == 0 {
+		return []tg.UserClazz{}
+	}
+
+	users := make([]tg.UserClazz, 0, len(data.Users))
+	for _, userID := range data.Users {
+		users = append(users, makePlaceholderUser(userID))
+	}
+	return users
+}
+
+func makeDialogChatsFromData(data *dialog.DialogsData) []tg.ChatClazz {
+	if data == nil || (len(data.Chats) == 0 && len(data.Channels) == 0) {
+		return []tg.ChatClazz{}
+	}
+
+	chats := make([]tg.ChatClazz, 0, len(data.Chats)+len(data.Channels))
+	for _, chatID := range data.Chats {
+		chats = append(chats, tg.MakeTLChatEmpty(&tg.TLChatEmpty{Id: chatID}))
+	}
+	for _, channelID := range data.Channels {
+		chats = append(chats, tg.MakeTLChannelForbidden(&tg.TLChannelForbidden{
+			Id:         channelID,
+			AccessHash: 0,
+			Title:      "",
+		}))
+	}
+	return chats
 }
