@@ -110,3 +110,28 @@ func makeBffMessagesMessagesByIDs(peer tg.PeerClazz, ids []int32, mentioned bool
 		Messages: messages,
 	}).ToMessagesMessages()
 }
+
+func makeBffMessagesMessagesFromBoxes(boxes []tg.MessageBoxClazz) *tg.MessagesMessages {
+	messages := make([]tg.MessageClazz, 0, len(boxes))
+	for _, box := range boxes {
+		if box != nil && box.Message != nil {
+			messages = append(messages, box.Message)
+		}
+	}
+	return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: messages,
+	}).ToMessagesMessages()
+}
+
+func bffPeerTypeAndID(peer tg.PeerClazz) (int32, int64, bool) {
+	switch p := peer.(type) {
+	case *tg.TLPeerUser:
+		return tg.PEER_USER, p.UserId, true
+	case *tg.TLPeerChat:
+		return tg.PEER_CHAT, p.ChatId, true
+	case *tg.TLPeerChannel:
+		return tg.PEER_CHANNEL, p.ChannelId, true
+	default:
+		return 0, 0, false
+	}
+}

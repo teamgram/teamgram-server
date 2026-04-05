@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -35,6 +36,20 @@ func (c *MessagesCore) MessagesGetMessages(in *tg.TLMessagesGetMessages) (*tg.Me
 		}
 	}
 	ids = append(ids, in.Id_VECTORINT32...)
+
+	if c.svcCtx != nil && c.svcCtx.MessageClient != nil && c.MD != nil && c.MD.UserId != 0 {
+		boxes, err := c.svcCtx.MessageClient.MessageGetUserMessageList(c.ctx, &message.TLMessageGetUserMessageList{
+			UserId: c.MD.UserId,
+			IdList: ids,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.getMessages - MessageGetUserMessageList error: %v", err)
+			return nil, err
+		}
+		if boxes != nil {
+			return makeBffMessagesMessagesFromBoxes(boxes.Datas), nil
+		}
+	}
 
 	return makeBffMessagesMessagesByIDs(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 0}), ids, false), nil
 }
