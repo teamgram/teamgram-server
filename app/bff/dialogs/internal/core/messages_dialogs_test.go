@@ -13,13 +13,27 @@ import (
 // --- fake dialog client ---
 
 type fakeDialogQueryClient struct {
-	req    *dialog.TLDialogGetDialogs
-	result *dialog.VectorDialogExt
+	req           *dialog.TLDialogGetDialogs
+	dialogByIDReq *dialog.TLDialogGetDialogById
+	dataReq       *dialog.TLDialogGetMyDialogsData
+	result        *dialog.VectorDialogExt
+	dataResult    *dialog.DialogsData
+	dialogResult  *dialog.DialogExt
 }
 
 func (f *fakeDialogQueryClient) DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
 	f.req = in
 	return f.result, nil
+}
+
+func (f *fakeDialogQueryClient) DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
+	f.dialogByIDReq = in
+	return f.dialogResult, nil
+}
+
+func (f *fakeDialogQueryClient) DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
+	f.dataReq = in
+	return f.dataResult, nil
 }
 
 var _ svc.DialogQueryClient = (*fakeDialogQueryClient)(nil)
@@ -300,6 +314,11 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 				}),
 			},
 		},
+		dataResult: dialog.MakeTLSimpleDialogsData(&dialog.TLSimpleDialogsData{
+			Users:    []int64{99},
+			Chats:    []int64{7},
+			Channels: []int64{8},
+		}).ToDialogsData(),
 	}
 
 	c := newWithMD(context.Background(), &svc.ServiceContext{
@@ -323,6 +342,9 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 	if fakeDialogCli.req.UserId != 100 {
 		t.Errorf("expected userId=100, got %d", fakeDialogCli.req.UserId)
 	}
+	if fakeDialogCli.dataReq == nil {
+		t.Fatal("expected DialogGetMyDialogsData to be called")
+	}
 
 	dialogsSlice, ok := result.ToMessagesDialogsSlice()
 	if !ok {
@@ -333,6 +355,69 @@ func TestMessagesGetDialogsDelegatesToDialogClient(t *testing.T) {
 	}
 	if len(dialogsSlice.Dialogs) != 1 {
 		t.Fatalf("expected 1 dialog, got %d", len(dialogsSlice.Dialogs))
+	}
+	if len(dialogsSlice.Users) != 1 {
+		t.Fatalf("expected 1 user from dialogs data, got %d", len(dialogsSlice.Users))
+	}
+	if len(dialogsSlice.Chats) != 2 {
+		t.Fatalf("expected 2 chats from dialogs data, got %d", len(dialogsSlice.Chats))
+	}
+}
+
+func TestMessagesGetPeerDialogsDelegatesToDialogClient(t *testing.T) {
+	fakeDialogCli := &fakeDialogQueryClient{
+		dialogResult: dialog.MakeTLDialogExt(&dialog.TLDialogExt{
+			Order: 1,
+			Dialog: tg.MakeTLDialog(&tg.TLDialog{
+				Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 42}),
+				TopMessage:      77,
+				ReadInboxMaxId:  77,
+				ReadOutboxMaxId: 77,
+				UnreadCount:     0,
+				NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+			}),
+			AvailableMinId: 1,
+			Date:           10,
+		}),
+	}
+
+	c := newWithMD(context.Background(), &svc.ServiceContext{
+		DialogClient: fakeDialogCli,
+	}, 100)
+
+	result, err := c.MessagesGetPeerDialogs(&tg.TLMessagesGetPeerDialogs{
+		Peers: []tg.InputDialogPeerClazz{
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+				Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 42}),
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if fakeDialogCli.dialogByIDReq == nil {
+		t.Fatal("expected DialogGetDialogById to be called")
+	}
+	if fakeDialogCli.dialogByIDReq.UserId != 100 {
+		t.Fatalf("expected dialog lookup user_id=100, got %d", fakeDialogCli.dialogByIDReq.UserId)
+	}
+	if len(result.Dialogs) != 1 || len(result.Messages) != 1 || len(result.Users) != 1 {
+		t.Fatalf("expected one peer dialog envelope item, got dialogs=%d messages=%d users=%d",
+			len(result.Dialogs), len(result.Messages), len(result.Users))
+	}
+	dialogItem, ok := result.Dialogs[0].(*tg.TLDialog)
+	if !ok {
+		t.Fatalf("expected delegated dialog, got %T", result.Dialogs[0])
+	}
+	if dialogItem.TopMessage != 77 {
+		t.Fatalf("expected delegated top_message=77, got %d", dialogItem.TopMessage)
+	}
+	messageItem, ok := result.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("expected placeholder message, got %T", result.Messages[0])
+	}
+	if messageItem.Id != 77 {
+		t.Fatalf("expected placeholder message id=77, got %d", messageItem.Id)
 	}
 }
 

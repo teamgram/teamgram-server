@@ -16,7 +16,10 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesGetPeerDialogs
 // messages.getPeerDialogs#e470bcfd peers:Vector<InputDialogPeer> = messages.PeerDialogs;
@@ -27,6 +30,36 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 			if c.MD != nil {
 				peer = tg.FromInputPeer2(c.MD.UserId, inputDialogPeer.Peer)
 			}
+
+			if c.svcCtx != nil && c.svcCtx.DialogClient != nil && c.MD != nil && c.MD.UserId != 0 {
+				dialogExt, err := c.svcCtx.DialogClient.DialogGetDialogById(c.ctx, &dialog.TLDialogGetDialogById{
+					UserId:   c.MD.UserId,
+					PeerType: peer.PeerType,
+					PeerId:   peer.PeerId,
+				})
+				if err != nil {
+					c.Logger.Errorf("messages.getPeerDialogs - DialogGetDialogById error: %v", err)
+					return nil, err
+				}
+				if dialogExt != nil && dialogExt.Dialog != nil {
+					topMessage := extractDialogTopMessage(dialogExt.Dialog)
+					return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+						Dialogs: []tg.DialogClazz{dialogExt.Dialog},
+						Messages: []tg.MessageClazz{
+							makePlaceholderDialogMessage(peer.PeerId, topMessage),
+						},
+						Chats: makeDialogPeerChats(peer),
+						Users: makeDialogPeerUsers(peer),
+						State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+							Pts:  1,
+							Qts:  0,
+							Date: 10,
+							Seq:  0,
+						}),
+					}).ToMessagesPeerDialogs(), nil
+				}
+			}
+
 			if peer.PeerType == tg.PEER_SELF || peer.PeerType == tg.PEER_USER {
 				return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
 					Dialogs: []tg.DialogClazz{
@@ -63,6 +96,48 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 			Seq:  0,
 		}),
 	}).ToMessagesPeerDialogs(), nil
+}
+
+func extractDialogTopMessage(dialog tg.DialogClazz) int32 {
+	if dialog == nil {
+		return 10
+	}
+	if d, ok := dialog.(*tg.TLDialog); ok {
+		if d.TopMessage > 0 {
+			return d.TopMessage
+		}
+	}
+	return 10
+}
+
+func makeDialogPeerUsers(peer *tg.PeerUtil) []tg.UserClazz {
+	if peer == nil {
+		return []tg.UserClazz{}
+	}
+	switch peer.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER:
+		return []tg.UserClazz{makePlaceholderUser(peer.PeerId)}
+	default:
+		return []tg.UserClazz{}
+	}
+}
+
+func makeDialogPeerChats(peer *tg.PeerUtil) []tg.ChatClazz {
+	if peer == nil {
+		return []tg.ChatClazz{}
+	}
+	switch peer.PeerType {
+	case tg.PEER_CHAT:
+		return []tg.ChatClazz{tg.MakeTLChatEmpty(&tg.TLChatEmpty{Id: peer.PeerId})}
+	case tg.PEER_CHANNEL:
+		return []tg.ChatClazz{tg.MakeTLChannelForbidden(&tg.TLChannelForbidden{
+			Id:         peer.PeerId,
+			AccessHash: 0,
+			Title:      "",
+		})}
+	default:
+		return []tg.ChatClazz{}
+	}
 }
 
 func makePlaceholderDialog(peerID int64, topMessage int32) tg.DialogClazz {
