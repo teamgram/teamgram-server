@@ -43,13 +43,17 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 				}
 				if dialogExt != nil && dialogExt.Dialog != nil {
 					topMessage := extractDialogTopMessage(dialogExt.Dialog)
+					messages := []tg.MessageClazz{
+						makePlaceholderDialogMessage(peer.PeerId, topMessage),
+					}
+					if fetched := c.fetchDialogTopMessage(c.MD.UserId, dialogExt.Dialog); fetched != nil {
+						messages = []tg.MessageClazz{fetched}
+					}
 					return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
-						Dialogs: []tg.DialogClazz{dialogExt.Dialog},
-						Messages: []tg.MessageClazz{
-							makePlaceholderDialogMessage(peer.PeerId, topMessage),
-						},
-						Chats: makeDialogPeerChats(peer),
-						Users: makeDialogPeerUsers(peer),
+						Dialogs:  []tg.DialogClazz{dialogExt.Dialog},
+						Messages: messages,
+						Chats:    makeDialogPeerChats(peer),
+						Users:    makeDialogPeerUsers(peer),
 						State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
 							Pts:  1,
 							Qts:  0,

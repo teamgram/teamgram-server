@@ -18,6 +18,7 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -54,9 +55,13 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		}
 
 		dialogs := make([]tg.DialogClazz, 0, len(dialogExts.Datas))
+		messages := make([]tg.MessageClazz, 0, len(dialogExts.Datas))
 		for _, ext := range dialogExts.Datas {
 			if ext != nil && ext.Dialog != nil {
 				dialogs = append(dialogs, ext.Dialog)
+				if fetched := c.fetchDialogTopMessage(userId, ext.Dialog); fetched != nil {
+					messages = append(messages, fetched)
+				}
 			}
 		}
 
@@ -74,7 +79,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 			Count:    int32(len(dialogs)),
 			Dialogs:  dialogs,
-			Messages: []tg.MessageClazz{},
+			Messages: messages,
 			Chats:    makeDialogChatsFromData(dialogData),
 			Users:    makeDialogUsersFromData(dialogData),
 		}).ToMessagesDialogs(), nil
@@ -138,4 +143,56 @@ func makeDialogChatsFromData(data *dialog.DialogsData) []tg.ChatClazz {
 		}))
 	}
 	return chats
+}
+
+func (c *DialogsCore) fetchDialogTopMessage(userID int64, dialogItem tg.DialogClazz) tg.MessageClazz {
+	if c == nil || c.svcCtx == nil || c.svcCtx.MessageClient == nil || userID == 0 || dialogItem == nil {
+		return nil
+	}
+
+	peerType, peerID, ok := dialogPeerInfo(dialogItem)
+	if !ok {
+		return nil
+	}
+	topMessage := extractDialogTopMessage(dialogItem)
+	if topMessage <= 0 {
+		return nil
+	}
+
+	boxes, err := c.svcCtx.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
+		UserId:   userID,
+		PeerType: peerType,
+		PeerId:   peerID,
+		MaxId:    topMessage,
+		Limit:    1,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getDialogs - MessageGetHistoryMessages error: %v", err)
+		return nil
+	}
+	if boxes == nil || len(boxes.Datas) == 0 {
+		return nil
+	}
+	if box := boxes.Datas[0]; box != nil && box.Message != nil {
+		return box.Message
+	}
+	return nil
+}
+
+func dialogPeerInfo(dialogItem tg.DialogClazz) (int32, int64, bool) {
+	dialogValue, ok := dialogItem.(*tg.TLDialog)
+	if !ok || dialogValue.Peer == nil {
+		return 0, 0, false
+	}
+
+	switch peer := dialogValue.Peer.(type) {
+	case *tg.TLPeerUser:
+		return tg.PEER_USER, peer.UserId, true
+	case *tg.TLPeerChat:
+		return tg.PEER_CHAT, peer.ChatId, true
+	case *tg.TLPeerChannel:
+		return tg.PEER_CHANNEL, peer.ChannelId, true
+	default:
+		return 0, 0, false
+	}
 }
