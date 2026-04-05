@@ -46,7 +46,7 @@ func (s *Server) Initialize() error {
 
 	logx.Infov(c)
 
-	ctx := svc.NewServiceContext(c)
+	ctx := svc.NewServiceContext(c, nil, nil)
 	_ = ctx
 
 	s.kitexSrv = kitex.MustNewServer(
