@@ -14,11 +14,20 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package dao
+package repository
 
-type Dao struct {
+import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/config"
+)
+
+// Repository aggregates service dependencies.
+type Repository struct {
+	Message MessageModel
 }
 
-func New() *Dao {
-	return new(Dao)
+// NewRepository creates the Repository.
+func NewRepository(c config.Config) *Repository {
+	return &Repository{
+		Message: NewMessageModel(),
+	}
 }

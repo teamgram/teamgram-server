@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -170,5 +172,118 @@ func TestUpdatesGetChannelDifferenceV2ReturnsPlaceholderChannelDifference(t *tes
 	if len(channelDiff.NewMessages) != 0 || len(channelDiff.OtherUpdates) != 0 {
 		t.Fatalf("expected empty channel difference payload, got new_messages=%d other_updates=%d",
 			len(channelDiff.NewMessages), len(channelDiff.OtherUpdates))
+	}
+}
+
+func TestUpdatesGetStateV2ReturnsRealStateFromRepository(t *testing.T) {
+	repo := repository.NewRepository(config.Config{})
+	// Seed a known state for user 2.
+	repo.UpdatesState.SetUserUpdatesState(context.Background(), &repository.UpdatesStateDO{
+		UserId: 2, Pts: 42, Qts: 1, Date: 1000, Seq: 5, UnreadCount: 3,
+	})
+
+	c := New(context.Background(), &svc.ServiceContext{
+		Repository: repo,
+	})
+
+	result, err := c.UpdatesGetStateV2(&updates.TLUpdatesGetStateV2{
+		AuthKeyId: 1,
+		UserId:    2,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	if result.Pts != 42 {
+		t.Fatalf("expected pts=42, got %d", result.Pts)
+	}
+	if result.Date != 1000 {
+		t.Fatalf("expected date=1000, got %d", result.Date)
+	}
+	if result.Seq != 5 {
+		t.Fatalf("expected seq=5, got %d", result.Seq)
+	}
+	if result.UnreadCount != 3 {
+		t.Fatalf("expected unreadCount=3, got %d", result.UnreadCount)
+	}
+}
+
+func TestUpdatesGetDifferenceV2ReturnsCatchUpWhenClientBehind(t *testing.T) {
+	repo := repository.NewRepository(config.Config{})
+	// Seed server state with pts=5.
+	repo.UpdatesState.SetUserUpdatesState(context.Background(), &repository.UpdatesStateDO{
+		UserId: 2, Pts: 5, Qts: 0, Date: 1000, Seq: 0, UnreadCount: 0,
+	})
+
+	c := New(context.Background(), &svc.ServiceContext{
+		Repository: repo,
+	})
+
+	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
+		AuthKeyId: 1,
+		UserId:    2,
+		Pts:       2,
+		Date:      500,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	diff, ok := result.ToDifference()
+	if !ok {
+		t.Fatalf("expected difference, got %T", result.Clazz)
+	}
+	if diff.State.Pts != 5 {
+		t.Fatalf("expected state pts=5 (server), got %d", diff.State.Pts)
+	}
+}
+
+func TestUpdatesGetDifferenceV2ReturnsEmptyWhenClientCurrent(t *testing.T) {
+	repo := repository.NewRepository(config.Config{})
+	// Seed server state with pts=5.
+	repo.UpdatesState.SetUserUpdatesState(context.Background(), &repository.UpdatesStateDO{
+		UserId: 2, Pts: 5, Qts: 0, Date: 1000, Seq: 0, UnreadCount: 0,
+	})
+
+	c := New(context.Background(), &svc.ServiceContext{
+		Repository: repo,
+	})
+
+	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
+		AuthKeyId: 1,
+		UserId:    2,
+		Pts:       5,
+		Date:      1000,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	_, ok := result.ToDifferenceEmpty()
+	if !ok {
+		t.Fatalf("expected differenceEmpty, got %T", result.Clazz)
+	}
+}
+
+func TestUpdatesGetDifferenceV2FreshClientGetsCatchUp(t *testing.T) {
+	repo := repository.NewRepository(config.Config{})
+	// No pre-existing state for user 2 (fresh user).
+	c := New(context.Background(), &svc.ServiceContext{
+		Repository: repo,
+	})
+
+	result, err := c.UpdatesGetDifferenceV2(&updates.TLUpdatesGetDifferenceV2{
+		AuthKeyId: 1,
+		UserId:    2,
+		Pts:       0,
+		Date:      0,
+	})
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+	diff, ok := result.ToDifference()
+	if !ok {
+		t.Fatalf("expected difference for fresh client, got %T", result.Clazz)
+	}
+	// State should use normalized defaults.
+	if diff.State.Pts != 1 {
+		t.Fatalf("expected state pts=1 for fresh client, got %d", diff.State.Pts)
 	}
 }

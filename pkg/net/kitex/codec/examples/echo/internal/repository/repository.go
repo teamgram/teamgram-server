@@ -14,21 +14,17 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package svc
+package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/config"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/repository"
 )
 
-type ServiceContext struct {
-	Config     config.Config
-	Repository *repository.Repository
+// Repository is the dependency container for repository instances.
+type Repository struct {
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config:     c,
-		Repository: repository.NewRepository(c),
-	}
+// NewRepository creates a new Repository.
+func NewRepository(c config.Config) *Repository {
+	return &Repository{}
 }

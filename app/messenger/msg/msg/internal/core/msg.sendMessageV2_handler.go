@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	synctypes "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
@@ -62,6 +63,9 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 			Date:     date,
 			Entities: entities,
 		}).ToUpdates()
+
+		// Persist the sent message before firing side effects.
+		c.persistSentMessage(in, outbox, messageID, date)
 
 		// Forward to recipient inbox and push sync updates if clients are wired.
 		c.pushSendMessageSideEffects(in, outbox, messageID, date)
@@ -173,6 +177,49 @@ func (c *MsgCore) pushSendMessageSideEffects(in *msg.TLMsgSendMessageV2, outbox 
 				c.Logger.Errorf("msg.sendMessageV2 - recipient sync push error: %v", err)
 			}
 		}
+	}
+}
+
+// persistSentMessage stores the sent message in the message repository.
+// Errors are logged but do not fail the send response.
+func (c *MsgCore) persistSentMessage(in *msg.TLMsgSendMessageV2, outbox *msg.OutboxMessage, messageID int32, date int32) {
+	if c.svcCtx == nil || c.svcCtx.Repository == nil {
+		return
+	}
+
+	sentMessage := tg.MakeTLMessage(&tg.TLMessage{
+		Out: true,
+		Id:  messageID,
+		FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: in.UserId,
+		}),
+		PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{
+			UserId: in.PeerId,
+		}),
+		Date:    date,
+		Message: "",
+	})
+	if outbox.Message != nil {
+		if m, ok := outbox.Message.(*tg.TLMessage); ok {
+			sentMessage.Message = m.Message
+			sentMessage.Entities = m.Entities
+		}
+	}
+
+	box := &repository.MessageBoxDO{
+		UserId:       in.UserId,
+		MessageId:    messageID,
+		SenderUserId: in.UserId,
+		PeerType:     in.PeerType,
+		PeerId:       in.PeerId,
+		RandomId:     outbox.RandomId,
+		Message:      sentMessage,
+		Pts:          1,
+		PtsCount:     1,
+	}
+
+	if err := c.svcCtx.Repository.Message.PutMessage(c.ctx, box); err != nil {
+		c.Logger.Errorf("msg.sendMessageV2 - persist message error: %v", err)
 	}
 }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package svc
+package repository
 
 import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/config"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/config"
 )
 
-type ServiceContext struct {
-	Config     config.Config
-	Repository *repository.Repository
+// Repository aggregates service dependencies.
+type Repository struct {
+	UpdatesState UpdatesStateModel
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config:     c,
-		Repository: repository.NewRepository(c),
+// NewRepository creates the Repository.
+func NewRepository(c config.Config) *Repository {
+	return &Repository{
+		UpdatesState: NewUpdatesStateModel(),
 	}
 }

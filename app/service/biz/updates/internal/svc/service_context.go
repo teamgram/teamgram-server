@@ -22,6 +22,7 @@ import (
 	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
@@ -31,6 +32,7 @@ type MessageQueryClient interface {
 
 type ServiceContext struct {
 	Config        config.Config
+	Repository   *repository.Repository
 	MessageClient MessageQueryClient
 }
 
@@ -38,6 +40,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	ctx := &ServiceContext{
 		Config: c,
 	}
+	ctx.Repository = repository.NewRepository(c)
 	if hasClient(c.MessageClient) {
 		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
 	}
