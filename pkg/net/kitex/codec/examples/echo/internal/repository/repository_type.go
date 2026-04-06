@@ -14,21 +14,9 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package svc
+package repository
 
-import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/config"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/repository"
+// Type aliases for convenience in the Logic layer.
+type (
+// TODO: Add type aliases per business requirements.
 )
-
-type ServiceContext struct {
-	Config     config.Config
-	Repository *repository.Repository
-}
-
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config:     c,
-		Repository: repository.NewRepository(c),
-	}
-}

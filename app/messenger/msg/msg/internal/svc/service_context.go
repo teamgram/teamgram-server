@@ -22,6 +22,7 @@ import (
 	inboxclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/repository"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
@@ -46,6 +47,7 @@ type IdgenClient interface {
 
 type ServiceContext struct {
 	Config      config.Config
+	Repository  *repository.Repository
 	InboxClient InboxPushClient
 	SyncClient  SyncPushClient
 	IdgenClient IdgenClient
@@ -53,7 +55,8 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	ctx := &ServiceContext{
-		Config: c,
+		Config:     c,
+		Repository: repository.NewRepository(c),
 	}
 	if hasClient(c.InboxClient) {
 		ctx.InboxClient = inboxclient.NewInboxClient(inboxclient.MustNewKitexClient(c.InboxClient))

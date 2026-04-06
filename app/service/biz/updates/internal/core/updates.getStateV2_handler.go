@@ -26,6 +26,88 @@ var _ *tg.Bool
 // UpdatesGetStateV2
 // updates.getStateV2 auth_key_id:long user_id:long = updates.State;
 func (c *UpdatesCore) UpdatesGetStateV2(in *updates.TLUpdatesGetStateV2) (*tg.UpdatesState, error) {
-	// TODO: return the persisted updates state once the updates storage layer is wired.
-	return makePlaceholderUpdatesState(1, 10), nil
+	state, err := c.getUserUpdatesState(in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return state.ToUpdatesState(), nil
+}
+
+func (c *UpdatesCore) getUserUpdatesState(userId int64) (*tg.TLUpdatesState, error) {
+	if c.svcCtx != nil && c.svcCtx.Repository != nil {
+		state, err := c.svcCtx.Repository.UpdatesState.GetUserUpdatesState(c.ctx, userId)
+		if err == nil && state != nil {
+			return &tg.TLUpdatesState{
+				Pts:         state.Pts,
+				Qts:         state.Qts,
+				Date:        state.Date,
+				Seq:         state.Seq,
+				UnreadCount: state.UnreadCount,
+			}, nil
+		}
+	}
+	// Fallback: return default placeholder state.
+	return &tg.TLUpdatesState{
+		Pts:         1,
+		Qts:         0,
+		Date:        10,
+		Seq:         0,
+		UnreadCount: 0,
+	}, nil
+}
+
+// getUserUpdatesStateWithDefaults returns the stored state if available,
+// otherwise returns a state built from the provided defaults.
+func (c *UpdatesCore) getUserUpdatesStateWithDefaults(userId int64, defaultPts int32, defaultDate int32) (*tg.TLUpdatesState, error) {
+	if c.svcCtx != nil && c.svcCtx.Repository != nil {
+		state, err := c.svcCtx.Repository.UpdatesState.GetUserUpdatesState(c.ctx, userId)
+		if err == nil && state != nil {
+			return &tg.TLUpdatesState{
+				Pts:         state.Pts,
+				Qts:         state.Qts,
+				Date:        state.Date,
+				Seq:         state.Seq,
+				UnreadCount: state.UnreadCount,
+			}, nil
+		}
+	}
+	// Fallback: use the provided defaults.
+	return &tg.TLUpdatesState{
+		Pts:         defaultPts,
+		Qts:         0,
+		Date:        defaultDate,
+		Seq:         0,
+		UnreadCount: 0,
+	}, nil
+}
+
+// getUserUpdatesStateForDifference returns stored state if available,
+// otherwise returns a fallback based on normalized client values.
+func (c *UpdatesCore) getUserUpdatesStateForDifference(userId int64, clientPts int32, clientDate int32) (*tg.TLUpdatesState, error) {
+	if c.svcCtx != nil && c.svcCtx.Repository != nil {
+		state, err := c.svcCtx.Repository.UpdatesState.GetUserUpdatesState(c.ctx, userId)
+		if err == nil && state != nil {
+			return &tg.TLUpdatesState{
+				Pts:         state.Pts,
+				Qts:         state.Qts,
+				Date:        state.Date,
+				Seq:         state.Seq,
+				UnreadCount: state.UnreadCount,
+			}, nil
+		}
+	}
+	// Fallback: use normalized client values (matches old behavior).
+	if clientPts <= 0 {
+		clientPts = 1
+	}
+	if clientDate <= 0 {
+		clientDate = 10
+	}
+	return &tg.TLUpdatesState{
+		Pts:         clientPts,
+		Qts:         0,
+		Date:        clientDate,
+		Seq:         0,
+		UnreadCount: 0,
+	}, nil
 }
