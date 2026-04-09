@@ -5,7 +5,7 @@
  * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package echo
@@ -15,19 +15,19 @@ import (
 )
 
 const (
-	ClazzName_echo      = "echo"
-	ClazzName_echo2     = "echo2"
-	ClazzName_echo_echo = "echo_echo"
+	ClazzName_echo       = "echo"
+	ClazzName_echo2      = "echo2"
+	ClazzName_echo1_echo = "echo1_echo"
 )
 
 func init() {
 	// RegisterClazzNameList
-	iface.RegisterClazzName(ClazzName_echo, 0, 0x2e3ba51e)      // 2e3ba51e
-	iface.RegisterClazzName(ClazzName_echo2, 0, 0x2249c1b)      // 2249c1b
-	iface.RegisterClazzName(ClazzName_echo_echo, 0, 0xf653b67d) // f653b67d
+	iface.RegisterClazzName(ClazzName_echo, 0, 0x2e3ba51e)       // 2e3ba51e
+	iface.RegisterClazzName(ClazzName_echo2, 0, 0x2249c1b)       // 2249c1b
+	iface.RegisterClazzName(ClazzName_echo1_echo, 0, 0x9f0506e2) // 9f0506e2
 
 	//RegisterClazzIDNameList
-	iface.RegisterClazzIDName(ClazzName_echo, 0x2e3ba51e)      // 2e3ba51e
-	iface.RegisterClazzIDName(ClazzName_echo2, 0x2249c1b)      // 2249c1b
-	iface.RegisterClazzIDName(ClazzName_echo_echo, 0xf653b67d) // f653b67d
+	iface.RegisterClazzIDName(ClazzName_echo, 0x2e3ba51e)       // 2e3ba51e
+	iface.RegisterClazzIDName(ClazzName_echo2, 0x2249c1b)       // 2249c1b
+	iface.RegisterClazzIDName(ClazzName_echo1_echo, 0x9f0506e2) // 9f0506e2
 }

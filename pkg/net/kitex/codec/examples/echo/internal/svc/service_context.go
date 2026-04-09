@@ -22,13 +22,13 @@ import (
 )
 
 type ServiceContext struct {
-	Config     config.Config
-	Repository *repository.Repository
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:     c,
-		Repository: repository.NewRepository(c),
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

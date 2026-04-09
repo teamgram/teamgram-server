@@ -5,7 +5,7 @@
  * Copyright (c) 2026-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: Benqi (wubenqi@gmail.com)
+ * Author: teamgramio (teamgram.io@gmail.com)
  */
 
 package echo
