@@ -349,9 +349,12 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		userFull.VideoCallsAvailable = false
 	}
 
+	unsafeUser := user.ToUnsafeUser(me)
+	patchBotUsernameFromImmutable(unsafeUser, user)
+
 	return mtproto.MakeTLUsersUserFull(&mtproto.Users_UserFull{
 		FullUser: userFull,
 		Chats:    chats,
-		Users:    []*mtproto.User{user.ToUnsafeUser(me)},
+		Users:    []*mtproto.User{unsafeUser},
 	}).To_Users_UserFull(), nil
 }
