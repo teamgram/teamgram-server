@@ -237,8 +237,10 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - ./data/es/data:/usr/share/elasticsearch/data
-      - ./data/es/plugins:/usr/share/elasticsearch/plugins
+      # Named volumes avoid bind-mount permission errors (node.lock AccessDeniedException
+      # when ./data/es/* is root-owned from sudo compose).
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - elasticsearch_plugins:/usr/share/elasticsearch/plugins
     networks:
       - teamgram_net
 
@@ -296,6 +298,8 @@ services:
 
 volumes:
   kafka_data:
+  elasticsearch_data:
+  elasticsearch_plugins:
 
 networks:
   teamgram_net:
