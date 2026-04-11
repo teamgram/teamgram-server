@@ -29,7 +29,9 @@ services:
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_LOG_DIRS: /var/lib/kafka/data
     volumes:
-      - ./data/kafka/data:/var/lib/kafka/data
+      # Named volume avoids host bind-mount permission errors (AccessDeniedException on
+      # bootstrap.checkpoint.tmp when ./data/kafka/data is root-owned from sudo compose).
+      - kafka_data:/var/lib/kafka/data
     networks:
       - teamgram_net
 
@@ -291,6 +293,9 @@ services:
     depends_on:
       - elasticsearch
       - kafka
+
+volumes:
+  kafka_data:
 
 networks:
   teamgram_net:
