@@ -18,9 +18,9 @@ Prometheus:
 #链路追踪
 Telemetry:
   Name: messenger.msg
-  Endpoint: http://jaeger:14268/api/traces
+  Endpoint: jaeger:4317
   Sampler: 1.0
-  Batcher: jaeger
+  Batcher: otlpgrpc
   
 Mysql:
   DSN: teamgram:teamgram@tcp(mysql:3306)/teamgram?charset=utf8mb4&parseTime=true
