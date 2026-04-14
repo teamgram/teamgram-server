@@ -7,8 +7,8 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
-	authsessionclient "github.com/teamgram/teamgram-server/app/service/authsession/client"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
+	authsessionclient "github.com/teamgram/teamgram-server/app/service/authsession/client"
 )
 
 func TestRPCErrorForAuthStateUsesRestartForTransientStates(t *testing.T) {
@@ -100,8 +100,8 @@ func TestRefreshAuthStateIfNeededPromotesWrapperToNormal(t *testing.T) {
 var _ authsessionclient.AuthsessionClient = (*fakeAuthsessionClient)(nil)
 
 type fakeAuthsessionClient struct {
-	authStateData          *authsession.AuthKeyStateData
-	getAuthStateDataCalls  int
+	authStateData         *authsession.AuthKeyStateData
+	getAuthStateDataCalls int
 }
 
 func (f *fakeAuthsessionClient) AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error) {

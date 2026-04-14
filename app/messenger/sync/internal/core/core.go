@@ -134,8 +134,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			// removed in pure push mode
+				// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+				// removed in pure push mode
 			}
 		},
 		mtproto.Predicate_updatePinnedMessages: func(
@@ -146,8 +146,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-			// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			// removed in pure push mode
+				// c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+				// removed in pure push mode
 			}
 		},
 		mtproto.Predicate_updatePhoneCall: func(
