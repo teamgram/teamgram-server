@@ -46,13 +46,6 @@ func ChatIdIsChannel(id int64) bool {
 	return id >= MinNebulaChatChannelID
 }
 
-var (
-	BoolTrueClazz  = MakeTLBoolTrue(&TLBoolTrue{})
-	BoolTrue       = BoolTrueClazz.ToBool()
-	BoolFalseClazz = MakeTLBoolFalse(&TLBoolFalse{})
-	BoolFalse      = BoolFalseClazz.ToBool()
-)
-
 func MakeInt32Helper(v int32) *Int32 {
 	return &TLInt32{ClazzName2: ClazzName_int32, V: v}
 }

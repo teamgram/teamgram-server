@@ -27,5 +27,5 @@ var _ *tg.Bool
 // sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncBroadcastUpdates(in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
 	// Keep broadcast fanout callable until multi-recipient routing is rebuilt.
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	return tg.VoidValue, nil
 }

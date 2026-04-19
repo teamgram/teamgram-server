@@ -3397,16 +3397,16 @@ var (
 
 // -500
 var (
-//// ErrInvalid MsgResendReq Query
-//// | -500 | Invalid msg_resend_req query | Invalid msg_resend_req query. |
+// // ErrInvalid MsgResendReq Query
+// // | -500 | Invalid msg_resend_req query | Invalid msg_resend_req query. |
 // ErrInvalid MsgResendReq Query = ecode.NewCodeError(-500, "Invalid msg_resend_req query")
 //
-//// ErrInvalid MsgsAck Query
-//// | -500 | Invalid msgs_ack query | Invalid msgs_ack query. |
+// // ErrInvalid MsgsAck Query
+// // | -500 | Invalid msgs_ack query | Invalid msgs_ack query. |
 // ErrInvalid MsgsAck Query = ecode.NewCodeError(-500, "Invalid msgs_ack query")
 //
-//// ErrInvalid MsgsStateReq Query
-//// | -500 | Invalid msgs_state_req query | Invalid msgs_state_req query. |
+// // ErrInvalid MsgsStateReq Query
+// // | -500 | Invalid msgs_state_req query | Invalid msgs_state_req query. |
 // ErrInvalid MsgsStateReq Query = ecode.NewCodeError(-500, "Invalid msgs_state_req query")
 )
 
