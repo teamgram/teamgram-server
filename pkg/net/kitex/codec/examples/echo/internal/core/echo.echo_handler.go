@@ -42,10 +42,16 @@ func (c *EchoCore) EchoEcho(in *echo.TLEchoEcho) (resp *echo.Echo, err error) {
 
 	md := metadata.RpcMetadataFromIncoming(c.ctx)
 	c.Logger.Debugf("md message: %s", md)
-	return &echo.Echo{
-		Clazz: echo.MakeTLEcho(&echo.TLEcho{
-			ClazzID: echo.ClazzID_echo,
-			Message: in.Message,
-		}),
-	}, nil
+
+	switch in.Message {
+	case "error":
+		return nil, tg.ErrMethodNotImpl
+	default:
+		return &echo.Echo{
+			Clazz: echo.MakeTLEcho(&echo.TLEcho{
+				ClazzID: echo.ClazzID_echo,
+				Message: in.Message,
+			}),
+		}, nil
+	}
 }

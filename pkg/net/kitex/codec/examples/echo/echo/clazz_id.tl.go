@@ -11,7 +11,7 @@
 package echo
 
 const (
-	ClazzID_echo       = 0x2e3ba51e // 2e3ba51e
-	ClazzID_echo2      = 0x2249c1b  // 2249c1b
-	ClazzID_echo1_echo = 0x9f0506e2 // 9f0506e2
+	ClazzID_echo      = 0x2e3ba51e // 2e3ba51e
+	ClazzID_echo2     = 0x2249c1b  // 2249c1b
+	ClazzID_echo_echo = 0xf653b67d // f653b67d
 )

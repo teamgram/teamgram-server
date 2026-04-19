@@ -150,7 +150,8 @@ func main() {
 	for {
 		req := &api.TLEchoEcho{
 			ClazzID: api.ClazzID_echo_echo,
-			Message: "my request",
+			// Message: "my request",
+			Message: "error",
 		}
 
 		ctx := context.Background()
