@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // DfsUploadEncryptedFileV2
 // dfs.uploadEncryptedFileV2 creator:long file:InputEncryptedFile = EncryptedFile;
 func (c *DfsCore) DfsUploadEncryptedFileV2(in *dfs.TLDfsUploadEncryptedFileV2) (*tg.EncryptedFile, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("dfs.uploadEncryptedFileV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("dfs.uploadEncryptedFileV2 - error: method DfsUploadEncryptedFileV2 not impl")
 
-	return nil, errors.New("dfs.uploadEncryptedFileV2 not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

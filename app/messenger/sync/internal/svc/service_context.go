@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,46 +17,18 @@
 package svc
 
 import (
-	"context"
-
-	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/config"
-	statusclient "github.com/teamgram/teamgram-server/v2/app/service/status/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/repository"
 )
 
-type SessionRpcResultClient interface {
-	SessionPushUpdatesData(ctx context.Context, in *session.TLSessionPushUpdatesData) (*tg.Bool, error)
-	SessionPushSessionUpdatesData(ctx context.Context, in *session.TLSessionPushSessionUpdatesData) (*tg.Bool, error)
-	SessionPushRpcResultData(ctx context.Context, in *session.TLSessionPushRpcResultData) (*tg.Bool, error)
-}
-
-type StatusQueryClient interface {
-	StatusGetUserOnlineSessions(ctx context.Context, in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error)
-}
-
 type ServiceContext struct {
-	Config        config.Config
-	SessionClient SessionRpcResultClient
-	StatusClient  StatusQueryClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.SessionClient) {
-		ctx.SessionClient = sessionclient.NewSessionClient(sessionclient.MustNewKitexClient(c.SessionClient))
-	}
-	if hasClient(c.StatusClient) {
-		ctx.StatusClient = statusclient.NewStatusClient(statusclient.MustNewKitexClient(c.StatusClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

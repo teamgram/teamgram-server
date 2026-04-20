@@ -26,7 +26,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates/updatesservice"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/config"
@@ -35,7 +34,6 @@ import (
 	dialoghelper "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog"
 	messagehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/message"
 	updateshelper "github.com/teamgram/teamgram-server/v2/app/service/biz/updates"
-	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -51,14 +49,14 @@ func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientC
 	return c
 }
 
-func buildUserConfig(c config.Config) userhelper.Config {
-	return userhelper.Config{
-		RpcServerConf: c.RpcServerConf,
-		Mysql:         c.Mysql,
-		Cache:         c.Cache,
-		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
-	}
-}
+//func buildUserConfig(c config.Config) userhelper.Config {
+//	return userhelper.Config{
+//		RpcServerConf: c.RpcServerConf,
+//		Mysql:         c.Mysql,
+//		Cache:         c.Cache,
+//		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+//	}
+//}
 
 func New() *Server {
 	return new(Server)
@@ -126,10 +124,11 @@ func (s *Server) Initialize() error {
 					//IdgenClient:   c.IdgenClient,
 				}))
 
-			// userhelper
-			_ = userservice.RegisterService(
-				s,
-				userhelper.New(buildUserConfig(c)))
+			//// userhelper
+			//_ = userservice.RegisterService(
+			//	s,
+			//	userhelper.New(buildUserConfig(c)))
+
 			return nil
 		})
 

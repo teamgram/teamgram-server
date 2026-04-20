@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // payments.assignPlayMarketTransaction#dffd50d3 receipt:DataJSON purpose:InputStorePaymentPurpose = Updates;
 func (c *PremiumCore) PaymentsAssignPlayMarketTransaction(in *tg.TLPaymentsAssignPlayMarketTransaction) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("payments.assignPlayMarketTransaction blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("payments.assignPlayMarketTransaction - error: method PaymentsAssignPlayMarketTransaction not impl")
 
-	return nil, errors.New("payments.assignPlayMarketTransaction not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,17 +23,8 @@ import (
 // MessagesGetMessagesViews
 // messages.getMessagesViews#5784d3e1 peer:InputPeer id:Vector<int> increment:Bool = messages.MessageViews;
 func (c *MessagesCore) MessagesGetMessagesViews(in *tg.TLMessagesGetMessagesViews) (*tg.MessagesMessageViews, error) {
-	views := make([]tg.MessageViewsClazz, 0, len(in.Id))
-	for _, id := range in.Id {
-		v := id
-		views = append(views, tg.MakeTLMessageViews(&tg.TLMessageViews{
-			Views: &v,
-		}))
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getMessagesViews - error: method MessagesGetMessagesViews not impl")
 
-	return tg.MakeTLMessagesMessageViews(&tg.TLMessagesMessageViews{
-		Views: views,
-		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{},
-	}).ToMessagesMessageViews(), nil
+	return nil, tg.ErrMethodNotImpl
 }

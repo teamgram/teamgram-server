@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // GnetwaySendDataToGateway
 // gnetway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (c *GnetwayCore) GnetwaySendDataToGateway(in *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.AuthKeyId != 0 && in.SessionId != 0 && len(in.Payload) != 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("gnetway.sendDataToGateway - error: method GnetwaySendDataToGateway not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

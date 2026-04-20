@@ -1,0 +1,38 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ *   Created from by 'dalgen'
+ *
+ * Copyright (c) 2026 The Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teamgramio (teamgram.io@gmail.com)
+ */
+
+package model
+
+import (
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+)
+
+var _ UserPeerSettingsModel = (*customUserPeerSettingsModel)(nil)
+
+type (
+	// UserPeerSettingsModel is an interface to be customized, add more methods here,
+	// and implement the added methods in customUserPeerSettingsModel.
+	UserPeerSettingsModel interface {
+		user_peer_settingsModel
+		bizUserPeerSettingsModel
+		extendUserPeerSettingsModel
+	}
+
+	customUserPeerSettingsModel struct {
+		*defaultUserPeerSettingsModel
+	}
+)
+
+// NewUserPeerSettingsModel returns a model for the database table.
+func NewUserPeerSettingsModel(db *sqlx.DB) UserPeerSettingsModel {
+	return &customUserPeerSettingsModel{
+		defaultUserPeerSettingsModel: newUserPeerSettingsModel(db),
+	}
+}

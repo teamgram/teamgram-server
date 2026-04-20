@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,8 @@ import (
 // AccountChangeAuthorizationSettings
 // account.changeAuthorizationSettings#40f48462 flags:# confirmed:flags.3?true hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
 func (c *AuthorizationCore) AccountChangeAuthorizationSettings(in *tg.TLAccountChangeAuthorizationSettings) (*tg.Bool, error) {
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("account.changeAuthorizationSettings - error: method AccountChangeAuthorizationSettings not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

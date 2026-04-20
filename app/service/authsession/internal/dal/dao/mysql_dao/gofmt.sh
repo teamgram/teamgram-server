@@ -1,1 +1,0 @@
-gofmt -w *.go

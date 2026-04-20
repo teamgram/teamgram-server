@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,15 +24,7 @@ import (
 // help.getAppConfig#61e3f854 hash:int = help.AppConfig;
 func (c *ConfigurationCore) HelpGetAppConfig(in *tg.TLHelpGetAppConfig) (*tg.HelpAppConfig, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.getAppConfig - error: method HelpGetAppConfig not impl")
 
-	rV := tg.MakeTLHelpAppConfig(&tg.TLHelpAppConfig{
-		Hash: 0,
-		Config: tg.MakeTLJsonObject(&tg.TLJsonObject{
-			ClazzID: 0,
-			Value:   []tg.JSONObjectValueClazz{},
-		}),
-	})
-
-	return rV.ToHelpAppConfig(), nil
+	return nil, tg.ErrMethodNotImpl
 }

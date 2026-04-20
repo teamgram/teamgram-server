@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,22 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthCheckPaidAuth
 // auth.checkPaidAuth#56e59f9c phone_number:string phone_code_hash:string form_id:long = auth.SentCode;
 func (c *AuthorizationCore) AuthCheckPaidAuth(in *tg.TLAuthCheckPaidAuth) (*tg.AuthSentCode, error) {
-	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
-		return nil, err
-	}
-	if in.PhoneCodeHash == "" {
-		return nil, tg.ErrPhoneCodeHashEmpty
-	}
-	timeout := int32(60)
-	return tg.MakeTLAuthSentCode(&tg.TLAuthSentCode{
-		Type:          tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{Length: 5}),
-		PhoneCodeHash: in.PhoneCodeHash,
-		NextType:      tg.MakeTLAuthCodeTypeSms(&tg.TLAuthCodeTypeSms{}),
-		Timeout:       &timeout,
-	}).ToAuthSentCode(), nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.checkPaidAuth - error: method AuthCheckPaidAuth not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

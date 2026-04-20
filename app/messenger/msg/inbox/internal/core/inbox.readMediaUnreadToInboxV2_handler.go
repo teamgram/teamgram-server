@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // InboxReadMediaUnreadToInboxV2
 // inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long dialog_message_id:long = Void;
 func (c *InboxCore) InboxReadMediaUnreadToInboxV2(in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error) {
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	// TODO: not impl
+	c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 - error: method InboxReadMediaUnreadToInboxV2 not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

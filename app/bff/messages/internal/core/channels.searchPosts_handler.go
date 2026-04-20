@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,10 @@ import (
 )
 
 // ChannelsSearchPosts
-// channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// channels.searchPosts#f2c4f24d flags:# hashtag:flags.0?string query:flags.1?string offset_rate:int offset_peer:InputPeer offset_id:int limit:int allow_paid_stars:flags.2?long = messages.Messages;
 func (c *MessagesCore) ChannelsSearchPosts(in *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error) {
-	peer, err := bffPeerFromInput(c, in.OffsetPeer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("channels.searchPosts - error: method ChannelsSearchPosts not impl")
 
-	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, 0, 0), historyPlaceholderCount(in.Limit), false), nil
+	return nil, tg.ErrMethodNotImpl
 }

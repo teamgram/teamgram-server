@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // contacts.getBlocked#9a868f80 flags:# my_stories_from:flags.0?true offset:int limit:int = contacts.Blocked;
 func (c *ContactsCore) ContactsGetBlocked(in *tg.TLContactsGetBlocked) (*tg.ContactsBlocked, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("contacts.getBlocked blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("contacts.getBlocked - error: method ContactsGetBlocked not impl")
 
-	return nil, errors.New("contacts.getBlocked not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

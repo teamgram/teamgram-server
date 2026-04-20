@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthRequestFirebaseSms
 // auth.requestFirebaseSms#8e39261e flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string play_integrity_token:flags.2?string ios_push_secret:flags.1?string = Bool;
 func (c *AuthorizationCore) AuthRequestFirebaseSms(in *tg.TLAuthRequestFirebaseSms) (*tg.Bool, error) {
-	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
-		return nil, err
-	}
-	if in.PhoneCodeHash == "" {
-		return nil, tg.ErrPhoneCodeHashEmpty
-	}
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.requestFirebaseSms - error: method AuthRequestFirebaseSms not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetMutableUsersV2
 // user.getMutableUsersV2 flags:# id:Vector<long> privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = MutableUsers;
 func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getMutableUsersV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getMutableUsersV2 - error: method UserGetMutableUsersV2 not impl")
 
-	return nil, errors.New("user.getMutableUsersV2 not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

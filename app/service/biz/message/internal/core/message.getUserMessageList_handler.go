@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,44 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetUserMessageList
 // message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUserMessageList(in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error) {
-	return &message.VectorMessageBox{
-		Datas: collectPlaceholderMessageBoxes(in.UserId, in.IdList),
-	}, nil
-}
+	// TODO: not impl
+	c.Logger.Errorf("message.getUserMessageList - error: method MessageGetUserMessageList not impl")
 
-func collectPlaceholderMessageBoxes(userID int64, ids []int32) []tg.MessageBoxClazz {
-	boxes := make([]tg.MessageBoxClazz, 0, len(ids))
-	for _, id := range ids {
-		boxes = append(boxes, makePlaceholderMessageBox(userID, tg.PEER_USER, userID, id))
-	}
-	return boxes
-}
-
-func collectScopedPlaceholderMessageBoxes(userID int64, peerType int32, peerID int64, startID int32, limit int32) []tg.MessageBoxClazz {
-	if limit <= 0 {
-		return []tg.MessageBoxClazz{}
-	}
-	if limit > 3 {
-		limit = 3
-	}
-	if startID <= 0 {
-		startID = 1
-	}
-	if peerID == 0 {
-		peerID = userID
-	}
-	if peerType == 0 {
-		peerType = tg.PEER_USER
-	}
-
-	boxes := make([]tg.MessageBoxClazz, 0, limit)
-	for i := int32(0); i < limit; i++ {
-		boxes = append(boxes, makePlaceholderMessageBox(userID, peerType, peerID, startID+i))
-	}
-	return boxes
+	return nil, tg.ErrMethodNotImpl
 }

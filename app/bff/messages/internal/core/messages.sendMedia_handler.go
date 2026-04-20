@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,27 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSendMedia
-// messages.sendMedia#7852834e flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
+// messages.sendMedia#330e77f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Updates, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
-	if in.Media == nil {
-		return nil, tg.ErrInputRequestInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.sendMedia - error: method MessagesSendMedia not impl")
 
-	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
-		Out:      true,
-		Id:       makePlaceholderMessageID(in.RandomId),
-		Pts:      1,
-		PtsCount: 1,
-		Date:     int32(time.Now().Unix()),
-		Entities: in.Entities,
-	}).ToUpdates(), nil
+	return nil, tg.ErrMethodNotImpl
 }

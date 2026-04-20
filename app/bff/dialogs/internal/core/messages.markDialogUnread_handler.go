@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesMarkDialogUnread
-// messages.markDialogUnread#c286d98f flags:# unread:flags.0?true peer:InputDialogPeer = Bool;
+// messages.markDialogUnread#8c5006f8 flags:# unread:flags.0?true parent_peer:flags.1?InputPeer peer:InputDialogPeer = Bool;
 func (c *DialogsCore) MessagesMarkDialogUnread(in *tg.TLMessagesMarkDialogUnread) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.Peer != nil && in.Unread), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.markDialogUnread - error: method MessagesMarkDialogUnread not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,36 +17,15 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
-	peer := tg.PeerClazz(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: in.PeerId}))
-	switch in.PeerType {
-	case tg.PEER_CHAT:
-		peer = tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: in.PeerId})
-	case tg.PEER_CHANNEL:
-		peer = tg.MakeTLPeerChannel(&tg.TLPeerChannel{ChannelId: in.PeerId})
-	case tg.PEER_SELF, tg.PEER_USER:
-	default:
-		return nil, tg.ErrPeerIdInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("msg.updatePinnedMessage - error: method MsgUpdatePinnedMessage not impl")
 
-	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
-		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
-			Pinned:   !in.Unpin,
-			Peer:     peer,
-			Messages: []int32{in.Id},
-			Pts:      1,
-			PtsCount: 1,
-		}),
-		Date: int32(time.Now().Unix()),
-	}).ToUpdates(), nil
+	return nil, tg.ErrMethodNotImpl
 }

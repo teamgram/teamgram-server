@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogToggleSavedDialogPin
 // dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 func (c *DialogCore) DialogToggleSavedDialogPin(in *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.Peer != nil && tg.FromBoolClazz(in.Pinned)), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.toggleSavedDialogPin - error: method DialogToggleSavedDialogPin not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,8 @@ import (
 // AccountInvalidateSignInCodes
 // account.invalidateSignInCodes#ca8ae8ba codes:Vector<string> = Bool;
 func (c *AuthorizationCore) AccountInvalidateSignInCodes(in *tg.TLAccountInvalidateSignInCodes) (*tg.Bool, error) {
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("account.invalidateSignInCodes - error: method AccountInvalidateSignInCodes not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

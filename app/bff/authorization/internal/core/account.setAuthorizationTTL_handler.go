@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AccountSetAuthorizationTTL
 // account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
 func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *tg.TLAccountSetAuthorizationTTL) (*tg.Bool, error) {
-	if in.AuthorizationTtlDays < 0 {
-		return nil, tg.ErrInputMethodInvalid
-	}
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("account.setAuthorizationTTL - error: method AccountSetAuthorizationTTL not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

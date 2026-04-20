@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthRequestPasswordRecovery
 // auth.requestPasswordRecovery#d897bc66 = auth.PasswordRecovery;
 func (c *AuthorizationCore) AuthRequestPasswordRecovery(in *tg.TLAuthRequestPasswordRecovery) (*tg.AuthPasswordRecovery, error) {
-	return tg.MakeTLAuthPasswordRecovery(&tg.TLAuthPasswordRecovery{
-		EmailPattern: "t***@example.com",
-	}).ToAuthPasswordRecovery(), nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.requestPasswordRecovery - error: method AuthRequestPasswordRecovery not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

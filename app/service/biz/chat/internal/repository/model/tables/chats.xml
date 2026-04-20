@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chats">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chats
+                (creator_user_id, access_hash, random_id, participant_count, title, about, default_banned_rights, date)
+            VALUES
+                (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :default_banned_rights, :date)
+        </sql>
+    </operation>
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, date
+            FROM
+                chats
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectLastCreator">
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, date
+            FROM
+                chats
+            WHERE
+                creator_user_id=:creator_user_id ORDER BY date DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="UpdateTitle">
+        <sql>
+            UPDATE
+                chats
+            SET
+                title=:title, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateAbout">
+        <sql>
+            UPDATE
+                chats
+            SET
+                about = :about
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectByIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, date
+            FROM
+                chats
+            WHERE
+                id IN (:idList)
+        </sql>
+    </operation>
+    <operation name="UpdateParticipantCount">
+        <sql>
+            UPDATE
+                chats
+            SET
+                participant_count=:participant_count, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdatePhotoId">
+        <sql>
+            UPDATE
+                chats
+            SET
+                photo_id=:photo_id, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateDefaultBannedRights">
+        <sql>
+            UPDATE
+                chats
+            SET
+                default_banned_rights=:default_banned_rights, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateVersion">
+        <sql>
+            UPDATE
+                chats
+            SET
+                version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateDeactivated">
+        <sql>
+            UPDATE
+                chats
+            SET
+                deactivated=:deactivated, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateMigratedTo">
+        <sql>
+            UPDATE
+                chats
+            SET
+                migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateAvailableReactions">
+        <sql>
+            UPDATE
+                chats
+            SET
+                available_reactions_type = :available_reactions_type, available_reactions = :available_reactions
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateNoforwards">
+        <sql>
+            UPDATE
+                chats
+            SET
+                noforwards=:noforwards, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateTTLPeriod">
+        <sql>
+            UPDATE
+                chats
+            SET
+                ttl_period=:ttl_period
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SearchByQueryString" result_set="single_list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="q" type="string" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                chats
+            WHERE
+                title LIKE :q LIMIT :limit
+        </sql>
+    </operation>
+
+</table>

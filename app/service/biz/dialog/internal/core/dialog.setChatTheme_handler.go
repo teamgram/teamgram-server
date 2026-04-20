@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogSetChatTheme
 // dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
 func (c *DialogCore) DialogSetChatTheme(in *dialog.TLDialogSetChatTheme) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.PeerId != 0 && in.ThemeEmoticon != ""), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.setChatTheme - error: method DialogSetChatTheme not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

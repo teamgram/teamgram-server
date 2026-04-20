@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DfsUploadProfilePhotoFileV2
-// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
+// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = Photo;
 func (c *DfsCore) DfsUploadProfilePhotoFileV2(in *dfs.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("dfs.uploadProfilePhotoFileV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("dfs.uploadProfilePhotoFileV2 - error: method DfsUploadProfilePhotoFileV2 not impl")
 
-	return nil, errors.New("dfs.uploadProfilePhotoFileV2 not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

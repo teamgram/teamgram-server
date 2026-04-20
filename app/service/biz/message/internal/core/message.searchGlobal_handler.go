@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageSearchGlobal
 // message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 func (c *MessageCore) MessageSearchGlobal(in *message.TLMessageSearchGlobal) (*message.VectorMessageBox, error) {
-	return &message.VectorMessageBox{
-		Datas: collectScopedPlaceholderMessageBoxes(in.UserId, tg.PEER_USER, in.UserId, int32(in.Offset+1), in.Limit),
-	}, nil
+	// TODO: not impl
+	c.Logger.Errorf("message.searchGlobal - error: method MessageSearchGlobal not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

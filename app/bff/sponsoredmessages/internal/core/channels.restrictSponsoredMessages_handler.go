@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // channels.restrictSponsoredMessages#9ae91519 channel:InputChannel restricted:Bool = Updates;
 func (c *SponsoredMessagesCore) ChannelsRestrictSponsoredMessages(in *tg.TLChannelsRestrictSponsoredMessages) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("channels.restrictSponsoredMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("channels.restrictSponsoredMessages - error: method ChannelsRestrictSponsoredMessages not impl")
 
-	return nil, errors.New("channels.restrictSponsoredMessages not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

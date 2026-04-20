@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,14 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetDialogFilterBySlug
 // dialog.getDialogFilterBySlug user_id:long slug:string = DialogFilterExt;
 func (c *DialogCore) DialogGetDialogFilterBySlug(in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
-	slug := "placeholder"
-	if in != nil && in.Slug != "" {
-		slug = in.Slug
-	}
-	return makeDialogFilterExtPlaceholder(1, slug).ToDialogFilterExt(), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getDialogFilterBySlug - error: method DialogGetDialogFilterBySlug not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

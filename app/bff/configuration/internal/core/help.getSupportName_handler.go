@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // help.getSupportName#d360e72c = help.SupportName;
 func (c *ConfigurationCore) HelpGetSupportName(in *tg.TLHelpGetSupportName) (*tg.HelpSupportName, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getSupportName blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("help.getSupportName - error: method HelpGetSupportName not impl")
 
-	return nil, errors.New("help.getSupportName not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

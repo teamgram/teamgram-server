@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgReadHistory
 // msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error) {
-	return makeAffectedMessagesPlaceholder(in.MaxId), nil
+	// TODO: not impl
+	c.Logger.Errorf("msg.readHistory - error: method MsgReadHistory not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

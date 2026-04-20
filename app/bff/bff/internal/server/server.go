@@ -23,8 +23,6 @@ import (
 
 	accounthelper "github.com/teamgram/teamgram-server/v2/app/bff/account"
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
-	authorizationhelper "github.com/teamgram/teamgram-server/v2/app/bff/authorization"
-	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/authorization/authorizationservice"
 	autodownloadhelper "github.com/teamgram/teamgram-server/v2/app/bff/autodownload"
 	"github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
 	"github.com/teamgram/teamgram-server/v2/app/bff/bff/internal/config"
@@ -90,22 +88,22 @@ func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientC
 	return c
 }
 
-func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
-	return authorizationhelper.Config{
-		RpcServerConf:             c.RpcServerConf,
-		KV:                        c.KV,
-		Code:                      c.Code,
-		UserClient:                withServiceName(c.BizServiceClient, "RPCUser"),
-		AuthsessionClient:         withServiceName(c.AuthSessionClient, "RPCAuthsession"),
-		ChatClient:                withServiceName(c.BizServiceClient, "RPCChat"),
-		StatusClient:              withServiceName(c.StatusClient, "RPCStatus"),
-		UsernameClient:            withServiceName(c.BizServiceClient, "RPCUsername"),
-		MsgClient:                 withServiceName(c.MsgClient, "RPCMsg"),
-		SyncClient:                c.SyncClient,
-		SignInServiceNotification: c.SignInServiceNotification,
-		SignInMessage:             c.SignInMessage,
-	}
-}
+//func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
+//	return authorizationhelper.Config{
+//		RpcServerConf:             c.RpcServerConf,
+//		KV:                        c.KV,
+//		Code:                      c.Code,
+//		UserClient:                withServiceName(c.BizServiceClient, "RPCUser"),
+//		AuthsessionClient:         withServiceName(c.AuthSessionClient, "RPCAuthsession"),
+//		ChatClient:                withServiceName(c.BizServiceClient, "RPCChat"),
+//		StatusClient:              withServiceName(c.StatusClient, "RPCStatus"),
+//		UsernameClient:            withServiceName(c.BizServiceClient, "RPCUsername"),
+//		MsgClient:                 withServiceName(c.MsgClient, "RPCMsg"),
+//		SyncClient:                c.SyncClient,
+//		SignInServiceNotification: c.SignInServiceNotification,
+//		SignInMessage:             c.SignInMessage,
+//	}
+//}
 
 func New() *Server {
 	return new(Server)
@@ -155,10 +153,10 @@ func (s *Server) Initialize() error {
 					RpcServerConf: c.RpcServerConf,
 				}))
 
-			// authorizationhelper
-			_ = authorizationservice.RegisterService(
-				s,
-				authorizationhelper.New(buildAuthorizationConfig(c)))
+			//// authorizationhelper
+			//_ = authorizationservice.RegisterService(
+			//	s,
+			//	authorizationhelper.New(buildAuthorizationConfig(c)))
 
 			// premiumhelper
 			_ = premiumservice.RegisterService(
@@ -218,7 +216,7 @@ func (s *Server) Initialize() error {
 				s,
 				updateshelper.New(updateshelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					UpdatesClient: withServiceName(c.BizServiceClient, "RPCUpdates"),
+					// UpdatesClient: withServiceName(c.BizServiceClient, "RPCUpdates"),
 					//UserClient:        c.BizServiceClient,
 					//ChatClient:        c.BizServiceClient,
 					//AuthsessionClient: c.AuthSessionClient,
@@ -241,7 +239,7 @@ func (s *Server) Initialize() error {
 				s,
 				dialogshelper.New(dialogshelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
+					// DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
 					//UpdatesClient: c.BizServiceClient,
 					//UserClient:    c.BizServiceClient,
 					//ChatClient:    c.BizServiceClient,
@@ -272,7 +270,7 @@ func (s *Server) Initialize() error {
 				s,
 				messageshelper.New(messageshelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
+					// MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
 					//UserClient:     c.BizServiceClient,
 					//ChatClient:     c.BizServiceClient,
 					//DialogClient:   c.BizServiceClient,

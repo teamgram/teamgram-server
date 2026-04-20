@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // account.saveAutoDownloadSettings#76f36233 flags:# low:flags.0?true high:flags.1?true settings:AutoDownloadSettings = Bool;
 func (c *AutoDownloadCore) AccountSaveAutoDownloadSettings(in *tg.TLAccountSaveAutoDownloadSettings) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("account.saveAutoDownloadSettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.saveAutoDownloadSettings - error: method AccountSaveAutoDownloadSettings not impl")
 
-	return nil, errors.New("account.saveAutoDownloadSettings not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

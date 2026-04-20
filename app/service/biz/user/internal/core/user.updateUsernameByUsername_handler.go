@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserUpdateUsernameByUsername
 // user.updateUsernameByUsername peer_type:int peer_id:long username:string = Bool;
 func (c *UserCore) UserUpdateUsernameByUsername(in *user.TLUserUpdateUsernameByUsername) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.updateUsernameByUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.updateUsernameByUsername - error: method UserUpdateUsernameByUsername not impl")
 
-	return nil, errors.New("user.updateUsernameByUsername not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageUpdatePinnedMessageId
 // message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 func (c *MessageCore) MessageUpdatePinnedMessageId(in *message.TLMessageUpdatePinnedMessageId) (*tg.Bool, error) {
-	if tg.FromBoolClazz(in.Pinned) {
-		return tg.BoolTrue, nil
-	}
-	return tg.BoolFalse, nil
+	// TODO: not impl
+	c.Logger.Errorf("message.updatePinnedMessageId - error: method MessageUpdatePinnedMessageId not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

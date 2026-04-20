@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_invite_participants">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_invite_participants
+                (chat_id, link, user_id, requested, approved_by, date2)
+            VALUES
+                (:chat_id, :link, :user_id, :requested, :approved_by, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectListByLink" result_set="list">
+        <params>
+            <param name="b" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                id, chat_id, link, user_id, requested, approved_by, date2
+            FROM
+                chat_invite_participants
+            WHERE
+                link = :link AND requested = :b
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM
+                chat_invite_participants
+            WHERE
+                chat_id = :chat_id AND user_id = :user_id
+        </sql>
+    </operation>
+
+    <operation name="SelectRecentRequestedList" result_set="list">
+        <sql>
+            SELECT
+                id, chat_id, link, user_id, requested, approved_by, date2
+            FROM
+                chat_invite_participants
+            WHERE
+                chat_id = :chat_id AND requested = 1
+        </sql>
+    </operation>
+
+    <operation name="UpdateChatId">
+        <sql>
+            UPDATE
+                chat_invite_participants
+            SET
+                chat_id = :chat_id
+            WHERE
+                link = :link
+        </sql>
+    </operation>
+
+    <operation name="UpdateApprovedBy">
+        <sql>
+            UPDATE
+                chat_invite_participants
+            SET
+                requested = 0, approved_by = :approved_by
+            WHERE
+                chat_id = :chat_id AND user_id = :user_id
+        </sql>
+    </operation>
+</table>

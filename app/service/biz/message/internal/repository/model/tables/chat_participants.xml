@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_participants">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_participants
+                (chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data)
+            VALUES
+                (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')
+        </sql>
+    </operation>
+
+    <operation name="InsertBulk" type="bulkinsert">
+        <sql>
+            INSERT INTO chat_participants
+                (chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data)
+            VALUES
+                (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO chat_participants
+                (chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data)
+            VALUES
+                (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')
+            ON DUPLICATE KEY UPDATE
+                participant_type = VALUES(participant_type),
+                inviter_user_id = VALUES(inviter_user_id),
+                invited_at = VALUES(invited_at),
+                state = 0, kicked_at = 0, left_at = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2
+            FROM
+                chat_participants
+            WHERE
+                chat_id=:chat_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByParticipant">
+        <sql>
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2
+            FROM
+                chat_participants
+            WHERE
+                chat_id = :chat_id AND user_id = :user_id
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateKicked">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                state = 2, kicked_at = :kicked_at
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateLeft">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                state = 1, left_at = :left_at
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdatePinnedMsgId">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                pinned_msg_id = :pinned_msg_id
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateParticipantType">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                participant_type=:participant_type
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <!-- draft -->
+    <operation name="SaveDraft">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                draft_type = 2, draft_message_data = :draft_message_data
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="ClearDraft">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                draft_type = 0, draft_message_data = ''
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="SelectDraftList" result_set="list">
+        <sql>
+            SELECT
+                user_id, chat_id, draft_type, draft_message_data
+            FROM
+                chat_participants
+            WHERE
+                user_id=:user_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateOutboxDialog">
+        <params>
+            <param name="cMap" type="map" />
+            <param name="unreadMentionCount" type="int32" />
+        </params>
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                unread_count = 0, cMap = :cMap
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateUnreadByPeer">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateReadOutboxMaxIdByPeer">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                read_outbox_max_id = :read_outbox_max_id
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectByOffsetId" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="userId2" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2
+            FROM
+                chat_participants
+            WHERE
+                user_id = :user_id AND chat_id IN (SELECT id FROM chats WHERE id IN (SELECT chat_id FROM chat_participants WHERE user_id = :userId2) AND deactivated = 0)
+                AND top_message < :top_message AND (state=0 OR state=2)
+            ORDER BY
+                top_message DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectExcludePinnedByOffsetId" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="userId2" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2
+            FROM
+                chat_participants
+            WHERE
+                user_id = :user_id AND is_pinned = 0 AND chat_id IN
+                    (SELECT id FROM chats WHERE id IN (SELECT chat_id FROM chat_participants WHERE user_id = :userId2) AND deactivated = 0)
+                AND top_message < :top_message AND (state=0 OR state=2)
+            ORDER BY
+                top_message DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectListByChatIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2
+            FROM
+                chat_participants
+            WHERE
+                user_id = :user_id AND chat_id in (:idList)
+            ORDER BY top_message DESC
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="UpdatePinned">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                is_pinned = :is_pinned
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectPinnedDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2
+            FROM
+                chat_participants
+            WHERE
+                user_id=:user_id AND is_pinned = 1 AND state = 0
+        </sql>
+    </operation>
+
+
+    <operation name="UpdateInboxDialog">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                unread_count = unread_count + 1, cMap = :cMap
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateMarkDialogUnread">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                unread_mark = :unread_mark
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="SelectMarkDialogUnreadList" result_set="single_list">
+        <sql>
+            SELECT
+                chat_id
+            FROM
+                chat_participants
+            WHERE
+                user_id=:user_id AND unread_mark = 1 AND state = 0
+        </sql>
+    </operation>
+
+    <operation name="UpdateCustomMap">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                cMap = :cMap
+            WHERE
+                user_id=:user_id AND chat_id = :chat_id
+        </sql>
+    </operation>
+
+</table>

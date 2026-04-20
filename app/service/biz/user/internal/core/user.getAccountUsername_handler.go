@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetAccountUsername
 // user.getAccountUsername user_id:long = UsernameData;
 func (c *UserCore) UserGetAccountUsername(in *user.TLUserGetAccountUsername) (*user.UsernameData, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getAccountUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getAccountUsername - error: method UserGetAccountUsername not impl")
 
-	return nil, errors.New("user.getAccountUsername not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

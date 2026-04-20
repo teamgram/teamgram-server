@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,24 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
-	pts := int32(1)
-	ptsCount := int32(1)
-	if len(in.Id) > 0 {
-		ptsCount = int32(len(in.Id))
-		for _, id := range in.Id {
-			if id > pts {
-				pts = id
-			}
-		}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("msg.deleteMessages - error: method MsgDeleteMessages not impl")
 
-	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
-		Pts:      pts,
-		PtsCount: ptsCount,
-	}).ToMessagesAffectedMessages(), nil
+	return nil, tg.ErrMethodNotImpl
 }

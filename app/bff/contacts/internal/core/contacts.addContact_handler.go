@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsAddContact
-// contacts.addContact#e8f463d0 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string = Updates;
+// contacts.addContact#d9ba2e54 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string note:flags.1?TextWithEntities = Updates;
 func (c *ContactsCore) ContactsAddContact(in *tg.TLContactsAddContact) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("contacts.addContact blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("contacts.addContact - error: method ContactsAddContact not impl")
 
-	return nil, errors.New("contacts.addContact not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,16 +23,8 @@ import (
 // AuthResetLoginEmail
 // auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
 func (c *AuthorizationCore) AuthResetLoginEmail(in *tg.TLAuthResetLoginEmail) (*tg.AuthSentCode, error) {
-	if in.PhoneCodeHash == "" {
-		return nil, tg.ErrPhoneCodeHashEmpty
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.resetLoginEmail - error: method AuthResetLoginEmail not impl")
 
-	timeout := int32(60)
-
-	return tg.MakeTLAuthSentCode(&tg.TLAuthSentCode{
-		Type:          tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{Length: 5}),
-		PhoneCodeHash: in.PhoneCodeHash,
-		NextType:      tg.MakeTLAuthCodeTypeSms(&tg.TLAuthCodeTypeSms{}),
-		Timeout:       &timeout,
-	}).ToAuthSentCode(), nil
+	return nil, tg.ErrMethodNotImpl
 }

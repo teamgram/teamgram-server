@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserSaveMusic
 // user.saveMusic flags:# unsave:flags.0?true user_id:long id:long after_id:flags.15?long = Bool;
 func (c *UserCore) UserSaveMusic(in *user.TLUserSaveMusic) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.saveMusic blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.saveMusic - error: method UserSaveMusic not impl")
 
-	return nil, errors.New("user.saveMusic not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

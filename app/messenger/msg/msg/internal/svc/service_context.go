@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,59 +17,18 @@
 package svc
 
 import (
-	"context"
-
-	inboxclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/client"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/internal/repository"
-	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
-	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-type InboxPushClient interface {
-	InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*tg.Void, error)
-}
-
-type SyncPushClient interface {
-	SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*tg.Void, error)
-	SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*tg.Void, error)
-	SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error)
-}
-
-type IdgenClient interface {
-	IdgenNextId(ctx context.Context, in *idgen.TLIdgenNextId) (*tg.Int64, error)
-}
-
 type ServiceContext struct {
-	Config      config.Config
-	Repository  *repository.Repository
-	InboxClient InboxPushClient
-	SyncClient  SyncPushClient
-	IdgenClient IdgenClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
-		Config:     c,
-		Repository: repository.NewRepository(c),
+	return &ServiceContext{
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.InboxClient) {
-		ctx.InboxClient = inboxclient.NewInboxClient(inboxclient.MustNewKitexClient(c.InboxClient))
-	}
-	if hasClient(c.SyncClient) {
-		ctx.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
-	}
-	if hasClient(c.IdgenClient) {
-		ctx.IdgenClient = idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.IdgenClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

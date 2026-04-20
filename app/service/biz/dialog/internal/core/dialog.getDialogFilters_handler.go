@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,17 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetDialogFilters
 // dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 func (c *DialogCore) DialogGetDialogFilters(in *dialog.TLDialogGetDialogFilters) (*dialog.VectorDialogFilterExt, error) {
-	if in != nil && in.UserId != 0 {
-		return &dialog.VectorDialogFilterExt{
-			Datas: []dialog.DialogFilterExtClazz{
-				makeDialogFilterExtPlaceholder(1, "placeholder-1"),
-			},
-		}, nil
-	}
-	return &dialog.VectorDialogFilterExt{Datas: []dialog.DialogFilterExtClazz{}}, nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getDialogFilters - error: method DialogGetDialogFilters not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

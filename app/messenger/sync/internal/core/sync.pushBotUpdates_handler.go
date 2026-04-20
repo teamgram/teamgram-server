@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // SyncPushBotUpdates
 // sync.pushBotUpdates user_id:long updates:Updates = Void;
 func (c *SyncCore) SyncPushBotUpdates(in *sync.TLSyncPushBotUpdates) (*tg.Void, error) {
-	_ = in
+	// TODO: not impl
+	c.Logger.Errorf("sync.pushBotUpdates - error: method SyncPushBotUpdates not impl")
 
-	// TODO: push bot updates through the real sync/session fanout pipeline.
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	return nil, tg.ErrMethodNotImpl
 }

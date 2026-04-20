@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,15 +23,8 @@ import (
 // AuthToggleBan
 // auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
 func (c *AuthorizationCore) AuthToggleBan(in *tg.TLAuthToggleBan) (*tg.PredefinedUser, error) {
-	if in.Phone == "" {
-		return nil, tg.ErrInputMethodInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.toggleBan - error: method AuthToggleBan not impl")
 
-	code := "00000"
-
-	return tg.MakeTLPredefinedUser(&tg.TLPredefinedUser{
-		Phone:  in.Phone,
-		Code:   code,
-		Banned: true,
-	}).ToPredefinedUser(), nil
+	return nil, tg.ErrMethodNotImpl
 }

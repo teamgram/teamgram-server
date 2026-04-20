@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // InboxUpdatePinnedMessage
 // inbox.updatePinnedMessage flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long = Void;
 func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessage) (*tg.Void, error) {
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	// TODO: not impl
+	c.Logger.Errorf("inbox.updatePinnedMessage - error: method InboxUpdatePinnedMessage not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

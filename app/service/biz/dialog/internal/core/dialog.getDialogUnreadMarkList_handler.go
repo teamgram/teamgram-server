@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,20 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetDialogUnreadMarkList
 // dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 func (c *DialogCore) DialogGetDialogUnreadMarkList(in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.VectorDialogPeer, error) {
-	if in != nil && in.UserId != 0 {
-		return &dialog.VectorDialogPeer{
-			Datas: []tg.DialogPeerClazz{
-				tg.MakeTLDialogPeer(&tg.TLDialogPeer{
-					Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: in.UserId}),
-				}),
-			},
-		}, nil
-	}
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getDialogUnreadMarkList - error: method DialogGetDialogUnreadMarkList not impl")
 
-	return &dialog.VectorDialogPeer{Datas: []tg.DialogPeerClazz{}}, nil
+	return nil, tg.ErrMethodNotImpl
 }

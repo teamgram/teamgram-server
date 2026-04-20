@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,20 +21,10 @@ import (
 )
 
 // ChannelsGetSendAs
-// channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
+// channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true for_live_stories:flags.1?true peer:InputPeer = channels.SendAsPeers;
 func (c *MessagesCore) ChannelsGetSendAs(in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("channels.getSendAs - error: method ChannelsGetSendAs not impl")
 
-	return tg.MakeTLChannelsSendAsPeers(&tg.TLChannelsSendAsPeers{
-		Peers: []tg.SendAsPeerClazz{
-			tg.MakeTLSendAsPeer(&tg.TLSendAsPeer{
-				Peer: peer,
-			}),
-		},
-		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{},
-	}).ToChannelsSendAsPeers(), nil
+	return nil, tg.ErrMethodNotImpl
 }

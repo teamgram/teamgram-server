@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,25 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetDialogById
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	peerType := int64(tg.PEER_USER)
-	peerID := int64(0)
-	if in != nil {
-		peerType = int64(in.PeerType)
-		peerID = in.PeerId
-		if peerID == 0 {
-			peerID = in.UserId
-		}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getDialogById - error: method DialogGetDialogById not impl")
 
-	return dialog.MakeTLDialogExt(&dialog.TLDialogExt{
-		Order:          10,
-		Dialog:         makeDialogPlaceholder(peerType, peerID, 10),
-		AvailableMinId: 1,
-		Date:           10,
-	}).ToDialogExt(), nil
+	return nil, tg.ErrMethodNotImpl
 }

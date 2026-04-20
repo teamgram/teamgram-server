@@ -60,23 +60,9 @@ var (
 )
 
 func init() {
-	// NOTE: Idempotent registration via defer/recover to allow both BFF and biz
-	// updates packages to be imported in the same binary without conflict.
-	// The BFF layer uses "RPCUpdates" for non-V2 methods, while biz layer
-	// uses "RPCUpdates" for V2 methods. This is a known TL schema duplication
-	// that should be addressed at the generator level.
-	func() {
-		defer func() { recover() }()
-		iface.RegisterKitexServiceInfo("RPCUpdates", updatesServiceServiceInfo)
-	}()
-	func() {
-		defer func() { recover() }()
-		iface.RegisterKitexServiceInfoForClient("RPCUpdates", updatesServiceServiceInfoForClient)
-	}()
-	func() {
-		defer func() { recover() }()
-		iface.RegisterKitexServiceInfoForStreamClient("RPCUpdates", updatesServiceServiceInfoForStreamClient)
-	}()
+	iface.RegisterKitexServiceInfo("RPCUpdates", updatesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUpdates", updatesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUpdates", updatesServiceServiceInfoForStreamClient)
 }
 
 // for server

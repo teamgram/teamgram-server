@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,37 +17,14 @@
 package core
 
 import (
-	"time"
-
-	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/model"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
-
-const (
-	qrCodeTimeout = 60 // salt timeout
 )
 
 // AuthExportLoginToken
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (c *QrCodeCore) AuthExportLoginToken(in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error) {
-	qrCode := &model.QRCodeTransaction{
-		PermAuthKeyId: c.MD.PermAuthKeyId,
-		AuthKeyId:     c.MD.AuthId,
-		SessionId:     c.MD.SessionId,
-		ServerId:      c.MD.ServerId,
-		ApiId:         in.ApiId,
-		ApiHash:       in.ApiHash,
-		CodeHash:      crypto.GenerateStringNonce(16),
-		ExpireAt:      time.Now().Unix() + qrCodeTimeout,
-		UserId:        0,
-		State:         model.QRCodeStateNew,
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.exportLoginToken - error: method AuthExportLoginToken not impl")
 
-	rQRLoginToken := tg.MakeTLAuthLoginToken(&tg.TLAuthLoginToken{
-		Expires: int32(qrCode.ExpireAt),
-		Token:   qrCode.Token(),
-	})
-
-	return rQRLoginToken.ToAuthLoginToken(), nil
+	return nil, tg.ErrMethodNotImpl
 }

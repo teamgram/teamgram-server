@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // ChatEditChatTitle
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*tg.MutableChat, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("chat.editChatTitle blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("chat.editChatTitle - error: method ChatEditChatTitle not impl")
 
-	return nil, errors.New("chat.editChatTitle not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.getChatInviteImporters#df04dd4e flags:# requested:flags.0?true subscription_expired:flags.3?true peer:InputPeer link:flags.1?string q:flags.2?string offset_date:int offset_user:InputUser limit:int = messages.ChatInviteImporters;
 func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *tg.TLMessagesGetChatInviteImporters) (*tg.MessagesChatInviteImporters, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getChatInviteImporters blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getChatInviteImporters - error: method MessagesGetChatInviteImporters not impl")
 
-	return nil, errors.New("messages.getChatInviteImporters not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

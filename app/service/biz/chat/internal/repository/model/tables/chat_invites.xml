@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_invites">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_invites
+                (chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2)
+            VALUES
+                (:chat_id, :admin_id, :link, :permanent, :revoked, :request_needed, :start_date, :expire_date, :usage_limit, :usage2, :requested, :title, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectListByAdminId" result_set="list">
+        <sql>
+            SELECT
+                id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2
+            FROM
+                chat_invites
+            WHERE
+                chat_id = :chat_id AND admin_id = :admin_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByLink">
+        <sql>
+            SELECT
+                id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2
+            FROM
+                chat_invites
+            WHERE
+                link = :link
+        </sql>
+    </operation>
+
+    <operation name="SelectAll" result_set="list">
+        <sql>
+            SELECT
+                id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2
+            FROM
+                chat_invites
+        </sql>
+    </operation>
+
+    <operation name="SelectListByChatId" result_set="list">
+        <sql>
+            SELECT
+                id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2
+            FROM
+                chat_invites
+            WHERE
+                chat_id = :chat_id
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                chat_invites
+            SET
+                cMap = :cMap
+            WHERE
+                chat_id = :chat_id AND link = :link
+        </sql>
+    </operation>
+
+    <operation name="DeleteByLink">
+        <sql>
+            DELETE FROM
+                chat_invites
+            WHERE
+                chat_id = :chat_id AND link = :link
+        </sql>
+    </operation>
+
+    <operation name="DeleteByRevoked">
+        <sql>
+            DELETE FROM
+                chat_invites
+            WHERE
+                chat_id = :chat_id AND admin_id = :admin_id AND revoked = 1
+        </sql>
+    </operation>
+</table>

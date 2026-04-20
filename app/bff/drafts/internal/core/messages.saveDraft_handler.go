@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSaveDraft
-// messages.saveDraft#d372c5ce flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long = Bool;
+// messages.saveDraft#54ae308e flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long suggested_post:flags.8?SuggestedPost = Bool;
 func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.saveDraft blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.saveDraft - error: method MessagesSaveDraft not impl")
 
-	return nil, errors.New("messages.saveDraft not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

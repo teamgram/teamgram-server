@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserSetMainProfileTab
 // user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
 func (c *UserCore) UserSetMainProfileTab(in *user.TLUserSetMainProfileTab) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.setMainProfileTab blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.setMainProfileTab - error: method UserSetMainProfileTab not impl")
 
-	return nil, errors.New("user.setMainProfileTab not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

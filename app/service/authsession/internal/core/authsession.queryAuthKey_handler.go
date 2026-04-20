@@ -1,11 +1,10 @@
-// Copyright 2024 Teamgooo Authors
-//  All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +13,6 @@
 // limitations under the License.
 //
 // Author: teamgramio (teamgram.io@gmail.com)
-//
 
 package core
 
@@ -23,16 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // AuthsessionQueryAuthKey
 // authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (c *AuthsessionCore) AuthsessionQueryAuthKey(in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
-	rValue, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.AuthKeyId)
-	if err != nil {
-		c.Logger.Errorf("authsession.queryAuthKey - error: %v", err.Error())
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("authsession.queryAuthKey - error: method AuthsessionQueryAuthKey not impl")
 
-	return rValue.ToAuthKeyInfo(), nil
+	return nil, tg.ErrMethodNotImpl
 }

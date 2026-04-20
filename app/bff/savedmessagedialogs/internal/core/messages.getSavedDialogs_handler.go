@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSavedDialogs
-// messages.getSavedDialogs#5381d21a flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
+// messages.getSavedDialogs#1e91fc99 flags:# exclude_pinned:flags.0?true parent_peer:flags.1?InputPeer offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
 func (c *SavedMessageDialogsCore) MessagesGetSavedDialogs(in *tg.TLMessagesGetSavedDialogs) (*tg.MessagesSavedDialogs, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getSavedDialogs - error: method MessagesGetSavedDialogs not impl")
 
-	return nil, errors.New("messages.getSavedDialogs not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

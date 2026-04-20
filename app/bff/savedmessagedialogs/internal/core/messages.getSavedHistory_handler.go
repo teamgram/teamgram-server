@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSavedHistory
-// messages.getSavedHistory#3d9a414d peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+// messages.getSavedHistory#998ab009 flags:# parent_peer:flags.0?InputPeer peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *SavedMessageDialogsCore) MessagesGetSavedHistory(in *tg.TLMessagesGetSavedHistory) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getSavedHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getSavedHistory - error: method MessagesGetSavedHistory not impl")
 
-	return nil, errors.New("messages.getSavedHistory not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

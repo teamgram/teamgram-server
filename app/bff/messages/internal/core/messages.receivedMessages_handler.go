@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,16 +23,8 @@ import (
 // MessagesReceivedMessages
 // messages.receivedMessages#5a954c0 max_id:int = Vector<ReceivedNotifyMessage>;
 func (c *MessagesCore) MessagesReceivedMessages(in *tg.TLMessagesReceivedMessages) (*tg.VectorReceivedNotifyMessage, error) {
-	if in.MaxId <= 0 {
-		return &tg.VectorReceivedNotifyMessage{Datas: []tg.ReceivedNotifyMessageClazz{}}, nil
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.receivedMessages - error: method MessagesReceivedMessages not impl")
 
-	return &tg.VectorReceivedNotifyMessage{
-		Datas: []tg.ReceivedNotifyMessageClazz{
-			tg.MakeTLReceivedNotifyMessage(&tg.TLReceivedNotifyMessage{
-				Id:    in.MaxId,
-				Flags: 0,
-			}),
-		},
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

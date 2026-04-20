@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string bot_has_main_app:flags.13?Bool = Bool;
 func (c *UserCore) UserUpdateBotData(in *user.TLUserUpdateBotData) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.updateBotData blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.updateBotData - error: method UserUpdateBotData not impl")
 
-	return nil, errors.New("user.updateBotData not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

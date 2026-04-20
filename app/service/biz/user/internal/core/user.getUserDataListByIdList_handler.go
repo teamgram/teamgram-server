@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetUserDataListByIdList
 // user.getUserDataListByIdList user_id_list:Vector<long> = Vector<UserData>;
 func (c *UserCore) UserGetUserDataListByIdList(in *user.TLUserGetUserDataListByIdList) (*user.VectorUserData, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getUserDataListByIdList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getUserDataListByIdList - error: method UserGetUserDataListByIdList not impl")
 
-	return nil, errors.New("user.getUserDataListByIdList not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

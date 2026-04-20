@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,18 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetPinnedDialogs
 // dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetPinnedDialogs(in *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
-	if in != nil && in.UserId != 0 {
-		return &dialog.VectorDialogExt{
-			Datas: []dialog.DialogExtClazz{
-				makeDialogExtPlaceholder(in.UserId, tg.PEER_USER, in.UserId, 10),
-			},
-		}, nil
-	}
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getPinnedDialogs - error: method DialogGetPinnedDialogs not impl")
 
-	return &dialog.VectorDialogExt{Datas: []dialog.DialogExtClazz{}}, nil
+	return nil, tg.ErrMethodNotImpl
 }

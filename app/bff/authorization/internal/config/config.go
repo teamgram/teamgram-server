@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,27 +17,9 @@
 package config
 
 import (
-	kafka "github.com/teamgram/marmota/pkg/mq"
-	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
-
-//type Config struct {
-//	kitex.RpcServerConf
-//}
 
 type Config struct {
 	kitex.RpcServerConf
-	KV                        kv.KvConf
-	Code                      *conf.SmsVerifyCodeConfig
-	UserClient                kitex.RpcClientConf
-	AuthsessionClient         kitex.RpcClientConf
-	ChatClient                kitex.RpcClientConf
-	StatusClient              kitex.RpcClientConf
-	UsernameClient            kitex.RpcClientConf
-	MsgClient                 kitex.RpcClientConf
-	SyncClient                *kafka.KafkaProducerConf
-	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`
-	SignInMessage             []conf.MessageEntityConfig `json:",optional"`
 }

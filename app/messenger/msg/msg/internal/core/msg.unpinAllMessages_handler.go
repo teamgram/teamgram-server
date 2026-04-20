@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,22 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgUnpinAllMessages
 // msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;
 func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
-	return makeAffectedHistoryPlaceholder(1, 0), nil
-}
+	// TODO: not impl
+	c.Logger.Errorf("msg.unpinAllMessages - error: method MsgUnpinAllMessages not impl")
 
-func makeAffectedHistoryPlaceholder(pts int32, offset int32) *tg.MessagesAffectedHistory {
-	if pts <= 0 {
-		pts = 1
-	}
-
-	return tg.MakeTLMessagesAffectedHistory(&tg.TLMessagesAffectedHistory{
-		Pts:      pts,
-		PtsCount: 1,
-		Offset:   offset,
-	}).ToMessagesAffectedHistory()
+	return nil, tg.ErrMethodNotImpl
 }

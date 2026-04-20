@@ -1,0 +1,126 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ *   Created from by 'dalgen'
+ *
+ * Copyright (c) 2026 The Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teamgramio (teamgram.io@gmail.com)
+ */
+
+package model
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+
+	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stringx"
+)
+
+var (
+	user_privaciesFieldNames          = builder.RawFieldNames(&UserPrivacies{})
+	user_privaciesRows                = strings.Join(user_privaciesFieldNames, ",")
+	user_privaciesRowsExpectAutoSet   = strings.Join(stringx.Remove(user_privaciesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	user_privaciesRowsWithPlaceHolder = strings.Join(stringx.Remove(user_privaciesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheTUserPrivaciesIdPrefix = "cache:t:user_privacies:id:"
+
+	cacheUserPrivaciesIdPrefix = "cache#UserPrivacies#id"
+
+	cacheUserPrivaciesUserIdKeyTypePrefix = "cache#UserId#KeyType"
+)
+
+type (
+	user_privaciesModel interface {
+		Insert2(ctx context.Context, data *UserPrivacies) (sql.Result, error)
+		FindOne(ctx context.Context, id int64) (*UserPrivacies, error)
+		FindListByIdList(ctx context.Context, id ...int64) ([]UserPrivacies, error)
+		Update2(ctx context.Context, data *UserPrivacies) error
+		Delete2(ctx context.Context, id int64) error
+
+		FindOneByUserIdKeyType(ctx context.Context, userId int64, keyType int32) (*UserPrivacies, error)
+	}
+
+	defaultUserPrivaciesModel struct {
+		db *sqlx.DB
+	}
+
+	UserPrivacies struct {
+		Id      int64  `db:"id" json:"id"`
+		UserId  int64  `db:"user_id" json:"user_id"`
+		KeyType int32  `db:"key_type" json:"key_type"`
+		Rules   string `db:"rules" json:"rules"`
+	}
+)
+
+func newUserPrivaciesModel(db *sqlx.DB) *defaultUserPrivaciesModel {
+	return &defaultUserPrivaciesModel{
+		db: db,
+	}
+}
+
+func (m *defaultUserPrivaciesModel) Insert2(ctx context.Context, data *UserPrivacies) (sql.Result, error) {
+	query := fmt.Sprintf("insert into `user_privacies` (%s) values (?, ?, ?)", user_privaciesRowsExpectAutoSet)
+	return m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules)
+}
+
+func (m *defaultUserPrivaciesModel) Delete2(ctx context.Context, id int64) error {
+	query := "delete from `user_privacies` where `id` = ?"
+	_, err := m.db.Exec(ctx, query, id)
+	return err
+}
+
+func (m *defaultUserPrivaciesModel) FindOne(ctx context.Context, id int64) (*UserPrivacies, error) {
+	query := fmt.Sprintf("select %s from user_privacies where id = ? limit 1", user_privaciesRows)
+	var resp UserPrivacies
+	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (m *defaultUserPrivaciesModel) FindListByIdList(ctx context.Context, id ...int64) ([]UserPrivacies, error) {
+	if len(id) == 0 {
+		return []UserPrivacies{}, nil
+	}
+
+	query := fmt.Sprintf("select %s from user_privacies where id in (%s)", user_privaciesRows, sqlx.InInt64List(id))
+
+	var resp []UserPrivacies
+	err := m.db.QueryRowsPartial(ctx, &resp, query)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *defaultUserPrivaciesModel) Update2(ctx context.Context, data *UserPrivacies) error {
+	query := fmt.Sprintf("update `user_privacies` set %s where `id` = ?", user_privaciesRowsWithPlaceHolder)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules, data.Id)
+	return err
+}
+
+func (m *defaultUserPrivaciesModel) FindOneByUserIdKeyType(ctx context.Context, userId int64, keyType int32) (*UserPrivacies, error) {
+	query := fmt.Sprintf("select %s from user_privacies where user_id = ? AND key_type = ? limit 1", user_privaciesRows)
+	var resp UserPrivacies
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, keyType)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (m *defaultUserPrivaciesModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s#%v", cacheUserPrivaciesIdPrefix, primary)
+}
+
+func (m *defaultUserPrivaciesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
+	query := fmt.Sprintf("select %s from user_privacies where id = ? limit 1", user_privaciesRows)
+	return m.db.QueryRowPartial(ctx, v, query, primary)
+}

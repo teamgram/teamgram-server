@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.editChatCreator#f743b857 peer:InputPeer user_id:InputUser password:InputCheckPasswordSRP = Updates;
 func (c *ChatsCore) MessagesEditChatCreator(in *tg.TLMessagesEditChatCreator) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.editChatCreator blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.editChatCreator - error: method MessagesEditChatCreator not impl")
 
-	return nil, errors.New("messages.editChatCreator not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,15 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetUserMessageListByDataIdList
 // message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUserMessageListByDataIdList(in *message.TLMessageGetUserMessageListByDataIdList) (*message.VectorMessageBox, error) {
-	boxes := make([]tg.MessageBoxClazz, 0, len(in.IdList))
-	for _, id := range in.IdList {
-		boxes = append(boxes, makePlaceholderMessageBox(in.UserId, tg.PEER_USER, in.UserId, int32(id)))
-	}
+	// TODO: not impl
+	c.Logger.Errorf("message.getUserMessageListByDataIdList - error: method MessageGetUserMessageListByDataIdList not impl")
 
-	return &message.VectorMessageBox{Datas: boxes}, nil
+	return nil, tg.ErrMethodNotImpl
 }

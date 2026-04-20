@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_saved_music">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_saved_music
+                (user_id, saved_music_id, order2)
+            values
+                (:user_id, :saved_music_id, :order2)
+            ON DUPLICATE KEY UPDATE
+                deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, saved_music_id
+            FROM
+                user_saved_music
+            WHERE
+                user_id=:user_id AND deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectListByIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, saved_music_id
+            FROM
+                user_saved_music
+            WHERE
+                user_id=:user_id AND deleted = 0 AND saved_music_id IN (:idList)
+        </sql>
+    </operation>
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                user_saved_music
+            SET
+                deleted = 1, order2 = 0
+            WHERE
+                user_id = :user_id AND saved_music_id = :saved_music_id
+        </sql>
+    </operation>
+</table>

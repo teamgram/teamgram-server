@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetOutboxReadDate
 // messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
 func (c *MessagesCore) MessagesGetOutboxReadDate(in *tg.TLMessagesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getOutboxReadDate - error: method MessagesGetOutboxReadDate not impl")
 
-	return tg.MakeTLOutboxReadDate(&tg.TLOutboxReadDate{
-		Date: int32(time.Now().Unix()),
-	}).ToOutboxReadDate(), nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // MediaUploadRingtoneFile
 // media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
 func (c *MediaCore) MediaUploadRingtoneFile(in *media.TLMediaUploadRingtoneFile) (*tg.Document, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("media.uploadRingtoneFile blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("media.uploadRingtoneFile - error: method MediaUploadRingtoneFile not impl")
 
-	return nil, errors.New("media.uploadRingtoneFile not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

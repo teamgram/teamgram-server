@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,36 +17,18 @@
 package svc
 
 import (
-	"context"
-
-	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/internal/repository"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
-type MessageQueryClient interface {
-	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error)
-}
-
 type ServiceContext struct {
-	Config        config.Config
-	Repository   *repository.Repository
-	MessageClient MessageQueryClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	ctx.Repository = repository.NewRepository(c)
-	if hasClient(c.MessageClient) {
-		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

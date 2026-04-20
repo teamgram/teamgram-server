@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,42 +17,14 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetHistory
 // messages.getHistory#4423e6c5 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.MessagesMessages, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getHistory - error: method MessagesGetHistory not impl")
 
-	if c.svcCtx != nil && c.svcCtx.MessageClient != nil && c.MD != nil {
-		peerType, peerID, ok := bffPeerTypeAndID(peer)
-		if ok {
-			boxes, err := c.svcCtx.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
-				UserId:     c.MD.UserId,
-				PeerType:   peerType,
-				PeerId:     peerID,
-				OffsetId:   in.OffsetId,
-				OffsetDate: in.OffsetDate,
-				AddOffset:  in.AddOffset,
-				Limit:      in.Limit,
-				MaxId:      in.MaxId,
-				MinId:      in.MinId,
-				Hash:       in.Hash,
-			})
-			if err != nil {
-				c.Logger.Errorf("messages.getHistory - MessageGetHistoryMessages error: %v", err)
-				return nil, err
-			}
-			if boxes != nil {
-				return makeBffMessagesMessagesFromBoxes(boxes.Datas), nil
-			}
-		}
-	}
-
-	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, in.MaxId, in.MinId), historyPlaceholderCount(in.Limit), false), nil
+	return nil, tg.ErrMethodNotImpl
 }

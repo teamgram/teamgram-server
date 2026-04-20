@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // CodeCreatePhoneCode
 // code.createPhoneCode flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true sent_code_type:int next_code_type:int state:int = PhoneCodeTransaction;
 func (c *CodeCore) CodeCreatePhoneCode(in *code.TLCodeCreatePhoneCode) (*code.PhoneCodeTransaction, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("code.createPhoneCode blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("code.createPhoneCode - error: method CodeCreatePhoneCode not impl")
 
-	return nil, errors.New("code.createPhoneCode not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

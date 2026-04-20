@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,17 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetUnreadMentions
 // message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 func (c *MessageCore) MessageGetUnreadMentions(in *message.TLMessageGetUnreadMentions) (*message.VectorMessageBox, error) {
-	startID := in.OffsetId
-	if startID <= 0 {
-		startID = 1
-	}
+	// TODO: not impl
+	c.Logger.Errorf("message.getUnreadMentions - error: method MessageGetUnreadMentions not impl")
 
-	return &message.VectorMessageBox{
-		Datas: collectScopedPlaceholderMessageBoxes(in.UserId, in.PeerType, in.PeerId, startID, in.Limit),
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

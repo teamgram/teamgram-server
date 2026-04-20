@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@ import (
 // MessagesGetUnreadMentions
 // messages.getUnreadMentions#f107e790 flags:# peer:InputPeer top_msg_id:flags.0?int offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
 func (c *MessagesCore) MessagesGetUnreadMentions(in *tg.TLMessagesGetUnreadMentions) (*tg.MessagesMessages, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getUnreadMentions - error: method MessagesGetUnreadMentions not impl")
 
-	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, in.MaxId, in.MinId), historyPlaceholderCount(in.Limit), true), nil
+	return nil, tg.ErrMethodNotImpl
 }

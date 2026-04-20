@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,27 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesToggleNoForwards
-// messages.toggleNoForwards#b11eafa2 peer:InputPeer enabled:Bool = Updates;
+// messages.toggleNoForwards#b2081a35 flags:# peer:InputPeer enabled:Bool request_msg_id:flags.0?int = Updates;
 func (c *MessagesCore) MessagesToggleNoForwards(in *tg.TLMessagesToggleNoForwards) (*tg.Updates, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.toggleNoForwards - error: method MessagesToggleNoForwards not impl")
 
-	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
-		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
-			Pinned:   true,
-			Peer:     peer,
-			Messages: []int32{},
-			Pts:      1,
-			PtsCount: 1,
-		}),
-		Date: int32(time.Now().Unix()),
-	}).ToUpdates(), nil
+	return nil, tg.ErrMethodNotImpl
 }

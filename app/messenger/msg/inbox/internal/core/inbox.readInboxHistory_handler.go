@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // InboxReadInboxHistory
-// inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int  layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
+// inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
 func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*tg.Void, error) {
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	// TODO: not impl
+	c.Logger.Errorf("inbox.readInboxHistory - error: method InboxReadInboxHistory not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

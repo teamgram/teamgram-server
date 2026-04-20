@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // ChatExportChatInvite
 // chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (c *ChatCore) ChatExportChatInvite(in *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("chat.exportChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("chat.exportChatInvite - error: method ChatExportChatInvite not impl")
 
-	return nil, errors.New("chat.exportChatInvite not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

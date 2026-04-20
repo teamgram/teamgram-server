@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,17 @@ package svc
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/internal/repository"
 )
 
 type ServiceContext struct {
 	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

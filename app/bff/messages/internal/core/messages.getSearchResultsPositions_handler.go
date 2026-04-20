@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,23 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSearchResultsPositions
 // messages.getSearchResultsPositions#9c7f2f10 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (c *MessagesCore) MessagesGetSearchResultsPositions(in *tg.TLMessagesGetSearchResultsPositions) (*tg.MessagesSearchResultsPositions, error) {
-	startID := historyPlaceholderStartID(in.OffsetId, 0, 0)
-	return tg.MakeTLMessagesSearchResultsPositions(&tg.TLMessagesSearchResultsPositions{
-		Count: 1,
-		Positions: []tg.SearchResultsPositionClazz{
-			tg.MakeTLSearchResultPosition(&tg.TLSearchResultPosition{
-				MsgId:  startID,
-				Date:   int32(time.Now().Unix()),
-				Offset: 0,
-			}),
-		},
-	}).ToMessagesSearchResultsPositions(), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.getSearchResultsPositions - error: method MessagesGetSearchResultsPositions not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // MediaGetPhotoSizeListList
 // media.getPhotoSizeListList id_list:Vector<long> = Vector<PhotoSizeList>;
 func (c *MediaCore) MediaGetPhotoSizeListList(in *media.TLMediaGetPhotoSizeListList) (*media.VectorPhotoSizeList, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("media.getPhotoSizeListList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("media.getPhotoSizeListList - error: method MediaGetPhotoSizeListList not impl")
 
-	return nil, errors.New("media.getPhotoSizeListList not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

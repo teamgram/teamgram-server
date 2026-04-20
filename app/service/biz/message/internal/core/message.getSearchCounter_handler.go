@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetSearchCounter
 // message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 func (c *MessageCore) MessageGetSearchCounter(in *message.TLMessageGetSearchCounter) (*tg.Int32, error) {
-	return tg.MakeTLInt32(&tg.TLInt32{V: 1}).ToInt32(), nil
+	// TODO: not impl
+	c.Logger.Errorf("message.getSearchCounter - error: method MessageGetSearchCounter not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

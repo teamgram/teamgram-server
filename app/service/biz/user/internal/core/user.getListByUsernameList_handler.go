@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetListByUsernameList
 // user.getListByUsernameList names:Vector<string> = Vector<UsernameData>;
 func (c *UserCore) UserGetListByUsernameList(in *user.TLUserGetListByUsernameList) (*user.VectorUsernameData, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getListByUsernameList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getListByUsernameList - error: method UserGetListByUsernameList not impl")
 
-	return nil, errors.New("user.getListByUsernameList not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

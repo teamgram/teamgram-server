@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,45 +17,18 @@
 package svc
 
 import (
-	"context"
-
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/config"
-	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/repository"
 )
 
-type DialogQueryClient interface {
-	DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error)
-	DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error)
-	DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
-}
-
-type MessageQueryClient interface {
-	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error)
-}
-
 type ServiceContext struct {
-	Config        config.Config
-	DialogClient  DialogQueryClient
-	MessageClient MessageQueryClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.DialogClient) {
-		ctx.DialogClient = dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
-	}
-	if hasClient(c.MessageClient) {
-		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

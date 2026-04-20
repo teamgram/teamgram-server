@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_read_outbox">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO message_read_outbox
+                (user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date)
+            VALUES
+                (:user_id, :peer_dialog_id, :read_user_id, :read_outbox_max_id, :read_outbox_max_date)
+            ON DUPLICATE KEY UPDATE
+                read_outbox_max_date=VALUES(read_outbox_max_date)
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date
+            FROM
+                message_read_outbox
+            WHERE
+                user_id = :user_id AND read_user_id = :read_user_id AND read_outbox_max_id >= :read_outbox_max_id
+            ORDER BY read_outbox_max_id LIMIT 1
+            ]]>
+        </sql>
+    </operation>
+</table>

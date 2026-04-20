@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserSetDefaultHistoryTTL
 // user.setDefaultHistoryTTL user_id:long ttl:int = Bool;
 func (c *UserCore) UserSetDefaultHistoryTTL(in *user.TLUserSetDefaultHistoryTTL) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.setDefaultHistoryTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.setDefaultHistoryTTL - error: method UserSetDefaultHistoryTTL not impl")
 
-	return nil, errors.New("user.setDefaultHistoryTTL not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

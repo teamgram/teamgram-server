@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_op_logs">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_op_logs
+                (auth_key_id, ip, op_type, log_text)
+            VALUES
+                (:auth_key_id, :ip, :op_type, :log_text)
+        </sql>
+    </operation>
+</table>

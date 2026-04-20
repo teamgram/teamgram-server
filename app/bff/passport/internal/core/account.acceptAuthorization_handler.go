@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // account.acceptAuthorization#f3ed4c73 bot_id:long scope:string public_key:string value_hashes:Vector<SecureValueHash> credentials:SecureCredentialsEncrypted = Bool;
 func (c *PassportCore) AccountAcceptAuthorization(in *tg.TLAccountAcceptAuthorization) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("account.acceptAuthorization blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.acceptAuthorization - error: method AccountAcceptAuthorization not impl")
 
-	return nil, errors.New("account.acceptAuthorization not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

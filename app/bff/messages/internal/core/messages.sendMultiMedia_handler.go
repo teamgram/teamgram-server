@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,32 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#37b74355 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
+// messages.sendMultiMedia#1bf89d74 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
 func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (*tg.Updates, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
-	if len(in.MultiMedia) == 0 {
-		return nil, tg.ErrInputRequestInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.sendMultiMedia - error: method MessagesSendMultiMedia not impl")
 
-	first := in.MultiMedia[0]
-	if first == nil || first.Media == nil {
-		return nil, tg.ErrInputRequestInvalid
-	}
-
-	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
-		Out:      true,
-		Id:       makePlaceholderMessageID(first.RandomId),
-		Pts:      1,
-		PtsCount: int32(len(in.MultiMedia)),
-		Date:     int32(time.Now().Unix()),
-		Entities: first.Entities,
-	}).ToUpdates(), nil
+	return nil, tg.ErrMethodNotImpl
 }

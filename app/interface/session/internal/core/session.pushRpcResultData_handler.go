@@ -1,11 +1,10 @@
-// Copyright 2024 Teamgooo Authors
-//  All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,29 +13,19 @@
 // limitations under the License.
 //
 // Author: teamgramio (teamgram.io@gmail.com)
-//
 
 package core
 
 import (
-	"fmt"
-
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // SessionPushRpcResultData
 // session.pushRpcResultData perm_auth_key_id:long auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 func (c *SessionCore) SessionPushRpcResultData(in *session.TLSessionPushRpcResultData) (*tg.Bool, error) {
-	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
-	if mainAuth == nil {
-		err := fmt.Errorf("not found authKeyId(%s)", in)
-		c.Logger.Errorf("session.pushRpcResultData - %v", err)
-		return nil, err
-	}
-	_ = mainAuth.SyncRpcResultDataArrived(c.ctx, in.AuthKeyId, in.SessionId, in.ClientReqMsgId, in.RpcResultData)
+	// TODO: not impl
+	c.Logger.Errorf("session.pushRpcResultData - error: method SessionPushRpcResultData not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

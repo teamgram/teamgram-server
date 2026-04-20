@@ -1,11 +1,10 @@
-// Copyright 2024 Teamgooo Authors
-//  All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +13,6 @@
 // limitations under the License.
 //
 // Author: teamgramio (teamgram.io@gmail.com)
-//
 
 package core
 
@@ -23,31 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // AuthsessionSetLayer
 // authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
 func (c *AuthsessionCore) AuthsessionSetLayer(in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error) {
-	var (
-		setLayer = in
-		inKeyId  = in.AuthKeyId
-	)
+	// TODO: not impl
+	c.Logger.Errorf("authsession.setLayer - error: method AuthsessionSetLayer not impl")
 
-	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
-	if err != nil {
-		c.Logger.Errorf("setLayer - queryAuthKeyV2(%d) is error: %v", inKeyId, err)
-		return nil, err
-	} else if keyData.PermAuthKeyId == 0 {
-		c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
-		return nil, tg.ErrAuthKeyPermEmpty
-	}
-
-	setLayer.AuthKeyId = keyData.PermAuthKeyId
-	err = c.svcCtx.Dao.SetLayer(c.ctx, setLayer)
-	if err != nil {
-		c.Logger.Errorf("setLayer(%d, %d) is error: %v", inKeyId, in.Layer, err)
-		return nil, err
-	}
-
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

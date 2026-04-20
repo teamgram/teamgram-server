@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // account.registerDevice#ec86017a flags:# no_muted:flags.0?true token_type:int token:string app_sandbox:Bool secret:bytes other_uids:Vector<long> = Bool;
 func (c *NotificationCore) AccountRegisterDevice(in *tg.TLAccountRegisterDevice) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("account.registerDevice blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.registerDevice - error: method AccountRegisterDevice not impl")
 
-	return nil, errors.New("account.registerDevice not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

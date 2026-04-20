@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,33 +17,15 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
-
-var _ *tg.Bool
-
-const (
-	maxNextIdsNum = 100
 )
 
 // IdgenNextIds
 // idgen.nextIds num:int = Vector<long>;
 func (c *IdgenCore) IdgenNextIds(in *idgen.TLIdgenNextIds) (*idgen.VectorLong, error) {
-	if in.Num > maxNextIdsNum || in.Num < 0 {
-		c.Logger.Errorf("NextIds num can't be greater than %d or less than 0", maxNextIdsNum)
-		return nil, fmt.Errorf("NextIds num: %d error", in.Num)
-	}
+	// TODO: not impl
+	c.Logger.Errorf("idgen.nextIds - error: method IdgenNextIds not impl")
 
-	ids := make([]int64, in.Num)
-	for i := int32(0); i < in.Num; i++ {
-		// TODO: 库里提供ids方法，以减少Lock次数
-		ids[i] = c.svcCtx.Node.Generate().Int64()
-	}
-
-	return &idgen.VectorLong{
-		Datas: ids,
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

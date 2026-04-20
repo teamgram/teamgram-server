@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserSearchUsername
 // user.searchUsername q:string excluded_contacts:Vector<long> limit:int = Vector<UsernameData>;
 func (c *UserCore) UserSearchUsername(in *user.TLUserSearchUsername) (*user.VectorUsernameData, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.searchUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.searchUsername - error: method UserSearchUsername not impl")
 
-	return nil, errors.New("user.searchUsername not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

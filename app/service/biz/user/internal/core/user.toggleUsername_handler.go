@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserToggleUsername
 // user.toggleUsername peer_type:int peer_id:long username:string active:Bool = Bool;
 func (c *UserCore) UserToggleUsername(in *user.TLUserToggleUsername) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.toggleUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.toggleUsername - error: method UserToggleUsername not impl")
 
-	return nil, errors.New("user.toggleUsername not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

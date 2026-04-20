@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,17 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthExportAuthorization
 // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 func (c *AuthorizationCore) AuthExportAuthorization(in *tg.TLAuthExportAuthorization) (*tg.AuthExportedAuthorization, error) {
-	var authID int64
-	if c.MD != nil {
-		authID = c.MD.AuthId
-	}
-	return tg.MakeTLAuthExportedAuthorization(&tg.TLAuthExportedAuthorization{
-		Id:    authID,
-		Bytes: []byte{byte(in.DcId & 0xff)},
-	}).ToAuthExportedAuthorization(), nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.exportAuthorization - error: method AuthExportAuthorization not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

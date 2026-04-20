@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import (
 // AuthBindTempAuthKey
 // auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 func (c *AuthorizationCore) AuthBindTempAuthKey(in *tg.TLAuthBindTempAuthKey) (*tg.Bool, error) {
-	if len(in.EncryptedMessage) == 0 {
-		return nil, tg.ErrTempAuthKeyEmpty
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.bindTempAuthKey - error: method AuthBindTempAuthKey not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,62 +1,34 @@
-/*
- * Created from 'scheme.tl' by 'mtprotoc'
- *
- * Copyright (c) 2024-present,  Teamgooo Studio (https://teamgram.io).
- *  All rights reserved.
- *
- * Author: teamgramio (teamgram.io@gmail.com)
- */
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
 
 package svc
 
 import (
-	"os"
-	"strings"
-
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dao"
-
-	"github.com/zeromicro/go-zero/core/netx"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/repository"
 )
-
-const (
-	allEths  = "0.0.0.0"
-	envPodIp = "POD_IP"
-)
-
-func figureOutListenOn(listenOn string) string {
-	fields := strings.Split(listenOn, ":")
-	if len(fields) == 0 {
-		return listenOn
-	}
-
-	host := fields[0]
-	if len(host) > 0 && host != allEths {
-		return listenOn
-	}
-
-	ip := os.Getenv(envPodIp)
-	if len(ip) == 0 {
-		ip = netx.InternalIp()
-	}
-	if len(ip) == 0 {
-		return listenOn
-	}
-
-	return strings.Join(append([]string{ip}, fields[1:]...), ":")
-}
 
 type ServiceContext struct {
 	Config config.Config
-	*dao.Dao
-
-	GatewayId string
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:    c,
-		Dao:       dao.New(c),
-		GatewayId: figureOutListenOn(c.ListenOn),
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

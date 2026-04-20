@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogUpdateUserPinnedMessage
 // dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 func (c *DialogCore) DialogUpdateUserPinnedMessage(in *dialog.TLDialogUpdateUserPinnedMessage) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.PinnedMsgId != 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.updateUserPinnedMessage - error: method DialogUpdateUserPinnedMessage not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

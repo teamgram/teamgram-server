@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,33 +17,15 @@
 package core
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // IdgenGetCurrentSeqId
 // idgen.getCurrentSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetCurrentSeqId(in *idgen.TLIdgenGetCurrentSeqId) (*tg.Int64, error) {
-	id, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, in.Key)
-	if err != nil {
-		c.Logger.Errorf("dgen.getCurrentSeqId(%s) error: %v", in.Key, err)
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("idgen.getCurrentSeqId - error: method IdgenGetCurrentSeqId not impl")
 
-	if id == "" {
-		return tg.MakeInt64Helper(0), nil
-	}
-
-	intValue, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		c.Logger.Errorf("dgen.getCurrentSeqId(%s) error: %v", in.Key, err)
-		return nil, fmt.Errorf("the value %q cannot parsed as int", err)
-	}
-
-	return tg.MakeInt64Helper(intValue), nil
+	return nil, tg.ErrMethodNotImpl
 }

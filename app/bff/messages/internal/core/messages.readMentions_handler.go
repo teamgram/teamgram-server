@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import (
 // MessagesReadMentions
 // messages.readMentions#36e5bf4d flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesReadMentions(in *tg.TLMessagesReadMentions) (*tg.MessagesAffectedHistory, error) {
-	pts := int32(1)
-	if in.TopMsgId != nil && *in.TopMsgId > 0 {
-		pts = *in.TopMsgId
-	}
-	return makeBffAffectedHistoryPlaceholder(pts, 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.readMentions - error: method MessagesReadMentions not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

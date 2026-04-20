@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,8 @@ import (
 // MessagesGetSearchCounters
 // messages.getSearchCounters#1bbcf300 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (c *MessagesCore) MessagesGetSearchCounters(in *tg.TLMessagesGetSearchCounters) (*tg.VectorMessagesSearchCounter, error) {
-	datas := make([]tg.MessagesSearchCounterClazz, 0, len(in.Filters))
-	for _, filter := range in.Filters {
-		datas = append(datas, tg.MakeTLMessagesSearchCounter(&tg.TLMessagesSearchCounter{
-			Filter: filter,
-			Count:  1,
-		}))
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getSearchCounters - error: method MessagesGetSearchCounters not impl")
 
-	return &tg.VectorMessagesSearchCounter{Datas: datas}, nil
+	return nil, tg.ErrMethodNotImpl
 }

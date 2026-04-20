@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,19 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesSetHistoryTTL
 // messages.setHistoryTTL#b80e5fe4 peer:InputPeer period:int = Updates;
 func (c *DialogsCore) MessagesSetHistoryTTL(in *tg.TLMessagesSetHistoryTTL) (*tg.Updates, error) {
-	if in == nil || in.Peer == nil || in.Period < 0 {
-		return tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}).ToUpdates(), nil
-	}
-	return tg.MakeTLUpdates(&tg.TLUpdates{
-		Updates: []tg.UpdateClazz{},
-		Users:   []tg.UserClazz{},
-		Chats:   []tg.ChatClazz{},
-		Date:    10,
-		Seq:     1,
-	}).ToUpdates(), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.setHistoryTTL - error: method MessagesSetHistoryTTL not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

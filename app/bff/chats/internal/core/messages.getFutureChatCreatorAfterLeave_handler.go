@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.getFutureChatCreatorAfterLeave#3b7d0ea6 peer:InputPeer = User;
 func (c *ChatsCore) MessagesGetFutureChatCreatorAfterLeave(in *tg.TLMessagesGetFutureChatCreatorAfterLeave) (*tg.User, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getFutureChatCreatorAfterLeave blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getFutureChatCreatorAfterLeave - error: method MessagesGetFutureChatCreatorAfterLeave not impl")
 
-	return nil, errors.New("messages.getFutureChatCreatorAfterLeave not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

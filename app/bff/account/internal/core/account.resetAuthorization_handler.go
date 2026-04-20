@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // account.resetAuthorization#df77f3bc hash:long = Bool;
 func (c *AccountCore) AccountResetAuthorization(in *tg.TLAccountResetAuthorization) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("account.resetAuthorization blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.resetAuthorization - error: method AccountResetAuthorization not impl")
 
-	return nil, errors.New("account.resetAuthorization not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetSavedMusicIdList
 // user.getSavedMusicIdList user_id:long = Vector<long>;
 func (c *UserCore) UserGetSavedMusicIdList(in *user.TLUserGetSavedMusicIdList) (*user.VectorLong, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getSavedMusicIdList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getSavedMusicIdList - error: method UserGetSavedMusicIdList not impl")
 
-	return nil, errors.New("user.getSavedMusicIdList not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

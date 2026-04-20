@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,47 +17,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // SyncPushUpdatesIfNot
-// sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
+// sync.pushUpdatesIfNot flags:# user_id:long includes:flags.0?Vector<long> excludes:flags.1?Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdatesIfNot(in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error) {
-	if c.svcCtx == nil || c.svcCtx.SessionClient == nil {
-		return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
-	}
+	// TODO: not impl
+	c.Logger.Errorf("sync.pushUpdatesIfNot - error: method SyncPushUpdatesIfNot not impl")
 
-	if c.svcCtx.StatusClient != nil {
-		excludeSet := make(map[int64]struct{}, len(in.Excludes))
-		for _, id := range in.Excludes {
-			excludeSet[id] = struct{}{}
-		}
-
-		sessionList, err := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &status.TLStatusGetUserOnlineSessions{
-			UserId: in.UserId,
-		})
-		if err != nil {
-			c.Logger.Errorf("sync.pushUpdatesIfNot - StatusGetUserOnlineSessions(%d) error: %v", in.UserId, err)
-		} else {
-			for _, sess := range sessionList.UserSessions {
-				if _, excluded := excludeSet[sess.PermAuthKeyId]; excluded {
-					continue
-				}
-				_, pushErr := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
-					PermAuthKeyId: sess.PermAuthKeyId,
-					Updates:       in.Updates,
-				})
-				if pushErr != nil {
-					c.Logger.Errorf("sync.pushUpdatesIfNot - push to session (permAuthKeyId=%d) error: %v", sess.PermAuthKeyId, pushErr)
-				}
-			}
-		}
-	}
-
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,29 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesGetPinnedDialogs
 // messages.getPinnedDialogs#d6b94df2 folder_id:int = messages.PeerDialogs;
 func (c *DialogsCore) MessagesGetPinnedDialogs(in *tg.TLMessagesGetPinnedDialogs) (*tg.MessagesPeerDialogs, error) {
-	return &tg.MessagesPeerDialogs{
-		Dialogs: []tg.DialogClazz{
-			tg.MakeTLDialog(&tg.TLDialog{
-				Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1}),
-				TopMessage:      10,
-				ReadInboxMaxId:  10,
-				ReadOutboxMaxId: 10,
-				UnreadCount:     0,
-				NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
-			}),
-		},
-		Messages: []tg.MessageClazz{
-			tg.MakeTLMessageEmpty(&tg.TLMessageEmpty{Id: 10}),
-		},
-		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{
-			tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: 1}),
-		},
-		State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{Pts: 1, Qts: 1, Date: 10, Seq: 1, UnreadCount: 0}),
-	}, nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.getPinnedDialogs - error: method MessagesGetPinnedDialogs not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

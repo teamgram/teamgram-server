@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserDeleteUsernameByPeer
 // user.deleteUsernameByPeer peer_type:int peer_id:long = Bool;
 func (c *UserCore) UserDeleteUsernameByPeer(in *user.TLUserDeleteUsernameByPeer) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.deleteUsernameByPeer blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.deleteUsernameByPeer - error: method UserDeleteUsernameByPeer not impl")
 
-	return nil, errors.New("user.deleteUsernameByPeer not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

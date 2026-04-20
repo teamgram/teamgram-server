@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,16 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // IdgenGetNextSeqId
 // idgen.getNextSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetNextSeqId(in *idgen.TLIdgenGetNextSeqId) (*tg.Int64, error) {
-	id, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, in.Key, 1)
-	if err != nil {
-		c.Logger.Errorf("dgen.getNextSeqId(%s) error: %v", in.Key, err)
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("idgen.getNextSeqId - error: method IdgenGetNextSeqId not impl")
 
-	return tg.MakeInt64Helper(id), nil
+	return nil, tg.ErrMethodNotImpl
 }

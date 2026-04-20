@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // contacts.getLocated#d348bc44 flags:# background:flags.1?true geo_point:InputGeoPoint self_expires:flags.0?int = Updates;
 func (c *ContactsCore) ContactsGetLocated(in *tg.TLContactsGetLocated) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("contacts.getLocated blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("contacts.getLocated - error: method ContactsGetLocated not impl")
 
-	return nil, errors.New("contacts.getLocated not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

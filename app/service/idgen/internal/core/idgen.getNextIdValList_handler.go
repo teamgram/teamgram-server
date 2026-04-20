@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,56 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // IdgenGetNextIdValList
 // idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error) {
-	var (
-		idList = make([]idgen.IdValClazz, len(in.Id))
-	)
+	// TODO: not impl
+	c.Logger.Errorf("idgen.getNextIdValList - error: method IdgenGetNextIdValList not impl")
 
-	for i, id := range in.Id {
-		switch id2 := id.(type) {
-		case *idgen.TLInputId:
-			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{
-				Id: c.svcCtx.Dao.Node.Generate().Int64(),
-			})
-		case *idgen.TLInputIds:
-			ids := make([]int64, id2.Num)
-			for j := int32(0); j < id2.Num; j++ {
-				// TODO: 库里提供ids方法，以减少Lock次数
-				ids[j] = c.svcCtx.Node.Generate().Int64()
-			}
-			idList[i] = idgen.MakeTLIdVals(&idgen.TLIdVals{
-				Id: ids,
-			})
-
-		case *idgen.TLInputSeqId:
-			sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, 1)
-			if err != nil {
-				c.Logger.Errorf("dgen.getNextIdValList(%s) error: %v", id2.Key, err)
-				// return err
-			}
-			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-				Id: sid,
-			})
-
-		case *idgen.TLInputNSeqId:
-			sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, int64(id2.N))
-			if err != nil {
-				c.Logger.Errorf("dgen.getNextIdValList(%s, %d) error: %v", id2.Key, id2.N, err)
-				// return err
-			}
-			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-				Id: sid,
-			})
-		default:
-			c.Logger.Errorf("idgen.getNextIdValList - unexpected input id type: %T", id2)
-		}
-	}
-
-	return &idgen.VectorIdVal{
-		Datas: idList,
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

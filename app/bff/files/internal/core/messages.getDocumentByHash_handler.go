@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.getDocumentByHash#b1f2061f sha256:bytes size:long mime_type:string = Document;
 func (c *FilesCore) MessagesGetDocumentByHash(in *tg.TLMessagesGetDocumentByHash) (*tg.Document, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getDocumentByHash blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getDocumentByHash - error: method MessagesGetDocumentByHash not impl")
 
-	return nil, errors.New("messages.getDocumentByHash not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

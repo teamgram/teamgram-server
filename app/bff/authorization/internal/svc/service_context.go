@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,28 +18,17 @@ package svc
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/dao"
-	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/logic"
-	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/plugin"
-	"github.com/teamgram/teamgram-server/v2/pkg/code"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/repository"
 )
 
 type ServiceContext struct {
 	Config config.Config
-	*dao.Dao
-	*logic.AuthLogic
-	Plugin plugin.AuthorizationPlugin
+	Repo   *repository.Repository
 }
 
-func NewServiceContext(c config.Config, code2 code.VerifyCodeInterface, plugin plugin.AuthorizationPlugin) *ServiceContext {
-	d := dao.New(c)
-	if code2 == nil {
-		code2 = code.NewVerifyCode(c.Code)
-	}
+func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:    c,
-		Dao:       d,
-		AuthLogic: logic.NewAuthSignLogic(d, code2),
-		Plugin:    plugin,
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

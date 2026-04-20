@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,28 +17,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // SyncPushRpcResult
 // sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
-	if c.svcCtx != nil && c.svcCtx.SessionClient != nil {
-		_, err := c.svcCtx.SessionClient.SessionPushRpcResultData(c.ctx, &session.TLSessionPushRpcResultData{
-			PermAuthKeyId:  in.PermAuthKeyId,
-			AuthKeyId:      in.AuthKeyId,
-			SessionId:      in.SessionId,
-			ClientReqMsgId: in.ClientReqMsgId,
-			RpcResultData:  in.RpcResult,
-		})
-		if err != nil {
-			return nil, err
-		}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("sync.pushRpcResult - error: method SyncPushRpcResult not impl")
 
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	return nil, tg.ErrMethodNotImpl
 }

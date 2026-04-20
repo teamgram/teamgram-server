@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@ import (
 // ChannelsCheckSearchPostsFlood
 // channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
 func (c *MessagesCore) ChannelsCheckSearchPostsFlood(in *tg.TLChannelsCheckSearchPostsFlood) (*tg.SearchPostsFlood, error) {
-	return tg.MakeTLSearchPostsFlood(&tg.TLSearchPostsFlood{
-		QueryIsFree: true,
-		TotalDaily:  1,
-		Remains:     1,
-		StarsAmount: 0,
-	}).ToSearchPostsFlood(), nil
+	// TODO: not impl
+	c.Logger.Errorf("channels.checkSearchPostsFlood - error: method ChannelsCheckSearchPostsFlood not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

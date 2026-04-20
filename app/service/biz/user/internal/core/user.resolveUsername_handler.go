@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserResolveUsername
 // user.resolveUsername username:string = Peer;
 func (c *UserCore) UserResolveUsername(in *user.TLUserResolveUsername) (*tg.Peer, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.resolveUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.resolveUsername - error: method UserResolveUsername not impl")
 
-	return nil, errors.New("user.resolveUsername not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

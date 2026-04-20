@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // ChatDeleteChat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
 func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*tg.MutableChat, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("chat.deleteChat blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("chat.deleteChat - error: method ChatDeleteChat not impl")
 
-	return nil, errors.New("chat.deleteChat not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

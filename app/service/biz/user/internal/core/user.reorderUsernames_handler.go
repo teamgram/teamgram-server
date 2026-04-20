@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserReorderUsernames
 // user.reorderUsernames peer_type:int peer_id:long username_list:Vector<string> = Bool;
 func (c *UserCore) UserReorderUsernames(in *user.TLUserReorderUsernames) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.reorderUsernames blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.reorderUsernames - error: method UserReorderUsernames not impl")
 
-	return nil, errors.New("user.reorderUsernames not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

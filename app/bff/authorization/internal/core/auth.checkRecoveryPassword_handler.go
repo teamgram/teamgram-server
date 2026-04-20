@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import (
 // AuthCheckRecoveryPassword
 // auth.checkRecoveryPassword#d36bf79 code:string = Bool;
 func (c *AuthorizationCore) AuthCheckRecoveryPassword(in *tg.TLAuthCheckRecoveryPassword) (*tg.Bool, error) {
-	if in.Code == "" {
-		return nil, tg.ErrCodeEmpty
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.checkRecoveryPassword - error: method AuthCheckRecoveryPassword not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

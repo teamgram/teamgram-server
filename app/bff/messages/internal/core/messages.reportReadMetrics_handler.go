@@ -23,9 +23,8 @@ import (
 // MessagesReportReadMetrics
 // messages.reportReadMetrics#4067c5e6 peer:InputPeer metrics:Vector<InputMessageReadMetric> = Bool;
 func (c *MessagesCore) MessagesReportReadMetrics(in *tg.TLMessagesReportReadMetrics) (*tg.Bool, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.reportReadMetrics - error: method MessagesReportReadMetrics not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

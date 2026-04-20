@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.editChatParticipantRank#a00f32b0 peer:InputPeer participant:InputPeer rank:string = Updates;
 func (c *ChatsCore) MessagesEditChatParticipantRank(in *tg.TLMessagesEditChatParticipantRank) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.editChatParticipantRank blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.editChatParticipantRank - error: method MessagesEditChatParticipantRank not impl")
 
-	return nil, errors.New("messages.editChatParticipantRank not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

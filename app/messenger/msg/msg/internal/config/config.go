@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,4 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	InboxClient kitex.RpcClientConf `json:",optional,inherit"`
-	SyncClient  kitex.RpcClientConf `json:",optional,inherit"`
-	IdgenClient kitex.RpcClientConf `json:",optional,inherit"`
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,14 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // IdgenNextId
 // idgen.nextId = Int64;
 func (c *IdgenCore) IdgenNextId(in *idgen.TLIdgenNextId) (*tg.Int64, error) {
-	_ = in
+	// TODO: not impl
+	c.Logger.Errorf("idgen.nextId - error: method IdgenNextId not impl")
 
-	id := c.svcCtx.Dao.Node.Generate().Int64()
-
-	return tg.MakeInt64Helper(id), nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogInsertOrUpdateDialog
 // dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long pinned_msg_id:flags.6?int = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdateDialog) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.UserId != 0 && in.PeerId != 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.insertOrUpdateDialog - error: method DialogInsertOrUpdateDialog not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

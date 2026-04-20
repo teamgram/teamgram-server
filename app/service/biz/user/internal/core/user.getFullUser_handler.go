@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // UserGetFullUser
 // user.getFullUser self_user_id:long id:long = users.UserFull;
 func (c *UserCore) UserGetFullUser(in *user.TLUserGetFullUser) (*tg.UsersUserFull, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("user.getFullUser blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("user.getFullUser - error: method UserGetFullUser not impl")
 
-	return nil, errors.New("user.getFullUser not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

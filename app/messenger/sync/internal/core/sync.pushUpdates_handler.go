@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,40 +17,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // SyncPushUpdates
 // sync.pushUpdates user_id:long updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*tg.Void, error) {
-	if c.svcCtx == nil || c.svcCtx.SessionClient == nil {
-		return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
-	}
+	// TODO: not impl
+	c.Logger.Errorf("sync.pushUpdates - error: method SyncPushUpdates not impl")
 
-	// Look up all online sessions for this user via status service.
-	if c.svcCtx.StatusClient != nil {
-		sessionList, err := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &status.TLStatusGetUserOnlineSessions{
-			UserId: in.UserId,
-		})
-		if err != nil {
-			c.Logger.Errorf("sync.pushUpdates - StatusGetUserOnlineSessions(%d) error: %v", in.UserId, err)
-		} else {
-			for _, sess := range sessionList.UserSessions {
-				_, pushErr := c.svcCtx.SessionClient.SessionPushUpdatesData(c.ctx, &session.TLSessionPushUpdatesData{
-					PermAuthKeyId: sess.PermAuthKeyId,
-					Updates:       in.Updates,
-				})
-				if pushErr != nil {
-					c.Logger.Errorf("sync.pushUpdates - push to session (permAuthKeyId=%d) error: %v", sess.PermAuthKeyId, pushErr)
-				}
-			}
-		}
-	}
-
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	return nil, tg.ErrMethodNotImpl
 }

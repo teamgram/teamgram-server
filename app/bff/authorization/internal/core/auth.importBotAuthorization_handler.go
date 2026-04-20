@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,19 +23,8 @@ import (
 // AuthImportBotAuthorization
 // auth.importBotAuthorization#67a3ff2c flags:int api_id:int api_hash:string bot_auth_token:string = auth.Authorization;
 func (c *AuthorizationCore) AuthImportBotAuthorization(in *tg.TLAuthImportBotAuthorization) (*tg.AuthAuthorization, error) {
-	if in.ApiId <= 0 {
-		return nil, tg.ErrApiIdInvalid
-	}
-	if in.BotAuthToken == "" {
-		return nil, tg.ErrAuthTokenInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.importBotAuthorization - error: method AuthImportBotAuthorization not impl")
 
-	var userID int64
-	if c.MD != nil {
-		userID = c.MD.UserId
-	}
-
-	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
-		User: tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
-	}).ToAuthAuthorization(), nil
+	return nil, tg.ErrMethodNotImpl
 }

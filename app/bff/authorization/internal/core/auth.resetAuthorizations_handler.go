@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthResetAuthorizations
 // auth.resetAuthorizations#9fab0d1a = Bool;
 func (c *AuthorizationCore) AuthResetAuthorizations(in *tg.TLAuthResetAuthorizations) (*tg.Bool, error) {
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.resetAuthorizations - error: method AuthResetAuthorizations not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

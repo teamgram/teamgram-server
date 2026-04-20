@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetUserPinnedMessage
 // dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 func (c *DialogCore) DialogGetUserPinnedMessage(in *dialog.TLDialogGetUserPinnedMessage) (*tg.Int32, error) {
-	if in == nil || in.PeerId == 0 {
-		return tg.MakeInt32Helper(0), nil
-	}
-	return tg.MakeInt32Helper(1), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getUserPinnedMessage - error: method DialogGetUserPinnedMessage not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

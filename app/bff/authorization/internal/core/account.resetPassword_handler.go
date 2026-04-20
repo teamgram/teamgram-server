@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,8 @@ import (
 // AccountResetPassword
 // account.resetPassword#9308ce1b = account.ResetPasswordResult;
 func (c *AuthorizationCore) AccountResetPassword(in *tg.TLAccountResetPassword) (*tg.AccountResetPasswordResult, error) {
-	return tg.MakeTLAccountResetPasswordOk(&tg.TLAccountResetPasswordOk{}).ToAccountResetPasswordResult(), nil
+	// TODO: not impl
+	c.Logger.Errorf("account.resetPassword - error: method AccountResetPassword not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

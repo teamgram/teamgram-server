@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-var _ *tg.Bool
 
 // MediaGetDocumentList
 // media.getDocumentList id_list:Vector<long> = Vector<Document>;
 func (c *MediaCore) MediaGetDocumentList(in *media.TLMediaGetDocumentList) (*media.VectorDocument, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("media.getDocumentList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("media.getDocumentList - error: method MediaGetDocumentList not impl")
 
-	return nil, errors.New("media.getDocumentList not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,53 +17,18 @@
 package svc
 
 import (
-	"context"
-
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/config"
-	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/client"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
-	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/repository"
 )
 
-type MsgSendClient interface {
-	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
-	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
-	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
-	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
-	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
-	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
-	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
-	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
-	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
-}
-
-type MessageQueryClient interface {
-	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error)
-	MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error)
-}
-
 type ServiceContext struct {
-	Config        config.Config
-	MsgClient     MsgSendClient
-	MessageClient MessageQueryClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.MsgClient) {
-		ctx.MsgClient = msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient))
-	}
-	if hasClient(c.MessageClient) {
-		ctx.MessageClient = messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

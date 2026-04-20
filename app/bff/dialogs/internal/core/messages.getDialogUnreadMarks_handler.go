@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesGetDialogUnreadMarks
-// messages.getDialogUnreadMarks#22e24e22 = Vector<DialogPeer>;
+// messages.getDialogUnreadMarks#21202222 flags:# parent_peer:flags.0?InputPeer = Vector<DialogPeer>;
 func (c *DialogsCore) MessagesGetDialogUnreadMarks(in *tg.TLMessagesGetDialogUnreadMarks) (*tg.VectorDialogPeer, error) {
-	return &tg.VectorDialogPeer{
-		Datas: []tg.DialogPeerClazz{
-			tg.MakeTLDialogPeer(&tg.TLDialogPeer{
-				Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1}),
-			}),
-		},
-	}, nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.getDialogUnreadMarks - error: method MessagesGetDialogUnreadMarks not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

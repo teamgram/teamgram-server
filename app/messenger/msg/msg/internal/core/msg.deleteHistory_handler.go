@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgDeleteHistory
 // msg.deleteHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long just_clear:flags.0?true revoke:flags.1?true max_id:int = messages.AffectedHistory;
 func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error) {
-	return makeAffectedHistoryPlaceholder(in.MaxId, 1), nil
+	// TODO: not impl
+	c.Logger.Errorf("msg.deleteHistory - error: method MsgDeleteHistory not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

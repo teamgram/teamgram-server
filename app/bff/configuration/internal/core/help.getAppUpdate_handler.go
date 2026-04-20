@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,10 +24,7 @@ import (
 // help.getAppUpdate#522d5a7d source:string = help.AppUpdate;
 func (c *ConfigurationCore) HelpGetAppUpdate(in *tg.TLHelpGetAppUpdate) (*tg.HelpAppUpdate, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.getAppUpdate - error: method HelpGetAppUpdate not impl")
 
-	rValue := tg.MakeTLHelpNoAppUpdate(&tg.TLHelpNoAppUpdate{
-		// ClazzID: 0,
-	})
-	return rValue.ToHelpAppUpdate(), nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -51,7 +51,7 @@ func MakeInt32Helper(v int32) *Int32 {
 }
 
 func MakeInt64Helper(v int64) *Int64 {
-	return &Int64{Clazz: &TLInt64{ClazzName2: ClazzName_int64, V: v}}
+	return &TLInt64{ClazzName2: ClazzName_int64, V: v}
 }
 
 func MakeStringHelper(v string) *String {

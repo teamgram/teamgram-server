@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@ import (
 // MessagesGetRecentLocations
 // messages.getRecentLocations#702a40e0 peer:InputPeer limit:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetRecentLocations(in *tg.TLMessagesGetRecentLocations) (*tg.MessagesMessages, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.getRecentLocations - error: method MessagesGetRecentLocations not impl")
 
-	return makeBffMessagesMessagesPlaceholder(peer, 1, historyPlaceholderCount(in.Limit), false), nil
+	return nil, tg.ErrMethodNotImpl
 }

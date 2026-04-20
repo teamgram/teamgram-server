@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,11 +24,7 @@ import (
 // help.getInviteText#4d392343 = help.InviteText;
 func (c *ConfigurationCore) HelpGetInviteText(in *tg.TLHelpGetInviteText) (*tg.HelpInviteText, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.getInviteText - error: method HelpGetInviteText not impl")
 
-	rV := tg.MakeTLHelpInviteText(&tg.TLHelpInviteText{
-		Message: "",
-	})
-
-	return rV.ToHelpInviteText(), nil
+	return nil, tg.ErrMethodNotImpl
 }

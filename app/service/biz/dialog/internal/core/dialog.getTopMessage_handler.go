@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetTopMessage
 // dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 func (c *DialogCore) DialogGetTopMessage(in *dialog.TLDialogGetTopMessage) (*tg.Int32, error) {
-	return &tg.Int32{
-		V: 10,
-	}, nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getTopMessage - error: method DialogGetTopMessage not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

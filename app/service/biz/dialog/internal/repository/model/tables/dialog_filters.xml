@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_filters">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO dialog_filters
+                (user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value)
+            VALUES
+                (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value)
+            ON DUPLICATE KEY UPDATE
+                is_chatlist = VALUES(is_chatlist),
+                dialog_filter = VALUES(dialog_filter),
+                joined_by_slug = VALUES(joined_by_slug),
+                slug = VALUES(slug),
+                order_value = VALUES(order_value),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectBySlug">
+        <sql>
+            SELECT
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND slug=:slug AND deleted=0
+            ORDER BY order_value DESC
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND dialog_filter_id=:dialog_filter_id AND deleted=0
+            ORDER BY order_value DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND deleted=0
+            ORDER BY order_value DESC
+        </sql>
+    </operation>
+
+    <operation name="UpdateOrder">
+        <sql>
+            UPDATE
+                dialog_filters
+            SET
+                order_value = :order_value
+            WHERE
+                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+        </sql>
+    </operation>
+
+    <operation name="Clear">
+        <sql>
+            UPDATE
+                dialog_filters
+            SET
+                deleted = 1, dialog_filter = 'null', order_value = 0
+            WHERE
+                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+        </sql>
+    </operation>
+</table>

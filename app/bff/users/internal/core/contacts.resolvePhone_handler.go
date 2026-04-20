@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
 func (c *UsersCore) ContactsResolvePhone(in *tg.TLContactsResolvePhone) (*tg.ContactsResolvedPeer, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("contacts.resolvePhone blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("contacts.resolvePhone - error: method ContactsResolvePhone not impl")
 
-	return nil, errors.New("contacts.resolvePhone not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

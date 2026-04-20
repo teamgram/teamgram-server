@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,19 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthReportMissingCode
 // auth.reportMissingCode#cb9deff6 phone_number:string phone_code_hash:string mnc:string = Bool;
 func (c *AuthorizationCore) AuthReportMissingCode(in *tg.TLAuthReportMissingCode) (*tg.Bool, error) {
-	if _, _, err := checkPhoneNumberInvalid(in.PhoneNumber); err != nil {
-		return nil, err
-	}
-	if in.PhoneCodeHash == "" {
-		return nil, tg.ErrPhoneCodeHashEmpty
-	}
-	if in.Mnc == "" {
-		return nil, tg.ErrInputMethodInvalid
-	}
-	return tg.BoolTrue, nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.reportMissingCode - error: method AuthReportMissingCode not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

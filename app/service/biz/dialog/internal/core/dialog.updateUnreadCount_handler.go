@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogUpdateUnreadCount
 // dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (c *DialogCore) DialogUpdateUnreadCount(in *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.PeerId != 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.updateUnreadCount - error: method DialogUpdateUnreadCount not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

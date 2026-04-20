@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // SyncBroadcastUpdates
 // sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncBroadcastUpdates(in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	// Keep broadcast fanout callable until multi-recipient routing is rebuilt.
-	return tg.VoidValue, nil
+	// TODO: not impl
+	c.Logger.Errorf("sync.broadcastUpdates - error: method SyncBroadcastUpdates not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

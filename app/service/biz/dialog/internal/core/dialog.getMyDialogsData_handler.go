@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,19 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetMyDialogsData
 // dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
-	var users []int64
-	if in != nil && in.User && in.UserId != 0 {
-		users = []int64{in.UserId}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getMyDialogsData - error: method DialogGetMyDialogsData not impl")
 
-	return dialog.MakeTLSimpleDialogsData(&dialog.TLSimpleDialogsData{
-		Users:    users,
-		Chats:    []int64{},
-		Channels: []int64{},
-	}).ToDialogsData(), nil
+	return nil, tg.ErrMethodNotImpl
 }

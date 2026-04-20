@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="video_sizes">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO video_sizes
+                (video_size_id, size_type, width, height, file_size, video_start_ts, file_path)
+            VALUES
+                (:video_size_id, :size_type, :width, :height, :file_size, :video_start_ts, :file_path)
+        </sql>
+    </operation>
+
+    <operation name="SelectListByVideoSizeId" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path
+            FROM
+                video_sizes
+            WHERE
+                video_size_id = :video_size_id ORDER BY id
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectListByVideoSizeIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path
+            FROM
+                video_sizes
+            WHERE
+                video_size_id IN (:idList) ORDER BY id
+            ]]>
+        </sql>
+    </operation>
+
+</table>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="photo_sizes">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO photo_sizes
+                (photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes)
+            VALUES
+                (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+        </sql>
+    </operation>
+
+    <operation name="SelectListByPhotoSizeId" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
+            FROM
+                photo_sizes
+            WHERE
+                photo_size_id = :photo_size_id ORDER BY id
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectListByPhotoSizeIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
+            FROM
+                photo_sizes
+            WHERE
+                photo_size_id IN (:idList) ORDER BY id
+            ]]>
+        </sql>
+    </operation>
+</table>

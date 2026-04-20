@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,8 @@ import (
 // MessagesGetMessageEditData
 // messages.getMessageEditData#fda68d36 peer:InputPeer id:int = messages.MessageEditData;
 func (c *MessagesCore) MessagesGetMessageEditData(in *tg.TLMessagesGetMessageEditData) (*tg.MessagesMessageEditData, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
-	_ = peer
+	// TODO: not impl
+	c.Logger.Errorf("messages.getMessageEditData - error: method MessagesGetMessageEditData not impl")
 
-	return tg.MakeTLMessagesMessageEditData(&tg.TLMessagesMessageEditData{
-		Caption: false,
-	}).ToMessagesMessageEditData(), nil
+	return nil, tg.ErrMethodNotImpl
 }

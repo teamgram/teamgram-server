@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // upload.getFile#be5335be flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:long limit:int = upload.File;
 func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("upload.getFile blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("upload.getFile - error: method UploadGetFile not impl")
 
-	return nil, errors.New("upload.getFile not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogCreateDialogFilter
 // dialog.createDialogFilter user_id:long dialog_filter:DialogFilterExt = DialogFilterExt;
 func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
-	if in != nil && in.DialogFilter != nil {
-		return in.DialogFilter.ToDialogFilterExt(), nil
-	}
-	return makeDialogFilterExtPlaceholder(1, "placeholder-1").ToDialogFilterExt(), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.createDialogFilter - error: method DialogCreateDialogFilter not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

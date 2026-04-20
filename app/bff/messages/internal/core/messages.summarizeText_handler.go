@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,14 +21,10 @@ import (
 )
 
 // MessagesSummarizeText
-// messages.summarizeText#9d4104e2 flags:# peer:InputPeer id:int to_lang:flags.0?string = TextWithEntities;
+// messages.summarizeText#abbbd346 flags:# peer:InputPeer id:int to_lang:flags.0?string tone:flags.2?string = TextWithEntities;
 func (c *MessagesCore) MessagesSummarizeText(in *tg.TLMessagesSummarizeText) (*tg.TextWithEntities, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.summarizeText - error: method MessagesSummarizeText not impl")
 
-	return tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
-		Text:     "placeholder summary",
-		Entities: []tg.MessageEntityClazz{},
-	}).ToTextWithEntities(), nil
+	return nil, tg.ErrMethodNotImpl
 }

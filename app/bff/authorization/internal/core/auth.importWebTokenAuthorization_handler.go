@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,19 +23,8 @@ import (
 // AuthImportWebTokenAuthorization
 // auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
 func (c *AuthorizationCore) AuthImportWebTokenAuthorization(in *tg.TLAuthImportWebTokenAuthorization) (*tg.AuthAuthorization, error) {
-	if in.ApiId <= 0 {
-		return nil, tg.ErrApiIdInvalid
-	}
-	if in.WebAuthToken == "" {
-		return nil, tg.ErrAuthTokenInvalid
-	}
+	// TODO: not impl
+	c.Logger.Errorf("auth.importWebTokenAuthorization - error: method AuthImportWebTokenAuthorization not impl")
 
-	var userID int64
-	if c.MD != nil {
-		userID = c.MD.UserId
-	}
-
-	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
-		User: tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
-	}).ToAuthAuthorization(), nil
+	return nil, tg.ErrMethodNotImpl
 }

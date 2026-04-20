@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,8 @@ import (
 // MessagesSearchSentMedia
 // messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
 func (c *MessagesCore) MessagesSearchSentMedia(in *tg.TLMessagesSearchSentMedia) (*tg.MessagesMessages, error) {
-	return makeBffMessagesMessagesByIDs(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 0}), []int32{1}, false), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.searchSentMedia - error: method MessagesSearchSentMedia not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

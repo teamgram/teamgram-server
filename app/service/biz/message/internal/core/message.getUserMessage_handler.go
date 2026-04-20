@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,29 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
 func (c *MessageCore) MessageGetUserMessage(in *message.TLMessageGetUserMessage) (*tg.MessageBox, error) {
-	return makePlaceholderMessageBox(in.UserId, tg.PEER_USER, in.UserId, in.Id), nil
-}
+	// TODO: not impl
+	c.Logger.Errorf("message.getUserMessage - error: method MessageGetUserMessage not impl")
 
-func makePlaceholderMessageBox(userID int64, peerType int32, peerID int64, messageID int32) *tg.MessageBox {
-	return tg.MakeTLMessageBox(&tg.TLMessageBox{
-		UserId:       userID,
-		MessageId:    messageID,
-		SenderUserId: userID,
-		PeerType:     peerType,
-		PeerId:       peerID,
-		Message: tg.MakeTLMessage(&tg.TLMessage{
-			Out:     true,
-			Id:      messageID,
-			Date:    int32(messageID),
-			Message: "placeholder",
-		}),
-		Pts:      1,
-		PtsCount: 1,
-		Reaction: "",
-	}).ToMessageBox()
+	return nil, tg.ErrMethodNotImpl
 }

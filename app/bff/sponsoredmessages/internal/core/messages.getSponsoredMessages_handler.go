@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSponsoredMessages
-// messages.getSponsoredMessages#9bd2f439 peer:InputPeer = messages.SponsoredMessages;
+// messages.getSponsoredMessages#3d6ce850 flags:# peer:InputPeer msg_id:flags.0?int = messages.SponsoredMessages;
 func (c *SponsoredMessagesCore) MessagesGetSponsoredMessages(in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.getSponsoredMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.getSponsoredMessages - error: method MessagesGetSponsoredMessages not impl")
 
-	return nil, errors.New("messages.getSponsoredMessages not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

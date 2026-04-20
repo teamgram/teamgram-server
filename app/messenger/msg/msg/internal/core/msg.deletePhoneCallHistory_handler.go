@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,15 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgDeletePhoneCallHistory
 // msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 func (c *MsgCore) MsgDeletePhoneCallHistory(in *msg.TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error) {
-	return tg.MakeTLMessagesAffectedFoundMessages(&tg.TLMessagesAffectedFoundMessages{
-		Pts:      1,
-		PtsCount: 1,
-		Offset:   0,
-		Messages: []int32{1},
-	}).ToMessagesAffectedFoundMessages(), nil
+	// TODO: not impl
+	c.Logger.Errorf("msg.deletePhoneCallHistory - error: method MsgDeletePhoneCallHistory not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

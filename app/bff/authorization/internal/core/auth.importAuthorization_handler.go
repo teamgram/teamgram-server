@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,17 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthImportAuthorization
 // auth.importAuthorization#a57a7dad id:long bytes:bytes = auth.Authorization;
 func (c *AuthorizationCore) AuthImportAuthorization(in *tg.TLAuthImportAuthorization) (*tg.AuthAuthorization, error) {
-	var userID int64
-	if c.MD != nil {
-		userID = c.MD.UserId
-	}
-	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
-		FutureAuthToken: append([]byte(nil), in.Bytes...),
-		User:            tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID}),
-	}).ToAuthAuthorization(), nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.importAuthorization - error: method AuthImportAuthorization not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteSavedHistory
-// messages.deleteSavedHistory#6e98102b flags:# peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
+// messages.deleteSavedHistory#4dc5085f flags:# parent_peer:flags.0?InputPeer peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (c *SavedMessageDialogsCore) MessagesDeleteSavedHistory(in *tg.TLMessagesDeleteSavedHistory) (*tg.MessagesAffectedHistory, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.deleteSavedHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.deleteSavedHistory - error: method MessagesDeleteSavedHistory not impl")
 
-	return nil, errors.New("messages.deleteSavedHistory not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

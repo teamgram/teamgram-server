@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,35 +17,18 @@
 package svc
 
 import (
-	"context"
-
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/config"
-	updatesclient "github.com/teamgram/teamgram-server/v2/app/service/biz/updates/client"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/repository"
 )
 
-type UpdatesStateClient interface {
-	UpdatesGetStateV2(ctx context.Context, in *updates.TLUpdatesGetStateV2) (*tg.UpdatesState, error)
-	UpdatesGetDifferenceV2(ctx context.Context, in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error)
-}
-
 type ServiceContext struct {
-	Config        config.Config
-	UpdatesClient UpdatesStateClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.UpdatesClient) {
-		ctx.UpdatesClient = updatesclient.NewUpdatesClient(updatesclient.MustNewKitexClient(c.UpdatesClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

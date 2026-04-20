@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 func (c *UsersCore) UsersGetUsers(in *tg.TLUsersGetUsers) (*tg.VectorUser, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("users.getUsers blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("users.getUsers - error: method UsersGetUsers not impl")
 
-	return nil, errors.New("users.getUsers not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,47 +17,15 @@
 package core
 
 import (
-	"strconv"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // IdgenGetCurrentSeqIdList
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
-	var (
-		idList = make([]idgen.IdValClazz, len(in.Id))
-	)
+	// TODO: not impl
+	c.Logger.Errorf("idgen.getCurrentSeqIdList - error: method IdgenGetCurrentSeqIdList not impl")
 
-	for i, id := range in.Id {
-		switch id2 := id.(type) {
-		case *idgen.TLInputNSeqId:
-			sid, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, id2.Key)
-			if err != nil {
-				c.Logger.Errorf("idgen.getCurrentSeqIdList(%s) error: %v", id2.Key, err)
-				// return err
-				continue
-			}
-
-			if sid == "" {
-				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-					Id: 0,
-				})
-			} else {
-				iV, _ := strconv.ParseInt(sid, 10, 64)
-				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
-					Id: iV,
-				})
-			}
-		default:
-			c.Logger.Errorf("idgen.getCurrentSeqIdList - unexpected input id type: %T", id2)
-		}
-	}
-
-	return &idgen.VectorIdVal{
-		Datas: idList,
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

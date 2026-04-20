@@ -23,15 +23,8 @@ import (
 // MessagesComposeMessageWithAI
 // messages.composeMessageWithAI#fd426afe flags:# proofread:flags.0?true emojify:flags.3?true text:TextWithEntities translate_to_lang:flags.1?string change_tone:flags.2?string = messages.ComposedMessageWithAI;
 func (c *MessagesCore) MessagesComposeMessageWithAI(in *tg.TLMessagesComposeMessageWithAI) (*tg.MessagesComposedMessageWithAI, error) {
-	text := ""
-	if in.Text != nil {
-		text = in.Text.Text
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.composeMessageWithAI - error: method MessagesComposeMessageWithAI not impl")
 
-	return &tg.MessagesComposedMessageWithAI{
-		ResultText: tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
-			Text:     text,
-			Entities: []tg.MessageEntityClazz{},
-		}),
-	}, nil
+	return nil, tg.ErrMethodNotImpl
 }

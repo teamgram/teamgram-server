@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.addChatUser#cbc6d107 chat_id:long user_id:InputUser fwd_limit:int = messages.InvitedUsers;
 func (c *ChatsCore) MessagesAddChatUser(in *tg.TLMessagesAddChatUser) (*tg.MessagesInvitedUsers, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.addChatUser blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.addChatUser - error: method MessagesAddChatUser not impl")
 
-	return nil, errors.New("messages.addChatUser not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

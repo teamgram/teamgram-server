@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,8 @@ import (
 // AccountVerifyEmail
 // account.verifyEmail#32da4cf purpose:EmailVerifyPurpose verification:EmailVerification = account.EmailVerified;
 func (c *AuthorizationCore) AccountVerifyEmail(in *tg.TLAccountVerifyEmail) (*tg.AccountEmailVerified, error) {
-	if verification, ok := in.Verification.(*tg.TLEmailVerificationCode); ok {
-		if verification.Code == "" {
-			return nil, tg.ErrCodeEmpty
-		}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("account.verifyEmail - error: method AccountVerifyEmail not impl")
 
-	return tg.MakeTLAccountEmailVerified(&tg.TLAccountEmailVerified{
-		Email: "t***@example.com",
-	}).ToAccountEmailVerified(), nil
+	return nil, tg.ErrMethodNotImpl
 }

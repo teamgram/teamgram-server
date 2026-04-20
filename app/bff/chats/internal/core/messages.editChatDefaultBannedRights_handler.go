@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // messages.editChatDefaultBannedRights#a5866b41 peer:InputPeer banned_rights:ChatBannedRights = Updates;
 func (c *ChatsCore) MessagesEditChatDefaultBannedRights(in *tg.TLMessagesEditChatDefaultBannedRights) (*tg.Updates, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("messages.editChatDefaultBannedRights blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("messages.editChatDefaultBannedRights - error: method MessagesEditChatDefaultBannedRights not impl")
 
-	return nil, errors.New("messages.editChatDefaultBannedRights not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

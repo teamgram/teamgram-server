@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,13 +24,7 @@ import (
 // help.getNearestDc#1fb33026 = NearestDc;
 func (c *ConfigurationCore) HelpGetNearestDc(in *tg.TLHelpGetNearestDc) (*tg.NearestDc, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.getNearestDc - error: method HelpGetNearestDc not impl")
 
-	rValue := tg.MakeTLNearestDc(&tg.TLNearestDc{
-		Country:   "CN",
-		ThisDc:    1,
-		NearestDc: 1,
-	})
-
-	return rValue.ToNearestDc(), nil
+	return nil, tg.ErrMethodNotImpl
 }

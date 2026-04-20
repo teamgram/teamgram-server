@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesToggleDialogPin
 // messages.toggleDialogPin#a731e257 flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
 func (c *DialogsCore) MessagesToggleDialogPin(in *tg.TLMessagesToggleDialogPin) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.Peer != nil && in.Pinned), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.toggleDialogPin - error: method MessagesToggleDialogPin not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

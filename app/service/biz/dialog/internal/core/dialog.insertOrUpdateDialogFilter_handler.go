@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogInsertOrUpdateDialogFilter
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertOrUpdateDialogFilter) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && in.Id != 0 && in.DialogFilter != nil), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.insertOrUpdateDialogFilter - error: method DialogInsertOrUpdateDialogFilter not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

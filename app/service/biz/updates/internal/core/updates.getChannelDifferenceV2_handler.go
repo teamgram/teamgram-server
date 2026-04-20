@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,15 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // UpdatesGetChannelDifferenceV2
 // updates.getChannelDifferenceV2 auth_key_id:long user_id:long channel_id:long pts:int limit:int = ChannelDifference;
 func (c *UpdatesCore) UpdatesGetChannelDifferenceV2(in *updates.TLUpdatesGetChannelDifferenceV2) (*updates.ChannelDifference, error) {
-	return updates.MakeTLChannelDifference(&updates.TLChannelDifference{
-		Final:        true,
-		Pts:          in.Pts,
-		NewMessages:  []tg.MessageClazz{},
-		OtherUpdates: []tg.UpdateClazz{},
-	}).ToChannelDifference(), nil
+	// TODO: not impl
+	c.Logger.Errorf("updates.getChannelDifferenceV2 - error: method UpdatesGetChannelDifferenceV2 not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

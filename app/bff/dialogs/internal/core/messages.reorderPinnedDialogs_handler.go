@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // MessagesReorderPinnedDialogs
 // messages.reorderPinnedDialogs#3b1adf37 flags:# force:flags.0?true folder_id:int order:Vector<InputDialogPeer> = Bool;
 func (c *DialogsCore) MessagesReorderPinnedDialogs(in *tg.TLMessagesReorderPinnedDialogs) (*tg.Bool, error) {
-	return tg.ToBool(in != nil && len(in.Order) > 0), nil
+	// TODO: not impl
+	c.Logger.Errorf("messages.reorderPinnedDialogs - error: method MessagesReorderPinnedDialogs not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

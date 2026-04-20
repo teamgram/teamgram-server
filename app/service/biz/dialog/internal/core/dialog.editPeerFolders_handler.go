@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,17 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogEditPeerFolders
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
-	result := &dialog.VectorDialogPinnedExt{Datas: []dialog.DialogPinnedExtClazz{}}
-	if in == nil {
-		return result, nil
-	}
-	for idx, peerID := range in.PeerDialogList {
-		result.Datas = append(result.Datas, makeDialogPinnedExtPlaceholder(tg.PEER_USER, peerID, int64(idx+1)))
-	}
-	return result, nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.editPeerFolders - error: method DialogEditPeerFolders not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

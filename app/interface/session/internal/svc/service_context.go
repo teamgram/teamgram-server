@@ -1,11 +1,10 @@
-// Copyright 2024 Teamgooo Authors
-//  All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,31 +13,22 @@
 // limitations under the License.
 //
 // Author: teamgramio (teamgram.io@gmail.com)
-//
 
 package svc
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/dao"
-	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/sess"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/repository"
 )
 
 type ServiceContext struct {
-	Config      config.Config
-	MainAuthMgr *sess.MainAuthWrapperManager
-	*dao.Dao
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	d := dao.New(c)
-	mainAuthMgr := sess.NewMainAuthWrapperManager(d)
-	d.RpcShardingManager.RegisterCB(mainAuthMgr.OnShardingCB)
-	d.RpcShardingManager.Start()
-
 	return &ServiceContext{
-		Config:      c,
-		MainAuthMgr: mainAuthMgr,
-		Dao:         d,
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

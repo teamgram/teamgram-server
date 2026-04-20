@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,43 +17,14 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSearchResultsCalendar
 // messages.getSearchResultsCalendar#6aa3f6bd flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
 func (c *MessagesCore) MessagesGetSearchResultsCalendar(in *tg.TLMessagesGetSearchResultsCalendar) (*tg.MessagesSearchResultsCalendar, error) {
-	peer, err := bffPeerFromInput(c, in.Peer)
-	if err != nil {
-		return nil, err
-	}
-	startID := historyPlaceholderStartID(in.OffsetId, 0, 0)
-	now := int32(time.Now().Unix())
+	// TODO: not impl
+	c.Logger.Errorf("messages.getSearchResultsCalendar - error: method MessagesGetSearchResultsCalendar not impl")
 
-	return tg.MakeTLMessagesSearchResultsCalendar(&tg.TLMessagesSearchResultsCalendar{
-		Count:    1,
-		MinDate:  now,
-		MinMsgId: startID,
-		Periods: []tg.SearchResultsCalendarPeriodClazz{
-			tg.MakeTLSearchResultsCalendarPeriod(&tg.TLSearchResultsCalendarPeriod{
-				Date:     now,
-				MinMsgId: startID,
-				MaxMsgId: startID,
-				Count:    1,
-			}),
-		},
-		Messages: []tg.MessageClazz{
-			tg.MakeTLMessage(&tg.TLMessage{
-				Id:      startID,
-				Out:     true,
-				Date:    now,
-				Message: "placeholder",
-				PeerId:  peer,
-			}),
-		},
-		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{},
-	}).ToMessagesSearchResultsCalendar(), nil
+	return nil, tg.ErrMethodNotImpl
 }

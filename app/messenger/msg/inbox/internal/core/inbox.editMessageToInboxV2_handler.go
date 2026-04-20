@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // InboxEditMessageToInboxV2
 // inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long new_message:MessageBox dst_message:flags.1?MessageBox users:flags.2?Vector<User> chats:flags.3?Vector<Chat> = Void;
 func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInboxV2) (*tg.Void, error) {
-	return tg.MakeTLVoid(&tg.TLVoid{}).ToVoid(), nil
+	// TODO: not impl
+	c.Logger.Errorf("inbox.editMessageToInboxV2 - error: method InboxEditMessageToInboxV2 not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -3,13 +3,10 @@ module github.com/teamgram/teamgram-server/v2
 go 1.24.0
 
 require (
-	github.com/alicebob/miniredis/v2 v2.36.1
 	github.com/apache/thrift v0.16.0
-	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/gopkg v0.1.3
 	github.com/cloudwego/kitex v0.16.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
-	github.com/lxzan/gws v1.8.9
 	github.com/nyaruka/phonenumbers v1.6.12
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/oschwald/geoip2-golang v1.13.0
@@ -18,7 +15,6 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/teamgram/marmota v0.2.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
-	github.com/valyala/bytebufferpool v1.0.0
 	github.com/zeromicro/go-zero v1.10.0
 	golang.org/x/crypto v0.47.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
@@ -48,7 +44,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -64,7 +59,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/golang/snappy v1.0.0 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -115,7 +110,6 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	github.com/yuin/gopher-lua v1.1.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.2 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.2 // indirect

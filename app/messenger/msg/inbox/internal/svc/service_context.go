@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,34 +17,18 @@
 package svc
 
 import (
-	"context"
-
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/internal/config"
-	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/internal/repository"
 )
 
-type SyncPushClient interface {
-	SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error)
-}
-
 type ServiceContext struct {
-	Config     config.Config
-	SyncClient SyncPushClient
+	Config config.Config
+	Repo   *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	ctx := &ServiceContext{
+	return &ServiceContext{
 		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
-	if hasClient(c.SyncClient) {
-		ctx.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
-	}
-	return ctx
-}
-
-func hasClient(c kitex.RpcClientConf) bool {
-	return c.DestService != "" || c.Target != "" || len(c.Endpoints) > 0 || c.HasEtcd()
 }

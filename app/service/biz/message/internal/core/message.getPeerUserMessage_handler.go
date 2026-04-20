@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MessageGetPeerUserMessage
 // message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 func (c *MessageCore) MessageGetPeerUserMessage(in *message.TLMessageGetPeerUserMessage) (*tg.MessageBox, error) {
-	return makePlaceholderMessageBox(in.UserId, tg.PEER_USER, in.PeerUserId, in.MsgId), nil
+	// TODO: not impl
+	c.Logger.Errorf("message.getPeerUserMessage - error: method MessageGetPeerUserMessage not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

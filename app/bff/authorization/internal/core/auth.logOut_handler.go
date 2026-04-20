@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // AuthLogOut
 // auth.logOut#3e72ba19 = auth.LoggedOut;
 func (c *AuthorizationCore) AuthLogOut(in *tg.TLAuthLogOut) (*tg.AuthLoggedOut, error) {
-	return tg.MakeTLAuthLoggedOut(&tg.TLAuthLoggedOut{
-		FutureAuthToken: []byte{},
-	}).ToAuthLoggedOut(), nil
+	// TODO: not impl
+	c.Logger.Errorf("auth.logOut - error: method AuthLogOut not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,12 +23,8 @@ import (
 // MessagesSaveDefaultSendAs
 // messages.saveDefaultSendAs#ccfddf96 peer:InputPeer send_as:InputPeer = Bool;
 func (c *MessagesCore) MessagesSaveDefaultSendAs(in *tg.TLMessagesSaveDefaultSendAs) (*tg.Bool, error) {
-	if _, err := bffPeerFromInput(c, in.Peer); err != nil {
-		return nil, err
-	}
-	if _, err := bffPeerFromInput(c, in.SendAs); err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.saveDefaultSendAs - error: method MessagesSaveDefaultSendAs not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="saved_dialogs">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO saved_dialogs
+                (user_id, peer_type, peer_id, pinned, top_message)
+            VALUES
+                (:user_id, :peer_type, :peer_id, 0, :top_message)
+            ON DUPLICATE KEY UPDATE
+                top_message = VALUES(top_message),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, pinned, top_message
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectPinnedDialogs" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, peer_type, peer_id, pinned, top_message
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND pinned > 0 AND deleted = 0
+            ORDER BY pinned DESC
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectExcludePinnedDialogs" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, peer_type, peer_id, pinned, top_message
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND pinned = 0 AND top_message < :top_message AND deleted = 0
+            ORDER BY top_message DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogs" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, peer_type, peer_id, pinned, top_message
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND top_message < :top_message AND deleted = 0
+            ORDER BY top_message DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="UpdateUserUnPinned">
+        <sql>
+            UPDATE
+                saved_dialogs
+            SET
+                pinned = 0
+            WHERE
+                user_id=:user_id AND pinned>0 AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="UpdateUserPeerPinned">
+        <sql>
+            UPDATE
+                saved_dialogs
+            SET
+                pinned = :pinned
+            WHERE
+                user_id=:user_id AND peer_type=:peer_type AND peer_id=:peer_id
+        </sql>
+    </operation>
+</table>

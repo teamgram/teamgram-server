@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,12 +24,7 @@ import (
 // help.getCountriesList#735787a8 lang_code:string hash:int = help.CountriesList;
 func (c *ConfigurationCore) HelpGetCountriesList(in *tg.TLHelpGetCountriesList) (*tg.HelpCountriesList, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.getCountriesList - error: method HelpGetCountriesList not impl")
 
-	rV := tg.MakeTLHelpCountriesList(&tg.TLHelpCountriesList{
-		Countries: []tg.HelpCountryClazz{},
-		Hash:      0,
-	})
-
-	return rV.ToHelpCountriesList(), nil
+	return nil, tg.ErrMethodNotImpl
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,10 @@ import (
 )
 
 // MessagesSearchGlobal
-// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true groups_only:flags.2?true users_only:flags.3?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (c *MessagesCore) MessagesSearchGlobal(in *tg.TLMessagesSearchGlobal) (*tg.MessagesMessages, error) {
-	peer, err := bffPeerFromInput(c, in.OffsetPeer)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("messages.searchGlobal - error: method MessagesSearchGlobal not impl")
 
-	return makeBffMessagesMessagesPlaceholder(peer, historyPlaceholderStartID(in.OffsetId, 0, 0), historyPlaceholderCount(in.Limit), false), nil
+	return nil, tg.ErrMethodNotImpl
 }

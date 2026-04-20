@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetChannelMessageReadParticipants
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (c *DialogCore) DialogGetChannelMessageReadParticipants(in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error) {
-	if in != nil && in.ChannelId != 0 && in.MsgId != 0 {
-		return &dialog.VectorLong{Datas: []int64{in.UserId}}, nil
-	}
-	return &dialog.VectorLong{Datas: []int64{}}, nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getChannelMessageReadParticipants - error: method DialogGetChannelMessageReadParticipants not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

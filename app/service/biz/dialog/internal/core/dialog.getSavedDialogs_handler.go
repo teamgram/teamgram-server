@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // DialogGetSavedDialogs
 // dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
 func (c *DialogCore) DialogGetSavedDialogs(in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
-	if in != nil && in.UserId != 0 && in.Limit > 0 {
-		return makeSavedDialogListPlaceholder(in.UserId, false).ToSavedDialogList(), nil
-	}
-	return makeSavedDialogListPlaceholder(0, false).ToSavedDialogList(), nil
+	// TODO: not impl
+	c.Logger.Errorf("dialog.getSavedDialogs - error: method DialogGetSavedDialogs not impl")
+
+	return nil, tg.ErrMethodNotImpl
 }

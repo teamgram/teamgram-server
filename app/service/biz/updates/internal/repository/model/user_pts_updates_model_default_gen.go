@@ -1,0 +1,115 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ *   Created from by 'dalgen'
+ *
+ * Copyright (c) 2026 The Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teamgramio (teamgram.io@gmail.com)
+ */
+
+package model
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+
+	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stringx"
+)
+
+var (
+	user_pts_updatesFieldNames          = builder.RawFieldNames(&UserPtsUpdates{})
+	user_pts_updatesRows                = strings.Join(user_pts_updatesFieldNames, ",")
+	user_pts_updatesRowsExpectAutoSet   = strings.Join(stringx.Remove(user_pts_updatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	user_pts_updatesRowsWithPlaceHolder = strings.Join(stringx.Remove(user_pts_updatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheTUserPtsUpdatesIdPrefix = "cache:t:user_pts_updates:id:"
+
+	cacheUserPtsUpdatesIdPrefix = "cache#UserPtsUpdates#id"
+)
+
+type (
+	user_pts_updatesModel interface {
+		Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error)
+		FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error)
+		FindListByIdList(ctx context.Context, id ...int64) ([]UserPtsUpdates, error)
+		Update2(ctx context.Context, data *UserPtsUpdates) error
+		Delete2(ctx context.Context, id int64) error
+	}
+
+	defaultUserPtsUpdatesModel struct {
+		db *sqlx.DB
+	}
+
+	UserPtsUpdates struct {
+		Id         int64  `db:"id" json:"id"`
+		UserId     int64  `db:"user_id" json:"user_id"`
+		Pts        int32  `db:"pts" json:"pts"`
+		PtsCount   int32  `db:"pts_count" json:"pts_count"`
+		UpdateType int32  `db:"update_type" json:"update_type"`
+		UpdateData string `db:"update_data" json:"update_data"`
+		Date2      int64  `db:"date2" json:"date2"`
+	}
+)
+
+func newUserPtsUpdatesModel(db *sqlx.DB) *defaultUserPtsUpdatesModel {
+	return &defaultUserPtsUpdatesModel{
+		db: db,
+	}
+}
+
+func (m *defaultUserPtsUpdatesModel) Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error) {
+	query := fmt.Sprintf("insert into `user_pts_updates` (%s) values (?, ?, ?, ?, ?, ?)", user_pts_updatesRowsExpectAutoSet)
+	return m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2)
+}
+
+func (m *defaultUserPtsUpdatesModel) Delete2(ctx context.Context, id int64) error {
+	query := "delete from `user_pts_updates` where `id` = ?"
+	_, err := m.db.Exec(ctx, query, id)
+	return err
+}
+
+func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error) {
+	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", user_pts_updatesRows)
+	var resp UserPtsUpdates
+	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ...int64) ([]UserPtsUpdates, error) {
+	if len(id) == 0 {
+		return []UserPtsUpdates{}, nil
+	}
+
+	query := fmt.Sprintf("select %s from user_pts_updates where id in (%s)", user_pts_updatesRows, sqlx.InInt64List(id))
+
+	var resp []UserPtsUpdates
+	err := m.db.QueryRowsPartial(ctx, &resp, query)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *defaultUserPtsUpdatesModel) Update2(ctx context.Context, data *UserPtsUpdates) error {
+	query := fmt.Sprintf("update `user_pts_updates` set %s where `id` = ?", user_pts_updatesRowsWithPlaceHolder)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2, data.Id)
+	return err
+}
+
+func (m *defaultUserPtsUpdatesModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s#%v", cacheUserPtsUpdatesIdPrefix, primary)
+}
+
+func (m *defaultUserPtsUpdatesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
+	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", user_pts_updatesRows)
+	return m.db.QueryRowPartial(ctx, v, query, primary)
+}

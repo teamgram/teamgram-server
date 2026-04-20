@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import (
 // help.dismissSuggestion#f50dbaa1 peer:InputPeer suggestion:string = Bool;
 func (c *ConfigurationCore) HelpDismissSuggestion(in *tg.TLHelpDismissSuggestion) (*tg.Bool, error) {
 	// TODO: not impl
-	_ = in
+	c.Logger.Errorf("help.dismissSuggestion - error: method HelpDismissSuggestion not impl")
 
-	return tg.BoolTrue, nil
+	return nil, tg.ErrMethodNotImpl
 }

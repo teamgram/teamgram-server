@@ -1,4 +1,4 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,27 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var _ *tg.Bool
-
 // MsgReadMessageContents
 // msg.readMessageContents user_id:long auth_key_id:long peer_type:int peer_id:long id:Vector<ContentMessage> = messages.AffectedMessages;
 func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error) {
-	pts := int32(1)
-	ptsCount := int32(1)
-	if len(in.Id) > 0 {
-		ptsCount = int32(len(in.Id))
-		for _, content := range in.Id {
-			if content == nil {
-				continue
-			}
-			if x := content.ToContentMessage(); x != nil && x.Id > pts {
-				pts = x.Id
-			}
-		}
-	}
+	// TODO: not impl
+	c.Logger.Errorf("msg.readMessageContents - error: method MsgReadMessageContents not impl")
 
-	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
-		Pts:      pts,
-		PtsCount: ptsCount,
-	}).ToMessagesAffectedMessages(), nil
+	return nil, tg.ErrMethodNotImpl
 }
