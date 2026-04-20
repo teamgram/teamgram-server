@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	auth_usersFieldNames          = builder.RawFieldNames(&AuthUsers{})
-	auth_usersRows                = strings.Join(auth_usersFieldNames, ",")
-	auth_usersRowsExpectAutoSet   = strings.Join(stringx.Remove(auth_usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	auth_usersRowsWithPlaceHolder = strings.Join(stringx.Remove(auth_usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	authUsersFieldNames          = builder.RawFieldNames(&AuthUsers{})
+	authUsersRows                = strings.Join(authUsersFieldNames, ",")
+	authUsersRowsExpectAutoSet   = strings.Join(stringx.Remove(authUsersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	authUsersRowsWithPlaceHolder = strings.Join(stringx.Remove(authUsersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTAuthUsersIdPrefix = "cache:t:auth_users:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	auth_usersModel interface {
+	authUsersModel interface {
 		Insert2(ctx context.Context, data *AuthUsers) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*AuthUsers, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]AuthUsers, error)
@@ -70,7 +70,7 @@ func newAuthUsersModel(db *sqlx.DB) *defaultAuthUsersModel {
 }
 
 func (m *defaultAuthUsersModel) Insert2(ctx context.Context, data *AuthUsers) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", auth_usersRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `auth_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", authUsersRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted)
 }
 
@@ -81,7 +81,7 @@ func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultAuthUsersModel) FindOne(ctx context.Context, id int64) (*AuthUsers, error) {
-	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", auth_usersRows)
+	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", authUsersRows)
 	var resp AuthUsers
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -95,7 +95,7 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 		return []AuthUsers{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from auth_users where id in (%s)", auth_usersRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from auth_users where id in (%s)", authUsersRows, sqlx.InInt64List(id))
 
 	var resp []AuthUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -106,13 +106,13 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 }
 
 func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) error {
-	query := fmt.Sprintf("update `auth_users` set %s where `id` = ?", auth_usersRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `auth_users` set %s where `id` = ?", authUsersRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultAuthUsersModel) FindOneByAuthKeyIdUserId(ctx context.Context, authKeyId int64, userId int64) (*AuthUsers, error) {
-	query := fmt.Sprintf("select %s from auth_users where auth_key_id = ? AND user_id = ? limit 1", auth_usersRows)
+	query := fmt.Sprintf("select %s from auth_users where auth_key_id = ? AND user_id = ? limit 1", authUsersRows)
 	var resp AuthUsers
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, userId)
 	if err != nil {
@@ -126,6 +126,6 @@ func (m *defaultAuthUsersModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultAuthUsersModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", auth_usersRows)
+	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", authUsersRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

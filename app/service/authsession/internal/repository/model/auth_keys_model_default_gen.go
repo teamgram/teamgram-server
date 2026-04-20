@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	auth_keysFieldNames          = builder.RawFieldNames(&AuthKeys{})
-	auth_keysRows                = strings.Join(auth_keysFieldNames, ",")
-	auth_keysRowsExpectAutoSet   = strings.Join(stringx.Remove(auth_keysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	auth_keysRowsWithPlaceHolder = strings.Join(stringx.Remove(auth_keysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	authKeysFieldNames          = builder.RawFieldNames(&AuthKeys{})
+	authKeysRows                = strings.Join(authKeysFieldNames, ",")
+	authKeysRowsExpectAutoSet   = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	authKeysRowsWithPlaceHolder = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTAuthKeysIdPrefix = "cache:t:auth_keys:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	auth_keysModel interface {
+	authKeysModel interface {
 		Insert2(ctx context.Context, data *AuthKeys) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*AuthKeys, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]AuthKeys, error)
@@ -52,10 +52,14 @@ type (
 	}
 
 	AuthKeys struct {
-		Id        int64  `db:"id" json:"id"`
-		AuthKeyId int64  `db:"auth_key_id" json:"auth_key_id"`
-		Body      string `db:"body" json:"body"`
-		Deleted   bool   `db:"deleted" json:"deleted"`
+		Id                 int64  `db:"id" json:"id"`
+		AuthKeyId          int64  `db:"auth_key_id" json:"auth_key_id"`
+		Body               string `db:"body" json:"body"`
+		AuthKeyType        int32  `db:"auth_key_type" json:"auth_key_type"`
+		PermAuthKeyId      int64  `db:"perm_auth_key_id" json:"perm_auth_key_id"`
+		TempAuthKeyId      int64  `db:"temp_auth_key_id" json:"temp_auth_key_id"`
+		MediaTempAuthKeyId int64  `db:"media_temp_auth_key_id" json:"media_temp_auth_key_id"`
+		Deleted            bool   `db:"deleted" json:"deleted"`
 	}
 )
 
@@ -66,8 +70,8 @@ func newAuthKeysModel(db *sqlx.DB) *defaultAuthKeysModel {
 }
 
 func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_keys` (%s) values (?, ?, ?)", auth_keysRowsExpectAutoSet)
-	return m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.Deleted)
+	query := fmt.Sprintf("insert into `auth_keys` (%s) values (?, ?, ?, ?, ?, ?, ?)", authKeysRowsExpectAutoSet)
+	return m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted)
 }
 
 func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
@@ -77,7 +81,7 @@ func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys, error) {
-	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", auth_keysRows)
+	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
 	var resp AuthKeys
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -91,7 +95,7 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 		return []AuthKeys{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from auth_keys where id in (%s)", auth_keysRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from auth_keys where id in (%s)", authKeysRows, sqlx.InInt64List(id))
 
 	var resp []AuthKeys
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -102,13 +106,13 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 }
 
 func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) error {
-	query := fmt.Sprintf("update `auth_keys` set %s where `id` = ?", auth_keysRowsWithPlaceHolder)
-	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.Deleted, data.Id)
+	query := fmt.Sprintf("update `auth_keys` set %s where `id` = ?", authKeysRowsWithPlaceHolder)
+	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error) {
-	query := fmt.Sprintf("select %s from auth_keys where auth_key_id = ? limit 1", auth_keysRows)
+	query := fmt.Sprintf("select %s from auth_keys where auth_key_id = ? limit 1", authKeysRows)
 	var resp AuthKeys
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId)
 	if err != nil {
@@ -122,7 +126,7 @@ func (m *defaultAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, auth
 		return []AuthKeys{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from auth_keys where auth_key_id in (%s)", auth_keysRows, sqlx.InInt64List(authKeyId))
+	query := fmt.Sprintf("select %s from auth_keys where auth_key_id in (%s)", authKeysRows, sqlx.InInt64List(authKeyId))
 
 	var resp []AuthKeys
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -137,6 +141,6 @@ func (m *defaultAuthKeysModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultAuthKeysModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", auth_keysRows)
+	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

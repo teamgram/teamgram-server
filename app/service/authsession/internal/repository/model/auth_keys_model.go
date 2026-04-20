@@ -20,7 +20,7 @@ type (
 	// AuthKeysModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customAuthKeysModel.
 	AuthKeysModel interface {
-		auth_keysModel
+		authKeysModel
 		bizAuthKeysModel
 		extendAuthKeysModel
 	}

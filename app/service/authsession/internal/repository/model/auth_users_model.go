@@ -20,7 +20,7 @@ type (
 	// AuthUsersModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customAuthUsersModel.
 	AuthUsersModel interface {
-		auth_usersModel
+		authUsersModel
 		bizAuthUsersModel
 		extendAuthUsersModel
 	}
