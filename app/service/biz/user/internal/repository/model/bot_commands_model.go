@@ -20,7 +20,7 @@ type (
 	// BotCommandsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customBotCommandsModel.
 	BotCommandsModel interface {
-		bot_commandsModel
+		botCommandsModel
 		bizBotCommandsModel
 		extendBotCommandsModel
 	}

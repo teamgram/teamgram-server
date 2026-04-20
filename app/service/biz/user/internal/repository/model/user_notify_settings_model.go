@@ -20,7 +20,7 @@ type (
 	// UserNotifySettingsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserNotifySettingsModel.
 	UserNotifySettingsModel interface {
-		user_notify_settingsModel
+		userNotifySettingsModel
 		bizUserNotifySettingsModel
 		extendUserNotifySettingsModel
 	}

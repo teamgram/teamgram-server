@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_global_privacy_settingsFieldNames          = builder.RawFieldNames(&UserGlobalPrivacySettings{})
-	user_global_privacy_settingsRows                = strings.Join(user_global_privacy_settingsFieldNames, ",")
-	user_global_privacy_settingsRowsExpectAutoSet   = strings.Join(stringx.Remove(user_global_privacy_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_global_privacy_settingsRowsWithPlaceHolder = strings.Join(stringx.Remove(user_global_privacy_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userGlobalPrivacySettingsFieldNames          = builder.RawFieldNames(&UserGlobalPrivacySettings{})
+	userGlobalPrivacySettingsRows                = strings.Join(userGlobalPrivacySettingsFieldNames, ",")
+	userGlobalPrivacySettingsRowsExpectAutoSet   = strings.Join(stringx.Remove(userGlobalPrivacySettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userGlobalPrivacySettingsRowsWithPlaceHolder = strings.Join(stringx.Remove(userGlobalPrivacySettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserGlobalPrivacySettingsIdPrefix = "cache:t:user_global_privacy_settings:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	user_global_privacy_settingsModel interface {
+	userGlobalPrivacySettingsModel interface {
 		Insert2(ctx context.Context, data *UserGlobalPrivacySettings) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserGlobalPrivacySettings, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]UserGlobalPrivacySettings, error)
@@ -69,7 +69,7 @@ func newUserGlobalPrivacySettingsModel(db *sqlx.DB) *defaultUserGlobalPrivacySet
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Insert2(ctx context.Context, data *UserGlobalPrivacySettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_global_privacy_settings` (%s) values (?, ?, ?, ?, ?, ?)", user_global_privacy_settingsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_global_privacy_settings` (%s) values (?, ?, ?, ?, ?, ?)", userGlobalPrivacySettingsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium)
 }
 
@@ -80,7 +80,7 @@ func (m *defaultUserGlobalPrivacySettingsModel) Delete2(ctx context.Context, id 
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOne(ctx context.Context, id int64) (*UserGlobalPrivacySettings, error) {
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where id = ? limit 1", user_global_privacy_settingsRows)
+	query := fmt.Sprintf("select %s from user_global_privacy_settings where id = ? limit 1", userGlobalPrivacySettingsRows)
 	var resp UserGlobalPrivacySettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -94,7 +94,7 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 		return []UserGlobalPrivacySettings{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where id in (%s)", user_global_privacy_settingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from user_global_privacy_settings where id in (%s)", userGlobalPrivacySettingsRows, sqlx.InInt64List(id))
 
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -105,13 +105,13 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Update2(ctx context.Context, data *UserGlobalPrivacySettings) error {
-	query := fmt.Sprintf("update `user_global_privacy_settings` set %s where `id` = ?", user_global_privacy_settingsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_global_privacy_settings` set %s where `id` = ?", userGlobalPrivacySettingsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium, data.Id)
 	return err
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOneByUserId(ctx context.Context, userId int64) (*UserGlobalPrivacySettings, error) {
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id = ? limit 1", user_global_privacy_settingsRows)
+	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id = ? limit 1", userGlobalPrivacySettingsRows)
 	var resp UserGlobalPrivacySettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 	if err != nil {
@@ -125,7 +125,7 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByUserIdList(ctx context
 		return []UserGlobalPrivacySettings{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id in (%s)", user_global_privacy_settingsRows, sqlx.InInt64List(userId))
+	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id in (%s)", userGlobalPrivacySettingsRows, sqlx.InInt64List(userId))
 
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -140,6 +140,6 @@ func (m *defaultUserGlobalPrivacySettingsModel) formatPrimary(primary interface{
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where id = ? limit 1", user_global_privacy_settingsRows)
+	query := fmt.Sprintf("select %s from user_global_privacy_settings where id = ? limit 1", userGlobalPrivacySettingsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

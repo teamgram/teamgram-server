@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_pts_updatesFieldNames          = builder.RawFieldNames(&UserPtsUpdates{})
-	user_pts_updatesRows                = strings.Join(user_pts_updatesFieldNames, ",")
-	user_pts_updatesRowsExpectAutoSet   = strings.Join(stringx.Remove(user_pts_updatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_pts_updatesRowsWithPlaceHolder = strings.Join(stringx.Remove(user_pts_updatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userPtsUpdatesFieldNames          = builder.RawFieldNames(&UserPtsUpdates{})
+	userPtsUpdatesRows                = strings.Join(userPtsUpdatesFieldNames, ",")
+	userPtsUpdatesRowsExpectAutoSet   = strings.Join(stringx.Remove(userPtsUpdatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userPtsUpdatesRowsWithPlaceHolder = strings.Join(stringx.Remove(userPtsUpdatesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserPtsUpdatesIdPrefix = "cache:t:user_pts_updates:id:"
 
@@ -34,7 +34,7 @@ var (
 )
 
 type (
-	user_pts_updatesModel interface {
+	userPtsUpdatesModel interface {
 		Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]UserPtsUpdates, error)
@@ -64,7 +64,7 @@ func newUserPtsUpdatesModel(db *sqlx.DB) *defaultUserPtsUpdatesModel {
 }
 
 func (m *defaultUserPtsUpdatesModel) Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_pts_updates` (%s) values (?, ?, ?, ?, ?, ?)", user_pts_updatesRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_pts_updates` (%s) values (?, ?, ?, ?, ?, ?)", userPtsUpdatesRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2)
 }
 
@@ -75,7 +75,7 @@ func (m *defaultUserPtsUpdatesModel) Delete2(ctx context.Context, id int64) erro
 }
 
 func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error) {
-	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", user_pts_updatesRows)
+	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", userPtsUpdatesRows)
 	var resp UserPtsUpdates
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -89,7 +89,7 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 		return []UserPtsUpdates{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_pts_updates where id in (%s)", user_pts_updatesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from user_pts_updates where id in (%s)", userPtsUpdatesRows, sqlx.InInt64List(id))
 
 	var resp []UserPtsUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -100,7 +100,7 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 }
 
 func (m *defaultUserPtsUpdatesModel) Update2(ctx context.Context, data *UserPtsUpdates) error {
-	query := fmt.Sprintf("update `user_pts_updates` set %s where `id` = ?", user_pts_updatesRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_pts_updates` set %s where `id` = ?", userPtsUpdatesRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2, data.Id)
 	return err
 }
@@ -110,6 +110,6 @@ func (m *defaultUserPtsUpdatesModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultUserPtsUpdatesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", user_pts_updatesRows)
+	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", userPtsUpdatesRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

@@ -20,7 +20,7 @@ type (
 	// PopularContactsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customPopularContactsModel.
 	PopularContactsModel interface {
-		popular_contactsModel
+		popularContactsModel
 		bizPopularContactsModel
 		extendPopularContactsModel
 	}

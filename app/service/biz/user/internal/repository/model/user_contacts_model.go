@@ -20,7 +20,7 @@ type (
 	// UserContactsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserContactsModel.
 	UserContactsModel interface {
-		user_contactsModel
+		userContactsModel
 		bizUserContactsModel
 		extendUserContactsModel
 	}

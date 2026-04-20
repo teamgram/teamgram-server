@@ -20,7 +20,7 @@ type (
 	// VideoSizesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customVideoSizesModel.
 	VideoSizesModel interface {
-		video_sizesModel
+		videoSizesModel
 		bizVideoSizesModel
 		extendVideoSizesModel
 	}

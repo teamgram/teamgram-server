@@ -20,7 +20,7 @@ type (
 	// DialogFiltersModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customDialogFiltersModel.
 	DialogFiltersModel interface {
-		dialog_filtersModel
+		dialogFiltersModel
 		bizDialogFiltersModel
 		extendDialogFiltersModel
 	}

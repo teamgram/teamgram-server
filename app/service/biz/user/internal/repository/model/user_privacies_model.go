@@ -20,7 +20,7 @@ type (
 	// UserPrivaciesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserPrivaciesModel.
 	UserPrivaciesModel interface {
-		user_privaciesModel
+		userPrivaciesModel
 		bizUserPrivaciesModel
 		extendUserPrivaciesModel
 	}

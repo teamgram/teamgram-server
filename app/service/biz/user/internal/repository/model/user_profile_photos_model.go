@@ -20,7 +20,7 @@ type (
 	// UserProfilePhotosModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserProfilePhotosModel.
 	UserProfilePhotosModel interface {
-		user_profile_photosModel
+		userProfilePhotosModel
 		bizUserProfilePhotosModel
 		extendUserProfilePhotosModel
 	}

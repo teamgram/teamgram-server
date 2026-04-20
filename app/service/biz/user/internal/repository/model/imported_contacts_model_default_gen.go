@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	imported_contactsFieldNames          = builder.RawFieldNames(&ImportedContacts{})
-	imported_contactsRows                = strings.Join(imported_contactsFieldNames, ",")
-	imported_contactsRowsExpectAutoSet   = strings.Join(stringx.Remove(imported_contactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	imported_contactsRowsWithPlaceHolder = strings.Join(stringx.Remove(imported_contactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	importedContactsFieldNames          = builder.RawFieldNames(&ImportedContacts{})
+	importedContactsRows                = strings.Join(importedContactsFieldNames, ",")
+	importedContactsRowsExpectAutoSet   = strings.Join(stringx.Remove(importedContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	importedContactsRowsWithPlaceHolder = strings.Join(stringx.Remove(importedContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTImportedContactsIdPrefix = "cache:t:imported_contacts:id:"
 
@@ -38,7 +38,7 @@ var (
 )
 
 type (
-	imported_contactsModel interface {
+	importedContactsModel interface {
 		Insert2(ctx context.Context, data *ImportedContacts) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*ImportedContacts, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]ImportedContacts, error)
@@ -70,7 +70,7 @@ func newImportedContactsModel(db *sqlx.DB) *defaultImportedContactsModel {
 }
 
 func (m *defaultImportedContactsModel) Insert2(ctx context.Context, data *ImportedContacts) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `imported_contacts` (%s) values (?, ?, ?)", imported_contactsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `imported_contacts` (%s) values (?, ?, ?)", importedContactsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted)
 }
 
@@ -81,7 +81,7 @@ func (m *defaultImportedContactsModel) Delete2(ctx context.Context, id int64) er
 }
 
 func (m *defaultImportedContactsModel) FindOne(ctx context.Context, id int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where id = ? limit 1", imported_contactsRows)
+	query := fmt.Sprintf("select %s from imported_contacts where id = ? limit 1", importedContactsRows)
 	var resp ImportedContacts
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -95,7 +95,7 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 		return []ImportedContacts{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from imported_contacts where id in (%s)", imported_contactsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from imported_contacts where id in (%s)", importedContactsRows, sqlx.InInt64List(id))
 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -106,13 +106,13 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 }
 
 func (m *defaultImportedContactsModel) Update2(ctx context.Context, data *ImportedContacts) error {
-	query := fmt.Sprintf("update `imported_contacts` set %s where `id` = ?", imported_contactsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `imported_contacts` set %s where `id` = ?", importedContactsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserId(ctx context.Context, userId int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? limit 1", imported_contactsRows)
+	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? limit 1", importedContactsRows)
 	var resp ImportedContacts
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 	if err != nil {
@@ -126,7 +126,7 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 		return []ImportedContacts{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from imported_contacts where user_id in (%s)", imported_contactsRows, sqlx.InInt64List(userId))
+	query := fmt.Sprintf("select %s from imported_contacts where user_id in (%s)", importedContactsRows, sqlx.InInt64List(userId))
 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -137,7 +137,7 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? AND imported_user_id = ? limit 1", imported_contactsRows)
+	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? AND imported_user_id = ? limit 1", importedContactsRows)
 	var resp ImportedContacts
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, importedUserId)
 	if err != nil {
@@ -151,6 +151,6 @@ func (m *defaultImportedContactsModel) formatPrimary(primary interface{}) string
 }
 
 func (m *defaultImportedContactsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from imported_contacts where id = ? limit 1", imported_contactsRows)
+	query := fmt.Sprintf("select %s from imported_contacts where id = ? limit 1", importedContactsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

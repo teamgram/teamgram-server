@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_settingsFieldNames          = builder.RawFieldNames(&UserSettings{})
-	user_settingsRows                = strings.Join(user_settingsFieldNames, ",")
-	user_settingsRowsExpectAutoSet   = strings.Join(stringx.Remove(user_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_settingsRowsWithPlaceHolder = strings.Join(stringx.Remove(user_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userSettingsFieldNames          = builder.RawFieldNames(&UserSettings{})
+	userSettingsRows                = strings.Join(userSettingsFieldNames, ",")
+	userSettingsRowsExpectAutoSet   = strings.Join(stringx.Remove(userSettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userSettingsRowsWithPlaceHolder = strings.Join(stringx.Remove(userSettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserSettingsIdPrefix = "cache:t:user_settings:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	user_settingsModel interface {
+	userSettingsModel interface {
 		Insert2(ctx context.Context, data *UserSettings) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserSettings, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]UserSettings, error)
@@ -66,7 +66,7 @@ func newUserSettingsModel(db *sqlx.DB) *defaultUserSettingsModel {
 }
 
 func (m *defaultUserSettingsModel) Insert2(ctx context.Context, data *UserSettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_settings` (%s) values (?, ?, ?, ?)", user_settingsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_settings` (%s) values (?, ?, ?, ?)", userSettingsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.Key2, data.Value, data.Deleted)
 }
 
@@ -77,7 +77,7 @@ func (m *defaultUserSettingsModel) Delete2(ctx context.Context, id int64) error 
 }
 
 func (m *defaultUserSettingsModel) FindOne(ctx context.Context, id int64) (*UserSettings, error) {
-	query := fmt.Sprintf("select %s from user_settings where id = ? limit 1", user_settingsRows)
+	query := fmt.Sprintf("select %s from user_settings where id = ? limit 1", userSettingsRows)
 	var resp UserSettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -91,7 +91,7 @@ func (m *defaultUserSettingsModel) FindListByIdList(ctx context.Context, id ...i
 		return []UserSettings{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_settings where id in (%s)", user_settingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from user_settings where id in (%s)", userSettingsRows, sqlx.InInt64List(id))
 
 	var resp []UserSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -102,13 +102,13 @@ func (m *defaultUserSettingsModel) FindListByIdList(ctx context.Context, id ...i
 }
 
 func (m *defaultUserSettingsModel) Update2(ctx context.Context, data *UserSettings) error {
-	query := fmt.Sprintf("update `user_settings` set %s where `id` = ?", user_settingsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_settings` set %s where `id` = ?", userSettingsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Key2, data.Value, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultUserSettingsModel) FindOneByUserIdKey2(ctx context.Context, userId int64, key2 string) (*UserSettings, error) {
-	query := fmt.Sprintf("select %s from user_settings where user_id = ? AND key2 = ? limit 1", user_settingsRows)
+	query := fmt.Sprintf("select %s from user_settings where user_id = ? AND key2 = ? limit 1", userSettingsRows)
 	var resp UserSettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, key2)
 	if err != nil {
@@ -122,6 +122,6 @@ func (m *defaultUserSettingsModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultUserSettingsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_settings where id = ? limit 1", user_settingsRows)
+	query := fmt.Sprintf("select %s from user_settings where id = ? limit 1", userSettingsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

@@ -20,7 +20,7 @@ type (
 	// ChatParticipantsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customChatParticipantsModel.
 	ChatParticipantsModel interface {
-		chat_participantsModel
+		chatParticipantsModel
 		bizChatParticipantsModel
 		extendChatParticipantsModel
 	}

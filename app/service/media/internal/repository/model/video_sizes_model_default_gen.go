@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	video_sizesFieldNames          = builder.RawFieldNames(&VideoSizes{})
-	video_sizesRows                = strings.Join(video_sizesFieldNames, ",")
-	video_sizesRowsExpectAutoSet   = strings.Join(stringx.Remove(video_sizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	video_sizesRowsWithPlaceHolder = strings.Join(stringx.Remove(video_sizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	videoSizesFieldNames          = builder.RawFieldNames(&VideoSizes{})
+	videoSizesRows                = strings.Join(videoSizesFieldNames, ",")
+	videoSizesRowsExpectAutoSet   = strings.Join(stringx.Remove(videoSizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	videoSizesRowsWithPlaceHolder = strings.Join(stringx.Remove(videoSizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTVideoSizesIdPrefix = "cache:t:video_sizes:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	video_sizesModel interface {
+	videoSizesModel interface {
 		Insert2(ctx context.Context, data *VideoSizes) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*VideoSizes, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]VideoSizes, error)
@@ -69,7 +69,7 @@ func newVideoSizesModel(db *sqlx.DB) *defaultVideoSizesModel {
 }
 
 func (m *defaultVideoSizesModel) Insert2(ctx context.Context, data *VideoSizes) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `video_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?)", video_sizesRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `video_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?)", videoSizesRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath)
 }
 
@@ -80,7 +80,7 @@ func (m *defaultVideoSizesModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultVideoSizesModel) FindOne(ctx context.Context, id int64) (*VideoSizes, error) {
-	query := fmt.Sprintf("select %s from video_sizes where id = ? limit 1", video_sizesRows)
+	query := fmt.Sprintf("select %s from video_sizes where id = ? limit 1", videoSizesRows)
 	var resp VideoSizes
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -94,7 +94,7 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 		return []VideoSizes{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from video_sizes where id in (%s)", video_sizesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from video_sizes where id in (%s)", videoSizesRows, sqlx.InInt64List(id))
 
 	var resp []VideoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -105,13 +105,13 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 }
 
 func (m *defaultVideoSizesModel) Update2(ctx context.Context, data *VideoSizes) error {
-	query := fmt.Sprintf("update `video_sizes` set %s where `id` = ?", video_sizesRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `video_sizes` set %s where `id` = ?", videoSizesRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath, data.Id)
 	return err
 }
 
 func (m *defaultVideoSizesModel) FindOneByVideoSizeIdSizeType(ctx context.Context, videoSizeId int64, sizeType string) (*VideoSizes, error) {
-	query := fmt.Sprintf("select %s from video_sizes where video_size_id = ? AND size_type = ? limit 1", video_sizesRows)
+	query := fmt.Sprintf("select %s from video_sizes where video_size_id = ? AND size_type = ? limit 1", videoSizesRows)
 	var resp VideoSizes
 	err := m.db.QueryRowPartial(ctx, &resp, query, videoSizeId, sizeType)
 	if err != nil {
@@ -125,6 +125,6 @@ func (m *defaultVideoSizesModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultVideoSizesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from video_sizes where id = ? limit 1", video_sizesRows)
+	query := fmt.Sprintf("select %s from video_sizes where id = ? limit 1", videoSizesRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

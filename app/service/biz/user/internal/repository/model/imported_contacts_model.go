@@ -20,7 +20,7 @@ type (
 	// ImportedContactsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customImportedContactsModel.
 	ImportedContactsModel interface {
-		imported_contactsModel
+		importedContactsModel
 		bizImportedContactsModel
 		extendImportedContactsModel
 	}

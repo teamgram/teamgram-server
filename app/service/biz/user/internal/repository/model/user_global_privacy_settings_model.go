@@ -20,7 +20,7 @@ type (
 	// UserGlobalPrivacySettingsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserGlobalPrivacySettingsModel.
 	UserGlobalPrivacySettingsModel interface {
-		user_global_privacy_settingsModel
+		userGlobalPrivacySettingsModel
 		bizUserGlobalPrivacySettingsModel
 		extendUserGlobalPrivacySettingsModel
 	}

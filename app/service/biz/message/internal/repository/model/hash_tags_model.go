@@ -20,7 +20,7 @@ type (
 	// HashTagsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customHashTagsModel.
 	HashTagsModel interface {
-		hash_tagsModel
+		hashTagsModel
 		bizHashTagsModel
 		extendHashTagsModel
 	}

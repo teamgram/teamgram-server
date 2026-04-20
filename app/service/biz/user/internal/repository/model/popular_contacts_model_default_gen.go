@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	popular_contactsFieldNames          = builder.RawFieldNames(&PopularContacts{})
-	popular_contactsRows                = strings.Join(popular_contactsFieldNames, ",")
-	popular_contactsRowsExpectAutoSet   = strings.Join(stringx.Remove(popular_contactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	popular_contactsRowsWithPlaceHolder = strings.Join(stringx.Remove(popular_contactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	popularContactsFieldNames          = builder.RawFieldNames(&PopularContacts{})
+	popularContactsRows                = strings.Join(popularContactsFieldNames, ",")
+	popularContactsRowsExpectAutoSet   = strings.Join(stringx.Remove(popularContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	popularContactsRowsWithPlaceHolder = strings.Join(stringx.Remove(popularContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTPopularContactsIdPrefix = "cache:t:popular_contacts:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	popular_contactsModel interface {
+	popularContactsModel interface {
 		Insert2(ctx context.Context, data *PopularContacts) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*PopularContacts, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]PopularContacts, error)
@@ -67,7 +67,7 @@ func newPopularContactsModel(db *sqlx.DB) *defaultPopularContactsModel {
 }
 
 func (m *defaultPopularContactsModel) Insert2(ctx context.Context, data *PopularContacts) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `popular_contacts` (%s) values (?, ?, ?)", popular_contactsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `popular_contacts` (%s) values (?, ?, ?)", popularContactsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.Phone, data.Importers, data.Deleted)
 }
 
@@ -78,7 +78,7 @@ func (m *defaultPopularContactsModel) Delete2(ctx context.Context, id int64) err
 }
 
 func (m *defaultPopularContactsModel) FindOne(ctx context.Context, id int64) (*PopularContacts, error) {
-	query := fmt.Sprintf("select %s from popular_contacts where id = ? limit 1", popular_contactsRows)
+	query := fmt.Sprintf("select %s from popular_contacts where id = ? limit 1", popularContactsRows)
 	var resp PopularContacts
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -92,7 +92,7 @@ func (m *defaultPopularContactsModel) FindListByIdList(ctx context.Context, id .
 		return []PopularContacts{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from popular_contacts where id in (%s)", popular_contactsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from popular_contacts where id in (%s)", popularContactsRows, sqlx.InInt64List(id))
 
 	var resp []PopularContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -103,13 +103,13 @@ func (m *defaultPopularContactsModel) FindListByIdList(ctx context.Context, id .
 }
 
 func (m *defaultPopularContactsModel) Update2(ctx context.Context, data *PopularContacts) error {
-	query := fmt.Sprintf("update `popular_contacts` set %s where `id` = ?", popular_contactsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `popular_contacts` set %s where `id` = ?", popularContactsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.Phone, data.Importers, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultPopularContactsModel) FindOneByPhone(ctx context.Context, phone string) (*PopularContacts, error) {
-	query := fmt.Sprintf("select %s from popular_contacts where phone = ? limit 1", popular_contactsRows)
+	query := fmt.Sprintf("select %s from popular_contacts where phone = ? limit 1", popularContactsRows)
 	var resp PopularContacts
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *defaultPopularContactsModel) FindListByPhoneList(ctx context.Context, p
 		return []PopularContacts{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from popular_contacts where phone in (%s)", popular_contactsRows, sqlx.InStringList(phone))
+	query := fmt.Sprintf("select %s from popular_contacts where phone in (%s)", popularContactsRows, sqlx.InStringList(phone))
 	var resp []PopularContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
@@ -137,6 +137,6 @@ func (m *defaultPopularContactsModel) formatPrimary(primary interface{}) string 
 }
 
 func (m *defaultPopularContactsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from popular_contacts where id = ? limit 1", popular_contactsRows)
+	query := fmt.Sprintf("select %s from popular_contacts where id = ? limit 1", popularContactsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

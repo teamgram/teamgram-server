@@ -20,7 +20,7 @@ type (
 	// MessageReadOutboxModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customMessageReadOutboxModel.
 	MessageReadOutboxModel interface {
-		message_read_outboxModel
+		messageReadOutboxModel
 		bizMessageReadOutboxModel
 		extendMessageReadOutboxModel
 	}

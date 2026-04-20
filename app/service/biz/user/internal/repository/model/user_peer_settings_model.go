@@ -20,7 +20,7 @@ type (
 	// UserPeerSettingsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserPeerSettingsModel.
 	UserPeerSettingsModel interface {
-		user_peer_settingsModel
+		userPeerSettingsModel
 		bizUserPeerSettingsModel
 		extendUserPeerSettingsModel
 	}

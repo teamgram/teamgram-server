@@ -20,7 +20,7 @@ type (
 	// DefaultHistoryTtlModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customDefaultHistoryTtlModel.
 	DefaultHistoryTtlModel interface {
-		default_history_ttlModel
+		defaultHistoryTtlModel
 		bizDefaultHistoryTtlModel
 		extendDefaultHistoryTtlModel
 	}

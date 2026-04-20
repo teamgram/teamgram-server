@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	saved_dialogsFieldNames          = builder.RawFieldNames(&SavedDialogs{})
-	saved_dialogsRows                = strings.Join(saved_dialogsFieldNames, ",")
-	saved_dialogsRowsExpectAutoSet   = strings.Join(stringx.Remove(saved_dialogsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	saved_dialogsRowsWithPlaceHolder = strings.Join(stringx.Remove(saved_dialogsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	savedDialogsFieldNames          = builder.RawFieldNames(&SavedDialogs{})
+	savedDialogsRows                = strings.Join(savedDialogsFieldNames, ",")
+	savedDialogsRowsExpectAutoSet   = strings.Join(stringx.Remove(savedDialogsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	savedDialogsRowsWithPlaceHolder = strings.Join(stringx.Remove(savedDialogsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTSavedDialogsIdPrefix = "cache:t:saved_dialogs:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	saved_dialogsModel interface {
+	savedDialogsModel interface {
 		Insert2(ctx context.Context, data *SavedDialogs) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SavedDialogs, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]SavedDialogs, error)
@@ -68,7 +68,7 @@ func newSavedDialogsModel(db *sqlx.DB) *defaultSavedDialogsModel {
 }
 
 func (m *defaultSavedDialogsModel) Insert2(ctx context.Context, data *SavedDialogs) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `saved_dialogs` (%s) values (?, ?, ?, ?, ?, ?)", saved_dialogsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `saved_dialogs` (%s) values (?, ?, ?, ?, ?, ?)", savedDialogsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Pinned, data.TopMessage, data.Deleted)
 }
 
@@ -79,7 +79,7 @@ func (m *defaultSavedDialogsModel) Delete2(ctx context.Context, id int64) error 
 }
 
 func (m *defaultSavedDialogsModel) FindOne(ctx context.Context, id int64) (*SavedDialogs, error) {
-	query := fmt.Sprintf("select %s from saved_dialogs where id = ? limit 1", saved_dialogsRows)
+	query := fmt.Sprintf("select %s from saved_dialogs where id = ? limit 1", savedDialogsRows)
 	var resp SavedDialogs
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -93,7 +93,7 @@ func (m *defaultSavedDialogsModel) FindListByIdList(ctx context.Context, id ...i
 		return []SavedDialogs{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from saved_dialogs where id in (%s)", saved_dialogsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from saved_dialogs where id in (%s)", savedDialogsRows, sqlx.InInt64List(id))
 
 	var resp []SavedDialogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -104,13 +104,13 @@ func (m *defaultSavedDialogsModel) FindListByIdList(ctx context.Context, id ...i
 }
 
 func (m *defaultSavedDialogsModel) Update2(ctx context.Context, data *SavedDialogs) error {
-	query := fmt.Sprintf("update `saved_dialogs` set %s where `id` = ?", saved_dialogsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `saved_dialogs` set %s where `id` = ?", savedDialogsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Pinned, data.TopMessage, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultSavedDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*SavedDialogs, error) {
-	query := fmt.Sprintf("select %s from saved_dialogs where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", saved_dialogsRows)
+	query := fmt.Sprintf("select %s from saved_dialogs where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", savedDialogsRows)
 	var resp SavedDialogs
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
 	if err != nil {
@@ -124,6 +124,6 @@ func (m *defaultSavedDialogsModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultSavedDialogsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from saved_dialogs where id = ? limit 1", saved_dialogsRows)
+	query := fmt.Sprintf("select %s from saved_dialogs where id = ? limit 1", savedDialogsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

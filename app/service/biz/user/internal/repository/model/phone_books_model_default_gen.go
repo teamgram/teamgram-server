@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	phone_booksFieldNames          = builder.RawFieldNames(&PhoneBooks{})
-	phone_booksRows                = strings.Join(phone_booksFieldNames, ",")
-	phone_booksRowsExpectAutoSet   = strings.Join(stringx.Remove(phone_booksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	phone_booksRowsWithPlaceHolder = strings.Join(stringx.Remove(phone_booksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	phoneBooksFieldNames          = builder.RawFieldNames(&PhoneBooks{})
+	phoneBooksRows                = strings.Join(phoneBooksFieldNames, ",")
+	phoneBooksRowsExpectAutoSet   = strings.Join(stringx.Remove(phoneBooksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	phoneBooksRowsWithPlaceHolder = strings.Join(stringx.Remove(phoneBooksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTPhoneBooksIdPrefix = "cache:t:phone_books:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	phone_booksModel interface {
+	phoneBooksModel interface {
 		Insert2(ctx context.Context, data *PhoneBooks) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*PhoneBooks, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]PhoneBooks, error)
@@ -68,7 +68,7 @@ func newPhoneBooksModel(db *sqlx.DB) *defaultPhoneBooksModel {
 }
 
 func (m *defaultPhoneBooksModel) Insert2(ctx context.Context, data *PhoneBooks) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `phone_books` (%s) values (?, ?, ?, ?, ?, ?)", phone_booksRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `phone_books` (%s) values (?, ?, ?, ?, ?, ?)", phoneBooksRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.AuthKeyId, data.ClientId, data.Phone, data.FirstName, data.LastName)
 }
 
@@ -79,7 +79,7 @@ func (m *defaultPhoneBooksModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultPhoneBooksModel) FindOne(ctx context.Context, id int64) (*PhoneBooks, error) {
-	query := fmt.Sprintf("select %s from phone_books where id = ? limit 1", phone_booksRows)
+	query := fmt.Sprintf("select %s from phone_books where id = ? limit 1", phoneBooksRows)
 	var resp PhoneBooks
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -93,7 +93,7 @@ func (m *defaultPhoneBooksModel) FindListByIdList(ctx context.Context, id ...int
 		return []PhoneBooks{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from phone_books where id in (%s)", phone_booksRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from phone_books where id in (%s)", phoneBooksRows, sqlx.InInt64List(id))
 
 	var resp []PhoneBooks
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -104,13 +104,13 @@ func (m *defaultPhoneBooksModel) FindListByIdList(ctx context.Context, id ...int
 }
 
 func (m *defaultPhoneBooksModel) Update2(ctx context.Context, data *PhoneBooks) error {
-	query := fmt.Sprintf("update `phone_books` set %s where `id` = ?", phone_booksRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `phone_books` set %s where `id` = ?", phoneBooksRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.AuthKeyId, data.ClientId, data.Phone, data.FirstName, data.LastName, data.Id)
 	return err
 }
 
 func (m *defaultPhoneBooksModel) FindOneByAuthKeyIdClientId(ctx context.Context, authKeyId int64, clientId int64) (*PhoneBooks, error) {
-	query := fmt.Sprintf("select %s from phone_books where auth_key_id = ? AND client_id = ? limit 1", phone_booksRows)
+	query := fmt.Sprintf("select %s from phone_books where auth_key_id = ? AND client_id = ? limit 1", phoneBooksRows)
 	var resp PhoneBooks
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, clientId)
 	if err != nil {
@@ -124,6 +124,6 @@ func (m *defaultPhoneBooksModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultPhoneBooksModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from phone_books where id = ? limit 1", phone_booksRows)
+	query := fmt.Sprintf("select %s from phone_books where id = ? limit 1", phoneBooksRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_saved_musicFieldNames          = builder.RawFieldNames(&UserSavedMusic{})
-	user_saved_musicRows                = strings.Join(user_saved_musicFieldNames, ",")
-	user_saved_musicRowsExpectAutoSet   = strings.Join(stringx.Remove(user_saved_musicFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_saved_musicRowsWithPlaceHolder = strings.Join(stringx.Remove(user_saved_musicFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userSavedMusicFieldNames          = builder.RawFieldNames(&UserSavedMusic{})
+	userSavedMusicRows                = strings.Join(userSavedMusicFieldNames, ",")
+	userSavedMusicRowsExpectAutoSet   = strings.Join(stringx.Remove(userSavedMusicFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userSavedMusicRowsWithPlaceHolder = strings.Join(stringx.Remove(userSavedMusicFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserSavedMusicIdPrefix = "cache:t:user_saved_music:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	user_saved_musicModel interface {
+	userSavedMusicModel interface {
 		Insert2(ctx context.Context, data *UserSavedMusic) (sql.Result, error)
 		FindOne(ctx context.Context, id int32) (*UserSavedMusic, error)
 		FindListByIdList(ctx context.Context, id ...int32) ([]UserSavedMusic, error)
@@ -66,7 +66,7 @@ func newUserSavedMusicModel(db *sqlx.DB) *defaultUserSavedMusicModel {
 }
 
 func (m *defaultUserSavedMusicModel) Insert2(ctx context.Context, data *UserSavedMusic) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_saved_music` (%s) values (?, ?, ?, ?)", user_saved_musicRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_saved_music` (%s) values (?, ?, ?, ?)", userSavedMusicRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.SavedMusicId, data.Order2, data.Deleted)
 }
 
@@ -77,7 +77,7 @@ func (m *defaultUserSavedMusicModel) Delete2(ctx context.Context, id int32) erro
 }
 
 func (m *defaultUserSavedMusicModel) FindOne(ctx context.Context, id int32) (*UserSavedMusic, error) {
-	query := fmt.Sprintf("select %s from user_saved_music where id = ? limit 1", user_saved_musicRows)
+	query := fmt.Sprintf("select %s from user_saved_music where id = ? limit 1", userSavedMusicRows)
 	var resp UserSavedMusic
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -90,7 +90,7 @@ func (m *defaultUserSavedMusicModel) FindListByIdList(ctx context.Context, id ..
 	if len(id) == 0 {
 		return []UserSavedMusic{}, nil
 	}
-	query := fmt.Sprintf("select %s from user_saved_music where id in (%s)", user_saved_musicRows, sqlx.InInt32List(id))
+	query := fmt.Sprintf("select %s from user_saved_music where id in (%s)", userSavedMusicRows, sqlx.InInt32List(id))
 
 	var resp []UserSavedMusic
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -101,13 +101,13 @@ func (m *defaultUserSavedMusicModel) FindListByIdList(ctx context.Context, id ..
 }
 
 func (m *defaultUserSavedMusicModel) Update2(ctx context.Context, data *UserSavedMusic) error {
-	query := fmt.Sprintf("update `user_saved_music` set %s where `id` = ?", user_saved_musicRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_saved_music` set %s where `id` = ?", userSavedMusicRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.SavedMusicId, data.Order2, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultUserSavedMusicModel) FindOneByUserIdSavedMusicId(ctx context.Context, userId int64, savedMusicId int64) (*UserSavedMusic, error) {
-	query := fmt.Sprintf("select %s from user_saved_music where user_id = ? AND saved_music_id = ? limit 1", user_saved_musicRows)
+	query := fmt.Sprintf("select %s from user_saved_music where user_id = ? AND saved_music_id = ? limit 1", userSavedMusicRows)
 	var resp UserSavedMusic
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, savedMusicId)
 	if err != nil {
@@ -121,6 +121,6 @@ func (m *defaultUserSavedMusicModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultUserSavedMusicModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_saved_music where id = ? limit 1", user_saved_musicRows)
+	query := fmt.Sprintf("select %s from user_saved_music where id = ? limit 1", userSavedMusicRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

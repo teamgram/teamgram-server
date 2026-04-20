@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_peer_settingsFieldNames          = builder.RawFieldNames(&UserPeerSettings{})
-	user_peer_settingsRows                = strings.Join(user_peer_settingsFieldNames, ",")
-	user_peer_settingsRowsExpectAutoSet   = strings.Join(stringx.Remove(user_peer_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_peer_settingsRowsWithPlaceHolder = strings.Join(stringx.Remove(user_peer_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userPeerSettingsFieldNames          = builder.RawFieldNames(&UserPeerSettings{})
+	userPeerSettingsRows                = strings.Join(userPeerSettingsFieldNames, ",")
+	userPeerSettingsRowsExpectAutoSet   = strings.Join(stringx.Remove(userPeerSettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userPeerSettingsRowsWithPlaceHolder = strings.Join(stringx.Remove(userPeerSettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserPeerSettingsIdPrefix = "cache:t:user_peer_settings:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	user_peer_settingsModel interface {
+	userPeerSettingsModel interface {
 		Insert2(ctx context.Context, data *UserPeerSettings) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserPeerSettings, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]UserPeerSettings, error)
@@ -75,7 +75,7 @@ func newUserPeerSettingsModel(db *sqlx.DB) *defaultUserPeerSettingsModel {
 }
 
 func (m *defaultUserPeerSettingsModel) Insert2(ctx context.Context, data *UserPeerSettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_peer_settings` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", user_peer_settingsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_peer_settings` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userPeerSettingsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Hide, data.ReportSpam, data.AddContact, data.BlockContact, data.ShareContact, data.NeedContactsException, data.ReportGeo, data.Autoarchived, data.InviteMembers, data.GeoDistance)
 }
 
@@ -86,7 +86,7 @@ func (m *defaultUserPeerSettingsModel) Delete2(ctx context.Context, id int64) er
 }
 
 func (m *defaultUserPeerSettingsModel) FindOne(ctx context.Context, id int64) (*UserPeerSettings, error) {
-	query := fmt.Sprintf("select %s from user_peer_settings where id = ? limit 1", user_peer_settingsRows)
+	query := fmt.Sprintf("select %s from user_peer_settings where id = ? limit 1", userPeerSettingsRows)
 	var resp UserPeerSettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -100,7 +100,7 @@ func (m *defaultUserPeerSettingsModel) FindListByIdList(ctx context.Context, id 
 		return []UserPeerSettings{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_peer_settings where id in (%s)", user_peer_settingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from user_peer_settings where id in (%s)", userPeerSettingsRows, sqlx.InInt64List(id))
 
 	var resp []UserPeerSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -111,13 +111,13 @@ func (m *defaultUserPeerSettingsModel) FindListByIdList(ctx context.Context, id 
 }
 
 func (m *defaultUserPeerSettingsModel) Update2(ctx context.Context, data *UserPeerSettings) error {
-	query := fmt.Sprintf("update `user_peer_settings` set %s where `id` = ?", user_peer_settingsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_peer_settings` set %s where `id` = ?", userPeerSettingsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Hide, data.ReportSpam, data.AddContact, data.BlockContact, data.ShareContact, data.NeedContactsException, data.ReportGeo, data.Autoarchived, data.InviteMembers, data.GeoDistance, data.Id)
 	return err
 }
 
 func (m *defaultUserPeerSettingsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserPeerSettings, error) {
-	query := fmt.Sprintf("select %s from user_peer_settings where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", user_peer_settingsRows)
+	query := fmt.Sprintf("select %s from user_peer_settings where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", userPeerSettingsRows)
 	var resp UserPeerSettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
 	if err != nil {
@@ -131,6 +131,6 @@ func (m *defaultUserPeerSettingsModel) formatPrimary(primary interface{}) string
 }
 
 func (m *defaultUserPeerSettingsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_peer_settings where id = ? limit 1", user_peer_settingsRows)
+	query := fmt.Sprintf("select %s from user_peer_settings where id = ? limit 1", userPeerSettingsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

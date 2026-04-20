@@ -20,7 +20,7 @@ type (
 	// AuthSeqUpdatesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customAuthSeqUpdatesModel.
 	AuthSeqUpdatesModel interface {
-		auth_seq_updatesModel
+		authSeqUpdatesModel
 		bizAuthSeqUpdatesModel
 		extendAuthSeqUpdatesModel
 	}

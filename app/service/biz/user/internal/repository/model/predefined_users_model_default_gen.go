@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	predefined_usersFieldNames          = builder.RawFieldNames(&PredefinedUsers{})
-	predefined_usersRows                = strings.Join(predefined_usersFieldNames, ",")
-	predefined_usersRowsExpectAutoSet   = strings.Join(stringx.Remove(predefined_usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	predefined_usersRowsWithPlaceHolder = strings.Join(stringx.Remove(predefined_usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	predefinedUsersFieldNames          = builder.RawFieldNames(&PredefinedUsers{})
+	predefinedUsersRows                = strings.Join(predefinedUsersFieldNames, ",")
+	predefinedUsersRowsExpectAutoSet   = strings.Join(stringx.Remove(predefinedUsersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	predefinedUsersRowsWithPlaceHolder = strings.Join(stringx.Remove(predefinedUsersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTPredefinedUsersIdPrefix = "cache:t:predefined_users:id:"
 
@@ -34,7 +34,7 @@ var (
 )
 
 type (
-	predefined_usersModel interface {
+	predefinedUsersModel interface {
 		Insert2(ctx context.Context, data *PredefinedUsers) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*PredefinedUsers, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]PredefinedUsers, error)
@@ -66,7 +66,7 @@ func newPredefinedUsersModel(db *sqlx.DB) *defaultPredefinedUsersModel {
 }
 
 func (m *defaultPredefinedUsersModel) Insert2(ctx context.Context, data *PredefinedUsers) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `predefined_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", predefined_usersRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `predefined_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", predefinedUsersRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted)
 }
 
@@ -77,7 +77,7 @@ func (m *defaultPredefinedUsersModel) Delete2(ctx context.Context, id int64) err
 }
 
 func (m *defaultPredefinedUsersModel) FindOne(ctx context.Context, id int64) (*PredefinedUsers, error) {
-	query := fmt.Sprintf("select %s from predefined_users where id = ? limit 1", predefined_usersRows)
+	query := fmt.Sprintf("select %s from predefined_users where id = ? limit 1", predefinedUsersRows)
 	var resp PredefinedUsers
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -91,7 +91,7 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 		return []PredefinedUsers{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from predefined_users where id in (%s)", predefined_usersRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from predefined_users where id in (%s)", predefinedUsersRows, sqlx.InInt64List(id))
 
 	var resp []PredefinedUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -102,7 +102,7 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 }
 
 func (m *defaultPredefinedUsersModel) Update2(ctx context.Context, data *PredefinedUsers) error {
-	query := fmt.Sprintf("update `predefined_users` set %s where `id` = ?", predefined_usersRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `predefined_users` set %s where `id` = ?", predefinedUsersRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted, data.Id)
 	return err
 }
@@ -112,6 +112,6 @@ func (m *defaultPredefinedUsersModel) formatPrimary(primary interface{}) string 
 }
 
 func (m *defaultPredefinedUsersModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from predefined_users where id = ? limit 1", predefined_usersRows)
+	query := fmt.Sprintf("select %s from predefined_users where id = ? limit 1", predefinedUsersRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

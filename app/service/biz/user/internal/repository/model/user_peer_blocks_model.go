@@ -20,7 +20,7 @@ type (
 	// UserPeerBlocksModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserPeerBlocksModel.
 	UserPeerBlocksModel interface {
-		user_peer_blocksModel
+		userPeerBlocksModel
 		bizUserPeerBlocksModel
 		extendUserPeerBlocksModel
 	}

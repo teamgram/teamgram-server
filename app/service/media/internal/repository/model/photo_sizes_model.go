@@ -20,7 +20,7 @@ type (
 	// PhotoSizesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customPhotoSizesModel.
 	PhotoSizesModel interface {
-		photo_sizesModel
+		photoSizesModel
 		bizPhotoSizesModel
 		extendPhotoSizesModel
 	}

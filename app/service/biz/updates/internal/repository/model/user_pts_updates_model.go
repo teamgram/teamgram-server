@@ -20,7 +20,7 @@ type (
 	// UserPtsUpdatesModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customUserPtsUpdatesModel.
 	UserPtsUpdatesModel interface {
-		user_pts_updatesModel
+		userPtsUpdatesModel
 		bizUserPtsUpdatesModel
 		extendUserPtsUpdatesModel
 	}

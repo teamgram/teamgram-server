@@ -20,7 +20,7 @@ type (
 	// SavedDialogsModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customSavedDialogsModel.
 	SavedDialogsModel interface {
-		saved_dialogsModel
+		savedDialogsModel
 		bizSavedDialogsModel
 		extendSavedDialogsModel
 	}

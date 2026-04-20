@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	photo_sizesFieldNames          = builder.RawFieldNames(&PhotoSizes{})
-	photo_sizesRows                = strings.Join(photo_sizesFieldNames, ",")
-	photo_sizesRowsExpectAutoSet   = strings.Join(stringx.Remove(photo_sizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	photo_sizesRowsWithPlaceHolder = strings.Join(stringx.Remove(photo_sizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	photoSizesFieldNames          = builder.RawFieldNames(&PhotoSizes{})
+	photoSizesRows                = strings.Join(photoSizesFieldNames, ",")
+	photoSizesRowsExpectAutoSet   = strings.Join(stringx.Remove(photoSizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	photoSizesRowsWithPlaceHolder = strings.Join(stringx.Remove(photoSizesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTPhotoSizesIdPrefix = "cache:t:photo_sizes:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	photo_sizesModel interface {
+	photoSizesModel interface {
 		Insert2(ctx context.Context, data *PhotoSizes) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*PhotoSizes, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]PhotoSizes, error)
@@ -75,7 +75,7 @@ func newPhotoSizesModel(db *sqlx.DB) *defaultPhotoSizesModel {
 }
 
 func (m *defaultPhotoSizesModel) Insert2(ctx context.Context, data *PhotoSizes) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `photo_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", photo_sizesRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `photo_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", photoSizesRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.PhotoSizeId, data.SizeType, data.VolumeId, data.LocalId, data.Secret, data.Width, data.Height, data.FileSize, data.FilePath, data.HasStripped, data.StrippedBytes, data.CachedType, data.CachedBytes)
 }
 
@@ -86,7 +86,7 @@ func (m *defaultPhotoSizesModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultPhotoSizesModel) FindOne(ctx context.Context, id int64) (*PhotoSizes, error) {
-	query := fmt.Sprintf("select %s from photo_sizes where id = ? limit 1", photo_sizesRows)
+	query := fmt.Sprintf("select %s from photo_sizes where id = ? limit 1", photoSizesRows)
 	var resp PhotoSizes
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -100,7 +100,7 @@ func (m *defaultPhotoSizesModel) FindListByIdList(ctx context.Context, id ...int
 		return []PhotoSizes{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from photo_sizes where id in (%s)", photo_sizesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from photo_sizes where id in (%s)", photoSizesRows, sqlx.InInt64List(id))
 
 	var resp []PhotoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -111,13 +111,13 @@ func (m *defaultPhotoSizesModel) FindListByIdList(ctx context.Context, id ...int
 }
 
 func (m *defaultPhotoSizesModel) Update2(ctx context.Context, data *PhotoSizes) error {
-	query := fmt.Sprintf("update `photo_sizes` set %s where `id` = ?", photo_sizesRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `photo_sizes` set %s where `id` = ?", photoSizesRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.PhotoSizeId, data.SizeType, data.VolumeId, data.LocalId, data.Secret, data.Width, data.Height, data.FileSize, data.FilePath, data.HasStripped, data.StrippedBytes, data.CachedType, data.CachedBytes, data.Id)
 	return err
 }
 
 func (m *defaultPhotoSizesModel) FindOneByPhotoSizeIdSizeType(ctx context.Context, photoSizeId int64, sizeType string) (*PhotoSizes, error) {
-	query := fmt.Sprintf("select %s from photo_sizes where photo_size_id = ? AND size_type = ? limit 1", photo_sizesRows)
+	query := fmt.Sprintf("select %s from photo_sizes where photo_size_id = ? AND size_type = ? limit 1", photoSizesRows)
 	var resp PhotoSizes
 	err := m.db.QueryRowPartial(ctx, &resp, query, photoSizeId, sizeType)
 	if err != nil {
@@ -131,6 +131,6 @@ func (m *defaultPhotoSizesModel) formatPrimary(primary interface{}) string {
 }
 
 func (m *defaultPhotoSizesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from photo_sizes where id = ? limit 1", photo_sizesRows)
+	query := fmt.Sprintf("select %s from photo_sizes where id = ? limit 1", photoSizesRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

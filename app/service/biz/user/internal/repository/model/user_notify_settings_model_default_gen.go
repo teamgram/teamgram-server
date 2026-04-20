@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	user_notify_settingsFieldNames          = builder.RawFieldNames(&UserNotifySettings{})
-	user_notify_settingsRows                = strings.Join(user_notify_settingsFieldNames, ",")
-	user_notify_settingsRowsExpectAutoSet   = strings.Join(stringx.Remove(user_notify_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	user_notify_settingsRowsWithPlaceHolder = strings.Join(stringx.Remove(user_notify_settingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	userNotifySettingsFieldNames          = builder.RawFieldNames(&UserNotifySettings{})
+	userNotifySettingsRows                = strings.Join(userNotifySettingsFieldNames, ",")
+	userNotifySettingsRowsExpectAutoSet   = strings.Join(stringx.Remove(userNotifySettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	userNotifySettingsRowsWithPlaceHolder = strings.Join(stringx.Remove(userNotifySettingsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTUserNotifySettingsIdPrefix = "cache:t:user_notify_settings:id:"
 
@@ -36,7 +36,7 @@ var (
 )
 
 type (
-	user_notify_settingsModel interface {
+	userNotifySettingsModel interface {
 		Insert2(ctx context.Context, data *UserNotifySettings) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserNotifySettings, error)
 		FindListByIdList(ctx context.Context, id ...int64) ([]UserNotifySettings, error)
@@ -70,7 +70,7 @@ func newUserNotifySettingsModel(db *sqlx.DB) *defaultUserNotifySettingsModel {
 }
 
 func (m *defaultUserNotifySettingsModel) Insert2(ctx context.Context, data *UserNotifySettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_notify_settings` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", user_notify_settingsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `user_notify_settings` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", userNotifySettingsRowsExpectAutoSet)
 	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.ShowPreviews, data.Silent, data.MuteUntil, data.Sound, data.Deleted)
 }
 
@@ -81,7 +81,7 @@ func (m *defaultUserNotifySettingsModel) Delete2(ctx context.Context, id int64) 
 }
 
 func (m *defaultUserNotifySettingsModel) FindOne(ctx context.Context, id int64) (*UserNotifySettings, error) {
-	query := fmt.Sprintf("select %s from user_notify_settings where id = ? limit 1", user_notify_settingsRows)
+	query := fmt.Sprintf("select %s from user_notify_settings where id = ? limit 1", userNotifySettingsRows)
 	var resp UserNotifySettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
 	if err != nil {
@@ -95,7 +95,7 @@ func (m *defaultUserNotifySettingsModel) FindListByIdList(ctx context.Context, i
 		return []UserNotifySettings{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from user_notify_settings where id in (%s)", user_notify_settingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from user_notify_settings where id in (%s)", userNotifySettingsRows, sqlx.InInt64List(id))
 
 	var resp []UserNotifySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -106,13 +106,13 @@ func (m *defaultUserNotifySettingsModel) FindListByIdList(ctx context.Context, i
 }
 
 func (m *defaultUserNotifySettingsModel) Update2(ctx context.Context, data *UserNotifySettings) error {
-	query := fmt.Sprintf("update `user_notify_settings` set %s where `id` = ?", user_notify_settingsRowsWithPlaceHolder)
+	query := fmt.Sprintf("update `user_notify_settings` set %s where `id` = ?", userNotifySettingsRowsWithPlaceHolder)
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.ShowPreviews, data.Silent, data.MuteUntil, data.Sound, data.Deleted, data.Id)
 	return err
 }
 
 func (m *defaultUserNotifySettingsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserNotifySettings, error) {
-	query := fmt.Sprintf("select %s from user_notify_settings where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", user_notify_settingsRows)
+	query := fmt.Sprintf("select %s from user_notify_settings where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", userNotifySettingsRows)
 	var resp UserNotifySettings
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
 	if err != nil {
@@ -126,6 +126,6 @@ func (m *defaultUserNotifySettingsModel) formatPrimary(primary interface{}) stri
 }
 
 func (m *defaultUserNotifySettingsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_notify_settings where id = ? limit 1", user_notify_settingsRows)
+	query := fmt.Sprintf("select %s from user_notify_settings where id = ? limit 1", userNotifySettingsRows)
 	return m.db.QueryRowPartial(ctx, v, query, primary)
 }
