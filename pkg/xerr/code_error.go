@@ -2,6 +2,7 @@ package xerr
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -24,6 +25,13 @@ func NewCodeError(code int, msg string) CodeError {
 	return &codeError{
 		code: code,
 		msg:  msg,
+	}
+}
+
+func NewCodeErrorf(code int, format string, a ...any) CodeError {
+	return &codeError{
+		code: code,
+		msg:  fmt.Sprintf(format, a...),
 	}
 }
 

@@ -25,8 +25,8 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/xerr"
 
 	"github.com/bytedance/gopkg/lang/dirtmake"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -206,7 +206,7 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 		if exception == nil {
 			return perrors.NewProtocolError(errors.New("binary decode, invalid Exception type: nil"))
 		}
-		return ecode.NewCodeError(exception.Code(), exception.ErrorMessage)
+		return xerr.NewCodeError(exception.Code(), exception.ErrorMessage)
 	}
 
 	// Decode payload using TL binary protocol

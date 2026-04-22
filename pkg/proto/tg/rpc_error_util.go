@@ -1,4 +1,5 @@
-// Copyright (c) 2024 The Teamgooo Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +20,8 @@ package tg
 import (
 	"errors"
 
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
+	"github.com/teamgram/teamgram-server/v2/pkg/xerr"
 )
 
 type (
@@ -46,7 +47,7 @@ func NewRpcError(e error) *TLRpcError {
 	}
 
 	var (
-		err ecode.CodeError
+		err xerr.CodeError
 	)
 	ok := errors.As(e, &err)
 	if ok {

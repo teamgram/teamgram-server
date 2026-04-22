@@ -6,6 +6,10 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/xerr/stack"
 )
 
+const (
+	ServerInternalError = 500 // Server internal error
+)
+
 func ErrPanic(r any) error {
 	return ErrPanicMsg(r, ServerInternalError, "panic error", 9)
 }
