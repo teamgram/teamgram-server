@@ -23,9 +23,8 @@ import (
 
 // Type aliases for convenience in the Logic layer.
 type (
-	AuthKeyInfosModelType = model.AuthKeyInfosModel
-	AuthKeysModelType     = model.AuthKeysModel
-	AuthUsersModelType    = model.AuthUsersModel
-	AuthsModelType        = model.AuthsModel
-	FutureSaltsModelType  = xkv.FutureSaltsModel
+	AuthKeysModelType    = model.AuthKeysModel
+	AuthUsersModelType   = model.AuthUsersModel
+	AuthsModelType       = model.AuthsModel
+	FutureSaltsModelType = xkv.FutureSaltsModel
 )

@@ -29,12 +29,11 @@ import (
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	sqlc.CachedConn
-	kv                kv.Store
-	AuthKeyInfosModel AuthKeyInfosModelType
-	AuthKeysModel     AuthKeysModelType
-	AuthUsersModel    AuthUsersModelType
-	AuthsModel        AuthsModelType
-	FutureSaltsModel  FutureSaltsModelType
+	kv               kv.Store
+	AuthKeysModel    AuthKeysModelType
+	AuthUsersModel   AuthUsersModelType
+	AuthsModel       AuthsModelType
+	FutureSaltsModel FutureSaltsModelType
 }
 
 // NewRepository creates a new Repository.
@@ -43,11 +42,10 @@ func NewRepository(c config.Config) *Repository {
 	kv := kv.NewStore(c.KV)
 
 	return &Repository{
-		CachedConn:        sqlc.NewConn(db, c.Cache),
-		AuthKeyInfosModel: model.NewAuthKeyInfosModel(db),
-		AuthKeysModel:     model.NewAuthKeysModel(db),
-		AuthUsersModel:    model.NewAuthUsersModel(db),
-		AuthsModel:        model.NewAuthsModel(db),
-		FutureSaltsModel:  xkv.NewFutureSaltsModel(kv, "future_salts"),
+		CachedConn:       sqlc.NewConn(db, c.Cache),
+		AuthKeysModel:    model.NewAuthKeysModel(db),
+		AuthUsersModel:   model.NewAuthUsersModel(db),
+		AuthsModel:       model.NewAuthsModel(db),
+		FutureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
 	}
 }
