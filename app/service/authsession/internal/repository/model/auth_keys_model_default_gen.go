@@ -27,12 +27,6 @@ var (
 	authKeysRows                = strings.Join(authKeysFieldNames, ",")
 	authKeysRowsExpectAutoSet   = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	authKeysRowsWithPlaceHolder = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTAuthKeysIdPrefix = "cache:t:auth_keys:id:"
-
-	cacheAuthKeysIdPrefix = "cache#AuthKeys#id"
-
-	cacheAuthKeysAuthKeyIdPrefix = "cache#AuthKeyId"
 )
 
 type (
@@ -134,13 +128,4 @@ func (m *defaultAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, auth
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultAuthKeysModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheAuthKeysIdPrefix, primary)
-}
-
-func (m *defaultAuthKeysModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }
