@@ -73,11 +73,14 @@ func newAuthsModel(db *sqlx.DB) *defaultAuthsModel {
 
 func (m *defaultAuthsModel) Insert2(ctx context.Context, data *Auths) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auths` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", authsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.AuthKeyId, data.Layer, data.ApiId, data.DeviceModel, data.SystemVersion, data.AppVersion, data.SystemLangCode, data.LangPack, data.LangCode, data.SystemCode, data.Proxy, data.Params, data.ClientIp, data.DateActive, data.Deleted)
+
 }
 
 func (m *defaultAuthsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auths` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -85,7 +88,9 @@ func (m *defaultAuthsModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultAuthsModel) FindOne(ctx context.Context, id int64) (*Auths, error) {
 	query := fmt.Sprintf("select %s from auths where id = ? limit 1", authsRows)
 	var resp Auths
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +114,7 @@ func (m *defaultAuthsModel) FindListByIdList(ctx context.Context, id ...int64) (
 
 func (m *defaultAuthsModel) Update2(ctx context.Context, data *Auths) error {
 	query := fmt.Sprintf("update `auths` set %s where `id` = ?", authsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Layer, data.ApiId, data.DeviceModel, data.SystemVersion, data.AppVersion, data.SystemLangCode, data.LangPack, data.LangCode, data.SystemCode, data.Proxy, data.Params, data.ClientIp, data.DateActive, data.Deleted, data.Id)
 	return err
 }
@@ -116,7 +122,9 @@ func (m *defaultAuthsModel) Update2(ctx context.Context, data *Auths) error {
 func (m *defaultAuthsModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*Auths, error) {
 	query := fmt.Sprintf("select %s from auths where auth_key_id = ? limit 1", authsRows)
 	var resp Auths
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId)
+
 	if err != nil {
 		return nil, err
 	}

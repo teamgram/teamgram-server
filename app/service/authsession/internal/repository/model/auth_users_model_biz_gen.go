@@ -80,6 +80,7 @@ func (m *defaultAuthUsersModel) InsertOrUpdates(ctx context.Context, data *AuthU
 	}
 
 	return
+
 }
 
 // InsertOrUpdatesTx
@@ -112,6 +113,7 @@ func (m *defaultAuthUsersModel) InsertOrUpdatesTx(tx *sqlx.Tx, data *AuthUsers) 
 // Select
 // select id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id from auth_users where auth_key_id = :auth_key_id and deleted = 0
 func (m *defaultAuthUsersModel) Select(ctx context.Context, authKeyId int64) (rValue *AuthUsers, err error) {
+
 	var (
 		query = "select id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id from auth_users where auth_key_id = ? and deleted = 0"
 		do    = &AuthUsers{}
@@ -135,6 +137,7 @@ func (m *defaultAuthUsersModel) Select(ctx context.Context, authKeyId int64) (rV
 // UpdateAndroidPushSessionId
 // update auth_users set android_push_session_id = :android_push_session_id where auth_key_id = :auth_key_id and user_id = :user_id
 func (m *defaultAuthUsersModel) UpdateAndroidPushSessionId(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update auth_users set android_push_session_id = ? where auth_key_id = ? and user_id = ?"
 		rResult sql.Result
@@ -225,6 +228,7 @@ func (m *defaultAuthUsersModel) SelectAuthKeyIdsWithCB(ctx context.Context, user
 // DeleteByHashList
 // update auth_users set deleted = 1, date_created = 0, date_active = 0 where id in (:idList)
 func (m *defaultAuthUsersModel) DeleteByHashList(ctx context.Context, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update auth_users set deleted = 1, date_created = 0, date_active = 0 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -324,6 +328,7 @@ func (m *defaultAuthUsersModel) SelectListByUserIdWithCB(ctx context.Context, us
 // Delete
 // update auth_users set deleted = 1, date_active = 0 where auth_key_id = :auth_key_id and user_id = :user_id
 func (m *defaultAuthUsersModel) Delete(ctx context.Context, authKeyId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update auth_users set deleted = 1, date_active = 0 where auth_key_id = ? and user_id = ?"
 		rResult sql.Result
@@ -369,6 +374,7 @@ func (m *defaultAuthUsersModel) DeleteTx(tx *sqlx.Tx, authKeyId int64, userId in
 // DeleteUser
 // update auth_users set deleted = 1, date_active = 0 where user_id = :user_id
 func (m *defaultAuthUsersModel) DeleteUser(ctx context.Context, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update auth_users set deleted = 1, date_active = 0 where user_id = ?"
 		rResult sql.Result

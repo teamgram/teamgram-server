@@ -48,23 +48,24 @@ func (m *defaultAuthKeysModel) InsertIgnore(ctx context.Context, data *AuthKeys)
 		r     sql.Result
 	)
 
-	r, err = m.db.NamedExec(ctx, query, data)
+	keys := m.uniqueCacheKeys(data)
+	lastInsertId, rowsAffected, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		r, err = conn.NamedExec(ctx, query, data)
+		if err != nil {
+			return 0, 0, err
+		}
+		lastInsertId, err = r.LastInsertId()
+		if err != nil {
+			return 0, 0, err
+		}
+		rowsAffected, err = r.RowsAffected()
+		return lastInsertId, rowsAffected, err
+	}, keys...)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("namedExec in InsertIgnore(%v), error: %v", data, err)
-		return
 	}
-
-	lastInsertId, err = r.LastInsertId()
-	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", data, err)
-		return
-	}
-	rowsAffected, err = r.RowsAffected()
-	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", data, err)
-	}
-
 	return
+
 }
 
 // InsertIgnoreTx
@@ -97,29 +98,24 @@ func (m *defaultAuthKeysModel) InsertIgnoreTx(tx *sqlx.Tx, data *AuthKeys) (last
 // SelectByAuthKeyId
 // select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = :auth_key_id
 func (m *defaultAuthKeysModel) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *AuthKeys, err error) {
-	var (
-		query = "select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = ?"
-		do    = &AuthKeys{}
-	)
-	err = m.db.QueryRowPartial(ctx, do, query, authKeyId)
 
-	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
-			return
-		} else {
-			err = nil
-		}
-	} else {
-		rValue = do
-	}
-
-	return
+	return m.FindOneByAuthKeyId(ctx, authKeyId)
 }
 
 // UpdateCustomMap
-// update auth_key_infos set %s where auth_key_id = :auth_key_id
+// update auth_keys set %s where auth_key_id = :auth_key_id
 func (m *defaultAuthKeysModel) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, authKeyId int64) (rowsAffected int64, err error) {
+
+	oldData, err := m.FindOneByAuthKeyId(ctx, authKeyId)
+
+	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
+		return
+	}
+	var keys []string
+
+	if oldData != nil {
+		keys = m.cacheKeys(oldData)
+	}
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -127,30 +123,25 @@ func (m *defaultAuthKeysModel) UpdateCustomMap(ctx context.Context, cMap map[str
 		aValues = append(aValues, v)
 	}
 
-	var (
-		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
-		rResult sql.Result
-	)
-
+	var query = fmt.Sprintf("update auth_keys set %s where auth_key_id = ?", strings.Join(names, ", "))
 	aValues = append(aValues, authKeyId)
 
-	rResult, err = m.db.Exec(ctx, query, aValues...)
-
+	_, rowsAffected, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		rResult, err := conn.Exec(ctx, query, aValues...)
+		if err != nil {
+			return 0, 0, err
+		}
+		rowsAffected, err := rResult.RowsAffected()
+		return 0, rowsAffected, err
+	}, keys...)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateCustomMap(_), error: %v", err)
-		return
 	}
-
-	rowsAffected, err = rResult.RowsAffected()
-	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
-	}
-
 	return
 }
 
 // UpdateCustomMapTx
-// update auth_key_infos set %s where auth_key_id = :auth_key_id
+// update auth_keys set %s where auth_key_id = :auth_key_id
 func (m *defaultAuthKeysModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, authKeyId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -160,7 +151,7 @@ func (m *defaultAuthKeysModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]in
 	}
 
 	var (
-		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
+		query   = fmt.Sprintf("update auth_keys set %s where auth_key_id = ?", strings.Join(names, ", "))
 		rResult sql.Result
 	)
 

@@ -11,6 +11,7 @@
 package model
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/cache"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
@@ -31,8 +32,8 @@ type (
 )
 
 // NewAuthKeysModel returns a model for the database table.
-func NewAuthKeysModel(db *sqlx.DB) AuthKeysModel {
+func NewAuthKeysModel(db *sqlx.DB, c cache.CacheConf) AuthKeysModel {
 	return &customAuthKeysModel{
-		defaultAuthKeysModel: newAuthKeysModel(db),
+		defaultAuthKeysModel: newAuthKeysModel(db, c),
 	}
 }

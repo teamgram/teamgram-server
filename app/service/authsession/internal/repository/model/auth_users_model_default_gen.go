@@ -65,11 +65,14 @@ func newAuthUsersModel(db *sqlx.DB) *defaultAuthUsersModel {
 
 func (m *defaultAuthUsersModel) Insert2(ctx context.Context, data *AuthUsers) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auth_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", authUsersRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted)
+
 }
 
 func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_users` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -77,7 +80,9 @@ func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultAuthUsersModel) FindOne(ctx context.Context, id int64) (*AuthUsers, error) {
 	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", authUsersRows)
 	var resp AuthUsers
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +106,7 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 
 func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) error {
 	query := fmt.Sprintf("update `auth_users` set %s where `id` = ?", authUsersRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted, data.Id)
 	return err
 }
@@ -108,7 +114,9 @@ func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) er
 func (m *defaultAuthUsersModel) FindOneByAuthKeyIdUserId(ctx context.Context, authKeyId int64, userId int64) (*AuthUsers, error) {
 	query := fmt.Sprintf("select %s from auth_users where auth_key_id = ? AND user_id = ? limit 1", authUsersRows)
 	var resp AuthUsers
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, userId)
+
 	if err != nil {
 		return nil, err
 	}

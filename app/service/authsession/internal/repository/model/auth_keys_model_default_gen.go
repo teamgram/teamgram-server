@@ -13,9 +13,12 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/teamgram/marmota/pkg/stores/cache"
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
@@ -27,6 +30,12 @@ var (
 	authKeysRows                = strings.Join(authKeysFieldNames, ",")
 	authKeysRowsExpectAutoSet   = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	authKeysRowsWithPlaceHolder = strings.Join(stringx.Remove(authKeysFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheTAuthKeysIdPrefix = "cache:t:auth_keys:id:"
+
+	cacheAuthKeysIdPrefix = "cache#AuthKeys#id"
+
+	cacheAuthKeysAuthKeyIdPrefix = "cache#AuthKeyId"
 )
 
 type (
@@ -43,6 +52,12 @@ type (
 
 	defaultAuthKeysModel struct {
 		db *sqlx.DB
+		sqlc.CachedConn
+	}
+
+	cachedExecResult struct {
+		lastInsertId int64
+		rowsAffected int64
 	}
 
 	AuthKeys struct {
@@ -57,27 +72,75 @@ type (
 	}
 )
 
-func newAuthKeysModel(db *sqlx.DB) *defaultAuthKeysModel {
+func (r cachedExecResult) LastInsertId() (int64, error) {
+	return r.lastInsertId, nil
+}
+
+func (r cachedExecResult) RowsAffected() (int64, error) {
+	return r.rowsAffected, nil
+}
+
+func newAuthKeysModel(db *sqlx.DB, c cache.CacheConf) *defaultAuthKeysModel {
 	return &defaultAuthKeysModel{
-		db: db,
+		db:         db,
+		CachedConn: sqlc.NewConn(db, c),
 	}
 }
 
 func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auth_keys` (%s) values (?, ?, ?, ?, ?, ?, ?)", authKeysRowsExpectAutoSet)
-	return m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted)
+
+	keys := m.uniqueCacheKeys(data)
+	lastInsertId, rowsAffected, err := m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted)
+		if err != nil {
+			return 0, 0, err
+		}
+		lastInsertId, err := r.LastInsertId()
+		if err != nil {
+			return 0, 0, err
+		}
+		rowsAffected, err := r.RowsAffected()
+		return lastInsertId, rowsAffected, err
+	}, keys...)
+	if err != nil {
+		return nil, err
+	}
+	return cachedExecResult{lastInsertId: lastInsertId, rowsAffected: rowsAffected}, nil
+
 }
 
 func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_keys` where `id` = ?"
-	_, err := m.db.Exec(ctx, query, id)
+
+	oldData, err := m.FindOne(ctx, id)
+	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
+		return err
+	}
+	keys := []string{m.formatPrimary(id)}
+	if oldData != nil {
+		keys = append(keys, m.cacheKeys(oldData)...)
+	}
+	_, _, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		r, err := conn.Exec(ctx, query, id)
+		if err != nil {
+			return 0, 0, err
+		}
+		rowsAffected, err := r.RowsAffected()
+		return 0, rowsAffected, err
+	}, keys...)
 	return err
 }
 
 func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys, error) {
 	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
 	var resp AuthKeys
-	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
+	cacheKey := m.formatPrimary(id)
+	err := m.QueryRow(ctx, &resp, cacheKey, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+		return conn.QueryRowPartial(ctx, v, query, id)
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -101,14 +164,38 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 
 func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) error {
 	query := fmt.Sprintf("update `auth_keys` set %s where `id` = ?", authKeysRowsWithPlaceHolder)
-	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted, data.Id)
+
+	oldData, err := m.FindOne(ctx, data.Id)
+	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
+		return err
+	}
+	keys := m.cacheKeys(data)
+	if oldData != nil {
+		keys = append(keys, m.cacheKeys(oldData)...)
+	}
+	_, _, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted, data.Id)
+		if err != nil {
+			return 0, 0, err
+		}
+		rowsAffected, err := r.RowsAffected()
+		return 0, rowsAffected, err
+	}, keys...)
 	return err
 }
 
 func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error) {
 	query := fmt.Sprintf("select %s from auth_keys where auth_key_id = ? limit 1", authKeysRows)
 	var resp AuthKeys
-	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId)
+
+	cacheAuthKeysAuthKeyIdKey := fmt.Sprintf("%s#%v", cacheAuthKeysAuthKeyIdPrefix, authKeyId)
+	err := m.QueryRowIndex(ctx, &resp, cacheAuthKeysAuthKeyIdKey, m.formatPrimary, func(ctx context.Context, conn *sqlx.DB, v interface{}) (interface{}, error) {
+		if err := conn.QueryRowPartial(ctx, &resp, query, authKeyId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+
 	if err != nil {
 		return nil, err
 	}
@@ -128,4 +215,33 @@ func (m *defaultAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, auth
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (m *defaultAuthKeysModel) cacheKeys(data *AuthKeys) []string {
+	if data == nil {
+		return nil
+	}
+	keys := []string{m.formatPrimary(data.Id)}
+	keys = append(keys, m.uniqueCacheKeys(data)...)
+	return keys
+}
+
+func (m *defaultAuthKeysModel) uniqueCacheKeys(data *AuthKeys) []string {
+	if data == nil {
+		return nil
+	}
+	var keys []string
+
+	keys = append(keys, fmt.Sprintf("%s#%v", cacheAuthKeysAuthKeyIdPrefix, data.AuthKeyId))
+
+	return keys
+}
+
+func (m *defaultAuthKeysModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s#%v", cacheAuthKeysIdPrefix, primary)
+}
+
+func (m *defaultAuthKeysModel) queryPrimary(ctx context.Context, conn *sqlx.DB, v interface{}, primary interface{}) error {
+	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
+	return conn.QueryRowPartial(ctx, v, query, primary)
 }

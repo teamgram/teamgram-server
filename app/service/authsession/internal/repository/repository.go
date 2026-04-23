@@ -43,7 +43,7 @@ func NewRepository(c config.Config) *Repository {
 
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
-		AuthKeysModel:    model.NewAuthKeysModel(db),
+		AuthKeysModel:    model.NewAuthKeysModel(db, c.Cache),
 		AuthUsersModel:   model.NewAuthUsersModel(db),
 		AuthsModel:       model.NewAuthsModel(db),
 		FutureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
