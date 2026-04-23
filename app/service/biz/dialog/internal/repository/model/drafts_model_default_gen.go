@@ -27,12 +27,6 @@ var (
 	draftsRows                = strings.Join(draftsFieldNames, ",")
 	draftsRowsExpectAutoSet   = strings.Join(stringx.Remove(draftsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	draftsRowsWithPlaceHolder = strings.Join(stringx.Remove(draftsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTDraftsIdPrefix = "cache:t:drafts:id:"
-
-	cacheDraftsIdPrefix = "cache#Drafts#id"
-
-	cacheDraftsUserIdPeerDialogIdPrefix = "cache#UserId#PeerDialogId"
 )
 
 type (
@@ -68,11 +62,14 @@ func newDraftsModel(db *sqlx.DB) *defaultDraftsModel {
 
 func (m *defaultDraftsModel) Insert2(ctx context.Context, data *Drafts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `drafts` (%s) values (?, ?, ?, ?, ?)", draftsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.DraftType, data.DraftMessageData, data.Date2)
+
 }
 
 func (m *defaultDraftsModel) Delete2(ctx context.Context, id int32) error {
 	query := "delete from `drafts` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -80,7 +77,9 @@ func (m *defaultDraftsModel) Delete2(ctx context.Context, id int32) error {
 func (m *defaultDraftsModel) FindOne(ctx context.Context, id int32) (*Drafts, error) {
 	query := fmt.Sprintf("select %s from drafts where id = ? limit 1", draftsRows)
 	var resp Drafts
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +102,7 @@ func (m *defaultDraftsModel) FindListByIdList(ctx context.Context, id ...int32) 
 
 func (m *defaultDraftsModel) Update2(ctx context.Context, data *Drafts) error {
 	query := fmt.Sprintf("update `drafts` set %s where `id` = ?", draftsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.DraftType, data.DraftMessageData, data.Date2, data.Id)
 	return err
 }
@@ -110,18 +110,11 @@ func (m *defaultDraftsModel) Update2(ctx context.Context, data *Drafts) error {
 func (m *defaultDraftsModel) FindOneByUserIdPeerDialogId(ctx context.Context, userId int32, peerDialogId int64) (*Drafts, error) {
 	query := fmt.Sprintf("select %s from drafts where user_id = ? AND peer_dialog_id = ? limit 1", draftsRows)
 	var resp Drafts
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultDraftsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheDraftsIdPrefix, primary)
-}
-
-func (m *defaultDraftsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from drafts where id = ? limit 1", draftsRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

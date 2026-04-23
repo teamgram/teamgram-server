@@ -62,6 +62,7 @@ func (m *defaultUserGlobalPrivacySettingsModel) InsertOrUpdate(ctx context.Conte
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -94,6 +95,7 @@ func (m *defaultUserGlobalPrivacySettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, da
 // Select
 // select id, user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium from user_global_privacy_settings where user_id = :user_id
 func (m *defaultUserGlobalPrivacySettingsModel) Select(ctx context.Context, userId int64) (rValue *UserGlobalPrivacySettings, err error) {
+
 	var (
 		query = "select id, user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium from user_global_privacy_settings where user_id = ?"
 		do    = &UserGlobalPrivacySettings{}

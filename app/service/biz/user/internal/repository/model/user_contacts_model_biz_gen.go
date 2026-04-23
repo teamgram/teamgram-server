@@ -109,6 +109,7 @@ func (m *defaultUserContactsModel) InsertOrUpdate(ctx context.Context, data *Use
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -141,6 +142,7 @@ func (m *defaultUserContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserConta
 // SelectContact
 // select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = :owner_user_id and contact_user_id = :contact_user_id
 func (m *defaultUserContactsModel) SelectContact(ctx context.Context, ownerUserId int64, contactUserId int64) (rValue *UserContacts, err error) {
+
 	var (
 		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_user_id = ?"
 		do    = &UserContacts{}
@@ -164,6 +166,7 @@ func (m *defaultUserContactsModel) SelectContact(ctx context.Context, ownerUserI
 // SelectByContactId
 // select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id and is_deleted = 0
 func (m *defaultUserContactsModel) SelectByContactId(ctx context.Context, ownerUserId int64, contactUserId int64) (rValue *UserContacts, err error) {
+
 	var (
 		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted from user_contacts where owner_user_id = ? and contact_user_id = ? and is_deleted = 0"
 		do    = &UserContacts{}
@@ -483,6 +486,7 @@ func (m *defaultUserContactsModel) SelectListByOwnerListAndContactListWithCB(ctx
 // UpdateContactNameById
 // update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where id = :id
 func (m *defaultUserContactsModel) UpdateContactNameById(ctx context.Context, contactFirstName string, contactLastName string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_contacts set contact_first_name = ?, contact_last_name = ?, is_deleted = 0 where id = ?"
 		rResult sql.Result
@@ -528,6 +532,7 @@ func (m *defaultUserContactsModel) UpdateContactNameByIdTx(tx *sqlx.Tx, contactF
 // UpdateContactName
 // update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 func (m *defaultUserContactsModel) UpdateContactName(ctx context.Context, contactFirstName string, contactLastName string, ownerUserId int64, contactUserId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_contacts set contact_first_name = ?, contact_last_name = ?, is_deleted = 0 where contact_user_id != 0 and (owner_user_id = ? and contact_user_id = ?)"
 		rResult sql.Result
@@ -573,6 +578,7 @@ func (m *defaultUserContactsModel) UpdateContactNameTx(tx *sqlx.Tx, contactFirst
 // UpdateMutual
 // update user_contacts set mutual = :mutual where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 func (m *defaultUserContactsModel) UpdateMutual(ctx context.Context, mutual bool, ownerUserId int64, contactUserId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_contacts set mutual = ? where contact_user_id != 0 and (owner_user_id = ? and contact_user_id = ?)"
 		rResult sql.Result
@@ -618,6 +624,7 @@ func (m *defaultUserContactsModel) UpdateMutualTx(tx *sqlx.Tx, mutual bool, owne
 // DeleteContacts
 // update user_contacts set is_deleted = 1, mutual = 0, close_friend = 0, stories_hidden = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id in (:id_list))
 func (m *defaultUserContactsModel) DeleteContacts(ctx context.Context, ownerUserId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update user_contacts set is_deleted = 1, mutual = 0, close_friend = 0, stories_hidden = 0 where contact_user_id != 0 and (owner_user_id = ? and contact_user_id in (%s))", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -672,6 +679,7 @@ func (m *defaultUserContactsModel) DeleteContactsTx(tx *sqlx.Tx, ownerUserId int
 // UpdatePhoneByContactId
 // update user_contacts set contact_phone = :contact_phone where contact_user_id = :contact_user_id
 func (m *defaultUserContactsModel) UpdatePhoneByContactId(ctx context.Context, contactPhone string, contactUserId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_contacts set contact_phone = ? where contact_user_id = ?"
 		rResult sql.Result
@@ -805,6 +813,7 @@ func (m *defaultUserContactsModel) SelectReverseListByIdListWithCB(ctx context.C
 // UpdateCloseFriend
 // update user_contacts set close_friend = :close_friend where owner_user_id = :owner_user_id and contact_user_id in (:idList)
 func (m *defaultUserContactsModel) UpdateCloseFriend(ctx context.Context, closeFriend bool, ownerUserId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update user_contacts set close_friend = ? where owner_user_id = ? and contact_user_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -859,6 +868,7 @@ func (m *defaultUserContactsModel) UpdateCloseFriendTx(tx *sqlx.Tx, closeFriend 
 // UpdateStoriesHidden
 // update user_contacts set stories_hidden = :stories_hidden where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id
 func (m *defaultUserContactsModel) UpdateStoriesHidden(ctx context.Context, storiesHidden bool, ownerUserId int64, contactUserId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_contacts set stories_hidden = ? where owner_user_id = ? and contact_user_id = ?"
 		rResult sql.Result

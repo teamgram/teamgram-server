@@ -72,6 +72,7 @@ func (m *defaultUnregisteredContactsModel) InsertOrUpdate(ctx context.Context, d
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -149,6 +150,7 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhoneWithCB(ctx cont
 // UpdateContactName
 // update unregistered_contacts set import_first_name = :import_first_name, import_last_name = :import_last_name where id = :id
 func (m *defaultUnregisteredContactsModel) UpdateContactName(ctx context.Context, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update unregistered_contacts set import_first_name = ?, import_last_name = ? where id = ?"
 		rResult sql.Result
@@ -194,6 +196,7 @@ func (m *defaultUnregisteredContactsModel) UpdateContactNameTx(tx *sqlx.Tx, impo
 // DeleteContacts
 // update unregistered_contacts set imported = 1 where id in (:id_list)
 func (m *defaultUnregisteredContactsModel) DeleteContacts(ctx context.Context, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -248,6 +251,7 @@ func (m *defaultUnregisteredContactsModel) DeleteContactsTx(tx *sqlx.Tx, idList 
 // DeleteImportersByPhone
 // update unregistered_contacts set imported = 1 where phone = :phone
 func (m *defaultUnregisteredContactsModel) DeleteImportersByPhone(ctx context.Context, phone string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update unregistered_contacts set imported = 1 where phone = ?"
 		rResult sql.Result

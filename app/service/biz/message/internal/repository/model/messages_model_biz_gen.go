@@ -167,6 +167,7 @@ func (m *defaultMessagesModel) InsertOrReturnId(ctx context.Context, data *Messa
 	}
 
 	return
+
 }
 
 // InsertOrReturnIdTx
@@ -199,6 +200,7 @@ func (m *defaultMessagesModel) InsertOrReturnIdTx(tx *sqlx.Tx, data *Messages) (
 // SelectByRandomId
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where sender_user_id = :sender_user_id and random_id = :random_id and deleted = 0 limit 1
 func (m *defaultMessagesModel) SelectByRandomId(ctx context.Context, senderUserId int64, randomId int64) (rValue *Messages, err error) {
+
 	var (
 		query = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where sender_user_id = ? and random_id = ? and deleted = 0 limit 1"
 		do    = &Messages{}
@@ -277,6 +279,7 @@ func (m *defaultMessagesModel) SelectByMessageIdListWithCB(ctx context.Context, 
 // SelectByMessageId
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1
 func (m *defaultMessagesModel) SelectByMessageId(ctx context.Context, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+
 	var (
 		query = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1"
 		do    = &Messages{}
@@ -355,6 +358,7 @@ func (m *defaultMessagesModel) SelectByMessageDataIdListWithCB(ctx context.Conte
 // SelectByMessageDataId
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and dialog_message_id = :dialog_message_id and deleted = 0 limit 1
 func (m *defaultMessagesModel) SelectByMessageDataId(ctx context.Context, userId int64, dialogMessageId int64) (rValue *Messages, err error) {
+
 	var (
 		query = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = ? and dialog_message_id = ? and deleted = 0 limit 1"
 		do    = &Messages{}
@@ -613,6 +617,7 @@ func (m *defaultMessagesModel) SelectForwardByOffsetDateLimitWithCB(ctx context.
 // SelectPeerUserMessageId
 // select user_message_box_id, message_box_type from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
 func (m *defaultMessagesModel) SelectPeerUserMessageId(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+
 	var (
 		query = "select user_message_box_id, message_box_type from messages where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)"
 		do    = &Messages{}
@@ -636,6 +641,7 @@ func (m *defaultMessagesModel) SelectPeerUserMessageId(ctx context.Context, peer
 // SelectPeerUserMessage
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
 func (m *defaultMessagesModel) SelectPeerUserMessage(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+
 	var (
 		query = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)"
 		do    = &Messages{}
@@ -802,6 +808,7 @@ func (m *defaultMessagesModel) SelectDialogLastMessageListWithCB(ctx context.Con
 // DeleteMessagesByMessageIdList
 // update messages set deleted = 1 where user_id = :user_id and user_message_box_id in (:idList) and deleted = 0
 func (m *defaultMessagesModel) DeleteMessagesByMessageIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update messages set deleted = 1 where user_id = ? and user_message_box_id in (%s) and deleted = 0", sqlx.InInt32List(idList))
 		rResult sql.Result
@@ -901,6 +908,7 @@ func (m *defaultMessagesModel) SelectDialogMessageIdListWithCB(ctx context.Conte
 // UpdateMediaUnread
 // update messages set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
 func (m *defaultMessagesModel) UpdateMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update messages set media_unread = 0 where user_id = ? and user_message_box_id = ?"
 		rResult sql.Result
@@ -946,6 +954,7 @@ func (m *defaultMessagesModel) UpdateMediaUnreadTx(tx *sqlx.Tx, userId int64, us
 // UpdateMentionedAndMediaUnread
 // update messages set mentioned = 0, media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
 func (m *defaultMessagesModel) UpdateMentionedAndMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update messages set mentioned = 0, media_unread = 0 where user_id = ? and user_message_box_id = ?"
 		rResult sql.Result
@@ -1339,6 +1348,7 @@ func (m *defaultMessagesModel) SelectLastTwoPinnedListWithCB(ctx context.Context
 // UpdatePinned
 // update messages set pinned = :pinned where user_id = :user_id and user_message_box_id = :user_message_box_id
 func (m *defaultMessagesModel) UpdatePinned(ctx context.Context, pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update messages set pinned = ? where user_id = ? and user_message_box_id = ?"
 		rResult sql.Result
@@ -1417,6 +1427,7 @@ func (m *defaultMessagesModel) SelectPinnedMessageIdListWithCB(ctx context.Conte
 // UpdateUnPinnedByIdList
 // update messages set pinned = 0 where user_id = :user_id and user_message_box_id in (:idList)
 func (m *defaultMessagesModel) UpdateUnPinnedByIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update messages set pinned = 0 where user_id = ? and user_message_box_id in (%s)", sqlx.InInt32List(idList))
 		rResult sql.Result
@@ -1471,6 +1482,7 @@ func (m *defaultMessagesModel) UpdateUnPinnedByIdListTx(tx *sqlx.Tx, userId int6
 // UpdateEditMessage
 // update messages set message_data = :message_data, message = :message where user_id = :user_id and user_message_box_id = :user_message_box_id
 func (m *defaultMessagesModel) UpdateEditMessage(ctx context.Context, messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update messages set message_data = ?, message = ? where user_id = ? and user_message_box_id = ?"
 		rResult sql.Result
@@ -1516,6 +1528,7 @@ func (m *defaultMessagesModel) UpdateEditMessageTx(tx *sqlx.Tx, messageData stri
 // UpdateCustomMap
 // update messages set %s where user_id = :user_id and user_message_box_id = :user_message_box_id
 func (m *defaultMessagesModel) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {

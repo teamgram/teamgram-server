@@ -27,12 +27,6 @@ var (
 	usernameRows                = strings.Join(usernameFieldNames, ",")
 	usernameRowsExpectAutoSet   = strings.Join(stringx.Remove(usernameFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	usernameRowsWithPlaceHolder = strings.Join(stringx.Remove(usernameFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUsernameIdPrefix = "cache:t:username:id:"
-
-	cacheUsernameIdPrefix = "cache#Username#id"
-
-	cacheUsernameUsernamePrefix = "cache#Username"
 )
 
 type (
@@ -71,11 +65,14 @@ func newUsernameModel(db *sqlx.DB) *defaultUsernameModel {
 
 func (m *defaultUsernameModel) Insert2(ctx context.Context, data *Username) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `username` (%s) values (?, ?, ?, ?, ?, ?, ?)", usernameRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted)
+
 }
 
 func (m *defaultUsernameModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `username` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -83,7 +80,9 @@ func (m *defaultUsernameModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultUsernameModel) FindOne(ctx context.Context, id int64) (*Username, error) {
 	query := fmt.Sprintf("select %s from username where id = ? limit 1", usernameRows)
 	var resp Username
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +106,7 @@ func (m *defaultUsernameModel) FindListByIdList(ctx context.Context, id ...int64
 
 func (m *defaultUsernameModel) Update2(ctx context.Context, data *Username) error {
 	query := fmt.Sprintf("update `username` set %s where `id` = ?", usernameRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted, data.Id)
 	return err
 }
@@ -114,7 +114,9 @@ func (m *defaultUsernameModel) Update2(ctx context.Context, data *Username) erro
 func (m *defaultUsernameModel) FindOneByUsername(ctx context.Context, username string) (*Username, error) {
 	query := fmt.Sprintf("select %s from username where username = ? limit 1", usernameRows)
 	var resp Username
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, username)
+
 	if err != nil {
 		return nil, err
 	}
@@ -133,13 +135,4 @@ func (m *defaultUsernameModel) FindListByUsernameList(ctx context.Context, usern
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultUsernameModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUsernameIdPrefix, primary)
-}
-
-func (m *defaultUsernameModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from username where id = ? limit 1", usernameRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

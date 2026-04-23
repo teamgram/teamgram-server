@@ -66,6 +66,7 @@ func (m *defaultPhotoSizesModel) Insert(ctx context.Context, data *PhotoSizes) (
 	}
 
 	return
+
 }
 
 // InsertTx

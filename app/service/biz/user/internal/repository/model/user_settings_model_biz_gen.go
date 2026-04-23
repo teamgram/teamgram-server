@@ -65,6 +65,7 @@ func (m *defaultUserSettingsModel) InsertOrUpdate(ctx context.Context, data *Use
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -97,6 +98,7 @@ func (m *defaultUserSettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserSetti
 // SelectByKey
 // select id, user_id, key2, value from user_settings where user_id = :user_id and key2 = :key2 and deleted = 0 limit 1
 func (m *defaultUserSettingsModel) SelectByKey(ctx context.Context, userId int64, key2 string) (rValue *UserSettings, err error) {
+
 	var (
 		query = "select id, user_id, key2, value from user_settings where user_id = ? and key2 = ? and deleted = 0 limit 1"
 		do    = &UserSettings{}
@@ -120,6 +122,7 @@ func (m *defaultUserSettingsModel) SelectByKey(ctx context.Context, userId int64
 // Update
 // update user_settings set value = :value, deleted = 0 where user_id = :user_id and key2 = :key2
 func (m *defaultUserSettingsModel) Update(ctx context.Context, value string, userId int64, key2 string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
 		rResult sql.Result

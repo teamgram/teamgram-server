@@ -30,9 +30,7 @@ import (
 type Repository struct {
 	sqlc.CachedConn
 	kv               kv.Store
-	AuthKeysModel    AuthKeysModelType
-	AuthUsersModel   AuthUsersModelType
-	AuthsModel       AuthsModelType
+	model            *model.Models
 	FutureSaltsModel FutureSaltsModelType
 }
 
@@ -43,9 +41,7 @@ func NewRepository(c config.Config) *Repository {
 
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
-		AuthKeysModel:    model.NewAuthKeysModel(db, c.Cache),
-		AuthUsersModel:   model.NewAuthUsersModel(db),
-		AuthsModel:       model.NewAuthsModel(db),
+		model:            model.NewModels(db, c.Cache),
 		FutureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
 	}
 }

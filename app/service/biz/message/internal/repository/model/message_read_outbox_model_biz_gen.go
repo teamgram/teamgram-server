@@ -63,6 +63,7 @@ func (m *defaultMessageReadOutboxModel) InsertOrUpdate(ctx context.Context, data
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx

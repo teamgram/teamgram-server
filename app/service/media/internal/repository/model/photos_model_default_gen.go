@@ -27,12 +27,6 @@ var (
 	photosRows                = strings.Join(photosFieldNames, ",")
 	photosRowsExpectAutoSet   = strings.Join(stringx.Remove(photosFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	photosRowsWithPlaceHolder = strings.Join(stringx.Remove(photosFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTPhotosIdPrefix = "cache:t:photos:id:"
-
-	cachePhotosIdPrefix = "cache#Photos#id"
-
-	cachePhotosPhotoIdPrefix = "cache#PhotoId"
 )
 
 type (
@@ -74,11 +68,14 @@ func newPhotosModel(db *sqlx.DB) *defaultPhotosModel {
 
 func (m *defaultPhotosModel) Insert2(ctx context.Context, data *Photos) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `photos` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", photosRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.PhotoId, data.AccessHash, data.HasStickers, data.DcId, data.Date2, data.HasVideo, data.SizeId, data.VideoSizeId, data.InputFileName, data.Ext)
+
 }
 
 func (m *defaultPhotosModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `photos` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -86,7 +83,9 @@ func (m *defaultPhotosModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultPhotosModel) FindOne(ctx context.Context, id int64) (*Photos, error) {
 	query := fmt.Sprintf("select %s from photos where id = ? limit 1", photosRows)
 	var resp Photos
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -110,6 +109,7 @@ func (m *defaultPhotosModel) FindListByIdList(ctx context.Context, id ...int64) 
 
 func (m *defaultPhotosModel) Update2(ctx context.Context, data *Photos) error {
 	query := fmt.Sprintf("update `photos` set %s where `id` = ?", photosRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.PhotoId, data.AccessHash, data.HasStickers, data.DcId, data.Date2, data.HasVideo, data.SizeId, data.VideoSizeId, data.InputFileName, data.Ext, data.Id)
 	return err
 }
@@ -117,7 +117,9 @@ func (m *defaultPhotosModel) Update2(ctx context.Context, data *Photos) error {
 func (m *defaultPhotosModel) FindOneByPhotoId(ctx context.Context, photoId int64) (*Photos, error) {
 	query := fmt.Sprintf("select %s from photos where photo_id = ? limit 1", photosRows)
 	var resp Photos
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, photoId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -137,13 +139,4 @@ func (m *defaultPhotosModel) FindListByPhotoIdList(ctx context.Context, photoId 
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultPhotosModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cachePhotosIdPrefix, primary)
-}
-
-func (m *defaultPhotosModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from photos where id = ? limit 1", photosRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

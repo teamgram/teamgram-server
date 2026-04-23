@@ -71,6 +71,7 @@ func (m *defaultUserPeerBlocksModel) InsertOrUpdate(ctx context.Context, data *U
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -195,6 +196,7 @@ func (m *defaultUserPeerBlocksModel) SelectListByIdListWithCB(ctx context.Contex
 // Select
 // select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (m *defaultUserPeerBlocksModel) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *UserPeerBlocks, err error) {
+
 	var (
 		query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
 		do    = &UserPeerBlocks{}
@@ -218,6 +220,7 @@ func (m *defaultUserPeerBlocksModel) Select(ctx context.Context, userId int64, p
 // Delete
 // update user_peer_blocks set deleted = 1, `date` = 0 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultUserPeerBlocksModel) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_peer_blocks set deleted = 1, `date` = 0 where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

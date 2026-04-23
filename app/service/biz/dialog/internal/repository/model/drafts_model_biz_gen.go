@@ -71,6 +71,7 @@ func (m *defaultDraftsModel) InsertOrUpdate(ctx context.Context, data *Drafts) (
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -103,6 +104,7 @@ func (m *defaultDraftsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Drafts) (lastIn
 // Select
 // select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (m *defaultDraftsModel) Select(ctx context.Context, userId int32, peerDialogId int64) (rValue *Drafts, err error) {
+
 	var (
 		query = "select id, user_id, peer_dialog_id, draft_type, draft_message_data, date2 from drafts where user_id = ? and peer_dialog_id = ?"
 		do    = &Drafts{}
@@ -214,6 +216,7 @@ func (m *defaultDraftsModel) SelectByIdListWithCB(ctx context.Context, userId in
 // ClearByIdList
 // update drafts set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and peer_dialog_id in (:idList)
 func (m *defaultDraftsModel) ClearByIdList(ctx context.Context, userId int32, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update drafts set draft_type = 0, draft_message_data = 'null' where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result

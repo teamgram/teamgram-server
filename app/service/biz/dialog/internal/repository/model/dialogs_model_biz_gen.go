@@ -151,6 +151,7 @@ func (m *defaultDialogsModel) InsertIgnore(ctx context.Context, data *Dialogs) (
 	}
 
 	return
+
 }
 
 // InsertIgnoreTx
@@ -205,6 +206,7 @@ func (m *defaultDialogsModel) InsertOrUpdate(ctx context.Context, data *Dialogs)
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -259,6 +261,7 @@ func (m *defaultDialogsModel) InsertOrUpdateDialog(ctx context.Context, data *Di
 	}
 
 	return
+
 }
 
 // InsertOrUpdateDialogTx
@@ -291,6 +294,7 @@ func (m *defaultDialogsModel) InsertOrUpdateDialogTx(tx *sqlx.Tx, data *Dialogs)
 // UpdateOutboxDialog
 // update dialogs set unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null' where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) UpdateOutboxDialog(ctx context.Context, topMessage int32, date2 int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set unread_count = 0, deleted = 0, top_message = ?, date2 = ?, unread_mark = 0, draft_message_data = 'null' where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -336,6 +340,7 @@ func (m *defaultDialogsModel) UpdateOutboxDialogTx(tx *sqlx.Tx, topMessage int32
 // UpdateInboxDialog
 // update dialogs set unread_count = unread_count + 1, deleted = 0, %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) UpdateInboxDialog(ctx context.Context, cMap map[string]interface{}, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -549,6 +554,7 @@ func (m *defaultDialogsModel) SelectPeerDialogListWithCB(ctx context.Context, us
 // SelectDialog
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, wallpaper_id, wallpaper_overridden, date2 from dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (m *defaultDialogsModel) SelectDialog(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *Dialogs, err error) {
+
 	var (
 		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, wallpaper_id, wallpaper_overridden, date2 from dialogs where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
 		do    = &Dialogs{}
@@ -572,6 +578,7 @@ func (m *defaultDialogsModel) SelectDialog(ctx context.Context, userId int64, pe
 // SelectByPeerDialogId
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, wallpaper_id, wallpaper_overridden, date2 from dialogs where user_id = :user_id and peer_dialog_id = :peer_dialog_id and deleted = 0
 func (m *defaultDialogsModel) SelectByPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (rValue *Dialogs, err error) {
+
 	var (
 		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, wallpaper_id, wallpaper_overridden, date2 from dialogs where user_id = ? and peer_dialog_id = ? and deleted = 0"
 		do    = &Dialogs{}
@@ -730,6 +737,7 @@ func (m *defaultDialogsModel) SelectExcludeFolderPinnedDialogsWithCB(ctx context
 // UpdateReadInboxMaxId
 // update dialogs set unread_count = :unread_count, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (m *defaultDialogsModel) UpdateReadInboxMaxId(ctx context.Context, unreadCount int32, readInboxMaxId int32, userId int64, peerDialogId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set unread_count = ?, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
@@ -775,6 +783,7 @@ func (m *defaultDialogsModel) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, unreadCount in
 // UpdateReadOutboxMaxId
 // update dialogs set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (m *defaultDialogsModel) UpdateReadOutboxMaxId(ctx context.Context, readOutboxMaxId int32, userId int64, peerDialogId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set read_outbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
@@ -820,6 +829,7 @@ func (m *defaultDialogsModel) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, readOutboxMax
 // UpdateTopMessage
 // update dialogs set top_message = :top_message where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (m *defaultDialogsModel) UpdateTopMessage(ctx context.Context, topMessage int32, userId int64, peerDialogId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set top_message = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
@@ -865,6 +875,7 @@ func (m *defaultDialogsModel) UpdateTopMessageTx(tx *sqlx.Tx, topMessage int32, 
 // UpdatePinnedMsgId
 // update dialogs set pinned_msg_id = :pinned_msg_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 func (m *defaultDialogsModel) UpdatePinnedMsgId(ctx context.Context, pinnedMsgId int32, userId int64, peerDialogId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set pinned_msg_id = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
@@ -910,6 +921,7 @@ func (m *defaultDialogsModel) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinnedMsgId int32
 // Delete
 // delete from dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from dialogs where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -987,6 +999,7 @@ func (m *defaultDialogsModel) SelectDialogsByGTReadInboxMaxIdWithCB(ctx context.
 // UpdateCustomMap
 // update dialogs set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1055,6 +1068,7 @@ func (m *defaultDialogsModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]int
 // SaveDraft
 // update dialogs set draft_type = :draft_type, draft_message_data = :draft_message_data where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) SaveDraft(ctx context.Context, draftType int32, draftMessageData string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set draft_type = ?, draft_message_data = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -1145,6 +1159,7 @@ func (m *defaultDialogsModel) SelectAllDraftsWithCB(ctx context.Context, userId 
 // ClearAllDrafts
 // update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and draft_type = 2
 func (m *defaultDialogsModel) ClearAllDrafts(ctx context.Context, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = ? and draft_type = 2"
 		rResult sql.Result
@@ -1190,6 +1205,7 @@ func (m *defaultDialogsModel) ClearAllDraftsTx(tx *sqlx.Tx, userId int64) (rowsA
 // UpdatePeerFolderId
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) UpdatePeerFolderId(ctx context.Context, folderId int32, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set folder_id = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -1235,6 +1251,7 @@ func (m *defaultDialogsModel) UpdatePeerFolderIdTx(tx *sqlx.Tx, folderId int32, 
 // UpdatePeerDialogListFolderId
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_dialog_id in (:idList)
 func (m *defaultDialogsModel) UpdatePeerDialogListFolderId(ctx context.Context, folderId int32, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update dialogs set folder_id = ? where user_id = ? and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -1289,6 +1306,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder
 // UpdatePeerDialogListPinned
 // update dialogs set pinned = :pinned where user_id = :user_id and folder_id = 0 and peer_dialog_id in (:idList)
 func (m *defaultDialogsModel) UpdatePeerDialogListPinned(ctx context.Context, pinned int64, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update dialogs set pinned = ? where user_id = ? and folder_id = 0 and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -1343,6 +1361,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned i
 // UpdateFolderPeerDialogListPinned
 // update dialogs set folder_pinned = :folder_pinned where user_id = :user_id and folder_id = 1 and peer_dialog_id in (:idList)
 func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinned(ctx context.Context, folderPinned int64, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update dialogs set folder_pinned = ? where user_id = ? and folder_id = 1 and peer_dialog_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -1397,6 +1416,7 @@ func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, fo
 // UpdateUnPinnedNotIdList
 // update dialogs set pinned = 0 where user_id = :user_id and folder_id = 0 and pinned > 0 and peer_dialog_id not in (:idList)
 func (m *defaultDialogsModel) UpdateUnPinnedNotIdList(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update dialogs set pinned = 0 where user_id = ? and folder_id = 0 and pinned > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -1451,6 +1471,7 @@ func (m *defaultDialogsModel) UpdateUnPinnedNotIdListTx(tx *sqlx.Tx, userId int6
 // UpdateFolderUnPinnedNotIdList
 // update dialogs set folder_pinned = 0 where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (:idList)
 func (m *defaultDialogsModel) UpdateFolderUnPinnedNotIdList(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update dialogs set folder_pinned = 0 where user_id = ? and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -1605,6 +1626,7 @@ func (m *defaultDialogsModel) SelectDialogsByPeerTypeWithCB(ctx context.Context,
 // UpdateUnreadCount
 // update dialogs set unread_count = unread_count + (:unreadCount), unread_mentions_count = unread_mentions_count + (:unreadMentionsCount), unread_reactions_count = unread_reactions_count + (:unreadReactionsCount) where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultDialogsModel) UpdateUnreadCount(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialogs set unread_count = unread_count + (?), unread_mentions_count = unread_mentions_count + (?), unread_reactions_count = unread_reactions_count + (?) where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

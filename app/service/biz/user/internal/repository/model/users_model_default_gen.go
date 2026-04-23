@@ -27,12 +27,6 @@ var (
 	usersRows                = strings.Join(usersFieldNames, ",")
 	usersRowsExpectAutoSet   = strings.Join(stringx.Remove(usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	usersRowsWithPlaceHolder = strings.Join(stringx.Remove(usersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUsersIdPrefix = "cache:t:users:id:"
-
-	cacheUsersIdPrefix = "cache#Users#id"
-
-	cacheUsersPhonePrefix = "cache#Phone"
 )
 
 type (
@@ -100,11 +94,14 @@ func newUsersModel(db *sqlx.DB) *defaultUsersModel {
 
 func (m *defaultUsersModel) Insert2(ctx context.Context, data *Users) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", usersRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason)
+
 }
 
 func (m *defaultUsersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `users` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -112,7 +109,9 @@ func (m *defaultUsersModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultUsersModel) FindOne(ctx context.Context, id int64) (*Users, error) {
 	query := fmt.Sprintf("select %s from users where id = ? limit 1", usersRows)
 	var resp Users
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +135,7 @@ func (m *defaultUsersModel) FindListByIdList(ctx context.Context, id ...int64) (
 
 func (m *defaultUsersModel) Update2(ctx context.Context, data *Users) error {
 	query := fmt.Sprintf("update `users` set %s where `id` = ?", usersRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason, data.Id)
 	return err
 }
@@ -143,7 +143,9 @@ func (m *defaultUsersModel) Update2(ctx context.Context, data *Users) error {
 func (m *defaultUsersModel) FindOneByPhone(ctx context.Context, phone string) (*Users, error) {
 	query := fmt.Sprintf("select %s from users where phone = ? limit 1", usersRows)
 	var resp Users
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone)
+
 	if err != nil {
 		return nil, err
 	}
@@ -162,13 +164,4 @@ func (m *defaultUsersModel) FindListByPhoneList(ctx context.Context, phone ...st
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultUsersModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUsersIdPrefix, primary)
-}
-
-func (m *defaultUsersModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from users where id = ? limit 1", usersRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

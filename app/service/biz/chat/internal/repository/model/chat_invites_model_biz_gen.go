@@ -80,6 +80,7 @@ func (m *defaultChatInvitesModel) Insert(ctx context.Context, data *ChatInvites)
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -157,6 +158,7 @@ func (m *defaultChatInvitesModel) SelectListByAdminIdWithCB(ctx context.Context,
 // SelectByLink
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where link = :link
 func (m *defaultChatInvitesModel) SelectByLink(ctx context.Context, link string) (rValue *ChatInvites, err error) {
+
 	var (
 		query = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where link = ?"
 		do    = &ChatInvites{}
@@ -270,6 +272,7 @@ func (m *defaultChatInvitesModel) SelectListByChatIdWithCB(ctx context.Context, 
 // Update
 // update chat_invites set %s where chat_id = :chat_id and link = :link
 func (m *defaultChatInvitesModel) Update(ctx context.Context, cMap map[string]interface{}, chatId int64, link string) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -336,6 +339,7 @@ func (m *defaultChatInvitesModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interfac
 // DeleteByLink
 // delete from chat_invites where chat_id = :chat_id and link = :link
 func (m *defaultChatInvitesModel) DeleteByLink(ctx context.Context, chatId int64, link string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from chat_invites where chat_id = ? and link = ?"
 		rResult sql.Result
@@ -380,6 +384,7 @@ func (m *defaultChatInvitesModel) DeleteByLinkTx(tx *sqlx.Tx, chatId int64, link
 // DeleteByRevoked
 // delete from chat_invites where chat_id = :chat_id and admin_id = :admin_id and revoked = 1
 func (m *defaultChatInvitesModel) DeleteByRevoked(ctx context.Context, chatId int64, adminId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from chat_invites where chat_id = ? and admin_id = ? and revoked = 1"
 		rResult sql.Result

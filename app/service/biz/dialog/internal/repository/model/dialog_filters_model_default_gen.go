@@ -27,12 +27,6 @@ var (
 	dialogFiltersRows                = strings.Join(dialogFiltersFieldNames, ",")
 	dialogFiltersRowsExpectAutoSet   = strings.Join(stringx.Remove(dialogFiltersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	dialogFiltersRowsWithPlaceHolder = strings.Join(stringx.Remove(dialogFiltersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTDialogFiltersIdPrefix = "cache:t:dialog_filters:id:"
-
-	cacheDialogFiltersIdPrefix = "cache#DialogFilters#id"
-
-	cacheDialogFiltersUserIdDialogFilterIdPrefix = "cache#UserId#DialogFilterId"
 )
 
 type (
@@ -73,11 +67,14 @@ func newDialogFiltersModel(db *sqlx.DB) *defaultDialogFiltersModel {
 
 func (m *defaultDialogFiltersModel) Insert2(ctx context.Context, data *DialogFilters) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `dialog_filters` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", dialogFiltersRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted)
+
 }
 
 func (m *defaultDialogFiltersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `dialog_filters` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -85,7 +82,9 @@ func (m *defaultDialogFiltersModel) Delete2(ctx context.Context, id int64) error
 func (m *defaultDialogFiltersModel) FindOne(ctx context.Context, id int64) (*DialogFilters, error) {
 	query := fmt.Sprintf("select %s from dialog_filters where id = ? limit 1", dialogFiltersRows)
 	var resp DialogFilters
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +108,7 @@ func (m *defaultDialogFiltersModel) FindListByIdList(ctx context.Context, id ...
 
 func (m *defaultDialogFiltersModel) Update2(ctx context.Context, data *DialogFilters) error {
 	query := fmt.Sprintf("update `dialog_filters` set %s where `id` = ?", dialogFiltersRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted, data.Id)
 	return err
 }
@@ -116,18 +116,11 @@ func (m *defaultDialogFiltersModel) Update2(ctx context.Context, data *DialogFil
 func (m *defaultDialogFiltersModel) FindOneByUserIdDialogFilterId(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error) {
 	query := fmt.Sprintf("select %s from dialog_filters where user_id = ? AND dialog_filter_id = ? limit 1", dialogFiltersRows)
 	var resp DialogFilters
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, dialogFilterId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultDialogFiltersModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheDialogFiltersIdPrefix, primary)
-}
-
-func (m *defaultDialogFiltersModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from dialog_filters where id = ? limit 1", dialogFiltersRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

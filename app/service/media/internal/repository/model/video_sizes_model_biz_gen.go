@@ -66,6 +66,7 @@ func (m *defaultVideoSizesModel) Insert(ctx context.Context, data *VideoSizes) (
 	}
 
 	return
+
 }
 
 // InsertTx

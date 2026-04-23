@@ -62,6 +62,7 @@ func (m *defaultDefaultHistoryTtlModel) InsertOrUpdate(ctx context.Context, data
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -94,6 +95,7 @@ func (m *defaultDefaultHistoryTtlModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Defa
 // Select
 // select id, user_id, period from default_history_ttl where user_id = :user_id
 func (m *defaultDefaultHistoryTtlModel) Select(ctx context.Context, userId int64) (rValue *DefaultHistoryTtl, err error) {
+
 	var (
 		query = "select id, user_id, period from default_history_ttl where user_id = ?"
 		do    = &DefaultHistoryTtl{}

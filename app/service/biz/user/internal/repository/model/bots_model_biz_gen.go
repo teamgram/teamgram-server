@@ -45,6 +45,7 @@ type (
 // Select
 // select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id = :bot_id
 func (m *defaultBotsModel) Select(ctx context.Context, botId int64) (rValue *Bots, err error) {
+
 	var (
 		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id = ?"
 		do    = &Bots{}
@@ -141,6 +142,7 @@ func (m *defaultBotsModel) SelectByIdListWithCB(ctx context.Context, idList []in
 // Update
 // update bots set %s where bot_id = :bot_id
 func (m *defaultBotsModel) Update(ctx context.Context, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {

@@ -52,7 +52,7 @@ func fromAuthKeyInfo(v *tg.AuthKeyInfo) *model.AuthKeys {
 }
 
 func (r *Repository) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
-	key, err := r.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
+	key, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (r *Repository) SetAuthKeyV2(ctx context.Context, authKey *tg.AuthKeyInfo, 
 	_ = expiredIn
 
 	key := fromAuthKeyInfo(authKey)
-	_, err = r.AuthKeysModel.Insert2(ctx, key)
+	_, err = r.model.AuthKeysModel.Insert2(ctx, key)
 
 	return
 }

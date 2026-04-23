@@ -27,12 +27,6 @@ var (
 	userPrivaciesRows                = strings.Join(userPrivaciesFieldNames, ",")
 	userPrivaciesRowsExpectAutoSet   = strings.Join(stringx.Remove(userPrivaciesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userPrivaciesRowsWithPlaceHolder = strings.Join(stringx.Remove(userPrivaciesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUserPrivaciesIdPrefix = "cache:t:user_privacies:id:"
-
-	cacheUserPrivaciesIdPrefix = "cache#UserPrivacies#id"
-
-	cacheUserPrivaciesUserIdKeyTypePrefix = "cache#UserId#KeyType"
 )
 
 type (
@@ -66,11 +60,14 @@ func newUserPrivaciesModel(db *sqlx.DB) *defaultUserPrivaciesModel {
 
 func (m *defaultUserPrivaciesModel) Insert2(ctx context.Context, data *UserPrivacies) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_privacies` (%s) values (?, ?, ?)", userPrivaciesRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules)
+
 }
 
 func (m *defaultUserPrivaciesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_privacies` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -78,7 +75,9 @@ func (m *defaultUserPrivaciesModel) Delete2(ctx context.Context, id int64) error
 func (m *defaultUserPrivaciesModel) FindOne(ctx context.Context, id int64) (*UserPrivacies, error) {
 	query := fmt.Sprintf("select %s from user_privacies where id = ? limit 1", userPrivaciesRows)
 	var resp UserPrivacies
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +101,7 @@ func (m *defaultUserPrivaciesModel) FindListByIdList(ctx context.Context, id ...
 
 func (m *defaultUserPrivaciesModel) Update2(ctx context.Context, data *UserPrivacies) error {
 	query := fmt.Sprintf("update `user_privacies` set %s where `id` = ?", userPrivaciesRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules, data.Id)
 	return err
 }
@@ -109,18 +109,11 @@ func (m *defaultUserPrivaciesModel) Update2(ctx context.Context, data *UserPriva
 func (m *defaultUserPrivaciesModel) FindOneByUserIdKeyType(ctx context.Context, userId int64, keyType int32) (*UserPrivacies, error) {
 	query := fmt.Sprintf("select %s from user_privacies where user_id = ? AND key_type = ? limit 1", userPrivaciesRows)
 	var resp UserPrivacies
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, keyType)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultUserPrivaciesModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUserPrivaciesIdPrefix, primary)
-}
-
-func (m *defaultUserPrivaciesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_privacies where id = ? limit 1", userPrivaciesRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

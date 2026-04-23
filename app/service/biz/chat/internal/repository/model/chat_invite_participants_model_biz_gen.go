@@ -75,6 +75,7 @@ func (m *defaultChatInviteParticipantsModel) Insert(ctx context.Context, data *C
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -152,6 +153,7 @@ func (m *defaultChatInviteParticipantsModel) SelectListByLinkWithCB(ctx context.
 // Delete
 // delete from chat_invite_participants where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatInviteParticipantsModel) Delete(ctx context.Context, chatId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"
 		rResult sql.Result
@@ -241,6 +243,7 @@ func (m *defaultChatInviteParticipantsModel) SelectRecentRequestedListWithCB(ctx
 // UpdateChatId
 // update chat_invite_participants set chat_id = :chat_id where link = :link
 func (m *defaultChatInviteParticipantsModel) UpdateChatId(ctx context.Context, chatId int64, link string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_invite_participants set chat_id = ? where link = ?"
 		rResult sql.Result
@@ -286,6 +289,7 @@ func (m *defaultChatInviteParticipantsModel) UpdateChatIdTx(tx *sqlx.Tx, chatId 
 // UpdateApprovedBy
 // update chat_invite_participants set requested = 0, approved_by = :approved_by where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatInviteParticipantsModel) UpdateApprovedBy(ctx context.Context, approvedBy int64, chatId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_invite_participants set requested = 0, approved_by = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result

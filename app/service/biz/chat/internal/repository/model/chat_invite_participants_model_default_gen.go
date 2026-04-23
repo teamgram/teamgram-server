@@ -27,12 +27,6 @@ var (
 	chatInviteParticipantsRows                = strings.Join(chatInviteParticipantsFieldNames, ",")
 	chatInviteParticipantsRowsExpectAutoSet   = strings.Join(stringx.Remove(chatInviteParticipantsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	chatInviteParticipantsRowsWithPlaceHolder = strings.Join(stringx.Remove(chatInviteParticipantsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTChatInviteParticipantsIdPrefix = "cache:t:chat_invite_participants:id:"
-
-	cacheChatInviteParticipantsIdPrefix = "cache#ChatInviteParticipants#id"
-
-	cacheChatInviteParticipantsLinkUserIdPrefix = "cache#Link#UserId"
 )
 
 type (
@@ -70,11 +64,14 @@ func newChatInviteParticipantsModel(db *sqlx.DB) *defaultChatInviteParticipantsM
 
 func (m *defaultChatInviteParticipantsModel) Insert2(ctx context.Context, data *ChatInviteParticipants) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `chat_invite_participants` (%s) values (?, ?, ?, ?, ?, ?, ?)", chatInviteParticipantsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.ChatId, data.Link, data.UserId, data.Requested, data.ApprovedBy, data.Date2, data.Deleted)
+
 }
 
 func (m *defaultChatInviteParticipantsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `chat_invite_participants` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -82,7 +79,9 @@ func (m *defaultChatInviteParticipantsModel) Delete2(ctx context.Context, id int
 func (m *defaultChatInviteParticipantsModel) FindOne(ctx context.Context, id int64) (*ChatInviteParticipants, error) {
 	query := fmt.Sprintf("select %s from chat_invite_participants where id = ? limit 1", chatInviteParticipantsRows)
 	var resp ChatInviteParticipants
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +105,7 @@ func (m *defaultChatInviteParticipantsModel) FindListByIdList(ctx context.Contex
 
 func (m *defaultChatInviteParticipantsModel) Update2(ctx context.Context, data *ChatInviteParticipants) error {
 	query := fmt.Sprintf("update `chat_invite_participants` set %s where `id` = ?", chatInviteParticipantsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.ChatId, data.Link, data.UserId, data.Requested, data.ApprovedBy, data.Date2, data.Deleted, data.Id)
 	return err
 }
@@ -113,18 +113,11 @@ func (m *defaultChatInviteParticipantsModel) Update2(ctx context.Context, data *
 func (m *defaultChatInviteParticipantsModel) FindOneByLinkUserId(ctx context.Context, link string, userId int64) (*ChatInviteParticipants, error) {
 	query := fmt.Sprintf("select %s from chat_invite_participants where link = ? AND user_id = ? limit 1", chatInviteParticipantsRows)
 	var resp ChatInviteParticipants
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, link, userId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultChatInviteParticipantsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheChatInviteParticipantsIdPrefix, primary)
-}
-
-func (m *defaultChatInviteParticipantsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from chat_invite_participants where id = ? limit 1", chatInviteParticipantsRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

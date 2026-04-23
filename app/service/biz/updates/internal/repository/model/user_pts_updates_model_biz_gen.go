@@ -65,6 +65,7 @@ func (m *defaultUserPtsUpdatesModel) Insert(ctx context.Context, data *UserPtsUp
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -97,6 +98,7 @@ func (m *defaultUserPtsUpdatesModel) InsertTx(tx *sqlx.Tx, data *UserPtsUpdates)
 // SelectLastPts
 // select pts from user_pts_updates where user_id = :user_id order by pts desc limit 1
 func (m *defaultUserPtsUpdatesModel) SelectLastPts(ctx context.Context, userId int64) (rValue *UserPtsUpdates, err error) {
+
 	var (
 		query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
 		do    = &UserPtsUpdates{}

@@ -148,6 +148,7 @@ func (m *defaultUsersModel) Insert(ctx context.Context, data *Users) (lastInsert
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -202,6 +203,7 @@ func (m *defaultUsersModel) InsertTestUser(ctx context.Context, data *Users) (la
 	}
 
 	return
+
 }
 
 // InsertTestUserTx
@@ -234,6 +236,7 @@ func (m *defaultUsersModel) InsertTestUserTx(tx *sqlx.Tx, data *Users) (lastInse
 // SelectByPhoneNumber
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone = :phone limit 1
 func (m *defaultUsersModel) SelectByPhoneNumber(ctx context.Context, phone string) (rValue *Users, err error) {
+
 	var (
 		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where phone = ? limit 1"
 		do    = &Users{}
@@ -257,6 +260,7 @@ func (m *defaultUsersModel) SelectByPhoneNumber(ctx context.Context, phone strin
 // SelectById
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id = :id limit 1
 func (m *defaultUsersModel) SelectById(ctx context.Context, id int64) (rValue *Users, err error) {
+
 	var (
 		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id = ? limit 1"
 		do    = &Users{}
@@ -280,6 +284,7 @@ func (m *defaultUsersModel) SelectById(ctx context.Context, id int64) (rValue *U
 // SelectNextTestUserId
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id < :maxId order by id desc limit 1
 func (m *defaultUsersModel) SelectNextTestUserId(ctx context.Context, maxId int64) (rValue *Users, err error) {
+
 	var (
 		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, main_tab, deleted, delete_reason from users where id < ? order by id desc limit 1"
 		do    = &Users{}
@@ -515,6 +520,7 @@ func (m *defaultUsersModel) SearchByQueryNotIdListWithCB(ctx context.Context, q2
 // Delete
 // update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 func (m *defaultUsersModel) Delete(ctx context.Context, phone string, deleteReason string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
 		rResult sql.Result
@@ -560,6 +566,7 @@ func (m *defaultUsersModel) DeleteTx(tx *sqlx.Tx, phone string, deleteReason str
 // UpdateUsername
 // update users set username = :username where id = :id
 func (m *defaultUsersModel) UpdateUsername(ctx context.Context, username string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set username = ? where id = ?"
 		rResult sql.Result
@@ -605,6 +612,7 @@ func (m *defaultUsersModel) UpdateUsernameTx(tx *sqlx.Tx, username string, id in
 // UpdateFirstAndLastName
 // update users set first_name = :first_name, last_name = :last_name where id = :id
 func (m *defaultUsersModel) UpdateFirstAndLastName(ctx context.Context, firstName string, lastName string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set first_name = ?, last_name = ? where id = ?"
 		rResult sql.Result
@@ -650,6 +658,7 @@ func (m *defaultUsersModel) UpdateFirstAndLastNameTx(tx *sqlx.Tx, firstName stri
 // UpdateAbout
 // update users set about = :about where id = :id
 func (m *defaultUsersModel) UpdateAbout(ctx context.Context, about string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set about = ? where id = ?"
 		rResult sql.Result
@@ -695,6 +704,7 @@ func (m *defaultUsersModel) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (
 // UpdateProfile
 // update users set first_name = :first_name, last_name = :last_name, about = :about where id = :id
 func (m *defaultUsersModel) UpdateProfile(ctx context.Context, firstName string, lastName string, about string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set first_name = ?, last_name = ?, about = ? where id = ?"
 		rResult sql.Result
@@ -740,6 +750,7 @@ func (m *defaultUsersModel) UpdateProfileTx(tx *sqlx.Tx, firstName string, lastN
 // SelectByUsername
 // select id from users where username = :username limit 1
 func (m *defaultUsersModel) SelectByUsername(ctx context.Context, username string) (rValue *Users, err error) {
+
 	var (
 		query = "select id from users where username = ? limit 1"
 		do    = &Users{}
@@ -763,6 +774,7 @@ func (m *defaultUsersModel) SelectByUsername(ctx context.Context, username strin
 // SelectAccountDaysTTL
 // select account_days_ttl from users where id = :id
 func (m *defaultUsersModel) SelectAccountDaysTTL(ctx context.Context, id int64) (rValue *Users, err error) {
+
 	var (
 		query = "select account_days_ttl from users where id = ?"
 		do    = &Users{}
@@ -786,6 +798,7 @@ func (m *defaultUsersModel) SelectAccountDaysTTL(ctx context.Context, id int64) 
 // UpdateAccountDaysTTL
 // update users set account_days_ttl = :account_days_ttl where id = :id
 func (m *defaultUsersModel) UpdateAccountDaysTTL(ctx context.Context, accountDaysTtl int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set account_days_ttl = ? where id = ?"
 		rResult sql.Result
@@ -849,6 +862,7 @@ func (m *defaultUsersModel) SelectProfilePhoto(ctx context.Context, id int64) (r
 // SelectCountryCode
 // select country_code from users where id = :id
 func (m *defaultUsersModel) SelectCountryCode(ctx context.Context, id int64) (rValue *Users, err error) {
+
 	var (
 		query = "select country_code from users where id = ?"
 		do    = &Users{}
@@ -872,6 +886,7 @@ func (m *defaultUsersModel) SelectCountryCode(ctx context.Context, id int64) (rV
 // UpdateProfilePhoto
 // update users set photo_id = :photo_id where id = :id
 func (m *defaultUsersModel) UpdateProfilePhoto(ctx context.Context, photoId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set photo_id = ? where id = ?"
 		rResult sql.Result
@@ -917,6 +932,7 @@ func (m *defaultUsersModel) UpdateProfilePhotoTx(tx *sqlx.Tx, photoId int64, id 
 // UpdateUser
 // update users set %s where id = :id
 func (m *defaultUsersModel) UpdateUser(ctx context.Context, cMap map[string]interface{}, id int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -981,6 +997,7 @@ func (m *defaultUsersModel) UpdateUserTx(tx *sqlx.Tx, cMap map[string]interface{
 // UpdateEmojiStatus
 // update users set emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until where id = :id
 func (m *defaultUsersModel) UpdateEmojiStatus(ctx context.Context, emojiStatusDocumentId int64, emojiStatusUntil int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set emoji_status_document_id = ?, emoji_status_until = ? where id = ?"
 		rResult sql.Result
@@ -1026,6 +1043,7 @@ func (m *defaultUsersModel) UpdateEmojiStatusTx(tx *sqlx.Tx, emojiStatusDocument
 // UpdateStoriesMaxId
 // update users set stories_max_id = :stories_max_id where id = :id
 func (m *defaultUsersModel) UpdateStoriesMaxId(ctx context.Context, storiesMaxId int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set stories_max_id = ? where id = ?"
 		rResult sql.Result
@@ -1071,6 +1089,7 @@ func (m *defaultUsersModel) UpdateStoriesMaxIdTx(tx *sqlx.Tx, storiesMaxId int32
 // UpdateColor
 // update users set color = :color, color_background_emoji_id = :color_background_emoji_id where id = :id
 func (m *defaultUsersModel) UpdateColor(ctx context.Context, color int32, colorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set color = ?, color_background_emoji_id = ? where id = ?"
 		rResult sql.Result
@@ -1116,6 +1135,7 @@ func (m *defaultUsersModel) UpdateColorTx(tx *sqlx.Tx, color int32, colorBackgro
 // UpdateProfileColor
 // update users set profile_color = :profile_color, profile_color_background_emoji_id = :profile_color_background_emoji_id where id = :id
 func (m *defaultUsersModel) UpdateProfileColor(ctx context.Context, profileColor int32, profileColorBackgroundEmojiId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set profile_color = ?, profile_color_background_emoji_id = ? where id = ?"
 		rResult sql.Result
@@ -1253,6 +1273,7 @@ func (m *defaultUsersModel) SelectBotsWithCB(ctx context.Context, idList []int64
 // UpdateBirthday
 // update users set birthday = :birthday where id = :id
 func (m *defaultUsersModel) UpdateBirthday(ctx context.Context, birthday string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set birthday = ? where id = ?"
 		rResult sql.Result
@@ -1298,6 +1319,7 @@ func (m *defaultUsersModel) UpdateBirthdayTx(tx *sqlx.Tx, birthday string, id in
 // UpdatePersonalChannelId
 // update users set personal_channel_id = :personal_channel_id where id = :id
 func (m *defaultUsersModel) UpdatePersonalChannelId(ctx context.Context, personalChannelId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set personal_channel_id = ? where id = ?"
 		rResult sql.Result
@@ -1343,6 +1365,7 @@ func (m *defaultUsersModel) UpdatePersonalChannelIdTx(tx *sqlx.Tx, personalChann
 // UpdateAuthorizationTTL
 // update users set authorization_ttl_days = :authorization_ttl_days where id = :id
 func (m *defaultUsersModel) UpdateAuthorizationTTL(ctx context.Context, authorizationTtlDays int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set authorization_ttl_days = ? where id = ?"
 		rResult sql.Result
@@ -1388,6 +1411,7 @@ func (m *defaultUsersModel) UpdateAuthorizationTTLTx(tx *sqlx.Tx, authorizationT
 // SelectAuthorizationTTL
 // select authorization_ttl_days from users where id = :id
 func (m *defaultUsersModel) SelectAuthorizationTTL(ctx context.Context, id int64) (rValue *Users, err error) {
+
 	var (
 		query = "select authorization_ttl_days from users where id = ?"
 		do    = &Users{}
@@ -1411,6 +1435,7 @@ func (m *defaultUsersModel) SelectAuthorizationTTL(ctx context.Context, id int64
 // UpdateSavedMusicId
 // update users set saved_music_id = :saved_music_id where id = :id
 func (m *defaultUsersModel) UpdateSavedMusicId(ctx context.Context, savedMusicId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set saved_music_id = ? where id = ?"
 		rResult sql.Result
@@ -1456,6 +1481,7 @@ func (m *defaultUsersModel) UpdateSavedMusicIdTx(tx *sqlx.Tx, savedMusicId int64
 // UpdateMainTab
 // update users set main_tab = :main_tab where id = :id
 func (m *defaultUsersModel) UpdateMainTab(ctx context.Context, mainTab int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update users set main_tab = ? where id = ?"
 		rResult sql.Result

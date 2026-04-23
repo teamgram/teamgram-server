@@ -27,12 +27,6 @@ var (
 	userPeerBlocksRows                = strings.Join(userPeerBlocksFieldNames, ",")
 	userPeerBlocksRowsExpectAutoSet   = strings.Join(stringx.Remove(userPeerBlocksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userPeerBlocksRowsWithPlaceHolder = strings.Join(stringx.Remove(userPeerBlocksFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUserPeerBlocksIdPrefix = "cache:t:user_peer_blocks:id:"
-
-	cacheUserPeerBlocksIdPrefix = "cache#UserPeerBlocks#id"
-
-	cacheUserPeerBlocksUserIdPeerTypePeerIdPrefix = "cache#UserId#PeerType#PeerId"
 )
 
 type (
@@ -68,11 +62,14 @@ func newUserPeerBlocksModel(db *sqlx.DB) *defaultUserPeerBlocksModel {
 
 func (m *defaultUserPeerBlocksModel) Insert2(ctx context.Context, data *UserPeerBlocks) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_peer_blocks` (%s) values (?, ?, ?, ?, ?)", userPeerBlocksRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Date, data.Deleted)
+
 }
 
 func (m *defaultUserPeerBlocksModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_peer_blocks` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -80,7 +77,9 @@ func (m *defaultUserPeerBlocksModel) Delete2(ctx context.Context, id int64) erro
 func (m *defaultUserPeerBlocksModel) FindOne(ctx context.Context, id int64) (*UserPeerBlocks, error) {
 	query := fmt.Sprintf("select %s from user_peer_blocks where id = ? limit 1", userPeerBlocksRows)
 	var resp UserPeerBlocks
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +103,7 @@ func (m *defaultUserPeerBlocksModel) FindListByIdList(ctx context.Context, id ..
 
 func (m *defaultUserPeerBlocksModel) Update2(ctx context.Context, data *UserPeerBlocks) error {
 	query := fmt.Sprintf("update `user_peer_blocks` set %s where `id` = ?", userPeerBlocksRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Date, data.Deleted, data.Id)
 	return err
 }
@@ -111,18 +111,11 @@ func (m *defaultUserPeerBlocksModel) Update2(ctx context.Context, data *UserPeer
 func (m *defaultUserPeerBlocksModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserPeerBlocks, error) {
 	query := fmt.Sprintf("select %s from user_peer_blocks where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", userPeerBlocksRows)
 	var resp UserPeerBlocks
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultUserPeerBlocksModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUserPeerBlocksIdPrefix, primary)
-}
-
-func (m *defaultUserPeerBlocksModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_peer_blocks where id = ? limit 1", userPeerBlocksRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

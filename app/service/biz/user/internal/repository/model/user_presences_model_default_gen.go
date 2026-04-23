@@ -27,12 +27,6 @@ var (
 	userPresencesRows                = strings.Join(userPresencesFieldNames, ",")
 	userPresencesRowsExpectAutoSet   = strings.Join(stringx.Remove(userPresencesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userPresencesRowsWithPlaceHolder = strings.Join(stringx.Remove(userPresencesFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUserPresencesIdPrefix = "cache:t:user_presences:id:"
-
-	cacheUserPresencesIdPrefix = "cache#UserPresences#id"
-
-	cacheUserPresencesUserIdPrefix = "cache#UserId"
 )
 
 type (
@@ -67,11 +61,14 @@ func newUserPresencesModel(db *sqlx.DB) *defaultUserPresencesModel {
 
 func (m *defaultUserPresencesModel) Insert2(ctx context.Context, data *UserPresences) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_presences` (%s) values (?, ?, ?)", userPresencesRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.LastSeenAt, data.Expires)
+
 }
 
 func (m *defaultUserPresencesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_presences` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -79,7 +76,9 @@ func (m *defaultUserPresencesModel) Delete2(ctx context.Context, id int64) error
 func (m *defaultUserPresencesModel) FindOne(ctx context.Context, id int64) (*UserPresences, error) {
 	query := fmt.Sprintf("select %s from user_presences where id = ? limit 1", userPresencesRows)
 	var resp UserPresences
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +102,7 @@ func (m *defaultUserPresencesModel) FindListByIdList(ctx context.Context, id ...
 
 func (m *defaultUserPresencesModel) Update2(ctx context.Context, data *UserPresences) error {
 	query := fmt.Sprintf("update `user_presences` set %s where `id` = ?", userPresencesRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.LastSeenAt, data.Expires, data.Id)
 	return err
 }
@@ -110,7 +110,9 @@ func (m *defaultUserPresencesModel) Update2(ctx context.Context, data *UserPrese
 func (m *defaultUserPresencesModel) FindOneByUserId(ctx context.Context, userId int64) (*UserPresences, error) {
 	query := fmt.Sprintf("select %s from user_presences where user_id = ? limit 1", userPresencesRows)
 	var resp UserPresences
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -130,13 +132,4 @@ func (m *defaultUserPresencesModel) FindListByUserIdList(ctx context.Context, us
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultUserPresencesModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUserPresencesIdPrefix, primary)
-}
-
-func (m *defaultUserPresencesModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_presences where id = ? limit 1", userPresencesRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

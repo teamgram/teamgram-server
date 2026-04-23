@@ -68,6 +68,7 @@ func (m *defaultUserProfilePhotosModel) InsertOrUpdate(ctx context.Context, data
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -158,6 +159,7 @@ func (m *defaultUserProfilePhotosModel) SelectNext(ctx context.Context, userId i
 // Delete
 // update user_profile_photos set deleted = 1, date2 = 0 where user_id = :user_id and photo_id in (:id_list)
 func (m *defaultUserProfilePhotosModel) Delete(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result

@@ -68,6 +68,7 @@ func (m *defaultAuthSeqUpdatesModel) Insert(ctx context.Context, data *AuthSeqUp
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -100,6 +101,7 @@ func (m *defaultAuthSeqUpdatesModel) InsertTx(tx *sqlx.Tx, data *AuthSeqUpdates)
 // SelectLastSeq
 // select seq from auth_seq_updates where auth_id = :auth_id and user_id = :user_id order by seq desc limit 1
 func (m *defaultAuthSeqUpdatesModel) SelectLastSeq(ctx context.Context, authId int64, userId int64) (rValue *AuthSeqUpdates, err error) {
+
 	var (
 		query = "select seq from auth_seq_updates where auth_id = ? and user_id = ? order by seq desc limit 1"
 		do    = &AuthSeqUpdates{}

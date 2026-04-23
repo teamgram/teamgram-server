@@ -68,6 +68,7 @@ func (m *defaultDocumentsModel) Insert(ctx context.Context, data *Documents) (la
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -100,6 +101,7 @@ func (m *defaultDocumentsModel) InsertTx(tx *sqlx.Tx, data *Documents) (lastInse
 // SelectByDocumentId
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = :document_id
 func (m *defaultDocumentsModel) SelectByDocumentId(ctx context.Context, documentId int64) (rValue *Documents, err error) {
+
 	var (
 		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
 		do    = &Documents{}

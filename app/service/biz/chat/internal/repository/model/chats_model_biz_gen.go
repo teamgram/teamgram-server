@@ -103,6 +103,7 @@ func (m *defaultChatsModel) Insert(ctx context.Context, data *Chats) (lastInsert
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -135,6 +136,7 @@ func (m *defaultChatsModel) InsertTx(tx *sqlx.Tx, data *Chats) (lastInsertId, ro
 // Select
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id = :id
 func (m *defaultChatsModel) Select(ctx context.Context, id int64) (rValue *Chats, err error) {
+
 	var (
 		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id = ?"
 		do    = &Chats{}
@@ -158,6 +160,7 @@ func (m *defaultChatsModel) Select(ctx context.Context, id int64) (rValue *Chats
 // SelectLastCreator
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 func (m *defaultChatsModel) SelectLastCreator(ctx context.Context, creatorUserId int64) (rValue *Chats, err error) {
+
 	var (
 		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
 		do    = &Chats{}
@@ -181,6 +184,7 @@ func (m *defaultChatsModel) SelectLastCreator(ctx context.Context, creatorUserId
 // UpdateTitle
 // update chats set title = :title, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateTitle(ctx context.Context, title string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set title = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -226,6 +230,7 @@ func (m *defaultChatsModel) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (
 // UpdateAbout
 // update chats set about = :about where id = :id
 func (m *defaultChatsModel) UpdateAbout(ctx context.Context, about string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set about = ? where id = ?"
 		rResult sql.Result
@@ -326,6 +331,7 @@ func (m *defaultChatsModel) SelectByIdListWithCB(ctx context.Context, idList []i
 // UpdateParticipantCount
 // update chats set participant_count = :participant_count, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateParticipantCount(ctx context.Context, participantCount int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -371,6 +377,7 @@ func (m *defaultChatsModel) UpdateParticipantCountTx(tx *sqlx.Tx, participantCou
 // UpdatePhotoId
 // update chats set photo_id = :photo_id, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdatePhotoId(ctx context.Context, photoId int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -416,6 +423,7 @@ func (m *defaultChatsModel) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64
 // UpdateDefaultBannedRights
 // update chats set default_banned_rights = :default_banned_rights, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateDefaultBannedRights(ctx context.Context, defaultBannedRights int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -461,6 +469,7 @@ func (m *defaultChatsModel) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBann
 // UpdateVersion
 // update chats set version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateVersion(ctx context.Context, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set version = version + 1 where id = ?"
 		rResult sql.Result
@@ -506,6 +515,7 @@ func (m *defaultChatsModel) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected
 // UpdateDeactivated
 // update chats set deactivated = :deactivated, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateDeactivated(ctx context.Context, deactivated bool, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -551,6 +561,7 @@ func (m *defaultChatsModel) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, i
 // UpdateMigratedTo
 // update chats set migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateMigratedTo(ctx context.Context, migratedToId int64, migratedToAccessHash int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -596,6 +607,7 @@ func (m *defaultChatsModel) UpdateMigratedToTx(tx *sqlx.Tx, migratedToId int64, 
 // UpdateAvailableReactions
 // update chats set available_reactions_type = :available_reactions_type, available_reactions = :available_reactions where id = :id
 func (m *defaultChatsModel) UpdateAvailableReactions(ctx context.Context, availableReactionsType int32, availableReactions string, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set available_reactions_type = ?, available_reactions = ? where id = ?"
 		rResult sql.Result
@@ -641,6 +653,7 @@ func (m *defaultChatsModel) UpdateAvailableReactionsTx(tx *sqlx.Tx, availableRea
 // UpdateNoforwards
 // update chats set noforwards = :noforwards, version = version + 1 where id = :id
 func (m *defaultChatsModel) UpdateNoforwards(ctx context.Context, noforwards bool, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set noforwards = ?, version = version + 1 where id = ?"
 		rResult sql.Result
@@ -686,6 +699,7 @@ func (m *defaultChatsModel) UpdateNoforwardsTx(tx *sqlx.Tx, noforwards bool, id 
 // UpdateTTLPeriod
 // update chats set ttl_period = :ttl_period where id = :id
 func (m *defaultChatsModel) UpdateTTLPeriod(ctx context.Context, ttlPeriod int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chats set ttl_period = ? where id = ?"
 		rResult sql.Result

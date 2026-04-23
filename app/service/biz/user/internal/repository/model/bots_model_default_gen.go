@@ -27,12 +27,6 @@ var (
 	botsRows                = strings.Join(botsFieldNames, ",")
 	botsRowsExpectAutoSet   = strings.Join(stringx.Remove(botsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	botsRowsWithPlaceHolder = strings.Join(stringx.Remove(botsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTBotsIdPrefix = "cache:t:bots:id:"
-
-	cacheBotsIdPrefix = "cache#Bots#id"
-
-	cacheBotsBotIdPrefix = "cache#BotId"
 )
 
 type (
@@ -96,11 +90,14 @@ func newBotsModel(db *sqlx.DB) *defaultBotsModel {
 
 func (m *defaultBotsModel) Insert2(ctx context.Context, data *Bots) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `bots` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", botsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode)
+
 }
 
 func (m *defaultBotsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `bots` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -108,7 +105,9 @@ func (m *defaultBotsModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultBotsModel) FindOne(ctx context.Context, id int64) (*Bots, error) {
 	query := fmt.Sprintf("select %s from bots where id = ? limit 1", botsRows)
 	var resp Bots
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -132,6 +131,7 @@ func (m *defaultBotsModel) FindListByIdList(ctx context.Context, id ...int64) ([
 
 func (m *defaultBotsModel) Update2(ctx context.Context, data *Bots) error {
 	query := fmt.Sprintf("update `bots` set %s where `id` = ?", botsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode, data.Id)
 	return err
 }
@@ -139,7 +139,9 @@ func (m *defaultBotsModel) Update2(ctx context.Context, data *Bots) error {
 func (m *defaultBotsModel) FindOneByBotId(ctx context.Context, botId int64) (*Bots, error) {
 	query := fmt.Sprintf("select %s from bots where bot_id = ? limit 1", botsRows)
 	var resp Bots
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, botId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -159,13 +161,4 @@ func (m *defaultBotsModel) FindListByBotIdList(ctx context.Context, botId ...int
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultBotsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheBotsIdPrefix, primary)
-}
-
-func (m *defaultBotsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from bots where id = ? limit 1", botsRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

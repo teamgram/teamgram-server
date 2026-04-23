@@ -27,12 +27,6 @@ var (
 	userContactsRows                = strings.Join(userContactsFieldNames, ",")
 	userContactsRowsExpectAutoSet   = strings.Join(stringx.Remove(userContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userContactsRowsWithPlaceHolder = strings.Join(stringx.Remove(userContactsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUserContactsIdPrefix = "cache:t:user_contacts:id:"
-
-	cacheUserContactsIdPrefix = "cache#UserContacts#id"
-
-	cacheUserContactsOwnerUserIdContactUserIdPrefix = "cache#OwnerUserId#ContactUserId"
 )
 
 type (
@@ -73,11 +67,14 @@ func newUserContactsModel(db *sqlx.DB) *defaultUserContactsModel {
 
 func (m *defaultUserContactsModel) Insert2(ctx context.Context, data *UserContacts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_contacts` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userContactsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.OwnerUserId, data.ContactUserId, data.ContactPhone, data.ContactFirstName, data.ContactLastName, data.Mutual, data.CloseFriend, data.StoriesHidden, data.IsDeleted, data.Date2)
+
 }
 
 func (m *defaultUserContactsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_contacts` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -85,7 +82,9 @@ func (m *defaultUserContactsModel) Delete2(ctx context.Context, id int64) error 
 func (m *defaultUserContactsModel) FindOne(ctx context.Context, id int64) (*UserContacts, error) {
 	query := fmt.Sprintf("select %s from user_contacts where id = ? limit 1", userContactsRows)
 	var resp UserContacts
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +108,7 @@ func (m *defaultUserContactsModel) FindListByIdList(ctx context.Context, id ...i
 
 func (m *defaultUserContactsModel) Update2(ctx context.Context, data *UserContacts) error {
 	query := fmt.Sprintf("update `user_contacts` set %s where `id` = ?", userContactsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.OwnerUserId, data.ContactUserId, data.ContactPhone, data.ContactFirstName, data.ContactLastName, data.Mutual, data.CloseFriend, data.StoriesHidden, data.IsDeleted, data.Date2, data.Id)
 	return err
 }
@@ -116,18 +116,11 @@ func (m *defaultUserContactsModel) Update2(ctx context.Context, data *UserContac
 func (m *defaultUserContactsModel) FindOneByOwnerUserIdContactUserId(ctx context.Context, ownerUserId int64, contactUserId int64) (*UserContacts, error) {
 	query := fmt.Sprintf("select %s from user_contacts where owner_user_id = ? AND contact_user_id = ? limit 1", userContactsRows)
 	var resp UserContacts
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, ownerUserId, contactUserId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultUserContactsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUserContactsIdPrefix, primary)
-}
-
-func (m *defaultUserContactsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_contacts where id = ? limit 1", userContactsRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

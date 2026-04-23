@@ -68,6 +68,7 @@ func (m *defaultUserPeerSettingsModel) InsertOrUpdate(ctx context.Context, data 
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -100,6 +101,7 @@ func (m *defaultUserPeerSettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserP
 // Select
 // select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hide = 0
 func (m *defaultUserPeerSettingsModel) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *UserPeerSettings, err error) {
+
 	var (
 		query = "select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = ? and peer_type = ? and peer_id = ? and hide = 0"
 		do    = &UserPeerSettings{}
@@ -123,6 +125,7 @@ func (m *defaultUserPeerSettingsModel) Select(ctx context.Context, userId int64,
 // Update
 // update user_peer_settings set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultUserPeerSettingsModel) Update(ctx context.Context, cMap map[string]interface{}, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -191,6 +194,7 @@ func (m *defaultUserPeerSettingsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]int
 // Delete
 // update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultUserPeerSettingsModel) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

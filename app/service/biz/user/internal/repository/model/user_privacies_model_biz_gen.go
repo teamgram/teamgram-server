@@ -74,6 +74,7 @@ func (m *defaultUserPrivaciesModel) InsertOrUpdate(ctx context.Context, data *Us
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -168,6 +169,7 @@ func (m *defaultUserPrivaciesModel) InsertBulkTx(tx *sqlx.Tx, doList []*UserPriv
 // SelectPrivacy
 // select id, user_id, key_type, rules from user_privacies where user_id = :user_id and key_type = :key_type
 func (m *defaultUserPrivaciesModel) SelectPrivacy(ctx context.Context, userId int64, keyType int32) (rValue *UserPrivacies, err error) {
+
 	var (
 		query = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type = ?"
 		do    = &UserPrivacies{}

@@ -27,12 +27,6 @@ var (
 	userProfilePhotosRows                = strings.Join(userProfilePhotosFieldNames, ",")
 	userProfilePhotosRowsExpectAutoSet   = strings.Join(stringx.Remove(userProfilePhotosFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userProfilePhotosRowsWithPlaceHolder = strings.Join(stringx.Remove(userProfilePhotosFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTUserProfilePhotosIdPrefix = "cache:t:user_profile_photos:id:"
-
-	cacheUserProfilePhotosIdPrefix = "cache#UserProfilePhotos#id"
-
-	cacheUserProfilePhotosUserIdPhotoIdPrefix = "cache#UserId#PhotoId"
 )
 
 type (
@@ -67,11 +61,14 @@ func newUserProfilePhotosModel(db *sqlx.DB) *defaultUserProfilePhotosModel {
 
 func (m *defaultUserProfilePhotosModel) Insert2(ctx context.Context, data *UserProfilePhotos) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_profile_photos` (%s) values (?, ?, ?, ?)", userProfilePhotosRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.PhotoId, data.Date2, data.Deleted)
+
 }
 
 func (m *defaultUserProfilePhotosModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_profile_photos` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -79,7 +76,9 @@ func (m *defaultUserProfilePhotosModel) Delete2(ctx context.Context, id int64) e
 func (m *defaultUserProfilePhotosModel) FindOne(ctx context.Context, id int64) (*UserProfilePhotos, error) {
 	query := fmt.Sprintf("select %s from user_profile_photos where id = ? limit 1", userProfilePhotosRows)
 	var resp UserProfilePhotos
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +102,7 @@ func (m *defaultUserProfilePhotosModel) FindListByIdList(ctx context.Context, id
 
 func (m *defaultUserProfilePhotosModel) Update2(ctx context.Context, data *UserProfilePhotos) error {
 	query := fmt.Sprintf("update `user_profile_photos` set %s where `id` = ?", userProfilePhotosRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PhotoId, data.Date2, data.Deleted, data.Id)
 	return err
 }
@@ -110,18 +110,11 @@ func (m *defaultUserProfilePhotosModel) Update2(ctx context.Context, data *UserP
 func (m *defaultUserProfilePhotosModel) FindOneByUserIdPhotoId(ctx context.Context, userId int64, photoId int64) (*UserProfilePhotos, error) {
 	query := fmt.Sprintf("select %s from user_profile_photos where user_id = ? AND photo_id = ? limit 1", userProfilePhotosRows)
 	var resp UserProfilePhotos
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, photoId)
+
 	if err != nil {
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (m *defaultUserProfilePhotosModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheUserProfilePhotosIdPrefix, primary)
-}
-
-func (m *defaultUserProfilePhotosModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from user_profile_photos where id = ? limit 1", userProfilePhotosRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

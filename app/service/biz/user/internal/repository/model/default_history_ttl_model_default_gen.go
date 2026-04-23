@@ -27,12 +27,6 @@ var (
 	defaultHistoryTtlRows                = strings.Join(defaultHistoryTtlFieldNames, ",")
 	defaultHistoryTtlRowsExpectAutoSet   = strings.Join(stringx.Remove(defaultHistoryTtlFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	defaultHistoryTtlRowsWithPlaceHolder = strings.Join(stringx.Remove(defaultHistoryTtlFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTDefaultHistoryTtlIdPrefix = "cache:t:default_history_ttl:id:"
-
-	cacheDefaultHistoryTtlIdPrefix = "cache#DefaultHistoryTtl#id"
-
-	cacheDefaultHistoryTtlUserIdPrefix = "cache#UserId"
 )
 
 type (
@@ -66,11 +60,14 @@ func newDefaultHistoryTtlModel(db *sqlx.DB) *defaultDefaultHistoryTtlModel {
 
 func (m *defaultDefaultHistoryTtlModel) Insert2(ctx context.Context, data *DefaultHistoryTtl) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `default_history_ttl` (%s) values (?, ?)", defaultHistoryTtlRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.UserId, data.Period)
+
 }
 
 func (m *defaultDefaultHistoryTtlModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `default_history_ttl` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -78,7 +75,9 @@ func (m *defaultDefaultHistoryTtlModel) Delete2(ctx context.Context, id int64) e
 func (m *defaultDefaultHistoryTtlModel) FindOne(ctx context.Context, id int64) (*DefaultHistoryTtl, error) {
 	query := fmt.Sprintf("select %s from default_history_ttl where id = ? limit 1", defaultHistoryTtlRows)
 	var resp DefaultHistoryTtl
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +101,7 @@ func (m *defaultDefaultHistoryTtlModel) FindListByIdList(ctx context.Context, id
 
 func (m *defaultDefaultHistoryTtlModel) Update2(ctx context.Context, data *DefaultHistoryTtl) error {
 	query := fmt.Sprintf("update `default_history_ttl` set %s where `id` = ?", defaultHistoryTtlRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Period, data.Id)
 	return err
 }
@@ -109,7 +109,9 @@ func (m *defaultDefaultHistoryTtlModel) Update2(ctx context.Context, data *Defau
 func (m *defaultDefaultHistoryTtlModel) FindOneByUserId(ctx context.Context, userId int64) (*DefaultHistoryTtl, error) {
 	query := fmt.Sprintf("select %s from default_history_ttl where user_id = ? limit 1", defaultHistoryTtlRows)
 	var resp DefaultHistoryTtl
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -129,13 +131,4 @@ func (m *defaultDefaultHistoryTtlModel) FindListByUserIdList(ctx context.Context
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (m *defaultDefaultHistoryTtlModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheDefaultHistoryTtlIdPrefix, primary)
-}
-
-func (m *defaultDefaultHistoryTtlModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from default_history_ttl where id = ? limit 1", defaultHistoryTtlRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

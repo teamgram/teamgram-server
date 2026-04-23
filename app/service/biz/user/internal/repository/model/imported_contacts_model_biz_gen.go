@@ -72,6 +72,7 @@ func (m *defaultImportedContactsModel) InsertOrUpdate(ctx context.Context, data 
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -249,6 +250,7 @@ func (m *defaultImportedContactsModel) SelectAllListWithCB(ctx context.Context, 
 // Delete
 // update imported_contacts set deleted = 1 where user_id = :user_id and imported_user_id = :imported_user_id
 func (m *defaultImportedContactsModel) Delete(ctx context.Context, userId int64, importedUserId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update imported_contacts set deleted = 1 where user_id = ? and imported_user_id = ?"
 		rResult sql.Result

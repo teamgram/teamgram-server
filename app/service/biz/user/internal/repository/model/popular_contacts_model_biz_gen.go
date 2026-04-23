@@ -71,6 +71,7 @@ func (m *defaultPopularContactsModel) InsertOrUpdate(ctx context.Context, data *
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -103,6 +104,7 @@ func (m *defaultPopularContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Popula
 // IncreaseImporters
 // update popular_contacts set importers = importers + 1 where phone = :phone
 func (m *defaultPopularContactsModel) IncreaseImporters(ctx context.Context, phone string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update popular_contacts set importers = importers + 1 where phone = ?"
 		rResult sql.Result
@@ -148,6 +150,7 @@ func (m *defaultPopularContactsModel) IncreaseImportersTx(tx *sqlx.Tx, phone str
 // IncreaseImportersList
 // update popular_contacts set importers = importers + 1 where phone in (:phoneList)
 func (m *defaultPopularContactsModel) IncreaseImportersList(ctx context.Context, phoneList []string) (rowsAffected int64, err error) {
+
 	var (
 		query   = fmt.Sprintf("update popular_contacts set importers = importers + 1 where phone in (%s)", sqlx.InStringList(phoneList))
 		rResult sql.Result
@@ -202,6 +205,7 @@ func (m *defaultPopularContactsModel) IncreaseImportersListTx(tx *sqlx.Tx, phone
 // SelectImporters
 // select phone, importers from popular_contacts where phone = :phone
 func (m *defaultPopularContactsModel) SelectImporters(ctx context.Context, phone string) (rValue *PopularContacts, err error) {
+
 	var (
 		query = "select phone, importers from popular_contacts where phone = ?"
 		do    = &PopularContacts{}

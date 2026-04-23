@@ -27,10 +27,6 @@ var (
 	chatsRows                = strings.Join(chatsFieldNames, ",")
 	chatsRowsExpectAutoSet   = strings.Join(stringx.Remove(chatsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	chatsRowsWithPlaceHolder = strings.Join(stringx.Remove(chatsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
-
-	cacheTChatsIdPrefix = "cache:t:chats:id:"
-
-	cacheChatsIdPrefix = "cache#Chats#id"
 )
 
 type (
@@ -76,11 +72,14 @@ func newChatsModel(db *sqlx.DB) *defaultChatsModel {
 
 func (m *defaultChatsModel) Insert2(ctx context.Context, data *Chats) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `chats` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", chatsRowsExpectAutoSet)
+
 	return m.db.Exec(ctx, query, data.CreatorUserId, data.AccessHash, data.RandomId, data.ParticipantCount, data.Title, data.About, data.PhotoId, data.DefaultBannedRights, data.MigratedToId, data.MigratedToAccessHash, data.AvailableReactionsType, data.AvailableReactions, data.Deactivated, data.Noforwards, data.TtlPeriod, data.Version, data.Date)
+
 }
 
 func (m *defaultChatsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `chats` where `id` = ?"
+
 	_, err := m.db.Exec(ctx, query, id)
 	return err
 }
@@ -88,7 +87,9 @@ func (m *defaultChatsModel) Delete2(ctx context.Context, id int64) error {
 func (m *defaultChatsModel) FindOne(ctx context.Context, id int64) (*Chats, error) {
 	query := fmt.Sprintf("select %s from chats where id = ? limit 1", chatsRows)
 	var resp Chats
+
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		return nil, err
 	}
@@ -112,15 +113,7 @@ func (m *defaultChatsModel) FindListByIdList(ctx context.Context, id ...int64) (
 
 func (m *defaultChatsModel) Update2(ctx context.Context, data *Chats) error {
 	query := fmt.Sprintf("update `chats` set %s where `id` = ?", chatsRowsWithPlaceHolder)
+
 	_, err := m.db.Exec(ctx, query, data.CreatorUserId, data.AccessHash, data.RandomId, data.ParticipantCount, data.Title, data.About, data.PhotoId, data.DefaultBannedRights, data.MigratedToId, data.MigratedToAccessHash, data.AvailableReactionsType, data.AvailableReactions, data.Deactivated, data.Noforwards, data.TtlPeriod, data.Version, data.Date, data.Id)
 	return err
-}
-
-func (m *defaultChatsModel) formatPrimary(primary interface{}) string {
-	return fmt.Sprintf("%s#%v", cacheChatsIdPrefix, primary)
-}
-
-func (m *defaultChatsModel) queryPrimary(ctx context.Context, v interface{}, primary interface{}) error {
-	query := fmt.Sprintf("select %s from chats where id = ? limit 1", chatsRows)
-	return m.db.QueryRowPartial(ctx, v, query, primary)
 }

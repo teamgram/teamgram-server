@@ -68,6 +68,7 @@ func (m *defaultUserNotifySettingsModel) InsertOrUpdate(ctx context.Context, dat
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -145,6 +146,7 @@ func (m *defaultUserNotifySettingsModel) SelectAllWithCB(ctx context.Context, us
 // Select
 // select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (m *defaultUserNotifySettingsModel) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *UserNotifySettings, err error) {
+
 	var (
 		query = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
 		do    = &UserNotifySettings{}
@@ -168,6 +170,7 @@ func (m *defaultUserNotifySettingsModel) Select(ctx context.Context, userId int6
 // DeleteAll
 // update user_notify_settings set deleted = 1 where user_id = :user_id
 func (m *defaultUserNotifySettingsModel) DeleteAll(ctx context.Context, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_notify_settings set deleted = 1 where user_id = ?"
 		rResult sql.Result

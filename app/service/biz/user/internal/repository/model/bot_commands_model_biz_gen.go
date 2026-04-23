@@ -112,6 +112,7 @@ func (m *defaultBotCommandsModel) InsertBulkTx(tx *sqlx.Tx, doList []*BotCommand
 // Delete
 // delete from bot_commands where bot_id = :bot_id
 func (m *defaultBotCommandsModel) Delete(ctx context.Context, botId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from bot_commands where bot_id = ?"
 		rResult sql.Result
@@ -178,6 +179,7 @@ func (m *defaultBotCommandsModel) InsertOrUpdate(ctx context.Context, data *BotC
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx

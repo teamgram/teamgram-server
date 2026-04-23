@@ -68,6 +68,7 @@ func (m *defaultUserPresencesModel) InsertOrUpdate(ctx context.Context, data *Us
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -100,6 +101,7 @@ func (m *defaultUserPresencesModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserPres
 // Select
 // select id, user_id, last_seen_at, expires from user_presences where user_id = :user_id
 func (m *defaultUserPresencesModel) Select(ctx context.Context, userId int64) (rValue *UserPresences, err error) {
+
 	var (
 		query = "select id, user_id, last_seen_at, expires from user_presences where user_id = ?"
 		do    = &UserPresences{}
@@ -178,6 +180,7 @@ func (m *defaultUserPresencesModel) SelectListWithCB(ctx context.Context, idList
 // UpdateLastSeenAt
 // update user_presences set last_seen_at = :last_seen_at, expires = :expires where user_id = :user_id
 func (m *defaultUserPresencesModel) UpdateLastSeenAt(ctx context.Context, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
 		rResult sql.Result

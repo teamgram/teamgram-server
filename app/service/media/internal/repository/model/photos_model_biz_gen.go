@@ -62,6 +62,7 @@ func (m *defaultPhotosModel) Insert(ctx context.Context, data *Photos) (lastInse
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -94,6 +95,7 @@ func (m *defaultPhotosModel) InsertTx(tx *sqlx.Tx, data *Photos) (lastInsertId, 
 // SelectByPhotoId
 // select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = :photo_id limit 1
 func (m *defaultPhotosModel) SelectByPhotoId(ctx context.Context, photoId int64) (rValue *Photos, err error) {
+
 	var (
 		query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
 		do    = &Photos{}

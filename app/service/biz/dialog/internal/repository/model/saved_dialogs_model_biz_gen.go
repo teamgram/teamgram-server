@@ -77,6 +77,7 @@ func (m *defaultSavedDialogsModel) InsertOrUpdate(ctx context.Context, data *Sav
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -109,6 +110,7 @@ func (m *defaultSavedDialogsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *SavedDial
 // Select
 // select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
 func (m *defaultSavedDialogsModel) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *SavedDialogs, err error) {
+
 	var (
 		query = "select user_id, peer_type, peer_id, pinned, top_message from saved_dialogs where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
 		do    = &SavedDialogs{}
@@ -267,6 +269,7 @@ func (m *defaultSavedDialogsModel) SelectDialogsWithCB(ctx context.Context, user
 // UpdateUserUnPinned
 // update saved_dialogs set pinned = 0 where user_id = :user_id and pinned > 0 and deleted = 0
 func (m *defaultSavedDialogsModel) UpdateUserUnPinned(ctx context.Context, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update saved_dialogs set pinned = 0 where user_id = ? and pinned > 0 and deleted = 0"
 		rResult sql.Result
@@ -312,6 +315,7 @@ func (m *defaultSavedDialogsModel) UpdateUserUnPinnedTx(tx *sqlx.Tx, userId int6
 // UpdateUserPeerPinned
 // update saved_dialogs set pinned = :pinned where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultSavedDialogsModel) UpdateUserPeerPinned(ctx context.Context, pinned int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update saved_dialogs set pinned = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

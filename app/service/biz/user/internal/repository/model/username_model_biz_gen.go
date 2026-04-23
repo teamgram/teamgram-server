@@ -95,6 +95,7 @@ func (m *defaultUsernameModel) Insert(ctx context.Context, data *Username) (last
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -182,6 +183,7 @@ func (m *defaultUsernameModel) SelectListWithCB(ctx context.Context, nameList []
 // SelectByUsername
 // select username, peer_type, peer_id, editable, active, order2, deleted from username where username = :username
 func (m *defaultUsernameModel) SelectByUsername(ctx context.Context, username string) (rValue *Username, err error) {
+
 	var (
 		query = "select username, peer_type, peer_id, editable, active, order2, deleted from username where username = ?"
 		do    = &Username{}
@@ -205,6 +207,7 @@ func (m *defaultUsernameModel) SelectByUsername(ctx context.Context, username st
 // Update
 // update username set %s where username = :username
 func (m *defaultUsernameModel) Update(ctx context.Context, cMap map[string]interface{}, username string) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -269,6 +272,7 @@ func (m *defaultUsernameModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}
 // Delete
 // delete from username where username = :username
 func (m *defaultUsernameModel) Delete(ctx context.Context, username string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from username where username = ?"
 		rResult sql.Result
@@ -313,6 +317,7 @@ func (m *defaultUsernameModel) DeleteTx(tx *sqlx.Tx, username string) (rowsAffec
 // Delete2
 // delete from username where peer_type = :peer_type and peer_id = :peer_id and editable = 1
 func (m *defaultUsernameModel) Delete2(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from username where peer_type = ? and peer_id = ? and editable = 1"
 		rResult sql.Result
@@ -357,6 +362,7 @@ func (m *defaultUsernameModel) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int
 // DeleteByChannelId
 // delete from username where peer_type = 2 and peer_id = :peer_id and editable = 0
 func (m *defaultUsernameModel) DeleteByChannelId(ctx context.Context, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "delete from username where peer_type = 2 and peer_id = ? and editable = 0"
 		rResult sql.Result
@@ -401,6 +407,7 @@ func (m *defaultUsernameModel) DeleteByChannelIdTx(tx *sqlx.Tx, peerId int64) (r
 // SelectByPeer
 // select username, peer_type, peer_id, editable, active, order2 from username where peer_type = :peer_type and peer_id = :peer_id and editable = 1
 func (m *defaultUsernameModel) SelectByPeer(ctx context.Context, peerType int32, peerId int64) (rValue *Username, err error) {
+
 	var (
 		query = "select username, peer_type, peer_id, editable, active, order2 from username where peer_type = ? and peer_id = ? and editable = 1"
 		do    = &Username{}
@@ -424,6 +431,7 @@ func (m *defaultUsernameModel) SelectByPeer(ctx context.Context, peerType int32,
 // SelectByUserId
 // select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id = :peer_id and editable = 1
 func (m *defaultUsernameModel) SelectByUserId(ctx context.Context, peerId int64) (rValue *Username, err error) {
+
 	var (
 		query = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id = ? and editable = 1"
 		do    = &Username{}
@@ -492,6 +500,7 @@ func (m *defaultUsernameModel) SelectListByUserIdWithCB(ctx context.Context, pee
 // SelectByChannelId
 // select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 4 and peer_id = :peer_id and editable = 1
 func (m *defaultUsernameModel) SelectByChannelId(ctx context.Context, peerId int64) (rValue *Username, err error) {
+
 	var (
 		query = "select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 4 and peer_id = ? and editable = 1"
 		do    = &Username{}
@@ -560,6 +569,7 @@ func (m *defaultUsernameModel) SelectListByChannelIdWithCB(ctx context.Context, 
 // UpdateUsername
 // update username set username = :username where peer_type = :peer_type and peer_id = :peer_id and editable = 1
 func (m *defaultUsernameModel) UpdateUsername(ctx context.Context, username string, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update username set username = ? where peer_type = ? and peer_id = ? and editable = 1"
 		rResult sql.Result

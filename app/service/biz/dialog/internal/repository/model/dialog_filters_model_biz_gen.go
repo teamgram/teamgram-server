@@ -73,6 +73,7 @@ func (m *defaultDialogFiltersModel) InsertOrUpdate(ctx context.Context, data *Di
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -105,6 +106,7 @@ func (m *defaultDialogFiltersModel) InsertOrUpdateTx(tx *sqlx.Tx, data *DialogFi
 // SelectBySlug
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 order by order_value desc
 func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int64, slug string) (rValue *DialogFilters, err error) {
+
 	var (
 		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
 		do    = &DialogFilters{}
@@ -128,6 +130,7 @@ func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int
 // Select
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
 func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, dialogFilterId int32) (rValue *DialogFilters, err error) {
+
 	var (
 		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
 		do    = &DialogFilters{}
@@ -196,6 +199,7 @@ func (m *defaultDialogFiltersModel) SelectListWithCB(ctx context.Context, userId
 // UpdateOrder
 // update dialog_filters set order_value = :order_value where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (m *defaultDialogFiltersModel) UpdateOrder(ctx context.Context, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
@@ -241,6 +245,7 @@ func (m *defaultDialogFiltersModel) UpdateOrderTx(tx *sqlx.Tx, orderValue int64,
 // Clear
 // update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (m *defaultDialogFiltersModel) Clear(ctx context.Context, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result

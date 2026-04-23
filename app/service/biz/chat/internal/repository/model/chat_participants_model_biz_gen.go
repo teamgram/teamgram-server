@@ -107,6 +107,7 @@ func (m *defaultChatParticipantsModel) Insert(ctx context.Context, data *ChatPar
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -223,6 +224,7 @@ func (m *defaultChatParticipantsModel) InsertOrUpdate(ctx context.Context, data 
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -333,6 +335,7 @@ func (m *defaultChatParticipantsModel) SelectChatParticipantIdListWithCB(ctx con
 // SelectByParticipantId
 // select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatParticipantsModel) SelectByParticipantId(ctx context.Context, chatId int64, userId int64) (rValue *ChatParticipants, err error) {
+
 	var (
 		query = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id = ?"
 		do    = &ChatParticipants{}
@@ -411,6 +414,7 @@ func (m *defaultChatParticipantsModel) SelectListByParticipantIdListWithCB(ctx c
 // Update
 // update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0, is_bot = :is_bot where id = :id
 func (m *defaultChatParticipantsModel) Update(ctx context.Context, participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0, is_bot = ? where id = ?"
 		rResult sql.Result
@@ -456,6 +460,7 @@ func (m *defaultChatParticipantsModel) UpdateTx(tx *sqlx.Tx, participantType int
 // UpdateKicked
 // update chat_participants set kicked_at = :kicked_at, left_at = 0, state = 2 where id = :id
 func (m *defaultChatParticipantsModel) UpdateKicked(ctx context.Context, kickedAt int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set kicked_at = ?, left_at = 0, state = 2 where id = ?"
 		rResult sql.Result
@@ -501,6 +506,7 @@ func (m *defaultChatParticipantsModel) UpdateKickedTx(tx *sqlx.Tx, kickedAt int6
 // UpdateLeft
 // update chat_participants set kicked_at = 0, left_at = :left_at, state = 1 where id = :id
 func (m *defaultChatParticipantsModel) UpdateLeft(ctx context.Context, leftAt int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set kicked_at = 0, left_at = ?, state = 1 where id = ?"
 		rResult sql.Result
@@ -546,6 +552,7 @@ func (m *defaultChatParticipantsModel) UpdateLeftTx(tx *sqlx.Tx, leftAt int64, i
 // UpdateParticipantType
 // update chat_participants set participant_type = :participant_type where id = :id
 func (m *defaultChatParticipantsModel) UpdateParticipantType(ctx context.Context, participantType int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set participant_type = ? where id = ?"
 		rResult sql.Result
@@ -712,6 +719,7 @@ func (m *defaultChatParticipantsModel) SelectMyAllListWithCB(ctx context.Context
 // UpdateStateByChatId
 // update chat_participants set state = :state where chat_id = :chat_id and state = 0
 func (m *defaultChatParticipantsModel) UpdateStateByChatId(ctx context.Context, state int32, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set state = ? where chat_id = ? and state = 0"
 		rResult sql.Result
@@ -757,6 +765,7 @@ func (m *defaultChatParticipantsModel) UpdateStateByChatIdTx(tx *sqlx.Tx, state 
 // UpdateLink
 // update chat_participants set link = :link where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatParticipantsModel) UpdateLink(ctx context.Context, link string, chatId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set link = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result
@@ -802,6 +811,7 @@ func (m *defaultChatParticipantsModel) UpdateLinkTx(tx *sqlx.Tx, link string, ch
 // UpdateLinkUsage
 // update chat_participants set usage2 = :usage2 where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatParticipantsModel) UpdateLinkUsage(ctx context.Context, usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set usage2 = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result

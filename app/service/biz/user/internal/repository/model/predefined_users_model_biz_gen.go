@@ -71,6 +71,7 @@ func (m *defaultPredefinedUsersModel) Insert(ctx context.Context, data *Predefin
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -103,6 +104,7 @@ func (m *defaultPredefinedUsersModel) InsertTx(tx *sqlx.Tx, data *PredefinedUser
 // SelectByPhone
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = :phone and deleted = 0 limit 1
 func (m *defaultPredefinedUsersModel) SelectByPhone(ctx context.Context, phone string) (rValue *PredefinedUsers, err error) {
+
 	var (
 		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
 		do    = &PredefinedUsers{}
@@ -171,6 +173,7 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAllWithCB(ctx context
 // Delete
 // update predefined_users set deleted = 0 where phone = :phone
 func (m *defaultPredefinedUsersModel) Delete(ctx context.Context, phone string) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update predefined_users set deleted = 0 where phone = ?"
 		rResult sql.Result
@@ -216,6 +219,7 @@ func (m *defaultPredefinedUsersModel) DeleteTx(tx *sqlx.Tx, phone string) (rowsA
 // Update
 // update predefined_users set %s where phone = :phone
 func (m *defaultPredefinedUsersModel) Update(ctx context.Context, cMap map[string]interface{}, phone string) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {

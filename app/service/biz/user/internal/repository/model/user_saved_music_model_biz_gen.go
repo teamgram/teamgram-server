@@ -69,6 +69,7 @@ func (m *defaultUserSavedMusicModel) InsertOrUpdate(ctx context.Context, data *U
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -201,6 +202,7 @@ func (m *defaultUserSavedMusicModel) SelectListByIdListWithCB(ctx context.Contex
 // Delete
 // update user_saved_music set deleted = 1, order2 = 0 where user_id = :user_id and saved_music_id = :saved_music_id
 func (m *defaultUserSavedMusicModel) Delete(ctx context.Context, userId int64, savedMusicId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update user_saved_music set deleted = 1, order2 = 0 where user_id = ? and saved_music_id = ?"
 		rResult sql.Result

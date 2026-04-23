@@ -131,6 +131,7 @@ func (m *defaultChatParticipantsModel) Insert(ctx context.Context, data *ChatPar
 	}
 
 	return
+
 }
 
 // InsertTx
@@ -247,6 +248,7 @@ func (m *defaultChatParticipantsModel) InsertOrUpdate(ctx context.Context, data 
 	}
 
 	return
+
 }
 
 // InsertOrUpdateTx
@@ -324,6 +326,7 @@ func (m *defaultChatParticipantsModel) SelectListWithCB(ctx context.Context, cha
 // SelectByParticipant
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
 func (m *defaultChatParticipantsModel) SelectByParticipant(ctx context.Context, chatId int64, userId int64) (rValue *ChatParticipants, err error) {
+
 	var (
 		query = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = ? and user_id = ?"
 		do    = &ChatParticipants{}
@@ -347,6 +350,7 @@ func (m *defaultChatParticipantsModel) SelectByParticipant(ctx context.Context, 
 // Update
 // update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
 func (m *defaultChatParticipantsModel) Update(ctx context.Context, participantType int32, inviterUserId int64, invitedAt int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0 where id = ?"
 		rResult sql.Result
@@ -392,6 +396,7 @@ func (m *defaultChatParticipantsModel) UpdateTx(tx *sqlx.Tx, participantType int
 // UpdateKicked
 // update chat_participants set state = 2, kicked_at = :kicked_at where id = :id
 func (m *defaultChatParticipantsModel) UpdateKicked(ctx context.Context, kickedAt int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set state = 2, kicked_at = ? where id = ?"
 		rResult sql.Result
@@ -437,6 +442,7 @@ func (m *defaultChatParticipantsModel) UpdateKickedTx(tx *sqlx.Tx, kickedAt int6
 // UpdateLeft
 // update chat_participants set state = 1, left_at = :left_at where id = :id
 func (m *defaultChatParticipantsModel) UpdateLeft(ctx context.Context, leftAt int64, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set state = 1, left_at = ? where id = ?"
 		rResult sql.Result
@@ -482,6 +488,7 @@ func (m *defaultChatParticipantsModel) UpdateLeftTx(tx *sqlx.Tx, leftAt int64, i
 // UpdatePinnedMsgId
 // update chat_participants set pinned_msg_id = :pinned_msg_id where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdatePinnedMsgId(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set pinned_msg_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -527,6 +534,7 @@ func (m *defaultChatParticipantsModel) UpdatePinnedMsgIdTx(tx *sqlx.Tx, userId i
 // UpdateParticipantType
 // update chat_participants set participant_type = :participant_type where id = :id
 func (m *defaultChatParticipantsModel) UpdateParticipantType(ctx context.Context, participantType int32, id int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set participant_type = ? where id = ?"
 		rResult sql.Result
@@ -572,6 +580,7 @@ func (m *defaultChatParticipantsModel) UpdateParticipantTypeTx(tx *sqlx.Tx, part
 // SaveDraft
 // update chat_participants set draft_type = 2, draft_message_data = :draft_message_data where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) SaveDraft(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set draft_type = 2, draft_message_data = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -617,6 +626,7 @@ func (m *defaultChatParticipantsModel) SaveDraftTx(tx *sqlx.Tx, userId int64, ch
 // ClearDraft
 // update chat_participants set draft_type = 0, draft_message_data = ” where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) ClearDraft(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set draft_type = 0, draft_message_data = '' where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -707,6 +717,7 @@ func (m *defaultChatParticipantsModel) SelectDraftListWithCB(ctx context.Context
 // UpdateOutboxDialog
 // update chat_participants set unread_count = 0, %s where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateOutboxDialog(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -773,6 +784,7 @@ func (m *defaultChatParticipantsModel) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap ma
 // UpdateUnreadByPeer
 // update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateUnreadByPeer(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -818,6 +830,7 @@ func (m *defaultChatParticipantsModel) UpdateUnreadByPeerTx(tx *sqlx.Tx, userId 
 // UpdateReadOutboxMaxIdByPeer
 // update chat_participants set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateReadOutboxMaxIdByPeer(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set read_outbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -1008,6 +1021,7 @@ func (m *defaultChatParticipantsModel) SelectListByChatIdListWithCB(ctx context.
 // UpdatePinned
 // update chat_participants set is_pinned = :is_pinned where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdatePinned(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set is_pinned = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -1098,6 +1112,7 @@ func (m *defaultChatParticipantsModel) SelectPinnedDialogsWithCB(ctx context.Con
 // UpdateInboxDialog
 // update chat_participants set unread_count = unread_count + 1, %s where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateInboxDialog(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1164,6 +1179,7 @@ func (m *defaultChatParticipantsModel) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map
 // UpdateMarkDialogUnread
 // update chat_participants set unread_mark = :unread_mark where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateMarkDialogUnread(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	var (
 		query   = "update chat_participants set unread_mark = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
@@ -1242,6 +1258,7 @@ func (m *defaultChatParticipantsModel) SelectMarkDialogUnreadListWithCB(ctx cont
 // UpdateCustomMap
 // update chat_participants set %s where user_id = :user_id and chat_id = :chat_id
 func (m *defaultChatParticipantsModel) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
+
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
