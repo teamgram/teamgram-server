@@ -35,7 +35,7 @@ func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode PhotoSizeList: constructor: %w", err)
 	}
 
 	switch id {
@@ -46,7 +46,7 @@ func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodePhotoSizeList - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode PhotoSizeList: invalid constructor %x", id)
 	}
 
 }
@@ -124,7 +124,7 @@ func (m *TLPhotoSizeList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photoSizeList, layer)
+		return fmt.Errorf("unable to validate photoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -137,7 +137,7 @@ func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.SizeId)
 
 		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err)
 		}
 
 		x.PutInt32(m.DcId)
@@ -145,7 +145,7 @@ func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_photoSizeList, layer)
+		return fmt.Errorf("unable to encode photoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -155,36 +155,36 @@ func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 	case 0x67139b3:
 		m.SizeId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field size_id: %w", err)
 		}
 		c1, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err3)
 		}
 		v1 := make([]tg.PhotoSizeClazz, l1)
 		for i := 0; i < l1; i++ {
 			v1[i], err3 = tg.DecodePhotoSizeClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err3)
 			}
 		}
 		m.Sizes = v1
 
 		m.DcId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field dc_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode photoSizeList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -199,7 +199,7 @@ func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode VideoSizeList: constructor: %w", err)
 	}
 
 	switch id {
@@ -210,7 +210,7 @@ func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeVideoSizeList - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode VideoSizeList: invalid constructor %x", id)
 	}
 
 }
@@ -288,7 +288,7 @@ func (m *TLVideoSizeList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_videoSizeList, layer)
+		return fmt.Errorf("unable to validate videoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -301,7 +301,7 @@ func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.SizeId)
 
 		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err)
 		}
 
 		x.PutInt32(m.DcId)
@@ -309,7 +309,7 @@ func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_videoSizeList, layer)
+		return fmt.Errorf("unable to encode videoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -319,36 +319,36 @@ func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
 	case 0x38d19bf2:
 		m.SizeId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field size_id: %w", err)
 		}
 		c1, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err3)
 		}
 		v1 := make([]tg.VideoSizeClazz, l1)
 		for i := 0; i < l1; i++ {
 			v1[i], err3 = tg.DecodeVideoSizeClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err3)
 			}
 		}
 		m.Sizes = v1
 
 		m.DcId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field dc_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode videoSizeList: invalid constructor %x", m.ClazzID)
 	}
 }
 

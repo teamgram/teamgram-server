@@ -49,12 +49,17 @@ func (m *TLInboxEditUserMessageToInbox) Encode(x *bin.Encoder, layer int32) erro
 
 		x.PutInt64(m.FromId)
 		x.PutInt64(m.PeerUserId)
-		_ = m.Message.Encode(x, layer)
+		if m.Message == nil {
+			return fmt.Errorf("unable to encode inbox_editUserMessageToInbox#0x5cfb37a8: field message is nil")
+		}
+		if err := m.Message.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode inbox_editUserMessageToInbox#0x5cfb37a8: field message: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_editUserMessageToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_editUserMessageToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -63,28 +68,28 @@ func (m *TLInboxEditUserMessageToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editUserMessageToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x5cfb37a8:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editUserMessageToInbox#0x5cfb37a8: field from_id: %w", err)
 		}
 		m.PeerUserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editUserMessageToInbox#0x5cfb37a8: field peer_user_id: %w", err)
 		}
 
 		m.Message, err = tg.DecodeMessageClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editUserMessageToInbox#0x5cfb37a8: field message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_editUserMessageToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -109,12 +114,17 @@ func (m *TLInboxEditChatMessageToInbox) Encode(x *bin.Encoder, layer int32) erro
 
 		x.PutInt64(m.FromId)
 		x.PutInt64(m.PeerChatId)
-		_ = m.Message.Encode(x, layer)
+		if m.Message == nil {
+			return fmt.Errorf("unable to encode inbox_editChatMessageToInbox#0x79107a0f: field message is nil")
+		}
+		if err := m.Message.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode inbox_editChatMessageToInbox#0x79107a0f: field message: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_editChatMessageToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_editChatMessageToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -123,28 +133,28 @@ func (m *TLInboxEditChatMessageToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editChatMessageToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x79107a0f:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editChatMessageToInbox#0x79107a0f: field from_id: %w", err)
 		}
 		m.PeerChatId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editChatMessageToInbox#0x79107a0f: field peer_chat_id: %w", err)
 		}
 
 		m.Message, err = tg.DecodeMessageClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editChatMessageToInbox#0x79107a0f: field message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_editChatMessageToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -177,7 +187,7 @@ func (m *TLInboxDeleteMessagesToInbox) Encode(x *bin.Encoder, layer int32) error
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_deleteMessagesToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_deleteMessagesToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -186,32 +196,32 @@ func (m *TLInboxDeleteMessagesToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x851c6e34:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox#0x851c6e34: field from_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox#0x851c6e34: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox#0x851c6e34: field peer_id: %w", err)
 		}
 
 		m.Id, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox#0x851c6e34: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_deleteMessagesToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -256,7 +266,7 @@ func (m *TLInboxDeleteUserHistoryToInbox) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_deleteUserHistoryToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_deleteUserHistoryToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -265,35 +275,35 @@ func (m *TLInboxDeleteUserHistoryToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x140a8158:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox: field flags: %w", err)
 		}
 		_ = flags
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox#0x140a8158: field from_id: %w", err)
 		}
 		m.PeerUserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox#0x140a8158: field peer_user_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.JustClear = true
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox#0x140a8158: field max_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_deleteUserHistoryToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -323,7 +333,7 @@ func (m *TLInboxDeleteChatHistoryToInbox) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_deleteChatHistoryToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_deleteChatHistoryToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -332,27 +342,27 @@ func (m *TLInboxDeleteChatHistoryToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteChatHistoryToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xd8aaa602:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteChatHistoryToInbox#0xd8aaa602: field from_id: %w", err)
 		}
 		m.PeerChatId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteChatHistoryToInbox#0xd8aaa602: field peer_chat_id: %w", err)
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_deleteChatHistoryToInbox#0xd8aaa602: field max_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_deleteChatHistoryToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -379,13 +389,13 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Encode(x *bin.Encoder, layer int32) 
 		x.PutInt64(m.PeerUserId)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_readUserMediaUnreadToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_readUserMediaUnreadToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -394,42 +404,42 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x15c1034b:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field from_id: %w", err)
 		}
 		m.PeerUserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field peer_user_id: %w", err)
 		}
 		c3, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err3)
 		}
 		v3 := make([]InboxMessageIdClazz, l3)
 		for i := 0; i < l3; i++ {
 			v3[i], err3 = DecodeInboxMessageIdClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err3)
 			}
 		}
 		m.Id = v3
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -456,13 +466,13 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Encode(x *bin.Encoder, layer int32) 
 		x.PutInt64(m.PeerChatId)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_readChatMediaUnreadToInbox, layer)
+		return fmt.Errorf("unable to validate inbox_readChatMediaUnreadToInbox: unsupported layer %d", layer)
 	}
 }
 
@@ -471,42 +481,42 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x55415dd4:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field from_id: %w", err)
 		}
 		m.PeerChatId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field peer_chat_id: %w", err)
 		}
 		c3, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err3)
 		}
 		v3 := make([]InboxMessageIdClazz, l3)
 		for i := 0; i < l3; i++ {
 			v3[i], err3 = DecodeInboxMessageIdClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err3)
 			}
 		}
 		m.Id = v3
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -540,7 +550,7 @@ func (m *TLInboxUpdateHistoryReaded) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_updateHistoryReaded, layer)
+		return fmt.Errorf("unable to validate inbox_updateHistoryReaded: unsupported layer %d", layer)
 	}
 }
 
@@ -549,35 +559,35 @@ func (m *TLInboxUpdateHistoryReaded) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xc3c84ce0:
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded#0xc3c84ce0: field from_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded#0xc3c84ce0: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded#0xc3c84ce0: field peer_id: %w", err)
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded#0xc3c84ce0: field max_id: %w", err)
 		}
 		m.Sender, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updateHistoryReaded#0xc3c84ce0: field sender: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_updateHistoryReaded: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -626,7 +636,7 @@ func (m *TLInboxUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_updatePinnedMessage, layer)
+		return fmt.Errorf("unable to validate inbox_updatePinnedMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -635,43 +645,43 @@ func (m *TLInboxUpdatePinnedMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa96c2af4:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage#0xa96c2af4: field user_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.Unpin = true
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage#0xa96c2af4: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage#0xa96c2af4: field peer_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage#0xa96c2af4: field id: %w", err)
 		}
 		m.DialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessage#0xa96c2af4: field dialog_message_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_updatePinnedMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -703,7 +713,7 @@ func (m *TLInboxUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_unpinAllMessages, layer)
+		return fmt.Errorf("unable to validate inbox_unpinAllMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -712,31 +722,31 @@ func (m *TLInboxUnpinAllMessages) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_unpinAllMessages: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x231ca261:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_unpinAllMessages#0x231ca261: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_unpinAllMessages#0x231ca261: field auth_key_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_unpinAllMessages#0x231ca261: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_unpinAllMessages#0x231ca261: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_unpinAllMessages: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -813,17 +823,17 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *bin.Encoder, layer int32) er
 		x.PutInt64(m.PeerId)
 
 		if err := iface.EncodeObjectList(x, m.BoxList, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err)
 		}
 
 		if m.Users != nil {
 			if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err)
 			}
 		}
 		if m.Chats != nil {
 			if err := iface.EncodeObjectList(x, m.Chats, layer); err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err)
 			}
 		}
 		if m.Layer != nil {
@@ -849,7 +859,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_sendUserMessageToInboxV2, layer)
+		return fmt.Errorf("unable to validate inbox_sendUserMessageToInboxV2: unsupported layer %d", layer)
 	}
 }
 
@@ -858,55 +868,55 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x5bd7522:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field user_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Out = true
 		}
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field from_id: %w", err)
 		}
 		m.FromAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field from_auth_keyId: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field peer_id: %w", err)
 		}
 		c8, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err2)
 		}
 		if c8 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
 		}
 		l8, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err3)
 		}
 		v8 := make([]tg.MessageBoxClazz, l8)
 		for i := 0; i < l8; i++ {
 			v8[i], err3 = tg.DecodeMessageBoxClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err3)
 			}
 		}
 		m.BoxList = v8
@@ -914,20 +924,20 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 1)) != 0 {
 			c9, err2 := d.ClazzID()
 			if err2 != nil {
-				return err2
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err2)
 			}
 			if c9 != iface.ClazzID_vector {
 				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
 			}
 			l9, err3 := d.Int()
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err3)
 			}
 			v9 := make([]tg.UserClazz, l9)
 			for i := 0; i < l9; i++ {
 				v9[i], err3 = tg.DecodeUserClazz(d)
 				if err3 != nil {
-					return err3
+					return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err3)
 				}
 			}
 			m.Users = v9
@@ -935,20 +945,20 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 2)) != 0 {
 			c10, err2 := d.ClazzID()
 			if err2 != nil {
-				return err2
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err2)
 			}
 			if c10 != iface.ClazzID_vector {
 				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
 			}
 			l10, err3 := d.Int()
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err3)
 			}
 			v10 := make([]tg.ChatClazz, l10)
 			for i := 0; i < l10; i++ {
 				v10[i], err3 = tg.DecodeChatClazz(d)
 				if err3 != nil {
-					return err3
+					return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err3)
 				}
 			}
 			m.Chats = v10
@@ -957,14 +967,14 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			m.Layer = new(int32)
 			*m.Layer, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field layer: %w", err)
 			}
 		}
 		if (flags & (1 << 4)) != 0 {
 			m.ServerId = new(string)
 			*m.ServerId, err = d.String()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field server_id: %w", err)
 			}
 		}
 
@@ -972,7 +982,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			m.SessionId = new(int64)
 			*m.SessionId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field session_id: %w", err)
 			}
 		}
 
@@ -980,7 +990,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			m.ClientReqMsgId = new(int64)
 			*m.ClientReqMsgId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field client_req_msg_id: %w", err)
 			}
 		}
 
@@ -988,13 +998,13 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			m.AuthKeyId = new(int64)
 			*m.AuthKeyId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field auth_key_id: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1053,26 +1063,33 @@ func (m *TLInboxEditMessageToInboxV2) Encode(x *bin.Encoder, layer int32) error 
 		x.PutInt64(m.FromAuthKeyId)
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
-		_ = m.NewMessage.Encode(x, layer)
+		if m.NewMessage == nil {
+			return fmt.Errorf("unable to encode inbox_editMessageToInboxV2#0xdabb9e69: field new_message is nil")
+		}
+		if err := m.NewMessage.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field new_message: %w", err)
+		}
 		if m.DstMessage != nil {
-			_ = m.DstMessage.Encode(x, layer)
+			if err := m.DstMessage.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field dst_message: %w", err)
+			}
 		}
 
 		if m.Users != nil {
 			if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err)
 			}
 		}
 		if m.Chats != nil {
 			if err := iface.EncodeObjectList(x, m.Chats, layer); err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err)
 			}
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_editMessageToInboxV2, layer)
+		return fmt.Errorf("unable to validate inbox_editMessageToInboxV2: unsupported layer %d", layer)
 	}
 }
 
@@ -1081,68 +1098,68 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xdabb9e69:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field user_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Out = true
 		}
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field from_id: %w", err)
 		}
 		m.FromAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field from_auth_keyId: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field peer_id: %w", err)
 		}
 
 		m.NewMessage, err = tg.DecodeMessageBoxClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field new_message: %w", err)
 		}
 
 		if (flags & (1 << 1)) != 0 {
 			m.DstMessage, err = tg.DecodeMessageBoxClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field dst_message: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			c10, err2 := d.ClazzID()
 			if err2 != nil {
-				return err2
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err2)
 			}
 			if c10 != iface.ClazzID_vector {
 				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
 			}
 			l10, err3 := d.Int()
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err3)
 			}
 			v10 := make([]tg.UserClazz, l10)
 			for i := 0; i < l10; i++ {
 				v10[i], err3 = tg.DecodeUserClazz(d)
 				if err3 != nil {
-					return err3
+					return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err3)
 				}
 			}
 			m.Users = v10
@@ -1150,20 +1167,20 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 3)) != 0 {
 			c11, err2 := d.ClazzID()
 			if err2 != nil {
-				return err2
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err2)
 			}
 			if c11 != iface.ClazzID_vector {
 				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 11, c11)
 			}
 			l11, err3 := d.Int()
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err3)
 			}
 			v11 := make([]tg.ChatClazz, l11)
 			for i := 0; i < l11; i++ {
 				v11[i], err3 = tg.DecodeChatClazz(d)
 				if err3 != nil {
-					return err3
+					return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err3)
 				}
 			}
 			m.Chats = v11
@@ -1171,7 +1188,7 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_editMessageToInboxV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1255,7 +1272,7 @@ func (m *TLInboxReadInboxHistory) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_readInboxHistory, layer)
+		return fmt.Errorf("unable to validate inbox_readInboxHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -1264,64 +1281,64 @@ func (m *TLInboxReadInboxHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1f73675:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field auth_key_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field peer_id: %w", err)
 		}
 		m.Pts, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field pts: %w", err)
 		}
 		m.PtsCount, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field pts_count: %w", err)
 		}
 		m.UnreadCount, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field unread_count: %w", err)
 		}
 		m.ReadInboxMaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field read_inbox_max_id: %w", err)
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field max_id: %w", err)
 		}
 		if (flags & (1 << 3)) != 0 {
 			m.Layer = new(int32)
 			*m.Layer, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field layer: %w", err)
 			}
 		}
 		if (flags & (1 << 4)) != 0 {
 			m.ServerId = new(string)
 			*m.ServerId, err = d.String()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field server_id: %w", err)
 			}
 		}
 
@@ -1329,7 +1346,7 @@ func (m *TLInboxReadInboxHistory) Decode(d *bin.Decoder) (err error) {
 			m.SessionId = new(int64)
 			*m.SessionId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field session_id: %w", err)
 			}
 		}
 
@@ -1337,13 +1354,13 @@ func (m *TLInboxReadInboxHistory) Decode(d *bin.Decoder) (err error) {
 			m.ClientReqMsgId = new(int64)
 			*m.ClientReqMsgId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_readInboxHistory#0x1f73675: field client_req_msg_id: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_readInboxHistory: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1375,7 +1392,7 @@ func (m *TLInboxReadOutboxHistory) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_readOutboxHistory, layer)
+		return fmt.Errorf("unable to validate inbox_readOutboxHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -1384,31 +1401,31 @@ func (m *TLInboxReadOutboxHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readOutboxHistory: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1c7036ca:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readOutboxHistory#0x1c7036ca: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readOutboxHistory#0x1c7036ca: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readOutboxHistory#0x1c7036ca: field peer_id: %w", err)
 		}
 		m.MaxDialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readOutboxHistory#0x1c7036ca: field max_dialog_message_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_readOutboxHistory: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1440,7 +1457,7 @@ func (m *TLInboxReadMediaUnreadToInboxV2) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_readMediaUnreadToInboxV2, layer)
+		return fmt.Errorf("unable to validate inbox_readMediaUnreadToInboxV2: unsupported layer %d", layer)
 	}
 }
 
@@ -1449,31 +1466,31 @@ func (m *TLInboxReadMediaUnreadToInboxV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xeac54342:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2#0xeac54342: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2#0xeac54342: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2#0xeac54342: field peer_id: %w", err)
 		}
 		m.DialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2#0xeac54342: field dialog_message_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_readMediaUnreadToInboxV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1554,7 +1571,7 @@ func (m *TLInboxUpdatePinnedMessageV2) Encode(x *bin.Encoder, layer int32) error
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_updatePinnedMessageV2, layer)
+		return fmt.Errorf("unable to validate inbox_updatePinnedMessageV2: unsupported layer %d", layer)
 	}
 }
 
@@ -1563,51 +1580,51 @@ func (m *TLInboxUpdatePinnedMessageV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x56b79e7c:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field user_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.Unpin = true
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field peer_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field id: %w", err)
 		}
 		m.DialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field dialog_message_id: %w", err)
 		}
 		if (flags & (1 << 3)) != 0 {
 			m.Layer = new(int32)
 			*m.Layer, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field layer: %w", err)
 			}
 		}
 		if (flags & (1 << 4)) != 0 {
 			m.ServerId = new(string)
 			*m.ServerId, err = d.String()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field server_id: %w", err)
 			}
 		}
 
@@ -1615,7 +1632,7 @@ func (m *TLInboxUpdatePinnedMessageV2) Decode(d *bin.Decoder) (err error) {
 			m.SessionId = new(int64)
 			*m.SessionId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field session_id: %w", err)
 			}
 		}
 
@@ -1623,13 +1640,13 @@ func (m *TLInboxUpdatePinnedMessageV2) Decode(d *bin.Decoder) (err error) {
 			m.ClientReqMsgId = new(int64)
 			*m.ClientReqMsgId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2#0x56b79e7c: field client_req_msg_id: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inbox_updatePinnedMessageV2: invalid constructor %x", m.ClazzID)
 	}
 }
 

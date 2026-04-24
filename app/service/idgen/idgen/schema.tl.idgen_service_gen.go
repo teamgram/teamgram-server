@@ -47,7 +47,7 @@ func (m *TLIdgenNextId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_nextId, layer)
+		return fmt.Errorf("unable to validate idgen_nextId: unsupported layer %d", layer)
 	}
 }
 
@@ -56,7 +56,7 @@ func (m *TLIdgenNextId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_nextId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -64,7 +64,7 @@ func (m *TLIdgenNextId) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_nextId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -90,7 +90,7 @@ func (m *TLIdgenNextIds) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_nextIds, layer)
+		return fmt.Errorf("unable to validate idgen_nextIds: unsupported layer %d", layer)
 	}
 }
 
@@ -99,19 +99,19 @@ func (m *TLIdgenNextIds) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_nextIds: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x47c56fae:
 		m.Num, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_nextIds#0x47c56fae: field num: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_nextIds: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -137,7 +137,7 @@ func (m *TLIdgenGetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getCurrentSeqId, layer)
+		return fmt.Errorf("unable to validate idgen_getCurrentSeqId: unsupported layer %d", layer)
 	}
 }
 
@@ -146,19 +146,19 @@ func (m *TLIdgenGetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x9d5bab80:
 		m.Key, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqId#0x9d5bab80: field key: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_getCurrentSeqId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -186,7 +186,7 @@ func (m *TLIdgenSetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_setCurrentSeqId, layer)
+		return fmt.Errorf("unable to validate idgen_setCurrentSeqId: unsupported layer %d", layer)
 	}
 }
 
@@ -195,23 +195,23 @@ func (m *TLIdgenSetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_setCurrentSeqId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xcd2c196d:
 		m.Key, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_setCurrentSeqId#0xcd2c196d: field key: %w", err)
 		}
 		m.Id, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_setCurrentSeqId#0xcd2c196d: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_setCurrentSeqId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -237,7 +237,7 @@ func (m *TLIdgenGetNextSeqId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextSeqId, layer)
+		return fmt.Errorf("unable to validate idgen_getNextSeqId: unsupported layer %d", layer)
 	}
 }
 
@@ -246,19 +246,19 @@ func (m *TLIdgenGetNextSeqId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextSeqId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf6716968:
 		m.Key, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextSeqId#0xf6716968: field key: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_getNextSeqId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -286,7 +286,7 @@ func (m *TLIdgenGetNextNSeqId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextNSeqId, layer)
+		return fmt.Errorf("unable to validate idgen_getNextNSeqId: unsupported layer %d", layer)
 	}
 }
 
@@ -295,23 +295,23 @@ func (m *TLIdgenGetNextNSeqId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextNSeqId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa7d4cc6e:
 		m.Key, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextNSeqId#0xa7d4cc6e: field key: %w", err)
 		}
 		m.N, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextNSeqId#0xa7d4cc6e: field n: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_getNextNSeqId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -333,13 +333,13 @@ func (m *TLIdgenGetNextIdValList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xaa85f137)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getNextIdValList, layer)
+		return fmt.Errorf("unable to validate idgen_getNextIdValList: unsupported layer %d", layer)
 	}
 }
 
@@ -348,34 +348,34 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getNextIdValList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xaa85f137:
 		c1, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: %w", err3)
 		}
 		v1 := make([]InputIdClazz, l1)
 		for i := 0; i < l1; i++ {
 			v1[i], err3 = DecodeInputIdClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: %w", err3)
 			}
 		}
 		m.Id = v1
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_getNextIdValList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -397,13 +397,13 @@ func (m *TLIdgenGetCurrentSeqIdList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xd229ae43)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_idgen_getCurrentSeqIdList, layer)
+		return fmt.Errorf("unable to validate idgen_getCurrentSeqIdList: unsupported layer %d", layer)
 	}
 }
 
@@ -412,34 +412,34 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xd229ae43:
 		c1, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: %w", err3)
 		}
 		v1 := make([]InputIdClazz, l1)
 		for i := 0; i < l1; i++ {
 			v1[i], err3 = DecodeInputIdClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: %w", err3)
 			}
 		}
 		m.Id = v1
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList: invalid constructor %x", m.ClazzID)
 	}
 }
 

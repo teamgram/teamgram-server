@@ -78,7 +78,7 @@ func (m *TLDfsWriteFilePartData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_writeFilePartData, layer)
+		return fmt.Errorf("unable to validate dfs_writeFilePartData: unsupported layer %d", layer)
 	}
 }
 
@@ -87,31 +87,31 @@ func (m *TLDfsWriteFilePartData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1a484107:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData: field flags: %w", err)
 		}
 		_ = flags
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData#0x1a484107: field creator: %w", err)
 		}
 		m.FileId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData#0x1a484107: field file_id: %w", err)
 		}
 		m.FilePart, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData#0x1a484107: field file_part: %w", err)
 		}
 		m.Bytes, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_writeFilePartData#0x1a484107: field bytes: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Big = true
@@ -120,13 +120,13 @@ func (m *TLDfsWriteFilePartData) Decode(d *bin.Decoder) (err error) {
 			m.FileTotalParts = new(int32)
 			*m.FileTotalParts, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_writeFilePartData#0x1a484107: field file_total_parts: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_writeFilePartData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -149,12 +149,17 @@ func (m *TLDfsUploadPhotoFileV2) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x2410d1a2)
 
 		x.PutInt64(m.Creator)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_uploadPhotoFileV2#0x2410d1a2: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadPhotoFileV2#0x2410d1a2: field file: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadPhotoFileV2, layer)
+		return fmt.Errorf("unable to validate dfs_uploadPhotoFileV2: unsupported layer %d", layer)
 	}
 }
 
@@ -163,24 +168,24 @@ func (m *TLDfsUploadPhotoFileV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadPhotoFileV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2410d1a2:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadPhotoFileV2#0x2410d1a2: field creator: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadPhotoFileV2#0x2410d1a2: field file: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadPhotoFileV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -230,11 +235,15 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *bin.Encoder, layer int32) erro
 		x.PutUint32(flags)
 		x.PutInt64(m.Creator)
 		if m.File != nil {
-			_ = m.File.Encode(x, layer)
+			if err := m.File.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field file: %w", err)
+			}
 		}
 
 		if m.Video != nil {
-			_ = m.Video.Encode(x, layer)
+			if err := m.Video.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field video: %w", err)
+			}
 		}
 
 		if m.VideoStartTs != nil {
@@ -242,13 +251,15 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *bin.Encoder, layer int32) erro
 		}
 
 		if m.VideoEmojiMarkup != nil {
-			_ = m.VideoEmojiMarkup.Encode(x, layer)
+			if err := m.VideoEmojiMarkup.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field video_emoji_markup: %w", err)
+			}
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadProfilePhotoFileV2, layer)
+		return fmt.Errorf("unable to validate dfs_uploadProfilePhotoFileV2: unsupported layer %d", layer)
 	}
 }
 
@@ -257,50 +268,50 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x872313d8:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2: field flags: %w", err)
 		}
 		_ = flags
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field creator: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.File, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field file: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.Video, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field video: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			m.VideoStartTs = new(float64)
 			*m.VideoStartTs, err = d.Double()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field video_start_ts: %w", err)
 			}
 		}
 
 		if (flags & (1 << 4)) != 0 {
 			m.VideoEmojiMarkup, err = tg.DecodeVideoSizeClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2#0x872313d8: field video_emoji_markup: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadProfilePhotoFileV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -323,12 +334,17 @@ func (m *TLDfsUploadEncryptedFileV2) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x79d3c523)
 
 		x.PutInt64(m.Creator)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_uploadEncryptedFileV2#0x79d3c523: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadEncryptedFileV2#0x79d3c523: field file: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadEncryptedFileV2, layer)
+		return fmt.Errorf("unable to validate dfs_uploadEncryptedFileV2: unsupported layer %d", layer)
 	}
 }
 
@@ -337,24 +353,24 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadEncryptedFileV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x79d3c523:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadEncryptedFileV2#0x79d3c523: field creator: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputEncryptedFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadEncryptedFileV2#0x79d3c523: field file: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadEncryptedFileV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -377,14 +393,19 @@ func (m *TLDfsDownloadFile) Encode(x *bin.Encoder, layer int32) error {
 	case 0xd6bfee3e:
 		x.PutClazzID(0xd6bfee3e)
 
-		_ = m.Location.Encode(x, layer)
+		if m.Location == nil {
+			return fmt.Errorf("unable to encode dfs_downloadFile#0xd6bfee3e: field location is nil")
+		}
+		if err := m.Location.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_downloadFile#0xd6bfee3e: field location: %w", err)
+		}
 		x.PutInt64(m.Offset)
 		x.PutInt32(m.Limit)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_downloadFile, layer)
+		return fmt.Errorf("unable to validate dfs_downloadFile: unsupported layer %d", layer)
 	}
 }
 
@@ -393,7 +414,7 @@ func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_downloadFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -401,21 +422,21 @@ func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
 
 		m.Location, err = tg.DecodeInputFileLocationClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_downloadFile#0xd6bfee3e: field location: %w", err)
 		}
 
 		m.Offset, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_downloadFile#0xd6bfee3e: field offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_downloadFile#0xd6bfee3e: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_downloadFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -438,12 +459,17 @@ func (m *TLDfsUploadDocumentFileV2) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x76336db7)
 
 		x.PutInt64(m.Creator)
-		_ = m.Media.Encode(x, layer)
+		if m.Media == nil {
+			return fmt.Errorf("unable to encode dfs_uploadDocumentFileV2#0x76336db7: field media is nil")
+		}
+		if err := m.Media.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadDocumentFileV2#0x76336db7: field media: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadDocumentFileV2, layer)
+		return fmt.Errorf("unable to validate dfs_uploadDocumentFileV2: unsupported layer %d", layer)
 	}
 }
 
@@ -452,24 +478,24 @@ func (m *TLDfsUploadDocumentFileV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadDocumentFileV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x76336db7:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadDocumentFileV2#0x76336db7: field creator: %w", err)
 		}
 
 		m.Media, err = tg.DecodeInputMediaClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadDocumentFileV2#0x76336db7: field media: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadDocumentFileV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -492,12 +518,17 @@ func (m *TLDfsUploadGifDocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 		x.PutClazzID(0x41c4cd00)
 
 		x.PutInt64(m.Creator)
-		_ = m.Media.Encode(x, layer)
+		if m.Media == nil {
+			return fmt.Errorf("unable to encode dfs_uploadGifDocumentMedia#0x41c4cd00: field media is nil")
+		}
+		if err := m.Media.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadGifDocumentMedia#0x41c4cd00: field media: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadGifDocumentMedia, layer)
+		return fmt.Errorf("unable to validate dfs_uploadGifDocumentMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -506,24 +537,24 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadGifDocumentMedia: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x41c4cd00:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadGifDocumentMedia#0x41c4cd00: field creator: %w", err)
 		}
 
 		m.Media, err = tg.DecodeInputMediaClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadGifDocumentMedia#0x41c4cd00: field media: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadGifDocumentMedia: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -546,12 +577,17 @@ func (m *TLDfsUploadMp4DocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 		x.PutClazzID(0xa2a4f818)
 
 		x.PutInt64(m.Creator)
-		_ = m.Media.Encode(x, layer)
+		if m.Media == nil {
+			return fmt.Errorf("unable to encode dfs_uploadMp4DocumentMedia#0xa2a4f818: field media is nil")
+		}
+		if err := m.Media.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadMp4DocumentMedia#0xa2a4f818: field media: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadMp4DocumentMedia, layer)
+		return fmt.Errorf("unable to validate dfs_uploadMp4DocumentMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -560,24 +596,24 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadMp4DocumentMedia: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa2a4f818:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadMp4DocumentMedia#0xa2a4f818: field creator: %w", err)
 		}
 
 		m.Media, err = tg.DecodeInputMediaClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadMp4DocumentMedia#0xa2a4f818: field media: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadMp4DocumentMedia: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -602,14 +638,24 @@ func (m *TLDfsUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xc1a61056)
 
 		x.PutInt64(m.Creator)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_uploadWallPaperFile#0xc1a61056: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field file: %w", err)
+		}
 		x.PutString(m.MimeType)
-		_ = m.Admin.Encode(x, layer)
+		if m.Admin == nil {
+			return fmt.Errorf("unable to encode dfs_uploadWallPaperFile#0xc1a61056: field admin is nil")
+		}
+		if err := m.Admin.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field admin: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadWallPaperFile, layer)
+		return fmt.Errorf("unable to validate dfs_uploadWallPaperFile: unsupported layer %d", layer)
 	}
 }
 
@@ -618,34 +664,34 @@ func (m *TLDfsUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xc1a61056:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field creator: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field file: %w", err)
 		}
 
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field mime_type: %w", err)
 		}
 
 		m.Admin, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadWallPaperFile#0xc1a61056: field admin: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadWallPaperFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -685,9 +731,16 @@ func (m *TLDfsUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.Creator)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_uploadThemeFile#0xdea64f97: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field file: %w", err)
+		}
 		if m.Thumb != nil {
-			_ = m.Thumb.Encode(x, layer)
+			if err := m.Thumb.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field thumb: %w", err)
+			}
 		}
 
 		x.PutString(m.MimeType)
@@ -696,7 +749,7 @@ func (m *TLDfsUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadThemeFile, layer)
+		return fmt.Errorf("unable to validate dfs_uploadThemeFile: unsupported layer %d", layer)
 	}
 }
 
@@ -705,44 +758,44 @@ func (m *TLDfsUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xdea64f97:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile: field flags: %w", err)
 		}
 		_ = flags
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field creator: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field file: %w", err)
 		}
 
 		if (flags & (1 << 0)) != 0 {
 			m.Thumb, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field thumb: %w", err)
 			}
 		}
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field mime_type: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadThemeFile#0xdea64f97: field file_name: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadThemeFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -767,14 +820,19 @@ func (m *TLDfsUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x2b3c5b1)
 
 		x.PutInt64(m.Creator)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_uploadRingtoneFile#0x2b3c5b1: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile#0x2b3c5b1: field file: %w", err)
+		}
 		x.PutString(m.MimeType)
 		x.PutString(m.FileName)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadRingtoneFile, layer)
+		return fmt.Errorf("unable to validate dfs_uploadRingtoneFile: unsupported layer %d", layer)
 	}
 }
 
@@ -783,33 +841,33 @@ func (m *TLDfsUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2b3c5b1:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile#0x2b3c5b1: field creator: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile#0x2b3c5b1: field file: %w", err)
 		}
 
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile#0x2b3c5b1: field mime_type: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadRingtoneFile#0x2b3c5b1: field file_name: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadRingtoneFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -837,7 +895,7 @@ func (m *TLDfsUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dfs_uploadedProfilePhoto, layer)
+		return fmt.Errorf("unable to validate dfs_uploadedProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -846,23 +904,23 @@ func (m *TLDfsUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadedProfilePhoto: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa3aa2874:
 		m.Creator, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadedProfilePhoto#0xa3aa2874: field creator: %w", err)
 		}
 		m.PhotoId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dfs_uploadedProfilePhoto#0xa3aa2874: field photo_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dfs_uploadedProfilePhoto: invalid constructor %x", m.ClazzID)
 	}
 }
 

@@ -41,7 +41,7 @@ func (m *TLReqPq) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_req_pq, layer)
+		return fmt.Errorf("unable to validate req_pq: unsupported layer %d", layer)
 	}
 }
 
@@ -49,19 +49,19 @@ func (m *TLReqPq) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_pq: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x60469778:
 		err = m.Nonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_pq#0x60469778: field nonce: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode req_pq: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -85,7 +85,7 @@ func (m *TLReqPqMulti) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_req_pq_multi, layer)
+		return fmt.Errorf("unable to validate req_pq_multi: unsupported layer %d", layer)
 	}
 }
 
@@ -93,19 +93,19 @@ func (m *TLReqPqMulti) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_pq_multi: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xbe7e8ef1:
 		err = m.Nonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_pq_multi#0xbe7e8ef1: field nonce: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode req_pq_multi: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -139,7 +139,7 @@ func (m *TLReqDHParams) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_req_DH_params, layer)
+		return fmt.Errorf("unable to validate req_DH_params: unsupported layer %d", layer)
 	}
 }
 
@@ -147,39 +147,39 @@ func (m *TLReqDHParams) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xd712e4be:
 		err = m.Nonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field nonce: %w", err)
 		}
 		err = m.ServerNonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field server_nonce: %w", err)
 		}
 		m.P, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field p: %w", err)
 		}
 		m.Q, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field q: %w", err)
 		}
 		m.PublicKeyFingerprint, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field public_key_fingerprint: %w", err)
 		}
 		m.EncryptedData, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode req_DH_params#0xd712e4be: field encrypted_data: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode req_DH_params: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -207,7 +207,7 @@ func (m *TLSetClientDHParams) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_set_client_DH_params, layer)
+		return fmt.Errorf("unable to validate set_client_DH_params: unsupported layer %d", layer)
 	}
 }
 
@@ -215,27 +215,27 @@ func (m *TLSetClientDHParams) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode set_client_DH_params: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf5045f1f:
 		err = m.Nonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode set_client_DH_params#0xf5045f1f: field nonce: %w", err)
 		}
 		err = m.ServerNonce.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode set_client_DH_params#0xf5045f1f: field server_nonce: %w", err)
 		}
 		m.EncryptedData, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode set_client_DH_params#0xf5045f1f: field encrypted_data: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode set_client_DH_params: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -256,7 +256,7 @@ func (m *TLDestroyAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_destroy_auth_key, layer)
+		return fmt.Errorf("unable to validate destroy_auth_key: unsupported layer %d", layer)
 	}
 }
 
@@ -264,7 +264,7 @@ func (m *TLDestroyAuthKey) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode destroy_auth_key: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -272,7 +272,7 @@ func (m *TLDestroyAuthKey) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode destroy_auth_key: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -293,7 +293,7 @@ func (m *TLHelpTest) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_help_test, layer)
+		return fmt.Errorf("unable to validate help_test: unsupported layer %d", layer)
 	}
 }
 
@@ -301,7 +301,7 @@ func (m *TLHelpTest) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode help_test: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -309,7 +309,7 @@ func (m *TLHelpTest) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode help_test: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -330,7 +330,7 @@ func (m *TLTestUseError) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_test_useError, layer)
+		return fmt.Errorf("unable to validate test_useError: unsupported layer %d", layer)
 	}
 }
 
@@ -338,7 +338,7 @@ func (m *TLTestUseError) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode test_useError: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -346,7 +346,7 @@ func (m *TLTestUseError) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode test_useError: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -367,7 +367,7 @@ func (m *TLTestUseConfigSimple) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_test_useConfigSimple, layer)
+		return fmt.Errorf("unable to validate test_useConfigSimple: unsupported layer %d", layer)
 	}
 }
 
@@ -375,7 +375,7 @@ func (m *TLTestUseConfigSimple) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode test_useConfigSimple: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -383,7 +383,7 @@ func (m *TLTestUseConfigSimple) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode test_useConfigSimple: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -407,7 +407,7 @@ func (m *TLRpcDropAnswer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_rpc_drop_answer, layer)
+		return fmt.Errorf("unable to validate rpc_drop_answer: unsupported layer %d", layer)
 	}
 }
 
@@ -415,19 +415,19 @@ func (m *TLRpcDropAnswer) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode rpc_drop_answer: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x58e4a740:
 		m.ReqMsgId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode rpc_drop_answer#0x58e4a740: field req_msg_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode rpc_drop_answer: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -451,7 +451,7 @@ func (m *TLGetFutureSalts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_get_future_salts, layer)
+		return fmt.Errorf("unable to validate get_future_salts: unsupported layer %d", layer)
 	}
 }
 
@@ -459,19 +459,19 @@ func (m *TLGetFutureSalts) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode get_future_salts: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb921bd04:
 		m.Num, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode get_future_salts#0xb921bd04: field num: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode get_future_salts: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -495,7 +495,7 @@ func (m *TLPing) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_ping, layer)
+		return fmt.Errorf("unable to validate ping: unsupported layer %d", layer)
 	}
 }
 
@@ -503,19 +503,19 @@ func (m *TLPing) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode ping: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x7abe77ec:
 		m.PingId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode ping#0x7abe77ec: field ping_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode ping: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -541,7 +541,7 @@ func (m *TLPingDelayDisconnect) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_ping_delay_disconnect, layer)
+		return fmt.Errorf("unable to validate ping_delay_disconnect: unsupported layer %d", layer)
 	}
 }
 
@@ -549,23 +549,23 @@ func (m *TLPingDelayDisconnect) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode ping_delay_disconnect: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf3427b8c:
 		m.PingId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode ping_delay_disconnect#0xf3427b8c: field ping_id: %w", err)
 		}
 		m.DisconnectDelay, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode ping_delay_disconnect#0xf3427b8c: field disconnect_delay: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode ping_delay_disconnect: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -589,7 +589,7 @@ func (m *TLDestroySession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_destroy_session, layer)
+		return fmt.Errorf("unable to validate destroy_session: unsupported layer %d", layer)
 	}
 }
 
@@ -597,18 +597,18 @@ func (m *TLDestroySession) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode destroy_session: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe7512126:
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode destroy_session#0xe7512126: field session_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode destroy_session: invalid constructor %x", m.ClazzID)
 	}
 }

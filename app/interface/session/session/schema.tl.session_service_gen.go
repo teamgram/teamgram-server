@@ -50,7 +50,7 @@ func (m *TLSessionQueryAuthKey) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_queryAuthKey, layer)
+		return fmt.Errorf("unable to validate session_queryAuthKey: unsupported layer %d", layer)
 	}
 }
 
@@ -59,19 +59,19 @@ func (m *TLSessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_queryAuthKey: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6b2df851:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_queryAuthKey#0x6b2df851: field auth_key_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_queryAuthKey: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -94,14 +94,24 @@ func (m *TLSessionSetAuthKey) Encode(x *bin.Encoder, layer int32) error {
 	case 0x1d11490b:
 		x.PutClazzID(0x1d11490b)
 
-		_ = m.AuthKey.Encode(x, layer)
-		_ = m.FutureSalt.Encode(x, layer)
+		if m.AuthKey == nil {
+			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field auth_key is nil")
+		}
+		if err := m.AuthKey.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field auth_key: %w", err)
+		}
+		if m.FutureSalt == nil {
+			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field future_salt is nil")
+		}
+		if err := m.FutureSalt.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field future_salt: %w", err)
+		}
 		x.PutInt32(m.ExpiresIn)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_setAuthKey, layer)
+		return fmt.Errorf("unable to validate session_setAuthKey: unsupported layer %d", layer)
 	}
 }
 
@@ -110,7 +120,7 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_setAuthKey: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -118,22 +128,22 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 
 		m.AuthKey, err = tg.DecodeAuthKeyInfoClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field auth_key: %w", err)
 		}
 
 		m.FutureSalt, err = tg.DecodeFutureSaltClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field future_salt: %w", err)
 		}
 
 		m.ExpiresIn, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field expires_in: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_setAuthKey: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -154,12 +164,17 @@ func (m *TLSessionCreateSession) Encode(x *bin.Encoder, layer int32) error {
 	case 0x410cb20d:
 		x.PutClazzID(0x410cb20d)
 
-		_ = m.Client.Encode(x, layer)
+		if m.Client == nil {
+			return fmt.Errorf("unable to encode session_createSession#0x410cb20d: field client is nil")
+		}
+		if err := m.Client.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_createSession#0x410cb20d: field client: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_createSession, layer)
+		return fmt.Errorf("unable to validate session_createSession: unsupported layer %d", layer)
 	}
 }
 
@@ -168,7 +183,7 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_createSession: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -176,12 +191,12 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 
 		m.Client, err = DecodeSessionClientEventClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_createSession#0x410cb20d: field client: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_createSession: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -202,12 +217,17 @@ func (m *TLSessionSendDataToSession) Encode(x *bin.Encoder, layer int32) error {
 	case 0x876b2dec:
 		x.PutClazzID(0x876b2dec)
 
-		_ = m.Data.Encode(x, layer)
+		if m.Data == nil {
+			return fmt.Errorf("unable to encode session_sendDataToSession#0x876b2dec: field data is nil")
+		}
+		if err := m.Data.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_sendDataToSession#0x876b2dec: field data: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_sendDataToSession, layer)
+		return fmt.Errorf("unable to validate session_sendDataToSession: unsupported layer %d", layer)
 	}
 }
 
@@ -216,7 +236,7 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_sendDataToSession: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -224,12 +244,12 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 
 		m.Data, err = DecodeSessionClientDataClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_sendDataToSession#0x876b2dec: field data: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_sendDataToSession: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -250,12 +270,17 @@ func (m *TLSessionSendHttpDataToSession) Encode(x *bin.Encoder, layer int32) err
 	case 0xbbec23ae:
 		x.PutClazzID(0xbbec23ae)
 
-		_ = m.Client.Encode(x, layer)
+		if m.Client == nil {
+			return fmt.Errorf("unable to encode session_sendHttpDataToSession#0xbbec23ae: field client is nil")
+		}
+		if err := m.Client.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_sendHttpDataToSession#0xbbec23ae: field client: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_sendHttpDataToSession, layer)
+		return fmt.Errorf("unable to validate session_sendHttpDataToSession: unsupported layer %d", layer)
 	}
 }
 
@@ -264,7 +289,7 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_sendHttpDataToSession: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -272,12 +297,12 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 
 		m.Client, err = DecodeSessionClientDataClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_sendHttpDataToSession#0xbbec23ae: field client: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_sendHttpDataToSession: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -298,12 +323,17 @@ func (m *TLSessionCloseSession) Encode(x *bin.Encoder, layer int32) error {
 	case 0x176fc253:
 		x.PutClazzID(0x176fc253)
 
-		_ = m.Client.Encode(x, layer)
+		if m.Client == nil {
+			return fmt.Errorf("unable to encode session_closeSession#0x176fc253: field client is nil")
+		}
+		if err := m.Client.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_closeSession#0x176fc253: field client: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_closeSession, layer)
+		return fmt.Errorf("unable to validate session_closeSession: unsupported layer %d", layer)
 	}
 }
 
@@ -312,7 +342,7 @@ func (m *TLSessionCloseSession) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_closeSession: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -320,12 +350,12 @@ func (m *TLSessionCloseSession) Decode(d *bin.Decoder) (err error) {
 
 		m.Client, err = DecodeSessionClientEventClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_closeSession#0x176fc253: field client: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_closeSession: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -363,12 +393,17 @@ func (m *TLSessionPushUpdatesData) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.PermAuthKeyId)
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode session_pushUpdatesData#0xa574d829: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_pushUpdatesData#0xa574d829: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_pushUpdatesData, layer)
+		return fmt.Errorf("unable to validate session_pushUpdatesData: unsupported layer %d", layer)
 	}
 }
 
@@ -377,19 +412,19 @@ func (m *TLSessionPushUpdatesData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushUpdatesData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa574d829:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushUpdatesData: field flags: %w", err)
 		}
 		_ = flags
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushUpdatesData#0xa574d829: field perm_auth_key_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Notification = true
@@ -397,12 +432,12 @@ func (m *TLSessionPushUpdatesData) Decode(d *bin.Decoder) (err error) {
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushUpdatesData#0xa574d829: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_pushUpdatesData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -439,12 +474,17 @@ func (m *TLSessionPushSessionUpdatesData) Encode(x *bin.Encoder, layer int32) er
 		x.PutInt64(m.PermAuthKeyId)
 		x.PutInt64(m.AuthKeyId)
 		x.PutInt64(m.SessionId)
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode session_pushSessionUpdatesData#0x45f3fda0: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_pushSessionUpdatesData, layer)
+		return fmt.Errorf("unable to validate session_pushSessionUpdatesData: unsupported layer %d", layer)
 	}
 }
 
@@ -453,37 +493,37 @@ func (m *TLSessionPushSessionUpdatesData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x45f3fda0:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData: field flags: %w", err)
 		}
 		_ = flags
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field perm_auth_key_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field session_id: %w", err)
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_pushSessionUpdatesData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -517,7 +557,7 @@ func (m *TLSessionPushRpcResultData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_session_pushRpcResultData, layer)
+		return fmt.Errorf("unable to validate session_pushRpcResultData: unsupported layer %d", layer)
 	}
 }
 
@@ -526,35 +566,35 @@ func (m *TLSessionPushRpcResultData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4b470c89:
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData#0x4b470c89: field perm_auth_key_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData#0x4b470c89: field auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData#0x4b470c89: field session_id: %w", err)
 		}
 		m.ClientReqMsgId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData#0x4b470c89: field client_req_msg_id: %w", err)
 		}
 		m.RpcResultData, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode session_pushRpcResultData#0x4b470c89: field rpc_result_data: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode session_pushRpcResultData: invalid constructor %x", m.ClazzID)
 	}
 }
 

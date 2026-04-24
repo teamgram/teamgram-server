@@ -84,12 +84,17 @@ func (m *TLSyncUpdatesMe) Encode(x *bin.Encoder, layer int32) error {
 			x.PutInt64(*m.SessionId)
 		}
 
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_updatesMe#0xe57d411f: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_updatesMe, layer)
+		return fmt.Errorf("unable to validate sync_updatesMe: unsupported layer %d", layer)
 	}
 }
 
@@ -98,29 +103,29 @@ func (m *TLSyncUpdatesMe) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesMe: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe57d411f:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesMe: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field user_id: %w", err)
 		}
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field perm_auth_key_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.ServerId = new(string)
 			*m.ServerId, err = d.String()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field server_id: %w", err)
 			}
 		}
 
@@ -128,7 +133,7 @@ func (m *TLSyncUpdatesMe) Decode(d *bin.Decoder) (err error) {
 			m.AuthKeyId = new(int64)
 			*m.AuthKeyId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field auth_key_id: %w", err)
 			}
 		}
 
@@ -136,18 +141,18 @@ func (m *TLSyncUpdatesMe) Decode(d *bin.Decoder) (err error) {
 			m.SessionId = new(int64)
 			*m.SessionId, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field session_id: %w", err)
 			}
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_updatesMe: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -172,12 +177,17 @@ func (m *TLSyncUpdatesNotMe) Encode(x *bin.Encoder, layer int32) error {
 
 		x.PutInt64(m.UserId)
 		x.PutInt64(m.PermAuthKeyId)
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_updatesNotMe#0x97ac5031: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_updatesNotMe#0x97ac5031: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_updatesNotMe, layer)
+		return fmt.Errorf("unable to validate sync_updatesNotMe: unsupported layer %d", layer)
 	}
 }
 
@@ -186,28 +196,28 @@ func (m *TLSyncUpdatesNotMe) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesNotMe: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x97ac5031:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesNotMe#0x97ac5031: field user_id: %w", err)
 		}
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesNotMe#0x97ac5031: field perm_auth_key_id: %w", err)
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_updatesNotMe#0x97ac5031: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_updatesNotMe: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -230,12 +240,17 @@ func (m *TLSyncPushUpdates) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x8f0ad9be)
 
 		x.PutInt64(m.UserId)
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_pushUpdates#0x8f0ad9be: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_pushUpdates#0x8f0ad9be: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_pushUpdates, layer)
+		return fmt.Errorf("unable to validate sync_pushUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -244,24 +259,24 @@ func (m *TLSyncPushUpdates) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdates: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x8f0ad9be:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdates#0x8f0ad9be: field user_id: %w", err)
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdates#0x8f0ad9be: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_pushUpdates: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -309,12 +324,17 @@ func (m *TLSyncPushUpdatesIfNot) Encode(x *bin.Encoder, layer int32) error {
 		if m.Excludes != nil {
 			iface.EncodeInt64List(x, m.Excludes)
 		}
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_pushUpdatesIfNot#0x2d3778bc: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_pushUpdatesIfNot, layer)
+		return fmt.Errorf("unable to validate sync_pushUpdatesIfNot: unsupported layer %d", layer)
 	}
 }
 
@@ -323,41 +343,41 @@ func (m *TLSyncPushUpdatesIfNot) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2d3778bc:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field user_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Includes, err = iface.DecodeInt64List(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field includes: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.Excludes, err = iface.DecodeInt64List(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field excludes: %w", err)
 			}
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_pushUpdatesIfNot: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -380,12 +400,17 @@ func (m *TLSyncPushBotUpdates) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xadc3f000)
 
 		x.PutInt64(m.UserId)
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_pushBotUpdates#0xadc3f000: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_pushBotUpdates#0xadc3f000: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_pushBotUpdates, layer)
+		return fmt.Errorf("unable to validate sync_pushBotUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -394,24 +419,24 @@ func (m *TLSyncPushBotUpdates) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushBotUpdates: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xadc3f000:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushBotUpdates#0xadc3f000: field user_id: %w", err)
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushBotUpdates#0xadc3f000: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_pushBotUpdates: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -449,7 +474,7 @@ func (m *TLSyncPushRpcResult) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_pushRpcResult, layer)
+		return fmt.Errorf("unable to validate sync_pushRpcResult: unsupported layer %d", layer)
 	}
 }
 
@@ -458,43 +483,43 @@ func (m *TLSyncPushRpcResult) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1a9d4b2:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field auth_key_id: %w", err)
 		}
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field perm_auth_key_id: %w", err)
 		}
 		m.ServerId, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field server_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field session_id: %w", err)
 		}
 		m.ClientReqMsgId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field client_req_msg_id: %w", err)
 		}
 		m.RpcResult, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_pushRpcResult#0x1a9d4b2: field rpc_result: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_pushRpcResult: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -523,12 +548,17 @@ func (m *TLSyncBroadcastUpdates) Encode(x *bin.Encoder, layer int32) error {
 
 		iface.EncodeInt64List(x, m.ExcludeIdList)
 
-		_ = m.Updates.Encode(x, layer)
+		if m.Updates == nil {
+			return fmt.Errorf("unable to encode sync_broadcastUpdates#0xf5e35cb6: field updates is nil")
+		}
+		if err := m.Updates.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field updates: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sync_broadcastUpdates, layer)
+		return fmt.Errorf("unable to validate sync_broadcastUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -537,33 +567,33 @@ func (m *TLSyncBroadcastUpdates) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_broadcastUpdates: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf5e35cb6:
 		m.BroadcastType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field broadcast_type: %w", err)
 		}
 		m.ChatId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field chat_id: %w", err)
 		}
 
 		m.ExcludeIdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field exclude_id_list: %w", err)
 		}
 
 		m.Updates, err = tg.DecodeUpdatesClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field updates: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sync_broadcastUpdates: invalid constructor %x", m.ClazzID)
 	}
 }
 

@@ -35,7 +35,7 @@ func DecodeHttpSessionDataClazz(d *bin.Decoder) (HttpSessionDataClazz, error) {
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode HttpSessionData: constructor: %w", err)
 	}
 
 	switch id {
@@ -46,7 +46,7 @@ func DecodeHttpSessionDataClazz(d *bin.Decoder) (HttpSessionDataClazz, error) {
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeHttpSessionData - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode HttpSessionData: invalid constructor %x", id)
 	}
 
 }
@@ -120,7 +120,7 @@ func (m *TLHttpSessionData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_httpSessionData, layer)
+		return fmt.Errorf("unable to validate httpSessionData: unsupported layer %d", layer)
 	}
 }
 
@@ -135,7 +135,7 @@ func (m *TLHttpSessionData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_httpSessionData, layer)
+		return fmt.Errorf("unable to encode httpSessionData: unsupported layer %d", layer)
 	}
 }
 
@@ -145,12 +145,12 @@ func (m *TLHttpSessionData) Decode(d *bin.Decoder) (err error) {
 	case 0xdbd8534f:
 		m.Payload, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode httpSessionData#0xdbd8534f: field payload: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode httpSessionData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -165,7 +165,7 @@ func DecodeSessionClientDataClazz(d *bin.Decoder) (SessionClientDataClazz, error
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode SessionClientData: constructor: %w", err)
 	}
 
 	switch id {
@@ -176,7 +176,7 @@ func DecodeSessionClientDataClazz(d *bin.Decoder) (SessionClientDataClazz, error
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeSessionClientData - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode SessionClientData: invalid constructor %x", id)
 	}
 
 }
@@ -276,7 +276,7 @@ func (m *TLSessionClientData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionClientData, layer)
+		return fmt.Errorf("unable to validate sessionClientData: unsupported layer %d", layer)
 	}
 }
 
@@ -300,7 +300,7 @@ func (m *TLSessionClientData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionClientData, layer)
+		return fmt.Errorf("unable to encode sessionClientData: unsupported layer %d", layer)
 	}
 }
 
@@ -310,48 +310,48 @@ func (m *TLSessionClientData) Decode(d *bin.Decoder) (err error) {
 	case 0x41a20c4e:
 		m.ServerId, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field server_id: %w", err)
 		}
 		m.ConnType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field conn_type: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field auth_key_id: %w", err)
 		}
 		m.KeyType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field key_type: %w", err)
 		}
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field perm_auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field session_id: %w", err)
 		}
 		m.ClientIp, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field client_ip: %w", err)
 		}
 		m.QuickAck, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field quick_ack: %w", err)
 		}
 		m.Salt, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field salt: %w", err)
 		}
 		m.Payload, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientData#0x41a20c4e: field payload: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sessionClientData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -366,7 +366,7 @@ func DecodeSessionClientEventClazz(d *bin.Decoder) (SessionClientEventClazz, err
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode SessionClientEvent: constructor: %w", err)
 	}
 
 	switch id {
@@ -377,7 +377,7 @@ func DecodeSessionClientEventClazz(d *bin.Decoder) (SessionClientEventClazz, err
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeSessionClientEvent - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode SessionClientEvent: invalid constructor %x", id)
 	}
 
 }
@@ -467,7 +467,7 @@ func (m *TLSessionClientEvent) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionClientEvent, layer)
+		return fmt.Errorf("unable to validate sessionClientEvent: unsupported layer %d", layer)
 	}
 }
 
@@ -488,7 +488,7 @@ func (m *TLSessionClientEvent) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_sessionClientEvent, layer)
+		return fmt.Errorf("unable to encode sessionClientEvent: unsupported layer %d", layer)
 	}
 }
 
@@ -498,36 +498,36 @@ func (m *TLSessionClientEvent) Decode(d *bin.Decoder) (err error) {
 	case 0xf17f375f:
 		m.ServerId, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field server_id: %w", err)
 		}
 		m.ConnType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field conn_type: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field auth_key_id: %w", err)
 		}
 		m.KeyType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field key_type: %w", err)
 		}
 		m.PermAuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field perm_auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field session_id: %w", err)
 		}
 		m.ClientIp, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode sessionClientEvent#0xf17f375f: field client_ip: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode sessionClientEvent: invalid constructor %x", m.ClazzID)
 	}
 }
 

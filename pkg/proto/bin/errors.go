@@ -24,7 +24,7 @@ func (i *InvalidLengthError) Error() string {
 	return fmt.Sprintf("invalid %s length: %d", i.Type, i.Length)
 }
 
-// UnexpectedClazzIDErr means that unknown or unexpected type id was decoded.
+// UnexpectedClazzIDError means that unknown or unexpected type id was decoded.
 type UnexpectedClazzIDError struct {
 	Want   uint32
 	Got    uint32

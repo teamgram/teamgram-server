@@ -75,7 +75,7 @@ func (m *TLCodeCreatePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_createPhoneCode, layer)
+		return fmt.Errorf("unable to validate code_createPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -84,47 +84,47 @@ func (m *TLCodeCreatePhoneCode) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6023e09e:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode: field flags: %w", err)
 		}
 		_ = flags
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field session_id: %w", err)
 		}
 		m.Phone, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field phone: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.PhoneNumberRegistered = true
 		}
 		m.SentCodeType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field sent_code_type: %w", err)
 		}
 		m.NextCodeType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field next_code_type: %w", err)
 		}
 		m.State, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_createPhoneCode#0x6023e09e: field state: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode code_createPhoneCode: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -154,7 +154,7 @@ func (m *TLCodeGetPhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_getPhoneCode, layer)
+		return fmt.Errorf("unable to validate code_getPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -163,27 +163,27 @@ func (m *TLCodeGetPhoneCode) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_getPhoneCode: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x61a4a0f9:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_getPhoneCode#0x61a4a0f9: field auth_key_id: %w", err)
 		}
 		m.Phone, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_getPhoneCode#0x61a4a0f9: field phone: %w", err)
 		}
 		m.PhoneCodeHash, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_getPhoneCode#0x61a4a0f9: field phone_code_hash: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode code_getPhoneCode: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -213,7 +213,7 @@ func (m *TLCodeDeletePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_deletePhoneCode, layer)
+		return fmt.Errorf("unable to validate code_deletePhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -222,27 +222,27 @@ func (m *TLCodeDeletePhoneCode) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_deletePhoneCode: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa6b06a50:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_deletePhoneCode#0xa6b06a50: field auth_key_id: %w", err)
 		}
 		m.Phone, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_deletePhoneCode#0xa6b06a50: field phone: %w", err)
 		}
 		m.PhoneCodeHash, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_deletePhoneCode#0xa6b06a50: field phone_code_hash: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode code_deletePhoneCode: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -269,12 +269,17 @@ func (m *TLCodeUpdatePhoneCodeData) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.AuthKeyId)
 		x.PutString(m.Phone)
 		x.PutString(m.PhoneCodeHash)
-		_ = m.CodeData.Encode(x, layer)
+		if m.CodeData == nil {
+			return fmt.Errorf("unable to encode code_updatePhoneCodeData#0xb6950a95: field code_data is nil")
+		}
+		if err := m.CodeData.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field code_data: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_code_updatePhoneCodeData, layer)
+		return fmt.Errorf("unable to validate code_updatePhoneCodeData: unsupported layer %d", layer)
 	}
 }
 
@@ -283,32 +288,32 @@ func (m *TLCodeUpdatePhoneCodeData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb6950a95:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field auth_key_id: %w", err)
 		}
 		m.Phone, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field phone: %w", err)
 		}
 		m.PhoneCodeHash, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field phone_code_hash: %w", err)
 		}
 
 		m.CodeData, err = DecodePhoneCodeTransactionClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field code_data: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode code_updatePhoneCodeData: invalid constructor %x", m.ClazzID)
 	}
 }
 

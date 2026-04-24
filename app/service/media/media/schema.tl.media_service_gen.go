@@ -66,10 +66,15 @@ func (m *TLMediaUploadPhotoFile) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadPhotoFile#0x3c2b0b17: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field file: %w", err)
+		}
 		if m.Stickers != nil {
 			if err := iface.EncodeObjectList(x, m.Stickers, layer); err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err)
 			}
 		}
 		if m.TtlSeconds != nil {
@@ -79,7 +84,7 @@ func (m *TLMediaUploadPhotoFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadPhotoFile, layer)
+		return fmt.Errorf("unable to validate media_uploadPhotoFile: unsupported layer %d", layer)
 	}
 }
 
@@ -88,43 +93,43 @@ func (m *TLMediaUploadPhotoFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadPhotoFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x3c2b0b17:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadPhotoFile: field flags: %w", err)
 		}
 		_ = flags
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field file: %w", err)
 		}
 
 		if (flags & (1 << 0)) != 0 {
 			c4, err2 := d.ClazzID()
 			if err2 != nil {
-				return err2
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err2)
 			}
 			if c4 != iface.ClazzID_vector {
 				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err3)
 			}
 			v4 := make([]tg.InputDocumentClazz, l4)
 			for i := 0; i < l4; i++ {
 				v4[i], err3 = tg.DecodeInputDocumentClazz(d)
 				if err3 != nil {
-					return err3
+					return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err3)
 				}
 			}
 			m.Stickers = v4
@@ -133,13 +138,13 @@ func (m *TLMediaUploadPhotoFile) Decode(d *bin.Decoder) (err error) {
 			m.TtlSeconds = new(int32)
 			*m.TtlSeconds, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field ttl_seconds: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadPhotoFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -189,11 +194,15 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *bin.Encoder, layer int32) erro
 		x.PutUint32(flags)
 		x.PutInt64(m.OwnerId)
 		if m.File != nil {
-			_ = m.File.Encode(x, layer)
+			if err := m.File.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field file: %w", err)
+			}
 		}
 
 		if m.Video != nil {
-			_ = m.Video.Encode(x, layer)
+			if err := m.Video.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video: %w", err)
+			}
 		}
 
 		if m.VideoStartTs != nil {
@@ -201,13 +210,15 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *bin.Encoder, layer int32) erro
 		}
 
 		if m.VideoEmojiMarkup != nil {
-			_ = m.VideoEmojiMarkup.Encode(x, layer)
+			if err := m.VideoEmojiMarkup.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video_emoji_markup: %w", err)
+			}
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadProfilePhotoFile, layer)
+		return fmt.Errorf("unable to validate media_uploadProfilePhotoFile: unsupported layer %d", layer)
 	}
 }
 
@@ -216,50 +227,50 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadProfilePhotoFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb6a04cc4:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadProfilePhotoFile: field flags: %w", err)
 		}
 		_ = flags
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field owner_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.File, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field file: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.Video, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			m.VideoStartTs = new(float64)
 			*m.VideoStartTs, err = d.Double()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video_start_ts: %w", err)
 			}
 		}
 
 		if (flags & (1 << 4)) != 0 {
 			m.VideoEmojiMarkup, err = tg.DecodeVideoSizeClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video_emoji_markup: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadProfilePhotoFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -285,7 +296,7 @@ func (m *TLMediaGetPhoto) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getPhoto, layer)
+		return fmt.Errorf("unable to validate media_getPhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -294,19 +305,19 @@ func (m *TLMediaGetPhoto) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhoto: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x657eb86b:
 		m.PhotoId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhoto#0x657eb86b: field photo_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getPhoto: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -332,7 +343,7 @@ func (m *TLMediaGetPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getPhotoSizeList, layer)
+		return fmt.Errorf("unable to validate media_getPhotoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -341,19 +352,19 @@ func (m *TLMediaGetPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhotoSizeList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa1eb7f45:
 		m.SizeId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhotoSizeList#0xa1eb7f45: field size_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getPhotoSizeList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -379,7 +390,7 @@ func (m *TLMediaGetPhotoSizeListList) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getPhotoSizeListList, layer)
+		return fmt.Errorf("unable to validate media_getPhotoSizeListList: unsupported layer %d", layer)
 	}
 }
 
@@ -388,7 +399,7 @@ func (m *TLMediaGetPhotoSizeListList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhotoSizeListList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -396,12 +407,12 @@ func (m *TLMediaGetPhotoSizeListList) Decode(d *bin.Decoder) (err error) {
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getPhotoSizeListList#0xfb5c80e0: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getPhotoSizeListList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -427,7 +438,7 @@ func (m *TLMediaGetVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getVideoSizeList, layer)
+		return fmt.Errorf("unable to validate media_getVideoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -436,19 +447,19 @@ func (m *TLMediaGetVideoSizeList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getVideoSizeList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xc47692ea:
 		m.SizeId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getVideoSizeList#0xc47692ea: field size_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getVideoSizeList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -471,12 +482,17 @@ func (m *TLMediaUploadedDocumentMedia) Encode(x *bin.Encoder, layer int32) error
 		x.PutClazzID(0x4f5fb06c)
 
 		x.PutInt64(m.OwnerId)
-		_ = m.Media.Encode(x, layer)
+		if m.Media == nil {
+			return fmt.Errorf("unable to encode media_uploadedDocumentMedia#0x4f5fb06c: field media is nil")
+		}
+		if err := m.Media.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadedDocumentMedia#0x4f5fb06c: field media: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadedDocumentMedia, layer)
+		return fmt.Errorf("unable to validate media_uploadedDocumentMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -485,24 +501,24 @@ func (m *TLMediaUploadedDocumentMedia) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedDocumentMedia: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4f5fb06c:
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedDocumentMedia#0x4f5fb06c: field owner_id: %w", err)
 		}
 
 		m.Media, err = tg.DecodeInputMediaClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedDocumentMedia#0x4f5fb06c: field media: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadedDocumentMedia: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -528,7 +544,7 @@ func (m *TLMediaGetDocument) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getDocument, layer)
+		return fmt.Errorf("unable to validate media_getDocument: unsupported layer %d", layer)
 	}
 }
 
@@ -537,19 +553,19 @@ func (m *TLMediaGetDocument) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getDocument: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x3fe5974d:
 		m.Id, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getDocument#0x3fe5974d: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getDocument: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -575,7 +591,7 @@ func (m *TLMediaGetDocumentList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getDocumentList, layer)
+		return fmt.Errorf("unable to validate media_getDocumentList: unsupported layer %d", layer)
 	}
 }
 
@@ -584,7 +600,7 @@ func (m *TLMediaGetDocumentList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getDocumentList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -592,12 +608,12 @@ func (m *TLMediaGetDocumentList) Decode(d *bin.Decoder) (err error) {
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getDocumentList#0xc52fd26f: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getDocumentList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -620,12 +636,17 @@ func (m *TLMediaUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xab00c69b)
 
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadEncryptedFile#0xab00c69b: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadEncryptedFile#0xab00c69b: field file: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadEncryptedFile, layer)
+		return fmt.Errorf("unable to validate media_uploadEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -634,24 +655,24 @@ func (m *TLMediaUploadEncryptedFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadEncryptedFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xab00c69b:
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadEncryptedFile#0xab00c69b: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputEncryptedFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadEncryptedFile#0xab00c69b: field file: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadEncryptedFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -679,7 +700,7 @@ func (m *TLMediaGetEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_getEncryptedFile, layer)
+		return fmt.Errorf("unable to validate media_getEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -688,23 +709,23 @@ func (m *TLMediaGetEncryptedFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getEncryptedFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xfc6080d1:
 		m.Id, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getEncryptedFile#0xfc6080d1: field id: %w", err)
 		}
 		m.AccessHash, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_getEncryptedFile#0xfc6080d1: field access_hash: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_getEncryptedFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -729,14 +750,24 @@ func (m *TLMediaUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x9cfaadfe)
 
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field file: %w", err)
+		}
 		x.PutString(m.MimeType)
-		_ = m.Admin.Encode(x, layer)
+		if m.Admin == nil {
+			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field admin is nil")
+		}
+		if err := m.Admin.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field admin: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadWallPaperFile, layer)
+		return fmt.Errorf("unable to validate media_uploadWallPaperFile: unsupported layer %d", layer)
 	}
 }
 
@@ -745,34 +776,34 @@ func (m *TLMediaUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x9cfaadfe:
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field file: %w", err)
 		}
 
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field mime_type: %w", err)
 		}
 
 		m.Admin, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field admin: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadWallPaperFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -812,9 +843,16 @@ func (m *TLMediaUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadThemeFile#0x42e6b860: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field file: %w", err)
+		}
 		if m.Thumb != nil {
-			_ = m.Thumb.Encode(x, layer)
+			if err := m.Thumb.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field thumb: %w", err)
+			}
 		}
 
 		x.PutString(m.MimeType)
@@ -823,7 +861,7 @@ func (m *TLMediaUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadThemeFile, layer)
+		return fmt.Errorf("unable to validate media_uploadThemeFile: unsupported layer %d", layer)
 	}
 }
 
@@ -832,44 +870,44 @@ func (m *TLMediaUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x42e6b860:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile: field flags: %w", err)
 		}
 		_ = flags
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field file: %w", err)
 		}
 
 		if (flags & (1 << 0)) != 0 {
 			m.Thumb, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field thumb: %w", err)
 			}
 		}
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field mime_type: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field file_name: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadThemeFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -910,19 +948,31 @@ func (m *TLMediaUploadStickerFile) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field file: %w", err)
+		}
 		if m.Thumb != nil {
-			_ = m.Thumb.Encode(x, layer)
+			if err := m.Thumb.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field thumb: %w", err)
+			}
 		}
 
 		x.PutString(m.MimeType)
 		x.PutString(m.FileName)
-		_ = m.DocumentAttributeSticker.Encode(x, layer)
+		if m.DocumentAttributeSticker == nil {
+			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker is nil")
+		}
+		if err := m.DocumentAttributeSticker.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadStickerFile, layer)
+		return fmt.Errorf("unable to validate media_uploadStickerFile: unsupported layer %d", layer)
 	}
 }
 
@@ -931,49 +981,49 @@ func (m *TLMediaUploadStickerFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xacb624ed:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile: field flags: %w", err)
 		}
 		_ = flags
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field file: %w", err)
 		}
 
 		if (flags & (1 << 0)) != 0 {
 			m.Thumb, err = tg.DecodeInputFileClazz(d)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field thumb: %w", err)
 			}
 		}
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field mime_type: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field file_name: %w", err)
 		}
 
 		m.DocumentAttributeSticker, err = tg.DecodeDocumentAttributeClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadStickerFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1008,14 +1058,19 @@ func (m *TLMediaUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 		var flags = getFlags()
 		x.PutUint32(flags)
 		x.PutInt64(m.OwnerId)
-		_ = m.File.Encode(x, layer)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode media_uploadRingtoneFile#0x3dbab209: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field file: %w", err)
+		}
 		x.PutString(m.MimeType)
 		x.PutString(m.FileName)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadRingtoneFile, layer)
+		return fmt.Errorf("unable to validate media_uploadRingtoneFile: unsupported layer %d", layer)
 	}
 }
 
@@ -1024,38 +1079,38 @@ func (m *TLMediaUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x3dbab209:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile: field flags: %w", err)
 		}
 		_ = flags
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field owner_id: %w", err)
 		}
 
 		m.File, err = tg.DecodeInputFileClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field file: %w", err)
 		}
 
 		m.MimeType, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field mime_type: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field file_name: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadRingtoneFile: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1083,7 +1138,7 @@ func (m *TLMediaUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_media_uploadedProfilePhoto, layer)
+		return fmt.Errorf("unable to validate media_uploadedProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -1092,23 +1147,23 @@ func (m *TLMediaUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedProfilePhoto: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x89d159d2:
 		m.OwnerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedProfilePhoto#0x89d159d2: field owner_id: %w", err)
 		}
 		m.PhotoId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode media_uploadedProfilePhoto#0x89d159d2: field photo_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode media_uploadedProfilePhoto: invalid constructor %x", m.ClazzID)
 	}
 }
 

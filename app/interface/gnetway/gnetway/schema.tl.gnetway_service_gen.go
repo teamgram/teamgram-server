@@ -54,7 +54,7 @@ func (m *TLGnetwaySendDataToGateway) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_gnetway_sendDataToGateway, layer)
+		return fmt.Errorf("unable to validate gnetway_sendDataToGateway: unsupported layer %d", layer)
 	}
 }
 
@@ -63,27 +63,27 @@ func (m *TLGnetwaySendDataToGateway) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode gnetway_sendDataToGateway: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x722d5ce0:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode gnetway_sendDataToGateway#0x722d5ce0: field auth_key_id: %w", err)
 		}
 		m.SessionId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode gnetway_sendDataToGateway#0x722d5ce0: field session_id: %w", err)
 		}
 		m.Payload, err = d.Bytes()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode gnetway_sendDataToGateway#0x722d5ce0: field payload: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode gnetway_sendDataToGateway: invalid constructor %x", m.ClazzID)
 	}
 }
 

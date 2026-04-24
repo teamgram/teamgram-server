@@ -51,12 +51,17 @@ func (m *TLDialogSaveDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.UserId)
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
-		_ = m.Message.Encode(x, layer)
+		if m.Message == nil {
+			return fmt.Errorf("unable to encode dialog_saveDraftMessage#0x4ecad99a: field message is nil")
+		}
+		if err := m.Message.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage#0x4ecad99a: field message: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_saveDraftMessage, layer)
+		return fmt.Errorf("unable to validate dialog_saveDraftMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -65,32 +70,32 @@ func (m *TLDialogSaveDraftMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4ecad99a:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage#0x4ecad99a: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage#0x4ecad99a: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage#0x4ecad99a: field peer_id: %w", err)
 		}
 
 		m.Message, err = tg.DecodeDraftMessageClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_saveDraftMessage#0x4ecad99a: field message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_saveDraftMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -120,7 +125,7 @@ func (m *TLDialogClearDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_clearDraftMessage, layer)
+		return fmt.Errorf("unable to validate dialog_clearDraftMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -129,27 +134,27 @@ func (m *TLDialogClearDraftMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearDraftMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xfb70b29a:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearDraftMessage#0xfb70b29a: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearDraftMessage#0xfb70b29a: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearDraftMessage#0xfb70b29a: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_clearDraftMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -175,7 +180,7 @@ func (m *TLDialogGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getAllDrafts, layer)
+		return fmt.Errorf("unable to validate dialog_getAllDrafts: unsupported layer %d", layer)
 	}
 }
 
@@ -184,19 +189,19 @@ func (m *TLDialogGetAllDrafts) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getAllDrafts: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xacde4fe6:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getAllDrafts#0xacde4fe6: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getAllDrafts: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -222,7 +227,7 @@ func (m *TLDialogClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_clearAllDrafts, layer)
+		return fmt.Errorf("unable to validate dialog_clearAllDrafts: unsupported layer %d", layer)
 	}
 }
 
@@ -231,19 +236,19 @@ func (m *TLDialogClearAllDrafts) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearAllDrafts: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x41b890fc:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_clearAllDrafts#0x41b890fc: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_clearAllDrafts: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -270,12 +275,17 @@ func (m *TLDialogMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.UserId)
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
-		_ = m.UnreadMark.Encode(x, layer)
+		if m.UnreadMark == nil {
+			return fmt.Errorf("unable to encode dialog_markDialogUnread#0x4532910e: field unread_mark is nil")
+		}
+		if err := m.UnreadMark.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_markDialogUnread#0x4532910e: field unread_mark: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_markDialogUnread, layer)
+		return fmt.Errorf("unable to validate dialog_markDialogUnread: unsupported layer %d", layer)
 	}
 }
 
@@ -284,32 +294,32 @@ func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_markDialogUnread: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4532910e:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_markDialogUnread#0x4532910e: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_markDialogUnread#0x4532910e: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_markDialogUnread#0x4532910e: field peer_id: %w", err)
 		}
 
 		m.UnreadMark, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_markDialogUnread#0x4532910e: field unread_mark: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_markDialogUnread: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -336,12 +346,17 @@ func (m *TLDialogToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.UserId)
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
-		_ = m.Pinned.Encode(x, layer)
+		if m.Pinned == nil {
+			return fmt.Errorf("unable to encode dialog_toggleDialogPin#0x867ee52f: field pinned is nil")
+		}
+		if err := m.Pinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field pinned: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleDialogPin, layer)
+		return fmt.Errorf("unable to validate dialog_toggleDialogPin: unsupported layer %d", layer)
 	}
 }
 
@@ -350,32 +365,32 @@ func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x867ee52f:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field peer_id: %w", err)
 		}
 
 		m.Pinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field pinned: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_toggleDialogPin: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -401,7 +416,7 @@ func (m *TLDialogGetDialogUnreadMarkList) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogUnreadMarkList, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogUnreadMarkList: unsupported layer %d", layer)
 	}
 }
 
@@ -410,19 +425,19 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogUnreadMarkList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xcabc38f4:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogUnreadMarkList#0xcabc38f4: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogUnreadMarkList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -447,14 +462,19 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(x *bin.Encoder, layer int32) err
 		x.PutClazzID(0x9d7e8604)
 
 		x.PutInt64(m.UserId)
-		_ = m.ExcludePinned.Encode(x, layer)
+		if m.ExcludePinned == nil {
+			return fmt.Errorf("unable to encode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned is nil")
+		}
+		if err := m.ExcludePinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned: %w", err)
+		}
 		x.PutInt32(m.OffsetDate)
 		x.PutInt32(m.Limit)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsByOffsetDate, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogsByOffsetDate: unsupported layer %d", layer)
 	}
 }
 
@@ -463,33 +483,33 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x9d7e8604:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field user_id: %w", err)
 		}
 
 		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned: %w", err)
 		}
 
 		m.OffsetDate, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field offset_date: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -513,13 +533,18 @@ func (m *TLDialogGetDialogs) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x860b1e16)
 
 		x.PutInt64(m.UserId)
-		_ = m.ExcludePinned.Encode(x, layer)
+		if m.ExcludePinned == nil {
+			return fmt.Errorf("unable to encode dialog_getDialogs#0x860b1e16: field exclude_pinned is nil")
+		}
+		if err := m.ExcludePinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field exclude_pinned: %w", err)
+		}
 		x.PutInt32(m.FolderId)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -528,29 +553,29 @@ func (m *TLDialogGetDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x860b1e16:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field user_id: %w", err)
 		}
 
 		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field exclude_pinned: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field folder_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -579,7 +604,7 @@ func (m *TLDialogGetDialogsByIdList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsByIdList, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogsByIdList: unsupported layer %d", layer)
 	}
 }
 
@@ -588,24 +613,24 @@ func (m *TLDialogGetDialogsByIdList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByIdList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xad258871:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByIdList#0xad258871: field user_id: %w", err)
 		}
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsByIdList#0xad258871: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogsByIdList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -629,13 +654,18 @@ func (m *TLDialogGetDialogsCount) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xe039b465)
 
 		x.PutInt64(m.UserId)
-		_ = m.ExcludePinned.Encode(x, layer)
+		if m.ExcludePinned == nil {
+			return fmt.Errorf("unable to encode dialog_getDialogsCount#0xe039b465: field exclude_pinned is nil")
+		}
+		if err := m.ExcludePinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field exclude_pinned: %w", err)
+		}
 		x.PutInt32(m.FolderId)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogsCount, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogsCount: unsupported layer %d", layer)
 	}
 }
 
@@ -644,29 +674,29 @@ func (m *TLDialogGetDialogsCount) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsCount: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe039b465:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field user_id: %w", err)
 		}
 
 		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field exclude_pinned: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field folder_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogsCount: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -694,7 +724,7 @@ func (m *TLDialogGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getPinnedDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_getPinnedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -703,23 +733,23 @@ func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getPinnedDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa8c21bb5:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getPinnedDialogs#0xa8c21bb5: field user_id: %w", err)
 		}
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getPinnedDialogs#0xa8c21bb5: field folder_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getPinnedDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -744,7 +774,12 @@ func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error
 		x.PutClazzID(0xfee33567)
 
 		x.PutInt64(m.UserId)
-		_ = m.Force.Encode(x, layer)
+		if m.Force == nil {
+			return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs#0xfee33567: field force is nil")
+		}
+		if err := m.Force.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field force: %w", err)
+		}
 		x.PutInt32(m.FolderId)
 
 		iface.EncodeInt64List(x, m.IdList)
@@ -752,7 +787,7 @@ func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_reorderPinnedDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_reorderPinnedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -761,34 +796,34 @@ func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xfee33567:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field user_id: %w", err)
 		}
 
 		m.Force, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field force: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field folder_id: %w", err)
 		}
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -818,7 +853,7 @@ func (m *TLDialogGetDialogById) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogById, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogById: unsupported layer %d", layer)
 	}
 }
 
@@ -827,27 +862,27 @@ func (m *TLDialogGetDialogById) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogById: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa15f3bf5:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogById: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -877,7 +912,7 @@ func (m *TLDialogGetTopMessage) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getTopMessage, layer)
+		return fmt.Errorf("unable to validate dialog_getTopMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -886,27 +921,27 @@ func (m *TLDialogGetTopMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getTopMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xfa7db272:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getTopMessage#0xfa7db272: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getTopMessage#0xfa7db272: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getTopMessage#0xfa7db272: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getTopMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -998,7 +1033,7 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(x *bin.Encoder, layer int32) error
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_insertOrUpdateDialog, layer)
+		return fmt.Errorf("unable to validate dialog_insertOrUpdateDialog: unsupported layer %d", layer)
 	}
 }
 
@@ -1007,54 +1042,54 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x5d2b8822:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field peer_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.TopMessage = new(int32)
 			*m.TopMessage, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field top_message: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.ReadOutboxMaxId = new(int32)
 			*m.ReadOutboxMaxId, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field read_outbox_max_id: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			m.ReadInboxMaxId = new(int32)
 			*m.ReadInboxMaxId, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field read_inbox_max_id: %w", err)
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
 			m.UnreadCount = new(int32)
 			*m.UnreadCount, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field unread_count: %w", err)
 			}
 		}
 		if (flags & (1 << 4)) != 0 {
@@ -1064,7 +1099,7 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(d *bin.Decoder) (err error) {
 			m.Date2 = new(int64)
 			*m.Date2, err = d.Int64()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field date2: %w", err)
 			}
 		}
 
@@ -1072,13 +1107,13 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(d *bin.Decoder) (err error) {
 			m.PinnedMsgId = new(int32)
 			*m.PinnedMsgId, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog#0x5d2b8822: field pinned_msg_id: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_insertOrUpdateDialog: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1108,7 +1143,7 @@ func (m *TLDialogDeleteDialog) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_deleteDialog, layer)
+		return fmt.Errorf("unable to validate dialog_deleteDialog: unsupported layer %d", layer)
 	}
 }
 
@@ -1117,27 +1152,27 @@ func (m *TLDialogDeleteDialog) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialog: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1b31de3:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialog#0x1b31de3: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialog#0x1b31de3: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialog#0x1b31de3: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_deleteDialog: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1167,7 +1202,7 @@ func (m *TLDialogGetUserPinnedMessage) Encode(x *bin.Encoder, layer int32) error
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getUserPinnedMessage, layer)
+		return fmt.Errorf("unable to validate dialog_getUserPinnedMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -1176,27 +1211,27 @@ func (m *TLDialogGetUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getUserPinnedMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x8f9bc2b1:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getUserPinnedMessage#0x8f9bc2b1: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getUserPinnedMessage#0x8f9bc2b1: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getUserPinnedMessage#0x8f9bc2b1: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getUserPinnedMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1228,7 +1263,7 @@ func (m *TLDialogUpdateUserPinnedMessage) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateUserPinnedMessage, layer)
+		return fmt.Errorf("unable to validate dialog_updateUserPinnedMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -1237,31 +1272,31 @@ func (m *TLDialogUpdateUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1622f22a:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage#0x1622f22a: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage#0x1622f22a: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage#0x1622f22a: field peer_id: %w", err)
 		}
 		m.PinnedMsgId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage#0x1622f22a: field pinned_msg_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_updateUserPinnedMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1286,12 +1321,17 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Encode(x *bin.Encoder, layer int32)
 
 		x.PutInt64(m.UserId)
 		x.PutInt32(m.Id)
-		_ = m.DialogFilter.Encode(x, layer)
+		if m.DialogFilter == nil {
+			return fmt.Errorf("unable to encode dialog_insertOrUpdateDialogFilter#0xaa8a384: field dialog_filter is nil")
+		}
+		if err := m.DialogFilter.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter#0xaa8a384: field dialog_filter: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_insertOrUpdateDialogFilter, layer)
+		return fmt.Errorf("unable to validate dialog_insertOrUpdateDialogFilter: unsupported layer %d", layer)
 	}
 }
 
@@ -1300,28 +1340,28 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Decode(d *bin.Decoder) (err error) 
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xaa8a384:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter#0xaa8a384: field user_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter#0xaa8a384: field id: %w", err)
 		}
 
 		m.DialogFilter, err = tg.DecodeDialogFilterClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter#0xaa8a384: field dialog_filter: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_insertOrUpdateDialogFilter: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1349,7 +1389,7 @@ func (m *TLDialogDeleteDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_deleteDialogFilter, layer)
+		return fmt.Errorf("unable to validate dialog_deleteDialogFilter: unsupported layer %d", layer)
 	}
 }
 
@@ -1358,23 +1398,23 @@ func (m *TLDialogDeleteDialogFilter) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialogFilter: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1dd3e97:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialogFilter#0x1dd3e97: field user_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_deleteDialogFilter#0x1dd3e97: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_deleteDialogFilter: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1403,7 +1443,7 @@ func (m *TLDialogUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32) e
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateDialogFiltersOrder, layer)
+		return fmt.Errorf("unable to validate dialog_updateDialogFiltersOrder: unsupported layer %d", layer)
 	}
 }
 
@@ -1412,24 +1452,24 @@ func (m *TLDialogUpdateDialogFiltersOrder) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateDialogFiltersOrder: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb13c0b3f:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateDialogFiltersOrder#0xb13c0b3f: field user_id: %w", err)
 		}
 
 		m.Order, err = iface.DecodeInt32List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateDialogFiltersOrder#0xb13c0b3f: field order: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_updateDialogFiltersOrder: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1455,7 +1495,7 @@ func (m *TLDialogGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilters, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogFilters: unsupported layer %d", layer)
 	}
 }
 
@@ -1464,19 +1504,19 @@ func (m *TLDialogGetDialogFilters) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilters: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6c676c3c:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilters#0x6c676c3c: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogFilters: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1504,7 +1544,7 @@ func (m *TLDialogGetDialogFolder) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFolder, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogFolder: unsupported layer %d", layer)
 	}
 }
 
@@ -1513,23 +1553,23 @@ func (m *TLDialogGetDialogFolder) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFolder: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x411b8eb5:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFolder#0x411b8eb5: field user_id: %w", err)
 		}
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFolder#0x411b8eb5: field folder_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogFolder: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1561,7 +1601,7 @@ func (m *TLDialogEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_editPeerFolders, layer)
+		return fmt.Errorf("unable to validate dialog_editPeerFolders: unsupported layer %d", layer)
 	}
 }
 
@@ -1570,29 +1610,29 @@ func (m *TLDialogEditPeerFolders) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_editPeerFolders: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2446869a:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field user_id: %w", err)
 		}
 
 		m.PeerDialogList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field peer_dialog_list: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field folder_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_editPeerFolders: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1622,7 +1662,7 @@ func (m *TLDialogGetChannelMessageReadParticipants) Encode(x *bin.Encoder, layer
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getChannelMessageReadParticipants, layer)
+		return fmt.Errorf("unable to validate dialog_getChannelMessageReadParticipants: unsupported layer %d", layer)
 	}
 }
 
@@ -1631,27 +1671,27 @@ func (m *TLDialogGetChannelMessageReadParticipants) Decode(d *bin.Decoder) (err 
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getChannelMessageReadParticipants: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x28bd4d3b:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getChannelMessageReadParticipants#0x28bd4d3b: field user_id: %w", err)
 		}
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getChannelMessageReadParticipants#0x28bd4d3b: field channel_id: %w", err)
 		}
 		m.MsgId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getChannelMessageReadParticipants#0x28bd4d3b: field msg_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getChannelMessageReadParticipants: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1683,7 +1723,7 @@ func (m *TLDialogSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setChatTheme, layer)
+		return fmt.Errorf("unable to validate dialog_setChatTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -1692,31 +1732,31 @@ func (m *TLDialogSetChatTheme) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatTheme: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe9aea22a:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatTheme#0xe9aea22a: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatTheme#0xe9aea22a: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatTheme#0xe9aea22a: field peer_id: %w", err)
 		}
 		m.ThemeEmoticon, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatTheme#0xe9aea22a: field theme_emoticon: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_setChatTheme: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1748,7 +1788,7 @@ func (m *TLDialogSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setHistoryTTL, layer)
+		return fmt.Errorf("unable to validate dialog_setHistoryTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -1757,31 +1797,31 @@ func (m *TLDialogSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setHistoryTTL: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x9d9b8ac:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setHistoryTTL#0x9d9b8ac: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setHistoryTTL#0x9d9b8ac: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setHistoryTTL#0x9d9b8ac: field peer_id: %w", err)
 		}
 		m.TtlPeriod, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setHistoryTTL#0x9d9b8ac: field ttl_period: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_setHistoryTTL: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1830,7 +1870,7 @@ func (m *TLDialogGetMyDialogsData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getMyDialogsData, layer)
+		return fmt.Errorf("unable to validate dialog_getMyDialogsData: unsupported layer %d", layer)
 	}
 }
 
@@ -1839,19 +1879,19 @@ func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getMyDialogsData: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x7ee08f03:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getMyDialogsData: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getMyDialogsData#0x7ee08f03: field user_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.User = true
@@ -1865,7 +1905,7 @@ func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getMyDialogsData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1892,16 +1932,26 @@ func (m *TLDialogGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x38c1d668)
 
 		x.PutInt64(m.UserId)
-		_ = m.ExcludePinned.Encode(x, layer)
+		if m.ExcludePinned == nil {
+			return fmt.Errorf("unable to encode dialog_getSavedDialogs#0x38c1d668: field exclude_pinned is nil")
+		}
+		if err := m.ExcludePinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field exclude_pinned: %w", err)
+		}
 		x.PutInt32(m.OffsetDate)
 		x.PutInt32(m.OffsetId)
-		_ = m.OffsetPeer.Encode(x, layer)
+		if m.OffsetPeer == nil {
+			return fmt.Errorf("unable to encode dialog_getSavedDialogs#0x38c1d668: field offset_peer is nil")
+		}
+		if err := m.OffsetPeer.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field offset_peer: %w", err)
+		}
 		x.PutInt32(m.Limit)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getSavedDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_getSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -1910,43 +1960,43 @@ func (m *TLDialogGetSavedDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x38c1d668:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field user_id: %w", err)
 		}
 
 		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field exclude_pinned: %w", err)
 		}
 
 		m.OffsetDate, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field offset_date: %w", err)
 		}
 		m.OffsetId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field offset_id: %w", err)
 		}
 
 		m.OffsetPeer, err = tg.DecodePeerUtilClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field offset_peer: %w", err)
 		}
 
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getSavedDialogs#0x38c1d668: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getSavedDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1972,7 +2022,7 @@ func (m *TLDialogGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getPinnedSavedDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_getPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -1981,19 +2031,19 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getPinnedSavedDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x40a3b7e7:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getPinnedSavedDialogs#0x40a3b7e7: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getPinnedSavedDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2017,13 +2067,23 @@ func (m *TLDialogToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) error
 		x.PutClazzID(0x44f317d9)
 
 		x.PutInt64(m.UserId)
-		_ = m.Peer.Encode(x, layer)
-		_ = m.Pinned.Encode(x, layer)
+		if m.Peer == nil {
+			return fmt.Errorf("unable to encode dialog_toggleSavedDialogPin#0x44f317d9: field peer is nil")
+		}
+		if err := m.Peer.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin#0x44f317d9: field peer: %w", err)
+		}
+		if m.Pinned == nil {
+			return fmt.Errorf("unable to encode dialog_toggleSavedDialogPin#0x44f317d9: field pinned is nil")
+		}
+		if err := m.Pinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin#0x44f317d9: field pinned: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleSavedDialogPin, layer)
+		return fmt.Errorf("unable to validate dialog_toggleSavedDialogPin: unsupported layer %d", layer)
 	}
 }
 
@@ -2032,29 +2092,29 @@ func (m *TLDialogToggleSavedDialogPin) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x44f317d9:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin#0x44f317d9: field user_id: %w", err)
 		}
 
 		m.Peer, err = tg.DecodePeerUtilClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin#0x44f317d9: field peer: %w", err)
 		}
 
 		m.Pinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin#0x44f317d9: field pinned: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_toggleSavedDialogPin: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2078,16 +2138,21 @@ func (m *TLDialogReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) 
 		x.PutClazzID(0xd85ccbd2)
 
 		x.PutInt64(m.UserId)
-		_ = m.Force.Encode(x, layer)
+		if m.Force == nil {
+			return fmt.Errorf("unable to encode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field force is nil")
+		}
+		if err := m.Force.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field force: %w", err)
+		}
 
 		if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_reorderPinnedSavedDialogs, layer)
+		return fmt.Errorf("unable to validate dialog_reorderPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -2096,44 +2161,44 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xd85ccbd2:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field user_id: %w", err)
 		}
 
 		m.Force, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field force: %w", err)
 		}
 
 		c3, err2 := d.ClazzID()
 		if err2 != nil {
-			return err2
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
 			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
-			return err3
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err3)
 		}
 		v3 := make([]tg.PeerUtilClazz, l3)
 		for i := 0; i < l3; i++ {
 			v3[i], err3 = tg.DecodePeerUtilClazz(d)
 			if err3 != nil {
-				return err3
+				return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err3)
 			}
 		}
 		m.Order = v3
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2161,7 +2226,7 @@ func (m *TLDialogGetDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilter, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogFilter: unsupported layer %d", layer)
 	}
 }
 
@@ -2170,23 +2235,23 @@ func (m *TLDialogGetDialogFilter) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilter: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf388061c:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilter#0xf388061c: field user_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilter#0xf388061c: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogFilter: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2214,7 +2279,7 @@ func (m *TLDialogGetDialogFilterBySlug) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilterBySlug, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogFilterBySlug: unsupported layer %d", layer)
 	}
 }
 
@@ -2223,23 +2288,23 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilterBySlug: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4e457fef:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilterBySlug#0x4e457fef: field user_id: %w", err)
 		}
 		m.Slug, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilterBySlug#0x4e457fef: field slug: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogFilterBySlug: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2262,12 +2327,17 @@ func (m *TLDialogCreateDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xc6cb636f)
 
 		x.PutInt64(m.UserId)
-		_ = m.DialogFilter.Encode(x, layer)
+		if m.DialogFilter == nil {
+			return fmt.Errorf("unable to encode dialog_createDialogFilter#0xc6cb636f: field dialog_filter is nil")
+		}
+		if err := m.DialogFilter.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_createDialogFilter#0xc6cb636f: field dialog_filter: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_createDialogFilter, layer)
+		return fmt.Errorf("unable to validate dialog_createDialogFilter: unsupported layer %d", layer)
 	}
 }
 
@@ -2276,24 +2346,24 @@ func (m *TLDialogCreateDialogFilter) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_createDialogFilter: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xc6cb636f:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_createDialogFilter#0xc6cb636f: field user_id: %w", err)
 		}
 
 		m.DialogFilter, err = DecodeDialogFilterExtClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_createDialogFilter#0xc6cb636f: field dialog_filter: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_createDialogFilter: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2357,7 +2427,7 @@ func (m *TLDialogUpdateUnreadCount) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_updateUnreadCount, layer)
+		return fmt.Errorf("unable to validate dialog_updateUnreadCount: unsupported layer %d", layer)
 	}
 }
 
@@ -2366,53 +2436,53 @@ func (m *TLDialogUpdateUnreadCount) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUnreadCount: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2bac334d:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUnreadCount: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field peer_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.UnreadCount = new(int32)
 			*m.UnreadCount, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field unread_count: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.UnreadMentionsCount = new(int32)
 			*m.UnreadMentionsCount, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field unread_mentions_count: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			m.UnreadReactionsCount = new(int32)
 			*m.UnreadReactionsCount, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode dialog_updateUnreadCount#0x2bac334d: field unread_reactions_count: %w", err)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_updateUnreadCount: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2435,12 +2505,17 @@ func (m *TLDialogToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) err
 		x.PutClazzID(0xa0cd6d89)
 
 		x.PutInt64(m.UserId)
-		_ = m.Enabled.Encode(x, layer)
+		if m.Enabled == nil {
+			return fmt.Errorf("unable to encode dialog_toggleDialogFilterTags#0xa0cd6d89: field enabled is nil")
+		}
+		if err := m.Enabled.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleDialogFilterTags#0xa0cd6d89: field enabled: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleDialogFilterTags, layer)
+		return fmt.Errorf("unable to validate dialog_toggleDialogFilterTags: unsupported layer %d", layer)
 	}
 }
 
@@ -2449,24 +2524,24 @@ func (m *TLDialogToggleDialogFilterTags) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogFilterTags: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa0cd6d89:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogFilterTags#0xa0cd6d89: field user_id: %w", err)
 		}
 
 		m.Enabled, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_toggleDialogFilterTags#0xa0cd6d89: field enabled: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_toggleDialogFilterTags: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2492,7 +2567,7 @@ func (m *TLDialogGetDialogFilterTags) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilterTags, layer)
+		return fmt.Errorf("unable to validate dialog_getDialogFilterTags: unsupported layer %d", layer)
 	}
 }
 
@@ -2501,19 +2576,19 @@ func (m *TLDialogGetDialogFilterTags) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilterTags: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xfaf0fa97:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_getDialogFilterTags#0xfaf0fa97: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_getDialogFilterTags: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2560,7 +2635,7 @@ func (m *TLDialogSetChatWallpaper) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setChatWallpaper, layer)
+		return fmt.Errorf("unable to validate dialog_setChatWallpaper: unsupported layer %d", layer)
 	}
 }
 
@@ -2569,31 +2644,31 @@ func (m *TLDialogSetChatWallpaper) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb551db12:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper: field flags: %w", err)
 		}
 		_ = flags
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper#0xb551db12: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper#0xb551db12: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper#0xb551db12: field peer_id: %w", err)
 		}
 		m.WallpaperId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode dialog_setChatWallpaper#0xb551db12: field wallpaper_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.WallpaperOverridden = true
@@ -2601,7 +2676,7 @@ func (m *TLDialogSetChatWallpaper) Decode(d *bin.Decoder) (err error) {
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode dialog_setChatWallpaper: invalid constructor %x", m.ClazzID)
 	}
 }
 

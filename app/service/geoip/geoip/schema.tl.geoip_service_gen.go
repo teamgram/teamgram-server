@@ -50,7 +50,7 @@ func (m *TLGeoipGetCountryAndRegionByIp) Encode(x *bin.Encoder, layer int32) err
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_geoip_getCountryAndRegionByIp, layer)
+		return fmt.Errorf("unable to validate geoip_getCountryAndRegionByIp: unsupported layer %d", layer)
 	}
 }
 
@@ -59,19 +59,19 @@ func (m *TLGeoipGetCountryAndRegionByIp) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode geoip_getCountryAndRegionByIp: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x676b04a4:
 		m.Ip, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode geoip_getCountryAndRegionByIp#0x676b04a4: field ip: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode geoip_getCountryAndRegionByIp: invalid constructor %x", m.ClazzID)
 	}
 }
 

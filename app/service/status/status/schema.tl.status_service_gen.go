@@ -47,12 +47,17 @@ func (m *TLStatusSetSessionOnline) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x52518bcf)
 
 		x.PutInt64(m.UserId)
-		_ = m.Session.Encode(x, layer)
+		if m.Session == nil {
+			return fmt.Errorf("unable to encode status_setSessionOnline#0x52518bcf: field session is nil")
+		}
+		if err := m.Session.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode status_setSessionOnline#0x52518bcf: field session: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setSessionOnline, layer)
+		return fmt.Errorf("unable to validate status_setSessionOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -61,24 +66,24 @@ func (m *TLStatusSetSessionOnline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOnline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x52518bcf:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOnline#0x52518bcf: field user_id: %w", err)
 		}
 
 		m.Session, err = DecodeSessionEntryClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOnline#0x52518bcf: field session: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setSessionOnline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -106,7 +111,7 @@ func (m *TLStatusSetSessionOffline) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setSessionOffline, layer)
+		return fmt.Errorf("unable to validate status_setSessionOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -115,23 +120,23 @@ func (m *TLStatusSetSessionOffline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOffline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x25a66a5c:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOffline#0x25a66a5c: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setSessionOffline#0x25a66a5c: field auth_key_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setSessionOffline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -157,7 +162,7 @@ func (m *TLStatusGetUserOnlineSessions) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_getUserOnlineSessions, layer)
+		return fmt.Errorf("unable to validate status_getUserOnlineSessions: unsupported layer %d", layer)
 	}
 }
 
@@ -166,19 +171,19 @@ func (m *TLStatusGetUserOnlineSessions) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getUserOnlineSessions: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe7c0e5cd:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getUserOnlineSessions#0xe7c0e5cd: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_getUserOnlineSessions: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -204,7 +209,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) Encode(x *bin.Encoder, layer int32)
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_getUsersOnlineSessionsList, layer)
+		return fmt.Errorf("unable to validate status_getUsersOnlineSessionsList: unsupported layer %d", layer)
 	}
 }
 
@@ -213,7 +218,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(d *bin.Decoder) (err error) 
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getUsersOnlineSessionsList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
@@ -221,12 +226,12 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(d *bin.Decoder) (err error) 
 
 		m.Users, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getUsersOnlineSessionsList#0x883b35c4: field users: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_getUsersOnlineSessionsList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -252,7 +257,7 @@ func (m *TLStatusGetChannelOnlineUsers) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_getChannelOnlineUsers, layer)
+		return fmt.Errorf("unable to validate status_getChannelOnlineUsers: unsupported layer %d", layer)
 	}
 }
 
@@ -261,19 +266,19 @@ func (m *TLStatusGetChannelOnlineUsers) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getChannelOnlineUsers: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4583ac55:
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_getChannelOnlineUsers#0x4583ac55: field channel_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_getChannelOnlineUsers: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -302,7 +307,7 @@ func (m *TLStatusSetUserChannelsOnline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setUserChannelsOnline, layer)
+		return fmt.Errorf("unable to validate status_setUserChannelsOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -311,24 +316,24 @@ func (m *TLStatusSetUserChannelsOnline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOnline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xcd39044d:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOnline#0xcd39044d: field user_id: %w", err)
 		}
 
 		m.Channels, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOnline#0xcd39044d: field channels: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setUserChannelsOnline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -357,7 +362,7 @@ func (m *TLStatusSetUserChannelsOffline) Encode(x *bin.Encoder, layer int32) err
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setUserChannelsOffline, layer)
+		return fmt.Errorf("unable to validate status_setUserChannelsOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -366,24 +371,24 @@ func (m *TLStatusSetUserChannelsOffline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOffline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6ca361aa:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOffline#0x6ca361aa: field user_id: %w", err)
 		}
 
 		m.Channels, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setUserChannelsOffline#0x6ca361aa: field channels: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setUserChannelsOffline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -411,7 +416,7 @@ func (m *TLStatusSetChannelUserOffline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setChannelUserOffline, layer)
+		return fmt.Errorf("unable to validate status_setChannelUserOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -420,23 +425,23 @@ func (m *TLStatusSetChannelUserOffline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUserOffline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xc48bcb7c:
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUserOffline#0xc48bcb7c: field channel_id: %w", err)
 		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUserOffline#0xc48bcb7c: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setChannelUserOffline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -465,7 +470,7 @@ func (m *TLStatusSetChannelUsersOnline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setChannelUsersOnline, layer)
+		return fmt.Errorf("unable to validate status_setChannelUsersOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -474,24 +479,24 @@ func (m *TLStatusSetChannelUsersOnline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUsersOnline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa69bdcf7:
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUsersOnline#0xa69bdcf7: field channel_id: %w", err)
 		}
 
 		m.Id, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelUsersOnline#0xa69bdcf7: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setChannelUsersOnline: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -517,7 +522,7 @@ func (m *TLStatusSetChannelOffline) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_status_setChannelOffline, layer)
+		return fmt.Errorf("unable to validate status_setChannelOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -526,19 +531,19 @@ func (m *TLStatusSetChannelOffline) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelOffline: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4b7756f5:
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode status_setChannelOffline#0x4b7756f5: field channel_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode status_setChannelOffline: invalid constructor %x", m.ClazzID)
 	}
 }
 

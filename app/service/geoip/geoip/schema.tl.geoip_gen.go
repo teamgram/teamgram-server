@@ -35,7 +35,7 @@ func DecodeRegionClazz(d *bin.Decoder) (RegionClazz, error) {
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode Region: constructor: %w", err)
 	}
 
 	switch id {
@@ -46,7 +46,7 @@ func DecodeRegionClazz(d *bin.Decoder) (RegionClazz, error) {
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeRegion - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode Region: invalid constructor %x", id)
 	}
 
 }
@@ -126,7 +126,7 @@ func (m *TLRegion) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_region, layer)
+		return fmt.Errorf("unable to validate region: unsupported layer %d", layer)
 	}
 }
 
@@ -142,7 +142,7 @@ func (m *TLRegion) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_region, layer)
+		return fmt.Errorf("unable to encode region: unsupported layer %d", layer)
 	}
 }
 
@@ -152,16 +152,16 @@ func (m *TLRegion) Decode(d *bin.Decoder) (err error) {
 	case 0xca964a2f:
 		m.Region, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode region#0xca964a2f: field region: %w", err)
 		}
 		m.IsoCode, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode region#0xca964a2f: field iso_code: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode region: invalid constructor %x", m.ClazzID)
 	}
 }
 

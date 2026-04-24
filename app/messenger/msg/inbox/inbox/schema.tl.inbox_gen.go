@@ -35,7 +35,7 @@ func DecodeInboxMessageDataClazz(d *bin.Decoder) (InboxMessageDataClazz, error) 
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode InboxMessageData: constructor: %w", err)
 	}
 
 	switch id {
@@ -46,7 +46,7 @@ func DecodeInboxMessageDataClazz(d *bin.Decoder) (InboxMessageDataClazz, error) 
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeInboxMessageData - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode InboxMessageData: invalid constructor %x", id)
 	}
 
 }
@@ -124,7 +124,7 @@ func (m *TLInboxMessageData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageData, layer)
+		return fmt.Errorf("unable to validate inboxMessageData: unsupported layer %d", layer)
 	}
 }
 
@@ -136,12 +136,17 @@ func (m *TLInboxMessageData) Encode(x *bin.Encoder, layer int32) error {
 
 		x.PutInt64(m.RandomId)
 		x.PutInt64(m.DialogMessageId)
-		_ = m.Message.Encode(x, layer)
+		if m.Message == nil {
+			return fmt.Errorf("unable to encode inboxMessageData#0x3bbdadd4: field message is nil")
+		}
+		if err := m.Message.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode inboxMessageData#0x3bbdadd4: field message: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageData, layer)
+		return fmt.Errorf("unable to encode inboxMessageData: unsupported layer %d", layer)
 	}
 }
 
@@ -151,21 +156,21 @@ func (m *TLInboxMessageData) Decode(d *bin.Decoder) (err error) {
 	case 0x3bbdadd4:
 		m.RandomId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inboxMessageData#0x3bbdadd4: field random_id: %w", err)
 		}
 		m.DialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inboxMessageData#0x3bbdadd4: field dialog_message_id: %w", err)
 		}
 
 		m.Message, err = tg.DecodeMessageClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inboxMessageData#0x3bbdadd4: field message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inboxMessageData: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -180,7 +185,7 @@ func DecodeInboxMessageIdClazz(d *bin.Decoder) (InboxMessageIdClazz, error) {
 	// id, err := d.PeekClazzID()
 	id, err := d.ClazzID()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to decode InboxMessageId: constructor: %w", err)
 	}
 
 	switch id {
@@ -191,7 +196,7 @@ func DecodeInboxMessageIdClazz(d *bin.Decoder) (InboxMessageIdClazz, error) {
 		}
 		return x, nil
 	default:
-		return nil, fmt.Errorf("DecodeInboxMessageId - unexpected clazzId: %d", id)
+		return nil, fmt.Errorf("unable to decode InboxMessageId: invalid constructor %x", id)
 	}
 
 }
@@ -264,7 +269,7 @@ func (m *TLInboxMessageId) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageId, layer)
+		return fmt.Errorf("unable to validate inboxMessageId: unsupported layer %d", layer)
 	}
 }
 
@@ -280,7 +285,7 @@ func (m *TLInboxMessageId) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inboxMessageId, layer)
+		return fmt.Errorf("unable to encode inboxMessageId: unsupported layer %d", layer)
 	}
 }
 
@@ -290,16 +295,16 @@ func (m *TLInboxMessageId) Decode(d *bin.Decoder) (err error) {
 	case 0xc692c19f:
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inboxMessageId#0xc692c19f: field id: %w", err)
 		}
 		m.DialogMessageId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode inboxMessageId#0xc692c19f: field dialog_message_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode inboxMessageId: invalid constructor %x", m.ClazzID)
 	}
 }
 

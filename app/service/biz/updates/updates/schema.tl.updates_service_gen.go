@@ -52,7 +52,7 @@ func (m *TLUpdatesGetStateV2) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getStateV2, layer)
+		return fmt.Errorf("unable to validate updates_getStateV2: unsupported layer %d", layer)
 	}
 }
 
@@ -61,23 +61,23 @@ func (m *TLUpdatesGetStateV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getStateV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x45f4cd65:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getStateV2#0x45f4cd65: field auth_key_id: %w", err)
 		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getStateV2#0x45f4cd65: field user_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode updates_getStateV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -128,7 +128,7 @@ func (m *TLUpdatesGetDifferenceV2) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getDifferenceV2, layer)
+		return fmt.Errorf("unable to validate updates_getDifferenceV2: unsupported layer %d", layer)
 	}
 }
 
@@ -137,43 +137,43 @@ func (m *TLUpdatesGetDifferenceV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb76b6699:
 		flags, err := d.Uint32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2: field flags: %w", err)
 		}
 		_ = flags
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2#0xb76b6699: field auth_key_id: %w", err)
 		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2#0xb76b6699: field user_id: %w", err)
 		}
 		m.Pts, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2#0xb76b6699: field pts: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.PtsTotalLimit = new(int32)
 			*m.PtsTotalLimit, err = d.Int32()
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to decode updates_getDifferenceV2#0xb76b6699: field pts_total_limit: %w", err)
 			}
 		}
 		m.Date, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getDifferenceV2#0xb76b6699: field date: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode updates_getDifferenceV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -207,7 +207,7 @@ func (m *TLUpdatesGetChannelDifferenceV2) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_updates_getChannelDifferenceV2, layer)
+		return fmt.Errorf("unable to validate updates_getChannelDifferenceV2: unsupported layer %d", layer)
 	}
 }
 
@@ -216,35 +216,35 @@ func (m *TLUpdatesGetChannelDifferenceV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x4da3318a:
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2#0x4da3318a: field auth_key_id: %w", err)
 		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2#0x4da3318a: field user_id: %w", err)
 		}
 		m.ChannelId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2#0x4da3318a: field channel_id: %w", err)
 		}
 		m.Pts, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2#0x4da3318a: field pts: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode updates_getChannelDifferenceV2#0x4da3318a: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode updates_getChannelDifferenceV2: invalid constructor %x", m.ClazzID)
 	}
 }
 

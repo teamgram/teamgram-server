@@ -52,7 +52,7 @@ func (m *TLMessageGetUserMessage) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUserMessage, layer)
+		return fmt.Errorf("unable to validate message_getUserMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -61,23 +61,23 @@ func (m *TLMessageGetUserMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x7accb1c8:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessage#0x7accb1c8: field user_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessage#0x7accb1c8: field id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUserMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -106,7 +106,7 @@ func (m *TLMessageGetUserMessageList) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUserMessageList, layer)
+		return fmt.Errorf("unable to validate message_getUserMessageList: unsupported layer %d", layer)
 	}
 }
 
@@ -115,24 +115,24 @@ func (m *TLMessageGetUserMessageList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xd3581c26:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageList#0xd3581c26: field user_id: %w", err)
 		}
 
 		m.IdList, err = iface.DecodeInt32List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageList#0xd3581c26: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUserMessageList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -161,7 +161,7 @@ func (m *TLMessageGetUserMessageListByDataIdList) Encode(x *bin.Encoder, layer i
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUserMessageListByDataIdList, layer)
+		return fmt.Errorf("unable to validate message_getUserMessageListByDataIdList: unsupported layer %d", layer)
 	}
 }
 
@@ -170,24 +170,24 @@ func (m *TLMessageGetUserMessageListByDataIdList) Decode(d *bin.Decoder) (err er
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x1155a17b:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdList#0x1155a17b: field user_id: %w", err)
 		}
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdList#0x1155a17b: field id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUserMessageListByDataIdList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -216,7 +216,7 @@ func (m *TLMessageGetUserMessageListByDataIdUserIdList) Encode(x *bin.Encoder, l
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUserMessageListByDataIdUserIdList, layer)
+		return fmt.Errorf("unable to validate message_getUserMessageListByDataIdUserIdList: unsupported layer %d", layer)
 	}
 }
 
@@ -225,24 +225,24 @@ func (m *TLMessageGetUserMessageListByDataIdUserIdList) Decode(d *bin.Decoder) (
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdUserIdList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x2cb26a31:
 		m.Id, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdUserIdList#0x2cb26a31: field id: %w", err)
 		}
 
 		m.UserIdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUserMessageListByDataIdUserIdList#0x2cb26a31: field user_id_list: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUserMessageListByDataIdUserIdList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -286,7 +286,7 @@ func (m *TLMessageGetHistoryMessages) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getHistoryMessages, layer)
+		return fmt.Errorf("unable to validate message_getHistoryMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -295,55 +295,55 @@ func (m *TLMessageGetHistoryMessages) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x308a340:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field peer_id: %w", err)
 		}
 		m.OffsetId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field offset_id: %w", err)
 		}
 		m.OffsetDate, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field offset_date: %w", err)
 		}
 		m.AddOffset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field add_offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field limit: %w", err)
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field max_id: %w", err)
 		}
 		m.MinId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field min_id: %w", err)
 		}
 		m.Hash, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessages#0x308a340: field hash: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getHistoryMessages: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -373,7 +373,7 @@ func (m *TLMessageGetHistoryMessagesCount) Encode(x *bin.Encoder, layer int32) e
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getHistoryMessagesCount, layer)
+		return fmt.Errorf("unable to validate message_getHistoryMessagesCount: unsupported layer %d", layer)
 	}
 }
 
@@ -382,27 +382,27 @@ func (m *TLMessageGetHistoryMessagesCount) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessagesCount: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf507e13:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessagesCount#0xf507e13: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessagesCount#0xf507e13: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getHistoryMessagesCount#0xf507e13: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getHistoryMessagesCount: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -432,7 +432,7 @@ func (m *TLMessageGetPeerUserMessageId) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getPeerUserMessageId, layer)
+		return fmt.Errorf("unable to validate message_getPeerUserMessageId: unsupported layer %d", layer)
 	}
 }
 
@@ -441,27 +441,27 @@ func (m *TLMessageGetPeerUserMessageId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessageId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x73aeb71f:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessageId#0x73aeb71f: field user_id: %w", err)
 		}
 		m.PeerUserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessageId#0x73aeb71f: field peer_user_id: %w", err)
 		}
 		m.MsgId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessageId#0x73aeb71f: field msg_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getPeerUserMessageId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -491,7 +491,7 @@ func (m *TLMessageGetPeerUserMessage) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getPeerUserMessage, layer)
+		return fmt.Errorf("unable to validate message_getPeerUserMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -500,27 +500,27 @@ func (m *TLMessageGetPeerUserMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x63129212:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessage#0x63129212: field user_id: %w", err)
 		}
 		m.PeerUserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessage#0x63129212: field peer_user_id: %w", err)
 		}
 		m.MsgId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPeerUserMessage#0x63129212: field msg_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getPeerUserMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -556,7 +556,7 @@ func (m *TLMessageSearchByMediaType) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_searchByMediaType, layer)
+		return fmt.Errorf("unable to validate message_searchByMediaType: unsupported layer %d", layer)
 	}
 }
 
@@ -565,39 +565,39 @@ func (m *TLMessageSearchByMediaType) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x111c2943:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field peer_id: %w", err)
 		}
 		m.MediaType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field media_type: %w", err)
 		}
 		m.Offset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByMediaType#0x111c2943: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_searchByMediaType: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -633,7 +633,7 @@ func (m *TLMessageSearch) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_search, layer)
+		return fmt.Errorf("unable to validate message_search: unsupported layer %d", layer)
 	}
 }
 
@@ -642,39 +642,39 @@ func (m *TLMessageSearch) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6835b023:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field peer_id: %w", err)
 		}
 		m.Q, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field q: %w", err)
 		}
 		m.Offset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_search#0x6835b023: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_search: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -706,7 +706,7 @@ func (m *TLMessageSearchGlobal) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_searchGlobal, layer)
+		return fmt.Errorf("unable to validate message_searchGlobal: unsupported layer %d", layer)
 	}
 }
 
@@ -715,31 +715,31 @@ func (m *TLMessageSearchGlobal) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchGlobal: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb3985dc5:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchGlobal#0xb3985dc5: field user_id: %w", err)
 		}
 		m.Q, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchGlobal#0xb3985dc5: field q: %w", err)
 		}
 		m.Offset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchGlobal#0xb3985dc5: field offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchGlobal#0xb3985dc5: field limit: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_searchGlobal: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -769,7 +769,7 @@ func (m *TLMessageSearchByPinned) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_searchByPinned, layer)
+		return fmt.Errorf("unable to validate message_searchByPinned: unsupported layer %d", layer)
 	}
 }
 
@@ -778,27 +778,27 @@ func (m *TLMessageSearchByPinned) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByPinned: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6e735b55:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByPinned#0x6e735b55: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByPinned#0x6e735b55: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchByPinned#0x6e735b55: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_searchByPinned: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -830,7 +830,7 @@ func (m *TLMessageGetSearchCounter) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getSearchCounter, layer)
+		return fmt.Errorf("unable to validate message_getSearchCounter: unsupported layer %d", layer)
 	}
 }
 
@@ -839,31 +839,31 @@ func (m *TLMessageGetSearchCounter) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getSearchCounter: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xe2cbbf46:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getSearchCounter#0xe2cbbf46: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getSearchCounter#0xe2cbbf46: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getSearchCounter#0xe2cbbf46: field peer_id: %w", err)
 		}
 		m.MediaType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getSearchCounter#0xe2cbbf46: field media_type: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getSearchCounter: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -913,7 +913,7 @@ func (m *TLMessageSearchV2) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_searchV2, layer)
+		return fmt.Errorf("unable to validate message_searchV2: unsupported layer %d", layer)
 	}
 }
 
@@ -922,67 +922,67 @@ func (m *TLMessageSearchV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xa1c62b21:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field peer_id: %w", err)
 		}
 		m.Q, err = d.String()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field q: %w", err)
 		}
 		m.FromId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field from_id: %w", err)
 		}
 		m.MinDate, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field min_date: %w", err)
 		}
 		m.MaxDate, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field max_date: %w", err)
 		}
 		m.OffsetId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field offset_id: %w", err)
 		}
 		m.AddOffset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field add_offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field limit: %w", err)
 		}
 		m.MaxId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field max_id: %w", err)
 		}
 		m.MinId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field min_id: %w", err)
 		}
 		m.Hash, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_searchV2#0xa1c62b21: field hash: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_searchV2: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1012,7 +1012,7 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Encode(x *bin.Encoder, layer int32)
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getLastTwoPinnedMessageId, layer)
+		return fmt.Errorf("unable to validate message_getLastTwoPinnedMessageId: unsupported layer %d", layer)
 	}
 }
 
@@ -1021,27 +1021,27 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Decode(d *bin.Decoder) (err error) 
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getLastTwoPinnedMessageId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xaf9a082b:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getLastTwoPinnedMessageId#0xaf9a082b: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getLastTwoPinnedMessageId#0xaf9a082b: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getLastTwoPinnedMessageId#0xaf9a082b: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getLastTwoPinnedMessageId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1070,12 +1070,17 @@ func (m *TLMessageUpdatePinnedMessageId) Encode(x *bin.Encoder, layer int32) err
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 		x.PutInt32(m.Id)
-		_ = m.Pinned.Encode(x, layer)
+		if m.Pinned == nil {
+			return fmt.Errorf("unable to encode message_updatePinnedMessageId#0xf520edd0: field pinned is nil")
+		}
+		if err := m.Pinned.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field pinned: %w", err)
+		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_updatePinnedMessageId, layer)
+		return fmt.Errorf("unable to validate message_updatePinnedMessageId: unsupported layer %d", layer)
 	}
 }
 
@@ -1084,36 +1089,36 @@ func (m *TLMessageUpdatePinnedMessageId) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xf520edd0:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field peer_id: %w", err)
 		}
 		m.Id, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field id: %w", err)
 		}
 
 		m.Pinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_updatePinnedMessageId#0xf520edd0: field pinned: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_updatePinnedMessageId: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1143,7 +1148,7 @@ func (m *TLMessageGetPinnedMessageIdList) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getPinnedMessageIdList, layer)
+		return fmt.Errorf("unable to validate message_getPinnedMessageIdList: unsupported layer %d", layer)
 	}
 }
 
@@ -1152,27 +1157,27 @@ func (m *TLMessageGetPinnedMessageIdList) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPinnedMessageIdList: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xda01d0dd:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPinnedMessageIdList#0xda01d0dd: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPinnedMessageIdList#0xda01d0dd: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getPinnedMessageIdList#0xda01d0dd: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getPinnedMessageIdList: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1202,7 +1207,7 @@ func (m *TLMessageUnPinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_unPinAllMessages, layer)
+		return fmt.Errorf("unable to validate message_unPinAllMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -1211,27 +1216,27 @@ func (m *TLMessageUnPinAllMessages) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_unPinAllMessages: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xea0a2a73:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_unPinAllMessages#0xea0a2a73: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_unPinAllMessages#0xea0a2a73: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_unPinAllMessages#0xea0a2a73: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_unPinAllMessages: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1271,7 +1276,7 @@ func (m *TLMessageGetUnreadMentions) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUnreadMentions, layer)
+		return fmt.Errorf("unable to validate message_getUnreadMentions: unsupported layer %d", layer)
 	}
 }
 
@@ -1280,47 +1285,47 @@ func (m *TLMessageGetUnreadMentions) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0x6fe184b4:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field peer_id: %w", err)
 		}
 		m.OffsetId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field offset_id: %w", err)
 		}
 		m.AddOffset, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field add_offset: %w", err)
 		}
 		m.Limit, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field limit: %w", err)
 		}
 		m.MinId, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field min_id: %w", err)
 		}
 		m.MaxInt, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentions#0x6fe184b4: field max_int: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUnreadMentions: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1350,7 +1355,7 @@ func (m *TLMessageGetUnreadMentionsCount) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_message_getUnreadMentionsCount, layer)
+		return fmt.Errorf("unable to validate message_getUnreadMentionsCount: unsupported layer %d", layer)
 	}
 }
 
@@ -1359,27 +1364,27 @@ func (m *TLMessageGetUnreadMentionsCount) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentionsCount: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
 	case 0xb5412049:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentionsCount#0xb5412049: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentionsCount#0xb5412049: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode message_getUnreadMentionsCount#0xb5412049: field peer_id: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+		return fmt.Errorf("unable to decode message_getUnreadMentionsCount: invalid constructor %x", m.ClazzID)
 	}
 }
 
