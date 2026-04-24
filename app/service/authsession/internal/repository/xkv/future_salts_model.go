@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/kv"
@@ -16,10 +14,20 @@ const (
 	cacheSaltPrefix = "salts"
 )
 
+const (
+	saltTimeout = 30 * 60
+)
+
 type FutureSaltsModel interface {
-	PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt, saltTimeout int) (err error)
-	GetSalts(ctx context.Context, keyId int64) (salts []*tg.TLFutureSalt, err error)
+	PutSalts(ctx context.Context, keyId int64, salts []*FutureSaltRecord) (err error)
+	GetSalts(ctx context.Context, keyId int64) (salts []*FutureSaltRecord, err error)
 	DeleteSalts(ctx context.Context, keyId int64) error
+}
+
+type FutureSaltRecord struct {
+	ValidSince int32 `json:"valid_since"`
+	ValidUntil int32 `json:"valid_until"`
+	Salt       int64 `json:"salt"`
 }
 
 type futureSaltsModel struct {
@@ -42,7 +50,7 @@ func (m *futureSaltsModel) formatKey(key string) string {
 	return m.prefix + ":" + key
 }
 
-func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt, saltTimeout int) (err error) {
+func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*FutureSaltRecord) (err error) {
 	var (
 		b   []byte
 		key = genCacheSaltKey(keyId)
@@ -61,7 +69,7 @@ func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*t
 	return
 }
 
-func (m *futureSaltsModel) GetSalts(ctx context.Context, keyId int64) (salts []*tg.TLFutureSalt, err error) {
+func (m *futureSaltsModel) GetSalts(ctx context.Context, keyId int64) (salts []*FutureSaltRecord, err error) {
 	var (
 		key  = genCacheSaltKey(keyId)
 		bBuf string

@@ -31,7 +31,7 @@ type Repository struct {
 	sqlc.CachedConn
 	kv               kv.Store
 	model            *model.Models
-	FutureSaltsModel FutureSaltsModelType
+	futureSaltsModel FutureSaltsModelType
 }
 
 // NewRepository creates a new Repository.
@@ -42,6 +42,6 @@ func NewRepository(c config.Config) *Repository {
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
 		model:            model.NewModels(db, c.Cache),
-		FutureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
+		futureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
 	}
 }

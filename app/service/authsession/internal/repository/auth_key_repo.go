@@ -18,6 +18,7 @@ package repository
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -55,6 +56,9 @@ func (r *Repository) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*tg.A
 	key, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
 
 	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, tg.ErrAuthKeyUnregistered
+		}
 		return nil, err
 	}
 
@@ -66,7 +70,10 @@ func (r *Repository) SetAuthKeyV2(ctx context.Context, authKey *tg.AuthKeyInfo, 
 	_ = expiredIn
 
 	key := fromAuthKeyInfo(authKey)
-	_, err = r.model.AuthKeysModel.Insert2(ctx, key)
+	_, _, err = r.model.AuthKeysModel.InsertIgnore(ctx, key)
+	if err != nil {
+		return err
+	}
 
 	return
 }

@@ -20,12 +20,57 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 const (
 	saltTimeout = 30 * 60 // salt timeout
 )
+
+func toFutureSaltRecord(salt *tg.TLFutureSalt) *xkv.FutureSaltRecord {
+	if salt == nil {
+		return nil
+	}
+
+	return &xkv.FutureSaltRecord{
+		ValidSince: salt.ValidSince,
+		ValidUntil: salt.ValidUntil,
+		Salt:       salt.Salt,
+	}
+}
+
+func toFutureSaltRecords(salts []*tg.TLFutureSalt) []*xkv.FutureSaltRecord {
+	records := make([]*xkv.FutureSaltRecord, 0, len(salts))
+	for _, salt := range salts {
+		if record := toFutureSaltRecord(salt); record != nil {
+			records = append(records, record)
+		}
+	}
+	return records
+}
+
+func toTLFutureSalt(record *xkv.FutureSaltRecord) *tg.TLFutureSalt {
+	if record == nil {
+		return nil
+	}
+
+	return tg.MakeTLFutureSalt(&tg.TLFutureSalt{
+		ValidSince: record.ValidSince,
+		ValidUntil: record.ValidUntil,
+		Salt:       record.Salt,
+	})
+}
+
+func toTLFutureSalts(records []*xkv.FutureSaltRecord) []*tg.TLFutureSalt {
+	salts := make([]*tg.TLFutureSalt, 0, len(records))
+	for _, record := range records {
+		if salt := toTLFutureSalt(record); salt != nil {
+			salts = append(salts, salt)
+		}
+	}
+	return salts
+}
 
 func (r *Repository) getOrNotInsertSaltList(ctx context.Context, keyId int64, size int32) ([]*tg.TLFutureSalt, error) {
 	var (
@@ -37,15 +82,16 @@ func (r *Repository) getOrNotInsertSaltList(ctx context.Context, keyId int64, si
 		lastSalt       *tg.TLFutureSalt
 	)
 
-	saltList, err := r.FutureSaltsModel.GetSalts(ctx, keyId)
+	saltRecords, err := r.futureSaltsModel.GetSalts(ctx, keyId)
 	if err != nil {
 		return nil, err
 	}
+	saltList := toTLFutureSalts(saltRecords)
 
 	if len(saltList) > 0 {
 		hasLastSalt := false
 		for idx, salt := range saltList {
-			if salt.ValidSince >= date {
+			if salt.ValidUntil >= date {
 				if !hasLastSalt {
 					if idx > 0 {
 						lastSalt = saltList[idx-1]
@@ -99,7 +145,7 @@ func (r *Repository) getOrNotInsertSaltList(ctx context.Context, keyId int64, si
 	saltsData2 = append(saltsData2, saltsData...)
 
 	if left > 0 {
-		err = r.FutureSaltsModel.PutSalts(ctx, keyId, saltsData2, saltTimeout)
+		err = r.futureSaltsModel.PutSalts(ctx, keyId, toFutureSaltRecords(saltsData2))
 		if err != nil {
 			return nil, err
 		}
@@ -122,5 +168,5 @@ func (r *Repository) GetFutureSalts(ctx context.Context, authKeyId int64, num in
 }
 
 func (r *Repository) PutSaltCache(ctx context.Context, authKeyId int64, salt *tg.TLFutureSalt) error {
-	return r.FutureSaltsModel.PutSalts(ctx, authKeyId, []*tg.TLFutureSalt{salt}, saltTimeout)
+	return r.futureSaltsModel.PutSalts(ctx, authKeyId, []*xkv.FutureSaltRecord{toFutureSaltRecord(salt)})
 }
