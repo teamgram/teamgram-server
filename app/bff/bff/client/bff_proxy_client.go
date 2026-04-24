@@ -94,12 +94,26 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 
 	// hack: layer > 177, android's createChat method use old messages.createChat#34A818
 	if rpcMetaData.Client == "android" && rpcMetaData.Layer >= 177 {
-		if createChat, ok := object.(*mtproto.TLMessagesCreateChat34A818); ok {
+		switch r := object.(type) {
+		case *mtproto.TLMessagesAddChatUserF24753E3:
+			object = &mtproto.TLMessagesAddChatUserCBC6D107{
+				Constructor: mtproto.CRC32_messages_addChatUserCBC6D107,
+				ChatId:      r.ChatId,
+				UserId:      r.UserId,
+				FwdLimit:    r.FwdLimit,
+			}
+		case *mtproto.TLMessagesCreateChat34A818:
 			object = &mtproto.TLMessagesCreateChat92CEDDD4{
 				Constructor: mtproto.CRC32_messages_createChat92CEDDD4,
-				Users:       createChat.Users,
-				Title:       createChat.Title,
-				TtlPeriod:   createChat.TtlPeriod,
+				Users:       r.Users,
+				Title:       r.Title,
+				TtlPeriod:   r.TtlPeriod,
+			}
+		case *mtproto.TLChannelsInviteToChannel199F3A6C:
+			object = &mtproto.TLChannelsInviteToChannelC9E33D54{
+				Constructor: mtproto.CRC32_channels_inviteToChannelC9E33D54,
+				Channel:     r.Channel,
+				Users:       r.Users,
 			}
 		}
 	}
