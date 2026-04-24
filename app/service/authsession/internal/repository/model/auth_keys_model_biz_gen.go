@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizAuthKeysModel interface {
@@ -52,18 +50,18 @@ func (m *defaultAuthKeysModel) InsertIgnore(ctx context.Context, data *AuthKeys)
 	lastInsertId, rowsAffected, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		r, err = conn.NamedExec(ctx, query, data)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("auth_keys.InsertIgnore named exec: %w", err)
 		}
 		lastInsertId, err = r.LastInsertId()
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("auth_keys.InsertIgnore last insert id: %w", err)
 		}
 		rowsAffected, err = r.RowsAffected()
-		return lastInsertId, rowsAffected, err
+		if err != nil {
+			return 0, 0, fmt.Errorf("auth_keys.InsertIgnore rows affected: %w", err)
+		}
+		return lastInsertId, rowsAffected, nil
 	}, keys...)
-	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertIgnore(%v), error: %v", data, err)
-	}
 	return
 
 }
@@ -78,18 +76,18 @@ func (m *defaultAuthKeysModel) InsertIgnoreTx(tx *sqlx.Tx, data *AuthKeys) (last
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertIgnore(%v), error: %v", data, err)
+		err = fmt.Errorf("auth_keys.InsertIgnoreTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_keys.InsertIgnoreTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_keys.InsertIgnoreTx rows affected: %w", err)
 	}
 
 	return
@@ -129,14 +127,14 @@ func (m *defaultAuthKeysModel) UpdateCustomMap(ctx context.Context, cMap map[str
 	_, rowsAffected, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		rResult, err := conn.Exec(ctx, query, aValues...)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, fmt.Errorf("auth_keys.UpdateCustomMap exec: %w", err)
 		}
 		rowsAffected, err := rResult.RowsAffected()
-		return 0, rowsAffected, err
+		if err != nil {
+			return 0, 0, fmt.Errorf("auth_keys.UpdateCustomMap rows affected: %w", err)
+		}
+		return 0, rowsAffected, nil
 	}, keys...)
-	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateCustomMap(_), error: %v", err)
-	}
 	return
 }
 
@@ -160,13 +158,13 @@ func (m *defaultAuthKeysModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]in
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("auth_keys.UpdateCustomMapTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("auth_keys.UpdateCustomMapTx rows affected: %w", err)
 	}
 
 	return

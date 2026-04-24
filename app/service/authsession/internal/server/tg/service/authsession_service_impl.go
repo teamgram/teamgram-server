@@ -178,6 +178,7 @@ func (s *Service) AuthsessionSetAuthKey(ctx context.Context, request *authsessio
 
 	r, err := c.AuthsessionSetAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.setAuthKey - error: %v", err)
 		return nil, err
 	}
 
