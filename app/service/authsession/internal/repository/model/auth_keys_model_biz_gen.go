@@ -109,11 +109,13 @@ func (m *defaultAuthKeysModel) UpdateCustomMap(ctx context.Context, cMap map[str
 	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
 		return
 	}
+	if oldData == nil {
+		return
+	}
+
 	var keys []string
 
-	if oldData != nil {
-		keys = m.cacheKeys(oldData)
-	}
+	keys = m.cacheKeys(oldData)
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {

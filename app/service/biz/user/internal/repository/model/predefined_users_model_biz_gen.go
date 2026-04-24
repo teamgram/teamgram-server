@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizPredefinedUsersModel interface {
@@ -56,18 +54,18 @@ func (m *defaultPredefinedUsersModel) Insert(ctx context.Context, data *Predefin
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("predefined_users.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("predefined_users.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("predefined_users.Insert rows affected: %w", err)
 	}
 
 	return
@@ -84,18 +82,18 @@ func (m *defaultPredefinedUsersModel) InsertTx(tx *sqlx.Tx, data *PredefinedUser
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("predefined_users.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("predefined_users.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("predefined_users.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -113,7 +111,7 @@ func (m *defaultPredefinedUsersModel) SelectByPhone(ctx context.Context, phone s
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByPhone(_), error: %v", err)
+			err = fmt.Errorf("predefined_users.SelectByPhone: %w", err)
 			return
 		} else {
 			err = nil
@@ -135,7 +133,7 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAll(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPredefinedUsersAll(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.SelectPredefinedUsersAll: %w", err)
 		return
 	}
 
@@ -154,7 +152,7 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAllWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPredefinedUsersAll(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.SelectPredefinedUsersAllWithCB: %w", err)
 		return
 	}
 
@@ -182,13 +180,13 @@ func (m *defaultPredefinedUsersModel) Delete(ctx context.Context, phone string) 
 	rResult, err = m.db.Exec(ctx, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.Delete rows affected: %w", err)
 	}
 
 	return
@@ -204,13 +202,13 @@ func (m *defaultPredefinedUsersModel) DeleteTx(tx *sqlx.Tx, phone string) (rowsA
 	rResult, err = tx.Exec(query, phone)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.DeleteTx rows affected: %w", err)
 	}
 
 	return
@@ -237,13 +235,13 @@ func (m *defaultPredefinedUsersModel) Update(ctx context.Context, cMap map[strin
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.Update rows affected: %w", err)
 	}
 
 	return
@@ -269,13 +267,13 @@ func (m *defaultPredefinedUsersModel) UpdateTx(tx *sqlx.Tx, cMap map[string]inte
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("predefined_users.UpdateTx rows affected: %w", err)
 	}
 
 	return

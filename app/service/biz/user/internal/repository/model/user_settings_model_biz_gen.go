@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserSettingsModel interface {
@@ -50,18 +48,18 @@ func (m *defaultUserSettingsModel) InsertOrUpdate(ctx context.Context, data *Use
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -78,18 +76,18 @@ func (m *defaultUserSettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserSetti
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_settings.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -107,7 +105,7 @@ func (m *defaultUserSettingsModel) SelectByKey(ctx context.Context, userId int64
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByKey(_), error: %v", err)
+			err = fmt.Errorf("user_settings.SelectByKey: %w", err)
 			return
 		} else {
 			err = nil
@@ -131,13 +129,13 @@ func (m *defaultUserSettingsModel) Update(ctx context.Context, value string, use
 	rResult, err = m.db.Exec(ctx, query, value, userId, key2)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("user_settings.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("user_settings.Update rows affected: %w", err)
 	}
 
 	return
@@ -153,13 +151,13 @@ func (m *defaultUserSettingsModel) UpdateTx(tx *sqlx.Tx, value string, userId in
 	rResult, err = tx.Exec(query, value, userId, key2)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("user_settings.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("user_settings.UpdateTx rows affected: %w", err)
 	}
 
 	return

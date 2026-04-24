@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -63,15 +64,23 @@ func newMessageReadOutboxModel(db *sqlx.DB) *defaultMessageReadOutboxModel {
 func (m *defaultMessageReadOutboxModel) Insert2(ctx context.Context, data *MessageReadOutbox) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `message_read_outbox` (%s) values (?, ?, ?, ?, ?)", messageReadOutboxRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.ReadUserId, data.ReadOutboxMaxId, data.ReadOutboxMaxDate)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.ReadUserId, data.ReadOutboxMaxId, data.ReadOutboxMaxDate)
+	if err != nil {
+		return nil, fmt.Errorf("message_read_outbox.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultMessageReadOutboxModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `message_read_outbox` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("message_read_outbox.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultMessageReadOutboxModel) FindOne(ctx context.Context, id int64) (*MessageReadOutbox, error) {
@@ -79,10 +88,13 @@ func (m *defaultMessageReadOutboxModel) FindOne(ctx context.Context, id int64) (
 	var resp MessageReadOutbox
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("message_read_outbox.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -96,8 +108,9 @@ func (m *defaultMessageReadOutboxModel) FindListByIdList(ctx context.Context, id
 	var resp []MessageReadOutbox
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("message_read_outbox.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -105,7 +118,11 @@ func (m *defaultMessageReadOutboxModel) Update2(ctx context.Context, data *Messa
 	query := fmt.Sprintf("update `message_read_outbox` set %s where `id` = ?", messageReadOutboxRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.ReadUserId, data.ReadOutboxMaxId, data.ReadOutboxMaxDate, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("message_read_outbox.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultMessageReadOutboxModel) FindOneByUserIdPeerDialogIdReadUserIdReadOutboxMaxId(ctx context.Context, userId int64, peerDialogId int64, readUserId int64, readOutboxMaxId int32) (*MessageReadOutbox, error) {
@@ -115,7 +132,11 @@ func (m *defaultMessageReadOutboxModel) FindOneByUserIdPeerDialogIdReadUserIdRea
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId, readUserId, readOutboxMaxId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("message_read_outbox.FindOneByUserIdPeerDialogIdReadUserIdReadOutboxMaxId: %w", err)
 	}
+
 	return &resp, nil
 }

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -68,15 +69,23 @@ func newUserContactsModel(db *sqlx.DB) *defaultUserContactsModel {
 func (m *defaultUserContactsModel) Insert2(ctx context.Context, data *UserContacts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_contacts` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userContactsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.OwnerUserId, data.ContactUserId, data.ContactPhone, data.ContactFirstName, data.ContactLastName, data.Mutual, data.CloseFriend, data.StoriesHidden, data.IsDeleted, data.Date2)
+	r, err := m.db.Exec(ctx, query, data.OwnerUserId, data.ContactUserId, data.ContactPhone, data.ContactFirstName, data.ContactLastName, data.Mutual, data.CloseFriend, data.StoriesHidden, data.IsDeleted, data.Date2)
+	if err != nil {
+		return nil, fmt.Errorf("user_contacts.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserContactsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_contacts` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_contacts.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserContactsModel) FindOne(ctx context.Context, id int64) (*UserContacts, error) {
@@ -84,10 +93,13 @@ func (m *defaultUserContactsModel) FindOne(ctx context.Context, id int64) (*User
 	var resp UserContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_contacts.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -101,8 +113,9 @@ func (m *defaultUserContactsModel) FindListByIdList(ctx context.Context, id ...i
 	var resp []UserContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_contacts.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -110,7 +123,11 @@ func (m *defaultUserContactsModel) Update2(ctx context.Context, data *UserContac
 	query := fmt.Sprintf("update `user_contacts` set %s where `id` = ?", userContactsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.OwnerUserId, data.ContactUserId, data.ContactPhone, data.ContactFirstName, data.ContactLastName, data.Mutual, data.CloseFriend, data.StoriesHidden, data.IsDeleted, data.Date2, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_contacts.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserContactsModel) FindOneByOwnerUserIdContactUserId(ctx context.Context, ownerUserId int64, contactUserId int64) (*UserContacts, error) {
@@ -120,7 +137,11 @@ func (m *defaultUserContactsModel) FindOneByOwnerUserIdContactUserId(ctx context
 	err := m.db.QueryRowPartial(ctx, &resp, query, ownerUserId, contactUserId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_contacts.FindOneByOwnerUserIdContactUserId: %w", err)
 	}
+
 	return &resp, nil
 }

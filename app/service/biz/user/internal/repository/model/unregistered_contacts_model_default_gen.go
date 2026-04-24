@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -63,15 +64,23 @@ func newUnregisteredContactsModel(db *sqlx.DB) *defaultUnregisteredContactsModel
 func (m *defaultUnregisteredContactsModel) Insert2(ctx context.Context, data *UnregisteredContacts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `unregistered_contacts` (%s) values (?, ?, ?, ?, ?)", unregisteredContactsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.Phone, data.ImporterUserId, data.ImportFirstName, data.ImportLastName, data.Imported)
+	r, err := m.db.Exec(ctx, query, data.Phone, data.ImporterUserId, data.ImportFirstName, data.ImportLastName, data.Imported)
+	if err != nil {
+		return nil, fmt.Errorf("unregistered_contacts.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUnregisteredContactsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `unregistered_contacts` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("unregistered_contacts.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUnregisteredContactsModel) FindOne(ctx context.Context, id int64) (*UnregisteredContacts, error) {
@@ -79,10 +88,13 @@ func (m *defaultUnregisteredContactsModel) FindOne(ctx context.Context, id int64
 	var resp UnregisteredContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("unregistered_contacts.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -96,8 +108,9 @@ func (m *defaultUnregisteredContactsModel) FindListByIdList(ctx context.Context,
 	var resp []UnregisteredContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unregistered_contacts.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -105,7 +118,11 @@ func (m *defaultUnregisteredContactsModel) Update2(ctx context.Context, data *Un
 	query := fmt.Sprintf("update `unregistered_contacts` set %s where `id` = ?", unregisteredContactsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Phone, data.ImporterUserId, data.ImportFirstName, data.ImportLastName, data.Imported, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("unregistered_contacts.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUnregisteredContactsModel) FindOneByPhoneImporterUserId(ctx context.Context, phone string, importerUserId int64) (*UnregisteredContacts, error) {
@@ -115,7 +132,11 @@ func (m *defaultUnregisteredContactsModel) FindOneByPhoneImporterUserId(ctx cont
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone, importerUserId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("unregistered_contacts.FindOneByPhoneImporterUserId: %w", err)
 	}
+
 	return &resp, nil
 }

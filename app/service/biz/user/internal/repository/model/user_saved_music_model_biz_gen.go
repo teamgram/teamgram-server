@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserSavedMusicModel interface {
@@ -54,18 +52,18 @@ func (m *defaultUserSavedMusicModel) InsertOrUpdate(ctx context.Context, data *U
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -82,18 +80,18 @@ func (m *defaultUserSavedMusicModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserSav
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_saved_music.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -109,7 +107,7 @@ func (m *defaultUserSavedMusicModel) SelectList(ctx context.Context, userId int6
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.SelectList: %w", err)
 		return
 	}
 
@@ -128,7 +126,7 @@ func (m *defaultUserSavedMusicModel) SelectListWithCB(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -159,7 +157,7 @@ func (m *defaultUserSavedMusicModel) SelectListByIdList(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.SelectListByIdList: %w", err)
 		return
 	}
 
@@ -183,7 +181,7 @@ func (m *defaultUserSavedMusicModel) SelectListByIdListWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.SelectListByIdListWithCB: %w", err)
 		return
 	}
 
@@ -211,13 +209,13 @@ func (m *defaultUserSavedMusicModel) Delete(ctx context.Context, userId int64, s
 	rResult, err = m.db.Exec(ctx, query, userId, savedMusicId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.Delete rows affected: %w", err)
 	}
 
 	return
@@ -233,13 +231,13 @@ func (m *defaultUserSavedMusicModel) DeleteTx(tx *sqlx.Tx, userId int64, savedMu
 	rResult, err = tx.Exec(query, userId, savedMusicId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_saved_music.DeleteTx rows affected: %w", err)
 	}
 
 	return

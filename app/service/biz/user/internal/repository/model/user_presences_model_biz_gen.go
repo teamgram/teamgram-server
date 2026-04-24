@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserPresencesModel interface {
@@ -53,18 +51,18 @@ func (m *defaultUserPresencesModel) InsertOrUpdate(ctx context.Context, data *Us
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -81,18 +79,18 @@ func (m *defaultUserPresencesModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserPres
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_presences.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -110,7 +108,7 @@ func (m *defaultUserPresencesModel) Select(ctx context.Context, userId int64) (r
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("user_presences.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -137,7 +135,7 @@ func (m *defaultUserPresencesModel) SelectList(ctx context.Context, idList []int
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_presences.SelectList: %w", err)
 		return
 	}
 
@@ -161,7 +159,7 @@ func (m *defaultUserPresencesModel) SelectListWithCB(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_presences.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -189,13 +187,13 @@ func (m *defaultUserPresencesModel) UpdateLastSeenAt(ctx context.Context, lastSe
 	rResult, err = m.db.Exec(ctx, query, lastSeenAt, expires, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateLastSeenAt(_), error: %v", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAt exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateLastSeenAt(_), error: %v", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAt rows affected: %w", err)
 	}
 
 	return
@@ -211,13 +209,13 @@ func (m *defaultUserPresencesModel) UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt i
 	rResult, err = tx.Exec(query, lastSeenAt, expires, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateLastSeenAt(_), error: %v", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAtTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateLastSeenAt(_), error: %v", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAtTx rows affected: %w", err)
 	}
 
 	return

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -61,15 +62,23 @@ func newUserPrivaciesModel(db *sqlx.DB) *defaultUserPrivaciesModel {
 func (m *defaultUserPrivaciesModel) Insert2(ctx context.Context, data *UserPrivacies) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_privacies` (%s) values (?, ?, ?)", userPrivaciesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules)
+	if err != nil {
+		return nil, fmt.Errorf("user_privacies.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserPrivaciesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_privacies` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_privacies.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPrivaciesModel) FindOne(ctx context.Context, id int64) (*UserPrivacies, error) {
@@ -77,10 +86,13 @@ func (m *defaultUserPrivaciesModel) FindOne(ctx context.Context, id int64) (*Use
 	var resp UserPrivacies
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_privacies.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -94,8 +106,9 @@ func (m *defaultUserPrivaciesModel) FindListByIdList(ctx context.Context, id ...
 	var resp []UserPrivacies
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_privacies.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -103,7 +116,11 @@ func (m *defaultUserPrivaciesModel) Update2(ctx context.Context, data *UserPriva
 	query := fmt.Sprintf("update `user_privacies` set %s where `id` = ?", userPrivaciesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.KeyType, data.Rules, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_privacies.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPrivaciesModel) FindOneByUserIdKeyType(ctx context.Context, userId int64, keyType int32) (*UserPrivacies, error) {
@@ -113,7 +130,11 @@ func (m *defaultUserPrivaciesModel) FindOneByUserIdKeyType(ctx context.Context, 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, keyType)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_privacies.FindOneByUserIdKeyType: %w", err)
 	}
+
 	return &resp, nil
 }

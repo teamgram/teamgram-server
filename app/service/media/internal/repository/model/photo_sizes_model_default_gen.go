@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -71,15 +72,23 @@ func newPhotoSizesModel(db *sqlx.DB) *defaultPhotoSizesModel {
 func (m *defaultPhotoSizesModel) Insert2(ctx context.Context, data *PhotoSizes) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `photo_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", photoSizesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.PhotoSizeId, data.SizeType, data.VolumeId, data.LocalId, data.Secret, data.Width, data.Height, data.FileSize, data.FilePath, data.HasStripped, data.StrippedBytes, data.CachedType, data.CachedBytes)
+	r, err := m.db.Exec(ctx, query, data.PhotoSizeId, data.SizeType, data.VolumeId, data.LocalId, data.Secret, data.Width, data.Height, data.FileSize, data.FilePath, data.HasStripped, data.StrippedBytes, data.CachedType, data.CachedBytes)
+	if err != nil {
+		return nil, fmt.Errorf("photo_sizes.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultPhotoSizesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `photo_sizes` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("photo_sizes.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhotoSizesModel) FindOne(ctx context.Context, id int64) (*PhotoSizes, error) {
@@ -87,10 +96,13 @@ func (m *defaultPhotoSizesModel) FindOne(ctx context.Context, id int64) (*PhotoS
 	var resp PhotoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("photo_sizes.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -104,8 +116,9 @@ func (m *defaultPhotoSizesModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []PhotoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("photo_sizes.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -113,7 +126,11 @@ func (m *defaultPhotoSizesModel) Update2(ctx context.Context, data *PhotoSizes) 
 	query := fmt.Sprintf("update `photo_sizes` set %s where `id` = ?", photoSizesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.PhotoSizeId, data.SizeType, data.VolumeId, data.LocalId, data.Secret, data.Width, data.Height, data.FileSize, data.FilePath, data.HasStripped, data.StrippedBytes, data.CachedType, data.CachedBytes, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("photo_sizes.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhotoSizesModel) FindOneByPhotoSizeIdSizeType(ctx context.Context, photoSizeId int64, sizeType string) (*PhotoSizes, error) {
@@ -123,7 +140,11 @@ func (m *defaultPhotoSizesModel) FindOneByPhotoSizeIdSizeType(ctx context.Contex
 	err := m.db.QueryRowPartial(ctx, &resp, query, photoSizeId, sizeType)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("photo_sizes.FindOneByPhotoSizeIdSizeType: %w", err)
 	}
+
 	return &resp, nil
 }

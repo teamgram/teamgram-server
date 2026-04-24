@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizImportedContactsModel interface {
@@ -57,18 +55,18 @@ func (m *defaultImportedContactsModel) InsertOrUpdate(ctx context.Context, data 
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -85,18 +83,18 @@ func (m *defaultImportedContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Impor
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("imported_contacts.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -112,7 +110,7 @@ func (m *defaultImportedContactsModel) SelectList(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectList: %w", err)
 		return
 	}
 
@@ -131,7 +129,7 @@ func (m *defaultImportedContactsModel) SelectListWithCB(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -162,7 +160,7 @@ func (m *defaultImportedContactsModel) SelectListByImportedList(ctx context.Cont
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectListByImportedList: %w", err)
 		return
 	}
 
@@ -186,7 +184,7 @@ func (m *defaultImportedContactsModel) SelectListByImportedListWithCB(ctx contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectListByImportedListWithCB: %w", err)
 		return
 	}
 
@@ -212,7 +210,7 @@ func (m *defaultImportedContactsModel) SelectAllList(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectAllList: %w", err)
 		return
 	}
 
@@ -231,7 +229,7 @@ func (m *defaultImportedContactsModel) SelectAllListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllList(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.SelectAllListWithCB: %w", err)
 		return
 	}
 
@@ -259,13 +257,13 @@ func (m *defaultImportedContactsModel) Delete(ctx context.Context, userId int64,
 	rResult, err = m.db.Exec(ctx, query, userId, importedUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.Delete rows affected: %w", err)
 	}
 
 	return
@@ -281,13 +279,13 @@ func (m *defaultImportedContactsModel) DeleteTx(tx *sqlx.Tx, userId int64, impor
 	rResult, err = tx.Exec(query, userId, importedUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("imported_contacts.DeleteTx rows affected: %w", err)
 	}
 
 	return

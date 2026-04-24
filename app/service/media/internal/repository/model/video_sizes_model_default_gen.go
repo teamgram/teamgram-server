@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -65,15 +66,23 @@ func newVideoSizesModel(db *sqlx.DB) *defaultVideoSizesModel {
 func (m *defaultVideoSizesModel) Insert2(ctx context.Context, data *VideoSizes) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `video_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?)", videoSizesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath)
+	r, err := m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath)
+	if err != nil {
+		return nil, fmt.Errorf("video_sizes.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultVideoSizesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `video_sizes` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("video_sizes.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultVideoSizesModel) FindOne(ctx context.Context, id int64) (*VideoSizes, error) {
@@ -81,10 +90,13 @@ func (m *defaultVideoSizesModel) FindOne(ctx context.Context, id int64) (*VideoS
 	var resp VideoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("video_sizes.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -98,8 +110,9 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []VideoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("video_sizes.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -107,7 +120,11 @@ func (m *defaultVideoSizesModel) Update2(ctx context.Context, data *VideoSizes) 
 	query := fmt.Sprintf("update `video_sizes` set %s where `id` = ?", videoSizesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("video_sizes.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultVideoSizesModel) FindOneByVideoSizeIdSizeType(ctx context.Context, videoSizeId int64, sizeType string) (*VideoSizes, error) {
@@ -117,7 +134,11 @@ func (m *defaultVideoSizesModel) FindOneByVideoSizeIdSizeType(ctx context.Contex
 	err := m.db.QueryRowPartial(ctx, &resp, query, videoSizeId, sizeType)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("video_sizes.FindOneByVideoSizeIdSizeType: %w", err)
 	}
+
 	return &resp, nil
 }

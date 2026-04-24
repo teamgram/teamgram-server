@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -62,15 +63,23 @@ func newUserSavedMusicModel(db *sqlx.DB) *defaultUserSavedMusicModel {
 func (m *defaultUserSavedMusicModel) Insert2(ctx context.Context, data *UserSavedMusic) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_saved_music` (%s) values (?, ?, ?, ?)", userSavedMusicRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.SavedMusicId, data.Order2, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.SavedMusicId, data.Order2, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("user_saved_music.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserSavedMusicModel) Delete2(ctx context.Context, id int32) error {
 	query := "delete from `user_saved_music` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_saved_music.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserSavedMusicModel) FindOne(ctx context.Context, id int32) (*UserSavedMusic, error) {
@@ -78,10 +87,13 @@ func (m *defaultUserSavedMusicModel) FindOne(ctx context.Context, id int32) (*Us
 	var resp UserSavedMusic
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_saved_music.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -94,8 +106,9 @@ func (m *defaultUserSavedMusicModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserSavedMusic
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_saved_music.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -103,7 +116,11 @@ func (m *defaultUserSavedMusicModel) Update2(ctx context.Context, data *UserSave
 	query := fmt.Sprintf("update `user_saved_music` set %s where `id` = ?", userSavedMusicRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.SavedMusicId, data.Order2, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_saved_music.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserSavedMusicModel) FindOneByUserIdSavedMusicId(ctx context.Context, userId int64, savedMusicId int64) (*UserSavedMusic, error) {
@@ -113,7 +130,11 @@ func (m *defaultUserSavedMusicModel) FindOneByUserIdSavedMusicId(ctx context.Con
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, savedMusicId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_saved_music.FindOneByUserIdSavedMusicId: %w", err)
 	}
+
 	return &resp, nil
 }

@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserPeerBlocksModel interface {
@@ -56,18 +54,18 @@ func (m *defaultUserPeerBlocksModel) InsertOrUpdate(ctx context.Context, data *U
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -84,18 +82,18 @@ func (m *defaultUserPeerBlocksModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserPee
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_blocks.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -111,7 +109,7 @@ func (m *defaultUserPeerBlocksModel) SelectList(ctx context.Context, userId int6
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.SelectList: %w", err)
 		return
 	}
 
@@ -130,7 +128,7 @@ func (m *defaultUserPeerBlocksModel) SelectListWithCB(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -160,7 +158,7 @@ func (m *defaultUserPeerBlocksModel) SelectListByIdList(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.SelectListByIdList: %w", err)
 	}
 
 	return
@@ -180,7 +178,7 @@ func (m *defaultUserPeerBlocksModel) SelectListByIdListWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.SelectListByIdListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -205,7 +203,7 @@ func (m *defaultUserPeerBlocksModel) Select(ctx context.Context, userId int64, p
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("user_peer_blocks.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -229,13 +227,13 @@ func (m *defaultUserPeerBlocksModel) Delete(ctx context.Context, userId int64, p
 	rResult, err = m.db.Exec(ctx, query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.Delete rows affected: %w", err)
 	}
 
 	return
@@ -251,13 +249,13 @@ func (m *defaultUserPeerBlocksModel) DeleteTx(tx *sqlx.Tx, userId int64, peerTyp
 	rResult, err = tx.Exec(query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_blocks.DeleteTx rows affected: %w", err)
 	}
 
 	return

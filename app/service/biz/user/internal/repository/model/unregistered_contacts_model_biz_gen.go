@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUnregisteredContactsModel interface {
@@ -57,18 +55,18 @@ func (m *defaultUnregisteredContactsModel) InsertOrUpdate(ctx context.Context, d
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -85,18 +83,18 @@ func (m *defaultUnregisteredContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *U
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -112,7 +110,7 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhone(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.SelectImportersByPhone: %w", err)
 		return
 	}
 
@@ -131,7 +129,7 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhoneWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.SelectImportersByPhoneWithCB: %w", err)
 		return
 	}
 
@@ -159,13 +157,13 @@ func (m *defaultUnregisteredContactsModel) UpdateContactName(ctx context.Context
 	rResult, err = m.db.Exec(ctx, query, importFirstName, importLastName, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactName exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactName rows affected: %w", err)
 	}
 
 	return
@@ -181,13 +179,13 @@ func (m *defaultUnregisteredContactsModel) UpdateContactNameTx(tx *sqlx.Tx, impo
 	rResult, err = tx.Exec(query, importFirstName, importLastName, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactNameTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactNameTx rows affected: %w", err)
 	}
 
 	return
@@ -209,13 +207,13 @@ func (m *defaultUnregisteredContactsModel) DeleteContacts(ctx context.Context, i
 	rResult, err = m.db.Exec(ctx, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContacts exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContacts rows affected: %w", err)
 	}
 
 	return
@@ -236,13 +234,13 @@ func (m *defaultUnregisteredContactsModel) DeleteContactsTx(tx *sqlx.Tx, idList 
 	rResult, err = tx.Exec(query)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContactsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContactsTx rows affected: %w", err)
 	}
 
 	return
@@ -260,13 +258,13 @@ func (m *defaultUnregisteredContactsModel) DeleteImportersByPhone(ctx context.Co
 	rResult, err = m.db.Exec(ctx, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhone exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhone rows affected: %w", err)
 	}
 
 	return
@@ -282,13 +280,13 @@ func (m *defaultUnregisteredContactsModel) DeleteImportersByPhoneTx(tx *sqlx.Tx,
 	rResult, err = tx.Exec(query, phone)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhoneTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteImportersByPhone(_), error: %v", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhoneTx rows affected: %w", err)
 	}
 
 	return

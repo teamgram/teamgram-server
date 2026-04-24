@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizChatInvitesModel interface {
@@ -65,18 +63,18 @@ func (m *defaultChatInvitesModel) Insert(ctx context.Context, data *ChatInvites)
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("chat_invites.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chat_invites.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chat_invites.Insert rows affected: %w", err)
 	}
 
 	return
@@ -93,18 +91,18 @@ func (m *defaultChatInvitesModel) InsertTx(tx *sqlx.Tx, data *ChatInvites) (last
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("chat_invites.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chat_invites.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chat_invites.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -120,7 +118,7 @@ func (m *defaultChatInvitesModel) SelectListByAdminId(ctx context.Context, chatI
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByAdminId(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectListByAdminId: %w", err)
 		return
 	}
 
@@ -139,7 +137,7 @@ func (m *defaultChatInvitesModel) SelectListByAdminIdWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByAdminId(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectListByAdminIdWithCB: %w", err)
 		return
 	}
 
@@ -167,7 +165,7 @@ func (m *defaultChatInvitesModel) SelectByLink(ctx context.Context, link string)
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
+			err = fmt.Errorf("chat_invites.SelectByLink: %w", err)
 			return
 		} else {
 			err = nil
@@ -189,7 +187,7 @@ func (m *defaultChatInvitesModel) SelectAll(ctx context.Context) (rList []ChatIn
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectAll: %w", err)
 		return
 	}
 
@@ -208,7 +206,7 @@ func (m *defaultChatInvitesModel) SelectAllWithCB(ctx context.Context, cb func(s
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectAllWithCB: %w", err)
 		return
 	}
 
@@ -234,7 +232,7 @@ func (m *defaultChatInvitesModel) SelectListByChatId(ctx context.Context, chatId
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByChatId(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectListByChatId: %w", err)
 		return
 	}
 
@@ -253,7 +251,7 @@ func (m *defaultChatInvitesModel) SelectListByChatIdWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByChatId(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.SelectListByChatIdWithCB: %w", err)
 		return
 	}
 
@@ -291,13 +289,13 @@ func (m *defaultChatInvitesModel) Update(ctx context.Context, cMap map[string]in
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.Update rows affected: %w", err)
 	}
 
 	return
@@ -324,13 +322,13 @@ func (m *defaultChatInvitesModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interfac
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.UpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -347,13 +345,13 @@ func (m *defaultChatInvitesModel) DeleteByLink(ctx context.Context, chatId int64
 	rResult, err = m.db.Exec(ctx, query, chatId, link)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteByLink(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByLink exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteByLink(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByLink rows affected: %w", err)
 	}
 
 	return
@@ -369,13 +367,13 @@ func (m *defaultChatInvitesModel) DeleteByLinkTx(tx *sqlx.Tx, chatId int64, link
 	rResult, err = tx.Exec(query, chatId, link)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteByLink(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByLinkTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteByLink(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByLinkTx rows affected: %w", err)
 	}
 
 	return
@@ -392,13 +390,13 @@ func (m *defaultChatInvitesModel) DeleteByRevoked(ctx context.Context, chatId in
 	rResult, err = m.db.Exec(ctx, query, chatId, adminId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteByRevoked(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByRevoked exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteByRevoked(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByRevoked rows affected: %w", err)
 	}
 
 	return
@@ -414,13 +412,13 @@ func (m *defaultChatInvitesModel) DeleteByRevokedTx(tx *sqlx.Tx, chatId int64, a
 	rResult, err = tx.Exec(query, chatId, adminId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteByRevoked(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByRevokedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteByRevoked(_), error: %v", err)
+		err = fmt.Errorf("chat_invites.DeleteByRevokedTx rows affected: %w", err)
 	}
 
 	return

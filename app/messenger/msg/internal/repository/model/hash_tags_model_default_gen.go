@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -64,15 +65,23 @@ func newHashTagsModel(db *sqlx.DB) *defaultHashTagsModel {
 func (m *defaultHashTagsModel) Insert2(ctx context.Context, data *HashTags) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `hash_tags` (%s) values (?, ?, ?, ?, ?, ?)", hashTagsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("hash_tags.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultHashTagsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `hash_tags` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("hash_tags.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultHashTagsModel) FindOne(ctx context.Context, id int64) (*HashTags, error) {
@@ -80,10 +89,13 @@ func (m *defaultHashTagsModel) FindOne(ctx context.Context, id int64) (*HashTags
 	var resp HashTags
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("hash_tags.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -97,8 +109,9 @@ func (m *defaultHashTagsModel) FindListByIdList(ctx context.Context, id ...int64
 	var resp []HashTags
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("hash_tags.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -106,7 +119,11 @@ func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) erro
 	query := fmt.Sprintf("update `hash_tags` set %s where `id` = ?", hashTagsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("hash_tags.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultHashTagsModel) FindOneByUserIdHashTagHashTagMessageId(ctx context.Context, userId int64, hashTag string, hashTagMessageId int32) (*HashTags, error) {
@@ -116,7 +133,11 @@ func (m *defaultHashTagsModel) FindOneByUserIdHashTagHashTagMessageId(ctx contex
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, hashTag, hashTagMessageId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("hash_tags.FindOneByUserIdHashTagHashTagMessageId: %w", err)
 	}
+
 	return &resp, nil
 }

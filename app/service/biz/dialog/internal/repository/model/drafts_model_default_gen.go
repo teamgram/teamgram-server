@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -63,15 +64,23 @@ func newDraftsModel(db *sqlx.DB) *defaultDraftsModel {
 func (m *defaultDraftsModel) Insert2(ctx context.Context, data *Drafts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `drafts` (%s) values (?, ?, ?, ?, ?)", draftsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.DraftType, data.DraftMessageData, data.Date2)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.DraftType, data.DraftMessageData, data.Date2)
+	if err != nil {
+		return nil, fmt.Errorf("drafts.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultDraftsModel) Delete2(ctx context.Context, id int32) error {
 	query := "delete from `drafts` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("drafts.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDraftsModel) FindOne(ctx context.Context, id int32) (*Drafts, error) {
@@ -79,10 +88,13 @@ func (m *defaultDraftsModel) FindOne(ctx context.Context, id int32) (*Drafts, er
 	var resp Drafts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("drafts.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -95,8 +107,9 @@ func (m *defaultDraftsModel) FindListByIdList(ctx context.Context, id ...int32) 
 	var resp []Drafts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("drafts.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -104,7 +117,11 @@ func (m *defaultDraftsModel) Update2(ctx context.Context, data *Drafts) error {
 	query := fmt.Sprintf("update `drafts` set %s where `id` = ?", draftsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerDialogId, data.DraftType, data.DraftMessageData, data.Date2, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("drafts.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDraftsModel) FindOneByUserIdPeerDialogId(ctx context.Context, userId int32, peerDialogId int64) (*Drafts, error) {
@@ -114,7 +131,11 @@ func (m *defaultDraftsModel) FindOneByUserIdPeerDialogId(ctx context.Context, us
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("drafts.FindOneByUserIdPeerDialogId: %w", err)
 	}
+
 	return &resp, nil
 }

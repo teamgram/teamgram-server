@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizPopularContactsModel interface {
@@ -56,18 +54,18 @@ func (m *defaultPopularContactsModel) InsertOrUpdate(ctx context.Context, data *
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -84,18 +82,18 @@ func (m *defaultPopularContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Popula
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("popular_contacts.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -113,13 +111,13 @@ func (m *defaultPopularContactsModel) IncreaseImporters(ctx context.Context, pho
 	rResult, err = m.db.Exec(ctx, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in IncreaseImporters(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImporters exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in IncreaseImporters(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImporters rows affected: %w", err)
 	}
 
 	return
@@ -135,13 +133,13 @@ func (m *defaultPopularContactsModel) IncreaseImportersTx(tx *sqlx.Tx, phone str
 	rResult, err = tx.Exec(query, phone)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in IncreaseImporters(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in IncreaseImporters(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersTx rows affected: %w", err)
 	}
 
 	return
@@ -163,13 +161,13 @@ func (m *defaultPopularContactsModel) IncreaseImportersList(ctx context.Context,
 	rResult, err = m.db.Exec(ctx, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in IncreaseImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in IncreaseImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersList rows affected: %w", err)
 	}
 
 	return
@@ -190,13 +188,13 @@ func (m *defaultPopularContactsModel) IncreaseImportersListTx(tx *sqlx.Tx, phone
 	rResult, err = tx.Exec(query)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in IncreaseImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersListTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in IncreaseImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.IncreaseImportersListTx rows affected: %w", err)
 	}
 
 	return
@@ -214,7 +212,7 @@ func (m *defaultPopularContactsModel) SelectImporters(ctx context.Context, phone
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectImporters(_), error: %v", err)
+			err = fmt.Errorf("popular_contacts.SelectImporters: %w", err)
 			return
 		} else {
 			err = nil
@@ -241,7 +239,7 @@ func (m *defaultPopularContactsModel) SelectImportersList(ctx context.Context, p
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.SelectImportersList: %w", err)
 		return
 	}
 
@@ -265,7 +263,7 @@ func (m *defaultPopularContactsModel) SelectImportersListWithCB(ctx context.Cont
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
+		err = fmt.Errorf("popular_contacts.SelectImportersListWithCB: %w", err)
 		return
 	}
 

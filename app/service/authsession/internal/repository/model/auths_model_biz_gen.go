@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizAuthsModel interface {
@@ -50,18 +48,18 @@ func (m *defaultAuthsModel) InsertOrUpdateLayer(ctx context.Context, data *Auths
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdateLayer(%v), error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayer named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdateLayer(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayer last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdateLayer(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayer rows affected: %w", err)
 	}
 
 	return
@@ -78,18 +76,18 @@ func (m *defaultAuthsModel) InsertOrUpdateLayerTx(tx *sqlx.Tx, data *Auths) (las
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdateLayer(%v), error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayerTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdateLayer(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayerTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdateLayer(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateLayerTx rows affected: %w", err)
 	}
 
 	return
@@ -105,18 +103,18 @@ func (m *defaultAuthsModel) InsertOrUpdate(ctx context.Context, data *Auths) (la
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -133,18 +131,18 @@ func (m *defaultAuthsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Auths) (lastInse
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("auths.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -162,7 +160,7 @@ func (m *defaultAuthsModel) SelectByAuthKeyId(ctx context.Context, authKeyId int
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
+			err = fmt.Errorf("auths.SelectByAuthKeyId: %w", err)
 			return
 		} else {
 			err = nil

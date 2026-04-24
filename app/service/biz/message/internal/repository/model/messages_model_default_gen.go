@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -83,15 +84,23 @@ func newMessagesModel(db *sqlx.DB) *defaultMessagesModel {
 func (m *defaultMessagesModel) Insert2(ctx context.Context, data *Messages) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `messages` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", messagesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.UserMessageBoxId, data.DialogId1, data.DialogId2, data.DialogMessageId, data.SenderUserId, data.PeerType, data.PeerId, data.RandomId, data.MessageFilterType, data.MessageData, data.Message, data.Mentioned, data.MediaUnread, data.Pinned, data.HasReaction, data.Reaction, data.ReactionDate, data.ReactionUnread, data.Date2, data.TtlPeriod, data.SavedPeerType, data.SavedPeerId, data.OutboxReadDate, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.UserMessageBoxId, data.DialogId1, data.DialogId2, data.DialogMessageId, data.SenderUserId, data.PeerType, data.PeerId, data.RandomId, data.MessageFilterType, data.MessageData, data.Message, data.Mentioned, data.MediaUnread, data.Pinned, data.HasReaction, data.Reaction, data.ReactionDate, data.ReactionUnread, data.Date2, data.TtlPeriod, data.SavedPeerType, data.SavedPeerId, data.OutboxReadDate, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("messages.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultMessagesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `messages` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("messages.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultMessagesModel) FindOne(ctx context.Context, id int64) (*Messages, error) {
@@ -99,10 +108,13 @@ func (m *defaultMessagesModel) FindOne(ctx context.Context, id int64) (*Messages
 	var resp Messages
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("messages.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -116,8 +128,9 @@ func (m *defaultMessagesModel) FindListByIdList(ctx context.Context, id ...int64
 	var resp []Messages
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("messages.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -125,7 +138,11 @@ func (m *defaultMessagesModel) Update2(ctx context.Context, data *Messages) erro
 	query := fmt.Sprintf("update `messages` set %s where `id` = ?", messagesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.UserMessageBoxId, data.DialogId1, data.DialogId2, data.DialogMessageId, data.SenderUserId, data.PeerType, data.PeerId, data.RandomId, data.MessageFilterType, data.MessageData, data.Message, data.Mentioned, data.MediaUnread, data.Pinned, data.HasReaction, data.Reaction, data.ReactionDate, data.ReactionUnread, data.Date2, data.TtlPeriod, data.SavedPeerType, data.SavedPeerId, data.OutboxReadDate, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("messages.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultMessagesModel) FindOneByUserIdUserMessageBoxId(ctx context.Context, userId int64, userMessageBoxId int32) (*Messages, error) {
@@ -135,7 +152,11 @@ func (m *defaultMessagesModel) FindOneByUserIdUserMessageBoxId(ctx context.Conte
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, userMessageBoxId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("messages.FindOneByUserIdUserMessageBoxId: %w", err)
 	}
+
 	return &resp, nil
 }

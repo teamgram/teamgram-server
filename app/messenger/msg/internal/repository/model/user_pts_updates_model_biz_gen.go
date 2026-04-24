@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserPtsUpdatesModel interface {
@@ -50,18 +48,18 @@ func (m *defaultUserPtsUpdatesModel) Insert(ctx context.Context, data *UserPtsUp
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.Insert rows affected: %w", err)
 	}
 
 	return
@@ -78,18 +76,18 @@ func (m *defaultUserPtsUpdatesModel) InsertTx(tx *sqlx.Tx, data *UserPtsUpdates)
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_pts_updates.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -107,7 +105,7 @@ func (m *defaultUserPtsUpdatesModel) SelectLastPts(ctx context.Context, userId i
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectLastPts(_), error: %v", err)
+			err = fmt.Errorf("user_pts_updates.SelectLastPts: %w", err)
 			return
 		} else {
 			err = nil
@@ -129,7 +127,7 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPts(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByGtPts(_), error: %v", err)
+		err = fmt.Errorf("user_pts_updates.SelectByGtPts: %w", err)
 		return
 	}
 
@@ -148,7 +146,7 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPtsWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByGtPts(_), error: %v", err)
+		err = fmt.Errorf("user_pts_updates.SelectByGtPtsWithCB: %w", err)
 		return
 	}
 

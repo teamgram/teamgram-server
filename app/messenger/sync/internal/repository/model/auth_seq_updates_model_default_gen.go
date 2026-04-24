@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -64,15 +65,23 @@ func newAuthSeqUpdatesModel(db *sqlx.DB) *defaultAuthSeqUpdatesModel {
 func (m *defaultAuthSeqUpdatesModel) Insert2(ctx context.Context, data *AuthSeqUpdates) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auth_seq_updates` (%s) values (?, ?, ?, ?, ?, ?)", authSeqUpdatesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.AuthId, data.UserId, data.Seq, data.UpdateType, data.UpdateData, data.Date2)
+	r, err := m.db.Exec(ctx, query, data.AuthId, data.UserId, data.Seq, data.UpdateType, data.UpdateData, data.Date2)
+	if err != nil {
+		return nil, fmt.Errorf("auth_seq_updates.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultAuthSeqUpdatesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_seq_updates` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_seq_updates.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultAuthSeqUpdatesModel) FindOne(ctx context.Context, id int64) (*AuthSeqUpdates, error) {
@@ -80,10 +89,13 @@ func (m *defaultAuthSeqUpdatesModel) FindOne(ctx context.Context, id int64) (*Au
 	var resp AuthSeqUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("auth_seq_updates.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -97,8 +109,9 @@ func (m *defaultAuthSeqUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	var resp []AuthSeqUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("auth_seq_updates.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -106,7 +119,11 @@ func (m *defaultAuthSeqUpdatesModel) Update2(ctx context.Context, data *AuthSeqU
 	query := fmt.Sprintf("update `auth_seq_updates` set %s where `id` = ?", authSeqUpdatesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthId, data.UserId, data.Seq, data.UpdateType, data.UpdateData, data.Date2, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_seq_updates.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultAuthSeqUpdatesModel) FindOneByAuthIdUserIdSeq(ctx context.Context, authId int64, userId int64, seq int32) (*AuthSeqUpdates, error) {
@@ -116,7 +133,11 @@ func (m *defaultAuthSeqUpdatesModel) FindOneByAuthIdUserIdSeq(ctx context.Contex
 	err := m.db.QueryRowPartial(ctx, &resp, query, authId, userId, seq)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("auth_seq_updates.FindOneByAuthIdUserIdSeq: %w", err)
 	}
+
 	return &resp, nil
 }

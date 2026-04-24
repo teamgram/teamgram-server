@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -66,15 +67,23 @@ func newAuthUsersModel(db *sqlx.DB) *defaultAuthUsersModel {
 func (m *defaultAuthUsersModel) Insert2(ctx context.Context, data *AuthUsers) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auth_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", authUsersRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("auth_users.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_users` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_users.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultAuthUsersModel) FindOne(ctx context.Context, id int64) (*AuthUsers, error) {
@@ -82,10 +91,13 @@ func (m *defaultAuthUsersModel) FindOne(ctx context.Context, id int64) (*AuthUse
 	var resp AuthUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("auth_users.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -99,8 +111,9 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 	var resp []AuthUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("auth_users.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -108,7 +121,11 @@ func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) er
 	query := fmt.Sprintf("update `auth_users` set %s where `id` = ?", authUsersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_users.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultAuthUsersModel) FindOneByAuthKeyIdUserId(ctx context.Context, authKeyId int64, userId int64) (*AuthUsers, error) {
@@ -118,7 +135,11 @@ func (m *defaultAuthUsersModel) FindOneByAuthKeyIdUserId(ctx context.Context, au
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("auth_users.FindOneByAuthKeyIdUserId: %w", err)
 	}
+
 	return &resp, nil
 }

@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizDialogsModel interface {
@@ -136,18 +134,18 @@ func (m *defaultDialogsModel) InsertIgnore(ctx context.Context, data *Dialogs) (
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertIgnore(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnore named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnore last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnore rows affected: %w", err)
 	}
 
 	return
@@ -164,18 +162,18 @@ func (m *defaultDialogsModel) InsertIgnoreTx(tx *sqlx.Tx, data *Dialogs) (lastIn
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertIgnore(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnoreTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnoreTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertIgnoreTx rows affected: %w", err)
 	}
 
 	return
@@ -191,18 +189,18 @@ func (m *defaultDialogsModel) InsertOrUpdate(ctx context.Context, data *Dialogs)
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -219,18 +217,18 @@ func (m *defaultDialogsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Dialogs) (last
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -246,18 +244,18 @@ func (m *defaultDialogsModel) InsertOrUpdateDialog(ctx context.Context, data *Di
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdateDialog(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialog named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdateDialog(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialog last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdateDialog(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialog rows affected: %w", err)
 	}
 
 	return
@@ -274,18 +272,18 @@ func (m *defaultDialogsModel) InsertOrUpdateDialogTx(tx *sqlx.Tx, data *Dialogs)
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdateDialog(%v), error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialogTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdateDialog(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialogTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdateDialog(%v)_error: %v", data, err)
+		err = fmt.Errorf("dialogs.InsertOrUpdateDialogTx rows affected: %w", err)
 	}
 
 	return
@@ -303,13 +301,13 @@ func (m *defaultDialogsModel) UpdateOutboxDialog(ctx context.Context, topMessage
 	rResult, err = m.db.Exec(ctx, query, topMessage, date2, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateOutboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateOutboxDialog exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateOutboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateOutboxDialog rows affected: %w", err)
 	}
 
 	return
@@ -325,13 +323,13 @@ func (m *defaultDialogsModel) UpdateOutboxDialogTx(tx *sqlx.Tx, topMessage int32
 	rResult, err = tx.Exec(query, topMessage, date2, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateOutboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateOutboxDialogTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateOutboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateOutboxDialogTx rows affected: %w", err)
 	}
 
 	return
@@ -360,13 +358,13 @@ func (m *defaultDialogsModel) UpdateInboxDialog(ctx context.Context, cMap map[st
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateInboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateInboxDialog exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateInboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateInboxDialog rows affected: %w", err)
 	}
 
 	return
@@ -394,13 +392,13 @@ func (m *defaultDialogsModel) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]i
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateInboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateInboxDialogTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateInboxDialog(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateInboxDialogTx rows affected: %w", err)
 	}
 
 	return
@@ -416,7 +414,7 @@ func (m *defaultDialogsModel) SelectPinnedDialogs(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectPinnedDialogs: %w", err)
 		return
 	}
 
@@ -435,7 +433,7 @@ func (m *defaultDialogsModel) SelectPinnedDialogsWithCB(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectPinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -461,7 +459,7 @@ func (m *defaultDialogsModel) SelectFolderPinnedDialogs(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectFolderPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectFolderPinnedDialogs: %w", err)
 		return
 	}
 
@@ -480,7 +478,7 @@ func (m *defaultDialogsModel) SelectFolderPinnedDialogsWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectFolderPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectFolderPinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -511,7 +509,7 @@ func (m *defaultDialogsModel) SelectPeerDialogList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectPeerDialogList: %w", err)
 		return
 	}
 
@@ -535,7 +533,7 @@ func (m *defaultDialogsModel) SelectPeerDialogListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectPeerDialogListWithCB: %w", err)
 		return
 	}
 
@@ -563,7 +561,7 @@ func (m *defaultDialogsModel) SelectDialog(ctx context.Context, userId int64, pe
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectDialog(_), error: %v", err)
+			err = fmt.Errorf("dialogs.SelectDialog: %w", err)
 			return
 		} else {
 			err = nil
@@ -587,7 +585,7 @@ func (m *defaultDialogsModel) SelectByPeerDialogId(ctx context.Context, userId i
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByPeerDialogId(_), error: %v", err)
+			err = fmt.Errorf("dialogs.SelectByPeerDialogId: %w", err)
 			return
 		} else {
 			err = nil
@@ -609,7 +607,7 @@ func (m *defaultDialogsModel) SelectDialogs(ctx context.Context, userId int64, f
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogs: %w", err)
 		return
 	}
 
@@ -628,7 +626,7 @@ func (m *defaultDialogsModel) SelectDialogsWithCB(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogsWithCB: %w", err)
 		return
 	}
 
@@ -654,7 +652,7 @@ func (m *defaultDialogsModel) SelectExcludePinnedDialogs(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectExcludePinnedDialogs: %w", err)
 		return
 	}
 
@@ -673,7 +671,7 @@ func (m *defaultDialogsModel) SelectExcludePinnedDialogsWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectExcludePinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -699,7 +697,7 @@ func (m *defaultDialogsModel) SelectExcludeFolderPinnedDialogs(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectExcludeFolderPinnedDialogs: %w", err)
 		return
 	}
 
@@ -718,7 +716,7 @@ func (m *defaultDialogsModel) SelectExcludeFolderPinnedDialogsWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectExcludeFolderPinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -746,13 +744,13 @@ func (m *defaultDialogsModel) UpdateReadInboxMaxId(ctx context.Context, unreadCo
 	rResult, err = m.db.Exec(ctx, query, unreadCount, readInboxMaxId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadInboxMaxId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadInboxMaxId rows affected: %w", err)
 	}
 
 	return
@@ -768,13 +766,13 @@ func (m *defaultDialogsModel) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, unreadCount in
 	rResult, err = tx.Exec(query, unreadCount, readInboxMaxId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadInboxMaxIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadInboxMaxIdTx rows affected: %w", err)
 	}
 
 	return
@@ -792,13 +790,13 @@ func (m *defaultDialogsModel) UpdateReadOutboxMaxId(ctx context.Context, readOut
 	rResult, err = m.db.Exec(ctx, query, readOutboxMaxId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateReadOutboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateReadOutboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxId rows affected: %w", err)
 	}
 
 	return
@@ -814,13 +812,13 @@ func (m *defaultDialogsModel) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, readOutboxMax
 	rResult, err = tx.Exec(query, readOutboxMaxId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateReadOutboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateReadOutboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxIdTx rows affected: %w", err)
 	}
 
 	return
@@ -838,13 +836,13 @@ func (m *defaultDialogsModel) UpdateTopMessage(ctx context.Context, topMessage i
 	rResult, err = m.db.Exec(ctx, query, topMessage, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateTopMessage(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateTopMessage exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateTopMessage(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateTopMessage rows affected: %w", err)
 	}
 
 	return
@@ -860,13 +858,13 @@ func (m *defaultDialogsModel) UpdateTopMessageTx(tx *sqlx.Tx, topMessage int32, 
 	rResult, err = tx.Exec(query, topMessage, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateTopMessage(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateTopMessageTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateTopMessage(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateTopMessageTx rows affected: %w", err)
 	}
 
 	return
@@ -884,13 +882,13 @@ func (m *defaultDialogsModel) UpdatePinnedMsgId(ctx context.Context, pinnedMsgId
 	rResult, err = m.db.Exec(ctx, query, pinnedMsgId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePinnedMsgId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePinnedMsgId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePinnedMsgId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePinnedMsgId rows affected: %w", err)
 	}
 
 	return
@@ -906,13 +904,13 @@ func (m *defaultDialogsModel) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinnedMsgId int32
 	rResult, err = tx.Exec(query, pinnedMsgId, userId, peerDialogId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePinnedMsgId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePinnedMsgIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePinnedMsgId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePinnedMsgIdTx rows affected: %w", err)
 	}
 
 	return
@@ -929,13 +927,13 @@ func (m *defaultDialogsModel) Delete(ctx context.Context, userId int64, peerType
 	rResult, err = m.db.Exec(ctx, query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("dialogs.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("dialogs.Delete rows affected: %w", err)
 	}
 
 	return
@@ -951,13 +949,13 @@ func (m *defaultDialogsModel) DeleteTx(tx *sqlx.Tx, userId int64, peerType int32
 	rResult, err = tx.Exec(query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("dialogs.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("dialogs.DeleteTx rows affected: %w", err)
 	}
 
 	return
@@ -970,7 +968,7 @@ func (m *defaultDialogsModel) SelectDialogsByGTReadInboxMaxId(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &rList, query, peerType, peerId, readInboxMaxId, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectDialogsByGTReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogsByGTReadInboxMaxId: %w", err)
 	}
 
 	return
@@ -983,7 +981,7 @@ func (m *defaultDialogsModel) SelectDialogsByGTReadInboxMaxIdWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &rList, query, peerType, peerId, readInboxMaxId, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectDialogsByGTReadInboxMaxId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogsByGTReadInboxMaxIdWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -1019,13 +1017,13 @@ func (m *defaultDialogsModel) UpdateCustomMap(ctx context.Context, cMap map[stri
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateCustomMap exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateCustomMap rows affected: %w", err)
 	}
 
 	return
@@ -1053,13 +1051,13 @@ func (m *defaultDialogsModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]int
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateCustomMapTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateCustomMapTx rows affected: %w", err)
 	}
 
 	return
@@ -1077,13 +1075,13 @@ func (m *defaultDialogsModel) SaveDraft(ctx context.Context, draftType int32, dr
 	rResult, err = m.db.Exec(ctx, query, draftType, draftMessageData, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in SaveDraft(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SaveDraft exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in SaveDraft(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SaveDraft rows affected: %w", err)
 	}
 
 	return
@@ -1099,13 +1097,13 @@ func (m *defaultDialogsModel) SaveDraftTx(tx *sqlx.Tx, draftType int32, draftMes
 	rResult, err = tx.Exec(query, draftType, draftMessageData, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in SaveDraft(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SaveDraftTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in SaveDraft(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SaveDraftTx rows affected: %w", err)
 	}
 
 	return
@@ -1121,7 +1119,7 @@ func (m *defaultDialogsModel) SelectAllDrafts(ctx context.Context, userId int64)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectAllDrafts: %w", err)
 		return
 	}
 
@@ -1140,7 +1138,7 @@ func (m *defaultDialogsModel) SelectAllDraftsWithCB(ctx context.Context, userId 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectAllDraftsWithCB: %w", err)
 		return
 	}
 
@@ -1168,13 +1166,13 @@ func (m *defaultDialogsModel) ClearAllDrafts(ctx context.Context, userId int64) 
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in ClearAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.ClearAllDrafts exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in ClearAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.ClearAllDrafts rows affected: %w", err)
 	}
 
 	return
@@ -1190,13 +1188,13 @@ func (m *defaultDialogsModel) ClearAllDraftsTx(tx *sqlx.Tx, userId int64) (rowsA
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in ClearAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.ClearAllDraftsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in ClearAllDrafts(_), error: %v", err)
+		err = fmt.Errorf("dialogs.ClearAllDraftsTx rows affected: %w", err)
 	}
 
 	return
@@ -1214,13 +1212,13 @@ func (m *defaultDialogsModel) UpdatePeerFolderId(ctx context.Context, folderId i
 	rResult, err = m.db.Exec(ctx, query, folderId, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePeerFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerFolderId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePeerFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerFolderId rows affected: %w", err)
 	}
 
 	return
@@ -1236,13 +1234,13 @@ func (m *defaultDialogsModel) UpdatePeerFolderIdTx(tx *sqlx.Tx, folderId int32, 
 	rResult, err = tx.Exec(query, folderId, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePeerFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerFolderIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePeerFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerFolderIdTx rows affected: %w", err)
 	}
 
 	return
@@ -1264,13 +1262,13 @@ func (m *defaultDialogsModel) UpdatePeerDialogListFolderId(ctx context.Context, 
 	rResult, err = m.db.Exec(ctx, query, folderId, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePeerDialogListFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePeerDialogListFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderId rows affected: %w", err)
 	}
 
 	return
@@ -1291,13 +1289,13 @@ func (m *defaultDialogsModel) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder
 	rResult, err = tx.Exec(query, folderId, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePeerDialogListFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePeerDialogListFolderId(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderIdTx rows affected: %w", err)
 	}
 
 	return
@@ -1319,13 +1317,13 @@ func (m *defaultDialogsModel) UpdatePeerDialogListPinned(ctx context.Context, pi
 	rResult, err = m.db.Exec(ctx, query, pinned, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinned exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinned rows affected: %w", err)
 	}
 
 	return
@@ -1346,13 +1344,13 @@ func (m *defaultDialogsModel) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned i
 	rResult, err = tx.Exec(query, pinned, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinnedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinnedTx rows affected: %w", err)
 	}
 
 	return
@@ -1374,13 +1372,13 @@ func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinned(ctx context.Conte
 	rResult, err = m.db.Exec(ctx, query, folderPinned, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateFolderPeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinned exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateFolderPeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinned rows affected: %w", err)
 	}
 
 	return
@@ -1401,13 +1399,13 @@ func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, fo
 	rResult, err = tx.Exec(query, folderPinned, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateFolderPeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinnedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateFolderPeerDialogListPinned(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinnedTx rows affected: %w", err)
 	}
 
 	return
@@ -1429,13 +1427,13 @@ func (m *defaultDialogsModel) UpdateUnPinnedNotIdList(ctx context.Context, userI
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdList rows affected: %w", err)
 	}
 
 	return
@@ -1456,13 +1454,13 @@ func (m *defaultDialogsModel) UpdateUnPinnedNotIdListTx(tx *sqlx.Tx, userId int6
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdListTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdListTx rows affected: %w", err)
 	}
 
 	return
@@ -1484,13 +1482,13 @@ func (m *defaultDialogsModel) UpdateFolderUnPinnedNotIdList(ctx context.Context,
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdList rows affected: %w", err)
 	}
 
 	return
@@ -1511,13 +1509,13 @@ func (m *defaultDialogsModel) UpdateFolderUnPinnedNotIdListTx(tx *sqlx.Tx, userI
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdListTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdListTx rows affected: %w", err)
 	}
 
 	return
@@ -1533,7 +1531,7 @@ func (m *defaultDialogsModel) SelectAllDialogs(ctx context.Context, userId int64
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectAllDialogs: %w", err)
 		return
 	}
 
@@ -1552,7 +1550,7 @@ func (m *defaultDialogsModel) SelectAllDialogsWithCB(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllDialogs(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectAllDialogsWithCB: %w", err)
 		return
 	}
 
@@ -1583,7 +1581,7 @@ func (m *defaultDialogsModel) SelectDialogsByPeerType(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByPeerType(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogsByPeerType: %w", err)
 		return
 	}
 
@@ -1607,7 +1605,7 @@ func (m *defaultDialogsModel) SelectDialogsByPeerTypeWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByPeerType(_), error: %v", err)
+		err = fmt.Errorf("dialogs.SelectDialogsByPeerTypeWithCB: %w", err)
 		return
 	}
 
@@ -1635,13 +1633,13 @@ func (m *defaultDialogsModel) UpdateUnreadCount(ctx context.Context, unreadCount
 	rResult, err = m.db.Exec(ctx, query, unreadCount, unreadMentionsCount, unreadReactionsCount, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateUnreadCount(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnreadCount exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUnreadCount(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnreadCount rows affected: %w", err)
 	}
 
 	return
@@ -1657,13 +1655,13 @@ func (m *defaultDialogsModel) UpdateUnreadCountTx(tx *sqlx.Tx, unreadCount int32
 	rResult, err = tx.Exec(query, unreadCount, unreadMentionsCount, unreadReactionsCount, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateUnreadCount(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnreadCountTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUnreadCount(_), error: %v", err)
+		err = fmt.Errorf("dialogs.UpdateUnreadCountTx rows affected: %w", err)
 	}
 
 	return

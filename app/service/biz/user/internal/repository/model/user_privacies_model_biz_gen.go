@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserPrivaciesModel interface {
@@ -59,18 +57,18 @@ func (m *defaultUserPrivaciesModel) InsertOrUpdate(ctx context.Context, data *Us
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -87,18 +85,18 @@ func (m *defaultUserPrivaciesModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserPriv
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_privacies.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -118,18 +116,18 @@ func (m *defaultUserPrivaciesModel) InsertBulk(ctx context.Context, doList []*Us
 
 	r, err = m.db.NamedExec(ctx, query, doList)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertBulk(%v), error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulk named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulk last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulk rows affected: %w", err)
 	}
 
 	return
@@ -149,18 +147,18 @@ func (m *defaultUserPrivaciesModel) InsertBulkTx(tx *sqlx.Tx, doList []*UserPriv
 
 	r, err = tx.NamedExec(query, doList)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertBulk(%v), error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulkTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulkTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("user_privacies.InsertBulkTx rows affected: %w", err)
 	}
 
 	return
@@ -178,7 +176,7 @@ func (m *defaultUserPrivaciesModel) SelectPrivacy(ctx context.Context, userId in
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectPrivacy(_), error: %v", err)
+			err = fmt.Errorf("user_privacies.SelectPrivacy: %w", err)
 			return
 		} else {
 			err = nil
@@ -205,7 +203,7 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyList(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectPrivacyList: %w", err)
 		return
 	}
 
@@ -229,7 +227,7 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectPrivacyListWithCB: %w", err)
 		return
 	}
 
@@ -264,7 +262,7 @@ func (m *defaultUserPrivaciesModel) SelectUsersPrivacyList(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectUsersPrivacyList: %w", err)
 		return
 	}
 
@@ -292,7 +290,7 @@ func (m *defaultUserPrivaciesModel) SelectUsersPrivacyListWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectUsersPrivacyListWithCB: %w", err)
 		return
 	}
 
@@ -318,7 +316,7 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyAll(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyAll(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectPrivacyAll: %w", err)
 		return
 	}
 
@@ -337,7 +335,7 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyAllWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyAll(_), error: %v", err)
+		err = fmt.Errorf("user_privacies.SelectPrivacyAllWithCB: %w", err)
 		return
 	}
 

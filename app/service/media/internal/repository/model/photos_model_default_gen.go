@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -69,15 +70,23 @@ func newPhotosModel(db *sqlx.DB) *defaultPhotosModel {
 func (m *defaultPhotosModel) Insert2(ctx context.Context, data *Photos) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `photos` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", photosRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.PhotoId, data.AccessHash, data.HasStickers, data.DcId, data.Date2, data.HasVideo, data.SizeId, data.VideoSizeId, data.InputFileName, data.Ext)
+	r, err := m.db.Exec(ctx, query, data.PhotoId, data.AccessHash, data.HasStickers, data.DcId, data.Date2, data.HasVideo, data.SizeId, data.VideoSizeId, data.InputFileName, data.Ext)
+	if err != nil {
+		return nil, fmt.Errorf("photos.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultPhotosModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `photos` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("photos.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhotosModel) FindOne(ctx context.Context, id int64) (*Photos, error) {
@@ -85,10 +94,13 @@ func (m *defaultPhotosModel) FindOne(ctx context.Context, id int64) (*Photos, er
 	var resp Photos
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("photos.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -102,8 +114,9 @@ func (m *defaultPhotosModel) FindListByIdList(ctx context.Context, id ...int64) 
 	var resp []Photos
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("photos.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -111,7 +124,11 @@ func (m *defaultPhotosModel) Update2(ctx context.Context, data *Photos) error {
 	query := fmt.Sprintf("update `photos` set %s where `id` = ?", photosRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.PhotoId, data.AccessHash, data.HasStickers, data.DcId, data.Date2, data.HasVideo, data.SizeId, data.VideoSizeId, data.InputFileName, data.Ext, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("photos.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhotosModel) FindOneByPhotoId(ctx context.Context, photoId int64) (*Photos, error) {
@@ -121,8 +138,12 @@ func (m *defaultPhotosModel) FindOneByPhotoId(ctx context.Context, photoId int64
 	err := m.db.QueryRowPartial(ctx, &resp, query, photoId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("photos.FindOneByPhotoId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -136,7 +157,8 @@ func (m *defaultPhotosModel) FindListByPhotoIdList(ctx context.Context, photoId 
 	var resp []Photos
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("photos.FindListByPhotoIdList: %w", err)
 	}
+
 	return resp, nil
 }

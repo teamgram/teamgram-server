@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizDocumentsModel interface {
@@ -53,18 +51,18 @@ func (m *defaultDocumentsModel) Insert(ctx context.Context, data *Documents) (la
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("documents.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("documents.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("documents.Insert rows affected: %w", err)
 	}
 
 	return
@@ -81,18 +79,18 @@ func (m *defaultDocumentsModel) InsertTx(tx *sqlx.Tx, data *Documents) (lastInse
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("documents.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("documents.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("documents.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -110,7 +108,7 @@ func (m *defaultDocumentsModel) SelectByDocumentId(ctx context.Context, document
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByDocumentId(_), error: %v", err)
+			err = fmt.Errorf("documents.SelectByDocumentId: %w", err)
 			return
 		} else {
 			err = nil
@@ -137,7 +135,7 @@ func (m *defaultDocumentsModel) SelectByDocumentIdList(ctx context.Context, idLi
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
+		err = fmt.Errorf("documents.SelectByDocumentIdList: %w", err)
 		return
 	}
 
@@ -161,7 +159,7 @@ func (m *defaultDocumentsModel) SelectByDocumentIdListWithCB(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
+		err = fmt.Errorf("documents.SelectByDocumentIdListWithCB: %w", err)
 		return
 	}
 
@@ -192,7 +190,7 @@ func (m *defaultDocumentsModel) SelectByIdList(ctx context.Context, idList []int
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("documents.SelectByIdList: %w", err)
 		return
 	}
 
@@ -216,7 +214,7 @@ func (m *defaultDocumentsModel) SelectByIdListWithCB(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("documents.SelectByIdListWithCB: %w", err)
 		return
 	}
 

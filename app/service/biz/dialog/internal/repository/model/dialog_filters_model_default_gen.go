@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -68,15 +69,23 @@ func newDialogFiltersModel(db *sqlx.DB) *defaultDialogFiltersModel {
 func (m *defaultDialogFiltersModel) Insert2(ctx context.Context, data *DialogFilters) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `dialog_filters` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", dialogFiltersRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("dialog_filters.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultDialogFiltersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `dialog_filters` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("dialog_filters.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDialogFiltersModel) FindOne(ctx context.Context, id int64) (*DialogFilters, error) {
@@ -84,10 +93,13 @@ func (m *defaultDialogFiltersModel) FindOne(ctx context.Context, id int64) (*Dia
 	var resp DialogFilters
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("dialog_filters.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -101,8 +113,9 @@ func (m *defaultDialogFiltersModel) FindListByIdList(ctx context.Context, id ...
 	var resp []DialogFilters
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("dialog_filters.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -110,7 +123,11 @@ func (m *defaultDialogFiltersModel) Update2(ctx context.Context, data *DialogFil
 	query := fmt.Sprintf("update `dialog_filters` set %s where `id` = ?", dialogFiltersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("dialog_filters.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDialogFiltersModel) FindOneByUserIdDialogFilterId(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error) {
@@ -120,7 +137,11 @@ func (m *defaultDialogFiltersModel) FindOneByUserIdDialogFilterId(ctx context.Co
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, dialogFilterId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("dialog_filters.FindOneByUserIdDialogFilterId: %w", err)
 	}
+
 	return &resp, nil
 }

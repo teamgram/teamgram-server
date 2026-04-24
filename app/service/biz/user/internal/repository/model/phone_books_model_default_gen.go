@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -64,15 +65,23 @@ func newPhoneBooksModel(db *sqlx.DB) *defaultPhoneBooksModel {
 func (m *defaultPhoneBooksModel) Insert2(ctx context.Context, data *PhoneBooks) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `phone_books` (%s) values (?, ?, ?, ?, ?, ?)", phoneBooksRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.AuthKeyId, data.ClientId, data.Phone, data.FirstName, data.LastName)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.AuthKeyId, data.ClientId, data.Phone, data.FirstName, data.LastName)
+	if err != nil {
+		return nil, fmt.Errorf("phone_books.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultPhoneBooksModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `phone_books` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("phone_books.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhoneBooksModel) FindOne(ctx context.Context, id int64) (*PhoneBooks, error) {
@@ -80,10 +89,13 @@ func (m *defaultPhoneBooksModel) FindOne(ctx context.Context, id int64) (*PhoneB
 	var resp PhoneBooks
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("phone_books.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -97,8 +109,9 @@ func (m *defaultPhoneBooksModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []PhoneBooks
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("phone_books.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -106,7 +119,11 @@ func (m *defaultPhoneBooksModel) Update2(ctx context.Context, data *PhoneBooks) 
 	query := fmt.Sprintf("update `phone_books` set %s where `id` = ?", phoneBooksRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.AuthKeyId, data.ClientId, data.Phone, data.FirstName, data.LastName, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("phone_books.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPhoneBooksModel) FindOneByAuthKeyIdClientId(ctx context.Context, authKeyId int64, clientId int64) (*PhoneBooks, error) {
@@ -116,7 +133,11 @@ func (m *defaultPhoneBooksModel) FindOneByAuthKeyIdClientId(ctx context.Context,
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, clientId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("phone_books.FindOneByAuthKeyIdClientId: %w", err)
 	}
+
 	return &resp, nil
 }

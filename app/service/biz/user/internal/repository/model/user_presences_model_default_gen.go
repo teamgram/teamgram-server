@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -62,15 +63,23 @@ func newUserPresencesModel(db *sqlx.DB) *defaultUserPresencesModel {
 func (m *defaultUserPresencesModel) Insert2(ctx context.Context, data *UserPresences) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_presences` (%s) values (?, ?, ?)", userPresencesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.LastSeenAt, data.Expires)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.LastSeenAt, data.Expires)
+	if err != nil {
+		return nil, fmt.Errorf("user_presences.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserPresencesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_presences` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_presences.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPresencesModel) FindOne(ctx context.Context, id int64) (*UserPresences, error) {
@@ -78,10 +87,13 @@ func (m *defaultUserPresencesModel) FindOne(ctx context.Context, id int64) (*Use
 	var resp UserPresences
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_presences.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -95,8 +107,9 @@ func (m *defaultUserPresencesModel) FindListByIdList(ctx context.Context, id ...
 	var resp []UserPresences
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_presences.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -104,7 +117,11 @@ func (m *defaultUserPresencesModel) Update2(ctx context.Context, data *UserPrese
 	query := fmt.Sprintf("update `user_presences` set %s where `id` = ?", userPresencesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.LastSeenAt, data.Expires, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_presences.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPresencesModel) FindOneByUserId(ctx context.Context, userId int64) (*UserPresences, error) {
@@ -114,8 +131,12 @@ func (m *defaultUserPresencesModel) FindOneByUserId(ctx context.Context, userId 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_presences.FindOneByUserId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -129,7 +150,8 @@ func (m *defaultUserPresencesModel) FindListByUserIdList(ctx context.Context, us
 	var resp []UserPresences
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_presences.FindListByUserIdList: %w", err)
 	}
+
 	return resp, nil
 }

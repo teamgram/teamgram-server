@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -65,15 +66,23 @@ func newUserGlobalPrivacySettingsModel(db *sqlx.DB) *defaultUserGlobalPrivacySet
 func (m *defaultUserGlobalPrivacySettingsModel) Insert2(ctx context.Context, data *UserGlobalPrivacySettings) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_global_privacy_settings` (%s) values (?, ?, ?, ?, ?, ?)", userGlobalPrivacySettingsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium)
+	if err != nil {
+		return nil, fmt.Errorf("user_global_privacy_settings.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_global_privacy_settings` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_global_privacy_settings.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOne(ctx context.Context, id int64) (*UserGlobalPrivacySettings, error) {
@@ -81,10 +90,13 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindOne(ctx context.Context, id 
 	var resp UserGlobalPrivacySettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_global_privacy_settings.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -98,8 +110,9 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_global_privacy_settings.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -107,7 +120,11 @@ func (m *defaultUserGlobalPrivacySettingsModel) Update2(ctx context.Context, dat
 	query := fmt.Sprintf("update `user_global_privacy_settings` set %s where `id` = ?", userGlobalPrivacySettingsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_global_privacy_settings.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOneByUserId(ctx context.Context, userId int64) (*UserGlobalPrivacySettings, error) {
@@ -117,8 +134,12 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindOneByUserId(ctx context.Cont
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_global_privacy_settings.FindOneByUserId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -132,7 +153,8 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByUserIdList(ctx context
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_global_privacy_settings.FindListByUserIdList: %w", err)
 	}
+
 	return resp, nil
 }

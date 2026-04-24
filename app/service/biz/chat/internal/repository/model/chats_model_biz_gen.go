@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizChatsModel interface {
@@ -88,18 +86,18 @@ func (m *defaultChatsModel) Insert(ctx context.Context, data *Chats) (lastInsert
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("chats.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chats.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chats.Insert rows affected: %w", err)
 	}
 
 	return
@@ -116,18 +114,18 @@ func (m *defaultChatsModel) InsertTx(tx *sqlx.Tx, data *Chats) (lastInsertId, ro
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("chats.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chats.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("chats.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -145,7 +143,7 @@ func (m *defaultChatsModel) Select(ctx context.Context, id int64) (rValue *Chats
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("chats.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -169,7 +167,7 @@ func (m *defaultChatsModel) SelectLastCreator(ctx context.Context, creatorUserId
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectLastCreator(_), error: %v", err)
+			err = fmt.Errorf("chats.SelectLastCreator: %w", err)
 			return
 		} else {
 			err = nil
@@ -193,13 +191,13 @@ func (m *defaultChatsModel) UpdateTitle(ctx context.Context, title string, id in
 	rResult, err = m.db.Exec(ctx, query, title, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateTitle(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTitle exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateTitle(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTitle rows affected: %w", err)
 	}
 
 	return
@@ -215,13 +213,13 @@ func (m *defaultChatsModel) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (
 	rResult, err = tx.Exec(query, title, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateTitle(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTitleTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateTitle(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTitleTx rows affected: %w", err)
 	}
 
 	return
@@ -239,13 +237,13 @@ func (m *defaultChatsModel) UpdateAbout(ctx context.Context, about string, id in
 	rResult, err = m.db.Exec(ctx, query, about, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateAbout(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAbout exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateAbout(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAbout rows affected: %w", err)
 	}
 
 	return
@@ -261,13 +259,13 @@ func (m *defaultChatsModel) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (
 	rResult, err = tx.Exec(query, about, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateAbout(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAboutTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateAbout(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAboutTx rows affected: %w", err)
 	}
 
 	return
@@ -288,7 +286,7 @@ func (m *defaultChatsModel) SelectByIdList(ctx context.Context, idList []int32) 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("chats.SelectByIdList: %w", err)
 		return
 	}
 
@@ -312,7 +310,7 @@ func (m *defaultChatsModel) SelectByIdListWithCB(ctx context.Context, idList []i
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("chats.SelectByIdListWithCB: %w", err)
 		return
 	}
 
@@ -340,13 +338,13 @@ func (m *defaultChatsModel) UpdateParticipantCount(ctx context.Context, particip
 	rResult, err = m.db.Exec(ctx, query, participantCount, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateParticipantCount(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateParticipantCount exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateParticipantCount(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateParticipantCount rows affected: %w", err)
 	}
 
 	return
@@ -362,13 +360,13 @@ func (m *defaultChatsModel) UpdateParticipantCountTx(tx *sqlx.Tx, participantCou
 	rResult, err = tx.Exec(query, participantCount, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateParticipantCount(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateParticipantCountTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateParticipantCount(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateParticipantCountTx rows affected: %w", err)
 	}
 
 	return
@@ -386,13 +384,13 @@ func (m *defaultChatsModel) UpdatePhotoId(ctx context.Context, photoId int64, id
 	rResult, err = m.db.Exec(ctx, query, photoId, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePhotoId(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdatePhotoId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePhotoId(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdatePhotoId rows affected: %w", err)
 	}
 
 	return
@@ -408,13 +406,13 @@ func (m *defaultChatsModel) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64
 	rResult, err = tx.Exec(query, photoId, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePhotoId(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdatePhotoIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePhotoId(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdatePhotoIdTx rows affected: %w", err)
 	}
 
 	return
@@ -432,13 +430,13 @@ func (m *defaultChatsModel) UpdateDefaultBannedRights(ctx context.Context, defau
 	rResult, err = m.db.Exec(ctx, query, defaultBannedRights, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateDefaultBannedRights(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDefaultBannedRights exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateDefaultBannedRights(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDefaultBannedRights rows affected: %w", err)
 	}
 
 	return
@@ -454,13 +452,13 @@ func (m *defaultChatsModel) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBann
 	rResult, err = tx.Exec(query, defaultBannedRights, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateDefaultBannedRights(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDefaultBannedRightsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateDefaultBannedRights(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDefaultBannedRightsTx rows affected: %w", err)
 	}
 
 	return
@@ -478,13 +476,13 @@ func (m *defaultChatsModel) UpdateVersion(ctx context.Context, id int64) (rowsAf
 	rResult, err = m.db.Exec(ctx, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateVersion(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateVersion exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateVersion(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateVersion rows affected: %w", err)
 	}
 
 	return
@@ -500,13 +498,13 @@ func (m *defaultChatsModel) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected
 	rResult, err = tx.Exec(query, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateVersion(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateVersionTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateVersion(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateVersionTx rows affected: %w", err)
 	}
 
 	return
@@ -524,13 +522,13 @@ func (m *defaultChatsModel) UpdateDeactivated(ctx context.Context, deactivated b
 	rResult, err = m.db.Exec(ctx, query, deactivated, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateDeactivated(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDeactivated exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateDeactivated(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDeactivated rows affected: %w", err)
 	}
 
 	return
@@ -546,13 +544,13 @@ func (m *defaultChatsModel) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, i
 	rResult, err = tx.Exec(query, deactivated, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateDeactivated(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDeactivatedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateDeactivated(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateDeactivatedTx rows affected: %w", err)
 	}
 
 	return
@@ -570,13 +568,13 @@ func (m *defaultChatsModel) UpdateMigratedTo(ctx context.Context, migratedToId i
 	rResult, err = m.db.Exec(ctx, query, migratedToId, migratedToAccessHash, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateMigratedTo(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateMigratedTo exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateMigratedTo(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateMigratedTo rows affected: %w", err)
 	}
 
 	return
@@ -592,13 +590,13 @@ func (m *defaultChatsModel) UpdateMigratedToTx(tx *sqlx.Tx, migratedToId int64, 
 	rResult, err = tx.Exec(query, migratedToId, migratedToAccessHash, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateMigratedTo(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateMigratedToTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateMigratedTo(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateMigratedToTx rows affected: %w", err)
 	}
 
 	return
@@ -616,13 +614,13 @@ func (m *defaultChatsModel) UpdateAvailableReactions(ctx context.Context, availa
 	rResult, err = m.db.Exec(ctx, query, availableReactionsType, availableReactions, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateAvailableReactions(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAvailableReactions exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateAvailableReactions(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAvailableReactions rows affected: %w", err)
 	}
 
 	return
@@ -638,13 +636,13 @@ func (m *defaultChatsModel) UpdateAvailableReactionsTx(tx *sqlx.Tx, availableRea
 	rResult, err = tx.Exec(query, availableReactionsType, availableReactions, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateAvailableReactions(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAvailableReactionsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateAvailableReactions(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateAvailableReactionsTx rows affected: %w", err)
 	}
 
 	return
@@ -662,13 +660,13 @@ func (m *defaultChatsModel) UpdateNoforwards(ctx context.Context, noforwards boo
 	rResult, err = m.db.Exec(ctx, query, noforwards, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateNoforwards(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateNoforwards exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateNoforwards(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateNoforwards rows affected: %w", err)
 	}
 
 	return
@@ -684,13 +682,13 @@ func (m *defaultChatsModel) UpdateNoforwardsTx(tx *sqlx.Tx, noforwards bool, id 
 	rResult, err = tx.Exec(query, noforwards, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateNoforwards(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateNoforwardsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateNoforwards(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateNoforwardsTx rows affected: %w", err)
 	}
 
 	return
@@ -708,13 +706,13 @@ func (m *defaultChatsModel) UpdateTTLPeriod(ctx context.Context, ttlPeriod int32
 	rResult, err = m.db.Exec(ctx, query, ttlPeriod, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateTTLPeriod(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTTLPeriod exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateTTLPeriod(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTTLPeriod rows affected: %w", err)
 	}
 
 	return
@@ -730,13 +728,13 @@ func (m *defaultChatsModel) UpdateTTLPeriodTx(tx *sqlx.Tx, ttlPeriod int32, id i
 	rResult, err = tx.Exec(query, ttlPeriod, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateTTLPeriod(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTTLPeriodTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateTTLPeriod(_), error: %v", err)
+		err = fmt.Errorf("chats.UpdateTTLPeriodTx rows affected: %w", err)
 	}
 
 	return
@@ -749,7 +747,7 @@ func (m *defaultChatsModel) SearchByQueryString(ctx context.Context, q string, l
 	err = m.db.QueryRowsPartial(ctx, &rList, query, q, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+		err = fmt.Errorf("chats.SearchByQueryString: %w", err)
 	}
 
 	return
@@ -762,7 +760,7 @@ func (m *defaultChatsModel) SearchByQueryStringWithCB(ctx context.Context, q str
 	err = m.db.QueryRowsPartial(ctx, &rList, query, q, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+		err = fmt.Errorf("chats.SearchByQueryStringWithCB: %w", err)
 	}
 
 	if cb != nil {

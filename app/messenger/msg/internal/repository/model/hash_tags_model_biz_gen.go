@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizHashTagsModel interface {
@@ -51,18 +49,18 @@ func (m *defaultHashTagsModel) InsertOrUpdate(ctx context.Context, data *HashTag
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -79,18 +77,18 @@ func (m *defaultHashTagsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *HashTags) (la
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("hash_tags.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -103,7 +101,7 @@ func (m *defaultHashTagsModel) SelectPeerHashTagList(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.SelectPeerHashTagList: %w", err)
 	}
 
 	return
@@ -116,7 +114,7 @@ func (m *defaultHashTagsModel) SelectPeerHashTagListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.SelectPeerHashTagListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -141,13 +139,13 @@ func (m *defaultHashTagsModel) DeleteHashTagMessageId(ctx context.Context, userI
 	rResult, err = m.db.Exec(ctx, query, userId, hashTagMessageId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteHashTagMessageId(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.DeleteHashTagMessageId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteHashTagMessageId(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.DeleteHashTagMessageId rows affected: %w", err)
 	}
 
 	return
@@ -163,13 +161,13 @@ func (m *defaultHashTagsModel) DeleteHashTagMessageIdTx(tx *sqlx.Tx, userId int6
 	rResult, err = tx.Exec(query, userId, hashTagMessageId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteHashTagMessageId(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.DeleteHashTagMessageIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteHashTagMessageId(_), error: %v", err)
+		err = fmt.Errorf("hash_tags.DeleteHashTagMessageIdTx rows affected: %w", err)
 	}
 
 	return

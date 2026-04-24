@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -66,15 +67,23 @@ func newUsernameModel(db *sqlx.DB) *defaultUsernameModel {
 func (m *defaultUsernameModel) Insert2(ctx context.Context, data *Username) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `username` (%s) values (?, ?, ?, ?, ?, ?, ?)", usernameRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("username.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUsernameModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `username` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("username.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUsernameModel) FindOne(ctx context.Context, id int64) (*Username, error) {
@@ -82,10 +91,13 @@ func (m *defaultUsernameModel) FindOne(ctx context.Context, id int64) (*Username
 	var resp Username
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("username.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -99,8 +111,9 @@ func (m *defaultUsernameModel) FindListByIdList(ctx context.Context, id ...int64
 	var resp []Username
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("username.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -108,7 +121,11 @@ func (m *defaultUsernameModel) Update2(ctx context.Context, data *Username) erro
 	query := fmt.Sprintf("update `username` set %s where `id` = ?", usernameRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("username.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUsernameModel) FindOneByUsername(ctx context.Context, username string) (*Username, error) {
@@ -118,8 +135,12 @@ func (m *defaultUsernameModel) FindOneByUsername(ctx context.Context, username s
 	err := m.db.QueryRowPartial(ctx, &resp, query, username)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("username.FindOneByUsername: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -132,7 +153,8 @@ func (m *defaultUsernameModel) FindListByUsernameList(ctx context.Context, usern
 	var resp []Username
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("username.FindListByUsernameList: %w", err)
 	}
+
 	return resp, nil
 }

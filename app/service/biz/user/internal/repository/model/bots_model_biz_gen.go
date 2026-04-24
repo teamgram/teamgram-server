@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizBotsModel interface {
@@ -54,7 +52,7 @@ func (m *defaultBotsModel) Select(ctx context.Context, botId int64) (rValue *Bot
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("bots.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -74,7 +72,7 @@ func (m *defaultBotsModel) SelectByToken(ctx context.Context, token string) (rVa
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("get in SelectByToken(_), error: %v", err)
+			err = fmt.Errorf("bots.SelectByToken: %w", err)
 			return
 		} else {
 			err = nil
@@ -99,7 +97,7 @@ func (m *defaultBotsModel) SelectByIdList(ctx context.Context, idList []int32) (
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("bots.SelectByIdList: %w", err)
 		return
 	}
 
@@ -123,7 +121,7 @@ func (m *defaultBotsModel) SelectByIdListWithCB(ctx context.Context, idList []in
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("bots.SelectByIdListWithCB: %w", err)
 		return
 	}
 
@@ -160,13 +158,13 @@ func (m *defaultBotsModel) Update(ctx context.Context, cMap map[string]interface
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("bots.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("bots.Update rows affected: %w", err)
 	}
 
 	return
@@ -192,13 +190,13 @@ func (m *defaultBotsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bo
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("bots.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("bots.UpdateTx rows affected: %w", err)
 	}
 
 	return

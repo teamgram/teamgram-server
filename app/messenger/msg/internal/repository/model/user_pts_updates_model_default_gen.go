@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -62,15 +63,23 @@ func newUserPtsUpdatesModel(db *sqlx.DB) *defaultUserPtsUpdatesModel {
 func (m *defaultUserPtsUpdatesModel) Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_pts_updates` (%s) values (?, ?, ?, ?, ?, ?)", userPtsUpdatesRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2)
+	if err != nil {
+		return nil, fmt.Errorf("user_pts_updates.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserPtsUpdatesModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_pts_updates` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_pts_updates.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error) {
@@ -78,10 +87,13 @@ func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*Us
 	var resp UserPtsUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_pts_updates.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -95,8 +107,9 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserPtsUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_pts_updates.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -104,5 +117,9 @@ func (m *defaultUserPtsUpdatesModel) Update2(ctx context.Context, data *UserPtsU
 	query := fmt.Sprintf("update `user_pts_updates` set %s where `id` = ?", userPtsUpdatesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_pts_updates.Update2 exec: %w", err)
+	}
+
+	return nil
 }

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -37,9 +38,9 @@ type (
 		Update2(ctx context.Context, data *Dialogs) error
 		Delete2(ctx context.Context, id int64) error
 
-		FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error)
-
 		FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error)
+
+		FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error)
 	}
 
 	defaultDialogsModel struct {
@@ -84,15 +85,23 @@ func newDialogsModel(db *sqlx.DB) *defaultDialogsModel {
 func (m *defaultDialogsModel) Insert2(ctx context.Context, data *Dialogs) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `dialogs` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", dialogsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.PeerDialogId, data.Pinned, data.TopMessage, data.PinnedMsgId, data.ReadInboxMaxId, data.ReadOutboxMaxId, data.UnreadCount, data.UnreadMentionsCount, data.UnreadReactionsCount, data.UnreadMark, data.DraftType, data.DraftMessageData, data.FolderId, data.FolderPinned, data.HasScheduled, data.TtlPeriod, data.ThemeEmoticon, data.WallpaperId, data.WallpaperOverridden, data.Date2, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.PeerDialogId, data.Pinned, data.TopMessage, data.PinnedMsgId, data.ReadInboxMaxId, data.ReadOutboxMaxId, data.UnreadCount, data.UnreadMentionsCount, data.UnreadReactionsCount, data.UnreadMark, data.DraftType, data.DraftMessageData, data.FolderId, data.FolderPinned, data.HasScheduled, data.TtlPeriod, data.ThemeEmoticon, data.WallpaperId, data.WallpaperOverridden, data.Date2, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("dialogs.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultDialogsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `dialogs` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("dialogs.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDialogsModel) FindOne(ctx context.Context, id int64) (*Dialogs, error) {
@@ -100,10 +109,13 @@ func (m *defaultDialogsModel) FindOne(ctx context.Context, id int64) (*Dialogs, 
 	var resp Dialogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("dialogs.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -117,8 +129,9 @@ func (m *defaultDialogsModel) FindListByIdList(ctx context.Context, id ...int64)
 	var resp []Dialogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("dialogs.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -126,19 +139,11 @@ func (m *defaultDialogsModel) Update2(ctx context.Context, data *Dialogs) error 
 	query := fmt.Sprintf("update `dialogs` set %s where `id` = ?", dialogsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.PeerDialogId, data.Pinned, data.TopMessage, data.PinnedMsgId, data.ReadInboxMaxId, data.ReadOutboxMaxId, data.UnreadCount, data.UnreadMentionsCount, data.UnreadReactionsCount, data.UnreadMark, data.DraftType, data.DraftMessageData, data.FolderId, data.FolderPinned, data.HasScheduled, data.TtlPeriod, data.ThemeEmoticon, data.WallpaperId, data.WallpaperOverridden, data.Date2, data.Deleted, data.Id)
-	return err
-}
-
-func (m *defaultDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error) {
-	query := fmt.Sprintf("select %s from dialogs where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", dialogsRows)
-	var resp Dialogs
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
-
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("dialogs.Update2 exec: %w", err)
 	}
-	return &resp, nil
+
+	return nil
 }
 
 func (m *defaultDialogsModel) FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error) {
@@ -148,7 +153,27 @@ func (m *defaultDialogsModel) FindOneByUserIdPeerDialogId(ctx context.Context, u
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("dialogs.FindOneByUserIdPeerDialogId: %w", err)
 	}
+
+	return &resp, nil
+}
+
+func (m *defaultDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error) {
+	query := fmt.Sprintf("select %s from dialogs where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", dialogsRows)
+	var resp Dialogs
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("dialogs.FindOneByUserIdPeerTypePeerId: %w", err)
+	}
+
 	return &resp, nil
 }

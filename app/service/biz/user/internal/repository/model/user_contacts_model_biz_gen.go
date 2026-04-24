@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserContactsModel interface {
@@ -94,18 +92,18 @@ func (m *defaultUserContactsModel) InsertOrUpdate(ctx context.Context, data *Use
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -122,18 +120,18 @@ func (m *defaultUserContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserConta
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_contacts.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -151,7 +149,7 @@ func (m *defaultUserContactsModel) SelectContact(ctx context.Context, ownerUserI
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectContact(_), error: %v", err)
+			err = fmt.Errorf("user_contacts.SelectContact: %w", err)
 			return
 		} else {
 			err = nil
@@ -175,7 +173,7 @@ func (m *defaultUserContactsModel) SelectByContactId(ctx context.Context, ownerU
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByContactId(_), error: %v", err)
+			err = fmt.Errorf("user_contacts.SelectByContactId: %w", err)
 			return
 		} else {
 			err = nil
@@ -202,7 +200,7 @@ func (m *defaultUserContactsModel) SelectListByPhoneList(ctx context.Context, ow
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByPhoneList: %w", err)
 		return
 	}
 
@@ -226,7 +224,7 @@ func (m *defaultUserContactsModel) SelectListByPhoneListWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByPhoneListWithCB: %w", err)
 		return
 	}
 
@@ -252,7 +250,7 @@ func (m *defaultUserContactsModel) SelectAllUserContacts(ctx context.Context, ow
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllUserContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectAllUserContacts: %w", err)
 		return
 	}
 
@@ -271,7 +269,7 @@ func (m *defaultUserContactsModel) SelectAllUserContactsWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAllUserContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectAllUserContactsWithCB: %w", err)
 		return
 	}
 
@@ -297,7 +295,7 @@ func (m *defaultUserContactsModel) SelectUserContacts(ctx context.Context, owner
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectUserContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserContacts: %w", err)
 		return
 	}
 
@@ -316,7 +314,7 @@ func (m *defaultUserContactsModel) SelectUserContactsWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectUserContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserContactsWithCB: %w", err)
 		return
 	}
 
@@ -339,7 +337,7 @@ func (m *defaultUserContactsModel) SelectUserContactIdList(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &rList, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectUserContactIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserContactIdList: %w", err)
 	}
 
 	return
@@ -352,7 +350,7 @@ func (m *defaultUserContactsModel) SelectUserContactIdListWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &rList, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectUserContactIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserContactIdListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -380,7 +378,7 @@ func (m *defaultUserContactsModel) SelectListByIdList(ctx context.Context, owner
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByIdList: %w", err)
 		return
 	}
 
@@ -404,7 +402,7 @@ func (m *defaultUserContactsModel) SelectListByIdListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByIdListWithCB: %w", err)
 		return
 	}
 
@@ -439,7 +437,7 @@ func (m *defaultUserContactsModel) SelectListByOwnerListAndContactList(ctx conte
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByOwnerListAndContactList: %w", err)
 		return
 	}
 
@@ -467,7 +465,7 @@ func (m *defaultUserContactsModel) SelectListByOwnerListAndContactListWithCB(ctx
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectListByOwnerListAndContactListWithCB: %w", err)
 		return
 	}
 
@@ -495,13 +493,13 @@ func (m *defaultUserContactsModel) UpdateContactNameById(ctx context.Context, co
 	rResult, err = m.db.Exec(ctx, query, contactFirstName, contactLastName, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateContactNameById(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameById exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateContactNameById(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameById rows affected: %w", err)
 	}
 
 	return
@@ -517,13 +515,13 @@ func (m *defaultUserContactsModel) UpdateContactNameByIdTx(tx *sqlx.Tx, contactF
 	rResult, err = tx.Exec(query, contactFirstName, contactLastName, id)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateContactNameById(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameByIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateContactNameById(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameByIdTx rows affected: %w", err)
 	}
 
 	return
@@ -541,13 +539,13 @@ func (m *defaultUserContactsModel) UpdateContactName(ctx context.Context, contac
 	rResult, err = m.db.Exec(ctx, query, contactFirstName, contactLastName, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactName exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactName rows affected: %w", err)
 	}
 
 	return
@@ -563,13 +561,13 @@ func (m *defaultUserContactsModel) UpdateContactNameTx(tx *sqlx.Tx, contactFirst
 	rResult, err = tx.Exec(query, contactFirstName, contactLastName, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateContactName(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateContactNameTx rows affected: %w", err)
 	}
 
 	return
@@ -587,13 +585,13 @@ func (m *defaultUserContactsModel) UpdateMutual(ctx context.Context, mutual bool
 	rResult, err = m.db.Exec(ctx, query, mutual, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateMutual(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateMutual exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateMutual(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateMutual rows affected: %w", err)
 	}
 
 	return
@@ -609,13 +607,13 @@ func (m *defaultUserContactsModel) UpdateMutualTx(tx *sqlx.Tx, mutual bool, owne
 	rResult, err = tx.Exec(query, mutual, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateMutual(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateMutualTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateMutual(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateMutualTx rows affected: %w", err)
 	}
 
 	return
@@ -637,13 +635,13 @@ func (m *defaultUserContactsModel) DeleteContacts(ctx context.Context, ownerUser
 	rResult, err = m.db.Exec(ctx, query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.DeleteContacts exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.DeleteContacts rows affected: %w", err)
 	}
 
 	return
@@ -664,13 +662,13 @@ func (m *defaultUserContactsModel) DeleteContactsTx(tx *sqlx.Tx, ownerUserId int
 	rResult, err = tx.Exec(query, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.DeleteContactsTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteContacts(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.DeleteContactsTx rows affected: %w", err)
 	}
 
 	return
@@ -688,13 +686,13 @@ func (m *defaultUserContactsModel) UpdatePhoneByContactId(ctx context.Context, c
 	rResult, err = m.db.Exec(ctx, query, contactPhone, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdatePhoneByContactId(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdatePhoneByContactId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdatePhoneByContactId(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdatePhoneByContactId rows affected: %w", err)
 	}
 
 	return
@@ -710,13 +708,13 @@ func (m *defaultUserContactsModel) UpdatePhoneByContactIdTx(tx *sqlx.Tx, contact
 	rResult, err = tx.Exec(query, contactPhone, contactUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdatePhoneByContactId(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdatePhoneByContactIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePhoneByContactId(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdatePhoneByContactIdTx rows affected: %w", err)
 	}
 
 	return
@@ -729,7 +727,7 @@ func (m *defaultUserContactsModel) SelectUserReverseContactIdList(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &rList, query, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectUserReverseContactIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserReverseContactIdList: %w", err)
 	}
 
 	return
@@ -742,7 +740,7 @@ func (m *defaultUserContactsModel) SelectUserReverseContactIdListWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &rList, query, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectUserReverseContactIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectUserReverseContactIdListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -770,7 +768,7 @@ func (m *defaultUserContactsModel) SelectReverseListByIdList(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectReverseListByIdList: %w", err)
 		return
 	}
 
@@ -794,7 +792,7 @@ func (m *defaultUserContactsModel) SelectReverseListByIdListWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.SelectReverseListByIdListWithCB: %w", err)
 		return
 	}
 
@@ -826,13 +824,13 @@ func (m *defaultUserContactsModel) UpdateCloseFriend(ctx context.Context, closeF
 	rResult, err = m.db.Exec(ctx, query, closeFriend, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateCloseFriend(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateCloseFriend exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateCloseFriend(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateCloseFriend rows affected: %w", err)
 	}
 
 	return
@@ -853,13 +851,13 @@ func (m *defaultUserContactsModel) UpdateCloseFriendTx(tx *sqlx.Tx, closeFriend 
 	rResult, err = tx.Exec(query, closeFriend, ownerUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateCloseFriend(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateCloseFriendTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateCloseFriend(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateCloseFriendTx rows affected: %w", err)
 	}
 
 	return
@@ -877,13 +875,13 @@ func (m *defaultUserContactsModel) UpdateStoriesHidden(ctx context.Context, stor
 	rResult, err = m.db.Exec(ctx, query, storiesHidden, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateStoriesHidden(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateStoriesHidden exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateStoriesHidden(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateStoriesHidden rows affected: %w", err)
 	}
 
 	return
@@ -899,13 +897,13 @@ func (m *defaultUserContactsModel) UpdateStoriesHiddenTx(tx *sqlx.Tx, storiesHid
 	rResult, err = tx.Exec(query, storiesHidden, ownerUserId, contactUserId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateStoriesHidden(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateStoriesHiddenTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateStoriesHidden(_), error: %v", err)
+		err = fmt.Errorf("user_contacts.UpdateStoriesHiddenTx rows affected: %w", err)
 	}
 
 	return

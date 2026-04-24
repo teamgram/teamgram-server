@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizBotCommandsModel interface {
@@ -61,18 +59,18 @@ func (m *defaultBotCommandsModel) InsertBulk(ctx context.Context, doList []*BotC
 
 	r, err = m.db.NamedExec(ctx, query, doList)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertBulk(%v), error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulk named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulk last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulk rows affected: %w", err)
 	}
 
 	return
@@ -92,18 +90,18 @@ func (m *defaultBotCommandsModel) InsertBulkTx(tx *sqlx.Tx, doList []*BotCommand
 
 	r, err = tx.NamedExec(query, doList)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertBulk(%v), error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulkTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulkTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertBulk(%v)_error: %v", doList, err)
+		err = fmt.Errorf("bot_commands.InsertBulkTx rows affected: %w", err)
 	}
 
 	return
@@ -120,13 +118,13 @@ func (m *defaultBotCommandsModel) Delete(ctx context.Context, botId int64) (rows
 	rResult, err = m.db.Exec(ctx, query, botId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.Delete rows affected: %w", err)
 	}
 
 	return
@@ -142,13 +140,13 @@ func (m *defaultBotCommandsModel) DeleteTx(tx *sqlx.Tx, botId int64) (rowsAffect
 	rResult, err = tx.Exec(query, botId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.DeleteTx rows affected: %w", err)
 	}
 
 	return
@@ -164,18 +162,18 @@ func (m *defaultBotCommandsModel) InsertOrUpdate(ctx context.Context, data *BotC
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -192,18 +190,18 @@ func (m *defaultBotCommandsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *BotCommand
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -219,7 +217,7 @@ func (m *defaultBotCommandsModel) SelectList(ctx context.Context, botId int64) (
 	err = m.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.SelectList: %w", err)
 		return
 	}
 
@@ -238,7 +236,7 @@ func (m *defaultBotCommandsModel) SelectListWithCB(ctx context.Context, botId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -269,7 +267,7 @@ func (m *defaultBotCommandsModel) SelectListByIdList(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.SelectListByIdList: %w", err)
 		return
 	}
 
@@ -293,7 +291,7 @@ func (m *defaultBotCommandsModel) SelectListByIdListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
+		err = fmt.Errorf("bot_commands.SelectListByIdListWithCB: %w", err)
 		return
 	}
 

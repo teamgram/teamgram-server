@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserProfilePhotosModel interface {
@@ -53,18 +51,18 @@ func (m *defaultUserProfilePhotosModel) InsertOrUpdate(ctx context.Context, data
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -81,18 +79,18 @@ func (m *defaultUserProfilePhotosModel) InsertOrUpdateTx(tx *sqlx.Tx, data *User
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_profile_photos.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -105,7 +103,7 @@ func (m *defaultUserProfilePhotosModel) SelectList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.SelectList: %w", err)
 	}
 
 	return
@@ -118,7 +116,7 @@ func (m *defaultUserProfilePhotosModel) SelectListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.SelectListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -146,7 +144,7 @@ func (m *defaultUserProfilePhotosModel) SelectNext(ctx context.Context, userId i
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("get in SelectNext(_), error: %v", err)
+			err = fmt.Errorf("user_profile_photos.SelectNext: %w", err)
 			return
 		} else {
 			err = nil
@@ -172,13 +170,13 @@ func (m *defaultUserProfilePhotosModel) Delete(ctx context.Context, userId int64
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.Delete rows affected: %w", err)
 	}
 
 	return
@@ -199,13 +197,13 @@ func (m *defaultUserProfilePhotosModel) DeleteTx(tx *sqlx.Tx, userId int64, idLi
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_profile_photos.DeleteTx rows affected: %w", err)
 	}
 
 	return

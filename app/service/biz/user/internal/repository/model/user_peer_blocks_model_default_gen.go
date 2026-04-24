@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -63,15 +64,23 @@ func newUserPeerBlocksModel(db *sqlx.DB) *defaultUserPeerBlocksModel {
 func (m *defaultUserPeerBlocksModel) Insert2(ctx context.Context, data *UserPeerBlocks) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_peer_blocks` (%s) values (?, ?, ?, ?, ?)", userPeerBlocksRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Date, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Date, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("user_peer_blocks.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserPeerBlocksModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_peer_blocks` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_peer_blocks.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPeerBlocksModel) FindOne(ctx context.Context, id int64) (*UserPeerBlocks, error) {
@@ -79,10 +88,13 @@ func (m *defaultUserPeerBlocksModel) FindOne(ctx context.Context, id int64) (*Us
 	var resp UserPeerBlocks
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_peer_blocks.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -96,8 +108,9 @@ func (m *defaultUserPeerBlocksModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserPeerBlocks
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_peer_blocks.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -105,7 +118,11 @@ func (m *defaultUserPeerBlocksModel) Update2(ctx context.Context, data *UserPeer
 	query := fmt.Sprintf("update `user_peer_blocks` set %s where `id` = ?", userPeerBlocksRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Date, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_peer_blocks.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserPeerBlocksModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserPeerBlocks, error) {
@@ -115,7 +132,11 @@ func (m *defaultUserPeerBlocksModel) FindOneByUserIdPeerTypePeerId(ctx context.C
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_peer_blocks.FindOneByUserIdPeerTypePeerId: %w", err)
 	}
+
 	return &resp, nil
 }

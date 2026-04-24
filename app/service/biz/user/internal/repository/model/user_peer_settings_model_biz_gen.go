@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserPeerSettingsModel interface {
@@ -53,18 +51,18 @@ func (m *defaultUserPeerSettingsModel) InsertOrUpdate(ctx context.Context, data 
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -81,18 +79,18 @@ func (m *defaultUserPeerSettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserP
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_peer_settings.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -110,7 +108,7 @@ func (m *defaultUserPeerSettingsModel) Select(ctx context.Context, userId int64,
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("user_peer_settings.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -145,13 +143,13 @@ func (m *defaultUserPeerSettingsModel) Update(ctx context.Context, cMap map[stri
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.Update rows affected: %w", err)
 	}
 
 	return
@@ -179,13 +177,13 @@ func (m *defaultUserPeerSettingsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]int
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.UpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -203,13 +201,13 @@ func (m *defaultUserPeerSettingsModel) Delete(ctx context.Context, userId int64,
 	rResult, err = m.db.Exec(ctx, query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.Delete rows affected: %w", err)
 	}
 
 	return
@@ -225,13 +223,13 @@ func (m *defaultUserPeerSettingsModel) DeleteTx(tx *sqlx.Tx, userId int64, peerT
 	rResult, err = tx.Exec(query, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("user_peer_settings.DeleteTx rows affected: %w", err)
 	}
 
 	return

@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUserNotifySettingsModel interface {
@@ -53,18 +51,18 @@ func (m *defaultUserNotifySettingsModel) InsertOrUpdate(ctx context.Context, dat
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -81,18 +79,18 @@ func (m *defaultUserNotifySettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Use
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("user_notify_settings.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -108,7 +106,7 @@ func (m *defaultUserNotifySettingsModel) SelectAll(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.SelectAll: %w", err)
 		return
 	}
 
@@ -127,7 +125,7 @@ func (m *defaultUserNotifySettingsModel) SelectAllWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.SelectAllWithCB: %w", err)
 		return
 	}
 
@@ -155,7 +153,7 @@ func (m *defaultUserNotifySettingsModel) Select(ctx context.Context, userId int6
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("user_notify_settings.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -179,13 +177,13 @@ func (m *defaultUserNotifySettingsModel) DeleteAll(ctx context.Context, userId i
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.DeleteAll exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.DeleteAll rows affected: %w", err)
 	}
 
 	return
@@ -201,13 +199,13 @@ func (m *defaultUserNotifySettingsModel) DeleteAllTx(tx *sqlx.Tx, userId int64) 
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.DeleteAllTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteAll(_), error: %v", err)
+		err = fmt.Errorf("user_notify_settings.DeleteAllTx rows affected: %w", err)
 	}
 
 	return

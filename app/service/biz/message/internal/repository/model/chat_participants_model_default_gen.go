@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -73,15 +74,23 @@ func newChatParticipantsModel(db *sqlx.DB) *defaultChatParticipantsModel {
 func (m *defaultChatParticipantsModel) Insert2(ctx context.Context, data *ChatParticipants) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `chat_participants` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", chatParticipantsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.ChatId, data.UserId, data.ParticipantType, data.Link, data.Usage2, data.AdminRights, data.InviterUserId, data.InvitedAt, data.KickedAt, data.LeftAt, data.GroupcallDefaultJoinAsPeerType, data.GroupcallDefaultJoinAsPeerId, data.IsBot, data.State, data.Date2)
+	r, err := m.db.Exec(ctx, query, data.ChatId, data.UserId, data.ParticipantType, data.Link, data.Usage2, data.AdminRights, data.InviterUserId, data.InvitedAt, data.KickedAt, data.LeftAt, data.GroupcallDefaultJoinAsPeerType, data.GroupcallDefaultJoinAsPeerId, data.IsBot, data.State, data.Date2)
+	if err != nil {
+		return nil, fmt.Errorf("chat_participants.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultChatParticipantsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `chat_participants` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("chat_participants.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultChatParticipantsModel) FindOne(ctx context.Context, id int64) (*ChatParticipants, error) {
@@ -89,10 +98,13 @@ func (m *defaultChatParticipantsModel) FindOne(ctx context.Context, id int64) (*
 	var resp ChatParticipants
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("chat_participants.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -106,8 +118,9 @@ func (m *defaultChatParticipantsModel) FindListByIdList(ctx context.Context, id 
 	var resp []ChatParticipants
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("chat_participants.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -115,7 +128,11 @@ func (m *defaultChatParticipantsModel) Update2(ctx context.Context, data *ChatPa
 	query := fmt.Sprintf("update `chat_participants` set %s where `id` = ?", chatParticipantsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.ChatId, data.UserId, data.ParticipantType, data.Link, data.Usage2, data.AdminRights, data.InviterUserId, data.InvitedAt, data.KickedAt, data.LeftAt, data.GroupcallDefaultJoinAsPeerType, data.GroupcallDefaultJoinAsPeerId, data.IsBot, data.State, data.Date2, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("chat_participants.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultChatParticipantsModel) FindOneByChatIdUserId(ctx context.Context, chatId int64, userId int64) (*ChatParticipants, error) {
@@ -125,7 +142,11 @@ func (m *defaultChatParticipantsModel) FindOneByChatIdUserId(ctx context.Context
 	err := m.db.QueryRowPartial(ctx, &resp, query, chatId, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("chat_participants.FindOneByChatIdUserId: %w", err)
 	}
+
 	return &resp, nil
 }

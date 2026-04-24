@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -95,15 +96,23 @@ func newUsersModel(db *sqlx.DB) *defaultUsersModel {
 func (m *defaultUsersModel) Insert2(ctx context.Context, data *Users) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", usersRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason)
+	r, err := m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason)
+	if err != nil {
+		return nil, fmt.Errorf("users.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUsersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `users` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("users.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUsersModel) FindOne(ctx context.Context, id int64) (*Users, error) {
@@ -111,10 +120,13 @@ func (m *defaultUsersModel) FindOne(ctx context.Context, id int64) (*Users, erro
 	var resp Users
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("users.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -128,8 +140,9 @@ func (m *defaultUsersModel) FindListByIdList(ctx context.Context, id ...int64) (
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("users.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -137,7 +150,11 @@ func (m *defaultUsersModel) Update2(ctx context.Context, data *Users) error {
 	query := fmt.Sprintf("update `users` set %s where `id` = ?", usersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("users.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUsersModel) FindOneByPhone(ctx context.Context, phone string) (*Users, error) {
@@ -147,8 +164,12 @@ func (m *defaultUsersModel) FindOneByPhone(ctx context.Context, phone string) (*
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("users.FindOneByPhone: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -161,7 +182,8 @@ func (m *defaultUsersModel) FindListByPhoneList(ctx context.Context, phone ...st
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("users.FindListByPhoneList: %w", err)
 	}
+
 	return resp, nil
 }

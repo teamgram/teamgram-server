@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizAuthUsersModel interface {
@@ -65,18 +63,18 @@ func (m *defaultAuthUsersModel) InsertOrUpdates(ctx context.Context, data *AuthU
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdates(%v), error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdates named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdates(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdates last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdates(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdates rows affected: %w", err)
 	}
 
 	return
@@ -93,18 +91,18 @@ func (m *defaultAuthUsersModel) InsertOrUpdatesTx(tx *sqlx.Tx, data *AuthUsers) 
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdates(%v), error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdatesTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdates(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdatesTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdates(%v)_error: %v", data, err)
+		err = fmt.Errorf("auth_users.InsertOrUpdatesTx rows affected: %w", err)
 	}
 
 	return
@@ -122,7 +120,7 @@ func (m *defaultAuthUsersModel) Select(ctx context.Context, authKeyId int64) (rV
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("auth_users.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -146,13 +144,13 @@ func (m *defaultAuthUsersModel) UpdateAndroidPushSessionId(ctx context.Context, 
 	rResult, err = m.db.Exec(ctx, query, androidPushSessionId, authKeyId, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateAndroidPushSessionId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateAndroidPushSessionId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionId rows affected: %w", err)
 	}
 
 	return
@@ -168,13 +166,13 @@ func (m *defaultAuthUsersModel) UpdateAndroidPushSessionIdTx(tx *sqlx.Tx, androi
 	rResult, err = tx.Exec(query, androidPushSessionId, authKeyId, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateAndroidPushSessionId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateAndroidPushSessionId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionIdTx rows affected: %w", err)
 	}
 
 	return
@@ -190,7 +188,7 @@ func (m *defaultAuthUsersModel) SelectAuthKeyIds(ctx context.Context, userId int
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAuthKeyIds(_), error: %v", err)
+		err = fmt.Errorf("auth_users.SelectAuthKeyIds: %w", err)
 		return
 	}
 
@@ -209,7 +207,7 @@ func (m *defaultAuthUsersModel) SelectAuthKeyIdsWithCB(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAuthKeyIds(_), error: %v", err)
+		err = fmt.Errorf("auth_users.SelectAuthKeyIdsWithCB: %w", err)
 		return
 	}
 
@@ -241,13 +239,13 @@ func (m *defaultAuthUsersModel) DeleteByHashList(ctx context.Context, idList []i
 	rResult, err = m.db.Exec(ctx, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteByHashList(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteByHashList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteByHashList(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteByHashList rows affected: %w", err)
 	}
 
 	return
@@ -268,13 +266,13 @@ func (m *defaultAuthUsersModel) DeleteByHashListTx(tx *sqlx.Tx, idList []int64) 
 	rResult, err = tx.Exec(query)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteByHashList(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteByHashListTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteByHashList(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteByHashListTx rows affected: %w", err)
 	}
 
 	return
@@ -290,7 +288,7 @@ func (m *defaultAuthUsersModel) SelectListByUserId(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.SelectListByUserId: %w", err)
 		return
 	}
 
@@ -309,7 +307,7 @@ func (m *defaultAuthUsersModel) SelectListByUserIdWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
+		err = fmt.Errorf("auth_users.SelectListByUserIdWithCB: %w", err)
 		return
 	}
 
@@ -337,13 +335,13 @@ func (m *defaultAuthUsersModel) Delete(ctx context.Context, authKeyId int64, use
 	rResult, err = m.db.Exec(ctx, query, authKeyId, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("auth_users.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("auth_users.Delete rows affected: %w", err)
 	}
 
 	return
@@ -359,13 +357,13 @@ func (m *defaultAuthUsersModel) DeleteTx(tx *sqlx.Tx, authKeyId int64, userId in
 	rResult, err = tx.Exec(query, authKeyId, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteTx rows affected: %w", err)
 	}
 
 	return
@@ -383,13 +381,13 @@ func (m *defaultAuthUsersModel) DeleteUser(ctx context.Context, userId int64) (r
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteUser(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteUser exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteUser(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteUser rows affected: %w", err)
 	}
 
 	return
@@ -405,13 +403,13 @@ func (m *defaultAuthUsersModel) DeleteUserTx(tx *sqlx.Tx, userId int64) (rowsAff
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteUser(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteUserTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteUser(_), error: %v", err)
+		err = fmt.Errorf("auth_users.DeleteUserTx rows affected: %w", err)
 	}
 
 	return

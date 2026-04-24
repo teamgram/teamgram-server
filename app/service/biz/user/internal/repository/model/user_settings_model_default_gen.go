@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -62,15 +63,23 @@ func newUserSettingsModel(db *sqlx.DB) *defaultUserSettingsModel {
 func (m *defaultUserSettingsModel) Insert2(ctx context.Context, data *UserSettings) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `user_settings` (%s) values (?, ?, ?, ?)", userSettingsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.Key2, data.Value, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.Key2, data.Value, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("user_settings.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultUserSettingsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `user_settings` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_settings.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserSettingsModel) FindOne(ctx context.Context, id int64) (*UserSettings, error) {
@@ -78,10 +87,13 @@ func (m *defaultUserSettingsModel) FindOne(ctx context.Context, id int64) (*User
 	var resp UserSettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_settings.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -95,8 +107,9 @@ func (m *defaultUserSettingsModel) FindListByIdList(ctx context.Context, id ...i
 	var resp []UserSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user_settings.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -104,7 +117,11 @@ func (m *defaultUserSettingsModel) Update2(ctx context.Context, data *UserSettin
 	query := fmt.Sprintf("update `user_settings` set %s where `id` = ?", userSettingsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Key2, data.Value, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("user_settings.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultUserSettingsModel) FindOneByUserIdKey2(ctx context.Context, userId int64, key2 string) (*UserSettings, error) {
@@ -114,7 +131,11 @@ func (m *defaultUserSettingsModel) FindOneByUserIdKey2(ctx context.Context, user
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, key2)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_settings.FindOneByUserIdKey2: %w", err)
 	}
+
 	return &resp, nil
 }

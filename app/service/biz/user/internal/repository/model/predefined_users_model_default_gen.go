@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -64,15 +65,23 @@ func newPredefinedUsersModel(db *sqlx.DB) *defaultPredefinedUsersModel {
 func (m *defaultPredefinedUsersModel) Insert2(ctx context.Context, data *PredefinedUsers) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `predefined_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", predefinedUsersRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("predefined_users.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultPredefinedUsersModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `predefined_users` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("predefined_users.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultPredefinedUsersModel) FindOne(ctx context.Context, id int64) (*PredefinedUsers, error) {
@@ -80,10 +89,13 @@ func (m *defaultPredefinedUsersModel) FindOne(ctx context.Context, id int64) (*P
 	var resp PredefinedUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("predefined_users.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -97,8 +109,9 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 	var resp []PredefinedUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("predefined_users.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -106,5 +119,9 @@ func (m *defaultPredefinedUsersModel) Update2(ctx context.Context, data *Predefi
 	query := fmt.Sprintf("update `predefined_users` set %s where `id` = ?", predefinedUsersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("predefined_users.Update2 exec: %w", err)
+	}
+
+	return nil
 }

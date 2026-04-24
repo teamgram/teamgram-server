@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizMessageReadOutboxModel interface {
@@ -48,18 +46,18 @@ func (m *defaultMessageReadOutboxModel) InsertOrUpdate(ctx context.Context, data
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -76,18 +74,18 @@ func (m *defaultMessageReadOutboxModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Mess
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("message_read_outbox.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -103,7 +101,7 @@ func (m *defaultMessageReadOutboxModel) SelectList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("message_read_outbox.SelectList: %w", err)
 		return
 	}
 
@@ -122,7 +120,7 @@ func (m *defaultMessageReadOutboxModel) SelectListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("message_read_outbox.SelectListWithCB: %w", err)
 		return
 	}
 

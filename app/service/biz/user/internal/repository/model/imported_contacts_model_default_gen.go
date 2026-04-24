@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -64,15 +65,23 @@ func newImportedContactsModel(db *sqlx.DB) *defaultImportedContactsModel {
 func (m *defaultImportedContactsModel) Insert2(ctx context.Context, data *ImportedContacts) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `imported_contacts` (%s) values (?, ?, ?)", importedContactsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("imported_contacts.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultImportedContactsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `imported_contacts` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("imported_contacts.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultImportedContactsModel) FindOne(ctx context.Context, id int64) (*ImportedContacts, error) {
@@ -80,10 +89,13 @@ func (m *defaultImportedContactsModel) FindOne(ctx context.Context, id int64) (*
 	var resp ImportedContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("imported_contacts.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -97,8 +109,9 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("imported_contacts.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -106,7 +119,11 @@ func (m *defaultImportedContactsModel) Update2(ctx context.Context, data *Import
 	query := fmt.Sprintf("update `imported_contacts` set %s where `id` = ?", importedContactsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("imported_contacts.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserId(ctx context.Context, userId int64) (*ImportedContacts, error) {
@@ -116,8 +133,12 @@ func (m *defaultImportedContactsModel) FindOneByUserId(ctx context.Context, user
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("imported_contacts.FindOneByUserId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -131,8 +152,9 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("imported_contacts.FindListByUserIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -143,7 +165,11 @@ func (m *defaultImportedContactsModel) FindOneByUserIdImportedUserId(ctx context
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, importedUserId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("imported_contacts.FindOneByUserIdImportedUserId: %w", err)
 	}
+
 	return &resp, nil
 }

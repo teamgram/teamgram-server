@@ -107,10 +107,10 @@ func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql
 		return lastInsertId, rowsAffected, nil
 	}, keys...)
 	if err != nil {
-		return nil, fmt.Errorf("auth_keys.Insert2: %w", err)
+		return nil, err
 	}
-	return cachedExecResult{lastInsertId: lastInsertId, rowsAffected: rowsAffected}, nil
 
+	return cachedExecResult{lastInsertId: lastInsertId, rowsAffected: rowsAffected}, nil
 }
 
 func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
@@ -118,12 +118,14 @@ func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 
 	oldData, err := m.FindOne(ctx, id)
 	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
-		return err
+		return fmt.Errorf("auth_keys.Delete2 find one: %w", err)
 	}
+	if oldData == nil {
+		return nil
+	}
+
 	keys := []string{m.formatPrimary(id)}
-	if oldData != nil {
-		keys = append(keys, m.cacheKeys(oldData)...)
-	}
+	keys = append(keys, m.cacheKeys(oldData)...)
 	_, _, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		r, err := conn.Exec(ctx, query, id)
 		if err != nil {
@@ -135,10 +137,8 @@ func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
-	if err != nil {
-		return fmt.Errorf("auth_keys.Delete2: %w", err)
-	}
-	return nil
+
+	return err
 }
 
 func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys, error) {
@@ -149,10 +149,13 @@ func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys
 	err := m.QueryRow(ctx, &resp, cacheKey, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 		return conn.QueryRowPartial(ctx, v, query, id)
 	})
-
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("auth_keys.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -168,6 +171,7 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 	if err != nil {
 		return nil, fmt.Errorf("auth_keys.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -176,12 +180,14 @@ func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) erro
 
 	oldData, err := m.FindOne(ctx, data.Id)
 	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
-		return err
+		return fmt.Errorf("auth_keys.Update2 find one: %w", err)
 	}
+	if oldData == nil {
+		return nil
+	}
+
 	keys := m.cacheKeys(data)
-	if oldData != nil {
-		keys = append(keys, m.cacheKeys(oldData)...)
-	}
+	keys = append(keys, m.cacheKeys(oldData)...)
 	_, _, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted, data.Id)
 		if err != nil {
@@ -193,10 +199,8 @@ func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) erro
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
-	if err != nil {
-		return fmt.Errorf("auth_keys.Update2: %w", err)
-	}
-	return nil
+
+	return err
 }
 
 func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error) {
@@ -206,14 +210,18 @@ func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId
 	cacheAuthKeysAuthKeyIdKey := fmt.Sprintf("%s#%v", cacheAuthKeysAuthKeyIdPrefix, authKeyId)
 	err := m.QueryRowIndex(ctx, &resp, cacheAuthKeysAuthKeyIdKey, m.formatPrimary, func(ctx context.Context, conn *sqlx.DB, v interface{}) (interface{}, error) {
 		if err := conn.QueryRowPartial(ctx, &resp, query, authKeyId); err != nil {
-			return nil, fmt.Errorf("auth_keys.FindOneByAuthKeyId query row: %w", err)
+			return nil, err
 		}
 		return resp.Id, nil
 	}, m.queryPrimary)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("auth_keys.FindOneByAuthKeyId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -229,6 +237,7 @@ func (m *defaultAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, auth
 	if err != nil {
 		return nil, fmt.Errorf("auth_keys.FindListByAuthKeyIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -238,6 +247,7 @@ func (m *defaultAuthKeysModel) cacheKeys(data *AuthKeys) []string {
 	}
 	keys := []string{m.formatPrimary(data.Id)}
 	keys = append(keys, m.uniqueCacheKeys(data)...)
+
 	return keys
 }
 
@@ -258,8 +268,6 @@ func (m *defaultAuthKeysModel) formatPrimary(primary interface{}) string {
 
 func (m *defaultAuthKeysModel) queryPrimary(ctx context.Context, conn *sqlx.DB, v interface{}, primary interface{}) error {
 	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
-	if err := conn.QueryRowPartial(ctx, v, query, primary); err != nil {
-		return fmt.Errorf("auth_keys.queryPrimary: %w", err)
-	}
-	return nil
+
+	return conn.QueryRowPartial(ctx, v, query, primary)
 }

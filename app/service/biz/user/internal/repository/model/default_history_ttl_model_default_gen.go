@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -61,15 +62,23 @@ func newDefaultHistoryTtlModel(db *sqlx.DB) *defaultDefaultHistoryTtlModel {
 func (m *defaultDefaultHistoryTtlModel) Insert2(ctx context.Context, data *DefaultHistoryTtl) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `default_history_ttl` (%s) values (?, ?)", defaultHistoryTtlRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.UserId, data.Period)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.Period)
+	if err != nil {
+		return nil, fmt.Errorf("default_history_ttl.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultDefaultHistoryTtlModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `default_history_ttl` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("default_history_ttl.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDefaultHistoryTtlModel) FindOne(ctx context.Context, id int64) (*DefaultHistoryTtl, error) {
@@ -77,10 +86,13 @@ func (m *defaultDefaultHistoryTtlModel) FindOne(ctx context.Context, id int64) (
 	var resp DefaultHistoryTtl
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("default_history_ttl.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -94,8 +106,9 @@ func (m *defaultDefaultHistoryTtlModel) FindListByIdList(ctx context.Context, id
 	var resp []DefaultHistoryTtl
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("default_history_ttl.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -103,7 +116,11 @@ func (m *defaultDefaultHistoryTtlModel) Update2(ctx context.Context, data *Defau
 	query := fmt.Sprintf("update `default_history_ttl` set %s where `id` = ?", defaultHistoryTtlRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Period, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("default_history_ttl.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDefaultHistoryTtlModel) FindOneByUserId(ctx context.Context, userId int64) (*DefaultHistoryTtl, error) {
@@ -113,8 +130,12 @@ func (m *defaultDefaultHistoryTtlModel) FindOneByUserId(ctx context.Context, use
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("default_history_ttl.FindOneByUserId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -128,7 +149,8 @@ func (m *defaultDefaultHistoryTtlModel) FindListByUserIdList(ctx context.Context
 	var resp []DefaultHistoryTtl
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("default_history_ttl.FindListByUserIdList: %w", err)
 	}
+
 	return resp, nil
 }

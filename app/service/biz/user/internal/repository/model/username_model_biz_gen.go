@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizUsernameModel interface {
@@ -80,18 +78,18 @@ func (m *defaultUsernameModel) Insert(ctx context.Context, data *Username) (last
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("username.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("username.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("username.Insert rows affected: %w", err)
 	}
 
 	return
@@ -108,18 +106,18 @@ func (m *defaultUsernameModel) InsertTx(tx *sqlx.Tx, data *Username) (lastInsert
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("username.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("username.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("username.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -140,7 +138,7 @@ func (m *defaultUsernameModel) SelectList(ctx context.Context, nameList []string
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("username.SelectList: %w", err)
 		return
 	}
 
@@ -164,7 +162,7 @@ func (m *defaultUsernameModel) SelectListWithCB(ctx context.Context, nameList []
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
+		err = fmt.Errorf("username.SelectListWithCB: %w", err)
 		return
 	}
 
@@ -192,7 +190,7 @@ func (m *defaultUsernameModel) SelectByUsername(ctx context.Context, username st
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
+			err = fmt.Errorf("username.SelectByUsername: %w", err)
 			return
 		} else {
 			err = nil
@@ -225,13 +223,13 @@ func (m *defaultUsernameModel) Update(ctx context.Context, cMap map[string]inter
 	rResult, err = m.db.Exec(ctx, query, aValues...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("username.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("username.Update rows affected: %w", err)
 	}
 
 	return
@@ -257,13 +255,13 @@ func (m *defaultUsernameModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}
 	rResult, err = tx.Exec(query, aValues...)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -280,13 +278,13 @@ func (m *defaultUsernameModel) Delete(ctx context.Context, username string) (row
 	rResult, err = m.db.Exec(ctx, query, username)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("username.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("username.Delete rows affected: %w", err)
 	}
 
 	return
@@ -302,13 +300,13 @@ func (m *defaultUsernameModel) DeleteTx(tx *sqlx.Tx, username string) (rowsAffec
 	rResult, err = tx.Exec(query, username)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteTx rows affected: %w", err)
 	}
 
 	return
@@ -325,13 +323,13 @@ func (m *defaultUsernameModel) Delete2(ctx context.Context, peerType int32, peer
 	rResult, err = m.db.Exec(ctx, query, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in Delete2(_), error: %v", err)
+		err = fmt.Errorf("username.Delete2 exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Delete2(_), error: %v", err)
+		err = fmt.Errorf("username.Delete2 rows affected: %w", err)
 	}
 
 	return
@@ -347,13 +345,13 @@ func (m *defaultUsernameModel) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int
 	rResult, err = tx.Exec(query, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in Delete2(_), error: %v", err)
+		err = fmt.Errorf("username.Delete2Tx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete2(_), error: %v", err)
+		err = fmt.Errorf("username.Delete2Tx rows affected: %w", err)
 	}
 
 	return
@@ -370,13 +368,13 @@ func (m *defaultUsernameModel) DeleteByChannelId(ctx context.Context, peerId int
 	rResult, err = m.db.Exec(ctx, query, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in DeleteByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteByChannelId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in DeleteByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteByChannelId rows affected: %w", err)
 	}
 
 	return
@@ -392,13 +390,13 @@ func (m *defaultUsernameModel) DeleteByChannelIdTx(tx *sqlx.Tx, peerId int64) (r
 	rResult, err = tx.Exec(query, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in DeleteByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteByChannelIdTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in DeleteByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.DeleteByChannelIdTx rows affected: %w", err)
 	}
 
 	return
@@ -416,7 +414,7 @@ func (m *defaultUsernameModel) SelectByPeer(ctx context.Context, peerType int32,
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByPeer(_), error: %v", err)
+			err = fmt.Errorf("username.SelectByPeer: %w", err)
 			return
 		} else {
 			err = nil
@@ -440,7 +438,7 @@ func (m *defaultUsernameModel) SelectByUserId(ctx context.Context, peerId int64)
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByUserId(_), error: %v", err)
+			err = fmt.Errorf("username.SelectByUserId: %w", err)
 			return
 		} else {
 			err = nil
@@ -462,7 +460,7 @@ func (m *defaultUsernameModel) SelectListByUserId(ctx context.Context, peerId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
+		err = fmt.Errorf("username.SelectListByUserId: %w", err)
 		return
 	}
 
@@ -481,7 +479,7 @@ func (m *defaultUsernameModel) SelectListByUserIdWithCB(ctx context.Context, pee
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
+		err = fmt.Errorf("username.SelectListByUserIdWithCB: %w", err)
 		return
 	}
 
@@ -509,7 +507,7 @@ func (m *defaultUsernameModel) SelectByChannelId(ctx context.Context, peerId int
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in SelectByChannelId(_), error: %v", err)
+			err = fmt.Errorf("username.SelectByChannelId: %w", err)
 			return
 		} else {
 			err = nil
@@ -531,7 +529,7 @@ func (m *defaultUsernameModel) SelectListByChannelId(ctx context.Context, peerId
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.SelectListByChannelId: %w", err)
 		return
 	}
 
@@ -550,7 +548,7 @@ func (m *defaultUsernameModel) SelectListByChannelIdWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByChannelId(_), error: %v", err)
+		err = fmt.Errorf("username.SelectListByChannelIdWithCB: %w", err)
 		return
 	}
 
@@ -578,13 +576,13 @@ func (m *defaultUsernameModel) UpdateUsername(ctx context.Context, username stri
 	rResult, err = m.db.Exec(ctx, query, username, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateUsername(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateUsername exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUsername(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateUsername rows affected: %w", err)
 	}
 
 	return
@@ -600,13 +598,13 @@ func (m *defaultUsernameModel) UpdateUsernameTx(tx *sqlx.Tx, username string, pe
 	rResult, err = tx.Exec(query, username, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateUsername(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateUsernameTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUsername(_), error: %v", err)
+		err = fmt.Errorf("username.UpdateUsernameTx rows affected: %w", err)
 	}
 
 	return
@@ -627,7 +625,7 @@ func (m *defaultUsernameModel) SearchByQueryNotIdList(ctx context.Context, q2 st
 	err = m.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
+		err = fmt.Errorf("username.SearchByQueryNotIdList: %w", err)
 		return
 	}
 
@@ -651,7 +649,7 @@ func (m *defaultUsernameModel) SearchByQueryNotIdListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
+		err = fmt.Errorf("username.SearchByQueryNotIdListWithCB: %w", err)
 		return
 	}
 

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -61,15 +62,23 @@ func newBotCommandsModel(db *sqlx.DB) *defaultBotCommandsModel {
 func (m *defaultBotCommandsModel) Insert2(ctx context.Context, data *BotCommands) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `bot_commands` (%s) values (?, ?, ?)", botCommandsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.BotId, data.Command, data.Description)
+	r, err := m.db.Exec(ctx, query, data.BotId, data.Command, data.Description)
+	if err != nil {
+		return nil, fmt.Errorf("bot_commands.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultBotCommandsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `bot_commands` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("bot_commands.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultBotCommandsModel) FindOne(ctx context.Context, id int64) (*BotCommands, error) {
@@ -77,10 +86,13 @@ func (m *defaultBotCommandsModel) FindOne(ctx context.Context, id int64) (*BotCo
 	var resp BotCommands
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("bot_commands.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -94,8 +106,9 @@ func (m *defaultBotCommandsModel) FindListByIdList(ctx context.Context, id ...in
 	var resp []BotCommands
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("bot_commands.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -103,7 +116,11 @@ func (m *defaultBotCommandsModel) Update2(ctx context.Context, data *BotCommands
 	query := fmt.Sprintf("update `bot_commands` set %s where `id` = ?", botCommandsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.BotId, data.Command, data.Description, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("bot_commands.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultBotCommandsModel) FindOneByBotIdCommand(ctx context.Context, botId int64, command string) (*BotCommands, error) {
@@ -113,7 +130,11 @@ func (m *defaultBotCommandsModel) FindOneByBotIdCommand(ctx context.Context, bot
 	err := m.db.QueryRowPartial(ctx, &resp, query, botId, command)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("bot_commands.FindOneByBotIdCommand: %w", err)
 	}
+
 	return &resp, nil
 }

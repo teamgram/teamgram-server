@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizDraftsModel interface {
@@ -56,18 +54,18 @@ func (m *defaultDraftsModel) InsertOrUpdate(ctx context.Context, data *Drafts) (
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -84,18 +82,18 @@ func (m *defaultDraftsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *Drafts) (lastIn
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("drafts.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -113,7 +111,7 @@ func (m *defaultDraftsModel) Select(ctx context.Context, userId int32, peerDialo
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("drafts.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -132,7 +130,7 @@ func (m *defaultDraftsModel) SelectIdList(ctx context.Context, userId int32) (rL
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.SelectIdList: %w", err)
 	}
 
 	return
@@ -145,7 +143,7 @@ func (m *defaultDraftsModel) SelectIdListWithCB(ctx context.Context, userId int3
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("select in SelectIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.SelectIdListWithCB: %w", err)
 	}
 
 	if cb != nil {
@@ -173,7 +171,7 @@ func (m *defaultDraftsModel) SelectByIdList(ctx context.Context, userId int32, i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.SelectByIdList: %w", err)
 		return
 	}
 
@@ -197,7 +195,7 @@ func (m *defaultDraftsModel) SelectByIdListWithCB(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.SelectByIdListWithCB: %w", err)
 		return
 	}
 
@@ -229,13 +227,13 @@ func (m *defaultDraftsModel) ClearByIdList(ctx context.Context, userId int32, id
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in ClearByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.ClearByIdList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in ClearByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.ClearByIdList rows affected: %w", err)
 	}
 
 	return
@@ -256,13 +254,13 @@ func (m *defaultDraftsModel) ClearByIdListTx(tx *sqlx.Tx, userId int32, idList [
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in ClearByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.ClearByIdListTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in ClearByIdList(_), error: %v", err)
+		err = fmt.Errorf("drafts.ClearByIdListTx rows affected: %w", err)
 	}
 
 	return

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -91,15 +92,23 @@ func newBotsModel(db *sqlx.DB) *defaultBotsModel {
 func (m *defaultBotsModel) Insert2(ctx context.Context, data *Bots) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `bots` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", botsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode)
+	r, err := m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode)
+	if err != nil {
+		return nil, fmt.Errorf("bots.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultBotsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `bots` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("bots.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultBotsModel) FindOne(ctx context.Context, id int64) (*Bots, error) {
@@ -107,10 +116,13 @@ func (m *defaultBotsModel) FindOne(ctx context.Context, id int64) (*Bots, error)
 	var resp Bots
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("bots.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -124,8 +136,9 @@ func (m *defaultBotsModel) FindListByIdList(ctx context.Context, id ...int64) ([
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("bots.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -133,7 +146,11 @@ func (m *defaultBotsModel) Update2(ctx context.Context, data *Bots) error {
 	query := fmt.Sprintf("update `bots` set %s where `id` = ?", botsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("bots.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultBotsModel) FindOneByBotId(ctx context.Context, botId int64) (*Bots, error) {
@@ -143,8 +160,12 @@ func (m *defaultBotsModel) FindOneByBotId(ctx context.Context, botId int64) (*Bo
 	err := m.db.QueryRowPartial(ctx, &resp, query, botId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("bots.FindOneByBotId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -158,7 +179,8 @@ func (m *defaultBotsModel) FindListByBotIdList(ctx context.Context, botId ...int
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("bots.FindListByBotIdList: %w", err)
 	}
+
 	return resp, nil
 }

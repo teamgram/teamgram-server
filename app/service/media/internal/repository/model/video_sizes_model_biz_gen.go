@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizVideoSizesModel interface {
@@ -51,18 +49,18 @@ func (m *defaultVideoSizesModel) Insert(ctx context.Context, data *VideoSizes) (
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("video_sizes.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("video_sizes.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("video_sizes.Insert rows affected: %w", err)
 	}
 
 	return
@@ -79,18 +77,18 @@ func (m *defaultVideoSizesModel) InsertTx(tx *sqlx.Tx, data *VideoSizes) (lastIn
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in Insert(%v), error: %v", data, err)
+		err = fmt.Errorf("video_sizes.InsertTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("video_sizes.InsertTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in Insert(%v)_error: %v", data, err)
+		err = fmt.Errorf("video_sizes.InsertTx rows affected: %w", err)
 	}
 
 	return
@@ -106,7 +104,7 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeId(ctx context.Context, vi
 	err = m.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeId(_), error: %v", err)
+		err = fmt.Errorf("video_sizes.SelectListByVideoSizeId: %w", err)
 		return
 	}
 
@@ -125,7 +123,7 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeId(_), error: %v", err)
+		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdWithCB: %w", err)
 		return
 	}
 
@@ -156,7 +154,7 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdList(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
+		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdList: %w", err)
 		return
 	}
 
@@ -180,7 +178,7 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdListWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
+		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdListWithCB: %w", err)
 		return
 	}
 

@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -60,15 +61,23 @@ func newAuthOpLogsModel(db *sqlx.DB) *defaultAuthOpLogsModel {
 func (m *defaultAuthOpLogsModel) Insert2(ctx context.Context, data *AuthOpLogs) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `auth_op_logs` (%s) values (?, ?, ?, ?)", authOpLogsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.AuthKeyId, data.Ip, data.OpType, data.LogText)
+	r, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Ip, data.OpType, data.LogText)
+	if err != nil {
+		return nil, fmt.Errorf("auth_op_logs.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultAuthOpLogsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_op_logs` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_op_logs.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultAuthOpLogsModel) FindOne(ctx context.Context, id int64) (*AuthOpLogs, error) {
@@ -76,10 +85,13 @@ func (m *defaultAuthOpLogsModel) FindOne(ctx context.Context, id int64) (*AuthOp
 	var resp AuthOpLogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("auth_op_logs.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -93,8 +105,9 @@ func (m *defaultAuthOpLogsModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []AuthOpLogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("auth_op_logs.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -102,5 +115,9 @@ func (m *defaultAuthOpLogsModel) Update2(ctx context.Context, data *AuthOpLogs) 
 	query := fmt.Sprintf("update `auth_op_logs` set %s where `id` = ?", authOpLogsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Ip, data.OpType, data.LogText, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("auth_op_logs.Update2 exec: %w", err)
+	}
+
+	return nil
 }

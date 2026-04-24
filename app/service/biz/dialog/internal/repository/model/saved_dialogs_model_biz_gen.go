@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var _ *sql.Result
@@ -26,7 +25,6 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
-var _ *logx.Logger
 
 type (
 	bizSavedDialogsModel interface {
@@ -62,18 +60,18 @@ func (m *defaultSavedDialogsModel) InsertOrUpdate(ctx context.Context, data *Sav
 
 	r, err = m.db.NamedExec(ctx, query, data)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -90,18 +88,18 @@ func (m *defaultSavedDialogsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *SavedDial
 
 	r, err = tx.NamedExec(query, data)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdateTx named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdateTx last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", data, err)
+		err = fmt.Errorf("saved_dialogs.InsertOrUpdateTx rows affected: %w", err)
 	}
 
 	return
@@ -119,7 +117,7 @@ func (m *defaultSavedDialogsModel) Select(ctx context.Context, userId int64, pee
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
-			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
+			err = fmt.Errorf("saved_dialogs.Select: %w", err)
 			return
 		} else {
 			err = nil
@@ -141,7 +139,7 @@ func (m *defaultSavedDialogsModel) SelectPinnedDialogs(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectPinnedDialogs: %w", err)
 		return
 	}
 
@@ -160,7 +158,7 @@ func (m *defaultSavedDialogsModel) SelectPinnedDialogsWithCB(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectPinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -186,7 +184,7 @@ func (m *defaultSavedDialogsModel) SelectExcludePinnedDialogs(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectExcludePinnedDialogs: %w", err)
 		return
 	}
 
@@ -205,7 +203,7 @@ func (m *defaultSavedDialogsModel) SelectExcludePinnedDialogsWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectExcludePinnedDialogsWithCB: %w", err)
 		return
 	}
 
@@ -231,7 +229,7 @@ func (m *defaultSavedDialogsModel) SelectDialogs(ctx context.Context, userId int
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectDialogs: %w", err)
 		return
 	}
 
@@ -250,7 +248,7 @@ func (m *defaultSavedDialogsModel) SelectDialogsWithCB(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessage, limit)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.SelectDialogsWithCB: %w", err)
 		return
 	}
 
@@ -278,13 +276,13 @@ func (m *defaultSavedDialogsModel) UpdateUserUnPinned(ctx context.Context, userI
 	rResult, err = m.db.Exec(ctx, query, userId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateUserUnPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserUnPinned exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUserUnPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserUnPinned rows affected: %w", err)
 	}
 
 	return
@@ -300,13 +298,13 @@ func (m *defaultSavedDialogsModel) UpdateUserUnPinnedTx(tx *sqlx.Tx, userId int6
 	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateUserUnPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserUnPinnedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUserUnPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserUnPinnedTx rows affected: %w", err)
 	}
 
 	return
@@ -324,13 +322,13 @@ func (m *defaultSavedDialogsModel) UpdateUserPeerPinned(ctx context.Context, pin
 	rResult, err = m.db.Exec(ctx, query, pinned, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("exec in UpdateUserPeerPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserPeerPinned exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUserPeerPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserPeerPinned rows affected: %w", err)
 	}
 
 	return
@@ -346,13 +344,13 @@ func (m *defaultSavedDialogsModel) UpdateUserPeerPinnedTx(tx *sqlx.Tx, pinned in
 	rResult, err = tx.Exec(query, pinned, userId, peerType, peerId)
 
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("exec in UpdateUserPeerPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserPeerPinnedTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUserPeerPinned(_), error: %v", err)
+		err = fmt.Errorf("saved_dialogs.UpdateUserPeerPinnedTx rows affected: %w", err)
 	}
 
 	return

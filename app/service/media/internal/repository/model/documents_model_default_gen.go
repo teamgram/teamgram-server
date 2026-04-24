@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -74,15 +75,23 @@ func newDocumentsModel(db *sqlx.DB) *defaultDocumentsModel {
 func (m *defaultDocumentsModel) Insert2(ctx context.Context, data *Documents) (sql.Result, error) {
 	query := fmt.Sprintf("insert into `documents` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", documentsRowsExpectAutoSet)
 
-	return m.db.Exec(ctx, query, data.DocumentId, data.AccessHash, data.DcId, data.FilePath, data.FileSize, data.UploadedFileName, data.Ext, data.MimeType, data.ThumbId, data.VideoThumbId, data.Version, data.Attributes, data.Date2, data.ImportDocumentId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.DocumentId, data.AccessHash, data.DcId, data.FilePath, data.FileSize, data.UploadedFileName, data.Ext, data.MimeType, data.ThumbId, data.VideoThumbId, data.Version, data.Attributes, data.Date2, data.ImportDocumentId, data.Deleted)
+	if err != nil {
+		return nil, fmt.Errorf("documents.Insert2 exec: %w", err)
+	}
 
+	return r, nil
 }
 
 func (m *defaultDocumentsModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `documents` where `id` = ?"
 
 	_, err := m.db.Exec(ctx, query, id)
-	return err
+	if err != nil {
+		return fmt.Errorf("documents.Delete2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDocumentsModel) FindOne(ctx context.Context, id int64) (*Documents, error) {
@@ -90,10 +99,13 @@ func (m *defaultDocumentsModel) FindOne(ctx context.Context, id int64) (*Documen
 	var resp Documents
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("documents.FindOne: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -107,8 +119,9 @@ func (m *defaultDocumentsModel) FindListByIdList(ctx context.Context, id ...int6
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("documents.FindListByIdList: %w", err)
 	}
+
 	return resp, nil
 }
 
@@ -116,7 +129,11 @@ func (m *defaultDocumentsModel) Update2(ctx context.Context, data *Documents) er
 	query := fmt.Sprintf("update `documents` set %s where `id` = ?", documentsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.DocumentId, data.AccessHash, data.DcId, data.FilePath, data.FileSize, data.UploadedFileName, data.Ext, data.MimeType, data.ThumbId, data.VideoThumbId, data.Version, data.Attributes, data.Date2, data.ImportDocumentId, data.Deleted, data.Id)
-	return err
+	if err != nil {
+		return fmt.Errorf("documents.Update2 exec: %w", err)
+	}
+
+	return nil
 }
 
 func (m *defaultDocumentsModel) FindOneByDocumentId(ctx context.Context, documentId int64) (*Documents, error) {
@@ -126,8 +143,12 @@ func (m *defaultDocumentsModel) FindOneByDocumentId(ctx context.Context, documen
 	err := m.db.QueryRowPartial(ctx, &resp, query, documentId)
 
 	if err != nil {
-		return nil, err
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("documents.FindOneByDocumentId: %w", err)
 	}
+
 	return &resp, nil
 }
 
@@ -141,7 +162,8 @@ func (m *defaultDocumentsModel) FindListByDocumentIdList(ctx context.Context, do
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("documents.FindListByDocumentIdList: %w", err)
 	}
+
 	return resp, nil
 }
