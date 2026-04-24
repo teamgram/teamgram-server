@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
-	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
@@ -18,15 +16,9 @@ const (
 	cacheSaltPrefix = "salts"
 )
 
-const (
-	saltTimeout = 30 * 60 // salt timeout
-)
-
 type FutureSaltsModel interface {
-	PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt) (err error)
+	PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt, saltTimeout int) (err error)
 	GetSalts(ctx context.Context, keyId int64) (salts []*tg.TLFutureSalt, err error)
-	PutSaltCache(ctx context.Context, keyId int64, salt *tg.TLFutureSalt) error
-	GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.TLFutureSalts, error)
 	DeleteSalts(ctx context.Context, keyId int64) error
 }
 
@@ -50,87 +42,7 @@ func (m *futureSaltsModel) formatKey(key string) string {
 	return m.prefix + ":" + key
 }
 
-func (m *futureSaltsModel) getOrNotInsertSaltList(ctx context.Context, keyId int64, size int32) ([]*tg.TLFutureSalt, error) {
-	var (
-		salts = make([]*tg.TLFutureSalt, 0, size)
-
-		date           = int32(time.Now().Unix())
-		lastValidUntil = date
-		saltsData      []*tg.TLFutureSalt
-		lastSalt       *tg.TLFutureSalt
-	)
-
-	saltList, err := m.GetSalts(ctx, keyId)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(saltList) > 0 {
-		hasLastSalt := false
-		for idx, salt := range saltList {
-			if salt.ValidSince >= date {
-				if !hasLastSalt {
-					if idx > 0 {
-						lastSalt = saltList[idx-1]
-					}
-					hasLastSalt = true
-				}
-				saltsData = append(saltsData, salt)
-				if lastValidUntil < salt.ValidUntil {
-					lastValidUntil = salt.ValidUntil
-				}
-			}
-		}
-		if !hasLastSalt {
-			lastSalt = saltList[len(saltList)-1]
-		}
-
-		// check ValidUntil
-		if lastSalt != nil && lastSalt.ValidUntil+300 < date {
-			lastSalt = nil
-		}
-	}
-
-	left := size - int32(len(saltsData))
-	if left > 0 {
-		for i := int32(0); i < size; i++ {
-			salt := tg.MakeTLFutureSalt(&tg.TLFutureSalt{
-				ValidSince: lastValidUntil,
-				ValidUntil: lastValidUntil + saltTimeout,
-				Salt:       rand.Int63(),
-			})
-			saltsData = append(saltsData, salt)
-			lastValidUntil += saltTimeout
-		}
-	}
-
-	for i := int32(0); i < size; i++ {
-		salts = append(salts, saltsData[i])
-	}
-
-	var (
-		salts2     []*tg.TLFutureSalt
-		saltsData2 []*tg.TLFutureSalt
-	)
-
-	if lastSalt != nil {
-		salts2 = append(salts2, lastSalt)
-		saltsData2 = append(saltsData2, lastSalt)
-	}
-
-	salts2 = append(salts2, salts...)
-	saltsData2 = append(saltsData2, saltsData...)
-
-	if left > 0 {
-		err = m.PutSalts(ctx, keyId, saltsData2)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return salts2, nil
-}
-
-func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt) (err error) {
+func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*tg.TLFutureSalt, saltTimeout int) (err error) {
 	var (
 		b   []byte
 		key = genCacheSaltKey(keyId)
@@ -169,24 +81,6 @@ func (m *futureSaltsModel) GetSalts(ctx context.Context, keyId int64) (salts []*
 	}
 
 	return
-}
-
-func (m *futureSaltsModel) PutSaltCache(ctx context.Context, keyId int64, salt *tg.TLFutureSalt) error {
-	return m.PutSalts(ctx, keyId, []*tg.TLFutureSalt{salt})
-}
-
-func (m *futureSaltsModel) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.TLFutureSalts, error) {
-	pSalts, err := m.getOrNotInsertSaltList(ctx, authKeyId, num)
-	if err != nil {
-		return nil, err
-	}
-	salts := tg.MakeTLFutureSalts(&tg.TLFutureSalts{
-		ReqMsgId: 0,
-		Now:      0,
-		Salts:    pSalts,
-	})
-
-	return salts, nil
 }
 
 func (m *futureSaltsModel) DeleteSalts(ctx context.Context, keyId int64) error {

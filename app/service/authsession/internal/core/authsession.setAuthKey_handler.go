@@ -19,13 +19,38 @@ package core
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // AuthsessionSetAuthKey
 // authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.setAuthKey - error: method AuthsessionSetAuthKey not impl")
+	var (
+		keyInfo = in.AuthKey
+		salt    *tg.TLFutureSalt
+		err     error
+	)
 
-	return nil, tg.ErrMethodNotImpl
+	if in.FutureSalt != nil {
+		salt = in.FutureSalt
+	}
+	if salt == nil {
+		err = c.svcCtx.Repo.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+	} else {
+		err = mr.Finish(
+			func() error {
+				return c.svcCtx.Repo.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+			},
+			func() error {
+				return c.svcCtx.Repo.PutSaltCache(c.ctx, keyInfo.AuthKeyId, salt)
+			})
+	}
+
+	if err != nil {
+		c.Logger.Errorf("authsession.setAuthKey - error: %v", err)
+		return tg.BoolFalse, nil
+	}
+
+	return tg.BoolTrue, nil
 }
