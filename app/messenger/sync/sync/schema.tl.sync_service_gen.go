@@ -93,7 +93,6 @@ func (m *TLSyncUpdatesMe) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_updatesMe: unsupported layer %d", layer)
 	}
 }
@@ -186,7 +185,6 @@ func (m *TLSyncUpdatesNotMe) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_updatesNotMe: unsupported layer %d", layer)
 	}
 }
@@ -249,7 +247,6 @@ func (m *TLSyncPushUpdates) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_pushUpdates: unsupported layer %d", layer)
 	}
 }
@@ -333,7 +330,6 @@ func (m *TLSyncPushUpdatesIfNot) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_pushUpdatesIfNot: unsupported layer %d", layer)
 	}
 }
@@ -409,7 +405,6 @@ func (m *TLSyncPushBotUpdates) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_pushBotUpdates: unsupported layer %d", layer)
 	}
 }
@@ -473,7 +468,6 @@ func (m *TLSyncPushRpcResult) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_pushRpcResult: unsupported layer %d", layer)
 	}
 }
@@ -557,7 +551,6 @@ func (m *TLSyncBroadcastUpdates) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sync_broadcastUpdates: unsupported layer %d", layer)
 	}
 }

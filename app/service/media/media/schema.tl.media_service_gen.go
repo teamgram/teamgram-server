@@ -83,7 +83,6 @@ func (m *TLMediaUploadPhotoFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadPhotoFile: unsupported layer %d", layer)
 	}
 }
@@ -119,7 +118,7 @@ func (m *TLMediaUploadPhotoFile) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err2)
 			}
 			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: invalid vector constructor %x", c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
@@ -217,7 +216,6 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadProfilePhotoFile: unsupported layer %d", layer)
 	}
 }
@@ -295,7 +293,6 @@ func (m *TLMediaGetPhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getPhoto: unsupported layer %d", layer)
 	}
 }
@@ -342,7 +339,6 @@ func (m *TLMediaGetPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getPhotoSizeList: unsupported layer %d", layer)
 	}
 }
@@ -389,7 +385,6 @@ func (m *TLMediaGetPhotoSizeListList) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getPhotoSizeListList: unsupported layer %d", layer)
 	}
 }
@@ -437,7 +432,6 @@ func (m *TLMediaGetVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getVideoSizeList: unsupported layer %d", layer)
 	}
 }
@@ -491,7 +485,6 @@ func (m *TLMediaUploadedDocumentMedia) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadedDocumentMedia: unsupported layer %d", layer)
 	}
 }
@@ -543,7 +536,6 @@ func (m *TLMediaGetDocument) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getDocument: unsupported layer %d", layer)
 	}
 }
@@ -590,7 +582,6 @@ func (m *TLMediaGetDocumentList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getDocumentList: unsupported layer %d", layer)
 	}
 }
@@ -645,7 +636,6 @@ func (m *TLMediaUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadEncryptedFile: unsupported layer %d", layer)
 	}
 }
@@ -699,7 +689,6 @@ func (m *TLMediaGetEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_getEncryptedFile: unsupported layer %d", layer)
 	}
 }
@@ -766,7 +755,6 @@ func (m *TLMediaUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadWallPaperFile: unsupported layer %d", layer)
 	}
 }
@@ -860,7 +848,6 @@ func (m *TLMediaUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadThemeFile: unsupported layer %d", layer)
 	}
 }
@@ -971,7 +958,6 @@ func (m *TLMediaUploadStickerFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadStickerFile: unsupported layer %d", layer)
 	}
 }
@@ -1069,7 +1055,6 @@ func (m *TLMediaUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadRingtoneFile: unsupported layer %d", layer)
 	}
 }
@@ -1137,7 +1122,6 @@ func (m *TLMediaUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode media_uploadedProfilePhoto: unsupported layer %d", layer)
 	}
 }

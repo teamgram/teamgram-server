@@ -177,7 +177,6 @@ func (m *TLBotInfoData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode botInfoData: unsupported layer %d", layer)
 	}
 }
@@ -336,7 +335,6 @@ func (m *TLLastSeenData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode lastSeenData: unsupported layer %d", layer)
 	}
 }
@@ -485,7 +483,6 @@ func (m *TLPeerPeerNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode peerPeerNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -662,7 +659,6 @@ func (m *TLUserImportedContacts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode userImportedContacts: unsupported layer %d", layer)
 	}
 }
@@ -676,7 +672,7 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", err2)
 		}
 		if c0 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 0, c0)
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: invalid vector constructor %x", c0)
 		}
 		l0, err3 := d.Int()
 		if err3 != nil {
@@ -696,7 +692,7 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -721,7 +717,7 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -889,7 +885,6 @@ func (m *TLUsernameData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usernameData: unsupported layer %d", layer)
 	}
 }
@@ -1053,7 +1048,6 @@ func (m *TLUsernameNotExisted) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usernameNotExisted: unsupported layer %d", layer)
 	}
 }
@@ -1145,7 +1139,6 @@ func (m *TLUsernameExisted) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usernameExisted: unsupported layer %d", layer)
 	}
 }
@@ -1237,7 +1230,6 @@ func (m *TLUsernameExistedNotMe) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usernameExistedNotMe: unsupported layer %d", layer)
 	}
 }
@@ -1329,7 +1321,6 @@ func (m *TLUsernameExistedIsMe) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usernameExistedIsMe: unsupported layer %d", layer)
 	}
 }
@@ -1379,7 +1370,9 @@ func (m *UsernameExist) Validate(layer int32) error {
 		return fmt.Errorf("UsernameExist.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate UsernameExist.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -1395,7 +1388,10 @@ func (m *UsernameExist) ClazzName() string {
 // Encode <--
 func (m *UsernameExist) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode UsernameExist.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("UsernameExist - invalid Clazz")
@@ -1606,7 +1602,6 @@ func (m *TLUsersDataFound) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usersDataFound: unsupported layer %d", layer)
 	}
 }
@@ -1624,7 +1619,7 @@ func (m *TLUsersDataFound) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -1733,7 +1728,6 @@ func (m *TLUsersIdFound) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode usersIdFound: unsupported layer %d", layer)
 	}
 }
@@ -1788,7 +1782,9 @@ func (m *UsersFound) Validate(layer int32) error {
 		return fmt.Errorf("UsersFound.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate UsersFound.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -1804,7 +1800,10 @@ func (m *UsersFound) ClazzName() string {
 // Encode <--
 func (m *UsersFound) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode UsersFound.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("UsersFound - invalid Clazz")

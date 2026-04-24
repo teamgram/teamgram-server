@@ -134,7 +134,6 @@ func (m *TLHttpSessionData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode httpSessionData: unsupported layer %d", layer)
 	}
 }
@@ -299,7 +298,6 @@ func (m *TLSessionClientData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sessionClientData: unsupported layer %d", layer)
 	}
 }
@@ -487,7 +485,6 @@ func (m *TLSessionClientEvent) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sessionClientEvent: unsupported layer %d", layer)
 	}
 }

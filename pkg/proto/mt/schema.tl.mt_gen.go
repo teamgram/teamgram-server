@@ -137,7 +137,6 @@ func (m *TLBindAuthKeyInner) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bind_auth_key_inner: unsupported layer %d", layer)
 	}
 }
@@ -292,7 +291,6 @@ func (m *TLClientDHInnerData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode client_DH_inner_data: unsupported layer %d", layer)
 	}
 }
@@ -444,7 +442,6 @@ func (m *TLDestroyAuthKeyOk) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode destroy_auth_key_ok: unsupported layer %d", layer)
 	}
 }
@@ -536,7 +533,6 @@ func (m *TLDestroyAuthKeyNone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode destroy_auth_key_none: unsupported layer %d", layer)
 	}
 }
@@ -628,7 +624,6 @@ func (m *TLDestroyAuthKeyFail) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode destroy_auth_key_fail: unsupported layer %d", layer)
 	}
 }
@@ -916,7 +911,6 @@ func (m *TLPQInnerData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode p_q_inner_data: unsupported layer %d", layer)
 	}
 }
@@ -1065,7 +1059,6 @@ func (m *TLPQInnerDataDc) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode p_q_inner_data_dc: unsupported layer %d", layer)
 	}
 }
@@ -1218,7 +1211,6 @@ func (m *TLPQInnerDataTemp) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode p_q_inner_data_temp: unsupported layer %d", layer)
 	}
 }
@@ -1374,7 +1366,6 @@ func (m *TLPQInnerDataTempDc) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode p_q_inner_data_temp_dc: unsupported layer %d", layer)
 	}
 }
@@ -1678,7 +1669,6 @@ func (m *TLResPQ) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode resPQ: unsupported layer %d", layer)
 	}
 }
@@ -1840,7 +1830,6 @@ func (m *TLServerDHInnerData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode server_DH_inner_data: unsupported layer %d", layer)
 	}
 }
@@ -2003,7 +1992,6 @@ func (m *TLServerDHParamsFail) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode server_DH_params_fail: unsupported layer %d", layer)
 	}
 }
@@ -2120,7 +2108,6 @@ func (m *TLServerDHParamsOk) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode server_DH_params_ok: unsupported layer %d", layer)
 	}
 }
@@ -2376,7 +2363,6 @@ func (m *TLDhGenOk) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dh_gen_ok: unsupported layer %d", layer)
 	}
 }
@@ -2490,7 +2476,6 @@ func (m *TLDhGenRetry) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dh_gen_retry: unsupported layer %d", layer)
 	}
 }
@@ -2604,7 +2589,6 @@ func (m *TLDhGenFail) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dh_gen_fail: unsupported layer %d", layer)
 	}
 }
@@ -2876,7 +2860,6 @@ func (m *TLAccessPointRule) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode accessPointRule: unsupported layer %d", layer)
 	}
 }
@@ -2893,11 +2876,13 @@ func (m *TLAccessPointRule) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field dc_id: %w", err)
 		}
-		// c2, err2 := d.ClazzID()
-		// if c2 != int32(iface.ClazzID_vector) {
-		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: invalid vector constructor %x", c2)
-		// }
+		c2, err2 := d.ClazzID()
+		if err2 != nil {
+			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: invalid vector constructor %x", c2)
+		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
@@ -3040,7 +3025,6 @@ func (m *TLBadMsgNotification) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bad_msg_notification: unsupported layer %d", layer)
 	}
 }
@@ -3157,7 +3141,6 @@ func (m *TLBadServerSalt) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bad_server_salt: unsupported layer %d", layer)
 	}
 }
@@ -3404,7 +3387,6 @@ func (m *TLDestroySessionOk) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode destroy_session_ok: unsupported layer %d", layer)
 	}
 }
@@ -3504,7 +3486,6 @@ func (m *TLDestroySessionNone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode destroy_session_none: unsupported layer %d", layer)
 	}
 }
@@ -3735,7 +3716,6 @@ func (m *TLFutureSalt) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode future_salt: unsupported layer %d", layer)
 	}
 }
@@ -3888,7 +3868,6 @@ func (m *TLFutureSalts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode future_salts: unsupported layer %d", layer)
 	}
 }
@@ -3905,11 +3884,13 @@ func (m *TLFutureSalts) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode future_salts#0xae500895: field now: %w", err)
 		}
-		// c2, err2 := d.ClazzID()
-		// if c2 != int32(iface.ClazzID_vector) {
-		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: invalid vector constructor %x", c2)
-		// }
+		c2, err2 := d.ClazzID()
+		if err2 != nil {
+			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: invalid vector constructor %x", c2)
+		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
@@ -4055,7 +4036,6 @@ func (m *TLHelpConfigSimple) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_configSimple: unsupported layer %d", layer)
 	}
 }
@@ -4072,11 +4052,13 @@ func (m *TLHelpConfigSimple) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field expires: %w", err)
 		}
-		// c2, err2 := d.ClazzID()
-		// if c2 != int32(iface.ClazzID_vector) {
-		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: invalid vector constructor %x", c2)
-		// }
+		c2, err2 := d.ClazzID()
+		if err2 != nil {
+			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: invalid vector constructor %x", c2)
+		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
@@ -4209,7 +4191,6 @@ func (m *TLHttpWait) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode http_wait: unsupported layer %d", layer)
 	}
 }
@@ -4357,7 +4338,6 @@ func (m *TLIpPort) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode ipPort: unsupported layer %d", layer)
 	}
 }
@@ -4470,7 +4450,6 @@ func (m *TLIpPortSecret) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode ipPortSecret: unsupported layer %d", layer)
 	}
 }
@@ -4722,7 +4701,6 @@ func (m *TLMsgDetailedInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_detailed_info: unsupported layer %d", layer)
 	}
 }
@@ -4840,7 +4818,6 @@ func (m *TLMsgNewDetailedInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_new_detailed_info: unsupported layer %d", layer)
 	}
 }
@@ -5076,7 +5053,6 @@ func (m *TLMsgResendReq) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_resend_req: unsupported layer %d", layer)
 	}
 }
@@ -5207,7 +5183,6 @@ func (m *TLMsgsAck) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msgs_ack: unsupported layer %d", layer)
 	}
 }
@@ -5346,7 +5321,6 @@ func (m *TLMsgsAllInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msgs_all_info: unsupported layer %d", layer)
 	}
 }
@@ -5485,7 +5459,6 @@ func (m *TLMsgsStateInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msgs_state_info: unsupported layer %d", layer)
 	}
 }
@@ -5619,7 +5592,6 @@ func (m *TLMsgsStateReq) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msgs_state_req: unsupported layer %d", layer)
 	}
 }
@@ -5753,7 +5725,6 @@ func (m *TLNewSessionCreated) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode new_session_created: unsupported layer %d", layer)
 	}
 }
@@ -5891,7 +5862,6 @@ func (m *TLPong) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode pong: unsupported layer %d", layer)
 	}
 }
@@ -6035,7 +6005,6 @@ func (m *TLRpcAnswerUnknown) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode rpc_answer_unknown: unsupported layer %d", layer)
 	}
 }
@@ -6127,7 +6096,6 @@ func (m *TLRpcAnswerDroppedRunning) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode rpc_answer_dropped_running: unsupported layer %d", layer)
 	}
 }
@@ -6229,7 +6197,6 @@ func (m *TLRpcAnswerDropped) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode rpc_answer_dropped: unsupported layer %d", layer)
 	}
 }
@@ -6485,7 +6452,6 @@ func (m *TLRpcError) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode rpc_error: unsupported layer %d", layer)
 	}
 }
@@ -6664,7 +6630,6 @@ func (m *TLTlsBlockString) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockString: unsupported layer %d", layer)
 	}
 }
@@ -6764,7 +6729,6 @@ func (m *TLTlsBlockRandom) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockRandom: unsupported layer %d", layer)
 	}
 }
@@ -6864,7 +6828,6 @@ func (m *TLTlsBlockZero) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockZero: unsupported layer %d", layer)
 	}
 }
@@ -6960,7 +6923,6 @@ func (m *TLTlsBlockDomain) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockDomain: unsupported layer %d", layer)
 	}
 }
@@ -7056,7 +7018,6 @@ func (m *TLTlsBlockGrease) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockGrease: unsupported layer %d", layer)
 	}
 }
@@ -7152,7 +7113,6 @@ func (m *TLTlsBlockPublicKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockPublicKey: unsupported layer %d", layer)
 	}
 }
@@ -7253,7 +7213,6 @@ func (m *TLTlsBlockScope) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsBlockScope: unsupported layer %d", layer)
 	}
 }
@@ -7590,7 +7549,6 @@ func (m *TLTlsClientHello) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode tlsClientHello: unsupported layer %d", layer)
 	}
 }
@@ -7599,11 +7557,13 @@ func (m *TLTlsClientHello) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLTlsClientHello) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x6c52c484:
-		// c0, err2 := d.ClazzID()
-		// if c0 != int32(iface.ClazzID_vector) {
-		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 0, c0)
-		//     return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: invalid vector constructor %x", c0)
-		// }
+		c0, err2 := d.ClazzID()
+		if err2 != nil {
+			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)
+		}
+		if c0 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: invalid vector constructor %x", c0)
+		}
 		l0, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)

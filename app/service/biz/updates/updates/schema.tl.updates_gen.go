@@ -166,7 +166,6 @@ func (m *TLChannelDifference) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channelDifference: unsupported layer %d", layer)
 	}
 }
@@ -192,7 +191,7 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -212,7 +211,7 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", err2)
 		}
 		if c4 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: invalid vector constructor %x", c4)
 		}
 		l4, err3 := d.Int()
 		if err3 != nil {
@@ -372,7 +371,6 @@ func (m *TLDifferenceEmpty) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode differenceEmpty: unsupported layer %d", layer)
 	}
 }
@@ -501,7 +499,6 @@ func (m *TLDifference) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode difference: unsupported layer %d", layer)
 	}
 }
@@ -515,7 +512,7 @@ func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -535,7 +532,7 @@ func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", err2)
 		}
 		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -669,7 +666,6 @@ func (m *TLDifferenceSlice) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode differenceSlice: unsupported layer %d", layer)
 	}
 }
@@ -683,7 +679,7 @@ func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -703,7 +699,7 @@ func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", err2)
 		}
 		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -809,7 +805,6 @@ func (m *TLDifferenceTooLong) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode differenceTooLong: unsupported layer %d", layer)
 	}
 }
@@ -863,7 +858,9 @@ func (m *Difference) Validate(layer int32) error {
 		return fmt.Errorf("Difference.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate Difference.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -879,7 +876,10 @@ func (m *Difference) ClazzName() string {
 // Encode <--
 func (m *Difference) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode Difference.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("Difference - invalid Clazz")

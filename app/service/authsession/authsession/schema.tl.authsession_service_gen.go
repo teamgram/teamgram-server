@@ -51,7 +51,6 @@ func (m *TLAuthsessionGetAuthorizations) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getAuthorizations: unsupported layer %d", layer)
 	}
 }
@@ -106,7 +105,6 @@ func (m *TLAuthsessionResetAuthorization) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_resetAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -161,7 +159,6 @@ func (m *TLAuthsessionGetLayer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getLayer: unsupported layer %d", layer)
 	}
 }
@@ -208,7 +205,6 @@ func (m *TLAuthsessionGetLangPack) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getLangPack: unsupported layer %d", layer)
 	}
 }
@@ -255,7 +251,6 @@ func (m *TLAuthsessionGetClient) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getClient: unsupported layer %d", layer)
 	}
 }
@@ -302,7 +297,6 @@ func (m *TLAuthsessionGetLangCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getLangCode: unsupported layer %d", layer)
 	}
 }
@@ -349,7 +343,6 @@ func (m *TLAuthsessionGetUserId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getUserId: unsupported layer %d", layer)
 	}
 }
@@ -400,7 +393,6 @@ func (m *TLAuthsessionGetPushSessionId) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getPushSessionId: unsupported layer %d", layer)
 	}
 }
@@ -457,7 +449,6 @@ func (m *TLAuthsessionGetFutureSalts) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getFutureSalts: unsupported layer %d", layer)
 	}
 }
@@ -508,7 +499,6 @@ func (m *TLAuthsessionQueryAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_queryAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -569,7 +559,6 @@ func (m *TLAuthsessionSetAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_setAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -629,7 +618,6 @@ func (m *TLAuthsessionBindAuthKeyUser) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_bindAuthKeyUser: unsupported layer %d", layer)
 	}
 }
@@ -682,7 +670,6 @@ func (m *TLAuthsessionUnbindAuthKeyUser) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_unbindAuthKeyUser: unsupported layer %d", layer)
 	}
 }
@@ -733,7 +720,6 @@ func (m *TLAuthsessionGetPermAuthKeyId) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getPermAuthKeyId: unsupported layer %d", layer)
 	}
 }
@@ -786,7 +772,6 @@ func (m *TLAuthsessionBindTempAuthKey) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_bindTempAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -850,7 +835,6 @@ func (m *TLAuthsessionSetClientSessionInfo) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_setClientSessionInfo: unsupported layer %d", layer)
 	}
 }
@@ -898,7 +882,6 @@ func (m *TLAuthsessionGetAuthorization) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -945,7 +928,6 @@ func (m *TLAuthsessionGetAuthStateData) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_getAuthStateData: unsupported layer %d", layer)
 	}
 }
@@ -996,7 +978,6 @@ func (m *TLAuthsessionSetLayer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_setLayer: unsupported layer %d", layer)
 	}
 }
@@ -1071,7 +1052,6 @@ func (m *TLAuthsessionSetInitConnection) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_setInitConnection: unsupported layer %d", layer)
 	}
 }
@@ -1162,7 +1142,6 @@ func (m *TLAuthsessionSetAndroidPushSessionId) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authsession_setAndroidPushSessionId: unsupported layer %d", layer)
 	}
 }

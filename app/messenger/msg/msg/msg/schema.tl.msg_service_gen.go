@@ -64,7 +64,6 @@ func (m *TLMsgPushUserMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_pushUserMessage: unsupported layer %d", layer)
 	}
 }
@@ -143,7 +142,6 @@ func (m *TLMsgReadMessageContents) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_readMessageContents: unsupported layer %d", layer)
 	}
 }
@@ -179,7 +177,7 @@ func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err2)
 		}
 		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: invalid vector constructor %x", c5)
 		}
 		l5, err3 := d.Int()
 		if err3 != nil {
@@ -232,7 +230,6 @@ func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_sendMessageV2: unsupported layer %d", layer)
 	}
 }
@@ -268,7 +265,7 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err2)
 		}
 		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: invalid vector constructor %x", c5)
 		}
 		l5, err3 := d.Int()
 		if err3 != nil {
@@ -332,7 +329,6 @@ func (m *TLMsgEditMessageV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_editMessageV2: unsupported layer %d", layer)
 	}
 }
@@ -429,7 +425,6 @@ func (m *TLMsgDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_deleteMessages: unsupported layer %d", layer)
 	}
 }
@@ -528,7 +523,6 @@ func (m *TLMsgDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_deleteHistory: unsupported layer %d", layer)
 	}
 }
@@ -619,7 +613,6 @@ func (m *TLMsgDeletePhoneCallHistory) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_deletePhoneCallHistory: unsupported layer %d", layer)
 	}
 }
@@ -680,7 +673,6 @@ func (m *TLMsgDeleteChatHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_deleteChatHistory: unsupported layer %d", layer)
 	}
 }
@@ -739,7 +731,6 @@ func (m *TLMsgReadHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_readHistory: unsupported layer %d", layer)
 	}
 }
@@ -810,7 +801,6 @@ func (m *TLMsgReadHistoryV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_readHistoryV2: unsupported layer %d", layer)
 	}
 }
@@ -904,7 +894,6 @@ func (m *TLMsgUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_updatePinnedMessage: unsupported layer %d", layer)
 	}
 }
@@ -987,7 +976,6 @@ func (m *TLMsgUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode msg_unpinAllMessages: unsupported layer %d", layer)
 	}
 }

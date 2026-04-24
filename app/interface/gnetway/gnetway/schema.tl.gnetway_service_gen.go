@@ -53,7 +53,6 @@ func (m *TLGnetwaySendDataToGateway) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode gnetway_sendDataToGateway: unsupported layer %d", layer)
 	}
 }

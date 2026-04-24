@@ -49,7 +49,6 @@ func (m *TLChatGetMutableChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getMutableChat: unsupported layer %d", layer)
 	}
 }
@@ -99,7 +98,6 @@ func (m *TLChatGetChatListByIdList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getChatListByIdList: unsupported layer %d", layer)
 	}
 }
@@ -153,7 +151,6 @@ func (m *TLChatGetChatBySelfId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getChatBySelfId: unsupported layer %d", layer)
 	}
 }
@@ -235,7 +232,6 @@ func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_createChat2: unsupported layer %d", layer)
 	}
 }
@@ -312,7 +308,6 @@ func (m *TLChatDeleteChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_deleteChat: unsupported layer %d", layer)
 	}
 }
@@ -367,7 +362,6 @@ func (m *TLChatDeleteChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_deleteChatUser: unsupported layer %d", layer)
 	}
 }
@@ -426,7 +420,6 @@ func (m *TLChatEditChatTitle) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editChatTitle: unsupported layer %d", layer)
 	}
 }
@@ -485,7 +478,6 @@ func (m *TLChatEditChatAbout) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editChatAbout: unsupported layer %d", layer)
 	}
 }
@@ -549,7 +541,6 @@ func (m *TLChatEditChatPhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editChatPhoto: unsupported layer %d", layer)
 	}
 }
@@ -616,7 +607,6 @@ func (m *TLChatEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editChatAdmin: unsupported layer %d", layer)
 	}
 }
@@ -685,7 +675,6 @@ func (m *TLChatEditChatDefaultBannedRights) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editChatDefaultBannedRights: unsupported layer %d", layer)
 	}
 }
@@ -760,7 +749,6 @@ func (m *TLChatAddChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_addChatUser: unsupported layer %d", layer)
 	}
 }
@@ -823,7 +811,6 @@ func (m *TLChatGetMutableChatByLink) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getMutableChatByLink: unsupported layer %d", layer)
 	}
 }
@@ -879,7 +866,6 @@ func (m *TLChatToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_toggleNoForwards: unsupported layer %d", layer)
 	}
 }
@@ -944,7 +930,6 @@ func (m *TLChatMigratedToChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_migratedToChannel: unsupported layer %d", layer)
 	}
 }
@@ -1001,7 +986,6 @@ func (m *TLChatGetChatParticipantIdList) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getChatParticipantIdList: unsupported layer %d", layer)
 	}
 }
@@ -1048,7 +1032,6 @@ func (m *TLChatGetUsersChatIdList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getUsersChatIdList: unsupported layer %d", layer)
 	}
 }
@@ -1103,7 +1086,6 @@ func (m *TLChatGetMyChatList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getMyChatList: unsupported layer %d", layer)
 	}
 }
@@ -1199,7 +1181,6 @@ func (m *TLChatExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_exportChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -1284,7 +1265,6 @@ func (m *TLChatGetAdminsWithInvites) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getAdminsWithInvites: unsupported layer %d", layer)
 	}
 }
@@ -1337,7 +1317,6 @@ func (m *TLChatGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -1423,7 +1402,6 @@ func (m *TLChatGetExportedChatInvites) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getExportedChatInvites: unsupported layer %d", layer)
 	}
 }
@@ -1503,7 +1481,6 @@ func (m *TLChatCheckChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_checkChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -1556,7 +1533,6 @@ func (m *TLChatImportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_importChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -1646,7 +1622,6 @@ func (m *TLChatGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getChatInviteImporters: unsupported layer %d", layer)
 	}
 }
@@ -1737,7 +1712,6 @@ func (m *TLChatDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_deleteExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -1796,7 +1770,6 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_deleteRevokedExportedChatInvites: unsupported layer %d", layer)
 	}
 }
@@ -1904,7 +1877,6 @@ func (m *TLChatEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_editExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -2001,7 +1973,6 @@ func (m *TLChatSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_setChatAvailableReactions: unsupported layer %d", layer)
 	}
 }
@@ -2065,7 +2036,6 @@ func (m *TLChatSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_setHistoryTTL: unsupported layer %d", layer)
 	}
 }
@@ -2126,7 +2096,6 @@ func (m *TLChatSearch) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_search: unsupported layer %d", layer)
 	}
 }
@@ -2187,7 +2156,6 @@ func (m *TLChatGetRecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_getRecentChatInviteRequesters: unsupported layer %d", layer)
 	}
 }
@@ -2270,7 +2238,6 @@ func (m *TLChatHideChatJoinRequests) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_hideChatJoinRequests: unsupported layer %d", layer)
 	}
 }
@@ -2346,7 +2313,6 @@ func (m *TLChatImportChatInvite2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chat_importChatInvite2: unsupported layer %d", layer)
 	}
 }

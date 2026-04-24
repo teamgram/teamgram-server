@@ -177,7 +177,6 @@ func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialogExt: unsupported layer %d", layer)
 	}
 }
@@ -375,7 +374,6 @@ func (m *TLDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialogFilterExt: unsupported layer %d", layer)
 	}
 }
@@ -530,7 +528,6 @@ func (m *TLDialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialogPinnedExt: unsupported layer %d", layer)
 	}
 }
@@ -684,7 +681,6 @@ func (m *TLSimpleDialogsData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode simpleDialogsData: unsupported layer %d", layer)
 	}
 }
@@ -842,7 +838,6 @@ func (m *TLUpdateDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode updateDraftMessage: unsupported layer %d", layer)
 	}
 }
@@ -984,7 +979,6 @@ func (m *TLSavedDialogList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode savedDialogList: unsupported layer %d", layer)
 	}
 }
@@ -1002,7 +996,7 @@ func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {

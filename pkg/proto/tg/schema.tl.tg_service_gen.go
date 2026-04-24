@@ -80,7 +80,6 @@ func (m *TLInvokeAfterMsg) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeAfterMsg: unsupported layer %d", layer)
 	}
 }
@@ -168,7 +167,6 @@ func (m *TLInvokeAfterMsgs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeAfterMsgs: unsupported layer %d", layer)
 	}
 }
@@ -425,7 +423,6 @@ func (m *TLInitConnection) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode initConnection: unsupported layer %d", layer)
 	}
 }
@@ -610,7 +607,6 @@ func (m *TLInvokeWithLayer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithLayer: unsupported layer %d", layer)
 	}
 }
@@ -690,7 +686,6 @@ func (m *TLInvokeWithoutUpdates) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithoutUpdates: unsupported layer %d", layer)
 	}
 }
@@ -778,7 +773,6 @@ func (m *TLInvokeWithMessagesRange) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithMessagesRange: unsupported layer %d", layer)
 	}
 }
@@ -866,7 +860,6 @@ func (m *TLInvokeWithTakeout) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithTakeout: unsupported layer %d", layer)
 	}
 }
@@ -953,7 +946,6 @@ func (m *TLInvokeWithBusinessConnection) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithBusinessConnection: unsupported layer %d", layer)
 	}
 }
@@ -1047,7 +1039,6 @@ func (m *TLInvokeWithGooglePlayIntegrity) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithGooglePlayIntegrity: unsupported layer %d", layer)
 	}
 }
@@ -1145,7 +1136,6 @@ func (m *TLInvokeWithApnsSecret) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithApnsSecret: unsupported layer %d", layer)
 	}
 }
@@ -1236,7 +1226,6 @@ func (m *TLInvokeWithReCaptcha) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode invokeWithReCaptcha: unsupported layer %d", layer)
 	}
 }
@@ -1338,7 +1327,6 @@ func (m *TLAuthSendCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_sendCode: unsupported layer %d", layer)
 	}
 }
@@ -1470,7 +1458,6 @@ func (m *TLAuthSignUp) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_signUp: unsupported layer %d", layer)
 	}
 }
@@ -1612,7 +1599,6 @@ func (m *TLAuthSignIn) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_signIn: unsupported layer %d", layer)
 	}
 }
@@ -1710,7 +1696,6 @@ func (m *TLAuthLogOut) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_logOut: unsupported layer %d", layer)
 	}
 }
@@ -1778,7 +1763,6 @@ func (m *TLAuthResetAuthorizations) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_resetAuthorizations: unsupported layer %d", layer)
 	}
 }
@@ -1850,7 +1834,6 @@ func (m *TLAuthExportAuthorization) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_exportAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -1932,7 +1915,6 @@ func (m *TLAuthImportAuthorization) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_importAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -2024,7 +2006,6 @@ func (m *TLAuthBindTempAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_bindTempAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -2128,7 +2109,6 @@ func (m *TLAuthImportBotAuthorization) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_importBotAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -2224,7 +2204,6 @@ func (m *TLAuthCheckPassword) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_checkPassword: unsupported layer %d", layer)
 	}
 }
@@ -2300,7 +2279,6 @@ func (m *TLAuthRequestPasswordRecovery) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_requestPasswordRecovery: unsupported layer %d", layer)
 	}
 }
@@ -2399,7 +2377,6 @@ func (m *TLAuthRecoverPassword) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_recoverPassword: unsupported layer %d", layer)
 	}
 }
@@ -2521,7 +2498,6 @@ func (m *TLAuthResendCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_resendCode: unsupported layer %d", layer)
 	}
 }
@@ -2623,7 +2599,6 @@ func (m *TLAuthCancelCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_cancelCode: unsupported layer %d", layer)
 	}
 }
@@ -2706,7 +2681,6 @@ func (m *TLAuthDropTempAuthKeys) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_dropTempAuthKeys: unsupported layer %d", layer)
 	}
 }
@@ -2794,7 +2768,6 @@ func (m *TLAuthExportLoginToken) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_exportLoginToken: unsupported layer %d", layer)
 	}
 }
@@ -2879,7 +2852,6 @@ func (m *TLAuthImportLoginToken) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_importLoginToken: unsupported layer %d", layer)
 	}
 }
@@ -2958,7 +2930,6 @@ func (m *TLAuthAcceptLoginToken) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_acceptLoginToken: unsupported layer %d", layer)
 	}
 }
@@ -3037,7 +3008,6 @@ func (m *TLAuthCheckRecoveryPassword) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_checkRecoveryPassword: unsupported layer %d", layer)
 	}
 }
@@ -3126,7 +3096,6 @@ func (m *TLAuthImportWebTokenAuthorization) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_importWebTokenAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -3266,7 +3235,6 @@ func (m *TLAuthRequestFirebaseSms) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_requestFirebaseSms: unsupported layer %d", layer)
 	}
 }
@@ -3384,7 +3352,6 @@ func (m *TLAuthResetLoginEmail) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_resetLoginEmail: unsupported layer %d", layer)
 	}
 }
@@ -3481,7 +3448,6 @@ func (m *TLAuthReportMissingCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_reportMissingCode: unsupported layer %d", layer)
 	}
 }
@@ -3578,7 +3544,6 @@ func (m *TLAuthCheckPaidAuth) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_checkPaidAuth: unsupported layer %d", layer)
 	}
 }
@@ -3668,7 +3633,6 @@ func (m *TLAuthInitPasskeyLogin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_initPasskeyLogin: unsupported layer %d", layer)
 	}
 }
@@ -3790,7 +3754,6 @@ func (m *TLAuthFinishPasskeyLogin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_finishPasskeyLogin: unsupported layer %d", layer)
 	}
 }
@@ -3958,7 +3921,6 @@ func (m *TLAccountRegisterDevice) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_registerDevice: unsupported layer %d", layer)
 	}
 }
@@ -4105,7 +4067,6 @@ func (m *TLAccountUnregisterDevice) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_unregisterDevice: unsupported layer %d", layer)
 	}
 }
@@ -4218,7 +4179,6 @@ func (m *TLAccountUpdateNotifySettings) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -4314,7 +4274,6 @@ func (m *TLAccountGetNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -4390,7 +4349,6 @@ func (m *TLAccountResetNotifySettings) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -4505,7 +4463,6 @@ func (m *TLAccountUpdateProfile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateProfile: unsupported layer %d", layer)
 	}
 }
@@ -4613,7 +4570,6 @@ func (m *TLAccountUpdateStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateStatus: unsupported layer %d", layer)
 	}
 }
@@ -4693,7 +4649,6 @@ func (m *TLAccountGetWallPapers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getWallPapers: unsupported layer %d", layer)
 	}
 }
@@ -4796,7 +4751,6 @@ func (m *TLAccountReportPeer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_reportPeer: unsupported layer %d", layer)
 	}
 }
@@ -4892,7 +4846,6 @@ func (m *TLAccountCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_checkUsername: unsupported layer %d", layer)
 	}
 }
@@ -4971,7 +4924,6 @@ func (m *TLAccountUpdateUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateUsername: unsupported layer %d", layer)
 	}
 }
@@ -5055,7 +5007,6 @@ func (m *TLAccountGetPrivacy) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getPrivacy: unsupported layer %d", layer)
 	}
 }
@@ -5153,7 +5104,6 @@ func (m *TLAccountSetPrivacy) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setPrivacy: unsupported layer %d", layer)
 	}
 }
@@ -5285,7 +5235,6 @@ func (m *TLAccountDeleteAccount) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_deleteAccount: unsupported layer %d", layer)
 	}
 }
@@ -5371,7 +5320,6 @@ func (m *TLAccountGetAccountTTL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAccountTTL: unsupported layer %d", layer)
 	}
 }
@@ -5451,7 +5399,6 @@ func (m *TLAccountSetAccountTTL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setAccountTTL: unsupported layer %d", layer)
 	}
 }
@@ -5546,7 +5493,6 @@ func (m *TLAccountSendChangePhoneCode) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_sendChangePhoneCode: unsupported layer %d", layer)
 	}
 }
@@ -5647,7 +5593,6 @@ func (m *TLAccountChangePhone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_changePhone: unsupported layer %d", layer)
 	}
 }
@@ -5731,7 +5676,6 @@ func (m *TLAccountUpdateDeviceLocked) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateDeviceLocked: unsupported layer %d", layer)
 	}
 }
@@ -5803,7 +5747,6 @@ func (m *TLAccountGetAuthorizations) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAuthorizations: unsupported layer %d", layer)
 	}
 }
@@ -5875,7 +5818,6 @@ func (m *TLAccountResetAuthorization) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -5947,7 +5889,6 @@ func (m *TLAccountGetPassword) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getPassword: unsupported layer %d", layer)
 	}
 }
@@ -6027,7 +5968,6 @@ func (m *TLAccountGetPasswordSettings) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getPasswordSettings: unsupported layer %d", layer)
 	}
 }
@@ -6127,7 +6067,6 @@ func (m *TLAccountUpdatePasswordSettings) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updatePasswordSettings: unsupported layer %d", layer)
 	}
 }
@@ -6230,7 +6169,6 @@ func (m *TLAccountSendConfirmPhoneCode) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_sendConfirmPhoneCode: unsupported layer %d", layer)
 	}
 }
@@ -6324,7 +6262,6 @@ func (m *TLAccountConfirmPhone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_confirmPhone: unsupported layer %d", layer)
 	}
 }
@@ -6415,7 +6352,6 @@ func (m *TLAccountGetTmpPassword) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getTmpPassword: unsupported layer %d", layer)
 	}
 }
@@ -6496,7 +6432,6 @@ func (m *TLAccountGetWebAuthorizations) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getWebAuthorizations: unsupported layer %d", layer)
 	}
 }
@@ -6568,7 +6503,6 @@ func (m *TLAccountResetWebAuthorization) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetWebAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -6640,7 +6574,6 @@ func (m *TLAccountResetWebAuthorizations) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetWebAuthorizations: unsupported layer %d", layer)
 	}
 }
@@ -6708,7 +6641,6 @@ func (m *TLAccountGetAllSecureValues) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAllSecureValues: unsupported layer %d", layer)
 	}
 }
@@ -6785,7 +6717,6 @@ func (m *TLAccountGetSecureValue) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getSecureValue: unsupported layer %d", layer)
 	}
 }
@@ -6892,7 +6823,6 @@ func (m *TLAccountSaveSecureValue) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveSecureValue: unsupported layer %d", layer)
 	}
 }
@@ -6982,7 +6912,6 @@ func (m *TLAccountDeleteSecureValue) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_deleteSecureValue: unsupported layer %d", layer)
 	}
 }
@@ -7091,7 +7020,6 @@ func (m *TLAccountGetAuthorizationForm) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAuthorizationForm: unsupported layer %d", layer)
 	}
 }
@@ -7211,7 +7139,6 @@ func (m *TLAccountAcceptAuthorization) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_acceptAuthorization: unsupported layer %d", layer)
 	}
 }
@@ -7342,7 +7269,6 @@ func (m *TLAccountSendVerifyPhoneCode) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_sendVerifyPhoneCode: unsupported layer %d", layer)
 	}
 }
@@ -7443,7 +7369,6 @@ func (m *TLAccountVerifyPhone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_verifyPhone: unsupported layer %d", layer)
 	}
 }
@@ -7542,7 +7467,6 @@ func (m *TLAccountSendVerifyEmailCode) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_sendVerifyEmailCode: unsupported layer %d", layer)
 	}
 }
@@ -7647,7 +7571,6 @@ func (m *TLAccountVerifyEmail) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_verifyEmail: unsupported layer %d", layer)
 	}
 }
@@ -7778,7 +7701,6 @@ func (m *TLAccountInitTakeoutSession) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_initTakeoutSession: unsupported layer %d", layer)
 	}
 }
@@ -7893,7 +7815,6 @@ func (m *TLAccountFinishTakeoutSession) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_finishTakeoutSession: unsupported layer %d", layer)
 	}
 }
@@ -7976,7 +7897,6 @@ func (m *TLAccountConfirmPasswordEmail) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_confirmPasswordEmail: unsupported layer %d", layer)
 	}
 }
@@ -8048,7 +7968,6 @@ func (m *TLAccountResendPasswordEmail) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resendPasswordEmail: unsupported layer %d", layer)
 	}
 }
@@ -8116,7 +8035,6 @@ func (m *TLAccountCancelPasswordEmail) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_cancelPasswordEmail: unsupported layer %d", layer)
 	}
 }
@@ -8184,7 +8102,6 @@ func (m *TLAccountGetContactSignUpNotification) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getContactSignUpNotification: unsupported layer %d", layer)
 	}
 }
@@ -8264,7 +8181,6 @@ func (m *TLAccountSetContactSignUpNotification) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setContactSignUpNotification: unsupported layer %d", layer)
 	}
 }
@@ -8373,7 +8289,6 @@ func (m *TLAccountGetNotifyExceptions) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getNotifyExceptions: unsupported layer %d", layer)
 	}
 }
@@ -8473,7 +8388,6 @@ func (m *TLAccountGetWallPaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getWallPaper: unsupported layer %d", layer)
 	}
 }
@@ -8596,7 +8510,6 @@ func (m *TLAccountUploadWallPaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_uploadWallPaper: unsupported layer %d", layer)
 	}
 }
@@ -8729,7 +8642,6 @@ func (m *TLAccountSaveWallPaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveWallPaper: unsupported layer %d", layer)
 	}
 }
@@ -8845,7 +8757,6 @@ func (m *TLAccountInstallWallPaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_installWallPaper: unsupported layer %d", layer)
 	}
 }
@@ -8929,7 +8840,6 @@ func (m *TLAccountResetWallPapers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetWallPapers: unsupported layer %d", layer)
 	}
 }
@@ -8997,7 +8907,6 @@ func (m *TLAccountGetAutoDownloadSettings) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAutoDownloadSettings: unsupported layer %d", layer)
 	}
 }
@@ -9097,7 +9006,6 @@ func (m *TLAccountSaveAutoDownloadSettings) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveAutoDownloadSettings: unsupported layer %d", layer)
 	}
 }
@@ -9236,7 +9144,6 @@ func (m *TLAccountUploadTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_uploadTheme: unsupported layer %d", layer)
 	}
 }
@@ -9387,7 +9294,6 @@ func (m *TLAccountCreateTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_createTheme: unsupported layer %d", layer)
 	}
 }
@@ -9584,7 +9490,6 @@ func (m *TLAccountUpdateTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateTheme: unsupported layer %d", layer)
 	}
 }
@@ -9745,7 +9650,6 @@ func (m *TLAccountSaveTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveTheme: unsupported layer %d", layer)
 	}
 }
@@ -9933,7 +9837,6 @@ func (m *TLAccountInstallTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_installTheme: unsupported layer %d", layer)
 	}
 }
@@ -10082,7 +9985,6 @@ func (m *TLAccountGetTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getTheme: unsupported layer %d", layer)
 	}
 }
@@ -10172,7 +10074,6 @@ func (m *TLAccountGetThemes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getThemes: unsupported layer %d", layer)
 	}
 }
@@ -10265,7 +10166,6 @@ func (m *TLAccountSetContentSettings) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setContentSettings: unsupported layer %d", layer)
 	}
 }
@@ -10341,7 +10241,6 @@ func (m *TLAccountGetContentSettings) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getContentSettings: unsupported layer %d", layer)
 	}
 }
@@ -10418,7 +10317,6 @@ func (m *TLAccountGetMultiWallPapers) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getMultiWallPapers: unsupported layer %d", layer)
 	}
 }
@@ -10510,7 +10408,6 @@ func (m *TLAccountGetGlobalPrivacySettings) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getGlobalPrivacySettings: unsupported layer %d", layer)
 	}
 }
@@ -10590,7 +10487,6 @@ func (m *TLAccountSetGlobalPrivacySettings) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setGlobalPrivacySettings: unsupported layer %d", layer)
 	}
 }
@@ -10709,7 +10605,6 @@ func (m *TLAccountReportProfilePhoto) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_reportProfilePhoto: unsupported layer %d", layer)
 	}
 }
@@ -10806,7 +10701,6 @@ func (m *TLAccountResetPassword) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resetPassword: unsupported layer %d", layer)
 	}
 }
@@ -10874,7 +10768,6 @@ func (m *TLAccountDeclinePasswordReset) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_declinePasswordReset: unsupported layer %d", layer)
 	}
 }
@@ -10946,7 +10839,6 @@ func (m *TLAccountGetChatThemes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getChatThemes: unsupported layer %d", layer)
 	}
 }
@@ -11022,7 +10914,6 @@ func (m *TLAccountSetAuthorizationTTL) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setAuthorizationTTL: unsupported layer %d", layer)
 	}
 }
@@ -11141,7 +11032,6 @@ func (m *TLAccountChangeAuthorizationSettings) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_changeAuthorizationSettings: unsupported layer %d", layer)
 	}
 }
@@ -11243,7 +11133,6 @@ func (m *TLAccountGetSavedRingtones) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getSavedRingtones: unsupported layer %d", layer)
 	}
 }
@@ -11339,7 +11228,6 @@ func (m *TLAccountSaveRingtone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveRingtone: unsupported layer %d", layer)
 	}
 }
@@ -11449,7 +11337,6 @@ func (m *TLAccountUploadRingtone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_uploadRingtone: unsupported layer %d", layer)
 	}
 }
@@ -11546,7 +11433,6 @@ func (m *TLAccountUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateEmojiStatus: unsupported layer %d", layer)
 	}
 }
@@ -11626,7 +11512,6 @@ func (m *TLAccountGetDefaultEmojiStatuses) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getDefaultEmojiStatuses: unsupported layer %d", layer)
 	}
 }
@@ -11702,7 +11587,6 @@ func (m *TLAccountGetRecentEmojiStatuses) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getRecentEmojiStatuses: unsupported layer %d", layer)
 	}
 }
@@ -11774,7 +11658,6 @@ func (m *TLAccountClearRecentEmojiStatuses) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_clearRecentEmojiStatuses: unsupported layer %d", layer)
 	}
 }
@@ -11849,7 +11732,6 @@ func (m *TLAccountReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_reorderUsernames: unsupported layer %d", layer)
 	}
 }
@@ -11938,7 +11820,6 @@ func (m *TLAccountToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_toggleUsername: unsupported layer %d", layer)
 	}
 }
@@ -12022,7 +11903,6 @@ func (m *TLAccountGetDefaultProfilePhotoEmojis) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getDefaultProfilePhotoEmojis: unsupported layer %d", layer)
 	}
 }
@@ -12098,7 +11978,6 @@ func (m *TLAccountGetDefaultGroupPhotoEmojis) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getDefaultGroupPhotoEmojis: unsupported layer %d", layer)
 	}
 }
@@ -12170,7 +12049,6 @@ func (m *TLAccountGetAutoSaveSettings) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getAutoSaveSettings: unsupported layer %d", layer)
 	}
 }
@@ -12289,7 +12167,6 @@ func (m *TLAccountSaveAutoSaveSettings) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveAutoSaveSettings: unsupported layer %d", layer)
 	}
 }
@@ -12388,7 +12265,6 @@ func (m *TLAccountDeleteAutoSaveExceptions) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_deleteAutoSaveExceptions: unsupported layer %d", layer)
 	}
 }
@@ -12463,7 +12339,6 @@ func (m *TLAccountInvalidateSignInCodes) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_invalidateSignInCodes: unsupported layer %d", layer)
 	}
 }
@@ -12562,7 +12437,6 @@ func (m *TLAccountUpdateColor) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateColor: unsupported layer %d", layer)
 	}
 }
@@ -12651,7 +12525,6 @@ func (m *TLAccountGetDefaultBackgroundEmojis) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getDefaultBackgroundEmojis: unsupported layer %d", layer)
 	}
 }
@@ -12727,7 +12600,6 @@ func (m *TLAccountGetChannelDefaultEmojiStatuses) Encode(x *bin.Encoder, layer i
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getChannelDefaultEmojiStatuses: unsupported layer %d", layer)
 	}
 }
@@ -12803,7 +12675,6 @@ func (m *TLAccountGetChannelRestrictedStatusEmojis) Encode(x *bin.Encoder, layer
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getChannelRestrictedStatusEmojis: unsupported layer %d", layer)
 	}
 }
@@ -12900,7 +12771,6 @@ func (m *TLAccountUpdateBusinessWorkHours) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBusinessWorkHours: unsupported layer %d", layer)
 	}
 }
@@ -13019,7 +12889,6 @@ func (m *TLAccountUpdateBusinessLocation) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBusinessLocation: unsupported layer %d", layer)
 	}
 }
@@ -13133,7 +13002,6 @@ func (m *TLAccountUpdateBusinessGreetingMessage) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBusinessGreetingMessage: unsupported layer %d", layer)
 	}
 }
@@ -13240,7 +13108,6 @@ func (m *TLAccountUpdateBusinessAwayMessage) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBusinessAwayMessage: unsupported layer %d", layer)
 	}
 }
@@ -13377,7 +13244,6 @@ func (m *TLAccountUpdateConnectedBot) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateConnectedBot: unsupported layer %d", layer)
 	}
 }
@@ -13478,7 +13344,6 @@ func (m *TLAccountGetConnectedBots) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getConnectedBots: unsupported layer %d", layer)
 	}
 }
@@ -13553,7 +13418,6 @@ func (m *TLAccountGetBotBusinessConnection) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getBotBusinessConnection: unsupported layer %d", layer)
 	}
 }
@@ -13650,7 +13514,6 @@ func (m *TLAccountUpdateBusinessIntro) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBusinessIntro: unsupported layer %d", layer)
 	}
 }
@@ -13756,7 +13619,6 @@ func (m *TLAccountToggleConnectedBotPaused) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_toggleConnectedBotPaused: unsupported layer %d", layer)
 	}
 }
@@ -13852,7 +13714,6 @@ func (m *TLAccountDisablePeerConnectedBot) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_disablePeerConnectedBot: unsupported layer %d", layer)
 	}
 }
@@ -13953,7 +13814,6 @@ func (m *TLAccountUpdateBirthday) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateBirthday: unsupported layer %d", layer)
 	}
 }
@@ -14047,7 +13907,6 @@ func (m *TLAccountCreateBusinessChatLink) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_createBusinessChatLink: unsupported layer %d", layer)
 	}
 }
@@ -14142,7 +14001,6 @@ func (m *TLAccountEditBusinessChatLink) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_editBusinessChatLink: unsupported layer %d", layer)
 	}
 }
@@ -14229,7 +14087,6 @@ func (m *TLAccountDeleteBusinessChatLink) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_deleteBusinessChatLink: unsupported layer %d", layer)
 	}
 }
@@ -14301,7 +14158,6 @@ func (m *TLAccountGetBusinessChatLinks) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getBusinessChatLinks: unsupported layer %d", layer)
 	}
 }
@@ -14376,7 +14232,6 @@ func (m *TLAccountResolveBusinessChatLink) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_resolveBusinessChatLink: unsupported layer %d", layer)
 	}
 }
@@ -14460,7 +14315,6 @@ func (m *TLAccountUpdatePersonalChannel) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updatePersonalChannel: unsupported layer %d", layer)
 	}
 }
@@ -14548,7 +14402,6 @@ func (m *TLAccountToggleSponsoredMessages) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_toggleSponsoredMessages: unsupported layer %d", layer)
 	}
 }
@@ -14624,7 +14477,6 @@ func (m *TLAccountGetReactionsNotifySettings) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getReactionsNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -14704,7 +14556,6 @@ func (m *TLAccountSetReactionsNotifySettings) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setReactionsNotifySettings: unsupported layer %d", layer)
 	}
 }
@@ -14784,7 +14635,6 @@ func (m *TLAccountGetCollectibleEmojiStatuses) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getCollectibleEmojiStatuses: unsupported layer %d", layer)
 	}
 }
@@ -14895,7 +14745,6 @@ func (m *TLAccountGetPaidMessagesRevenue) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getPaidMessagesRevenue: unsupported layer %d", layer)
 	}
 }
@@ -15032,7 +14881,6 @@ func (m *TLAccountToggleNoPaidMessagesException) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_toggleNoPaidMessagesException: unsupported layer %d", layer)
 	}
 }
@@ -15140,7 +14988,6 @@ func (m *TLAccountSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_setMainProfileTab: unsupported layer %d", layer)
 	}
 }
@@ -15257,7 +15104,6 @@ func (m *TLAccountSaveMusic) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_saveMusic: unsupported layer %d", layer)
 	}
 }
@@ -15355,7 +15201,6 @@ func (m *TLAccountGetSavedMusicIds) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getSavedMusicIds: unsupported layer %d", layer)
 	}
 }
@@ -15440,7 +15285,6 @@ func (m *TLAccountGetUniqueGiftChatThemes) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getUniqueGiftChatThemes: unsupported layer %d", layer)
 	}
 }
@@ -15520,7 +15364,6 @@ func (m *TLAccountInitPasskeyRegistration) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_initPasskeyRegistration: unsupported layer %d", layer)
 	}
 }
@@ -15600,7 +15443,6 @@ func (m *TLAccountRegisterPasskey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_registerPasskey: unsupported layer %d", layer)
 	}
 }
@@ -15676,7 +15518,6 @@ func (m *TLAccountGetPasskeys) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_getPasskeys: unsupported layer %d", layer)
 	}
 }
@@ -15751,7 +15592,6 @@ func (m *TLAccountDeletePasskey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_deletePasskey: unsupported layer %d", layer)
 	}
 }
@@ -15832,7 +15672,6 @@ func (m *TLUsersGetUsers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getUsers: unsupported layer %d", layer)
 	}
 }
@@ -15936,7 +15775,6 @@ func (m *TLUsersGetFullUser) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getFullUser: unsupported layer %d", layer)
 	}
 }
@@ -16034,7 +15872,6 @@ func (m *TLUsersSetSecureValueErrors) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_setSecureValueErrors: unsupported layer %d", layer)
 	}
 }
@@ -16144,7 +15981,6 @@ func (m *TLUsersGetRequirementsToContact) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getRequirementsToContact: unsupported layer %d", layer)
 	}
 }
@@ -16257,7 +16093,6 @@ func (m *TLUsersGetSavedMusic) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getSavedMusic: unsupported layer %d", layer)
 	}
 }
@@ -16368,7 +16203,6 @@ func (m *TLUsersGetSavedMusicByID) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getSavedMusicByID: unsupported layer %d", layer)
 	}
 }
@@ -16493,7 +16327,6 @@ func (m *TLUsersSuggestBirthday) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_suggestBirthday: unsupported layer %d", layer)
 	}
 }
@@ -16581,7 +16414,6 @@ func (m *TLContactsGetContactIDs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getContactIDs: unsupported layer %d", layer)
 	}
 }
@@ -16653,7 +16485,6 @@ func (m *TLContactsGetStatuses) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getStatuses: unsupported layer %d", layer)
 	}
 }
@@ -16725,7 +16556,6 @@ func (m *TLContactsGetContacts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getContacts: unsupported layer %d", layer)
 	}
 }
@@ -16806,7 +16636,6 @@ func (m *TLContactsImportContacts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_importContacts: unsupported layer %d", layer)
 	}
 }
@@ -16907,7 +16736,6 @@ func (m *TLContactsDeleteContacts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_deleteContacts: unsupported layer %d", layer)
 	}
 }
@@ -17006,7 +16834,6 @@ func (m *TLContactsDeleteByPhones) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_deleteByPhones: unsupported layer %d", layer)
 	}
 }
@@ -17104,7 +16931,6 @@ func (m *TLContactsBlock) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_block: unsupported layer %d", layer)
 	}
 }
@@ -17216,7 +17042,6 @@ func (m *TLContactsUnblock) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_unblock: unsupported layer %d", layer)
 	}
 }
@@ -17323,7 +17148,6 @@ func (m *TLContactsGetBlocked) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getBlocked: unsupported layer %d", layer)
 	}
 }
@@ -17417,7 +17241,6 @@ func (m *TLContactsSearch) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_search: unsupported layer %d", layer)
 	}
 }
@@ -17522,7 +17345,6 @@ func (m *TLContactsResolveUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_resolveUsername: unsupported layer %d", layer)
 	}
 }
@@ -17664,7 +17486,6 @@ func (m *TLContactsGetTopPeers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getTopPeers: unsupported layer %d", layer)
 	}
 }
@@ -17800,7 +17621,6 @@ func (m *TLContactsResetTopPeerRating) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_resetTopPeerRating: unsupported layer %d", layer)
 	}
 }
@@ -17884,7 +17704,6 @@ func (m *TLContactsResetSaved) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_resetSaved: unsupported layer %d", layer)
 	}
 }
@@ -17952,7 +17771,6 @@ func (m *TLContactsGetSaved) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getSaved: unsupported layer %d", layer)
 	}
 }
@@ -18032,7 +17850,6 @@ func (m *TLContactsToggleTopPeers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_toggleTopPeers: unsupported layer %d", layer)
 	}
 }
@@ -18170,7 +17987,6 @@ func (m *TLContactsAddContact) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_addContact: unsupported layer %d", layer)
 	}
 }
@@ -18288,7 +18104,6 @@ func (m *TLContactsAcceptContact) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_acceptContact: unsupported layer %d", layer)
 	}
 }
@@ -18403,7 +18218,6 @@ func (m *TLContactsGetLocated) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getLocated: unsupported layer %d", layer)
 	}
 }
@@ -18523,7 +18337,6 @@ func (m *TLContactsBlockFromReplies) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_blockFromReplies: unsupported layer %d", layer)
 	}
 }
@@ -18616,7 +18429,6 @@ func (m *TLContactsResolvePhone) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_resolvePhone: unsupported layer %d", layer)
 	}
 }
@@ -18688,7 +18500,6 @@ func (m *TLContactsExportContactToken) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_exportContactToken: unsupported layer %d", layer)
 	}
 }
@@ -18763,7 +18574,6 @@ func (m *TLContactsImportContactToken) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_importContactToken: unsupported layer %d", layer)
 	}
 }
@@ -18842,7 +18652,6 @@ func (m *TLContactsEditCloseFriends) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_editCloseFriends: unsupported layer %d", layer)
 	}
 }
@@ -18942,7 +18751,6 @@ func (m *TLContactsSetBlocked) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_setBlocked: unsupported layer %d", layer)
 	}
 }
@@ -19047,7 +18855,6 @@ func (m *TLContactsGetBirthdays) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getBirthdays: unsupported layer %d", layer)
 	}
 }
@@ -19122,7 +18929,6 @@ func (m *TLContactsGetSponsoredPeers) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_getSponsoredPeers: unsupported layer %d", layer)
 	}
 }
@@ -19218,7 +19024,6 @@ func (m *TLContactsUpdateContactNote) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contacts_updateContactNote: unsupported layer %d", layer)
 	}
 }
@@ -19329,7 +19134,6 @@ func (m *TLMessagesGetMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessages: unsupported layer %d", layer)
 	}
 }
@@ -19478,7 +19282,6 @@ func (m *TLMessagesGetDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDialogs: unsupported layer %d", layer)
 	}
 }
@@ -19619,7 +19422,6 @@ func (m *TLMessagesGetHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getHistory: unsupported layer %d", layer)
 	}
 }
@@ -19844,7 +19646,6 @@ func (m *TLMessagesSearch) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_search: unsupported layer %d", layer)
 	}
 }
@@ -20037,7 +19838,6 @@ func (m *TLMessagesReadHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readHistory: unsupported layer %d", layer)
 	}
 }
@@ -20176,7 +19976,6 @@ func (m *TLMessagesDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteHistory: unsupported layer %d", layer)
 	}
 }
@@ -20306,7 +20105,6 @@ func (m *TLMessagesDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteMessages: unsupported layer %d", layer)
 	}
 }
@@ -20388,7 +20186,6 @@ func (m *TLMessagesReceivedMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_receivedMessages: unsupported layer %d", layer)
 	}
 }
@@ -20508,7 +20305,6 @@ func (m *TLMessagesSetTyping) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setTyping: unsupported layer %d", layer)
 	}
 }
@@ -20802,7 +20598,6 @@ func (m *TLMessagesSendMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendMessage: unsupported layer %d", layer)
 	}
 }
@@ -21222,7 +21017,6 @@ func (m *TLMessagesSendMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendMedia: unsupported layer %d", layer)
 	}
 }
@@ -21651,7 +21445,6 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_forwardMessages: unsupported layer %d", layer)
 	}
 }
@@ -21858,7 +21651,6 @@ func (m *TLMessagesReportSpam) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportSpam: unsupported layer %d", layer)
 	}
 }
@@ -21946,7 +21738,6 @@ func (m *TLMessagesGetPeerSettings) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPeerSettings: unsupported layer %d", layer)
 	}
 }
@@ -22057,7 +21848,6 @@ func (m *TLMessagesReport) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_report: unsupported layer %d", layer)
 	}
 }
@@ -22151,7 +21941,6 @@ func (m *TLMessagesGetChats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getChats: unsupported layer %d", layer)
 	}
 }
@@ -22225,7 +22014,6 @@ func (m *TLMessagesGetFullChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFullChat: unsupported layer %d", layer)
 	}
 }
@@ -22307,7 +22095,6 @@ func (m *TLMessagesEditChatTitle) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatTitle: unsupported layer %d", layer)
 	}
 }
@@ -22398,7 +22185,6 @@ func (m *TLMessagesEditChatPhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatPhoto: unsupported layer %d", layer)
 	}
 }
@@ -22496,7 +22282,6 @@ func (m *TLMessagesAddChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_addChatUser: unsupported layer %d", layer)
 	}
 }
@@ -22612,7 +22397,6 @@ func (m *TLMessagesDeleteChatUser) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteChatUser: unsupported layer %d", layer)
 	}
 }
@@ -22740,7 +22524,6 @@ func (m *TLMessagesCreateChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_createChat: unsupported layer %d", layer)
 	}
 }
@@ -22856,7 +22639,6 @@ func (m *TLMessagesGetDhConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDhConfig: unsupported layer %d", layer)
 	}
 }
@@ -22954,7 +22736,6 @@ func (m *TLMessagesRequestEncryption) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestEncryption: unsupported layer %d", layer)
 	}
 }
@@ -23061,7 +22842,6 @@ func (m *TLMessagesAcceptEncryption) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_acceptEncryption: unsupported layer %d", layer)
 	}
 }
@@ -23166,7 +22946,6 @@ func (m *TLMessagesDiscardEncryption) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_discardEncryption: unsupported layer %d", layer)
 	}
 }
@@ -23270,7 +23049,6 @@ func (m *TLMessagesSetEncryptedTyping) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setEncryptedTyping: unsupported layer %d", layer)
 	}
 }
@@ -23369,7 +23147,6 @@ func (m *TLMessagesReadEncryptedHistory) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readEncryptedHistory: unsupported layer %d", layer)
 	}
 }
@@ -23488,7 +23265,6 @@ func (m *TLMessagesSendEncrypted) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendEncrypted: unsupported layer %d", layer)
 	}
 }
@@ -23631,7 +23407,6 @@ func (m *TLMessagesSendEncryptedFile) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendEncryptedFile: unsupported layer %d", layer)
 	}
 }
@@ -23754,7 +23529,6 @@ func (m *TLMessagesSendEncryptedService) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendEncryptedService: unsupported layer %d", layer)
 	}
 }
@@ -23843,7 +23617,6 @@ func (m *TLMessagesReceivedQueue) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_receivedQueue: unsupported layer %d", layer)
 	}
 }
@@ -23927,7 +23700,6 @@ func (m *TLMessagesReportEncryptedSpam) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportEncryptedSpam: unsupported layer %d", layer)
 	}
 }
@@ -24010,7 +23782,6 @@ func (m *TLMessagesReadMessageContents) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readMessageContents: unsupported layer %d", layer)
 	}
 }
@@ -24090,7 +23861,6 @@ func (m *TLMessagesGetStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getStickers: unsupported layer %d", layer)
 	}
 }
@@ -24170,7 +23940,6 @@ func (m *TLMessagesGetAllStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAllStickers: unsupported layer %d", layer)
 	}
 }
@@ -24273,7 +24042,6 @@ func (m *TLMessagesGetWebPagePreview) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getWebPagePreview: unsupported layer %d", layer)
 	}
 }
@@ -24457,7 +24225,6 @@ func (m *TLMessagesExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_exportChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -24583,7 +24350,6 @@ func (m *TLMessagesCheckChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_checkChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -24662,7 +24428,6 @@ func (m *TLMessagesImportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_importChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -24771,7 +24536,6 @@ func (m *TLMessagesGetStickerSet) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -24887,7 +24651,6 @@ func (m *TLMessagesInstallStickerSet) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_installStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -24983,7 +24746,6 @@ func (m *TLMessagesUninstallStickerSet) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_uninstallStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -25093,7 +24855,6 @@ func (m *TLMessagesStartBot) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_startBot: unsupported layer %d", layer)
 	}
 }
@@ -25219,7 +24980,6 @@ func (m *TLMessagesGetMessagesViews) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessagesViews: unsupported layer %d", layer)
 	}
 }
@@ -25332,7 +25092,6 @@ func (m *TLMessagesEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatAdmin: unsupported layer %d", layer)
 	}
 }
@@ -25424,7 +25183,6 @@ func (m *TLMessagesMigrateChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_migrateChat: unsupported layer %d", layer)
 	}
 }
@@ -25578,7 +25336,6 @@ func (m *TLMessagesSearchGlobal) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchGlobal: unsupported layer %d", layer)
 	}
 }
@@ -25737,7 +25494,6 @@ func (m *TLMessagesReorderStickerSets) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reorderStickerSets: unsupported layer %d", layer)
 	}
 }
@@ -25835,7 +25591,6 @@ func (m *TLMessagesGetDocumentByHash) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDocumentByHash: unsupported layer %d", layer)
 	}
 }
@@ -25919,7 +25674,6 @@ func (m *TLMessagesGetSavedGifs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSavedGifs: unsupported layer %d", layer)
 	}
 }
@@ -26015,7 +25769,6 @@ func (m *TLMessagesSaveGif) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_saveGif: unsupported layer %d", layer)
 	}
 }
@@ -26163,7 +25916,6 @@ func (m *TLMessagesGetInlineBotResults) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getInlineBotResults: unsupported layer %d", layer)
 	}
 }
@@ -26346,7 +26098,6 @@ func (m *TLMessagesSetInlineBotResults) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setInlineBotResults: unsupported layer %d", layer)
 	}
 }
@@ -26603,7 +26354,6 @@ func (m *TLMessagesSendInlineBotResult) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendInlineBotResult: unsupported layer %d", layer)
 	}
 }
@@ -26765,7 +26515,6 @@ func (m *TLMessagesGetMessageEditData) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessageEditData: unsupported layer %d", layer)
 	}
 }
@@ -26969,7 +26718,6 @@ func (m *TLMessagesEditMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editMessage: unsupported layer %d", layer)
 	}
 }
@@ -27219,7 +26967,6 @@ func (m *TLMessagesEditInlineBotMessage) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editInlineBotMessage: unsupported layer %d", layer)
 	}
 }
@@ -27415,7 +27162,6 @@ func (m *TLMessagesGetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getBotCallbackAnswer: unsupported layer %d", layer)
 	}
 }
@@ -27568,7 +27314,6 @@ func (m *TLMessagesSetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setBotCallbackAnswer: unsupported layer %d", layer)
 	}
 }
@@ -27677,7 +27422,6 @@ func (m *TLMessagesGetPeerDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPeerDialogs: unsupported layer %d", layer)
 	}
 }
@@ -27875,7 +27619,6 @@ func (m *TLMessagesSaveDraft) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_saveDraft: unsupported layer %d", layer)
 	}
 }
@@ -28028,7 +27771,6 @@ func (m *TLMessagesGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAllDrafts: unsupported layer %d", layer)
 	}
 }
@@ -28100,7 +27842,6 @@ func (m *TLMessagesGetFeaturedStickers) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFeaturedStickers: unsupported layer %d", layer)
 	}
 }
@@ -28179,7 +27920,6 @@ func (m *TLMessagesReadFeaturedStickers) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readFeaturedStickers: unsupported layer %d", layer)
 	}
 }
@@ -28269,7 +28009,6 @@ func (m *TLMessagesGetRecentStickers) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getRecentStickers: unsupported layer %d", layer)
 	}
 }
@@ -28389,7 +28128,6 @@ func (m *TLMessagesSaveRecentSticker) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_saveRecentSticker: unsupported layer %d", layer)
 	}
 }
@@ -28498,7 +28236,6 @@ func (m *TLMessagesClearRecentStickers) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_clearRecentStickers: unsupported layer %d", layer)
 	}
 }
@@ -28601,7 +28338,6 @@ func (m *TLMessagesGetArchivedStickers) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getArchivedStickers: unsupported layer %d", layer)
 	}
 }
@@ -28692,7 +28428,6 @@ func (m *TLMessagesGetMaskStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMaskStickers: unsupported layer %d", layer)
 	}
 }
@@ -28776,7 +28511,6 @@ func (m *TLMessagesGetAttachedStickers) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAttachedStickers: unsupported layer %d", layer)
 	}
 }
@@ -28902,7 +28636,6 @@ func (m *TLMessagesSetGameScore) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setGameScore: unsupported layer %d", layer)
 	}
 }
@@ -29054,7 +28787,6 @@ func (m *TLMessagesSetInlineGameScore) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setInlineGameScore: unsupported layer %d", layer)
 	}
 }
@@ -29181,7 +28913,6 @@ func (m *TLMessagesGetGameHighScores) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getGameHighScores: unsupported layer %d", layer)
 	}
 }
@@ -29294,7 +29025,6 @@ func (m *TLMessagesGetInlineGameHighScores) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getInlineGameHighScores: unsupported layer %d", layer)
 	}
 }
@@ -29396,7 +29126,6 @@ func (m *TLMessagesGetCommonChats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getCommonChats: unsupported layer %d", layer)
 	}
 }
@@ -29491,7 +29220,6 @@ func (m *TLMessagesGetWebPage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getWebPage: unsupported layer %d", layer)
 	}
 }
@@ -29595,7 +29323,6 @@ func (m *TLMessagesToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleDialogPin: unsupported layer %d", layer)
 	}
 }
@@ -29708,7 +29435,6 @@ func (m *TLMessagesReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reorderPinnedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -29816,7 +29542,6 @@ func (m *TLMessagesGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPinnedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -29928,7 +29653,6 @@ func (m *TLMessagesSetBotShippingResults) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setBotShippingResults: unsupported layer %d", layer)
 	}
 }
@@ -30070,7 +29794,6 @@ func (m *TLMessagesSetBotPrecheckoutResults) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setBotPrecheckoutResults: unsupported layer %d", layer)
 	}
 }
@@ -30206,7 +29929,6 @@ func (m *TLMessagesUploadMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_uploadMedia: unsupported layer %d", layer)
 	}
 }
@@ -30329,7 +30051,6 @@ func (m *TLMessagesSendScreenshotNotification) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendScreenshotNotification: unsupported layer %d", layer)
 	}
 }
@@ -30422,7 +30143,6 @@ func (m *TLMessagesGetFavedStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFavedStickers: unsupported layer %d", layer)
 	}
 }
@@ -30518,7 +30238,6 @@ func (m *TLMessagesFaveSticker) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_faveSticker: unsupported layer %d", layer)
 	}
 }
@@ -30653,7 +30372,6 @@ func (m *TLMessagesGetUnreadMentions) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getUnreadMentions: unsupported layer %d", layer)
 	}
 }
@@ -30796,7 +30514,6 @@ func (m *TLMessagesReadMentions) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readMentions: unsupported layer %d", layer)
 	}
 }
@@ -30903,7 +30620,6 @@ func (m *TLMessagesGetRecentLocations) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getRecentLocations: unsupported layer %d", layer)
 	}
 }
@@ -31128,7 +30844,6 @@ func (m *TLMessagesSendMultiMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendMultiMedia: unsupported layer %d", layer)
 	}
 }
@@ -31329,7 +31044,6 @@ func (m *TLMessagesUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_uploadEncryptedFile: unsupported layer %d", layer)
 	}
 }
@@ -31439,7 +31153,6 @@ func (m *TLMessagesSearchStickerSets) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchStickerSets: unsupported layer %d", layer)
 	}
 }
@@ -31523,7 +31236,6 @@ func (m *TLMessagesGetSplitRanges) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSplitRanges: unsupported layer %d", layer)
 	}
 }
@@ -31634,7 +31346,6 @@ func (m *TLMessagesMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_markDialogUnread: unsupported layer %d", layer)
 	}
 }
@@ -31752,7 +31463,6 @@ func (m *TLMessagesGetDialogUnreadMarks) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDialogUnreadMarks: unsupported layer %d", layer)
 	}
 }
@@ -31834,7 +31544,6 @@ func (m *TLMessagesClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_clearAllDrafts: unsupported layer %d", layer)
 	}
 }
@@ -31941,7 +31650,6 @@ func (m *TLMessagesUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_updatePinnedMessage: unsupported layer %d", layer)
 	}
 }
@@ -32059,7 +31767,6 @@ func (m *TLMessagesSendVote) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendVote: unsupported layer %d", layer)
 	}
 }
@@ -32184,7 +31891,6 @@ func (m *TLMessagesGetPollResults) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPollResults: unsupported layer %d", layer)
 	}
 }
@@ -32297,7 +32003,6 @@ func (m *TLMessagesGetOnlines) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getOnlines: unsupported layer %d", layer)
 	}
 }
@@ -32392,7 +32097,6 @@ func (m *TLMessagesEditChatAbout) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatAbout: unsupported layer %d", layer)
 	}
 }
@@ -32497,7 +32201,6 @@ func (m *TLMessagesEditChatDefaultBannedRights) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights: unsupported layer %d", layer)
 	}
 }
@@ -32588,7 +32291,6 @@ func (m *TLMessagesGetEmojiKeywords) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiKeywords: unsupported layer %d", layer)
 	}
 }
@@ -32670,7 +32372,6 @@ func (m *TLMessagesGetEmojiKeywordsDifference) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiKeywordsDifference: unsupported layer %d", layer)
 	}
 }
@@ -32753,7 +32454,6 @@ func (m *TLMessagesGetEmojiKeywordsLanguages) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiKeywordsLanguages: unsupported layer %d", layer)
 	}
 }
@@ -32830,7 +32530,6 @@ func (m *TLMessagesGetEmojiURL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiURL: unsupported layer %d", layer)
 	}
 }
@@ -32961,7 +32660,6 @@ func (m *TLMessagesGetSearchCounters) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSearchCounters: unsupported layer %d", layer)
 	}
 }
@@ -33224,7 +32922,6 @@ func (m *TLMessagesRequestUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestUrlAuth: unsupported layer %d", layer)
 	}
 }
@@ -33528,7 +33225,6 @@ func (m *TLMessagesAcceptUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_acceptUrlAuth: unsupported layer %d", layer)
 	}
 }
@@ -33701,7 +33397,6 @@ func (m *TLMessagesHidePeerSettingsBar) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_hidePeerSettingsBar: unsupported layer %d", layer)
 	}
 }
@@ -33792,7 +33487,6 @@ func (m *TLMessagesGetScheduledHistory) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getScheduledHistory: unsupported layer %d", layer)
 	}
 }
@@ -33893,7 +33587,6 @@ func (m *TLMessagesGetScheduledMessages) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getScheduledMessages: unsupported layer %d", layer)
 	}
 }
@@ -33991,7 +33684,6 @@ func (m *TLMessagesSendScheduledMessages) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendScheduledMessages: unsupported layer %d", layer)
 	}
 }
@@ -34089,7 +33781,6 @@ func (m *TLMessagesDeleteScheduledMessages) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteScheduledMessages: unsupported layer %d", layer)
 	}
 }
@@ -34221,7 +33912,6 @@ func (m *TLMessagesGetPollVotes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPollVotes: unsupported layer %d", layer)
 	}
 }
@@ -34360,7 +34050,6 @@ func (m *TLMessagesToggleStickerSets) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleStickerSets: unsupported layer %d", layer)
 	}
 }
@@ -34466,7 +34155,6 @@ func (m *TLMessagesGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDialogFilters: unsupported layer %d", layer)
 	}
 }
@@ -34534,7 +34222,6 @@ func (m *TLMessagesGetSuggestedDialogFilters) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSuggestedDialogFilters: unsupported layer %d", layer)
 	}
 }
@@ -34630,7 +34317,6 @@ func (m *TLMessagesUpdateDialogFilter) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_updateDialogFilter: unsupported layer %d", layer)
 	}
 }
@@ -34723,7 +34409,6 @@ func (m *TLMessagesUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_updateDialogFiltersOrder: unsupported layer %d", layer)
 	}
 }
@@ -34803,7 +34488,6 @@ func (m *TLMessagesGetOldFeaturedStickers) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getOldFeaturedStickers: unsupported layer %d", layer)
 	}
 }
@@ -34919,7 +34603,6 @@ func (m *TLMessagesGetReplies) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getReplies: unsupported layer %d", layer)
 	}
 }
@@ -35043,7 +34726,6 @@ func (m *TLMessagesGetDiscussionMessage) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDiscussionMessage: unsupported layer %d", layer)
 	}
 }
@@ -35142,7 +34824,6 @@ func (m *TLMessagesReadDiscussion) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readDiscussion: unsupported layer %d", layer)
 	}
 }
@@ -35275,7 +34956,6 @@ func (m *TLMessagesUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_unpinAllMessages: unsupported layer %d", layer)
 	}
 }
@@ -35377,7 +35057,6 @@ func (m *TLMessagesDeleteChat) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteChat: unsupported layer %d", layer)
 	}
 }
@@ -35466,7 +35145,6 @@ func (m *TLMessagesDeletePhoneCallHistory) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deletePhoneCallHistory: unsupported layer %d", layer)
 	}
 }
@@ -35549,7 +35227,6 @@ func (m *TLMessagesCheckHistoryImport) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_checkHistoryImport: unsupported layer %d", layer)
 	}
 }
@@ -35648,7 +35325,6 @@ func (m *TLMessagesInitHistoryImport) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_initHistoryImport: unsupported layer %d", layer)
 	}
 }
@@ -35771,7 +35447,6 @@ func (m *TLMessagesUploadImportedMedia) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_uploadImportedMedia: unsupported layer %d", layer)
 	}
 }
@@ -35879,7 +35554,6 @@ func (m *TLMessagesStartHistoryImport) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_startHistoryImport: unsupported layer %d", layer)
 	}
 }
@@ -36028,7 +35702,6 @@ func (m *TLMessagesGetExportedChatInvites) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getExportedChatInvites: unsupported layer %d", layer)
 	}
 }
@@ -36159,7 +35832,6 @@ func (m *TLMessagesGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -36324,7 +35996,6 @@ func (m *TLMessagesEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -36467,7 +36138,6 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, laye
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites: unsupported layer %d", layer)
 	}
 }
@@ -36570,7 +36240,6 @@ func (m *TLMessagesDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteExportedChatInvite: unsupported layer %d", layer)
 	}
 }
@@ -36663,7 +36332,6 @@ func (m *TLMessagesGetAdminsWithInvites) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAdminsWithInvites: unsupported layer %d", layer)
 	}
 }
@@ -36814,7 +36482,6 @@ func (m *TLMessagesGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getChatInviteImporters: unsupported layer %d", layer)
 	}
 }
@@ -36950,7 +36617,6 @@ func (m *TLMessagesSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setHistoryTTL: unsupported layer %d", layer)
 	}
 }
@@ -37043,7 +36709,6 @@ func (m *TLMessagesCheckHistoryImportPeer) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_checkHistoryImportPeer: unsupported layer %d", layer)
 	}
 }
@@ -37143,7 +36808,6 @@ func (m *TLMessagesSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setChatTheme: unsupported layer %d", layer)
 	}
 }
@@ -37242,7 +36906,6 @@ func (m *TLMessagesGetMessageReadParticipants) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessageReadParticipants: unsupported layer %d", layer)
 	}
 }
@@ -37379,7 +37042,6 @@ func (m *TLMessagesGetSearchResultsCalendar) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSearchResultsCalendar: unsupported layer %d", layer)
 	}
 }
@@ -37543,7 +37205,6 @@ func (m *TLMessagesGetSearchResultsPositions) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSearchResultsPositions: unsupported layer %d", layer)
 	}
 }
@@ -37691,7 +37352,6 @@ func (m *TLMessagesHideChatJoinRequest) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_hideChatJoinRequest: unsupported layer %d", layer)
 	}
 }
@@ -37822,7 +37482,6 @@ func (m *TLMessagesHideAllChatJoinRequests) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_hideAllChatJoinRequests: unsupported layer %d", layer)
 	}
 }
@@ -37993,7 +37652,6 @@ func (m *TLMessagesToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleNoForwards: unsupported layer %d", layer)
 	}
 }
@@ -38133,7 +37791,6 @@ func (m *TLMessagesSaveDefaultSendAs) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_saveDefaultSendAs: unsupported layer %d", layer)
 	}
 }
@@ -38265,7 +37922,6 @@ func (m *TLMessagesSendReaction) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendReaction: unsupported layer %d", layer)
 	}
 }
@@ -38403,7 +38059,6 @@ func (m *TLMessagesGetMessagesReactions) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessagesReactions: unsupported layer %d", layer)
 	}
 }
@@ -38537,7 +38192,6 @@ func (m *TLMessagesGetMessageReactionsList) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMessageReactionsList: unsupported layer %d", layer)
 	}
 }
@@ -38704,7 +38358,6 @@ func (m *TLMessagesSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setChatAvailableReactions: unsupported layer %d", layer)
 	}
 }
@@ -38814,7 +38467,6 @@ func (m *TLMessagesGetAvailableReactions) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAvailableReactions: unsupported layer %d", layer)
 	}
 }
@@ -38898,7 +38550,6 @@ func (m *TLMessagesSetDefaultReaction) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setDefaultReaction: unsupported layer %d", layer)
 	}
 }
@@ -39108,7 +38759,6 @@ func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_translateText: unsupported layer %d", layer)
 	}
 }
@@ -39345,7 +38995,6 @@ func (m *TLMessagesGetUnreadReactions) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getUnreadReactions: unsupported layer %d", layer)
 	}
 }
@@ -39511,7 +39160,6 @@ func (m *TLMessagesReadReactions) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readReactions: unsupported layer %d", layer)
 	}
 }
@@ -39631,7 +39279,6 @@ func (m *TLMessagesSearchSentMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchSentMedia: unsupported layer %d", layer)
 	}
 }
@@ -39720,7 +39367,6 @@ func (m *TLMessagesGetAttachMenuBots) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAttachMenuBots: unsupported layer %d", layer)
 	}
 }
@@ -39804,7 +39450,6 @@ func (m *TLMessagesGetAttachMenuBot) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAttachMenuBot: unsupported layer %d", layer)
 	}
 }
@@ -39920,7 +39565,6 @@ func (m *TLMessagesToggleBotInAttachMenu) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu: unsupported layer %d", layer)
 	}
 }
@@ -40137,7 +39781,6 @@ func (m *TLMessagesRequestWebView) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestWebView: unsupported layer %d", layer)
 	}
 }
@@ -40356,7 +39999,6 @@ func (m *TLMessagesProlongWebView) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_prolongWebView: unsupported layer %d", layer)
 	}
 }
@@ -40557,7 +40199,6 @@ func (m *TLMessagesRequestSimpleWebView) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestSimpleWebView: unsupported layer %d", layer)
 	}
 }
@@ -40699,7 +40340,6 @@ func (m *TLMessagesSendWebViewResultMessage) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendWebViewResultMessage: unsupported layer %d", layer)
 	}
 }
@@ -40808,7 +40448,6 @@ func (m *TLMessagesSendWebViewData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendWebViewData: unsupported layer %d", layer)
 	}
 }
@@ -40912,7 +40551,6 @@ func (m *TLMessagesTranscribeAudio) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_transcribeAudio: unsupported layer %d", layer)
 	}
 }
@@ -41023,7 +40661,6 @@ func (m *TLMessagesRateTranscribedAudio) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_rateTranscribedAudio: unsupported layer %d", layer)
 	}
 }
@@ -41123,7 +40760,6 @@ func (m *TLMessagesGetCustomEmojiDocuments) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getCustomEmojiDocuments: unsupported layer %d", layer)
 	}
 }
@@ -41197,7 +40833,6 @@ func (m *TLMessagesGetEmojiStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiStickers: unsupported layer %d", layer)
 	}
 }
@@ -41273,7 +40908,6 @@ func (m *TLMessagesGetFeaturedEmojiStickers) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFeaturedEmojiStickers: unsupported layer %d", layer)
 	}
 }
@@ -41372,7 +41006,6 @@ func (m *TLMessagesReportReaction) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportReaction: unsupported layer %d", layer)
 	}
 }
@@ -41468,7 +41101,6 @@ func (m *TLMessagesGetTopReactions) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getTopReactions: unsupported layer %d", layer)
 	}
 }
@@ -41551,7 +41183,6 @@ func (m *TLMessagesGetRecentReactions) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getRecentReactions: unsupported layer %d", layer)
 	}
 }
@@ -41627,7 +41258,6 @@ func (m *TLMessagesClearRecentReactions) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_clearRecentReactions: unsupported layer %d", layer)
 	}
 }
@@ -41715,7 +41345,6 @@ func (m *TLMessagesGetExtendedMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getExtendedMedia: unsupported layer %d", layer)
 	}
 }
@@ -41797,7 +41426,6 @@ func (m *TLMessagesSetDefaultHistoryTTL) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setDefaultHistoryTTL: unsupported layer %d", layer)
 	}
 }
@@ -41869,7 +41497,6 @@ func (m *TLMessagesGetDefaultHistoryTTL) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDefaultHistoryTTL: unsupported layer %d", layer)
 	}
 }
@@ -42034,7 +41661,6 @@ func (m *TLMessagesSendBotRequestedPeer) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendBotRequestedPeer: unsupported layer %d", layer)
 	}
 }
@@ -42207,7 +41833,6 @@ func (m *TLMessagesGetEmojiGroups) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiGroups: unsupported layer %d", layer)
 	}
 }
@@ -42283,7 +41908,6 @@ func (m *TLMessagesGetEmojiStatusGroups) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiStatusGroups: unsupported layer %d", layer)
 	}
 }
@@ -42359,7 +41983,6 @@ func (m *TLMessagesGetEmojiProfilePhotoGroups) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiProfilePhotoGroups: unsupported layer %d", layer)
 	}
 }
@@ -42441,7 +42064,6 @@ func (m *TLMessagesSearchCustomEmoji) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchCustomEmoji: unsupported layer %d", layer)
 	}
 }
@@ -42545,7 +42167,6 @@ func (m *TLMessagesTogglePeerTranslations) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_togglePeerTranslations: unsupported layer %d", layer)
 	}
 }
@@ -42644,7 +42265,6 @@ func (m *TLMessagesGetBotApp) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getBotApp: unsupported layer %d", layer)
 	}
 }
@@ -42807,7 +42427,6 @@ func (m *TLMessagesRequestAppWebView) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestAppWebView: unsupported layer %d", layer)
 	}
 }
@@ -42998,7 +42617,6 @@ func (m *TLMessagesSetChatWallPaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_setChatWallPaper: unsupported layer %d", layer)
 	}
 }
@@ -43137,7 +42755,6 @@ func (m *TLMessagesSearchEmojiStickerSets) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchEmojiStickerSets: unsupported layer %d", layer)
 	}
 }
@@ -43276,7 +42893,6 @@ func (m *TLMessagesGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -43446,7 +43062,6 @@ func (m *TLMessagesGetSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSavedHistory: unsupported layer %d", layer)
 	}
 }
@@ -43630,7 +43245,6 @@ func (m *TLMessagesDeleteSavedHistory) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteSavedHistory: unsupported layer %d", layer)
 	}
 }
@@ -43739,7 +43353,6 @@ func (m *TLMessagesGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -43835,7 +43448,6 @@ func (m *TLMessagesToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleSavedDialogPin: unsupported layer %d", layer)
 	}
 }
@@ -43945,7 +43557,6 @@ func (m *TLMessagesReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reorderPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -44075,7 +43686,6 @@ func (m *TLMessagesGetSavedReactionTags) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSavedReactionTags: unsupported layer %d", layer)
 	}
 }
@@ -44195,7 +43805,6 @@ func (m *TLMessagesUpdateSavedReactionTag) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_updateSavedReactionTag: unsupported layer %d", layer)
 	}
 }
@@ -44288,7 +43897,6 @@ func (m *TLMessagesGetDefaultTagReactions) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getDefaultTagReactions: unsupported layer %d", layer)
 	}
 }
@@ -44375,7 +43983,6 @@ func (m *TLMessagesGetOutboxReadDate) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getOutboxReadDate: unsupported layer %d", layer)
 	}
 }
@@ -44460,7 +44067,6 @@ func (m *TLMessagesGetQuickReplies) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getQuickReplies: unsupported layer %d", layer)
 	}
 }
@@ -44539,7 +44145,6 @@ func (m *TLMessagesReorderQuickReplies) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reorderQuickReplies: unsupported layer %d", layer)
 	}
 }
@@ -44616,7 +44221,6 @@ func (m *TLMessagesCheckQuickReplyShortcut) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_checkQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
@@ -44698,7 +44302,6 @@ func (m *TLMessagesEditQuickReplyShortcut) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
@@ -44778,7 +44381,6 @@ func (m *TLMessagesDeleteQuickReplyShortcut) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
@@ -44880,7 +44482,6 @@ func (m *TLMessagesGetQuickReplyMessages) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
@@ -44995,7 +44596,6 @@ func (m *TLMessagesSendQuickReplyMessages) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
@@ -45091,7 +44691,6 @@ func (m *TLMessagesDeleteQuickReplyMessages) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
@@ -45177,7 +44776,6 @@ func (m *TLMessagesToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleDialogFilterTags: unsupported layer %d", layer)
 	}
 }
@@ -45260,7 +44858,6 @@ func (m *TLMessagesGetMyStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getMyStickers: unsupported layer %d", layer)
 	}
 }
@@ -45340,7 +44937,6 @@ func (m *TLMessagesGetEmojiStickerGroups) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiStickerGroups: unsupported layer %d", layer)
 	}
 }
@@ -45416,7 +45012,6 @@ func (m *TLMessagesGetAvailableEffects) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getAvailableEffects: unsupported layer %d", layer)
 	}
 }
@@ -45515,7 +45110,6 @@ func (m *TLMessagesEditFactCheck) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editFactCheck: unsupported layer %d", layer)
 	}
 }
@@ -45619,7 +45213,6 @@ func (m *TLMessagesDeleteFactCheck) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteFactCheck: unsupported layer %d", layer)
 	}
 }
@@ -45720,7 +45313,6 @@ func (m *TLMessagesGetFactCheck) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFactCheck: unsupported layer %d", layer)
 	}
 }
@@ -45876,7 +45468,6 @@ func (m *TLMessagesRequestMainWebView) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_requestMainWebView: unsupported layer %d", layer)
 	}
 }
@@ -46038,7 +45629,6 @@ func (m *TLMessagesSendPaidReaction) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_sendPaidReaction: unsupported layer %d", layer)
 	}
 }
@@ -46168,7 +45758,6 @@ func (m *TLMessagesTogglePaidReactionPrivacy) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy: unsupported layer %d", layer)
 	}
 }
@@ -46257,7 +45846,6 @@ func (m *TLMessagesGetPaidReactionPrivacy) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPaidReactionPrivacy: unsupported layer %d", layer)
 	}
 }
@@ -46332,7 +45920,6 @@ func (m *TLMessagesViewSponsoredMessage) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_viewSponsoredMessage: unsupported layer %d", layer)
 	}
 }
@@ -46431,7 +46018,6 @@ func (m *TLMessagesClickSponsoredMessage) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_clickSponsoredMessage: unsupported layer %d", layer)
 	}
 }
@@ -46528,7 +46114,6 @@ func (m *TLMessagesReportSponsoredMessage) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportSponsoredMessage: unsupported layer %d", layer)
 	}
 }
@@ -46638,7 +46223,6 @@ func (m *TLMessagesGetSponsoredMessages) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSponsoredMessages: unsupported layer %d", layer)
 	}
 }
@@ -46775,7 +46359,6 @@ func (m *TLMessagesSavePreparedInlineMessage) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_savePreparedInlineMessage: unsupported layer %d", layer)
 	}
 }
@@ -46910,7 +46493,6 @@ func (m *TLMessagesGetPreparedInlineMessage) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getPreparedInlineMessage: unsupported layer %d", layer)
 	}
 }
@@ -47039,7 +46621,6 @@ func (m *TLMessagesSearchStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_searchStickers: unsupported layer %d", layer)
 	}
 }
@@ -47174,7 +46755,6 @@ func (m *TLMessagesReportMessagesDelivery) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportMessagesDelivery: unsupported layer %d", layer)
 	}
 }
@@ -47296,7 +46876,6 @@ func (m *TLMessagesGetSavedDialogsByID) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getSavedDialogsByID: unsupported layer %d", layer)
 	}
 }
@@ -47429,7 +47008,6 @@ func (m *TLMessagesReadSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readSavedHistory: unsupported layer %d", layer)
 	}
 }
@@ -47549,7 +47127,6 @@ func (m *TLMessagesToggleTodoCompleted) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleTodoCompleted: unsupported layer %d", layer)
 	}
 }
@@ -47659,7 +47236,6 @@ func (m *TLMessagesAppendTodoList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_appendTodoList: unsupported layer %d", layer)
 	}
 }
@@ -47818,7 +47394,6 @@ func (m *TLMessagesToggleSuggestedPostApproval) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_toggleSuggestedPostApproval: unsupported layer %d", layer)
 	}
 }
@@ -47969,7 +47544,6 @@ func (m *TLMessagesGetForumTopics) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getForumTopics: unsupported layer %d", layer)
 	}
 }
@@ -48095,7 +47669,6 @@ func (m *TLMessagesGetForumTopicsByID) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getForumTopicsByID: unsupported layer %d", layer)
 	}
 }
@@ -48250,7 +47823,6 @@ func (m *TLMessagesEditForumTopic) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editForumTopic: unsupported layer %d", layer)
 	}
 }
@@ -48397,7 +47969,6 @@ func (m *TLMessagesUpdatePinnedForumTopic) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_updatePinnedForumTopic: unsupported layer %d", layer)
 	}
 }
@@ -48522,7 +48093,6 @@ func (m *TLMessagesReorderPinnedForumTopics) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reorderPinnedForumTopics: unsupported layer %d", layer)
 	}
 }
@@ -48684,7 +48254,6 @@ func (m *TLMessagesCreateForumTopic) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_createForumTopic: unsupported layer %d", layer)
 	}
 }
@@ -48816,7 +48385,6 @@ func (m *TLMessagesDeleteTopicHistory) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deleteTopicHistory: unsupported layer %d", layer)
 	}
 }
@@ -48897,7 +48465,6 @@ func (m *TLMessagesGetEmojiGameInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getEmojiGameInfo: unsupported layer %d", layer)
 	}
 }
@@ -49059,7 +48626,6 @@ func (m *TLMessagesSummarizeText) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_summarizeText: unsupported layer %d", layer)
 	}
 }
@@ -49224,7 +48790,6 @@ func (m *TLMessagesEditChatCreator) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatCreator: unsupported layer %d", layer)
 	}
 }
@@ -49328,7 +48893,6 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) Encode(x *bin.Encoder, layer 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getFutureChatCreatorAfterLeave: unsupported layer %d", layer)
 	}
 }
@@ -49435,7 +48999,6 @@ func (m *TLMessagesEditChatParticipantRank) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_editChatParticipantRank: unsupported layer %d", layer)
 	}
 }
@@ -49531,7 +49094,6 @@ func (m *TLMessagesDeclineUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_declineUrlAuth: unsupported layer %d", layer)
 	}
 }
@@ -49617,7 +49179,6 @@ func (m *TLMessagesCheckUrlAuthMatchCode) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_checkUrlAuthMatchCode: unsupported layer %d", layer)
 	}
 }
@@ -49748,7 +49309,6 @@ func (m *TLMessagesComposeMessageWithAI) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_composeMessageWithAI: unsupported layer %d", layer)
 	}
 }
@@ -49873,7 +49433,6 @@ func (m *TLMessagesReportReadMetrics) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportReadMetrics: unsupported layer %d", layer)
 	}
 }
@@ -49989,7 +49548,6 @@ func (m *TLMessagesReportMusicListen) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_reportMusicListen: unsupported layer %d", layer)
 	}
 }
@@ -50097,7 +49655,6 @@ func (m *TLMessagesAddPollAnswer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_addPollAnswer: unsupported layer %d", layer)
 	}
 }
@@ -50208,7 +49765,6 @@ func (m *TLMessagesDeletePollAnswer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_deletePollAnswer: unsupported layer %d", layer)
 	}
 }
@@ -50344,7 +49900,6 @@ func (m *TLMessagesGetUnreadPollVotes) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_getUnreadPollVotes: unsupported layer %d", layer)
 	}
 }
@@ -50487,7 +50042,6 @@ func (m *TLMessagesReadPollVotes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode messages_readPollVotes: unsupported layer %d", layer)
 	}
 }
@@ -50576,7 +50130,6 @@ func (m *TLUpdatesGetState) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode updates_getState: unsupported layer %d", layer)
 	}
 }
@@ -50701,7 +50254,6 @@ func (m *TLUpdatesGetDifference) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode updates_getDifference: unsupported layer %d", layer)
 	}
 }
@@ -50853,7 +50405,6 @@ func (m *TLUpdatesGetChannelDifference) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode updates_getChannelDifference: unsupported layer %d", layer)
 	}
 }
@@ -50997,7 +50548,6 @@ func (m *TLPhotosUpdateProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photos_updateProfilePhoto: unsupported layer %d", layer)
 	}
 }
@@ -51173,7 +50723,6 @@ func (m *TLPhotosUploadProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photos_uploadProfilePhoto: unsupported layer %d", layer)
 	}
 }
@@ -51302,7 +50851,6 @@ func (m *TLPhotosDeletePhotos) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photos_deletePhotos: unsupported layer %d", layer)
 	}
 }
@@ -51415,7 +50963,6 @@ func (m *TLPhotosGetUserPhotos) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photos_getUserPhotos: unsupported layer %d", layer)
 	}
 }
@@ -51589,7 +51136,6 @@ func (m *TLPhotosUploadContactProfilePhoto) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto: unsupported layer %d", layer)
 	}
 }
@@ -51725,7 +51271,6 @@ func (m *TLUploadSaveFilePart) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_saveFilePart: unsupported layer %d", layer)
 	}
 }
@@ -51843,7 +51388,6 @@ func (m *TLUploadGetFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_getFile: unsupported layer %d", layer)
 	}
 }
@@ -51955,7 +51499,6 @@ func (m *TLUploadSaveBigFilePart) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_saveBigFilePart: unsupported layer %d", layer)
 	}
 }
@@ -52057,7 +51600,6 @@ func (m *TLUploadGetWebFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_getWebFile: unsupported layer %d", layer)
 	}
 }
@@ -52155,7 +51697,6 @@ func (m *TLUploadGetCdnFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_getCdnFile: unsupported layer %d", layer)
 	}
 }
@@ -52249,7 +51790,6 @@ func (m *TLUploadReuploadCdnFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_reuploadCdnFile: unsupported layer %d", layer)
 	}
 }
@@ -52335,7 +51875,6 @@ func (m *TLUploadGetCdnFileHashes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_getCdnFileHashes: unsupported layer %d", layer)
 	}
 }
@@ -52426,7 +51965,6 @@ func (m *TLUploadGetFileHashes) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode upload_getFileHashes: unsupported layer %d", layer)
 	}
 }
@@ -52507,7 +52045,6 @@ func (m *TLHelpGetConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getConfig: unsupported layer %d", layer)
 	}
 }
@@ -52575,7 +52112,6 @@ func (m *TLHelpGetNearestDc) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getNearestDc: unsupported layer %d", layer)
 	}
 }
@@ -52650,7 +52186,6 @@ func (m *TLHelpGetAppUpdate) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getAppUpdate: unsupported layer %d", layer)
 	}
 }
@@ -52722,7 +52257,6 @@ func (m *TLHelpGetInviteText) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getInviteText: unsupported layer %d", layer)
 	}
 }
@@ -52790,7 +52324,6 @@ func (m *TLHelpGetSupport) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getSupport: unsupported layer %d", layer)
 	}
 }
@@ -52868,7 +52401,6 @@ func (m *TLHelpSetBotUpdatesStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_setBotUpdatesStatus: unsupported layer %d", layer)
 	}
 }
@@ -52944,7 +52476,6 @@ func (m *TLHelpGetCdnConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getCdnConfig: unsupported layer %d", layer)
 	}
 }
@@ -53019,7 +52550,6 @@ func (m *TLHelpGetRecentMeUrls) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getRecentMeUrls: unsupported layer %d", layer)
 	}
 }
@@ -53091,7 +52621,6 @@ func (m *TLHelpGetTermsOfServiceUpdate) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getTermsOfServiceUpdate: unsupported layer %d", layer)
 	}
 }
@@ -53171,7 +52700,6 @@ func (m *TLHelpAcceptTermsOfService) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_acceptTermsOfService: unsupported layer %d", layer)
 	}
 }
@@ -53254,7 +52782,6 @@ func (m *TLHelpGetDeepLinkInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getDeepLinkInfo: unsupported layer %d", layer)
 	}
 }
@@ -53330,7 +52857,6 @@ func (m *TLHelpGetAppConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getAppConfig: unsupported layer %d", layer)
 	}
 }
@@ -53411,7 +52937,6 @@ func (m *TLHelpSaveAppLog) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_saveAppLog: unsupported layer %d", layer)
 	}
 }
@@ -53507,7 +53032,6 @@ func (m *TLHelpGetPassportConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getPassportConfig: unsupported layer %d", layer)
 	}
 }
@@ -53579,7 +53103,6 @@ func (m *TLHelpGetSupportName) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getSupportName: unsupported layer %d", layer)
 	}
 }
@@ -53659,7 +53182,6 @@ func (m *TLHelpGetUserInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getUserInfo: unsupported layer %d", layer)
 	}
 }
@@ -53764,7 +53286,6 @@ func (m *TLHelpEditUserInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_editUserInfo: unsupported layer %d", layer)
 	}
 }
@@ -53869,7 +53390,6 @@ func (m *TLHelpGetPromoData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getPromoData: unsupported layer %d", layer)
 	}
 }
@@ -53949,7 +53469,6 @@ func (m *TLHelpHidePromoData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_hidePromoData: unsupported layer %d", layer)
 	}
 }
@@ -54044,7 +53563,6 @@ func (m *TLHelpDismissSuggestion) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_dismissSuggestion: unsupported layer %d", layer)
 	}
 }
@@ -54135,7 +53653,6 @@ func (m *TLHelpGetCountriesList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getCountriesList: unsupported layer %d", layer)
 	}
 }
@@ -54211,7 +53728,6 @@ func (m *TLHelpGetPremiumPromo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getPremiumPromo: unsupported layer %d", layer)
 	}
 }
@@ -54283,7 +53799,6 @@ func (m *TLHelpGetPeerColors) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getPeerColors: unsupported layer %d", layer)
 	}
 }
@@ -54359,7 +53874,6 @@ func (m *TLHelpGetPeerProfileColors) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getPeerProfileColors: unsupported layer %d", layer)
 	}
 }
@@ -54435,7 +53949,6 @@ func (m *TLHelpGetTimezonesList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_getTimezonesList: unsupported layer %d", layer)
 	}
 }
@@ -54522,7 +54035,6 @@ func (m *TLChannelsReadHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_readHistory: unsupported layer %d", layer)
 	}
 }
@@ -54623,7 +54135,6 @@ func (m *TLChannelsDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_deleteMessages: unsupported layer %d", layer)
 	}
 }
@@ -54733,7 +54244,6 @@ func (m *TLChannelsReportSpam) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_reportSpam: unsupported layer %d", layer)
 	}
 }
@@ -54871,7 +54381,6 @@ func (m *TLChannelsGetMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getMessages: unsupported layer %d", layer)
 	}
 }
@@ -55018,7 +54527,6 @@ func (m *TLChannelsGetParticipants) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getParticipants: unsupported layer %d", layer)
 	}
 }
@@ -55139,7 +54647,6 @@ func (m *TLChannelsGetParticipant) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getParticipant: unsupported layer %d", layer)
 	}
 }
@@ -55232,7 +54739,6 @@ func (m *TLChannelsGetChannels) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getChannels: unsupported layer %d", layer)
 	}
 }
@@ -55336,7 +54842,6 @@ func (m *TLChannelsGetFullChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getFullChannel: unsupported layer %d", layer)
 	}
 }
@@ -55491,7 +54996,6 @@ func (m *TLChannelsCreateChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_createChannel: unsupported layer %d", layer)
 	}
 }
@@ -55717,7 +55221,6 @@ func (m *TLChannelsEditAdmin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editAdmin: unsupported layer %d", layer)
 	}
 }
@@ -55873,7 +55376,6 @@ func (m *TLChannelsEditTitle) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editTitle: unsupported layer %d", layer)
 	}
 }
@@ -55978,7 +55480,6 @@ func (m *TLChannelsEditPhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editPhoto: unsupported layer %d", layer)
 	}
 }
@@ -56081,7 +55582,6 @@ func (m *TLChannelsCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_checkUsername: unsupported layer %d", layer)
 	}
 }
@@ -56181,7 +55681,6 @@ func (m *TLChannelsUpdateUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_updateUsername: unsupported layer %d", layer)
 	}
 }
@@ -56274,7 +55773,6 @@ func (m *TLChannelsJoinChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_joinChannel: unsupported layer %d", layer)
 	}
 }
@@ -56362,7 +55860,6 @@ func (m *TLChannelsLeaveChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_leaveChannel: unsupported layer %d", layer)
 	}
 }
@@ -56460,7 +55957,6 @@ func (m *TLChannelsInviteToChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_inviteToChannel: unsupported layer %d", layer)
 	}
 }
@@ -56573,7 +56069,6 @@ func (m *TLChannelsDeleteChannel) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_deleteChannel: unsupported layer %d", layer)
 	}
 }
@@ -56684,7 +56179,6 @@ func (m *TLChannelsExportMessageLink) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_exportMessageLink: unsupported layer %d", layer)
 	}
 }
@@ -56808,7 +56302,6 @@ func (m *TLChannelsToggleSignatures) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleSignatures: unsupported layer %d", layer)
 	}
 }
@@ -56920,7 +56413,6 @@ func (m *TLChannelsGetAdminedPublicChannels) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getAdminedPublicChannels: unsupported layer %d", layer)
 	}
 }
@@ -57038,7 +56530,6 @@ func (m *TLChannelsEditBanned) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editBanned: unsupported layer %d", layer)
 	}
 }
@@ -57197,7 +56688,6 @@ func (m *TLChannelsGetAdminLog) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getAdminLog: unsupported layer %d", layer)
 	}
 }
@@ -57354,7 +56844,6 @@ func (m *TLChannelsSetStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_setStickers: unsupported layer %d", layer)
 	}
 }
@@ -57458,7 +56947,6 @@ func (m *TLChannelsReadMessageContents) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_readMessageContents: unsupported layer %d", layer)
 	}
 }
@@ -57567,7 +57055,6 @@ func (m *TLChannelsDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_deleteHistory: unsupported layer %d", layer)
 	}
 }
@@ -57680,7 +57167,6 @@ func (m *TLChannelsTogglePreHistoryHidden) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_togglePreHistoryHidden: unsupported layer %d", layer)
 	}
 }
@@ -57768,7 +57254,6 @@ func (m *TLChannelsGetLeftChannels) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getLeftChannels: unsupported layer %d", layer)
 	}
 }
@@ -57840,7 +57325,6 @@ func (m *TLChannelsGetGroupsForDiscussion) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getGroupsForDiscussion: unsupported layer %d", layer)
 	}
 }
@@ -57932,7 +57416,6 @@ func (m *TLChannelsSetDiscussionGroup) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_setDiscussionGroup: unsupported layer %d", layer)
 	}
 }
@@ -58047,7 +57530,6 @@ func (m *TLChannelsEditLocation) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editLocation: unsupported layer %d", layer)
 	}
 }
@@ -58151,7 +57633,6 @@ func (m *TLChannelsToggleSlowMode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleSlowMode: unsupported layer %d", layer)
 	}
 }
@@ -58232,7 +57713,6 @@ func (m *TLChannelsGetInactiveChannels) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getInactiveChannels: unsupported layer %d", layer)
 	}
 }
@@ -58312,7 +57792,6 @@ func (m *TLChannelsConvertToGigagroup) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_convertToGigagroup: unsupported layer %d", layer)
 	}
 }
@@ -58420,7 +57899,6 @@ func (m *TLChannelsGetSendAs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getSendAs: unsupported layer %d", layer)
 	}
 }
@@ -58531,7 +58009,6 @@ func (m *TLChannelsDeleteParticipantHistory) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_deleteParticipantHistory: unsupported layer %d", layer)
 	}
 }
@@ -58639,7 +58116,6 @@ func (m *TLChannelsToggleJoinToSend) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleJoinToSend: unsupported layer %d", layer)
 	}
 }
@@ -58747,7 +58223,6 @@ func (m *TLChannelsToggleJoinRequest) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleJoinRequest: unsupported layer %d", layer)
 	}
 }
@@ -58851,7 +58326,6 @@ func (m *TLChannelsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_reorderUsernames: unsupported layer %d", layer)
 	}
 }
@@ -58960,7 +58434,6 @@ func (m *TLChannelsToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleUsername: unsupported layer %d", layer)
 	}
 }
@@ -59061,7 +58534,6 @@ func (m *TLChannelsDeactivateAllUsernames) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_deactivateAllUsernames: unsupported layer %d", layer)
 	}
 }
@@ -59173,7 +58645,6 @@ func (m *TLChannelsToggleForum) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleForum: unsupported layer %d", layer)
 	}
 }
@@ -59289,7 +58760,6 @@ func (m *TLChannelsToggleAntiSpam) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleAntiSpam: unsupported layer %d", layer)
 	}
 }
@@ -59388,7 +58858,6 @@ func (m *TLChannelsReportAntiSpamFalsePositive) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_reportAntiSpamFalsePositive: unsupported layer %d", layer)
 	}
 }
@@ -59493,7 +58962,6 @@ func (m *TLChannelsToggleParticipantsHidden) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleParticipantsHidden: unsupported layer %d", layer)
 	}
 }
@@ -59628,7 +59096,6 @@ func (m *TLChannelsUpdateColor) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_updateColor: unsupported layer %d", layer)
 	}
 }
@@ -59751,7 +59218,6 @@ func (m *TLChannelsToggleViewForumAsMessages) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages: unsupported layer %d", layer)
 	}
 }
@@ -59860,7 +59326,6 @@ func (m *TLChannelsGetChannelRecommendations) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getChannelRecommendations: unsupported layer %d", layer)
 	}
 }
@@ -59966,7 +59431,6 @@ func (m *TLChannelsUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_updateEmojiStatus: unsupported layer %d", layer)
 	}
 }
@@ -60065,7 +59529,6 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) Encode(x *bin.Encoder, layer 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_setBoostsToUnblockRestrictions: unsupported layer %d", layer)
 	}
 }
@@ -60170,7 +59633,6 @@ func (m *TLChannelsSetEmojiStickers) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_setEmojiStickers: unsupported layer %d", layer)
 	}
 }
@@ -60278,7 +59740,6 @@ func (m *TLChannelsRestrictSponsoredMessages) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_restrictSponsoredMessages: unsupported layer %d", layer)
 	}
 }
@@ -60431,7 +59892,6 @@ func (m *TLChannelsSearchPosts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_searchPosts: unsupported layer %d", layer)
 	}
 }
@@ -60579,7 +60039,6 @@ func (m *TLChannelsUpdatePaidMessagesPrice) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_updatePaidMessagesPrice: unsupported layer %d", layer)
 	}
 }
@@ -60692,7 +60151,6 @@ func (m *TLChannelsToggleAutotranslation) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_toggleAutotranslation: unsupported layer %d", layer)
 	}
 }
@@ -60791,7 +60249,6 @@ func (m *TLChannelsGetMessageAuthor) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getMessageAuthor: unsupported layer %d", layer)
 	}
 }
@@ -60895,7 +60352,6 @@ func (m *TLChannelsCheckSearchPostsFlood) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_checkSearchPostsFlood: unsupported layer %d", layer)
 	}
 }
@@ -60999,7 +60455,6 @@ func (m *TLChannelsSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_setMainProfileTab: unsupported layer %d", layer)
 	}
 }
@@ -61102,7 +60557,6 @@ func (m *TLBotsSendCustomRequest) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_sendCustomRequest: unsupported layer %d", layer)
 	}
 }
@@ -61197,7 +60651,6 @@ func (m *TLBotsAnswerWebhookJSONQuery) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_answerWebhookJSONQuery: unsupported layer %d", layer)
 	}
 }
@@ -61306,7 +60759,6 @@ func (m *TLBotsSetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setBotCommands: unsupported layer %d", layer)
 	}
 }
@@ -61430,7 +60882,6 @@ func (m *TLBotsResetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_resetBotCommands: unsupported layer %d", layer)
 	}
 }
@@ -61530,7 +60981,6 @@ func (m *TLBotsGetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getBotCommands: unsupported layer %d", layer)
 	}
 }
@@ -61635,7 +61085,6 @@ func (m *TLBotsSetBotMenuButton) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setBotMenuButton: unsupported layer %d", layer)
 	}
 }
@@ -61731,7 +61180,6 @@ func (m *TLBotsGetBotMenuButton) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getBotMenuButton: unsupported layer %d", layer)
 	}
 }
@@ -61819,7 +61267,6 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) Encode(x *bin.Encoder, layer i
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setBotBroadcastDefaultAdminRights: unsupported layer %d", layer)
 	}
 }
@@ -61907,7 +61354,6 @@ func (m *TLBotsSetBotGroupDefaultAdminRights) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setBotGroupDefaultAdminRights: unsupported layer %d", layer)
 	}
 }
@@ -62052,7 +61498,6 @@ func (m *TLBotsSetBotInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setBotInfo: unsupported layer %d", layer)
 	}
 }
@@ -62195,7 +61640,6 @@ func (m *TLBotsGetBotInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getBotInfo: unsupported layer %d", layer)
 	}
 }
@@ -62301,7 +61745,6 @@ func (m *TLBotsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_reorderUsernames: unsupported layer %d", layer)
 	}
 }
@@ -62410,7 +61853,6 @@ func (m *TLBotsToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_toggleUsername: unsupported layer %d", layer)
 	}
 }
@@ -62511,7 +61953,6 @@ func (m *TLBotsCanSendMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_canSendMessage: unsupported layer %d", layer)
 	}
 }
@@ -62599,7 +62040,6 @@ func (m *TLBotsAllowSendMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_allowSendMessage: unsupported layer %d", layer)
 	}
 }
@@ -62706,7 +62146,6 @@ func (m *TLBotsInvokeWebViewCustomMethod) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod: unsupported layer %d", layer)
 	}
 }
@@ -62805,7 +62244,6 @@ func (m *TLBotsGetPopularAppBots) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getPopularAppBots: unsupported layer %d", layer)
 	}
 }
@@ -62912,7 +62350,6 @@ func (m *TLBotsAddPreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_addPreviewMedia: unsupported layer %d", layer)
 	}
 }
@@ -63044,7 +62481,6 @@ func (m *TLBotsEditPreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_editPreviewMedia: unsupported layer %d", layer)
 	}
 }
@@ -63170,7 +62606,6 @@ func (m *TLBotsDeletePreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_deletePreviewMedia: unsupported layer %d", layer)
 	}
 }
@@ -63304,7 +62739,6 @@ func (m *TLBotsReorderPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_reorderPreviewMedias: unsupported layer %d", layer)
 	}
 }
@@ -63428,7 +62862,6 @@ func (m *TLBotsGetPreviewInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getPreviewInfo: unsupported layer %d", layer)
 	}
 }
@@ -63521,7 +62954,6 @@ func (m *TLBotsGetPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getPreviewMedias: unsupported layer %d", layer)
 	}
 }
@@ -63621,7 +63053,6 @@ func (m *TLBotsUpdateUserEmojiStatus) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_updateUserEmojiStatus: unsupported layer %d", layer)
 	}
 }
@@ -63729,7 +63160,6 @@ func (m *TLBotsToggleUserEmojiStatusPermission) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission: unsupported layer %d", layer)
 	}
 }
@@ -63839,7 +63269,6 @@ func (m *TLBotsCheckDownloadFileParams) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_checkDownloadFileParams: unsupported layer %d", layer)
 	}
 }
@@ -63924,7 +63353,6 @@ func (m *TLBotsGetAdminedBots) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getAdminedBots: unsupported layer %d", layer)
 	}
 }
@@ -64029,7 +63457,6 @@ func (m *TLBotsUpdateStarRefProgram) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_updateStarRefProgram: unsupported layer %d", layer)
 	}
 }
@@ -64176,7 +63603,6 @@ func (m *TLBotsSetCustomVerification) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_setCustomVerification: unsupported layer %d", layer)
 	}
 }
@@ -64289,7 +63715,6 @@ func (m *TLBotsGetBotRecommendations) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getBotRecommendations: unsupported layer %d", layer)
 	}
 }
@@ -64372,7 +63797,6 @@ func (m *TLBotsCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_checkUsername: unsupported layer %d", layer)
 	}
 }
@@ -64486,7 +63910,6 @@ func (m *TLBotsCreateBot) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_createBot: unsupported layer %d", layer)
 	}
 }
@@ -64602,7 +64025,6 @@ func (m *TLBotsExportBotToken) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_exportBotToken: unsupported layer %d", layer)
 	}
 }
@@ -64710,7 +64132,6 @@ func (m *TLBotsRequestWebViewButton) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_requestWebViewButton: unsupported layer %d", layer)
 	}
 }
@@ -64813,7 +64234,6 @@ func (m *TLBotsGetRequestedWebViewButton) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode bots_getRequestedWebViewButton: unsupported layer %d", layer)
 	}
 }
@@ -64930,7 +64350,6 @@ func (m *TLPaymentsGetPaymentForm) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getPaymentForm: unsupported layer %d", layer)
 	}
 }
@@ -65036,7 +64455,6 @@ func (m *TLPaymentsGetPaymentReceipt) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getPaymentReceipt: unsupported layer %d", layer)
 	}
 }
@@ -65157,7 +64575,6 @@ func (m *TLPaymentsValidateRequestedInfo) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_validateRequestedInfo: unsupported layer %d", layer)
 	}
 }
@@ -65323,7 +64740,6 @@ func (m *TLPaymentsSendPaymentForm) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_sendPaymentForm: unsupported layer %d", layer)
 	}
 }
@@ -65440,7 +64856,6 @@ func (m *TLPaymentsGetSavedInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getSavedInfo: unsupported layer %d", layer)
 	}
 }
@@ -65529,7 +64944,6 @@ func (m *TLPaymentsClearSavedInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_clearSavedInfo: unsupported layer %d", layer)
 	}
 }
@@ -65615,7 +65029,6 @@ func (m *TLPaymentsGetBankCardData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getBankCardData: unsupported layer %d", layer)
 	}
 }
@@ -65699,7 +65112,6 @@ func (m *TLPaymentsExportInvoice) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_exportInvoice: unsupported layer %d", layer)
 	}
 }
@@ -65794,7 +65206,6 @@ func (m *TLPaymentsAssignAppStoreTransaction) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_assignAppStoreTransaction: unsupported layer %d", layer)
 	}
 }
@@ -65898,7 +65309,6 @@ func (m *TLPaymentsAssignPlayMarketTransaction) Encode(x *bin.Encoder, layer int
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction: unsupported layer %d", layer)
 	}
 }
@@ -66007,7 +65417,6 @@ func (m *TLPaymentsGetPremiumGiftCodeOptions) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getPremiumGiftCodeOptions: unsupported layer %d", layer)
 	}
 }
@@ -66096,7 +65505,6 @@ func (m *TLPaymentsCheckGiftCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_checkGiftCode: unsupported layer %d", layer)
 	}
 }
@@ -66175,7 +65583,6 @@ func (m *TLPaymentsApplyGiftCode) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_applyGiftCode: unsupported layer %d", layer)
 	}
 }
@@ -66262,7 +65669,6 @@ func (m *TLPaymentsGetGiveawayInfo) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getGiveawayInfo: unsupported layer %d", layer)
 	}
 }
@@ -66370,7 +65776,6 @@ func (m *TLPaymentsLaunchPrepaidGiveaway) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway: unsupported layer %d", layer)
 	}
 }
@@ -66459,7 +65864,6 @@ func (m *TLPaymentsGetStarsTopupOptions) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsTopupOptions: unsupported layer %d", layer)
 	}
 }
@@ -66555,7 +65959,6 @@ func (m *TLPaymentsGetStarsStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsStatus: unsupported layer %d", layer)
 	}
 }
@@ -66702,7 +66105,6 @@ func (m *TLPaymentsGetStarsTransactions) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsTransactions: unsupported layer %d", layer)
 	}
 }
@@ -66826,7 +66228,6 @@ func (m *TLPaymentsSendStarsForm) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_sendStarsForm: unsupported layer %d", layer)
 	}
 }
@@ -66925,7 +66326,6 @@ func (m *TLPaymentsRefundStarsCharge) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_refundStarsCharge: unsupported layer %d", layer)
 	}
 }
@@ -67038,7 +66438,6 @@ func (m *TLPaymentsGetStarsRevenueStats) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsRevenueStats: unsupported layer %d", layer)
 	}
 }
@@ -67178,7 +66577,6 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl: unsupported layer %d", layer)
 	}
 }
@@ -67290,7 +66688,6 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsRevenueAdsAccountUrl: unsupported layer %d", layer)
 	}
 }
@@ -67404,7 +66801,6 @@ func (m *TLPaymentsGetStarsTransactionsByID) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsTransactionsByID: unsupported layer %d", layer)
 	}
 }
@@ -67538,7 +66934,6 @@ func (m *TLPaymentsGetStarsGiftOptions) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsGiftOptions: unsupported layer %d", layer)
 	}
 }
@@ -67655,7 +67050,6 @@ func (m *TLPaymentsGetStarsSubscriptions) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsSubscriptions: unsupported layer %d", layer)
 	}
 }
@@ -67787,7 +67181,6 @@ func (m *TLPaymentsChangeStarsSubscription) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_changeStarsSubscription: unsupported layer %d", layer)
 	}
 }
@@ -67901,7 +67294,6 @@ func (m *TLPaymentsFulfillStarsSubscription) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_fulfillStarsSubscription: unsupported layer %d", layer)
 	}
 }
@@ -67982,7 +67374,6 @@ func (m *TLPaymentsGetStarsGiveawayOptions) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarsGiveawayOptions: unsupported layer %d", layer)
 	}
 }
@@ -68054,7 +67445,6 @@ func (m *TLPaymentsGetStarGifts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGifts: unsupported layer %d", layer)
 	}
 }
@@ -68154,7 +67544,6 @@ func (m *TLPaymentsSaveStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_saveStarGift: unsupported layer %d", layer)
 	}
 }
@@ -68250,7 +67639,6 @@ func (m *TLPaymentsConvertStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_convertStarGift: unsupported layer %d", layer)
 	}
 }
@@ -68361,7 +67749,6 @@ func (m *TLPaymentsBotCancelStarsSubscription) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_botCancelStarsSubscription: unsupported layer %d", layer)
 	}
 }
@@ -68501,7 +67888,6 @@ func (m *TLPaymentsGetConnectedStarRefBots) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getConnectedStarRefBots: unsupported layer %d", layer)
 	}
 }
@@ -68626,7 +68012,6 @@ func (m *TLPaymentsGetConnectedStarRefBot) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getConnectedStarRefBot: unsupported layer %d", layer)
 	}
 }
@@ -68752,7 +68137,6 @@ func (m *TLPaymentsGetSuggestedStarRefBots) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getSuggestedStarRefBots: unsupported layer %d", layer)
 	}
 }
@@ -68872,7 +68256,6 @@ func (m *TLPaymentsConnectStarRefBot) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_connectStarRefBot: unsupported layer %d", layer)
 	}
 }
@@ -68991,7 +68374,6 @@ func (m *TLPaymentsEditConnectedStarRefBot) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_editConnectedStarRefBot: unsupported layer %d", layer)
 	}
 }
@@ -69084,7 +68466,6 @@ func (m *TLPaymentsGetStarGiftUpgradePreview) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftUpgradePreview: unsupported layer %d", layer)
 	}
 }
@@ -69184,7 +68565,6 @@ func (m *TLPaymentsUpgradeStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_upgradeStarGift: unsupported layer %d", layer)
 	}
 }
@@ -69292,7 +68672,6 @@ func (m *TLPaymentsTransferStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_transferStarGift: unsupported layer %d", layer)
 	}
 }
@@ -69383,7 +68762,6 @@ func (m *TLPaymentsGetUniqueStarGift) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getUniqueStarGift: unsupported layer %d", layer)
 	}
 }
@@ -69538,7 +68916,6 @@ func (m *TLPaymentsGetSavedStarGifts) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getSavedStarGifts: unsupported layer %d", layer)
 	}
 }
@@ -69671,7 +69048,6 @@ func (m *TLPaymentsGetSavedStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getSavedStarGift: unsupported layer %d", layer)
 	}
 }
@@ -69787,7 +69163,6 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl: unsupported layer %d", layer)
 	}
 }
@@ -69899,7 +69274,6 @@ func (m *TLPaymentsToggleChatStarGiftNotifications) Encode(x *bin.Encoder, layer
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_toggleChatStarGiftNotifications: unsupported layer %d", layer)
 	}
 }
@@ -70005,7 +69379,6 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_toggleStarGiftsPinnedToTop: unsupported layer %d", layer)
 	}
 }
@@ -70118,7 +69491,6 @@ func (m *TLPaymentsCanPurchaseStore) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_canPurchaseStore: unsupported layer %d", layer)
 	}
 }
@@ -70262,7 +69634,6 @@ func (m *TLPaymentsGetResaleStarGifts) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getResaleStarGifts: unsupported layer %d", layer)
 	}
 }
@@ -70417,7 +69788,6 @@ func (m *TLPaymentsUpdateStarGiftPrice) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_updateStarGiftPrice: unsupported layer %d", layer)
 	}
 }
@@ -70530,7 +69900,6 @@ func (m *TLPaymentsCreateStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_createStarGiftCollection: unsupported layer %d", layer)
 	}
 }
@@ -70712,7 +70081,6 @@ func (m *TLPaymentsUpdateStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_updateStarGiftCollection: unsupported layer %d", layer)
 	}
 }
@@ -70904,7 +70272,6 @@ func (m *TLPaymentsReorderStarGiftCollections) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_reorderStarGiftCollections: unsupported layer %d", layer)
 	}
 }
@@ -70997,7 +70364,6 @@ func (m *TLPaymentsDeleteStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_deleteStarGiftCollection: unsupported layer %d", layer)
 	}
 }
@@ -71093,7 +70459,6 @@ func (m *TLPaymentsGetStarGiftCollections) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftCollections: unsupported layer %d", layer)
 	}
 }
@@ -71181,7 +70546,6 @@ func (m *TLPaymentsGetUniqueStarGiftValueInfo) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getUniqueStarGiftValueInfo: unsupported layer %d", layer)
 	}
 }
@@ -71257,7 +70621,6 @@ func (m *TLPaymentsCheckCanSendGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_checkCanSendGift: unsupported layer %d", layer)
 	}
 }
@@ -71344,7 +70707,6 @@ func (m *TLPaymentsGetStarGiftAuctionState) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftAuctionState: unsupported layer %d", layer)
 	}
 }
@@ -71429,7 +70791,6 @@ func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) Encode(x *bin.Encoder, layer
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftAuctionAcquiredGifts: unsupported layer %d", layer)
 	}
 }
@@ -71505,7 +70866,6 @@ func (m *TLPaymentsGetStarGiftActiveAuctions) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftActiveAuctions: unsupported layer %d", layer)
 	}
 }
@@ -71597,7 +70957,6 @@ func (m *TLPaymentsResolveStarGiftOffer) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_resolveStarGiftOffer: unsupported layer %d", layer)
 	}
 }
@@ -71736,7 +71095,6 @@ func (m *TLPaymentsSendStarGiftOffer) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_sendStarGiftOffer: unsupported layer %d", layer)
 	}
 }
@@ -71850,7 +71208,6 @@ func (m *TLPaymentsGetStarGiftUpgradeAttributes) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getStarGiftUpgradeAttributes: unsupported layer %d", layer)
 	}
 }
@@ -71935,7 +71292,6 @@ func (m *TLPaymentsGetCraftStarGifts) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_getCraftStarGifts: unsupported layer %d", layer)
 	}
 }
@@ -72024,7 +71380,6 @@ func (m *TLPaymentsCraftStarGift) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode payments_craftStarGift: unsupported layer %d", layer)
 	}
 }
@@ -72202,7 +71557,6 @@ func (m *TLStickersCreateStickerSet) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_createStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -72354,7 +71708,6 @@ func (m *TLStickersRemoveStickerFromSet) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_removeStickerFromSet: unsupported layer %d", layer)
 	}
 }
@@ -72445,7 +71798,6 @@ func (m *TLStickersChangeStickerPosition) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_changeStickerPosition: unsupported layer %d", layer)
 	}
 }
@@ -72550,7 +71902,6 @@ func (m *TLStickersAddStickerToSet) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_addStickerToSet: unsupported layer %d", layer)
 	}
 }
@@ -72682,7 +72033,6 @@ func (m *TLStickersSetStickerSetThumb) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_setStickerSetThumb: unsupported layer %d", layer)
 	}
 }
@@ -72787,7 +72137,6 @@ func (m *TLStickersCheckShortName) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_checkShortName: unsupported layer %d", layer)
 	}
 }
@@ -72866,7 +72215,6 @@ func (m *TLStickersSuggestShortName) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_suggestShortName: unsupported layer %d", layer)
 	}
 }
@@ -72998,7 +72346,6 @@ func (m *TLStickersChangeSticker) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_changeSticker: unsupported layer %d", layer)
 	}
 }
@@ -73123,7 +72470,6 @@ func (m *TLStickersRenameStickerSet) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_renameStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -73216,7 +72562,6 @@ func (m *TLStickersDeleteStickerSet) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_deleteStickerSet: unsupported layer %d", layer)
 	}
 }
@@ -73316,7 +72661,6 @@ func (m *TLStickersReplaceSticker) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stickers_replaceSticker: unsupported layer %d", layer)
 	}
 }
@@ -73400,7 +72744,6 @@ func (m *TLPhoneGetCallConfig) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getCallConfig: unsupported layer %d", layer)
 	}
 }
@@ -73518,7 +72861,6 @@ func (m *TLPhoneRequestCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_requestCall: unsupported layer %d", layer)
 	}
 }
@@ -73650,7 +72992,6 @@ func (m *TLPhoneAcceptCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_acceptCall: unsupported layer %d", layer)
 	}
 }
@@ -73773,7 +73114,6 @@ func (m *TLPhoneConfirmCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_confirmCall: unsupported layer %d", layer)
 	}
 }
@@ -73878,7 +73218,6 @@ func (m *TLPhoneReceivedCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_receivedCall: unsupported layer %d", layer)
 	}
 }
@@ -74000,7 +73339,6 @@ func (m *TLPhoneDiscardCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_discardCall: unsupported layer %d", layer)
 	}
 }
@@ -74140,7 +73478,6 @@ func (m *TLPhoneSetCallRating) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_setCallRating: unsupported layer %d", layer)
 	}
 }
@@ -74257,7 +73594,6 @@ func (m *TLPhoneSaveCallDebug) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_saveCallDebug: unsupported layer %d", layer)
 	}
 }
@@ -74360,7 +73696,6 @@ func (m *TLPhoneSendSignalingData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_sendSignalingData: unsupported layer %d", layer)
 	}
 }
@@ -74495,7 +73830,6 @@ func (m *TLPhoneCreateGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_createGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -74692,7 +74026,6 @@ func (m *TLPhoneJoinGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_joinGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -74833,7 +74166,6 @@ func (m *TLPhoneLeaveGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_leaveGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -74936,7 +74268,6 @@ func (m *TLPhoneInviteToGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_inviteToGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -75049,7 +74380,6 @@ func (m *TLPhoneDiscardGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_discardGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -75192,7 +74522,6 @@ func (m *TLPhoneToggleGroupCallSettings) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_toggleGroupCallSettings: unsupported layer %d", layer)
 	}
 }
@@ -75317,7 +74646,6 @@ func (m *TLPhoneGetGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -75439,7 +74767,6 @@ func (m *TLPhoneGetGroupParticipants) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupParticipants: unsupported layer %d", layer)
 	}
 }
@@ -75571,7 +74898,6 @@ func (m *TLPhoneCheckGroupCall) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_checkGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -75706,7 +75032,6 @@ func (m *TLPhoneToggleGroupCallRecord) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_toggleGroupCallRecord: unsupported layer %d", layer)
 	}
 }
@@ -75927,7 +75252,6 @@ func (m *TLPhoneEditGroupCallParticipant) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_editGroupCallParticipant: unsupported layer %d", layer)
 	}
 }
@@ -76088,7 +75412,6 @@ func (m *TLPhoneEditGroupCallTitle) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_editGroupCallTitle: unsupported layer %d", layer)
 	}
 }
@@ -76181,7 +75504,6 @@ func (m *TLPhoneGetGroupCallJoinAs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCallJoinAs: unsupported layer %d", layer)
 	}
 }
@@ -76285,7 +75607,6 @@ func (m *TLPhoneExportGroupCallInvite) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_exportGroupCallInvite: unsupported layer %d", layer)
 	}
 }
@@ -76393,7 +75714,6 @@ func (m *TLPhoneToggleGroupCallStartSubscription) Encode(x *bin.Encoder, layer i
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription: unsupported layer %d", layer)
 	}
 }
@@ -76489,7 +75809,6 @@ func (m *TLPhoneStartScheduledGroupCall) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_startScheduledGroupCall: unsupported layer %d", layer)
 	}
 }
@@ -76589,7 +75908,6 @@ func (m *TLPhoneSaveDefaultGroupCallJoinAs) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs: unsupported layer %d", layer)
 	}
 }
@@ -76697,7 +76015,6 @@ func (m *TLPhoneJoinGroupCallPresentation) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_joinGroupCallPresentation: unsupported layer %d", layer)
 	}
 }
@@ -76793,7 +76110,6 @@ func (m *TLPhoneLeaveGroupCallPresentation) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_leaveGroupCallPresentation: unsupported layer %d", layer)
 	}
 }
@@ -76881,7 +76197,6 @@ func (m *TLPhoneGetGroupCallStreamChannels) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCallStreamChannels: unsupported layer %d", layer)
 	}
 }
@@ -76997,7 +76312,6 @@ func (m *TLPhoneGetGroupCallStreamRtmpUrl) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl: unsupported layer %d", layer)
 	}
 }
@@ -77113,7 +76427,6 @@ func (m *TLPhoneSaveCallLog) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_saveCallLog: unsupported layer %d", layer)
 	}
 }
@@ -77262,7 +76575,6 @@ func (m *TLPhoneCreateConferenceCall) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_createConferenceCall: unsupported layer %d", layer)
 	}
 }
@@ -77420,7 +76732,6 @@ func (m *TLPhoneDeleteConferenceCallParticipants) Encode(x *bin.Encoder, layer i
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_deleteConferenceCallParticipants: unsupported layer %d", layer)
 	}
 }
@@ -77533,7 +76844,6 @@ func (m *TLPhoneSendConferenceCallBroadcast) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_sendConferenceCallBroadcast: unsupported layer %d", layer)
 	}
 }
@@ -77654,7 +76964,6 @@ func (m *TLPhoneInviteConferenceCallParticipant) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant: unsupported layer %d", layer)
 	}
 }
@@ -77750,7 +77059,6 @@ func (m *TLPhoneDeclineConferenceCallInvite) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_declineConferenceCallInvite: unsupported layer %d", layer)
 	}
 }
@@ -77843,7 +77151,6 @@ func (m *TLPhoneGetGroupCallChainBlocks) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCallChainBlocks: unsupported layer %d", layer)
 	}
 }
@@ -77995,7 +77302,6 @@ func (m *TLPhoneSendGroupCallMessage) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_sendGroupCallMessage: unsupported layer %d", layer)
 	}
 }
@@ -78126,7 +77432,6 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_sendGroupCallEncryptedMessage: unsupported layer %d", layer)
 	}
 }
@@ -78243,7 +77548,6 @@ func (m *TLPhoneDeleteGroupCallMessages) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_deleteGroupCallMessages: unsupported layer %d", layer)
 	}
 }
@@ -78369,7 +77673,6 @@ func (m *TLPhoneDeleteGroupCallParticipantMessages) Encode(x *bin.Encoder, layer
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages: unsupported layer %d", layer)
 	}
 }
@@ -78473,7 +77776,6 @@ func (m *TLPhoneGetGroupCallStars) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_getGroupCallStars: unsupported layer %d", layer)
 	}
 }
@@ -78573,7 +77875,6 @@ func (m *TLPhoneSaveDefaultSendAs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode phone_saveDefaultSendAs: unsupported layer %d", layer)
 	}
 }
@@ -78688,7 +77989,6 @@ func (m *TLLangpackGetLangPack) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode langpack_getLangPack: unsupported layer %d", layer)
 	}
 }
@@ -78817,7 +78117,6 @@ func (m *TLLangpackGetStrings) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode langpack_getStrings: unsupported layer %d", layer)
 	}
 }
@@ -78921,7 +78220,6 @@ func (m *TLLangpackGetDifference) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode langpack_getDifference: unsupported layer %d", layer)
 	}
 }
@@ -79019,7 +78317,6 @@ func (m *TLLangpackGetLanguages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode langpack_getLanguages: unsupported layer %d", layer)
 	}
 }
@@ -79108,7 +78405,6 @@ func (m *TLLangpackGetLanguage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode langpack_getLanguage: unsupported layer %d", layer)
 	}
 }
@@ -79193,7 +78489,6 @@ func (m *TLFoldersEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode folders_editPeerFolders: unsupported layer %d", layer)
 	}
 }
@@ -79313,7 +78608,6 @@ func (m *TLStatsGetBroadcastStats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getBroadcastStats: unsupported layer %d", layer)
 	}
 }
@@ -79426,7 +78720,6 @@ func (m *TLStatsLoadAsyncGraph) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_loadAsyncGraph: unsupported layer %d", layer)
 	}
 }
@@ -79538,7 +78831,6 @@ func (m *TLStatsGetMegagroupStats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getMegagroupStats: unsupported layer %d", layer)
 	}
 }
@@ -79647,7 +78939,6 @@ func (m *TLStatsGetMessagePublicForwards) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getMessagePublicForwards: unsupported layer %d", layer)
 	}
 }
@@ -79767,7 +79058,6 @@ func (m *TLStatsGetMessageStats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getMessageStats: unsupported layer %d", layer)
 	}
 }
@@ -79887,7 +79177,6 @@ func (m *TLStatsGetStoryStats) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getStoryStats: unsupported layer %d", layer)
 	}
 }
@@ -80001,7 +79290,6 @@ func (m *TLStatsGetStoryPublicForwards) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stats_getStoryPublicForwards: unsupported layer %d", layer)
 	}
 }
@@ -80119,7 +79407,6 @@ func (m *TLChatlistsExportChatlistInvite) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_exportChatlistInvite: unsupported layer %d", layer)
 	}
 }
@@ -80243,7 +79530,6 @@ func (m *TLChatlistsDeleteExportedInvite) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_deleteExportedInvite: unsupported layer %d", layer)
 	}
 }
@@ -80379,7 +79665,6 @@ func (m *TLChatlistsEditExportedInvite) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_editExportedInvite: unsupported layer %d", layer)
 	}
 }
@@ -80511,7 +79796,6 @@ func (m *TLChatlistsGetExportedInvites) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_getExportedInvites: unsupported layer %d", layer)
 	}
 }
@@ -80594,7 +79878,6 @@ func (m *TLChatlistsCheckChatlistInvite) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_checkChatlistInvite: unsupported layer %d", layer)
 	}
 }
@@ -80683,7 +79966,6 @@ func (m *TLChatlistsJoinChatlistInvite) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_joinChatlistInvite: unsupported layer %d", layer)
 	}
 }
@@ -80791,7 +80073,6 @@ func (m *TLChatlistsGetChatlistUpdates) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_getChatlistUpdates: unsupported layer %d", layer)
 	}
 }
@@ -80889,7 +80170,6 @@ func (m *TLChatlistsJoinChatlistUpdates) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_joinChatlistUpdates: unsupported layer %d", layer)
 	}
 }
@@ -81002,7 +80282,6 @@ func (m *TLChatlistsHideChatlistUpdates) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_hideChatlistUpdates: unsupported layer %d", layer)
 	}
 }
@@ -81090,7 +80369,6 @@ func (m *TLChatlistsGetLeaveChatlistSuggestions) Encode(x *bin.Encoder, layer in
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_getLeaveChatlistSuggestions: unsupported layer %d", layer)
 	}
 }
@@ -81188,7 +80466,6 @@ func (m *TLChatlistsLeaveChatlist) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatlists_leaveChatlist: unsupported layer %d", layer)
 	}
 }
@@ -81301,7 +80578,6 @@ func (m *TLStoriesCanSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_canSendStory: unsupported layer %d", layer)
 	}
 }
@@ -81687,7 +80963,6 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_sendStory: unsupported layer %d", layer)
 	}
 }
@@ -82258,7 +81533,6 @@ func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_editStory: unsupported layer %d", layer)
 	}
 }
@@ -82584,7 +81858,6 @@ func (m *TLStoriesDeleteStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_deleteStories: unsupported layer %d", layer)
 	}
 }
@@ -82695,7 +81968,6 @@ func (m *TLStoriesTogglePinned) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_togglePinned: unsupported layer %d", layer)
 	}
 }
@@ -82812,7 +82084,6 @@ func (m *TLStoriesGetAllStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getAllStories: unsupported layer %d", layer)
 	}
 }
@@ -82916,7 +82187,6 @@ func (m *TLStoriesGetPinnedStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getPinnedStories: unsupported layer %d", layer)
 	}
 }
@@ -83019,7 +82289,6 @@ func (m *TLStoriesGetStoriesArchive) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getStoriesArchive: unsupported layer %d", layer)
 	}
 }
@@ -83124,7 +82393,6 @@ func (m *TLStoriesGetStoriesByID) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getStoriesByID: unsupported layer %d", layer)
 	}
 }
@@ -83214,7 +82482,6 @@ func (m *TLStoriesToggleAllStoriesHidden) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_toggleAllStoriesHidden: unsupported layer %d", layer)
 	}
 }
@@ -83305,7 +82572,6 @@ func (m *TLStoriesReadStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_readStories: unsupported layer %d", layer)
 	}
 }
@@ -83406,7 +82672,6 @@ func (m *TLStoriesIncrementStoryViews) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_incrementStoryViews: unsupported layer %d", layer)
 	}
 }
@@ -83546,7 +82811,6 @@ func (m *TLStoriesGetStoryViewsList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getStoryViewsList: unsupported layer %d", layer)
 	}
 }
@@ -83677,7 +82941,6 @@ func (m *TLStoriesGetStoriesViews) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getStoriesViews: unsupported layer %d", layer)
 	}
 }
@@ -83770,7 +83033,6 @@ func (m *TLStoriesExportStoryLink) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_exportStoryLink: unsupported layer %d", layer)
 	}
 }
@@ -83886,7 +83148,6 @@ func (m *TLStoriesReport) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_report: unsupported layer %d", layer)
 	}
 }
@@ -83994,7 +83255,6 @@ func (m *TLStoriesActivateStealthMode) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_activateStealthMode: unsupported layer %d", layer)
 	}
 }
@@ -84116,7 +83376,6 @@ func (m *TLStoriesSendReaction) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_sendReaction: unsupported layer %d", layer)
 	}
 }
@@ -84225,7 +83484,6 @@ func (m *TLStoriesGetPeerStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getPeerStories: unsupported layer %d", layer)
 	}
 }
@@ -84301,7 +83559,6 @@ func (m *TLStoriesGetAllReadPeerStories) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getAllReadPeerStories: unsupported layer %d", layer)
 	}
 }
@@ -84378,7 +83635,6 @@ func (m *TLStoriesGetPeerMaxIDs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getPeerMaxIDs: unsupported layer %d", layer)
 	}
 }
@@ -84470,7 +83726,6 @@ func (m *TLStoriesGetChatsToSend) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getChatsToSend: unsupported layer %d", layer)
 	}
 }
@@ -84562,7 +83817,6 @@ func (m *TLStoriesTogglePeerStoriesHidden) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden: unsupported layer %d", layer)
 	}
 }
@@ -84707,7 +83961,6 @@ func (m *TLStoriesGetStoryReactionsList) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getStoryReactionsList: unsupported layer %d", layer)
 	}
 }
@@ -84837,7 +84090,6 @@ func (m *TLStoriesTogglePinnedToTop) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_togglePinnedToTop: unsupported layer %d", layer)
 	}
 }
@@ -84978,7 +84230,6 @@ func (m *TLStoriesSearchPosts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_searchPosts: unsupported layer %d", layer)
 	}
 }
@@ -85112,7 +84363,6 @@ func (m *TLStoriesCreateAlbum) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_createAlbum: unsupported layer %d", layer)
 	}
 }
@@ -85266,7 +84516,6 @@ func (m *TLStoriesUpdateAlbum) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_updateAlbum: unsupported layer %d", layer)
 	}
 }
@@ -85389,7 +84638,6 @@ func (m *TLStoriesReorderAlbums) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_reorderAlbums: unsupported layer %d", layer)
 	}
 }
@@ -85482,7 +84730,6 @@ func (m *TLStoriesDeleteAlbum) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_deleteAlbum: unsupported layer %d", layer)
 	}
 }
@@ -85578,7 +84825,6 @@ func (m *TLStoriesGetAlbums) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getAlbums: unsupported layer %d", layer)
 	}
 }
@@ -85680,7 +84926,6 @@ func (m *TLStoriesGetAlbumStories) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_getAlbumStories: unsupported layer %d", layer)
 	}
 }
@@ -85870,7 +85115,6 @@ func (m *TLStoriesStartLive) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode stories_startLive: unsupported layer %d", layer)
 	}
 }
@@ -86078,7 +85322,6 @@ func (m *TLPremiumGetBoostsList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode premium_getBoostsList: unsupported layer %d", layer)
 	}
 }
@@ -86171,7 +85414,6 @@ func (m *TLPremiumGetMyBoosts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode premium_getMyBoosts: unsupported layer %d", layer)
 	}
 }
@@ -86275,7 +85517,6 @@ func (m *TLPremiumApplyBoost) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode premium_applyBoost: unsupported layer %d", layer)
 	}
 }
@@ -86371,7 +85612,6 @@ func (m *TLPremiumGetBoostsStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode premium_getBoostsStatus: unsupported layer %d", layer)
 	}
 }
@@ -86471,7 +85711,6 @@ func (m *TLPremiumGetUserBoosts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode premium_getUserBoosts: unsupported layer %d", layer)
 	}
 }
@@ -86555,7 +85794,6 @@ func (m *TLSmsjobsIsEligibleToJoin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_isEligibleToJoin: unsupported layer %d", layer)
 	}
 }
@@ -86623,7 +85861,6 @@ func (m *TLSmsjobsJoin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_join: unsupported layer %d", layer)
 	}
 }
@@ -86691,7 +85928,6 @@ func (m *TLSmsjobsLeave) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_leave: unsupported layer %d", layer)
 	}
 }
@@ -86776,7 +86012,6 @@ func (m *TLSmsjobsUpdateSettings) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_updateSettings: unsupported layer %d", layer)
 	}
 }
@@ -86852,7 +86087,6 @@ func (m *TLSmsjobsGetStatus) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_getStatus: unsupported layer %d", layer)
 	}
 }
@@ -86927,7 +86161,6 @@ func (m *TLSmsjobsGetSmsJob) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_getSmsJob: unsupported layer %d", layer)
 	}
 }
@@ -87028,7 +86261,6 @@ func (m *TLSmsjobsFinishJob) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode smsjobs_finishJob: unsupported layer %d", layer)
 	}
 }
@@ -87124,7 +86356,6 @@ func (m *TLFragmentGetCollectibleInfo) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode fragment_getCollectibleInfo: unsupported layer %d", layer)
 	}
 }
@@ -87236,7 +86467,6 @@ func (m *TLChannelsEditCreator) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_editCreator: unsupported layer %d", layer)
 	}
 }
@@ -87340,7 +86570,6 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode channels_getFutureCreatorAfterLeave: unsupported layer %d", layer)
 	}
 }
@@ -87416,7 +86645,6 @@ func (m *TLTestParseInputAppEvent) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode test_parseInputAppEvent: unsupported layer %d", layer)
 	}
 }
@@ -87484,7 +86712,6 @@ func (m *TLHelpTest) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode help_test: unsupported layer %d", layer)
 	}
 }
@@ -87619,7 +86846,6 @@ func (m *TLPredefinedCreatePredefinedUser) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_createPredefinedUser: unsupported layer %d", layer)
 	}
 }
@@ -87741,7 +86967,6 @@ func (m *TLPredefinedUpdatePredefinedUsername) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_updatePredefinedUsername: unsupported layer %d", layer)
 	}
 }
@@ -87870,7 +87095,6 @@ func (m *TLPredefinedUpdatePredefinedProfile) Encode(x *bin.Encoder, layer int32
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_updatePredefinedProfile: unsupported layer %d", layer)
 	}
 }
@@ -87993,7 +87217,6 @@ func (m *TLPredefinedUpdatePredefinedVerified) Encode(x *bin.Encoder, layer int3
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_updatePredefinedVerified: unsupported layer %d", layer)
 	}
 }
@@ -88087,7 +87310,6 @@ func (m *TLPredefinedUpdatePredefinedCode) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_updatePredefinedCode: unsupported layer %d", layer)
 	}
 }
@@ -88170,7 +87392,6 @@ func (m *TLPredefinedGetPredefinedUser) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_getPredefinedUser: unsupported layer %d", layer)
 	}
 }
@@ -88242,7 +87463,6 @@ func (m *TLPredefinedGetPredefinedUsers) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode predefined_getPredefinedUsers: unsupported layer %d", layer)
 	}
 }
@@ -88320,7 +87540,6 @@ func (m *TLUsersGetMe) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode users_getMe: unsupported layer %d", layer)
 	}
 }
@@ -88416,7 +87635,6 @@ func (m *TLAccountUpdateVerified) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode account_updateVerified: unsupported layer %d", layer)
 	}
 }
@@ -88541,7 +87759,6 @@ func (m *TLAuthToggleBan) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode auth_toggleBan: unsupported layer %d", layer)
 	}
 }
@@ -88647,7 +87864,6 @@ func (m *TLBizInvokeBizDataRaw) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode biz_invokeBizDataRaw: unsupported layer %d", layer)
 	}
 }

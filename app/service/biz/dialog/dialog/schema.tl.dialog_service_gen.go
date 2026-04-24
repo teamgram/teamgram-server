@@ -60,7 +60,6 @@ func (m *TLDialogSaveDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_saveDraftMessage: unsupported layer %d", layer)
 	}
 }
@@ -124,7 +123,6 @@ func (m *TLDialogClearDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_clearDraftMessage: unsupported layer %d", layer)
 	}
 }
@@ -179,7 +177,6 @@ func (m *TLDialogGetAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getAllDrafts: unsupported layer %d", layer)
 	}
 }
@@ -226,7 +223,6 @@ func (m *TLDialogClearAllDrafts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_clearAllDrafts: unsupported layer %d", layer)
 	}
 }
@@ -284,7 +280,6 @@ func (m *TLDialogMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_markDialogUnread: unsupported layer %d", layer)
 	}
 }
@@ -355,7 +350,6 @@ func (m *TLDialogToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_toggleDialogPin: unsupported layer %d", layer)
 	}
 }
@@ -415,7 +409,6 @@ func (m *TLDialogGetDialogUnreadMarkList) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogUnreadMarkList: unsupported layer %d", layer)
 	}
 }
@@ -473,7 +466,6 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogsByOffsetDate: unsupported layer %d", layer)
 	}
 }
@@ -543,7 +535,6 @@ func (m *TLDialogGetDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogs: unsupported layer %d", layer)
 	}
 }
@@ -603,7 +594,6 @@ func (m *TLDialogGetDialogsByIdList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogsByIdList: unsupported layer %d", layer)
 	}
 }
@@ -664,7 +654,6 @@ func (m *TLDialogGetDialogsCount) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogsCount: unsupported layer %d", layer)
 	}
 }
@@ -723,7 +712,6 @@ func (m *TLDialogGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getPinnedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -786,7 +774,6 @@ func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -852,7 +839,6 @@ func (m *TLDialogGetDialogById) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogById: unsupported layer %d", layer)
 	}
 }
@@ -911,7 +897,6 @@ func (m *TLDialogGetTopMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getTopMessage: unsupported layer %d", layer)
 	}
 }
@@ -1032,7 +1017,6 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_insertOrUpdateDialog: unsupported layer %d", layer)
 	}
 }
@@ -1142,7 +1126,6 @@ func (m *TLDialogDeleteDialog) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_deleteDialog: unsupported layer %d", layer)
 	}
 }
@@ -1201,7 +1184,6 @@ func (m *TLDialogGetUserPinnedMessage) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getUserPinnedMessage: unsupported layer %d", layer)
 	}
 }
@@ -1262,7 +1244,6 @@ func (m *TLDialogUpdateUserPinnedMessage) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_updateUserPinnedMessage: unsupported layer %d", layer)
 	}
 }
@@ -1330,7 +1311,6 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Encode(x *bin.Encoder, layer int32)
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_insertOrUpdateDialogFilter: unsupported layer %d", layer)
 	}
 }
@@ -1388,7 +1368,6 @@ func (m *TLDialogDeleteDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_deleteDialogFilter: unsupported layer %d", layer)
 	}
 }
@@ -1442,7 +1421,6 @@ func (m *TLDialogUpdateDialogFiltersOrder) Encode(x *bin.Encoder, layer int32) e
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_updateDialogFiltersOrder: unsupported layer %d", layer)
 	}
 }
@@ -1494,7 +1472,6 @@ func (m *TLDialogGetDialogFilters) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogFilters: unsupported layer %d", layer)
 	}
 }
@@ -1543,7 +1520,6 @@ func (m *TLDialogGetDialogFolder) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogFolder: unsupported layer %d", layer)
 	}
 }
@@ -1600,7 +1576,6 @@ func (m *TLDialogEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_editPeerFolders: unsupported layer %d", layer)
 	}
 }
@@ -1661,7 +1636,6 @@ func (m *TLDialogGetChannelMessageReadParticipants) Encode(x *bin.Encoder, layer
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getChannelMessageReadParticipants: unsupported layer %d", layer)
 	}
 }
@@ -1722,7 +1696,6 @@ func (m *TLDialogSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_setChatTheme: unsupported layer %d", layer)
 	}
 }
@@ -1787,7 +1760,6 @@ func (m *TLDialogSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_setHistoryTTL: unsupported layer %d", layer)
 	}
 }
@@ -1869,7 +1841,6 @@ func (m *TLDialogGetMyDialogsData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getMyDialogsData: unsupported layer %d", layer)
 	}
 }
@@ -1950,7 +1921,6 @@ func (m *TLDialogGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -2021,7 +1991,6 @@ func (m *TLDialogGetPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -2082,7 +2051,6 @@ func (m *TLDialogToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_toggleSavedDialogPin: unsupported layer %d", layer)
 	}
 }
@@ -2151,7 +2119,6 @@ func (m *TLDialogReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_reorderPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
@@ -2181,7 +2148,7 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -2225,7 +2192,6 @@ func (m *TLDialogGetDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogFilter: unsupported layer %d", layer)
 	}
 }
@@ -2278,7 +2244,6 @@ func (m *TLDialogGetDialogFilterBySlug) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogFilterBySlug: unsupported layer %d", layer)
 	}
 }
@@ -2336,7 +2301,6 @@ func (m *TLDialogCreateDialogFilter) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_createDialogFilter: unsupported layer %d", layer)
 	}
 }
@@ -2426,7 +2390,6 @@ func (m *TLDialogUpdateUnreadCount) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_updateUnreadCount: unsupported layer %d", layer)
 	}
 }
@@ -2514,7 +2477,6 @@ func (m *TLDialogToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_toggleDialogFilterTags: unsupported layer %d", layer)
 	}
 }
@@ -2566,7 +2528,6 @@ func (m *TLDialogGetDialogFilterTags) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_getDialogFilterTags: unsupported layer %d", layer)
 	}
 }
@@ -2634,7 +2595,6 @@ func (m *TLDialogSetChatWallpaper) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dialog_setChatWallpaper: unsupported layer %d", layer)
 	}
 }

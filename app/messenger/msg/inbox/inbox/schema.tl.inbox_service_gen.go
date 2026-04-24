@@ -58,7 +58,6 @@ func (m *TLInboxEditUserMessageToInbox) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_editUserMessageToInbox: unsupported layer %d", layer)
 	}
 }
@@ -123,7 +122,6 @@ func (m *TLInboxEditChatMessageToInbox) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_editChatMessageToInbox: unsupported layer %d", layer)
 	}
 }
@@ -186,7 +184,6 @@ func (m *TLInboxDeleteMessagesToInbox) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_deleteMessagesToInbox: unsupported layer %d", layer)
 	}
 }
@@ -265,7 +262,6 @@ func (m *TLInboxDeleteUserHistoryToInbox) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_deleteUserHistoryToInbox: unsupported layer %d", layer)
 	}
 }
@@ -332,7 +328,6 @@ func (m *TLInboxDeleteChatHistoryToInbox) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_deleteChatHistoryToInbox: unsupported layer %d", layer)
 	}
 }
@@ -394,7 +389,6 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_readUserMediaUnreadToInbox: unsupported layer %d", layer)
 	}
 }
@@ -422,7 +416,7 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -471,7 +465,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Encode(x *bin.Encoder, layer int32) 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_readChatMediaUnreadToInbox: unsupported layer %d", layer)
 	}
 }
@@ -499,7 +492,7 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err2)
 		}
 		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -549,7 +542,6 @@ func (m *TLInboxUpdateHistoryReaded) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_updateHistoryReaded: unsupported layer %d", layer)
 	}
 }
@@ -635,7 +627,6 @@ func (m *TLInboxUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_updatePinnedMessage: unsupported layer %d", layer)
 	}
 }
@@ -712,7 +703,6 @@ func (m *TLInboxUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_unpinAllMessages: unsupported layer %d", layer)
 	}
 }
@@ -858,7 +848,6 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_sendUserMessageToInboxV2: unsupported layer %d", layer)
 	}
 }
@@ -906,7 +895,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err2)
 		}
 		if c8 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: invalid vector constructor %x", c8)
 		}
 		l8, err3 := d.Int()
 		if err3 != nil {
@@ -927,7 +916,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err2)
 			}
 			if c9 != iface.ClazzID_vector {
-				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: invalid vector constructor %x", c9)
 			}
 			l9, err3 := d.Int()
 			if err3 != nil {
@@ -948,7 +937,7 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err2)
 			}
 			if c10 != iface.ClazzID_vector {
-				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: invalid vector constructor %x", c10)
 			}
 			l10, err3 := d.Int()
 			if err3 != nil {
@@ -1088,7 +1077,6 @@ func (m *TLInboxEditMessageToInboxV2) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_editMessageToInboxV2: unsupported layer %d", layer)
 	}
 }
@@ -1149,7 +1137,7 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err2)
 			}
 			if c10 != iface.ClazzID_vector {
-				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: invalid vector constructor %x", c10)
 			}
 			l10, err3 := d.Int()
 			if err3 != nil {
@@ -1170,7 +1158,7 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err2)
 			}
 			if c11 != iface.ClazzID_vector {
-				return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 11, c11)
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: invalid vector constructor %x", c11)
 			}
 			l11, err3 := d.Int()
 			if err3 != nil {
@@ -1271,7 +1259,6 @@ func (m *TLInboxReadInboxHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_readInboxHistory: unsupported layer %d", layer)
 	}
 }
@@ -1391,7 +1378,6 @@ func (m *TLInboxReadOutboxHistory) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_readOutboxHistory: unsupported layer %d", layer)
 	}
 }
@@ -1456,7 +1442,6 @@ func (m *TLInboxReadMediaUnreadToInboxV2) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_readMediaUnreadToInboxV2: unsupported layer %d", layer)
 	}
 }
@@ -1570,7 +1555,6 @@ func (m *TLInboxUpdatePinnedMessageV2) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inbox_updatePinnedMessageV2: unsupported layer %d", layer)
 	}
 }

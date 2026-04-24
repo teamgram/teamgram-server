@@ -49,7 +49,6 @@ func (m *TLSessionQueryAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_queryAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -110,7 +109,6 @@ func (m *TLSessionSetAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_setAuthKey: unsupported layer %d", layer)
 	}
 }
@@ -173,7 +171,6 @@ func (m *TLSessionCreateSession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_createSession: unsupported layer %d", layer)
 	}
 }
@@ -226,7 +223,6 @@ func (m *TLSessionSendDataToSession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_sendDataToSession: unsupported layer %d", layer)
 	}
 }
@@ -279,7 +275,6 @@ func (m *TLSessionSendHttpDataToSession) Encode(x *bin.Encoder, layer int32) err
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_sendHttpDataToSession: unsupported layer %d", layer)
 	}
 }
@@ -332,7 +327,6 @@ func (m *TLSessionCloseSession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_closeSession: unsupported layer %d", layer)
 	}
 }
@@ -402,7 +396,6 @@ func (m *TLSessionPushUpdatesData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_pushUpdatesData: unsupported layer %d", layer)
 	}
 }
@@ -483,7 +476,6 @@ func (m *TLSessionPushSessionUpdatesData) Encode(x *bin.Encoder, layer int32) er
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_pushSessionUpdatesData: unsupported layer %d", layer)
 	}
 }
@@ -556,7 +548,6 @@ func (m *TLSessionPushRpcResultData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode session_pushRpcResultData: unsupported layer %d", layer)
 	}
 }

@@ -156,7 +156,6 @@ func (m *TLSessionEntry) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sessionEntry: unsupported layer %d", layer)
 	}
 }
@@ -316,7 +315,6 @@ func (m *TLUserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode userSessionEntryList: unsupported layer %d", layer)
 	}
 }
@@ -334,7 +332,7 @@ func (m *TLUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode userSessionEntryList#0xefecb398: field user_sessions: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode userSessionEntryList#0xefecb398: field user_sessions: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {

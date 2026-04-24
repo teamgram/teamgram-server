@@ -46,7 +46,6 @@ func (m *TLIdgenNextId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_nextId: unsupported layer %d", layer)
 	}
 }
@@ -89,7 +88,6 @@ func (m *TLIdgenNextIds) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_nextIds: unsupported layer %d", layer)
 	}
 }
@@ -136,7 +134,6 @@ func (m *TLIdgenGetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_getCurrentSeqId: unsupported layer %d", layer)
 	}
 }
@@ -185,7 +182,6 @@ func (m *TLIdgenSetCurrentSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_setCurrentSeqId: unsupported layer %d", layer)
 	}
 }
@@ -236,7 +232,6 @@ func (m *TLIdgenGetNextSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_getNextSeqId: unsupported layer %d", layer)
 	}
 }
@@ -285,7 +280,6 @@ func (m *TLIdgenGetNextNSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_getNextNSeqId: unsupported layer %d", layer)
 	}
 }
@@ -338,7 +332,6 @@ func (m *TLIdgenGetNextIdValList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_getNextIdValList: unsupported layer %d", layer)
 	}
 }
@@ -358,7 +351,7 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode idgen_getNextIdValList#0xaa85f137: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -402,7 +395,6 @@ func (m *TLIdgenGetCurrentSeqIdList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idgen_getCurrentSeqIdList: unsupported layer %d", layer)
 	}
 }
@@ -422,7 +414,7 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode idgen_getCurrentSeqIdList#0xd229ae43: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {

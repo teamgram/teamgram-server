@@ -77,7 +77,6 @@ func (m *TLDfsWriteFilePartData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_writeFilePartData: unsupported layer %d", layer)
 	}
 }
@@ -158,7 +157,6 @@ func (m *TLDfsUploadPhotoFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadPhotoFileV2: unsupported layer %d", layer)
 	}
 }
@@ -258,7 +256,6 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *bin.Encoder, layer int32) erro
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadProfilePhotoFileV2: unsupported layer %d", layer)
 	}
 }
@@ -343,7 +340,6 @@ func (m *TLDfsUploadEncryptedFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadEncryptedFileV2: unsupported layer %d", layer)
 	}
 }
@@ -404,7 +400,6 @@ func (m *TLDfsDownloadFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_downloadFile: unsupported layer %d", layer)
 	}
 }
@@ -468,7 +463,6 @@ func (m *TLDfsUploadDocumentFileV2) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadDocumentFileV2: unsupported layer %d", layer)
 	}
 }
@@ -527,7 +521,6 @@ func (m *TLDfsUploadGifDocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadGifDocumentMedia: unsupported layer %d", layer)
 	}
 }
@@ -586,7 +579,6 @@ func (m *TLDfsUploadMp4DocumentMedia) Encode(x *bin.Encoder, layer int32) error 
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadMp4DocumentMedia: unsupported layer %d", layer)
 	}
 }
@@ -654,7 +646,6 @@ func (m *TLDfsUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadWallPaperFile: unsupported layer %d", layer)
 	}
 }
@@ -748,7 +739,6 @@ func (m *TLDfsUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadThemeFile: unsupported layer %d", layer)
 	}
 }
@@ -831,7 +821,6 @@ func (m *TLDfsUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadRingtoneFile: unsupported layer %d", layer)
 	}
 }
@@ -894,7 +883,6 @@ func (m *TLDfsUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode dfs_uploadedProfilePhoto: unsupported layer %d", layer)
 	}
 }

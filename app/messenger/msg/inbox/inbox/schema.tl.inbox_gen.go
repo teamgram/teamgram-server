@@ -145,7 +145,6 @@ func (m *TLInboxMessageData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inboxMessageData: unsupported layer %d", layer)
 	}
 }
@@ -284,7 +283,6 @@ func (m *TLInboxMessageId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inboxMessageId: unsupported layer %d", layer)
 	}
 }

@@ -176,7 +176,6 @@ func (m *TLAuthKeyStateData) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode authKeyStateData: unsupported layer %d", layer)
 	}
 }
@@ -401,7 +400,6 @@ func (m *TLClientSession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode clientSession: unsupported layer %d", layer)
 	}
 }

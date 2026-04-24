@@ -161,7 +161,6 @@ func (m *TLContentMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode contentMessage: unsupported layer %d", layer)
 	}
 }
@@ -352,7 +351,6 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode outboxMessage: unsupported layer %d", layer)
 	}
 }
@@ -509,7 +507,6 @@ func (m *TLSender) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode sender: unsupported layer %d", layer)
 	}
 }

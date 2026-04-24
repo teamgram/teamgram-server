@@ -156,7 +156,6 @@ func (m *TLChatInviteAlready) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatInviteAlready: unsupported layer %d", layer)
 	}
 }
@@ -315,7 +314,6 @@ func (m *TLChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatInvite: unsupported layer %d", layer)
 	}
 }
@@ -457,7 +455,6 @@ func (m *TLChatInvitePeek) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatInvitePeek: unsupported layer %d", layer)
 	}
 }
@@ -517,7 +514,9 @@ func (m *ChatInviteExt) Validate(layer int32) error {
 		return fmt.Errorf("ChatInviteExt.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate ChatInviteExt.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -533,7 +532,10 @@ func (m *ChatInviteExt) ClazzName() string {
 // Encode <--
 func (m *ChatInviteExt) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode ChatInviteExt.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("ChatInviteExt - invalid Clazz")
@@ -732,7 +734,6 @@ func (m *TLChatInviteImported) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode chatInviteImported: unsupported layer %d", layer)
 	}
 }
@@ -879,7 +880,6 @@ func (m *TLRecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32) error
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode recentChatInviteRequesters: unsupported layer %d", layer)
 	}
 }
@@ -1018,7 +1018,6 @@ func (m *TLUserChatIdList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode userChatIdList: unsupported layer %d", layer)
 	}
 }

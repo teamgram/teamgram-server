@@ -148,7 +148,6 @@ func (m *TLIdVal) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idVal: unsupported layer %d", layer)
 	}
 }
@@ -251,7 +250,6 @@ func (m *TLIdVals) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode idVals: unsupported layer %d", layer)
 	}
 }
@@ -352,7 +350,6 @@ func (m *TLSeqIdVal) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode seqIdVal: unsupported layer %d", layer)
 	}
 }
@@ -406,7 +403,9 @@ func (m *IdVal) Validate(layer int32) error {
 		return fmt.Errorf("IdVal.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate IdVal.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -422,7 +421,10 @@ func (m *IdVal) ClazzName() string {
 // Encode <--
 func (m *IdVal) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode IdVal.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("IdVal - invalid Clazz")
@@ -609,7 +611,6 @@ func (m *TLInputId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inputId: unsupported layer %d", layer)
 	}
 }
@@ -705,7 +706,6 @@ func (m *TLInputIds) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inputIds: unsupported layer %d", layer)
 	}
 }
@@ -808,7 +808,6 @@ func (m *TLInputSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inputSeqId: unsupported layer %d", layer)
 	}
 }
@@ -914,7 +913,6 @@ func (m *TLInputNSeqId) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode inputNSeqId: unsupported layer %d", layer)
 	}
 }
@@ -972,7 +970,9 @@ func (m *InputId) Validate(layer int32) error {
 		return fmt.Errorf("InputId.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate InputId.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -988,7 +988,10 @@ func (m *InputId) ClazzName() string {
 // Encode <--
 func (m *InputId) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode InputId.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("InputId - invalid Clazz")

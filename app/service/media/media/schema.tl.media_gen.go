@@ -144,7 +144,6 @@ func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode photoSizeList: unsupported layer %d", layer)
 	}
 }
@@ -162,7 +161,7 @@ func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -308,7 +307,6 @@ func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		// TODO(@benqi): handle error
 		return fmt.Errorf("unable to encode videoSizeList: unsupported layer %d", layer)
 	}
 }
@@ -326,7 +324,7 @@ func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err2)
 		}
 		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
