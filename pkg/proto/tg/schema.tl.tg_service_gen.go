@@ -5178,9 +5178,11 @@ func (m *TLAccountSetPrivacy) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -6799,9 +6801,11 @@ func (m *TLAccountGetSecureValue) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x73665bc2:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -6994,9 +6998,11 @@ func (m *TLAccountDeleteSecureValue) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xb880bc4b:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -7233,9 +7239,11 @@ func (m *TLAccountAcceptAuthorization) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field public_key: %w", err)
 		}
 		c4, err2 := d.ClazzID()
-		if c4 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err2)
+		}
+		if c4 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: invalid vector constructor %x", c4)
 		}
 		l4, err3 := d.Int()
 		if err3 != nil {
@@ -9418,9 +9426,11 @@ func (m *TLAccountCreateTheme) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -9634,9 +9644,11 @@ func (m *TLAccountUpdateTheme) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -10422,9 +10434,11 @@ func (m *TLAccountGetMultiWallPapers) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x65ad71dc:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -15834,9 +15848,11 @@ func (m *TLUsersGetUsers) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xd91a548:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -16043,9 +16059,11 @@ func (m *TLUsersSetSecureValueErrors) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -16142,9 +16160,11 @@ func (m *TLUsersGetRequirementsToContact) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xd89a83a3:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -16373,9 +16393,11 @@ func (m *TLUsersGetSavedMusicByID) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -16800,9 +16822,11 @@ func (m *TLContactsImportContacts) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x2c800be5:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -16899,9 +16923,11 @@ func (m *TLContactsDeleteContacts) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x96a0e00:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -18940,9 +18966,11 @@ func (m *TLContactsSetBlocked) Decode(d *bin.Decoder) (err error) {
 			m.MyStoriesFrom = true
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -19317,9 +19345,11 @@ func (m *TLMessagesGetMessages) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x63c66506:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -19867,9 +19897,11 @@ func (m *TLMessagesSearch) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c6, err2 := d.ClazzID()
-			if c6 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", err2)
+			}
+			if c6 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: invalid vector constructor %x", c6)
 			}
 			l6, err3 := d.Int()
 			if err3 != nil {
@@ -20851,9 +20883,11 @@ func (m *TLMessagesSendMessage) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c15, err2 := d.ClazzID()
-			if c15 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 15, c15)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", err2)
+			}
+			if c15 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: invalid vector constructor %x", c15)
 			}
 			l15, err3 := d.Int()
 			if err3 != nil {
@@ -21275,9 +21309,11 @@ func (m *TLMessagesSendMedia) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c15, err2 := d.ClazzID()
-			if c15 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 15, c15)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", err2)
+			}
+			if c15 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: invalid vector constructor %x", c15)
 			}
 			l15, err3 := d.Int()
 			if err3 != nil {
@@ -22725,9 +22761,11 @@ func (m *TLMessagesCreateChat) Decode(d *bin.Decoder) (err error) {
 		}
 		_ = flags
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -24261,9 +24299,11 @@ func (m *TLMessagesGetWebPagePreview) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c3, err2 := d.ClazzID()
-			if c3 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err2)
+			}
+			if c3 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: invalid vector constructor %x", c3)
 			}
 			l3, err3 := d.Int()
 			if err3 != nil {
@@ -26337,9 +26377,11 @@ func (m *TLMessagesSetInlineBotResults) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field query_id: %w", err)
 		}
 		c5, err2 := d.ClazzID()
-		if c5 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", err2)
+		}
+		if c5 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: invalid vector constructor %x", c5)
 		}
 		l5, err3 := d.Int()
 		if err3 != nil {
@@ -26994,9 +27036,11 @@ func (m *TLMessagesEditMessage) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c9, err2 := d.ClazzID()
-			if c9 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", err2)
+			}
+			if c9 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: invalid vector constructor %x", c9)
 			}
 			l9, err3 := d.Int()
 			if err3 != nil {
@@ -27238,9 +27282,11 @@ func (m *TLMessagesEditInlineBotMessage) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c8, err2 := d.ClazzID()
-			if c8 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", err2)
+			}
+			if c8 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: invalid vector constructor %x", c8)
 			}
 			l8, err3 := d.Int()
 			if err3 != nil {
@@ -27647,9 +27693,11 @@ func (m *TLMessagesGetPeerDialogs) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xe470bcfd:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -27877,9 +27925,11 @@ func (m *TLMessagesSaveDraft) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -29686,9 +29736,11 @@ func (m *TLMessagesReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field folder_id: %w", err)
 		}
 		c4, err2 := d.ClazzID()
-		if c4 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err2)
+		}
+		if c4 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: invalid vector constructor %x", c4)
 		}
 		l4, err3 := d.Int()
 		if err3 != nil {
@@ -29910,9 +29962,11 @@ func (m *TLMessagesSetBotShippingResults) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c4, err2 := d.ClazzID()
-			if c4 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err2)
+			}
+			if c4 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: invalid vector constructor %x", c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
@@ -31134,9 +31188,11 @@ func (m *TLMessagesSendMultiMedia) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		c11, err2 := d.ClazzID()
-		if c11 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 11, c11)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err2)
+		}
+		if c11 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: invalid vector constructor %x", c11)
 		}
 		l11, err3 := d.Int()
 		if err3 != nil {
@@ -32951,9 +33007,11 @@ func (m *TLMessagesGetSearchCounters) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		c5, err2 := d.ClazzID()
-		if c5 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", err2)
+		}
+		if c5 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: invalid vector constructor %x", c5)
 		}
 		l5, err3 := d.Int()
 		if err3 != nil {
@@ -34332,9 +34390,11 @@ func (m *TLMessagesToggleStickerSets) Decode(d *bin.Decoder) (err error) {
 			m.Unarchive = true
 		}
 		c5, err2 := d.ClazzID()
-		if c5 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err2)
+		}
+		if c5 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: invalid vector constructor %x", c5)
 		}
 		l5, err3 := d.Int()
 		if err3 != nil {
@@ -38246,9 +38306,11 @@ func (m *TLMessagesSendReaction) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 0)) != 0 {
 			c6, err2 := d.ClazzID()
-			if c6 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", err2)
+			}
+			if c6 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: invalid vector constructor %x", c6)
 			}
 			l6, err3 := d.Int()
 			if err3 != nil {
@@ -39080,9 +39142,11 @@ func (m *TLMessagesTranslateText) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 1)) != 0 {
 			c4, err2 := d.ClazzID()
-			if c4 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err2)
+			}
+			if c4 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: invalid vector constructor %x", c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
@@ -39135,9 +39199,11 @@ func (m *TLMessagesTranslateText) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 1)) != 0 {
 			c4, err2 := d.ClazzID()
-			if c4 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err2)
+			}
+			if c4 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: invalid vector constructor %x", c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
@@ -42017,9 +42083,11 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field button_id: %w", err)
 		}
 		c6, err2 := d.ClazzID()
-		if c6 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err2)
+		}
+		if c6 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: invalid vector constructor %x", c6)
 		}
 		l6, err3 := d.Int()
 		if err3 != nil {
@@ -42059,9 +42127,11 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field button_id: %w", err)
 		}
 		c6, err2 := d.ClazzID()
-		if c6 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err2)
+		}
+		if c6 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: invalid vector constructor %x", c6)
 		}
 		l6, err3 := d.Int()
 		if err3 != nil {
@@ -43899,9 +43969,11 @@ func (m *TLMessagesReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error)
 			m.Force = true
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -46742,9 +46814,11 @@ func (m *TLMessagesSavePreparedInlineMessage) Decode(d *bin.Decoder) (err error)
 
 		if (flags & (1 << 0)) != 0 {
 			c4, err2 := d.ClazzID()
-			if c4 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err2)
+			}
+			if c4 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: invalid vector constructor %x", c4)
 			}
 			l4, err3 := d.Int()
 			if err3 != nil {
@@ -47252,9 +47326,11 @@ func (m *TLMessagesGetSavedDialogsByID) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -47612,9 +47688,11 @@ func (m *TLMessagesAppendTodoList) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field msg_id: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -49820,9 +49898,11 @@ func (m *TLMessagesReportReadMetrics) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -51238,9 +51318,11 @@ func (m *TLPhotosDeletePhotos) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x87cf7f2f:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -53345,9 +53427,11 @@ func (m *TLHelpSaveAppLog) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x6f02f748:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -53709,9 +53793,11 @@ func (m *TLHelpEditUserInfo) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field message: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -54810,9 +54896,11 @@ func (m *TLChannelsGetMessages) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -55160,9 +55248,11 @@ func (m *TLChannelsGetChannels) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xa7f6bbb:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -56395,9 +56485,11 @@ func (m *TLChannelsInviteToChannel) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -57149,9 +57241,11 @@ func (m *TLChannelsGetAdminLog) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 1)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -61241,9 +61335,11 @@ func (m *TLBotsSetBotCommands) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field lang_code: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -63103,9 +63199,11 @@ func (m *TLBotsDeletePreviewMedia) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field lang_code: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -63235,9 +63333,11 @@ func (m *TLBotsReorderPreviewMedias) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field lang_code: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -67337,9 +67437,11 @@ func (m *TLPaymentsGetStarsTransactionsByID) Decode(d *bin.Decoder) (err error) 
 		}
 
 		c4, err2 := d.ClazzID()
-		if c4 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 4, c4)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err2)
+		}
+		if c4 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: invalid vector constructor %x", c4)
 		}
 		l4, err3 := d.Int()
 		if err3 != nil {
@@ -69585,9 +69687,11 @@ func (m *TLPaymentsGetSavedStarGift) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xb455a106:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -69926,9 +70030,11 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) Decode(d *bin.Decoder) (err error
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -70202,9 +70308,11 @@ func (m *TLPaymentsGetResaleStarGifts) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c8, err2 := d.ClazzID()
-			if c8 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err2)
+			}
+			if c8 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: invalid vector constructor %x", c8)
 			}
 			l8, err3 := d.Int()
 			if err3 != nil {
@@ -70451,9 +70559,11 @@ func (m *TLPaymentsCreateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field title: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -70645,9 +70755,11 @@ func (m *TLPaymentsUpdateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 
 		if (flags & (1 << 1)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -70669,9 +70781,11 @@ func (m *TLPaymentsUpdateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 		}
 		if (flags & (1 << 2)) != 0 {
 			c6, err2 := d.ClazzID()
-			if c6 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 6, c6)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err2)
+			}
+			if c6 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: invalid vector constructor %x", c6)
 			}
 			l6, err3 := d.Int()
 			if err3 != nil {
@@ -70693,9 +70807,11 @@ func (m *TLPaymentsUpdateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 		}
 		if (flags & (1 << 3)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -71924,9 +72040,11 @@ func (m *TLPaymentsCraftStarGift) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xb0f9684f:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -72140,9 +72258,11 @@ func (m *TLStickersCreateStickerSet) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		c9, err2 := d.ClazzID()
-		if c9 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", err2)
+		}
+		if c9 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: invalid vector constructor %x", c9)
 		}
 		l9, err3 := d.Int()
 		if err3 != nil {
@@ -74841,9 +74961,11 @@ func (m *TLPhoneInviteToGroupCall) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -75342,9 +75464,11 @@ func (m *TLPhoneGetGroupParticipants) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -79085,9 +79209,11 @@ func (m *TLFoldersEditPeerFolders) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x6847d0ab:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -80022,9 +80148,11 @@ func (m *TLChatlistsExportChatlistInvite) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field title: %w", err)
 		}
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -80294,9 +80422,11 @@ func (m *TLChatlistsEditExportedInvite) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 2)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -80573,9 +80703,11 @@ func (m *TLChatlistsJoinChatlistInvite) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field slug: %w", err)
 		}
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -80782,9 +80914,11 @@ func (m *TLChatlistsJoinChatlistUpdates) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -81079,9 +81213,11 @@ func (m *TLChatlistsLeaveChatlist) Decode(d *bin.Decoder) (err error) {
 		}
 
 		c2, err2 := d.ClazzID()
-		if c2 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err2)
+		}
+		if c2 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: invalid vector constructor %x", c2)
 		}
 		l2, err3 := d.Int()
 		if err3 != nil {
@@ -81599,9 +81735,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 5)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -81631,9 +81769,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c9, err2 := d.ClazzID()
-			if c9 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err2)
+			}
+			if c9 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: invalid vector constructor %x", c9)
 			}
 			l9, err3 := d.Int()
 			if err3 != nil {
@@ -81654,9 +81794,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 			m.Entities = v9
 		}
 		c10, err2 := d.ClazzID()
-		if c10 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err2)
+		}
+		if c10 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: invalid vector constructor %x", c10)
 		}
 		l10, err3 := d.Int()
 		if err3 != nil {
@@ -81751,9 +81893,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 5)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -81783,9 +81927,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c9, err2 := d.ClazzID()
-			if c9 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 9, c9)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err2)
+			}
+			if c9 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: invalid vector constructor %x", c9)
 			}
 			l9, err3 := d.Int()
 			if err3 != nil {
@@ -81806,9 +81952,11 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 			m.Entities = v9
 		}
 		c10, err2 := d.ClazzID()
-		if c10 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 10, c10)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err2)
+		}
+		if c10 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: invalid vector constructor %x", c10)
 		}
 		l10, err3 := d.Int()
 		if err3 != nil {
@@ -82154,9 +82302,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -82186,9 +82336,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -82210,9 +82362,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 2)) != 0 {
 			c8, err2 := d.ClazzID()
-			if c8 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err2)
+			}
+			if c8 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: invalid vector constructor %x", c8)
 			}
 			l8, err3 := d.Int()
 			if err3 != nil {
@@ -82273,9 +82427,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 3)) != 0 {
 			c5, err2 := d.ClazzID()
-			if c5 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 5, c5)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err2)
+			}
+			if c5 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: invalid vector constructor %x", c5)
 			}
 			l5, err3 := d.Int()
 			if err3 != nil {
@@ -82305,9 +82461,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -82329,9 +82487,11 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 		if (flags & (1 << 2)) != 0 {
 			c8, err2 := d.ClazzID()
-			if c8 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err2)
+			}
+			if c8 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: invalid vector constructor %x", c8)
 			}
 			l8, err3 := d.Int()
 			if err3 != nil {
@@ -84234,9 +84394,11 @@ func (m *TLStoriesGetPeerMaxIDs) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x78499170:
 		c1, err2 := d.ClazzID()
-		if c1 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 1, c1)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", err2)
+		}
+		if c1 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: invalid vector constructor %x", c1)
 		}
 		l1, err3 := d.Int()
 		if err3 != nil {
@@ -85756,9 +85918,11 @@ func (m *TLStoriesStartLive) Decode(d *bin.Decoder) (err error) {
 
 		if (flags & (1 << 1)) != 0 {
 			c7, err2 := d.ClazzID()
-			if c7 != iface.ClazzID_vector {
-				// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 7, c7)
+			if err2 != nil {
 				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", err2)
+			}
+			if c7 != iface.ClazzID_vector {
+				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: invalid vector constructor %x", c7)
 			}
 			l7, err3 := d.Int()
 			if err3 != nil {
@@ -85779,9 +85943,11 @@ func (m *TLStoriesStartLive) Decode(d *bin.Decoder) (err error) {
 			m.Entities = v7
 		}
 		c8, err2 := d.ClazzID()
-		if c8 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 8, c8)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", err2)
+		}
+		if c8 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: invalid vector constructor %x", c8)
 		}
 		l8, err3 := d.Int()
 		if err3 != nil {

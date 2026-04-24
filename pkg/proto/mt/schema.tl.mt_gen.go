@@ -686,7 +686,9 @@ func (m *DestroyAuthKeyRes) Validate(layer int32) error {
 		return fmt.Errorf("DestroyAuthKeyRes.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate DestroyAuthKeyRes.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -694,7 +696,10 @@ func (m *DestroyAuthKeyRes) Validate(layer int32) error {
 // Encode <--
 func (m *DestroyAuthKeyRes) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode DestroyAuthKeyRes.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("DestroyAuthKeyRes - invalid Clazz")
@@ -1459,7 +1464,9 @@ func (m *PQInnerData) Validate(layer int32) error {
 		return fmt.Errorf("PQInnerData.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate PQInnerData.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -1467,7 +1474,10 @@ func (m *PQInnerData) Validate(layer int32) error {
 // Encode <--
 func (m *PQInnerData) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode PQInnerData.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("PQInnerData - invalid Clazz")
@@ -2180,7 +2190,9 @@ func (m *ServerDHParams) Validate(layer int32) error {
 		return fmt.Errorf("ServerDHParams.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate ServerDHParams.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -2188,7 +2200,10 @@ func (m *ServerDHParams) Validate(layer int32) error {
 // Encode <--
 func (m *ServerDHParams) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode ServerDHParams.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("ServerDHParams - invalid Clazz")
@@ -2659,7 +2674,9 @@ func (m *SetClientDHParamsAnswer) Validate(layer int32) error {
 		return fmt.Errorf("SetClientDHParamsAnswer.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate SetClientDHParamsAnswer.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -2667,7 +2684,10 @@ func (m *SetClientDHParamsAnswer) Validate(layer int32) error {
 // Encode <--
 func (m *SetClientDHParamsAnswer) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode SetClientDHParamsAnswer.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("SetClientDHParamsAnswer - invalid Clazz")
@@ -2876,7 +2896,7 @@ func (m *TLAccessPointRule) Decode(d *bin.Decoder) (err error) {
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
+		//     return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: invalid vector constructor %x", c2)
 		// }
 		l2, err2 := d.Int()
 		if err2 != nil {
@@ -3211,7 +3231,9 @@ func (m *BadMsgNotification) Validate(layer int32) error {
 		return fmt.Errorf("BadMsgNotification.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate BadMsgNotification.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -3219,7 +3241,10 @@ func (m *BadMsgNotification) Validate(layer int32) error {
 // Encode <--
 func (m *BadMsgNotification) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode BadMsgNotification.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("BadMsgNotification - invalid Clazz")
@@ -3541,7 +3566,9 @@ func (m *DestroySessionRes) Validate(layer int32) error {
 		return fmt.Errorf("DestroySessionRes.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate DestroySessionRes.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -3549,7 +3576,10 @@ func (m *DestroySessionRes) Validate(layer int32) error {
 // Encode <--
 func (m *DestroySessionRes) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode DestroySessionRes.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("DestroySessionRes - invalid Clazz")
@@ -3878,7 +3908,7 @@ func (m *TLFutureSalts) Decode(d *bin.Decoder) (err error) {
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
+		//     return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: invalid vector constructor %x", c2)
 		// }
 		l2, err2 := d.Int()
 		if err2 != nil {
@@ -4045,7 +4075,7 @@ func (m *TLHelpConfigSimple) Decode(d *bin.Decoder) (err error) {
 		// c2, err2 := d.ClazzID()
 		// if c2 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 2, c2)
-		//     return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
+		//     return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: invalid vector constructor %x", c2)
 		// }
 		l2, err2 := d.Int()
 		if err2 != nil {
@@ -4510,7 +4540,9 @@ func (m *IpPort) Validate(layer int32) error {
 		return fmt.Errorf("IpPort.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate IpPort.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -4518,7 +4550,10 @@ func (m *IpPort) Validate(layer int32) error {
 // Encode <--
 func (m *IpPort) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode IpPort.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("IpPort - invalid Clazz")
@@ -4875,7 +4910,9 @@ func (m *MsgDetailedInfo) Validate(layer int32) error {
 		return fmt.Errorf("MsgDetailedInfo.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate MsgDetailedInfo.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -4883,7 +4920,10 @@ func (m *MsgDetailedInfo) Validate(layer int32) error {
 // Encode <--
 func (m *MsgDetailedInfo) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode MsgDetailedInfo.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("MsgDetailedInfo - invalid Clazz")
@@ -6259,7 +6299,9 @@ func (m *RpcDropAnswer) Validate(layer int32) error {
 		return fmt.Errorf("RpcDropAnswer.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate RpcDropAnswer.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -6267,7 +6309,10 @@ func (m *RpcDropAnswer) Validate(layer int32) error {
 // Encode <--
 func (m *RpcDropAnswer) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode RpcDropAnswer.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("RpcDropAnswer - invalid Clazz")
@@ -7218,9 +7263,11 @@ func (m *TLTlsBlockScope) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xe725d44f:
 		c3, err2 := d.ClazzID()
-		if c3 != iface.ClazzID_vector {
-			// dBuf.err = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 3, c3)
+		if err2 != nil {
 			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", err2)
+		}
+		if c3 != iface.ClazzID_vector {
+			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: invalid vector constructor %x", c3)
 		}
 		l3, err3 := d.Int()
 		if err3 != nil {
@@ -7283,7 +7330,9 @@ func (m *TlsBlock) Validate(layer int32) error {
 		return fmt.Errorf("TlsBlock.Clazz is required")
 	}
 	if v, ok := m.Clazz.(iface.TLObjectValidator); ok {
-		return v.Validate(layer)
+		if err := v.Validate(layer); err != nil {
+			return fmt.Errorf("unable to validate TlsBlock.Clazz: %w", err)
+		}
 	}
 	return nil
 }
@@ -7291,7 +7340,10 @@ func (m *TlsBlock) Validate(layer int32) error {
 // Encode <--
 func (m *TlsBlock) Encode(x *bin.Encoder, layer int32) error {
 	if m.Clazz != nil {
-		return m.Clazz.Encode(x, layer)
+		if err := m.Clazz.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode TlsBlock.Clazz: %w", err)
+		}
+		return nil
 	}
 
 	return fmt.Errorf("TlsBlock - invalid Clazz")
@@ -7550,7 +7602,7 @@ func (m *TLTlsClientHello) Decode(d *bin.Decoder) (err error) {
 		// c0, err2 := d.ClazzID()
 		// if c0 != int32(iface.ClazzID_vector) {
 		//     err2 = fmt.Errorf("invalid ClazzID_vector, c%d: %d", 0, c0)
-		//     return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)
+		//     return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: invalid vector constructor %x", c0)
 		// }
 		l0, err2 := d.Int()
 		if err2 != nil {
