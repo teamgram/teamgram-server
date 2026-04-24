@@ -65,7 +65,7 @@ func (m *TLInvokeAfterMsg) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeAfterMsg: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeAfterMsg: unsupported layer %d", layer)
 	}
 }
 
@@ -152,7 +152,7 @@ func (m *TLInvokeAfterMsgs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeAfterMsgs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeAfterMsgs: unsupported layer %d", layer)
 	}
 }
 
@@ -333,7 +333,7 @@ func (m *TLInitConnection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate initConnection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode initConnection: unsupported layer %d", layer)
 	}
 }
 
@@ -369,13 +369,13 @@ func (m *TLInitConnection) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.LangCode)
 		if m.Proxy != nil {
 			if err := m.Proxy.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode initConnection#0xc1cd5ea9: field proxy: %w", err)
+				return fmt.Errorf("unable to encode initConnection#0xc1cd5ea9: field proxy: %w", err)
 			}
 		}
 
 		if m.Params != nil {
 			if err := m.Params.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode initConnection#0xc1cd5ea9: field params: %w", err)
+				return fmt.Errorf("unable to encode initConnection#0xc1cd5ea9: field params: %w", err)
 			}
 		}
 
@@ -411,13 +411,13 @@ func (m *TLInitConnection) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.LangCode)
 		if m.Proxy != nil {
 			if err := m.Proxy.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode initConnection#0xc1cd5ea9: field proxy: %w", err)
+				return fmt.Errorf("unable to encode initConnection#0xc1cd5ea9: field proxy: %w", err)
 			}
 		}
 
 		if m.Params != nil {
 			if err := m.Params.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode initConnection#0xc1cd5ea9: field params: %w", err)
+				return fmt.Errorf("unable to encode initConnection#0xc1cd5ea9: field params: %w", err)
 			}
 		}
 
@@ -595,7 +595,7 @@ func (m *TLInvokeWithLayer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithLayer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithLayer: unsupported layer %d", layer)
 	}
 }
 
@@ -676,7 +676,7 @@ func (m *TLInvokeWithoutUpdates) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithoutUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithoutUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -758,7 +758,7 @@ func (m *TLInvokeWithMessagesRange) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithMessagesRange: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithMessagesRange: unsupported layer %d", layer)
 	}
 }
 
@@ -772,7 +772,7 @@ func (m *TLInvokeWithMessagesRange) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode invokeWithMessagesRange#0x365275f2: field range is nil")
 		}
 		if err := m.Range.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode invokeWithMessagesRange#0x365275f2: field range: %w", err)
+			return fmt.Errorf("unable to encode invokeWithMessagesRange#0x365275f2: field range: %w", err)
 		}
 		x.PutRaw(m.Query)
 
@@ -851,7 +851,7 @@ func (m *TLInvokeWithTakeout) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithTakeout: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithTakeout: unsupported layer %d", layer)
 	}
 }
 
@@ -938,7 +938,7 @@ func (m *TLInvokeWithBusinessConnection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithBusinessConnection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithBusinessConnection: unsupported layer %d", layer)
 	}
 }
 
@@ -1031,7 +1031,7 @@ func (m *TLInvokeWithGooglePlayIntegrity) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithGooglePlayIntegrity: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithGooglePlayIntegrity: unsupported layer %d", layer)
 	}
 }
 
@@ -1129,7 +1129,7 @@ func (m *TLInvokeWithApnsSecret) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithApnsSecret: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithApnsSecret: unsupported layer %d", layer)
 	}
 }
 
@@ -1221,7 +1221,7 @@ func (m *TLInvokeWithReCaptcha) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate invokeWithReCaptcha: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode invokeWithReCaptcha: unsupported layer %d", layer)
 	}
 }
 
@@ -1316,7 +1316,7 @@ func (m *TLAuthSendCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_sendCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_sendCode: unsupported layer %d", layer)
 	}
 }
 
@@ -1333,7 +1333,7 @@ func (m *TLAuthSendCode) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode auth_sendCode#0xa677244f: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode auth_sendCode#0xa677244f: field settings: %w", err)
+			return fmt.Errorf("unable to encode auth_sendCode#0xa677244f: field settings: %w", err)
 		}
 
 		return nil
@@ -1439,7 +1439,7 @@ func (m *TLAuthSignUp) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_signUp: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_signUp: unsupported layer %d", layer)
 	}
 }
 
@@ -1571,7 +1571,7 @@ func (m *TLAuthSignIn) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_signIn: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_signIn: unsupported layer %d", layer)
 	}
 }
 
@@ -1606,7 +1606,7 @@ func (m *TLAuthSignIn) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.EmailVerification != nil {
 			if err := m.EmailVerification.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode auth_signIn#0x8d52a951: field email_verification: %w", err)
+				return fmt.Errorf("unable to encode auth_signIn#0x8d52a951: field email_verification: %w", err)
 			}
 		}
 
@@ -1698,7 +1698,7 @@ func (m *TLAuthLogOut) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_logOut: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_logOut: unsupported layer %d", layer)
 	}
 }
 
@@ -1766,7 +1766,7 @@ func (m *TLAuthResetAuthorizations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_resetAuthorizations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_resetAuthorizations: unsupported layer %d", layer)
 	}
 }
 
@@ -1836,7 +1836,7 @@ func (m *TLAuthExportAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_exportAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_exportAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -1917,7 +1917,7 @@ func (m *TLAuthImportAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_importAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_importAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -2007,7 +2007,7 @@ func (m *TLAuthBindTempAuthKey) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_bindTempAuthKey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_bindTempAuthKey: unsupported layer %d", layer)
 	}
 }
 
@@ -2111,7 +2111,7 @@ func (m *TLAuthImportBotAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_importBotAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_importBotAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -2205,7 +2205,7 @@ func (m *TLAuthCheckPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_checkPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_checkPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -2219,7 +2219,7 @@ func (m *TLAuthCheckPassword) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode auth_checkPassword#0xd18b4d16: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode auth_checkPassword#0xd18b4d16: field password: %w", err)
+			return fmt.Errorf("unable to encode auth_checkPassword#0xd18b4d16: field password: %w", err)
 		}
 
 		return nil
@@ -2288,7 +2288,7 @@ func (m *TLAuthRequestPasswordRecovery) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_requestPasswordRecovery: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_requestPasswordRecovery: unsupported layer %d", layer)
 	}
 }
 
@@ -2366,7 +2366,7 @@ func (m *TLAuthRecoverPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_recoverPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_recoverPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -2393,7 +2393,7 @@ func (m *TLAuthRecoverPassword) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.Code)
 		if m.NewSettings != nil {
 			if err := m.NewSettings.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode auth_recoverPassword#0x37096c70: field new_settings: %w", err)
+				return fmt.Errorf("unable to encode auth_recoverPassword#0x37096c70: field new_settings: %w", err)
 			}
 		}
 
@@ -2489,7 +2489,7 @@ func (m *TLAuthResendCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_resendCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_resendCode: unsupported layer %d", layer)
 	}
 }
 
@@ -2608,7 +2608,7 @@ func (m *TLAuthCancelCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_cancelCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_cancelCode: unsupported layer %d", layer)
 	}
 }
 
@@ -2692,7 +2692,7 @@ func (m *TLAuthDropTempAuthKeys) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_dropTempAuthKeys: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_dropTempAuthKeys: unsupported layer %d", layer)
 	}
 }
 
@@ -2777,7 +2777,7 @@ func (m *TLAuthExportLoginToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_exportLoginToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_exportLoginToken: unsupported layer %d", layer)
 	}
 }
 
@@ -2865,7 +2865,7 @@ func (m *TLAuthImportLoginToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_importLoginToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_importLoginToken: unsupported layer %d", layer)
 	}
 }
 
@@ -2944,7 +2944,7 @@ func (m *TLAuthAcceptLoginToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_acceptLoginToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_acceptLoginToken: unsupported layer %d", layer)
 	}
 }
 
@@ -3023,7 +3023,7 @@ func (m *TLAuthCheckRecoveryPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_checkRecoveryPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_checkRecoveryPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -3110,7 +3110,7 @@ func (m *TLAuthImportWebTokenAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_importWebTokenAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_importWebTokenAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -3220,7 +3220,7 @@ func (m *TLAuthRequestFirebaseSms) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_requestFirebaseSms: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_requestFirebaseSms: unsupported layer %d", layer)
 	}
 }
 
@@ -3369,7 +3369,7 @@ func (m *TLAuthResetLoginEmail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_resetLoginEmail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_resetLoginEmail: unsupported layer %d", layer)
 	}
 }
 
@@ -3465,7 +3465,7 @@ func (m *TLAuthReportMissingCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_reportMissingCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_reportMissingCode: unsupported layer %d", layer)
 	}
 }
 
@@ -3562,7 +3562,7 @@ func (m *TLAuthCheckPaidAuth) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_checkPaidAuth: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_checkPaidAuth: unsupported layer %d", layer)
 	}
 }
 
@@ -3653,7 +3653,7 @@ func (m *TLAuthInitPasskeyLogin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_initPasskeyLogin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_initPasskeyLogin: unsupported layer %d", layer)
 	}
 }
 
@@ -3747,7 +3747,7 @@ func (m *TLAuthFinishPasskeyLogin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_finishPasskeyLogin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_finishPasskeyLogin: unsupported layer %d", layer)
 	}
 }
 
@@ -3778,7 +3778,7 @@ func (m *TLAuthFinishPasskeyLogin) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode auth_finishPasskeyLogin#0x9857ad07: field credential is nil")
 		}
 		if err := m.Credential.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode auth_finishPasskeyLogin#0x9857ad07: field credential: %w", err)
+			return fmt.Errorf("unable to encode auth_finishPasskeyLogin#0x9857ad07: field credential: %w", err)
 		}
 		if m.FromDcId != nil {
 			x.PutInt32(*m.FromDcId)
@@ -3913,7 +3913,7 @@ func (m *TLAccountRegisterDevice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_registerDevice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_registerDevice: unsupported layer %d", layer)
 	}
 }
 
@@ -3943,7 +3943,7 @@ func (m *TLAccountRegisterDevice) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_registerDevice#0xec86017a: field app_sandbox is nil")
 		}
 		if err := m.AppSandbox.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_registerDevice#0xec86017a: field app_sandbox: %w", err)
+			return fmt.Errorf("unable to encode account_registerDevice#0xec86017a: field app_sandbox: %w", err)
 		}
 		x.PutBytes(m.Secret)
 
@@ -4081,7 +4081,7 @@ func (m *TLAccountUnregisterDevice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_unregisterDevice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_unregisterDevice: unsupported layer %d", layer)
 	}
 }
 
@@ -4193,7 +4193,7 @@ func (m *TLAccountUpdateNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -4207,13 +4207,13 @@ func (m *TLAccountUpdateNotifySettings) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode account_updateNotifySettings#0x84be5b93: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateNotifySettings#0x84be5b93: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_updateNotifySettings#0x84be5b93: field peer: %w", err)
 		}
 		if m.Settings == nil {
 			return fmt.Errorf("unable to encode account_updateNotifySettings#0x84be5b93: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateNotifySettings#0x84be5b93: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_updateNotifySettings#0x84be5b93: field settings: %w", err)
 		}
 
 		return nil
@@ -4295,7 +4295,7 @@ func (m *TLAccountGetNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -4309,7 +4309,7 @@ func (m *TLAccountGetNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_getNotifySettings#0x12b3ad31: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getNotifySettings#0x12b3ad31: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_getNotifySettings#0x12b3ad31: field peer: %w", err)
 		}
 
 		return nil
@@ -4378,7 +4378,7 @@ func (m *TLAccountResetNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -4461,7 +4461,7 @@ func (m *TLAccountUpdateProfile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateProfile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateProfile: unsupported layer %d", layer)
 	}
 }
 
@@ -4594,7 +4594,7 @@ func (m *TLAccountUpdateStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -4608,7 +4608,7 @@ func (m *TLAccountUpdateStatus) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_updateStatus#0x6628562c: field offline is nil")
 		}
 		if err := m.Offline.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateStatus#0x6628562c: field offline: %w", err)
+			return fmt.Errorf("unable to encode account_updateStatus#0x6628562c: field offline: %w", err)
 		}
 
 		return nil
@@ -4679,7 +4679,7 @@ func (m *TLAccountGetWallPapers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getWallPapers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getWallPapers: unsupported layer %d", layer)
 	}
 }
 
@@ -4770,7 +4770,7 @@ func (m *TLAccountReportPeer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_reportPeer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_reportPeer: unsupported layer %d", layer)
 	}
 }
 
@@ -4784,13 +4784,13 @@ func (m *TLAccountReportPeer) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_reportPeer#0xc5ba3d86: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_reportPeer#0xc5ba3d86: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_reportPeer#0xc5ba3d86: field peer: %w", err)
 		}
 		if m.Reason == nil {
 			return fmt.Errorf("unable to encode account_reportPeer#0xc5ba3d86: field reason is nil")
 		}
 		if err := m.Reason.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_reportPeer#0xc5ba3d86: field reason: %w", err)
+			return fmt.Errorf("unable to encode account_reportPeer#0xc5ba3d86: field reason: %w", err)
 		}
 		x.PutString(m.Message)
 
@@ -4878,7 +4878,7 @@ func (m *TLAccountCheckUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_checkUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_checkUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -4957,7 +4957,7 @@ func (m *TLAccountUpdateUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -5036,7 +5036,7 @@ func (m *TLAccountGetPrivacy) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getPrivacy: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getPrivacy: unsupported layer %d", layer)
 	}
 }
 
@@ -5050,7 +5050,7 @@ func (m *TLAccountGetPrivacy) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_getPrivacy#0xdadbc950: field key is nil")
 		}
 		if err := m.Key.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getPrivacy#0xdadbc950: field key: %w", err)
+			return fmt.Errorf("unable to encode account_getPrivacy#0xdadbc950: field key: %w", err)
 		}
 
 		return nil
@@ -5130,7 +5130,7 @@ func (m *TLAccountSetPrivacy) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setPrivacy: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setPrivacy: unsupported layer %d", layer)
 	}
 }
 
@@ -5144,11 +5144,11 @@ func (m *TLAccountSetPrivacy) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_setPrivacy#0xc9f81ce8: field key is nil")
 		}
 		if err := m.Key.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field key: %w", err)
+			return fmt.Errorf("unable to encode account_setPrivacy#0xc9f81ce8: field key: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Rules, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", err)
+			return fmt.Errorf("unable to encode account_setPrivacy#0xc9f81ce8: field rules: %w", err)
 		}
 
 		return nil
@@ -5250,7 +5250,7 @@ func (m *TLAccountDeleteAccount) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_deleteAccount: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_deleteAccount: unsupported layer %d", layer)
 	}
 }
 
@@ -5277,7 +5277,7 @@ func (m *TLAccountDeleteAccount) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.Reason)
 		if m.Password != nil {
 			if err := m.Password.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_deleteAccount#0xa2c0cf74: field password: %w", err)
+				return fmt.Errorf("unable to encode account_deleteAccount#0xa2c0cf74: field password: %w", err)
 			}
 		}
 
@@ -5357,7 +5357,7 @@ func (m *TLAccountGetAccountTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAccountTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAccountTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -5430,7 +5430,7 @@ func (m *TLAccountSetAccountTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setAccountTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setAccountTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -5444,7 +5444,7 @@ func (m *TLAccountSetAccountTTL) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_setAccountTTL#0x2442485e: field ttl is nil")
 		}
 		if err := m.Ttl.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setAccountTTL#0x2442485e: field ttl: %w", err)
+			return fmt.Errorf("unable to encode account_setAccountTTL#0x2442485e: field ttl: %w", err)
 		}
 
 		return nil
@@ -5524,7 +5524,7 @@ func (m *TLAccountSendChangePhoneCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_sendChangePhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_sendChangePhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -5539,7 +5539,7 @@ func (m *TLAccountSendChangePhoneCode) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode account_sendChangePhoneCode#0x82574ae5: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_sendChangePhoneCode#0x82574ae5: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_sendChangePhoneCode#0x82574ae5: field settings: %w", err)
 		}
 
 		return nil
@@ -5629,7 +5629,7 @@ func (m *TLAccountChangePhone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_changePhone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_changePhone: unsupported layer %d", layer)
 	}
 }
 
@@ -5715,7 +5715,7 @@ func (m *TLAccountUpdateDeviceLocked) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateDeviceLocked: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateDeviceLocked: unsupported layer %d", layer)
 	}
 }
 
@@ -5789,7 +5789,7 @@ func (m *TLAccountGetAuthorizations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAuthorizations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAuthorizations: unsupported layer %d", layer)
 	}
 }
 
@@ -5859,7 +5859,7 @@ func (m *TLAccountResetAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -5933,7 +5933,7 @@ func (m *TLAccountGetPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -6006,7 +6006,7 @@ func (m *TLAccountGetPasswordSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getPasswordSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getPasswordSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -6020,7 +6020,7 @@ func (m *TLAccountGetPasswordSettings) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode account_getPasswordSettings#0x9cd4eaf9: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getPasswordSettings#0x9cd4eaf9: field password: %w", err)
+			return fmt.Errorf("unable to encode account_getPasswordSettings#0x9cd4eaf9: field password: %w", err)
 		}
 
 		return nil
@@ -6100,7 +6100,7 @@ func (m *TLAccountUpdatePasswordSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updatePasswordSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updatePasswordSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -6114,13 +6114,13 @@ func (m *TLAccountUpdatePasswordSettings) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode account_updatePasswordSettings#0xa59b102f: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updatePasswordSettings#0xa59b102f: field password: %w", err)
+			return fmt.Errorf("unable to encode account_updatePasswordSettings#0xa59b102f: field password: %w", err)
 		}
 		if m.NewSettings == nil {
 			return fmt.Errorf("unable to encode account_updatePasswordSettings#0xa59b102f: field new_settings is nil")
 		}
 		if err := m.NewSettings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updatePasswordSettings#0xa59b102f: field new_settings: %w", err)
+			return fmt.Errorf("unable to encode account_updatePasswordSettings#0xa59b102f: field new_settings: %w", err)
 		}
 
 		return nil
@@ -6208,7 +6208,7 @@ func (m *TLAccountSendConfirmPhoneCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_sendConfirmPhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_sendConfirmPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -6223,7 +6223,7 @@ func (m *TLAccountSendConfirmPhoneCode) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode account_sendConfirmPhoneCode#0x1b3faa88: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_sendConfirmPhoneCode#0x1b3faa88: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_sendConfirmPhoneCode#0x1b3faa88: field settings: %w", err)
 		}
 
 		return nil
@@ -6307,7 +6307,7 @@ func (m *TLAccountConfirmPhone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_confirmPhone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_confirmPhone: unsupported layer %d", layer)
 	}
 }
 
@@ -6393,7 +6393,7 @@ func (m *TLAccountGetTmpPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getTmpPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getTmpPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -6407,7 +6407,7 @@ func (m *TLAccountGetTmpPassword) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_getTmpPassword#0x449e0b51: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getTmpPassword#0x449e0b51: field password: %w", err)
+			return fmt.Errorf("unable to encode account_getTmpPassword#0x449e0b51: field password: %w", err)
 		}
 		x.PutInt32(m.Period)
 
@@ -6482,7 +6482,7 @@ func (m *TLAccountGetWebAuthorizations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getWebAuthorizations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getWebAuthorizations: unsupported layer %d", layer)
 	}
 }
 
@@ -6552,7 +6552,7 @@ func (m *TLAccountResetWebAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetWebAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetWebAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -6626,7 +6626,7 @@ func (m *TLAccountResetWebAuthorizations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetWebAuthorizations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetWebAuthorizations: unsupported layer %d", layer)
 	}
 }
 
@@ -6694,7 +6694,7 @@ func (m *TLAccountGetAllSecureValues) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAllSecureValues: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAllSecureValues: unsupported layer %d", layer)
 	}
 }
 
@@ -6767,7 +6767,7 @@ func (m *TLAccountGetSecureValue) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getSecureValue: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getSecureValue: unsupported layer %d", layer)
 	}
 }
 
@@ -6778,7 +6778,7 @@ func (m *TLAccountGetSecureValue) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x73665bc2)
 
 		if err := iface.EncodeObjectList(x, m.Types, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", err)
+			return fmt.Errorf("unable to encode account_getSecureValue#0x73665bc2: field types: %w", err)
 		}
 
 		return nil
@@ -6868,7 +6868,7 @@ func (m *TLAccountSaveSecureValue) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveSecureValue: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveSecureValue: unsupported layer %d", layer)
 	}
 }
 
@@ -6882,7 +6882,7 @@ func (m *TLAccountSaveSecureValue) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_saveSecureValue#0x899fe31d: field value is nil")
 		}
 		if err := m.Value.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveSecureValue#0x899fe31d: field value: %w", err)
+			return fmt.Errorf("unable to encode account_saveSecureValue#0x899fe31d: field value: %w", err)
 		}
 		x.PutInt64(m.SecureSecretId)
 
@@ -6962,7 +6962,7 @@ func (m *TLAccountDeleteSecureValue) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_deleteSecureValue: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_deleteSecureValue: unsupported layer %d", layer)
 	}
 }
 
@@ -6973,7 +6973,7 @@ func (m *TLAccountDeleteSecureValue) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xb880bc4b)
 
 		if err := iface.EncodeObjectList(x, m.Types, layer); err != nil {
-			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", err)
+			return fmt.Errorf("unable to encode account_deleteSecureValue#0xb880bc4b: field types: %w", err)
 		}
 
 		return nil
@@ -7069,7 +7069,7 @@ func (m *TLAccountGetAuthorizationForm) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAuthorizationForm: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAuthorizationForm: unsupported layer %d", layer)
 	}
 }
 
@@ -7178,7 +7178,7 @@ func (m *TLAccountAcceptAuthorization) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_acceptAuthorization: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_acceptAuthorization: unsupported layer %d", layer)
 	}
 }
 
@@ -7193,14 +7193,14 @@ func (m *TLAccountAcceptAuthorization) Encode(x *bin.Encoder, layer int32) error
 		x.PutString(m.PublicKey)
 
 		if err := iface.EncodeObjectList(x, m.ValueHashes, layer); err != nil {
-			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err)
+			return fmt.Errorf("unable to encode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err)
 		}
 
 		if m.Credentials == nil {
 			return fmt.Errorf("unable to encode account_acceptAuthorization#0xf3ed4c73: field credentials is nil")
 		}
 		if err := m.Credentials.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field credentials: %w", err)
+			return fmt.Errorf("unable to encode account_acceptAuthorization#0xf3ed4c73: field credentials: %w", err)
 		}
 
 		return nil
@@ -7314,7 +7314,7 @@ func (m *TLAccountSendVerifyPhoneCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_sendVerifyPhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_sendVerifyPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -7329,7 +7329,7 @@ func (m *TLAccountSendVerifyPhoneCode) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode account_sendVerifyPhoneCode#0xa5a356f9: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_sendVerifyPhoneCode#0xa5a356f9: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_sendVerifyPhoneCode#0xa5a356f9: field settings: %w", err)
 		}
 
 		return nil
@@ -7419,7 +7419,7 @@ func (m *TLAccountVerifyPhone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_verifyPhone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_verifyPhone: unsupported layer %d", layer)
 	}
 }
 
@@ -7514,7 +7514,7 @@ func (m *TLAccountSendVerifyEmailCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_sendVerifyEmailCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_sendVerifyEmailCode: unsupported layer %d", layer)
 	}
 }
 
@@ -7528,7 +7528,7 @@ func (m *TLAccountSendVerifyEmailCode) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode account_sendVerifyEmailCode#0x98e037bb: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_sendVerifyEmailCode#0x98e037bb: field purpose: %w", err)
+			return fmt.Errorf("unable to encode account_sendVerifyEmailCode#0x98e037bb: field purpose: %w", err)
 		}
 		x.PutString(m.Email)
 
@@ -7614,7 +7614,7 @@ func (m *TLAccountVerifyEmail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_verifyEmail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_verifyEmail: unsupported layer %d", layer)
 	}
 }
 
@@ -7628,13 +7628,13 @@ func (m *TLAccountVerifyEmail) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_verifyEmail#0x32da4cf: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_verifyEmail#0x32da4cf: field purpose: %w", err)
+			return fmt.Errorf("unable to encode account_verifyEmail#0x32da4cf: field purpose: %w", err)
 		}
 		if m.Verification == nil {
 			return fmt.Errorf("unable to encode account_verifyEmail#0x32da4cf: field verification is nil")
 		}
 		if err := m.Verification.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_verifyEmail#0x32da4cf: field verification: %w", err)
+			return fmt.Errorf("unable to encode account_verifyEmail#0x32da4cf: field verification: %w", err)
 		}
 
 		return nil
@@ -7722,7 +7722,7 @@ func (m *TLAccountInitTakeoutSession) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_initTakeoutSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_initTakeoutSession: unsupported layer %d", layer)
 	}
 }
 
@@ -7858,7 +7858,7 @@ func (m *TLAccountFinishTakeoutSession) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_finishTakeoutSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_finishTakeoutSession: unsupported layer %d", layer)
 	}
 }
 
@@ -7954,7 +7954,7 @@ func (m *TLAccountConfirmPasswordEmail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_confirmPasswordEmail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_confirmPasswordEmail: unsupported layer %d", layer)
 	}
 }
 
@@ -8028,7 +8028,7 @@ func (m *TLAccountResendPasswordEmail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resendPasswordEmail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resendPasswordEmail: unsupported layer %d", layer)
 	}
 }
 
@@ -8096,7 +8096,7 @@ func (m *TLAccountCancelPasswordEmail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_cancelPasswordEmail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_cancelPasswordEmail: unsupported layer %d", layer)
 	}
 }
 
@@ -8164,7 +8164,7 @@ func (m *TLAccountGetContactSignUpNotification) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getContactSignUpNotification: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getContactSignUpNotification: unsupported layer %d", layer)
 	}
 }
 
@@ -8237,7 +8237,7 @@ func (m *TLAccountSetContactSignUpNotification) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setContactSignUpNotification: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setContactSignUpNotification: unsupported layer %d", layer)
 	}
 }
 
@@ -8251,7 +8251,7 @@ func (m *TLAccountSetContactSignUpNotification) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode account_setContactSignUpNotification#0xcff43f61: field silent is nil")
 		}
 		if err := m.Silent.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setContactSignUpNotification#0xcff43f61: field silent: %w", err)
+			return fmt.Errorf("unable to encode account_setContactSignUpNotification#0xcff43f61: field silent: %w", err)
 		}
 
 		return nil
@@ -8327,7 +8327,7 @@ func (m *TLAccountGetNotifyExceptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getNotifyExceptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getNotifyExceptions: unsupported layer %d", layer)
 	}
 }
 
@@ -8359,7 +8359,7 @@ func (m *TLAccountGetNotifyExceptions) Encode(x *bin.Encoder, layer int32) error
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_getNotifyExceptions#0x53577479: field peer: %w", err)
+				return fmt.Errorf("unable to encode account_getNotifyExceptions#0x53577479: field peer: %w", err)
 			}
 		}
 
@@ -8446,7 +8446,7 @@ func (m *TLAccountGetWallPaper) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getWallPaper: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getWallPaper: unsupported layer %d", layer)
 	}
 }
 
@@ -8460,7 +8460,7 @@ func (m *TLAccountGetWallPaper) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_getWallPaper#0xfc8ddbea: field wallpaper is nil")
 		}
 		if err := m.Wallpaper.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getWallPaper#0xfc8ddbea: field wallpaper: %w", err)
+			return fmt.Errorf("unable to encode account_getWallPaper#0xfc8ddbea: field wallpaper: %w", err)
 		}
 
 		return nil
@@ -8548,7 +8548,7 @@ func (m *TLAccountUploadWallPaper) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_uploadWallPaper: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_uploadWallPaper: unsupported layer %d", layer)
 	}
 }
 
@@ -8576,14 +8576,14 @@ func (m *TLAccountUploadWallPaper) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_uploadWallPaper#0xe39a8f03: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_uploadWallPaper#0xe39a8f03: field file: %w", err)
+			return fmt.Errorf("unable to encode account_uploadWallPaper#0xe39a8f03: field file: %w", err)
 		}
 		x.PutString(m.MimeType)
 		if m.Settings == nil {
 			return fmt.Errorf("unable to encode account_uploadWallPaper#0xe39a8f03: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_uploadWallPaper#0xe39a8f03: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_uploadWallPaper#0xe39a8f03: field settings: %w", err)
 		}
 
 		return nil
@@ -8690,7 +8690,7 @@ func (m *TLAccountSaveWallPaper) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveWallPaper: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveWallPaper: unsupported layer %d", layer)
 	}
 }
 
@@ -8704,19 +8704,19 @@ func (m *TLAccountSaveWallPaper) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field wallpaper is nil")
 		}
 		if err := m.Wallpaper.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveWallPaper#0x6c5a5b37: field wallpaper: %w", err)
+			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field wallpaper: %w", err)
 		}
 		if m.Unsave == nil {
 			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field unsave is nil")
 		}
 		if err := m.Unsave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveWallPaper#0x6c5a5b37: field unsave: %w", err)
+			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field unsave: %w", err)
 		}
 		if m.Settings == nil {
 			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveWallPaper#0x6c5a5b37: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_saveWallPaper#0x6c5a5b37: field settings: %w", err)
 		}
 
 		return nil
@@ -8812,7 +8812,7 @@ func (m *TLAccountInstallWallPaper) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_installWallPaper: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_installWallPaper: unsupported layer %d", layer)
 	}
 }
 
@@ -8826,13 +8826,13 @@ func (m *TLAccountInstallWallPaper) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_installWallPaper#0xfeed5769: field wallpaper is nil")
 		}
 		if err := m.Wallpaper.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_installWallPaper#0xfeed5769: field wallpaper: %w", err)
+			return fmt.Errorf("unable to encode account_installWallPaper#0xfeed5769: field wallpaper: %w", err)
 		}
 		if m.Settings == nil {
 			return fmt.Errorf("unable to encode account_installWallPaper#0xfeed5769: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_installWallPaper#0xfeed5769: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_installWallPaper#0xfeed5769: field settings: %w", err)
 		}
 
 		return nil
@@ -8909,7 +8909,7 @@ func (m *TLAccountResetWallPapers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetWallPapers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetWallPapers: unsupported layer %d", layer)
 	}
 }
 
@@ -8977,7 +8977,7 @@ func (m *TLAccountGetAutoDownloadSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAutoDownloadSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAutoDownloadSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -9053,7 +9053,7 @@ func (m *TLAccountSaveAutoDownloadSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveAutoDownloadSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveAutoDownloadSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -9084,7 +9084,7 @@ func (m *TLAccountSaveAutoDownloadSettings) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode account_saveAutoDownloadSettings#0x76f36233: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveAutoDownloadSettings#0x76f36233: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_saveAutoDownloadSettings#0x76f36233: field settings: %w", err)
 		}
 
 		return nil
@@ -9187,7 +9187,7 @@ func (m *TLAccountUploadTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_uploadTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_uploadTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -9215,11 +9215,11 @@ func (m *TLAccountUploadTheme) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_uploadTheme#0x1c3db333: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_uploadTheme#0x1c3db333: field file: %w", err)
+			return fmt.Errorf("unable to encode account_uploadTheme#0x1c3db333: field file: %w", err)
 		}
 		if m.Thumb != nil {
 			if err := m.Thumb.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_uploadTheme#0x1c3db333: field thumb: %w", err)
+				return fmt.Errorf("unable to encode account_uploadTheme#0x1c3db333: field thumb: %w", err)
 			}
 		}
 
@@ -9336,7 +9336,7 @@ func (m *TLAccountCreateTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_createTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_createTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -9367,13 +9367,13 @@ func (m *TLAccountCreateTheme) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.Title)
 		if m.Document != nil {
 			if err := m.Document.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field document: %w", err)
+				return fmt.Errorf("unable to encode account_createTheme#0x652e4400: field document: %w", err)
 			}
 		}
 
 		if m.Settings != nil {
 			if err := iface.EncodeObjectList(x, m.Settings, layer); err != nil {
-				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", err)
+				return fmt.Errorf("unable to encode account_createTheme#0x652e4400: field settings: %w", err)
 			}
 		}
 
@@ -9512,7 +9512,7 @@ func (m *TLAccountUpdateTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -9550,7 +9550,7 @@ func (m *TLAccountUpdateTheme) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_updateTheme#0x2bf40ccc: field theme is nil")
 		}
 		if err := m.Theme.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field theme: %w", err)
+			return fmt.Errorf("unable to encode account_updateTheme#0x2bf40ccc: field theme: %w", err)
 		}
 		if m.Slug != nil {
 			x.PutString(*m.Slug)
@@ -9562,13 +9562,13 @@ func (m *TLAccountUpdateTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Document != nil {
 			if err := m.Document.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field document: %w", err)
+				return fmt.Errorf("unable to encode account_updateTheme#0x2bf40ccc: field document: %w", err)
 			}
 		}
 
 		if m.Settings != nil {
 			if err := iface.EncodeObjectList(x, m.Settings, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", err)
+				return fmt.Errorf("unable to encode account_updateTheme#0x2bf40ccc: field settings: %w", err)
 			}
 		}
 
@@ -9708,7 +9708,7 @@ func (m *TLAccountSaveTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -9722,13 +9722,13 @@ func (m *TLAccountSaveTheme) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_saveTheme#0xf257106c: field theme is nil")
 		}
 		if err := m.Theme.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveTheme#0xf257106c: field theme: %w", err)
+			return fmt.Errorf("unable to encode account_saveTheme#0xf257106c: field theme: %w", err)
 		}
 		if m.Unsave == nil {
 			return fmt.Errorf("unable to encode account_saveTheme#0xf257106c: field unsave is nil")
 		}
 		if err := m.Unsave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveTheme#0xf257106c: field unsave: %w", err)
+			return fmt.Errorf("unable to encode account_saveTheme#0xf257106c: field unsave: %w", err)
 		}
 
 		return nil
@@ -9836,7 +9836,7 @@ func (m *TLAccountInstallTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_installTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_installTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -9871,7 +9871,7 @@ func (m *TLAccountInstallTheme) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Theme != nil {
 			if err := m.Theme.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_installTheme#0xc727bb3b: field theme: %w", err)
+				return fmt.Errorf("unable to encode account_installTheme#0xc727bb3b: field theme: %w", err)
 			}
 		}
 
@@ -9881,7 +9881,7 @@ func (m *TLAccountInstallTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.BaseTheme != nil {
 			if err := m.BaseTheme.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_installTheme#0xc727bb3b: field base_theme: %w", err)
+				return fmt.Errorf("unable to encode account_installTheme#0xc727bb3b: field base_theme: %w", err)
 			}
 		}
 
@@ -9915,7 +9915,7 @@ func (m *TLAccountInstallTheme) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Theme != nil {
 			if err := m.Theme.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_installTheme#0xc727bb3b: field theme: %w", err)
+				return fmt.Errorf("unable to encode account_installTheme#0xc727bb3b: field theme: %w", err)
 			}
 		}
 
@@ -10050,7 +10050,7 @@ func (m *TLAccountGetTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -10065,7 +10065,7 @@ func (m *TLAccountGetTheme) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_getTheme#0x3a5869ec: field theme is nil")
 		}
 		if err := m.Theme.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getTheme#0x3a5869ec: field theme: %w", err)
+			return fmt.Errorf("unable to encode account_getTheme#0x3a5869ec: field theme: %w", err)
 		}
 
 		return nil
@@ -10145,7 +10145,7 @@ func (m *TLAccountGetThemes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getThemes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getThemes: unsupported layer %d", layer)
 	}
 }
 
@@ -10226,7 +10226,7 @@ func (m *TLAccountSetContentSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setContentSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setContentSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -10317,7 +10317,7 @@ func (m *TLAccountGetContentSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getContentSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getContentSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -10390,7 +10390,7 @@ func (m *TLAccountGetMultiWallPapers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getMultiWallPapers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getMultiWallPapers: unsupported layer %d", layer)
 	}
 }
 
@@ -10401,7 +10401,7 @@ func (m *TLAccountGetMultiWallPapers) Encode(x *bin.Encoder, layer int32) error 
 		x.PutClazzID(0x65ad71dc)
 
 		if err := iface.EncodeObjectList(x, m.Wallpapers, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err)
+			return fmt.Errorf("unable to encode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err)
 		}
 
 		return nil
@@ -10484,7 +10484,7 @@ func (m *TLAccountGetGlobalPrivacySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getGlobalPrivacySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getGlobalPrivacySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -10557,7 +10557,7 @@ func (m *TLAccountSetGlobalPrivacySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setGlobalPrivacySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setGlobalPrivacySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -10571,7 +10571,7 @@ func (m *TLAccountSetGlobalPrivacySettings) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode account_setGlobalPrivacySettings#0x1edaaac2: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setGlobalPrivacySettings#0x1edaaac2: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_setGlobalPrivacySettings#0x1edaaac2: field settings: %w", err)
 		}
 
 		return nil
@@ -10663,7 +10663,7 @@ func (m *TLAccountReportProfilePhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_reportProfilePhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_reportProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -10677,19 +10677,19 @@ func (m *TLAccountReportProfilePhoto) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_reportProfilePhoto#0xfa8cc6f5: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field peer: %w", err)
 		}
 		if m.PhotoId == nil {
 			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field photo_id is nil")
 		}
 		if err := m.PhotoId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_reportProfilePhoto#0xfa8cc6f5: field photo_id: %w", err)
+			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field photo_id: %w", err)
 		}
 		if m.Reason == nil {
 			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field reason is nil")
 		}
 		if err := m.Reason.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_reportProfilePhoto#0xfa8cc6f5: field reason: %w", err)
+			return fmt.Errorf("unable to encode account_reportProfilePhoto#0xfa8cc6f5: field reason: %w", err)
 		}
 		x.PutString(m.Message)
 
@@ -10780,7 +10780,7 @@ func (m *TLAccountResetPassword) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resetPassword: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resetPassword: unsupported layer %d", layer)
 	}
 }
 
@@ -10848,7 +10848,7 @@ func (m *TLAccountDeclinePasswordReset) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_declinePasswordReset: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_declinePasswordReset: unsupported layer %d", layer)
 	}
 }
 
@@ -10918,7 +10918,7 @@ func (m *TLAccountGetChatThemes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getChatThemes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getChatThemes: unsupported layer %d", layer)
 	}
 }
 
@@ -10994,7 +10994,7 @@ func (m *TLAccountSetAuthorizationTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setAuthorizationTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setAuthorizationTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -11081,7 +11081,7 @@ func (m *TLAccountChangeAuthorizationSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_changeAuthorizationSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_changeAuthorizationSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -11115,13 +11115,13 @@ func (m *TLAccountChangeAuthorizationSettings) Encode(x *bin.Encoder, layer int3
 		x.PutInt64(m.Hash)
 		if m.EncryptedRequestsDisabled != nil {
 			if err := m.EncryptedRequestsDisabled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_changeAuthorizationSettings#0x40f48462: field encrypted_requests_disabled: %w", err)
+				return fmt.Errorf("unable to encode account_changeAuthorizationSettings#0x40f48462: field encrypted_requests_disabled: %w", err)
 			}
 		}
 
 		if m.CallRequestsDisabled != nil {
 			if err := m.CallRequestsDisabled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_changeAuthorizationSettings#0x40f48462: field call_requests_disabled: %w", err)
+				return fmt.Errorf("unable to encode account_changeAuthorizationSettings#0x40f48462: field call_requests_disabled: %w", err)
 			}
 		}
 
@@ -11215,7 +11215,7 @@ func (m *TLAccountGetSavedRingtones) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getSavedRingtones: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getSavedRingtones: unsupported layer %d", layer)
 	}
 }
 
@@ -11300,7 +11300,7 @@ func (m *TLAccountSaveRingtone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveRingtone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveRingtone: unsupported layer %d", layer)
 	}
 }
 
@@ -11314,13 +11314,13 @@ func (m *TLAccountSaveRingtone) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_saveRingtone#0x3dea5b03: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveRingtone#0x3dea5b03: field id: %w", err)
+			return fmt.Errorf("unable to encode account_saveRingtone#0x3dea5b03: field id: %w", err)
 		}
 		if m.Unsave == nil {
 			return fmt.Errorf("unable to encode account_saveRingtone#0x3dea5b03: field unsave is nil")
 		}
 		if err := m.Unsave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveRingtone#0x3dea5b03: field unsave: %w", err)
+			return fmt.Errorf("unable to encode account_saveRingtone#0x3dea5b03: field unsave: %w", err)
 		}
 
 		return nil
@@ -11414,7 +11414,7 @@ func (m *TLAccountUploadRingtone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_uploadRingtone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_uploadRingtone: unsupported layer %d", layer)
 	}
 }
 
@@ -11428,7 +11428,7 @@ func (m *TLAccountUploadRingtone) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_uploadRingtone#0x831a83a2: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_uploadRingtone#0x831a83a2: field file: %w", err)
+			return fmt.Errorf("unable to encode account_uploadRingtone#0x831a83a2: field file: %w", err)
 		}
 		x.PutString(m.FileName)
 		x.PutString(m.MimeType)
@@ -11513,7 +11513,7 @@ func (m *TLAccountUpdateEmojiStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateEmojiStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateEmojiStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -11527,7 +11527,7 @@ func (m *TLAccountUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_updateEmojiStatus#0xfbd3de6b: field emoji_status is nil")
 		}
 		if err := m.EmojiStatus.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateEmojiStatus#0xfbd3de6b: field emoji_status: %w", err)
+			return fmt.Errorf("unable to encode account_updateEmojiStatus#0xfbd3de6b: field emoji_status: %w", err)
 		}
 
 		return nil
@@ -11598,7 +11598,7 @@ func (m *TLAccountGetDefaultEmojiStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getDefaultEmojiStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getDefaultEmojiStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -11674,7 +11674,7 @@ func (m *TLAccountGetRecentEmojiStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getRecentEmojiStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getRecentEmojiStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -11748,7 +11748,7 @@ func (m *TLAccountClearRecentEmojiStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_clearRecentEmojiStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_clearRecentEmojiStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -11821,7 +11821,7 @@ func (m *TLAccountReorderUsernames) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_reorderUsernames: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_reorderUsernames: unsupported layer %d", layer)
 	}
 }
 
@@ -11904,7 +11904,7 @@ func (m *TLAccountToggleUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_toggleUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_toggleUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -11919,7 +11919,7 @@ func (m *TLAccountToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_toggleUsername#0x58d6b376: field active is nil")
 		}
 		if err := m.Active.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_toggleUsername#0x58d6b376: field active: %w", err)
+			return fmt.Errorf("unable to encode account_toggleUsername#0x58d6b376: field active: %w", err)
 		}
 
 		return nil
@@ -11994,7 +11994,7 @@ func (m *TLAccountGetDefaultProfilePhotoEmojis) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getDefaultProfilePhotoEmojis: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getDefaultProfilePhotoEmojis: unsupported layer %d", layer)
 	}
 }
 
@@ -12070,7 +12070,7 @@ func (m *TLAccountGetDefaultGroupPhotoEmojis) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getDefaultGroupPhotoEmojis: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getDefaultGroupPhotoEmojis: unsupported layer %d", layer)
 	}
 }
 
@@ -12144,7 +12144,7 @@ func (m *TLAccountGetAutoSaveSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getAutoSaveSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getAutoSaveSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -12227,7 +12227,7 @@ func (m *TLAccountSaveAutoSaveSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveAutoSaveSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveAutoSaveSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -12262,7 +12262,7 @@ func (m *TLAccountSaveAutoSaveSettings) Encode(x *bin.Encoder, layer int32) erro
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_saveAutoSaveSettings#0xd69b8361: field peer: %w", err)
+				return fmt.Errorf("unable to encode account_saveAutoSaveSettings#0xd69b8361: field peer: %w", err)
 			}
 		}
 
@@ -12270,7 +12270,7 @@ func (m *TLAccountSaveAutoSaveSettings) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode account_saveAutoSaveSettings#0xd69b8361: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveAutoSaveSettings#0xd69b8361: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_saveAutoSaveSettings#0xd69b8361: field settings: %w", err)
 		}
 
 		return nil
@@ -12362,7 +12362,7 @@ func (m *TLAccountDeleteAutoSaveExceptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_deleteAutoSaveExceptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_deleteAutoSaveExceptions: unsupported layer %d", layer)
 	}
 }
 
@@ -12435,7 +12435,7 @@ func (m *TLAccountInvalidateSignInCodes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_invalidateSignInCodes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_invalidateSignInCodes: unsupported layer %d", layer)
 	}
 }
 
@@ -12513,7 +12513,7 @@ func (m *TLAccountUpdateColor) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateColor: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateColor: unsupported layer %d", layer)
 	}
 }
 
@@ -12542,7 +12542,7 @@ func (m *TLAccountUpdateColor) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Color != nil {
 			if err := m.Color.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateColor#0x684d214e: field color: %w", err)
+				return fmt.Errorf("unable to encode account_updateColor#0x684d214e: field color: %w", err)
 			}
 		}
 
@@ -12623,7 +12623,7 @@ func (m *TLAccountGetDefaultBackgroundEmojis) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getDefaultBackgroundEmojis: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getDefaultBackgroundEmojis: unsupported layer %d", layer)
 	}
 }
 
@@ -12699,7 +12699,7 @@ func (m *TLAccountGetChannelDefaultEmojiStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getChannelDefaultEmojiStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getChannelDefaultEmojiStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -12775,7 +12775,7 @@ func (m *TLAccountGetChannelRestrictedStatusEmojis) Validate(layer int32) error 
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getChannelRestrictedStatusEmojis: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getChannelRestrictedStatusEmojis: unsupported layer %d", layer)
 	}
 }
 
@@ -12854,7 +12854,7 @@ func (m *TLAccountUpdateBusinessWorkHours) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBusinessWorkHours: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBusinessWorkHours: unsupported layer %d", layer)
 	}
 }
 
@@ -12880,7 +12880,7 @@ func (m *TLAccountUpdateBusinessWorkHours) Encode(x *bin.Encoder, layer int32) e
 		x.PutUint32(flags)
 		if m.BusinessWorkHours != nil {
 			if err := m.BusinessWorkHours.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBusinessWorkHours#0x4b00e066: field business_work_hours: %w", err)
+				return fmt.Errorf("unable to encode account_updateBusinessWorkHours#0x4b00e066: field business_work_hours: %w", err)
 			}
 		}
 
@@ -12966,7 +12966,7 @@ func (m *TLAccountUpdateBusinessLocation) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBusinessLocation: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBusinessLocation: unsupported layer %d", layer)
 	}
 }
 
@@ -12995,7 +12995,7 @@ func (m *TLAccountUpdateBusinessLocation) Encode(x *bin.Encoder, layer int32) er
 		x.PutUint32(flags)
 		if m.GeoPoint != nil {
 			if err := m.GeoPoint.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBusinessLocation#0x9e6b131a: field geo_point: %w", err)
+				return fmt.Errorf("unable to encode account_updateBusinessLocation#0x9e6b131a: field geo_point: %w", err)
 			}
 		}
 
@@ -13087,7 +13087,7 @@ func (m *TLAccountUpdateBusinessGreetingMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBusinessGreetingMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBusinessGreetingMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -13113,7 +13113,7 @@ func (m *TLAccountUpdateBusinessGreetingMessage) Encode(x *bin.Encoder, layer in
 		x.PutUint32(flags)
 		if m.Message != nil {
 			if err := m.Message.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBusinessGreetingMessage#0x66cdafc4: field message: %w", err)
+				return fmt.Errorf("unable to encode account_updateBusinessGreetingMessage#0x66cdafc4: field message: %w", err)
 			}
 		}
 
@@ -13194,7 +13194,7 @@ func (m *TLAccountUpdateBusinessAwayMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBusinessAwayMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBusinessAwayMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -13220,7 +13220,7 @@ func (m *TLAccountUpdateBusinessAwayMessage) Encode(x *bin.Encoder, layer int32)
 		x.PutUint32(flags)
 		if m.Message != nil {
 			if err := m.Message.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBusinessAwayMessage#0xa26a7fa5: field message: %w", err)
+				return fmt.Errorf("unable to encode account_updateBusinessAwayMessage#0xa26a7fa5: field message: %w", err)
 			}
 		}
 
@@ -13315,7 +13315,7 @@ func (m *TLAccountUpdateConnectedBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateConnectedBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateConnectedBot: unsupported layer %d", layer)
 	}
 }
 
@@ -13344,7 +13344,7 @@ func (m *TLAccountUpdateConnectedBot) Encode(x *bin.Encoder, layer int32) error 
 		x.PutUint32(flags)
 		if m.Rights != nil {
 			if err := m.Rights.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateConnectedBot#0x66a08c7e: field rights: %w", err)
+				return fmt.Errorf("unable to encode account_updateConnectedBot#0x66a08c7e: field rights: %w", err)
 			}
 		}
 
@@ -13352,13 +13352,13 @@ func (m *TLAccountUpdateConnectedBot) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode account_updateConnectedBot#0x66a08c7e: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateConnectedBot#0x66a08c7e: field bot: %w", err)
+			return fmt.Errorf("unable to encode account_updateConnectedBot#0x66a08c7e: field bot: %w", err)
 		}
 		if m.Recipients == nil {
 			return fmt.Errorf("unable to encode account_updateConnectedBot#0x66a08c7e: field recipients is nil")
 		}
 		if err := m.Recipients.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updateConnectedBot#0x66a08c7e: field recipients: %w", err)
+			return fmt.Errorf("unable to encode account_updateConnectedBot#0x66a08c7e: field recipients: %w", err)
 		}
 
 		return nil
@@ -13452,7 +13452,7 @@ func (m *TLAccountGetConnectedBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getConnectedBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getConnectedBots: unsupported layer %d", layer)
 	}
 }
 
@@ -13525,7 +13525,7 @@ func (m *TLAccountGetBotBusinessConnection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getBotBusinessConnection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getBotBusinessConnection: unsupported layer %d", layer)
 	}
 }
 
@@ -13604,7 +13604,7 @@ func (m *TLAccountUpdateBusinessIntro) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBusinessIntro: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBusinessIntro: unsupported layer %d", layer)
 	}
 }
 
@@ -13630,7 +13630,7 @@ func (m *TLAccountUpdateBusinessIntro) Encode(x *bin.Encoder, layer int32) error
 		x.PutUint32(flags)
 		if m.Intro != nil {
 			if err := m.Intro.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBusinessIntro#0xa614d034: field intro: %w", err)
+				return fmt.Errorf("unable to encode account_updateBusinessIntro#0xa614d034: field intro: %w", err)
 			}
 		}
 
@@ -13717,7 +13717,7 @@ func (m *TLAccountToggleConnectedBotPaused) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_toggleConnectedBotPaused: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_toggleConnectedBotPaused: unsupported layer %d", layer)
 	}
 }
 
@@ -13731,13 +13731,13 @@ func (m *TLAccountToggleConnectedBotPaused) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode account_toggleConnectedBotPaused#0x646e1097: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_toggleConnectedBotPaused#0x646e1097: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_toggleConnectedBotPaused#0x646e1097: field peer: %w", err)
 		}
 		if m.Paused == nil {
 			return fmt.Errorf("unable to encode account_toggleConnectedBotPaused#0x646e1097: field paused is nil")
 		}
 		if err := m.Paused.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_toggleConnectedBotPaused#0x646e1097: field paused: %w", err)
+			return fmt.Errorf("unable to encode account_toggleConnectedBotPaused#0x646e1097: field paused: %w", err)
 		}
 
 		return nil
@@ -13819,7 +13819,7 @@ func (m *TLAccountDisablePeerConnectedBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_disablePeerConnectedBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_disablePeerConnectedBot: unsupported layer %d", layer)
 	}
 }
 
@@ -13833,7 +13833,7 @@ func (m *TLAccountDisablePeerConnectedBot) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode account_disablePeerConnectedBot#0x5e437ed9: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_disablePeerConnectedBot#0x5e437ed9: field peer: %w", err)
+			return fmt.Errorf("unable to encode account_disablePeerConnectedBot#0x5e437ed9: field peer: %w", err)
 		}
 
 		return nil
@@ -13907,7 +13907,7 @@ func (m *TLAccountUpdateBirthday) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateBirthday: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateBirthday: unsupported layer %d", layer)
 	}
 }
 
@@ -13933,7 +13933,7 @@ func (m *TLAccountUpdateBirthday) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Birthday != nil {
 			if err := m.Birthday.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_updateBirthday#0xcc6e0c11: field birthday: %w", err)
+				return fmt.Errorf("unable to encode account_updateBirthday#0xcc6e0c11: field birthday: %w", err)
 			}
 		}
 
@@ -14014,7 +14014,7 @@ func (m *TLAccountCreateBusinessChatLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_createBusinessChatLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_createBusinessChatLink: unsupported layer %d", layer)
 	}
 }
 
@@ -14028,7 +14028,7 @@ func (m *TLAccountCreateBusinessChatLink) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode account_createBusinessChatLink#0x8851e68e: field link is nil")
 		}
 		if err := m.Link.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_createBusinessChatLink#0x8851e68e: field link: %w", err)
+			return fmt.Errorf("unable to encode account_createBusinessChatLink#0x8851e68e: field link: %w", err)
 		}
 
 		return nil
@@ -14108,7 +14108,7 @@ func (m *TLAccountEditBusinessChatLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_editBusinessChatLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_editBusinessChatLink: unsupported layer %d", layer)
 	}
 }
 
@@ -14123,7 +14123,7 @@ func (m *TLAccountEditBusinessChatLink) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode account_editBusinessChatLink#0x8c3410af: field link is nil")
 		}
 		if err := m.Link.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_editBusinessChatLink#0x8c3410af: field link: %w", err)
+			return fmt.Errorf("unable to encode account_editBusinessChatLink#0x8c3410af: field link: %w", err)
 		}
 
 		return nil
@@ -14201,7 +14201,7 @@ func (m *TLAccountDeleteBusinessChatLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_deleteBusinessChatLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_deleteBusinessChatLink: unsupported layer %d", layer)
 	}
 }
 
@@ -14275,7 +14275,7 @@ func (m *TLAccountGetBusinessChatLinks) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getBusinessChatLinks: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getBusinessChatLinks: unsupported layer %d", layer)
 	}
 }
 
@@ -14348,7 +14348,7 @@ func (m *TLAccountResolveBusinessChatLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_resolveBusinessChatLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_resolveBusinessChatLink: unsupported layer %d", layer)
 	}
 }
 
@@ -14427,7 +14427,7 @@ func (m *TLAccountUpdatePersonalChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updatePersonalChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updatePersonalChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -14441,7 +14441,7 @@ func (m *TLAccountUpdatePersonalChannel) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode account_updatePersonalChannel#0xd94305e0: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_updatePersonalChannel#0xd94305e0: field channel: %w", err)
+			return fmt.Errorf("unable to encode account_updatePersonalChannel#0xd94305e0: field channel: %w", err)
 		}
 
 		return nil
@@ -14515,7 +14515,7 @@ func (m *TLAccountToggleSponsoredMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_toggleSponsoredMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_toggleSponsoredMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -14529,7 +14529,7 @@ func (m *TLAccountToggleSponsoredMessages) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode account_toggleSponsoredMessages#0xb9d9a38d: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_toggleSponsoredMessages#0xb9d9a38d: field enabled: %w", err)
+			return fmt.Errorf("unable to encode account_toggleSponsoredMessages#0xb9d9a38d: field enabled: %w", err)
 		}
 
 		return nil
@@ -14598,7 +14598,7 @@ func (m *TLAccountGetReactionsNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getReactionsNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getReactionsNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -14671,7 +14671,7 @@ func (m *TLAccountSetReactionsNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setReactionsNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setReactionsNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -14685,7 +14685,7 @@ func (m *TLAccountSetReactionsNotifySettings) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode account_setReactionsNotifySettings#0x316ce548: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setReactionsNotifySettings#0x316ce548: field settings: %w", err)
+			return fmt.Errorf("unable to encode account_setReactionsNotifySettings#0x316ce548: field settings: %w", err)
 		}
 
 		return nil
@@ -14756,7 +14756,7 @@ func (m *TLAccountGetCollectibleEmojiStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getCollectibleEmojiStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getCollectibleEmojiStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -14842,7 +14842,7 @@ func (m *TLAccountGetPaidMessagesRevenue) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getPaidMessagesRevenue: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getPaidMessagesRevenue: unsupported layer %d", layer)
 	}
 }
 
@@ -14868,7 +14868,7 @@ func (m *TLAccountGetPaidMessagesRevenue) Encode(x *bin.Encoder, layer int32) er
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_getPaidMessagesRevenue#0x19ba4a67: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode account_getPaidMessagesRevenue#0x19ba4a67: field parent_peer: %w", err)
 			}
 		}
 
@@ -14876,7 +14876,7 @@ func (m *TLAccountGetPaidMessagesRevenue) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode account_getPaidMessagesRevenue#0x19ba4a67: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_getPaidMessagesRevenue#0x19ba4a67: field user_id: %w", err)
+			return fmt.Errorf("unable to encode account_getPaidMessagesRevenue#0x19ba4a67: field user_id: %w", err)
 		}
 
 		return nil
@@ -14973,7 +14973,7 @@ func (m *TLAccountToggleNoPaidMessagesException) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_toggleNoPaidMessagesException: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_toggleNoPaidMessagesException: unsupported layer %d", layer)
 	}
 }
 
@@ -15005,7 +15005,7 @@ func (m *TLAccountToggleNoPaidMessagesException) Encode(x *bin.Encoder, layer in
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_toggleNoPaidMessagesException#0xfe2eda76: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode account_toggleNoPaidMessagesException#0xfe2eda76: field parent_peer: %w", err)
 			}
 		}
 
@@ -15013,7 +15013,7 @@ func (m *TLAccountToggleNoPaidMessagesException) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode account_toggleNoPaidMessagesException#0xfe2eda76: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_toggleNoPaidMessagesException#0xfe2eda76: field user_id: %w", err)
+			return fmt.Errorf("unable to encode account_toggleNoPaidMessagesException#0xfe2eda76: field user_id: %w", err)
 		}
 
 		return nil
@@ -15107,7 +15107,7 @@ func (m *TLAccountSetMainProfileTab) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_setMainProfileTab: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_setMainProfileTab: unsupported layer %d", layer)
 	}
 }
 
@@ -15121,7 +15121,7 @@ func (m *TLAccountSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_setMainProfileTab#0x5dee78b0: field tab is nil")
 		}
 		if err := m.Tab.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_setMainProfileTab#0x5dee78b0: field tab: %w", err)
+			return fmt.Errorf("unable to encode account_setMainProfileTab#0x5dee78b0: field tab: %w", err)
 		}
 
 		return nil
@@ -15201,7 +15201,7 @@ func (m *TLAccountSaveMusic) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_saveMusic: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_saveMusic: unsupported layer %d", layer)
 	}
 }
 
@@ -15233,11 +15233,11 @@ func (m *TLAccountSaveMusic) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_saveMusic#0xb26732a9: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_saveMusic#0xb26732a9: field id: %w", err)
+			return fmt.Errorf("unable to encode account_saveMusic#0xb26732a9: field id: %w", err)
 		}
 		if m.AfterId != nil {
 			if err := m.AfterId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode account_saveMusic#0xb26732a9: field after_id: %w", err)
+				return fmt.Errorf("unable to encode account_saveMusic#0xb26732a9: field after_id: %w", err)
 			}
 		}
 
@@ -15327,7 +15327,7 @@ func (m *TLAccountGetSavedMusicIds) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getSavedMusicIds: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getSavedMusicIds: unsupported layer %d", layer)
 	}
 }
 
@@ -15410,7 +15410,7 @@ func (m *TLAccountGetUniqueGiftChatThemes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getUniqueGiftChatThemes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getUniqueGiftChatThemes: unsupported layer %d", layer)
 	}
 }
 
@@ -15494,7 +15494,7 @@ func (m *TLAccountInitPasskeyRegistration) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_initPasskeyRegistration: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_initPasskeyRegistration: unsupported layer %d", layer)
 	}
 }
 
@@ -15567,7 +15567,7 @@ func (m *TLAccountRegisterPasskey) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_registerPasskey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_registerPasskey: unsupported layer %d", layer)
 	}
 }
 
@@ -15581,7 +15581,7 @@ func (m *TLAccountRegisterPasskey) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode account_registerPasskey#0x55b41fd6: field credential is nil")
 		}
 		if err := m.Credential.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode account_registerPasskey#0x55b41fd6: field credential: %w", err)
+			return fmt.Errorf("unable to encode account_registerPasskey#0x55b41fd6: field credential: %w", err)
 		}
 
 		return nil
@@ -15650,7 +15650,7 @@ func (m *TLAccountGetPasskeys) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_getPasskeys: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_getPasskeys: unsupported layer %d", layer)
 	}
 }
 
@@ -15723,7 +15723,7 @@ func (m *TLAccountDeletePasskey) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_deletePasskey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_deletePasskey: unsupported layer %d", layer)
 	}
 }
 
@@ -15802,7 +15802,7 @@ func (m *TLUsersGetUsers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getUsers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getUsers: unsupported layer %d", layer)
 	}
 }
 
@@ -15813,7 +15813,7 @@ func (m *TLUsersGetUsers) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xd91a548)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", err)
+			return fmt.Errorf("unable to encode users_getUsers#0xd91a548: field id: %w", err)
 		}
 
 		return nil
@@ -15901,7 +15901,7 @@ func (m *TLUsersGetFullUser) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getFullUser: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getFullUser: unsupported layer %d", layer)
 	}
 }
 
@@ -15915,7 +15915,7 @@ func (m *TLUsersGetFullUser) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode users_getFullUser#0xb60f5918: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getFullUser#0xb60f5918: field id: %w", err)
+			return fmt.Errorf("unable to encode users_getFullUser#0xb60f5918: field id: %w", err)
 		}
 
 		return nil
@@ -15995,7 +15995,7 @@ func (m *TLUsersSetSecureValueErrors) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_setSecureValueErrors: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_setSecureValueErrors: unsupported layer %d", layer)
 	}
 }
 
@@ -16009,11 +16009,11 @@ func (m *TLUsersSetSecureValueErrors) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode users_setSecureValueErrors#0x90c894b5: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field id: %w", err)
+			return fmt.Errorf("unable to encode users_setSecureValueErrors#0x90c894b5: field id: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Errors, layer); err != nil {
-			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", err)
+			return fmt.Errorf("unable to encode users_setSecureValueErrors#0x90c894b5: field errors: %w", err)
 		}
 
 		return nil
@@ -16110,7 +16110,7 @@ func (m *TLUsersGetRequirementsToContact) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getRequirementsToContact: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getRequirementsToContact: unsupported layer %d", layer)
 	}
 }
 
@@ -16121,7 +16121,7 @@ func (m *TLUsersGetRequirementsToContact) Encode(x *bin.Encoder, layer int32) er
 		x.PutClazzID(0xd89a83a3)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", err)
+			return fmt.Errorf("unable to encode users_getRequirementsToContact#0xd89a83a3: field id: %w", err)
 		}
 
 		return nil
@@ -16215,7 +16215,7 @@ func (m *TLUsersGetSavedMusic) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getSavedMusic: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getSavedMusic: unsupported layer %d", layer)
 	}
 }
 
@@ -16229,7 +16229,7 @@ func (m *TLUsersGetSavedMusic) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode users_getSavedMusic#0x788d7fe3: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getSavedMusic#0x788d7fe3: field id: %w", err)
+			return fmt.Errorf("unable to encode users_getSavedMusic#0x788d7fe3: field id: %w", err)
 		}
 		x.PutInt32(m.Offset)
 		x.PutInt32(m.Limit)
@@ -16325,7 +16325,7 @@ func (m *TLUsersGetSavedMusicByID) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getSavedMusicByID: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getSavedMusicByID: unsupported layer %d", layer)
 	}
 }
 
@@ -16339,11 +16339,11 @@ func (m *TLUsersGetSavedMusicByID) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode users_getSavedMusicByID#0x7573a4e9: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field id: %w", err)
+			return fmt.Errorf("unable to encode users_getSavedMusicByID#0x7573a4e9: field id: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Documents, layer); err != nil {
-			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err)
+			return fmt.Errorf("unable to encode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err)
 		}
 
 		return nil
@@ -16446,7 +16446,7 @@ func (m *TLUsersSuggestBirthday) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_suggestBirthday: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_suggestBirthday: unsupported layer %d", layer)
 	}
 }
 
@@ -16460,13 +16460,13 @@ func (m *TLUsersSuggestBirthday) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode users_suggestBirthday#0xfc533372: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_suggestBirthday#0xfc533372: field id: %w", err)
+			return fmt.Errorf("unable to encode users_suggestBirthday#0xfc533372: field id: %w", err)
 		}
 		if m.Birthday == nil {
 			return fmt.Errorf("unable to encode users_suggestBirthday#0xfc533372: field birthday is nil")
 		}
 		if err := m.Birthday.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode users_suggestBirthday#0xfc533372: field birthday: %w", err)
+			return fmt.Errorf("unable to encode users_suggestBirthday#0xfc533372: field birthday: %w", err)
 		}
 
 		return nil
@@ -16545,7 +16545,7 @@ func (m *TLContactsGetContactIDs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getContactIDs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getContactIDs: unsupported layer %d", layer)
 	}
 }
 
@@ -16619,7 +16619,7 @@ func (m *TLContactsGetStatuses) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getStatuses: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getStatuses: unsupported layer %d", layer)
 	}
 }
 
@@ -16689,7 +16689,7 @@ func (m *TLContactsGetContacts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getContacts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getContacts: unsupported layer %d", layer)
 	}
 }
 
@@ -16768,7 +16768,7 @@ func (m *TLContactsImportContacts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_importContacts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_importContacts: unsupported layer %d", layer)
 	}
 }
 
@@ -16779,7 +16779,7 @@ func (m *TLContactsImportContacts) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x2c800be5)
 
 		if err := iface.EncodeObjectList(x, m.Contacts, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", err)
+			return fmt.Errorf("unable to encode contacts_importContacts#0x2c800be5: field contacts: %w", err)
 		}
 
 		return nil
@@ -16867,7 +16867,7 @@ func (m *TLContactsDeleteContacts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_deleteContacts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_deleteContacts: unsupported layer %d", layer)
 	}
 }
 
@@ -16878,7 +16878,7 @@ func (m *TLContactsDeleteContacts) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x96a0e00)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_deleteContacts#0x96a0e00: field id: %w", err)
 		}
 
 		return nil
@@ -16966,7 +16966,7 @@ func (m *TLContactsDeleteByPhones) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_deleteByPhones: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_deleteByPhones: unsupported layer %d", layer)
 	}
 }
 
@@ -17045,7 +17045,7 @@ func (m *TLContactsBlock) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_block: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_block: unsupported layer %d", layer)
 	}
 }
 
@@ -17073,7 +17073,7 @@ func (m *TLContactsBlock) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_block#0x2e2e8734: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_block#0x2e2e8734: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_block#0x2e2e8734: field id: %w", err)
 		}
 
 		return nil
@@ -17157,7 +17157,7 @@ func (m *TLContactsUnblock) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_unblock: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_unblock: unsupported layer %d", layer)
 	}
 }
 
@@ -17185,7 +17185,7 @@ func (m *TLContactsUnblock) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_unblock#0xb550d328: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_unblock#0xb550d328: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_unblock#0xb550d328: field id: %w", err)
 		}
 
 		return nil
@@ -17268,7 +17268,7 @@ func (m *TLContactsGetBlocked) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getBlocked: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getBlocked: unsupported layer %d", layer)
 	}
 }
 
@@ -17376,7 +17376,7 @@ func (m *TLContactsSearch) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_search: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_search: unsupported layer %d", layer)
 	}
 }
 
@@ -17465,7 +17465,7 @@ func (m *TLContactsResolveUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_resolveUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_resolveUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -17584,7 +17584,7 @@ func (m *TLContactsGetTopPeers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getTopPeers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getTopPeers: unsupported layer %d", layer)
 	}
 }
 
@@ -17749,7 +17749,7 @@ func (m *TLContactsResetTopPeerRating) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_resetTopPeerRating: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_resetTopPeerRating: unsupported layer %d", layer)
 	}
 }
 
@@ -17763,13 +17763,13 @@ func (m *TLContactsResetTopPeerRating) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode contacts_resetTopPeerRating#0x1ae373ac: field category is nil")
 		}
 		if err := m.Category.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_resetTopPeerRating#0x1ae373ac: field category: %w", err)
+			return fmt.Errorf("unable to encode contacts_resetTopPeerRating#0x1ae373ac: field category: %w", err)
 		}
 		if m.Peer == nil {
 			return fmt.Errorf("unable to encode contacts_resetTopPeerRating#0x1ae373ac: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_resetTopPeerRating#0x1ae373ac: field peer: %w", err)
+			return fmt.Errorf("unable to encode contacts_resetTopPeerRating#0x1ae373ac: field peer: %w", err)
 		}
 
 		return nil
@@ -17846,7 +17846,7 @@ func (m *TLContactsResetSaved) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_resetSaved: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_resetSaved: unsupported layer %d", layer)
 	}
 }
 
@@ -17914,7 +17914,7 @@ func (m *TLContactsGetSaved) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getSaved: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getSaved: unsupported layer %d", layer)
 	}
 }
 
@@ -17987,7 +17987,7 @@ func (m *TLContactsToggleTopPeers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_toggleTopPeers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_toggleTopPeers: unsupported layer %d", layer)
 	}
 }
 
@@ -18001,7 +18001,7 @@ func (m *TLContactsToggleTopPeers) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_toggleTopPeers#0x8514bdda: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_toggleTopPeers#0x8514bdda: field enabled: %w", err)
+			return fmt.Errorf("unable to encode contacts_toggleTopPeers#0x8514bdda: field enabled: %w", err)
 		}
 
 		return nil
@@ -18099,7 +18099,7 @@ func (m *TLContactsAddContact) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_addContact: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_addContact: unsupported layer %d", layer)
 	}
 }
 
@@ -18131,14 +18131,14 @@ func (m *TLContactsAddContact) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_addContact#0xd9ba2e54: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_addContact#0xd9ba2e54: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_addContact#0xd9ba2e54: field id: %w", err)
 		}
 		x.PutString(m.FirstName)
 		x.PutString(m.LastName)
 		x.PutString(m.Phone)
 		if m.Note != nil {
 			if err := m.Note.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode contacts_addContact#0xd9ba2e54: field note: %w", err)
+				return fmt.Errorf("unable to encode contacts_addContact#0xd9ba2e54: field note: %w", err)
 			}
 		}
 
@@ -18243,7 +18243,7 @@ func (m *TLContactsAcceptContact) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_acceptContact: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_acceptContact: unsupported layer %d", layer)
 	}
 }
 
@@ -18257,7 +18257,7 @@ func (m *TLContactsAcceptContact) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_acceptContact#0xf831a20f: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_acceptContact#0xf831a20f: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_acceptContact#0xf831a20f: field id: %w", err)
 		}
 
 		return nil
@@ -18337,7 +18337,7 @@ func (m *TLContactsGetLocated) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getLocated: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getLocated: unsupported layer %d", layer)
 	}
 }
 
@@ -18369,7 +18369,7 @@ func (m *TLContactsGetLocated) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode contacts_getLocated#0xd348bc44: field geo_point is nil")
 		}
 		if err := m.GeoPoint.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_getLocated#0xd348bc44: field geo_point: %w", err)
+			return fmt.Errorf("unable to encode contacts_getLocated#0xd348bc44: field geo_point: %w", err)
 		}
 		if m.SelfExpires != nil {
 			x.PutInt32(*m.SelfExpires)
@@ -18463,7 +18463,7 @@ func (m *TLContactsBlockFromReplies) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_blockFromReplies: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_blockFromReplies: unsupported layer %d", layer)
 	}
 }
 
@@ -18576,7 +18576,7 @@ func (m *TLContactsResolvePhone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_resolvePhone: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_resolvePhone: unsupported layer %d", layer)
 	}
 }
 
@@ -18650,7 +18650,7 @@ func (m *TLContactsExportContactToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_exportContactToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_exportContactToken: unsupported layer %d", layer)
 	}
 }
 
@@ -18723,7 +18723,7 @@ func (m *TLContactsImportContactToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_importContactToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_importContactToken: unsupported layer %d", layer)
 	}
 }
 
@@ -18802,7 +18802,7 @@ func (m *TLContactsEditCloseFriends) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_editCloseFriends: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_editCloseFriends: unsupported layer %d", layer)
 	}
 }
 
@@ -18883,7 +18883,7 @@ func (m *TLContactsSetBlocked) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_setBlocked: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_setBlocked: unsupported layer %d", layer)
 	}
 }
 
@@ -18909,7 +18909,7 @@ func (m *TLContactsSetBlocked) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_setBlocked#0x94c65c76: field id: %w", err)
 		}
 
 		x.PutInt32(m.Limit)
@@ -19007,7 +19007,7 @@ func (m *TLContactsGetBirthdays) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getBirthdays: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getBirthdays: unsupported layer %d", layer)
 	}
 }
 
@@ -19080,7 +19080,7 @@ func (m *TLContactsGetSponsoredPeers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_getSponsoredPeers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_getSponsoredPeers: unsupported layer %d", layer)
 	}
 }
 
@@ -19165,7 +19165,7 @@ func (m *TLContactsUpdateContactNote) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contacts_updateContactNote: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contacts_updateContactNote: unsupported layer %d", layer)
 	}
 }
 
@@ -19179,13 +19179,13 @@ func (m *TLContactsUpdateContactNote) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode contacts_updateContactNote#0x139f63fb: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_updateContactNote#0x139f63fb: field id: %w", err)
+			return fmt.Errorf("unable to encode contacts_updateContactNote#0x139f63fb: field id: %w", err)
 		}
 		if m.Note == nil {
 			return fmt.Errorf("unable to encode contacts_updateContactNote#0x139f63fb: field note is nil")
 		}
 		if err := m.Note.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode contacts_updateContactNote#0x139f63fb: field note: %w", err)
+			return fmt.Errorf("unable to encode contacts_updateContactNote#0x139f63fb: field note: %w", err)
 		}
 
 		return nil
@@ -19279,7 +19279,7 @@ func (m *TLMessagesGetMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -19290,7 +19290,7 @@ func (m *TLMessagesGetMessages) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x63c66506)
 
 		if err := iface.EncodeObjectList(x, m.Id_VECTORINPUTMESSAGE, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err)
 		}
 
 		return nil
@@ -19404,7 +19404,7 @@ func (m *TLMessagesGetDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -19441,7 +19441,7 @@ func (m *TLMessagesGetDialogs) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getDialogs#0xa0f4cb4f: field offset_peer is nil")
 		}
 		if err := m.OffsetPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getDialogs#0xa0f4cb4f: field offset_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getDialogs#0xa0f4cb4f: field offset_peer: %w", err)
 		}
 		x.PutInt32(m.Limit)
 		x.PutInt64(m.Hash)
@@ -19563,7 +19563,7 @@ func (m *TLMessagesGetHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -19577,7 +19577,7 @@ func (m *TLMessagesGetHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getHistory#0x4423e6c5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getHistory#0x4423e6c5: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getHistory#0x4423e6c5: field peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.OffsetDate)
@@ -19736,7 +19736,7 @@ func (m *TLMessagesSearch) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_search: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_search: unsupported layer %d", layer)
 	}
 }
 
@@ -19773,24 +19773,24 @@ func (m *TLMessagesSearch) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_search#0x29ee847a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_search#0x29ee847a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_search#0x29ee847a: field peer: %w", err)
 		}
 		x.PutString(m.Q)
 		if m.FromId != nil {
 			if err := m.FromId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field from_id: %w", err)
+				return fmt.Errorf("unable to encode messages_search#0x29ee847a: field from_id: %w", err)
 			}
 		}
 
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_search#0x29ee847a: field saved_peer_id: %w", err)
 			}
 		}
 
 		if m.SavedReaction != nil {
 			if err := iface.EncodeObjectList(x, m.SavedReaction, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", err)
+				return fmt.Errorf("unable to encode messages_search#0x29ee847a: field saved_reaction: %w", err)
 			}
 		}
 		if m.TopMsgId != nil {
@@ -19801,7 +19801,7 @@ func (m *TLMessagesSearch) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_search#0x29ee847a: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_search#0x29ee847a: field filter: %w", err)
+			return fmt.Errorf("unable to encode messages_search#0x29ee847a: field filter: %w", err)
 		}
 		x.PutInt32(m.MinDate)
 		x.PutInt32(m.MaxDate)
@@ -19985,7 +19985,7 @@ func (m *TLMessagesReadHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -19999,7 +19999,7 @@ func (m *TLMessagesReadHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readHistory#0xe306d3a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readHistory#0xe306d3a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readHistory#0xe306d3a: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 
@@ -20093,7 +20093,7 @@ func (m *TLMessagesDeleteHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -20131,7 +20131,7 @@ func (m *TLMessagesDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_deleteHistory#0xb08f922a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteHistory#0xb08f922a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteHistory#0xb08f922a: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 		if m.MinDate != nil {
@@ -20245,7 +20245,7 @@ func (m *TLMessagesDeleteMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -20342,7 +20342,7 @@ func (m *TLMessagesReceivedMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_receivedMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_receivedMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -20433,7 +20433,7 @@ func (m *TLMessagesSetTyping) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setTyping: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setTyping: unsupported layer %d", layer)
 	}
 }
 
@@ -20461,7 +20461,7 @@ func (m *TLMessagesSetTyping) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setTyping#0x58943ee2: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setTyping#0x58943ee2: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setTyping#0x58943ee2: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -20471,7 +20471,7 @@ func (m *TLMessagesSetTyping) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setTyping#0x58943ee2: field action is nil")
 		}
 		if err := m.Action.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setTyping#0x58943ee2: field action: %w", err)
+			return fmt.Errorf("unable to encode messages_setTyping#0x58943ee2: field action: %w", err)
 		}
 
 		return nil
@@ -20632,7 +20632,7 @@ func (m *TLMessagesSendMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -20713,11 +20713,11 @@ func (m *TLMessagesSendMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field peer: %w", err)
 		}
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field reply_to: %w", err)
 			}
 		}
 
@@ -20725,13 +20725,13 @@ func (m *TLMessagesSendMessage) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.RandomId)
 		if m.ReplyMarkup != nil {
 			if err := m.ReplyMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field reply_markup: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field reply_markup: %w", err)
 			}
 		}
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field entities: %w", err)
 			}
 		}
 		if m.ScheduleDate != nil {
@@ -20744,13 +20744,13 @@ func (m *TLMessagesSendMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field send_as: %w", err)
 			}
 		}
 
 		if m.QuickReplyShortcut != nil {
 			if err := m.QuickReplyShortcut.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field quick_reply_shortcut: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field quick_reply_shortcut: %w", err)
 			}
 		}
 
@@ -20764,7 +20764,7 @@ func (m *TLMessagesSendMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SuggestedPost != nil {
 			if err := m.SuggestedPost.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field suggested_post: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMessage#0x545cd15a: field suggested_post: %w", err)
 			}
 		}
 
@@ -21047,7 +21047,7 @@ func (m *TLMessagesSendMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -21125,11 +21125,11 @@ func (m *TLMessagesSendMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field peer: %w", err)
 		}
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field reply_to: %w", err)
 			}
 		}
 
@@ -21137,19 +21137,19 @@ func (m *TLMessagesSendMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field media: %w", err)
+			return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field media: %w", err)
 		}
 		x.PutString(m.Message)
 		x.PutInt64(m.RandomId)
 		if m.ReplyMarkup != nil {
 			if err := m.ReplyMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field reply_markup: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field reply_markup: %w", err)
 			}
 		}
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field entities: %w", err)
 			}
 		}
 		if m.ScheduleDate != nil {
@@ -21162,13 +21162,13 @@ func (m *TLMessagesSendMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field send_as: %w", err)
 			}
 		}
 
 		if m.QuickReplyShortcut != nil {
 			if err := m.QuickReplyShortcut.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field quick_reply_shortcut: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field quick_reply_shortcut: %w", err)
 			}
 		}
 
@@ -21182,7 +21182,7 @@ func (m *TLMessagesSendMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SuggestedPost != nil {
 			if err := m.SuggestedPost.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field suggested_post: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMedia#0x330e77f: field suggested_post: %w", err)
 			}
 		}
 
@@ -21475,7 +21475,7 @@ func (m *TLMessagesForwardMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_forwardMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_forwardMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -21552,7 +21552,7 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field from_peer is nil")
 		}
 		if err := m.FromPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field from_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field from_peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -21563,7 +21563,7 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field to_peer is nil")
 		}
 		if err := m.ToPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field to_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field to_peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -21571,7 +21571,7 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field reply_to: %w", err)
 			}
 		}
 
@@ -21585,13 +21585,13 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field send_as: %w", err)
 			}
 		}
 
 		if m.QuickReplyShortcut != nil {
 			if err := m.QuickReplyShortcut.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field quick_reply_shortcut: %w", err)
+				return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field quick_reply_shortcut: %w", err)
 			}
 		}
 
@@ -21609,7 +21609,7 @@ func (m *TLMessagesForwardMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SuggestedPost != nil {
 			if err := m.SuggestedPost.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_forwardMessages#0x13704a7c: field suggested_post: %w", err)
+				return fmt.Errorf("unable to encode messages_forwardMessages#0x13704a7c: field suggested_post: %w", err)
 			}
 		}
 
@@ -21803,7 +21803,7 @@ func (m *TLMessagesReportSpam) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportSpam: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportSpam: unsupported layer %d", layer)
 	}
 }
 
@@ -21817,7 +21817,7 @@ func (m *TLMessagesReportSpam) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_reportSpam#0xcf1592db: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportSpam#0xcf1592db: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportSpam#0xcf1592db: field peer: %w", err)
 		}
 
 		return nil
@@ -21891,7 +21891,7 @@ func (m *TLMessagesGetPeerSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPeerSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPeerSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -21905,7 +21905,7 @@ func (m *TLMessagesGetPeerSettings) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getPeerSettings#0xefd9a6a2: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPeerSettings#0xefd9a6a2: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getPeerSettings#0xefd9a6a2: field peer: %w", err)
 		}
 
 		return nil
@@ -21997,7 +21997,7 @@ func (m *TLMessagesReport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_report: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_report: unsupported layer %d", layer)
 	}
 }
 
@@ -22011,7 +22011,7 @@ func (m *TLMessagesReport) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_report#0xfc78af9b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_report#0xfc78af9b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_report#0xfc78af9b: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -22101,7 +22101,7 @@ func (m *TLMessagesGetChats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getChats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getChats: unsupported layer %d", layer)
 	}
 }
 
@@ -22175,7 +22175,7 @@ func (m *TLMessagesGetFullChat) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFullChat: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFullChat: unsupported layer %d", layer)
 	}
 }
 
@@ -22256,7 +22256,7 @@ func (m *TLMessagesEditChatTitle) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatTitle: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatTitle: unsupported layer %d", layer)
 	}
 }
 
@@ -22342,7 +22342,7 @@ func (m *TLMessagesEditChatPhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatPhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatPhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -22357,7 +22357,7 @@ func (m *TLMessagesEditChatPhoto) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editChatPhoto#0x35ddd674: field photo is nil")
 		}
 		if err := m.Photo.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatPhoto#0x35ddd674: field photo: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatPhoto#0x35ddd674: field photo: %w", err)
 		}
 
 		return nil
@@ -22439,7 +22439,7 @@ func (m *TLMessagesAddChatUser) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_addChatUser: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_addChatUser: unsupported layer %d", layer)
 	}
 }
 
@@ -22454,7 +22454,7 @@ func (m *TLMessagesAddChatUser) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_addChatUser#0xcbc6d107: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_addChatUser#0xcbc6d107: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_addChatUser#0xcbc6d107: field user_id: %w", err)
 		}
 		x.PutInt32(m.FwdLimit)
 
@@ -22542,7 +22542,7 @@ func (m *TLMessagesDeleteChatUser) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteChatUser: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteChatUser: unsupported layer %d", layer)
 	}
 }
 
@@ -22571,7 +22571,7 @@ func (m *TLMessagesDeleteChatUser) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_deleteChatUser#0xa2185cab: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteChatUser#0xa2185cab: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteChatUser#0xa2185cab: field user_id: %w", err)
 		}
 
 		return nil
@@ -22668,7 +22668,7 @@ func (m *TLMessagesCreateChat) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_createChat: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_createChat: unsupported layer %d", layer)
 	}
 }
 
@@ -22694,7 +22694,7 @@ func (m *TLMessagesCreateChat) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 
 		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", err)
+			return fmt.Errorf("unable to encode messages_createChat#0x92ceddd4: field users: %w", err)
 		}
 
 		x.PutString(m.Title)
@@ -22803,7 +22803,7 @@ func (m *TLMessagesGetDhConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDhConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDhConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -22895,7 +22895,7 @@ func (m *TLMessagesRequestEncryption) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestEncryption: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestEncryption: unsupported layer %d", layer)
 	}
 }
 
@@ -22909,7 +22909,7 @@ func (m *TLMessagesRequestEncryption) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_requestEncryption#0xf64daf43: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestEncryption#0xf64daf43: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_requestEncryption#0xf64daf43: field user_id: %w", err)
 		}
 		x.PutInt32(m.RandomId)
 		x.PutBytes(m.GA)
@@ -23002,7 +23002,7 @@ func (m *TLMessagesAcceptEncryption) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_acceptEncryption: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_acceptEncryption: unsupported layer %d", layer)
 	}
 }
 
@@ -23016,7 +23016,7 @@ func (m *TLMessagesAcceptEncryption) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_acceptEncryption#0x3dbc0415: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_acceptEncryption#0x3dbc0415: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_acceptEncryption#0x3dbc0415: field peer: %w", err)
 		}
 		x.PutBytes(m.GB)
 		x.PutInt64(m.KeyFingerprint)
@@ -23100,7 +23100,7 @@ func (m *TLMessagesDiscardEncryption) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_discardEncryption: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_discardEncryption: unsupported layer %d", layer)
 	}
 }
 
@@ -23207,7 +23207,7 @@ func (m *TLMessagesSetEncryptedTyping) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setEncryptedTyping: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setEncryptedTyping: unsupported layer %d", layer)
 	}
 }
 
@@ -23221,13 +23221,13 @@ func (m *TLMessagesSetEncryptedTyping) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_setEncryptedTyping#0x791451ed: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setEncryptedTyping#0x791451ed: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setEncryptedTyping#0x791451ed: field peer: %w", err)
 		}
 		if m.Typing == nil {
 			return fmt.Errorf("unable to encode messages_setEncryptedTyping#0x791451ed: field typing is nil")
 		}
 		if err := m.Typing.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setEncryptedTyping#0x791451ed: field typing: %w", err)
+			return fmt.Errorf("unable to encode messages_setEncryptedTyping#0x791451ed: field typing: %w", err)
 		}
 
 		return nil
@@ -23311,7 +23311,7 @@ func (m *TLMessagesReadEncryptedHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readEncryptedHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readEncryptedHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -23325,7 +23325,7 @@ func (m *TLMessagesReadEncryptedHistory) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_readEncryptedHistory#0x7f4b690a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readEncryptedHistory#0x7f4b690a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readEncryptedHistory#0x7f4b690a: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxDate)
 
@@ -23415,7 +23415,7 @@ func (m *TLMessagesSendEncrypted) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendEncrypted: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendEncrypted: unsupported layer %d", layer)
 	}
 }
 
@@ -23443,7 +23443,7 @@ func (m *TLMessagesSendEncrypted) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendEncrypted#0x44fa7a15: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendEncrypted#0x44fa7a15: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendEncrypted#0x44fa7a15: field peer: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		x.PutBytes(m.Data)
@@ -23552,7 +23552,7 @@ func (m *TLMessagesSendEncryptedFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendEncryptedFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -23580,7 +23580,7 @@ func (m *TLMessagesSendEncryptedFile) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_sendEncryptedFile#0x5559481d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendEncryptedFile#0x5559481d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendEncryptedFile#0x5559481d: field peer: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		x.PutBytes(m.Data)
@@ -23588,7 +23588,7 @@ func (m *TLMessagesSendEncryptedFile) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_sendEncryptedFile#0x5559481d: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendEncryptedFile#0x5559481d: field file: %w", err)
+			return fmt.Errorf("unable to encode messages_sendEncryptedFile#0x5559481d: field file: %w", err)
 		}
 
 		return nil
@@ -23695,7 +23695,7 @@ func (m *TLMessagesSendEncryptedService) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendEncryptedService: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendEncryptedService: unsupported layer %d", layer)
 	}
 }
 
@@ -23709,7 +23709,7 @@ func (m *TLMessagesSendEncryptedService) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_sendEncryptedService#0x32d439a4: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendEncryptedService#0x32d439a4: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendEncryptedService#0x32d439a4: field peer: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		x.PutBytes(m.Data)
@@ -23791,7 +23791,7 @@ func (m *TLMessagesReceivedQueue) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_receivedQueue: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_receivedQueue: unsupported layer %d", layer)
 	}
 }
 
@@ -23870,7 +23870,7 @@ func (m *TLMessagesReportEncryptedSpam) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportEncryptedSpam: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportEncryptedSpam: unsupported layer %d", layer)
 	}
 }
 
@@ -23884,7 +23884,7 @@ func (m *TLMessagesReportEncryptedSpam) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_reportEncryptedSpam#0x4b0c8c0f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportEncryptedSpam#0x4b0c8c0f: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportEncryptedSpam#0x4b0c8c0f: field peer: %w", err)
 		}
 
 		return nil
@@ -23958,7 +23958,7 @@ func (m *TLMessagesReadMessageContents) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readMessageContents: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readMessageContents: unsupported layer %d", layer)
 	}
 }
 
@@ -24037,7 +24037,7 @@ func (m *TLMessagesGetStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -24118,7 +24118,7 @@ func (m *TLMessagesGetAllStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAllStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAllStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -24202,7 +24202,7 @@ func (m *TLMessagesGetWebPagePreview) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getWebPagePreview: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getWebPagePreview: unsupported layer %d", layer)
 	}
 }
 
@@ -24229,7 +24229,7 @@ func (m *TLMessagesGetWebPagePreview) Encode(x *bin.Encoder, layer int32) error 
 		x.PutString(m.Message)
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err)
 			}
 		}
 
@@ -24351,7 +24351,7 @@ func (m *TLMessagesExportChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_exportChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_exportChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -24395,7 +24395,7 @@ func (m *TLMessagesExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_exportChatInvite#0xa455de90: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_exportChatInvite#0xa455de90: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_exportChatInvite#0xa455de90: field peer: %w", err)
 		}
 		if m.ExpireDate != nil {
 			x.PutInt32(*m.ExpireDate)
@@ -24411,7 +24411,7 @@ func (m *TLMessagesExportChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SubscriptionPricing != nil {
 			if err := m.SubscriptionPricing.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_exportChatInvite#0xa455de90: field subscription_pricing: %w", err)
+				return fmt.Errorf("unable to encode messages_exportChatInvite#0xa455de90: field subscription_pricing: %w", err)
 			}
 		}
 
@@ -24529,7 +24529,7 @@ func (m *TLMessagesCheckChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_checkChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_checkChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -24608,7 +24608,7 @@ func (m *TLMessagesImportChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_importChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_importChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -24700,7 +24700,7 @@ func (m *TLMessagesGetStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -24714,7 +24714,7 @@ func (m *TLMessagesGetStickerSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getStickerSet#0xc8a0ec74: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getStickerSet#0xc8a0ec74: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode messages_getStickerSet#0xc8a0ec74: field stickerset: %w", err)
 		}
 		x.PutInt32(m.Hash)
 
@@ -24726,7 +24726,7 @@ func (m *TLMessagesGetStickerSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getStickerSet#0xc8a0ec74: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getStickerSet#0xc8a0ec74: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode messages_getStickerSet#0xc8a0ec74: field stickerset: %w", err)
 		}
 
 		return nil
@@ -24822,7 +24822,7 @@ func (m *TLMessagesInstallStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_installStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_installStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -24836,13 +24836,13 @@ func (m *TLMessagesInstallStickerSet) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_installStickerSet#0xc78fe460: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_installStickerSet#0xc78fe460: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode messages_installStickerSet#0xc78fe460: field stickerset: %w", err)
 		}
 		if m.Archived == nil {
 			return fmt.Errorf("unable to encode messages_installStickerSet#0xc78fe460: field archived is nil")
 		}
 		if err := m.Archived.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_installStickerSet#0xc78fe460: field archived: %w", err)
+			return fmt.Errorf("unable to encode messages_installStickerSet#0xc78fe460: field archived: %w", err)
 		}
 
 		return nil
@@ -24924,7 +24924,7 @@ func (m *TLMessagesUninstallStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_uninstallStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_uninstallStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -24938,7 +24938,7 @@ func (m *TLMessagesUninstallStickerSet) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_uninstallStickerSet#0xf96e55de: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uninstallStickerSet#0xf96e55de: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode messages_uninstallStickerSet#0xf96e55de: field stickerset: %w", err)
 		}
 
 		return nil
@@ -25026,7 +25026,7 @@ func (m *TLMessagesStartBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_startBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_startBot: unsupported layer %d", layer)
 	}
 }
 
@@ -25040,13 +25040,13 @@ func (m *TLMessagesStartBot) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_startBot#0xe6df7378: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_startBot#0xe6df7378: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_startBot#0xe6df7378: field bot: %w", err)
 		}
 		if m.Peer == nil {
 			return fmt.Errorf("unable to encode messages_startBot#0xe6df7378: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_startBot#0xe6df7378: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_startBot#0xe6df7378: field peer: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		x.PutString(m.StartParam)
@@ -25151,7 +25151,7 @@ func (m *TLMessagesGetMessagesViews) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessagesViews: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessagesViews: unsupported layer %d", layer)
 	}
 }
 
@@ -25165,7 +25165,7 @@ func (m *TLMessagesGetMessagesViews) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getMessagesViews#0x5784d3e1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessagesViews#0x5784d3e1: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessagesViews#0x5784d3e1: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -25174,7 +25174,7 @@ func (m *TLMessagesGetMessagesViews) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getMessagesViews#0x5784d3e1: field increment is nil")
 		}
 		if err := m.Increment.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessagesViews#0x5784d3e1: field increment: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessagesViews#0x5784d3e1: field increment: %w", err)
 		}
 
 		return nil
@@ -25266,7 +25266,7 @@ func (m *TLMessagesEditChatAdmin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatAdmin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatAdmin: unsupported layer %d", layer)
 	}
 }
 
@@ -25281,13 +25281,13 @@ func (m *TLMessagesEditChatAdmin) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editChatAdmin#0xa85bd1c2: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatAdmin#0xa85bd1c2: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatAdmin#0xa85bd1c2: field user_id: %w", err)
 		}
 		if m.IsAdmin == nil {
 			return fmt.Errorf("unable to encode messages_editChatAdmin#0xa85bd1c2: field is_admin is nil")
 		}
 		if err := m.IsAdmin.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatAdmin#0xa85bd1c2: field is_admin: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatAdmin#0xa85bd1c2: field is_admin: %w", err)
 		}
 
 		return nil
@@ -25370,7 +25370,7 @@ func (m *TLMessagesMigrateChat) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_migrateChat: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_migrateChat: unsupported layer %d", layer)
 	}
 }
 
@@ -25480,7 +25480,7 @@ func (m *TLMessagesSearchGlobal) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchGlobal: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchGlobal: unsupported layer %d", layer)
 	}
 }
 
@@ -25522,7 +25522,7 @@ func (m *TLMessagesSearchGlobal) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_searchGlobal#0x4bc6589a: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_searchGlobal#0x4bc6589a: field filter: %w", err)
+			return fmt.Errorf("unable to encode messages_searchGlobal#0x4bc6589a: field filter: %w", err)
 		}
 		x.PutInt32(m.MinDate)
 		x.PutInt32(m.MaxDate)
@@ -25531,7 +25531,7 @@ func (m *TLMessagesSearchGlobal) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_searchGlobal#0x4bc6589a: field offset_peer is nil")
 		}
 		if err := m.OffsetPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_searchGlobal#0x4bc6589a: field offset_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_searchGlobal#0x4bc6589a: field offset_peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.Limit)
@@ -25665,7 +25665,7 @@ func (m *TLMessagesReorderStickerSets) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reorderStickerSets: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reorderStickerSets: unsupported layer %d", layer)
 	}
 }
 
@@ -25779,7 +25779,7 @@ func (m *TLMessagesGetDocumentByHash) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDocumentByHash: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDocumentByHash: unsupported layer %d", layer)
 	}
 }
 
@@ -25865,7 +25865,7 @@ func (m *TLMessagesGetSavedGifs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSavedGifs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSavedGifs: unsupported layer %d", layer)
 	}
 }
 
@@ -25950,7 +25950,7 @@ func (m *TLMessagesSaveGif) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_saveGif: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_saveGif: unsupported layer %d", layer)
 	}
 }
 
@@ -25964,13 +25964,13 @@ func (m *TLMessagesSaveGif) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_saveGif#0x327a30cb: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveGif#0x327a30cb: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_saveGif#0x327a30cb: field id: %w", err)
 		}
 		if m.Unsave == nil {
 			return fmt.Errorf("unable to encode messages_saveGif#0x327a30cb: field unsave is nil")
 		}
 		if err := m.Unsave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveGif#0x327a30cb: field unsave: %w", err)
+			return fmt.Errorf("unable to encode messages_saveGif#0x327a30cb: field unsave: %w", err)
 		}
 
 		return nil
@@ -26076,7 +26076,7 @@ func (m *TLMessagesGetInlineBotResults) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getInlineBotResults: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getInlineBotResults: unsupported layer %d", layer)
 	}
 }
 
@@ -26104,17 +26104,17 @@ func (m *TLMessagesGetInlineBotResults) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_getInlineBotResults#0x514e999d: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getInlineBotResults#0x514e999d: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_getInlineBotResults#0x514e999d: field bot: %w", err)
 		}
 		if m.Peer == nil {
 			return fmt.Errorf("unable to encode messages_getInlineBotResults#0x514e999d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getInlineBotResults#0x514e999d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getInlineBotResults#0x514e999d: field peer: %w", err)
 		}
 		if m.GeoPoint != nil {
 			if err := m.GeoPoint.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getInlineBotResults#0x514e999d: field geo_point: %w", err)
+				return fmt.Errorf("unable to encode messages_getInlineBotResults#0x514e999d: field geo_point: %w", err)
 			}
 		}
 
@@ -26244,7 +26244,7 @@ func (m *TLMessagesSetInlineBotResults) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setInlineBotResults: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setInlineBotResults: unsupported layer %d", layer)
 	}
 }
 
@@ -26284,7 +26284,7 @@ func (m *TLMessagesSetInlineBotResults) Encode(x *bin.Encoder, layer int32) erro
 		x.PutInt64(m.QueryId)
 
 		if err := iface.EncodeObjectList(x, m.Results, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", err)
+			return fmt.Errorf("unable to encode messages_setInlineBotResults#0xbb12a419: field results: %w", err)
 		}
 
 		x.PutInt32(m.CacheTime)
@@ -26294,13 +26294,13 @@ func (m *TLMessagesSetInlineBotResults) Encode(x *bin.Encoder, layer int32) erro
 
 		if m.SwitchPm != nil {
 			if err := m.SwitchPm.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field switch_pm: %w", err)
+				return fmt.Errorf("unable to encode messages_setInlineBotResults#0xbb12a419: field switch_pm: %w", err)
 			}
 		}
 
 		if m.SwitchWebview != nil {
 			if err := m.SwitchWebview.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field switch_webview: %w", err)
+				return fmt.Errorf("unable to encode messages_setInlineBotResults#0xbb12a419: field switch_webview: %w", err)
 			}
 		}
 
@@ -26474,7 +26474,7 @@ func (m *TLMessagesSendInlineBotResult) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendInlineBotResult: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendInlineBotResult: unsupported layer %d", layer)
 	}
 }
 
@@ -26528,11 +26528,11 @@ func (m *TLMessagesSendInlineBotResult) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_sendInlineBotResult#0xc0cf7646: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendInlineBotResult#0xc0cf7646: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendInlineBotResult#0xc0cf7646: field peer: %w", err)
 		}
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendInlineBotResult#0xc0cf7646: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_sendInlineBotResult#0xc0cf7646: field reply_to: %w", err)
 			}
 		}
 
@@ -26545,13 +26545,13 @@ func (m *TLMessagesSendInlineBotResult) Encode(x *bin.Encoder, layer int32) erro
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendInlineBotResult#0xc0cf7646: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_sendInlineBotResult#0xc0cf7646: field send_as: %w", err)
 			}
 		}
 
 		if m.QuickReplyShortcut != nil {
 			if err := m.QuickReplyShortcut.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendInlineBotResult#0xc0cf7646: field quick_reply_shortcut: %w", err)
+				return fmt.Errorf("unable to encode messages_sendInlineBotResult#0xc0cf7646: field quick_reply_shortcut: %w", err)
 			}
 		}
 
@@ -26703,7 +26703,7 @@ func (m *TLMessagesGetMessageEditData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessageEditData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessageEditData: unsupported layer %d", layer)
 	}
 }
 
@@ -26717,7 +26717,7 @@ func (m *TLMessagesGetMessageEditData) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_getMessageEditData#0xfda68d36: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessageEditData#0xfda68d36: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessageEditData#0xfda68d36: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -26836,7 +26836,7 @@ func (m *TLMessagesEditMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -26889,7 +26889,7 @@ func (m *TLMessagesEditMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editMessage#0x51e842e1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editMessage#0x51e842e1: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Message != nil {
@@ -26898,19 +26898,19 @@ func (m *TLMessagesEditMessage) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Media != nil {
 			if err := m.Media.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field media: %w", err)
+				return fmt.Errorf("unable to encode messages_editMessage#0x51e842e1: field media: %w", err)
 			}
 		}
 
 		if m.ReplyMarkup != nil {
 			if err := m.ReplyMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field reply_markup: %w", err)
+				return fmt.Errorf("unable to encode messages_editMessage#0x51e842e1: field reply_markup: %w", err)
 			}
 		}
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_editMessage#0x51e842e1: field entities: %w", err)
 			}
 		}
 		if m.ScheduleDate != nil {
@@ -27105,7 +27105,7 @@ func (m *TLMessagesEditInlineBotMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editInlineBotMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editInlineBotMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -27149,7 +27149,7 @@ func (m *TLMessagesEditInlineBotMessage) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_editInlineBotMessage#0x83557dba: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_editInlineBotMessage#0x83557dba: field id: %w", err)
 		}
 		if m.Message != nil {
 			x.PutString(*m.Message)
@@ -27157,19 +27157,19 @@ func (m *TLMessagesEditInlineBotMessage) Encode(x *bin.Encoder, layer int32) err
 
 		if m.Media != nil {
 			if err := m.Media.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field media: %w", err)
+				return fmt.Errorf("unable to encode messages_editInlineBotMessage#0x83557dba: field media: %w", err)
 			}
 		}
 
 		if m.ReplyMarkup != nil {
 			if err := m.ReplyMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field reply_markup: %w", err)
+				return fmt.Errorf("unable to encode messages_editInlineBotMessage#0x83557dba: field reply_markup: %w", err)
 			}
 		}
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_editInlineBotMessage#0x83557dba: field entities: %w", err)
 			}
 		}
 
@@ -27319,7 +27319,7 @@ func (m *TLMessagesGetBotCallbackAnswer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getBotCallbackAnswer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getBotCallbackAnswer: unsupported layer %d", layer)
 	}
 }
 
@@ -27354,7 +27354,7 @@ func (m *TLMessagesGetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getBotCallbackAnswer#0x9342ca07: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getBotCallbackAnswer#0x9342ca07: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getBotCallbackAnswer#0x9342ca07: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.Data != nil {
@@ -27363,7 +27363,7 @@ func (m *TLMessagesGetBotCallbackAnswer) Encode(x *bin.Encoder, layer int32) err
 
 		if m.Password != nil {
 			if err := m.Password.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getBotCallbackAnswer#0x9342ca07: field password: %w", err)
+				return fmt.Errorf("unable to encode messages_getBotCallbackAnswer#0x9342ca07: field password: %w", err)
 			}
 		}
 
@@ -27478,7 +27478,7 @@ func (m *TLMessagesSetBotCallbackAnswer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setBotCallbackAnswer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setBotCallbackAnswer: unsupported layer %d", layer)
 	}
 }
 
@@ -27615,7 +27615,7 @@ func (m *TLMessagesGetPeerDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPeerDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPeerDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -27626,7 +27626,7 @@ func (m *TLMessagesGetPeerDialogs) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xe470bcfd)
 
 		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err)
+			return fmt.Errorf("unable to encode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err)
 		}
 
 		return nil
@@ -27748,7 +27748,7 @@ func (m *TLMessagesSaveDraft) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_saveDraft: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_saveDraft: unsupported layer %d", layer)
 	}
 }
 
@@ -27793,7 +27793,7 @@ func (m *TLMessagesSaveDraft) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field reply_to: %w", err)
 			}
 		}
 
@@ -27801,17 +27801,17 @@ func (m *TLMessagesSaveDraft) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field peer: %w", err)
 		}
 		x.PutString(m.Message)
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", err)
+				return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field entities: %w", err)
 			}
 		}
 		if m.Media != nil {
 			if err := m.Media.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field media: %w", err)
+				return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field media: %w", err)
 			}
 		}
 
@@ -27821,7 +27821,7 @@ func (m *TLMessagesSaveDraft) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SuggestedPost != nil {
 			if err := m.SuggestedPost.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field suggested_post: %w", err)
+				return fmt.Errorf("unable to encode messages_saveDraft#0x54ae308e: field suggested_post: %w", err)
 			}
 		}
 
@@ -27966,7 +27966,7 @@ func (m *TLMessagesGetAllDrafts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAllDrafts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAllDrafts: unsupported layer %d", layer)
 	}
 }
 
@@ -28036,7 +28036,7 @@ func (m *TLMessagesGetFeaturedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFeaturedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFeaturedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28115,7 +28115,7 @@ func (m *TLMessagesReadFeaturedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readFeaturedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readFeaturedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28191,7 +28191,7 @@ func (m *TLMessagesGetRecentStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getRecentStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getRecentStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28300,7 +28300,7 @@ func (m *TLMessagesSaveRecentSticker) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_saveRecentSticker: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_saveRecentSticker: unsupported layer %d", layer)
 	}
 }
 
@@ -28328,13 +28328,13 @@ func (m *TLMessagesSaveRecentSticker) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_saveRecentSticker#0x392718f8: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveRecentSticker#0x392718f8: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_saveRecentSticker#0x392718f8: field id: %w", err)
 		}
 		if m.Unsave == nil {
 			return fmt.Errorf("unable to encode messages_saveRecentSticker#0x392718f8: field unsave is nil")
 		}
 		if err := m.Unsave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveRecentSticker#0x392718f8: field unsave: %w", err)
+			return fmt.Errorf("unable to encode messages_saveRecentSticker#0x392718f8: field unsave: %w", err)
 		}
 
 		return nil
@@ -28421,7 +28421,7 @@ func (m *TLMessagesClearRecentStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_clearRecentStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_clearRecentStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28519,7 +28519,7 @@ func (m *TLMessagesGetArchivedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getArchivedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getArchivedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28628,7 +28628,7 @@ func (m *TLMessagesGetMaskStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMaskStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMaskStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28707,7 +28707,7 @@ func (m *TLMessagesGetAttachedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAttachedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAttachedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -28721,7 +28721,7 @@ func (m *TLMessagesGetAttachedStickers) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_getAttachedStickers#0xcc5b67cc: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getAttachedStickers#0xcc5b67cc: field media: %w", err)
+			return fmt.Errorf("unable to encode messages_getAttachedStickers#0xcc5b67cc: field media: %w", err)
 		}
 
 		return nil
@@ -28808,7 +28808,7 @@ func (m *TLMessagesSetGameScore) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setGameScore: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setGameScore: unsupported layer %d", layer)
 	}
 }
 
@@ -28839,14 +28839,14 @@ func (m *TLMessagesSetGameScore) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setGameScore#0x8ef8ecc0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setGameScore#0x8ef8ecc0: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setGameScore#0x8ef8ecc0: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_setGameScore#0x8ef8ecc0: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setGameScore#0x8ef8ecc0: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_setGameScore#0x8ef8ecc0: field user_id: %w", err)
 		}
 		x.PutInt32(m.Score)
 
@@ -28961,7 +28961,7 @@ func (m *TLMessagesSetInlineGameScore) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setInlineGameScore: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setInlineGameScore: unsupported layer %d", layer)
 	}
 }
 
@@ -28992,13 +28992,13 @@ func (m *TLMessagesSetInlineGameScore) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_setInlineGameScore#0x15ad9f64: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setInlineGameScore#0x15ad9f64: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_setInlineGameScore#0x15ad9f64: field id: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_setInlineGameScore#0x15ad9f64: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setInlineGameScore#0x15ad9f64: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_setInlineGameScore#0x15ad9f64: field user_id: %w", err)
 		}
 		x.PutInt32(m.Score)
 
@@ -29105,7 +29105,7 @@ func (m *TLMessagesGetGameHighScores) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getGameHighScores: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getGameHighScores: unsupported layer %d", layer)
 	}
 }
 
@@ -29119,14 +29119,14 @@ func (m *TLMessagesGetGameHighScores) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_getGameHighScores#0xe822649d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getGameHighScores#0xe822649d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getGameHighScores#0xe822649d: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_getGameHighScores#0xe822649d: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getGameHighScores#0xe822649d: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_getGameHighScores#0xe822649d: field user_id: %w", err)
 		}
 
 		return nil
@@ -29219,7 +29219,7 @@ func (m *TLMessagesGetInlineGameHighScores) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getInlineGameHighScores: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getInlineGameHighScores: unsupported layer %d", layer)
 	}
 }
 
@@ -29233,13 +29233,13 @@ func (m *TLMessagesGetInlineGameHighScores) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode messages_getInlineGameHighScores#0xf635e1b: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getInlineGameHighScores#0xf635e1b: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_getInlineGameHighScores#0xf635e1b: field id: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_getInlineGameHighScores#0xf635e1b: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getInlineGameHighScores#0xf635e1b: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_getInlineGameHighScores#0xf635e1b: field user_id: %w", err)
 		}
 
 		return nil
@@ -29325,7 +29325,7 @@ func (m *TLMessagesGetCommonChats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getCommonChats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getCommonChats: unsupported layer %d", layer)
 	}
 }
 
@@ -29339,7 +29339,7 @@ func (m *TLMessagesGetCommonChats) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getCommonChats#0xe40ca104: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getCommonChats#0xe40ca104: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_getCommonChats#0xe40ca104: field user_id: %w", err)
 		}
 		x.PutInt64(m.MaxId)
 		x.PutInt32(m.Limit)
@@ -29426,7 +29426,7 @@ func (m *TLMessagesGetWebPage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getWebPage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getWebPage: unsupported layer %d", layer)
 	}
 }
 
@@ -29512,7 +29512,7 @@ func (m *TLMessagesToggleDialogPin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleDialogPin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleDialogPin: unsupported layer %d", layer)
 	}
 }
 
@@ -29540,7 +29540,7 @@ func (m *TLMessagesToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_toggleDialogPin#0xa731e257: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleDialogPin#0xa731e257: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleDialogPin#0xa731e257: field peer: %w", err)
 		}
 
 		return nil
@@ -29626,7 +29626,7 @@ func (m *TLMessagesReorderPinnedDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reorderPinnedDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reorderPinnedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -29653,7 +29653,7 @@ func (m *TLMessagesReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) err
 		x.PutInt32(m.FolderId)
 
 		if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err)
+			return fmt.Errorf("unable to encode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err)
 		}
 
 		return nil
@@ -29750,7 +29750,7 @@ func (m *TLMessagesGetPinnedDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPinnedDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPinnedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -29836,7 +29836,7 @@ func (m *TLMessagesSetBotShippingResults) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setBotShippingResults: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setBotShippingResults: unsupported layer %d", layer)
 	}
 }
 
@@ -29870,7 +29870,7 @@ func (m *TLMessagesSetBotShippingResults) Encode(x *bin.Encoder, layer int32) er
 
 		if m.ShippingOptions != nil {
 			if err := iface.EncodeObjectList(x, m.ShippingOptions, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err)
+				return fmt.Errorf("unable to encode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err)
 			}
 		}
 
@@ -29981,7 +29981,7 @@ func (m *TLMessagesSetBotPrecheckoutResults) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setBotPrecheckoutResults: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setBotPrecheckoutResults: unsupported layer %d", layer)
 	}
 }
 
@@ -30109,7 +30109,7 @@ func (m *TLMessagesUploadMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_uploadMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_uploadMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -30141,13 +30141,13 @@ func (m *TLMessagesUploadMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_uploadMedia#0x14967978: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadMedia#0x14967978: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadMedia#0x14967978: field peer: %w", err)
 		}
 		if m.Media == nil {
 			return fmt.Errorf("unable to encode messages_uploadMedia#0x14967978: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadMedia#0x14967978: field media: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadMedia#0x14967978: field media: %w", err)
 		}
 
 		return nil
@@ -30249,7 +30249,7 @@ func (m *TLMessagesSendScreenshotNotification) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendScreenshotNotification: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendScreenshotNotification: unsupported layer %d", layer)
 	}
 }
 
@@ -30263,13 +30263,13 @@ func (m *TLMessagesSendScreenshotNotification) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode messages_sendScreenshotNotification#0xa1405817: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendScreenshotNotification#0xa1405817: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendScreenshotNotification#0xa1405817: field peer: %w", err)
 		}
 		if m.ReplyTo == nil {
 			return fmt.Errorf("unable to encode messages_sendScreenshotNotification#0xa1405817: field reply_to is nil")
 		}
 		if err := m.ReplyTo.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendScreenshotNotification#0xa1405817: field reply_to: %w", err)
+			return fmt.Errorf("unable to encode messages_sendScreenshotNotification#0xa1405817: field reply_to: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 
@@ -30354,7 +30354,7 @@ func (m *TLMessagesGetFavedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFavedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFavedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -30439,7 +30439,7 @@ func (m *TLMessagesFaveSticker) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_faveSticker: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_faveSticker: unsupported layer %d", layer)
 	}
 }
 
@@ -30453,13 +30453,13 @@ func (m *TLMessagesFaveSticker) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_faveSticker#0xb9ffc55b: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_faveSticker#0xb9ffc55b: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_faveSticker#0xb9ffc55b: field id: %w", err)
 		}
 		if m.Unfave == nil {
 			return fmt.Errorf("unable to encode messages_faveSticker#0xb9ffc55b: field unfave is nil")
 		}
 		if err := m.Unfave.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_faveSticker#0xb9ffc55b: field unfave: %w", err)
+			return fmt.Errorf("unable to encode messages_faveSticker#0xb9ffc55b: field unfave: %w", err)
 		}
 
 		return nil
@@ -30557,7 +30557,7 @@ func (m *TLMessagesGetUnreadMentions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getUnreadMentions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getUnreadMentions: unsupported layer %d", layer)
 	}
 }
 
@@ -30585,7 +30585,7 @@ func (m *TLMessagesGetUnreadMentions) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_getUnreadMentions#0xf107e790: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getUnreadMentions#0xf107e790: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getUnreadMentions#0xf107e790: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -30706,7 +30706,7 @@ func (m *TLMessagesReadMentions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readMentions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readMentions: unsupported layer %d", layer)
 	}
 }
 
@@ -30734,7 +30734,7 @@ func (m *TLMessagesReadMentions) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readMentions#0x36e5bf4d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readMentions#0x36e5bf4d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readMentions#0x36e5bf4d: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -30828,7 +30828,7 @@ func (m *TLMessagesGetRecentLocations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getRecentLocations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getRecentLocations: unsupported layer %d", layer)
 	}
 }
 
@@ -30842,7 +30842,7 @@ func (m *TLMessagesGetRecentLocations) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_getRecentLocations#0x702a40e0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getRecentLocations#0x702a40e0: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getRecentLocations#0x702a40e0: field peer: %w", err)
 		}
 		x.PutInt32(m.Limit)
 		x.PutInt64(m.Hash)
@@ -30970,7 +30970,7 @@ func (m *TLMessagesSendMultiMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendMultiMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendMultiMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -31036,16 +31036,16 @@ func (m *TLMessagesSendMultiMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field peer: %w", err)
 		}
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field reply_to: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.MultiMedia, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err)
+			return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err)
 		}
 
 		if m.ScheduleDate != nil {
@@ -31054,13 +31054,13 @@ func (m *TLMessagesSendMultiMedia) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field send_as: %w", err)
 			}
 		}
 
 		if m.QuickReplyShortcut != nil {
 			if err := m.QuickReplyShortcut.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field quick_reply_shortcut: %w", err)
+				return fmt.Errorf("unable to encode messages_sendMultiMedia#0x1bf89d74: field quick_reply_shortcut: %w", err)
 			}
 		}
 
@@ -31248,7 +31248,7 @@ func (m *TLMessagesUploadEncryptedFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_uploadEncryptedFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_uploadEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -31262,13 +31262,13 @@ func (m *TLMessagesUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_uploadEncryptedFile#0x5057c497: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadEncryptedFile#0x5057c497: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadEncryptedFile#0x5057c497: field peer: %w", err)
 		}
 		if m.File == nil {
 			return fmt.Errorf("unable to encode messages_uploadEncryptedFile#0x5057c497: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadEncryptedFile#0x5057c497: field file: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadEncryptedFile#0x5057c497: field file: %w", err)
 		}
 
 		return nil
@@ -31354,7 +31354,7 @@ func (m *TLMessagesSearchStickerSets) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchStickerSets: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchStickerSets: unsupported layer %d", layer)
 	}
 }
 
@@ -31455,7 +31455,7 @@ func (m *TLMessagesGetSplitRanges) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSplitRanges: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSplitRanges: unsupported layer %d", layer)
 	}
 }
 
@@ -31536,7 +31536,7 @@ func (m *TLMessagesMarkDialogUnread) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_markDialogUnread: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_markDialogUnread: unsupported layer %d", layer)
 	}
 }
 
@@ -31565,7 +31565,7 @@ func (m *TLMessagesMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_markDialogUnread#0x8c5006f8: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_markDialogUnread#0x8c5006f8: field parent_peer: %w", err)
 			}
 		}
 
@@ -31573,7 +31573,7 @@ func (m *TLMessagesMarkDialogUnread) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_markDialogUnread#0x8c5006f8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_markDialogUnread#0x8c5006f8: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_markDialogUnread#0x8c5006f8: field peer: %w", err)
 		}
 
 		return nil
@@ -31664,7 +31664,7 @@ func (m *TLMessagesGetDialogUnreadMarks) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDialogUnreadMarks: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDialogUnreadMarks: unsupported layer %d", layer)
 	}
 }
 
@@ -31690,7 +31690,7 @@ func (m *TLMessagesGetDialogUnreadMarks) Encode(x *bin.Encoder, layer int32) err
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getDialogUnreadMarks#0x21202222: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_getDialogUnreadMarks#0x21202222: field parent_peer: %w", err)
 			}
 		}
 
@@ -31766,7 +31766,7 @@ func (m *TLMessagesClearAllDrafts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_clearAllDrafts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_clearAllDrafts: unsupported layer %d", layer)
 	}
 }
 
@@ -31845,7 +31845,7 @@ func (m *TLMessagesUpdatePinnedMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_updatePinnedMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_updatePinnedMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -31879,7 +31879,7 @@ func (m *TLMessagesUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_updatePinnedMessage#0xd2aaf7ec: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_updatePinnedMessage#0xd2aaf7ec: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_updatePinnedMessage#0xd2aaf7ec: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -31981,7 +31981,7 @@ func (m *TLMessagesSendVote) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendVote: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendVote: unsupported layer %d", layer)
 	}
 }
 
@@ -31995,7 +31995,7 @@ func (m *TLMessagesSendVote) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendVote#0x10ea6184: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendVote#0x10ea6184: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendVote#0x10ea6184: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -32095,7 +32095,7 @@ func (m *TLMessagesGetPollResults) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPollResults: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPollResults: unsupported layer %d", layer)
 	}
 }
 
@@ -32109,7 +32109,7 @@ func (m *TLMessagesGetPollResults) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getPollResults#0xeda3e33b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPollResults#0xeda3e33b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getPollResults#0xeda3e33b: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutInt64(m.PollHash)
@@ -32122,7 +32122,7 @@ func (m *TLMessagesGetPollResults) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getPollResults#0xeda3e33b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPollResults#0xeda3e33b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getPollResults#0xeda3e33b: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -32222,7 +32222,7 @@ func (m *TLMessagesGetOnlines) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getOnlines: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getOnlines: unsupported layer %d", layer)
 	}
 }
 
@@ -32236,7 +32236,7 @@ func (m *TLMessagesGetOnlines) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getOnlines#0x6e2be050: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getOnlines#0x6e2be050: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getOnlines#0x6e2be050: field peer: %w", err)
 		}
 
 		return nil
@@ -32316,7 +32316,7 @@ func (m *TLMessagesEditChatAbout) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatAbout: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatAbout: unsupported layer %d", layer)
 	}
 }
 
@@ -32330,7 +32330,7 @@ func (m *TLMessagesEditChatAbout) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editChatAbout#0xdef60797: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatAbout#0xdef60797: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatAbout#0xdef60797: field peer: %w", err)
 		}
 		x.PutString(m.About)
 
@@ -32416,7 +32416,7 @@ func (m *TLMessagesEditChatDefaultBannedRights) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatDefaultBannedRights: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights: unsupported layer %d", layer)
 	}
 }
 
@@ -32430,13 +32430,13 @@ func (m *TLMessagesEditChatDefaultBannedRights) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights#0xa5866b41: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatDefaultBannedRights#0xa5866b41: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights#0xa5866b41: field peer: %w", err)
 		}
 		if m.BannedRights == nil {
 			return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights#0xa5866b41: field banned_rights is nil")
 		}
 		if err := m.BannedRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatDefaultBannedRights#0xa5866b41: field banned_rights: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatDefaultBannedRights#0xa5866b41: field banned_rights: %w", err)
 		}
 
 		return nil
@@ -32518,7 +32518,7 @@ func (m *TLMessagesGetEmojiKeywords) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiKeywords: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiKeywords: unsupported layer %d", layer)
 	}
 }
 
@@ -32599,7 +32599,7 @@ func (m *TLMessagesGetEmojiKeywordsDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiKeywordsDifference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiKeywordsDifference: unsupported layer %d", layer)
 	}
 }
 
@@ -32683,7 +32683,7 @@ func (m *TLMessagesGetEmojiKeywordsLanguages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiKeywordsLanguages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiKeywordsLanguages: unsupported layer %d", layer)
 	}
 }
 
@@ -32760,7 +32760,7 @@ func (m *TLMessagesGetEmojiURL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiURL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiURL: unsupported layer %d", layer)
 	}
 }
 
@@ -32856,7 +32856,7 @@ func (m *TLMessagesGetSearchCounters) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSearchCounters: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSearchCounters: unsupported layer %d", layer)
 	}
 }
 
@@ -32887,11 +32887,11 @@ func (m *TLMessagesGetSearchCounters) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_getSearchCounters#0x1bbcf300: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchCounters#0x1bbcf300: field peer: %w", err)
 		}
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_getSearchCounters#0x1bbcf300: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -32900,7 +32900,7 @@ func (m *TLMessagesGetSearchCounters) Encode(x *bin.Encoder, layer int32) error 
 		}
 
 		if err := iface.EncodeObjectList(x, m.Filters, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchCounters#0x1bbcf300: field filters: %w", err)
 		}
 
 		return nil
@@ -33061,7 +33061,7 @@ func (m *TLMessagesRequestUrlAuth) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestUrlAuth: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestUrlAuth: unsupported layer %d", layer)
 	}
 }
 
@@ -33099,7 +33099,7 @@ func (m *TLMessagesRequestUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestUrlAuth#0x894cc99c: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_requestUrlAuth#0x894cc99c: field peer: %w", err)
 			}
 		}
 
@@ -33148,7 +33148,7 @@ func (m *TLMessagesRequestUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestUrlAuth#0x894cc99c: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_requestUrlAuth#0x894cc99c: field peer: %w", err)
 			}
 		}
 
@@ -33353,7 +33353,7 @@ func (m *TLMessagesAcceptUrlAuth) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_acceptUrlAuth: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_acceptUrlAuth: unsupported layer %d", layer)
 	}
 }
 
@@ -33397,7 +33397,7 @@ func (m *TLMessagesAcceptUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_acceptUrlAuth#0x67a3f0de: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_acceptUrlAuth#0x67a3f0de: field peer: %w", err)
 			}
 		}
 
@@ -33452,7 +33452,7 @@ func (m *TLMessagesAcceptUrlAuth) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_acceptUrlAuth#0x67a3f0de: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_acceptUrlAuth#0x67a3f0de: field peer: %w", err)
 			}
 		}
 
@@ -33624,7 +33624,7 @@ func (m *TLMessagesHidePeerSettingsBar) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_hidePeerSettingsBar: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_hidePeerSettingsBar: unsupported layer %d", layer)
 	}
 }
 
@@ -33638,7 +33638,7 @@ func (m *TLMessagesHidePeerSettingsBar) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_hidePeerSettingsBar#0x4facb138: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_hidePeerSettingsBar#0x4facb138: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_hidePeerSettingsBar#0x4facb138: field peer: %w", err)
 		}
 
 		return nil
@@ -33714,7 +33714,7 @@ func (m *TLMessagesGetScheduledHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getScheduledHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getScheduledHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -33728,7 +33728,7 @@ func (m *TLMessagesGetScheduledHistory) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_getScheduledHistory#0xf516760b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getScheduledHistory#0xf516760b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getScheduledHistory#0xf516760b: field peer: %w", err)
 		}
 		x.PutInt64(m.Hash)
 
@@ -33814,7 +33814,7 @@ func (m *TLMessagesGetScheduledMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getScheduledMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getScheduledMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -33828,7 +33828,7 @@ func (m *TLMessagesGetScheduledMessages) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getScheduledMessages#0xbdbb0464: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getScheduledMessages#0xbdbb0464: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getScheduledMessages#0xbdbb0464: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -33912,7 +33912,7 @@ func (m *TLMessagesSendScheduledMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendScheduledMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendScheduledMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -33926,7 +33926,7 @@ func (m *TLMessagesSendScheduledMessages) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode messages_sendScheduledMessages#0xbd38850a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendScheduledMessages#0xbd38850a: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendScheduledMessages#0xbd38850a: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -34010,7 +34010,7 @@ func (m *TLMessagesDeleteScheduledMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteScheduledMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteScheduledMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -34024,7 +34024,7 @@ func (m *TLMessagesDeleteScheduledMessages) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode messages_deleteScheduledMessages#0x59ae2b16: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteScheduledMessages#0x59ae2b16: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteScheduledMessages#0x59ae2b16: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -34117,7 +34117,7 @@ func (m *TLMessagesGetPollVotes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPollVotes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPollVotes: unsupported layer %d", layer)
 	}
 }
 
@@ -34148,7 +34148,7 @@ func (m *TLMessagesGetPollVotes) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getPollVotes#0xb86e380e: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPollVotes#0xb86e380e: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getPollVotes#0xb86e380e: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Option != nil {
@@ -34265,7 +34265,7 @@ func (m *TLMessagesToggleStickerSets) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleStickerSets: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleStickerSets: unsupported layer %d", layer)
 	}
 }
 
@@ -34297,7 +34297,7 @@ func (m *TLMessagesToggleStickerSets) Encode(x *bin.Encoder, layer int32) error 
 		x.PutUint32(flags)
 
 		if err := iface.EncodeObjectList(x, m.Stickersets, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err)
 		}
 
 		return nil
@@ -34394,7 +34394,7 @@ func (m *TLMessagesGetDialogFilters) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDialogFilters: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDialogFilters: unsupported layer %d", layer)
 	}
 }
 
@@ -34462,7 +34462,7 @@ func (m *TLMessagesGetSuggestedDialogFilters) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSuggestedDialogFilters: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSuggestedDialogFilters: unsupported layer %d", layer)
 	}
 }
 
@@ -34537,7 +34537,7 @@ func (m *TLMessagesUpdateDialogFilter) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_updateDialogFilter: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_updateDialogFilter: unsupported layer %d", layer)
 	}
 }
 
@@ -34564,7 +34564,7 @@ func (m *TLMessagesUpdateDialogFilter) Encode(x *bin.Encoder, layer int32) error
 		x.PutInt32(m.Id)
 		if m.Filter != nil {
 			if err := m.Filter.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_updateDialogFilter#0x1ad4a04a: field filter: %w", err)
+				return fmt.Errorf("unable to encode messages_updateDialogFilter#0x1ad4a04a: field filter: %w", err)
 			}
 		}
 
@@ -34649,7 +34649,7 @@ func (m *TLMessagesUpdateDialogFiltersOrder) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_updateDialogFiltersOrder: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_updateDialogFiltersOrder: unsupported layer %d", layer)
 	}
 }
 
@@ -34727,7 +34727,7 @@ func (m *TLMessagesGetOldFeaturedStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getOldFeaturedStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getOldFeaturedStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -34832,7 +34832,7 @@ func (m *TLMessagesGetReplies) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getReplies: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getReplies: unsupported layer %d", layer)
 	}
 }
 
@@ -34846,7 +34846,7 @@ func (m *TLMessagesGetReplies) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getReplies#0x22ddd30c: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getReplies#0x22ddd30c: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getReplies#0x22ddd30c: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutInt32(m.OffsetId)
@@ -34963,7 +34963,7 @@ func (m *TLMessagesGetDiscussionMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDiscussionMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDiscussionMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -34977,7 +34977,7 @@ func (m *TLMessagesGetDiscussionMessage) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getDiscussionMessage#0x446972fd: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getDiscussionMessage#0x446972fd: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getDiscussionMessage#0x446972fd: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -35061,7 +35061,7 @@ func (m *TLMessagesReadDiscussion) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readDiscussion: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readDiscussion: unsupported layer %d", layer)
 	}
 }
 
@@ -35075,7 +35075,7 @@ func (m *TLMessagesReadDiscussion) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readDiscussion#0xf731a9f4: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readDiscussion#0xf731a9f4: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readDiscussion#0xf731a9f4: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutInt32(m.ReadMaxId)
@@ -35170,7 +35170,7 @@ func (m *TLMessagesUnpinAllMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_unpinAllMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_unpinAllMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -35201,7 +35201,7 @@ func (m *TLMessagesUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_unpinAllMessages#0x62dd747: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_unpinAllMessages#0x62dd747: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_unpinAllMessages#0x62dd747: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -35209,7 +35209,7 @@ func (m *TLMessagesUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_unpinAllMessages#0x62dd747: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_unpinAllMessages#0x62dd747: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -35303,7 +35303,7 @@ func (m *TLMessagesDeleteChat) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteChat: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteChat: unsupported layer %d", layer)
 	}
 }
 
@@ -35379,7 +35379,7 @@ func (m *TLMessagesDeletePhoneCallHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deletePhoneCallHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deletePhoneCallHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -35475,7 +35475,7 @@ func (m *TLMessagesCheckHistoryImport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_checkHistoryImport: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_checkHistoryImport: unsupported layer %d", layer)
 	}
 }
 
@@ -35562,7 +35562,7 @@ func (m *TLMessagesInitHistoryImport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_initHistoryImport: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_initHistoryImport: unsupported layer %d", layer)
 	}
 }
 
@@ -35576,13 +35576,13 @@ func (m *TLMessagesInitHistoryImport) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_initHistoryImport#0x34090c3b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_initHistoryImport#0x34090c3b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_initHistoryImport#0x34090c3b: field peer: %w", err)
 		}
 		if m.File == nil {
 			return fmt.Errorf("unable to encode messages_initHistoryImport#0x34090c3b: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_initHistoryImport#0x34090c3b: field file: %w", err)
+			return fmt.Errorf("unable to encode messages_initHistoryImport#0x34090c3b: field file: %w", err)
 		}
 		x.PutInt32(m.MediaCount)
 
@@ -35684,7 +35684,7 @@ func (m *TLMessagesUploadImportedMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_uploadImportedMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_uploadImportedMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -35698,7 +35698,7 @@ func (m *TLMessagesUploadImportedMedia) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_uploadImportedMedia#0x2a862092: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadImportedMedia#0x2a862092: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadImportedMedia#0x2a862092: field peer: %w", err)
 		}
 		x.PutInt64(m.ImportId)
 		x.PutString(m.FileName)
@@ -35706,7 +35706,7 @@ func (m *TLMessagesUploadImportedMedia) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_uploadImportedMedia#0x2a862092: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_uploadImportedMedia#0x2a862092: field media: %w", err)
+			return fmt.Errorf("unable to encode messages_uploadImportedMedia#0x2a862092: field media: %w", err)
 		}
 
 		return nil
@@ -35799,7 +35799,7 @@ func (m *TLMessagesStartHistoryImport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_startHistoryImport: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_startHistoryImport: unsupported layer %d", layer)
 	}
 }
 
@@ -35813,7 +35813,7 @@ func (m *TLMessagesStartHistoryImport) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_startHistoryImport#0xb43df344: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_startHistoryImport#0xb43df344: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_startHistoryImport#0xb43df344: field peer: %w", err)
 		}
 		x.PutInt64(m.ImportId)
 
@@ -35913,7 +35913,7 @@ func (m *TLMessagesGetExportedChatInvites) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getExportedChatInvites: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getExportedChatInvites: unsupported layer %d", layer)
 	}
 }
 
@@ -35948,13 +35948,13 @@ func (m *TLMessagesGetExportedChatInvites) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_getExportedChatInvites#0xa2b5a3f6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getExportedChatInvites#0xa2b5a3f6: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getExportedChatInvites#0xa2b5a3f6: field peer: %w", err)
 		}
 		if m.AdminId == nil {
 			return fmt.Errorf("unable to encode messages_getExportedChatInvites#0xa2b5a3f6: field admin_id is nil")
 		}
 		if err := m.AdminId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getExportedChatInvites#0xa2b5a3f6: field admin_id: %w", err)
+			return fmt.Errorf("unable to encode messages_getExportedChatInvites#0xa2b5a3f6: field admin_id: %w", err)
 		}
 		if m.OffsetDate != nil {
 			x.PutInt32(*m.OffsetDate)
@@ -36079,7 +36079,7 @@ func (m *TLMessagesGetExportedChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getExportedChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getExportedChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -36093,7 +36093,7 @@ func (m *TLMessagesGetExportedChatInvite) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode messages_getExportedChatInvite#0x73746f5c: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getExportedChatInvite#0x73746f5c: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getExportedChatInvite#0x73746f5c: field peer: %w", err)
 		}
 		x.PutString(m.Link)
 
@@ -36200,7 +36200,7 @@ func (m *TLMessagesEditExportedChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editExportedChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editExportedChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -36241,7 +36241,7 @@ func (m *TLMessagesEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_editExportedChatInvite#0xbdca2f75: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editExportedChatInvite#0xbdca2f75: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editExportedChatInvite#0xbdca2f75: field peer: %w", err)
 		}
 		x.PutString(m.Link)
 		if m.ExpireDate != nil {
@@ -36254,7 +36254,7 @@ func (m *TLMessagesEditExportedChatInvite) Encode(x *bin.Encoder, layer int32) e
 
 		if m.RequestNeeded != nil {
 			if err := m.RequestNeeded.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editExportedChatInvite#0xbdca2f75: field request_needed: %w", err)
+				return fmt.Errorf("unable to encode messages_editExportedChatInvite#0xbdca2f75: field request_needed: %w", err)
 			}
 		}
 
@@ -36382,7 +36382,7 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) Validate(layer int32) error
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteRevokedExportedChatInvites: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites: unsupported layer %d", layer)
 	}
 }
 
@@ -36396,13 +36396,13 @@ func (m *TLMessagesDeleteRevokedExportedChatInvites) Encode(x *bin.Encoder, laye
 			return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites#0x56987bd5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteRevokedExportedChatInvites#0x56987bd5: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites#0x56987bd5: field peer: %w", err)
 		}
 		if m.AdminId == nil {
 			return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites#0x56987bd5: field admin_id is nil")
 		}
 		if err := m.AdminId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteRevokedExportedChatInvites#0x56987bd5: field admin_id: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteRevokedExportedChatInvites#0x56987bd5: field admin_id: %w", err)
 		}
 
 		return nil
@@ -36490,7 +36490,7 @@ func (m *TLMessagesDeleteExportedChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteExportedChatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteExportedChatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -36504,7 +36504,7 @@ func (m *TLMessagesDeleteExportedChatInvite) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_deleteExportedChatInvite#0xd464a42b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteExportedChatInvite#0xd464a42b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteExportedChatInvite#0xd464a42b: field peer: %w", err)
 		}
 		x.PutString(m.Link)
 
@@ -36584,7 +36584,7 @@ func (m *TLMessagesGetAdminsWithInvites) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAdminsWithInvites: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAdminsWithInvites: unsupported layer %d", layer)
 	}
 }
 
@@ -36598,7 +36598,7 @@ func (m *TLMessagesGetAdminsWithInvites) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getAdminsWithInvites#0x3920e6ef: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getAdminsWithInvites#0x3920e6ef: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getAdminsWithInvites#0x3920e6ef: field peer: %w", err)
 		}
 
 		return nil
@@ -36695,7 +36695,7 @@ func (m *TLMessagesGetChatInviteImporters) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getChatInviteImporters: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getChatInviteImporters: unsupported layer %d", layer)
 	}
 }
 
@@ -36733,7 +36733,7 @@ func (m *TLMessagesGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_getChatInviteImporters#0xdf04dd4e: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getChatInviteImporters#0xdf04dd4e: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getChatInviteImporters#0xdf04dd4e: field peer: %w", err)
 		}
 		if m.Link != nil {
 			x.PutString(*m.Link)
@@ -36748,7 +36748,7 @@ func (m *TLMessagesGetChatInviteImporters) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_getChatInviteImporters#0xdf04dd4e: field offset_user is nil")
 		}
 		if err := m.OffsetUser.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getChatInviteImporters#0xdf04dd4e: field offset_user: %w", err)
+			return fmt.Errorf("unable to encode messages_getChatInviteImporters#0xdf04dd4e: field offset_user: %w", err)
 		}
 		x.PutInt32(m.Limit)
 
@@ -36870,7 +36870,7 @@ func (m *TLMessagesSetHistoryTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setHistoryTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setHistoryTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -36884,7 +36884,7 @@ func (m *TLMessagesSetHistoryTTL) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setHistoryTTL#0xb80e5fe4: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setHistoryTTL#0xb80e5fe4: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setHistoryTTL#0xb80e5fe4: field peer: %w", err)
 		}
 		x.PutInt32(m.Period)
 
@@ -36964,7 +36964,7 @@ func (m *TLMessagesCheckHistoryImportPeer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_checkHistoryImportPeer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_checkHistoryImportPeer: unsupported layer %d", layer)
 	}
 }
 
@@ -36978,7 +36978,7 @@ func (m *TLMessagesCheckHistoryImportPeer) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_checkHistoryImportPeer#0x5dc60f03: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_checkHistoryImportPeer#0x5dc60f03: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_checkHistoryImportPeer#0x5dc60f03: field peer: %w", err)
 		}
 
 		return nil
@@ -37058,7 +37058,7 @@ func (m *TLMessagesSetChatTheme) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setChatTheme: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setChatTheme: unsupported layer %d", layer)
 	}
 }
 
@@ -37072,13 +37072,13 @@ func (m *TLMessagesSetChatTheme) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setChatTheme#0x81202c9: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setChatTheme#0x81202c9: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setChatTheme#0x81202c9: field peer: %w", err)
 		}
 		if m.Theme == nil {
 			return fmt.Errorf("unable to encode messages_setChatTheme#0x81202c9: field theme is nil")
 		}
 		if err := m.Theme.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setChatTheme#0x81202c9: field theme: %w", err)
+			return fmt.Errorf("unable to encode messages_setChatTheme#0x81202c9: field theme: %w", err)
 		}
 
 		return nil
@@ -37162,7 +37162,7 @@ func (m *TLMessagesGetMessageReadParticipants) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessageReadParticipants: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessageReadParticipants: unsupported layer %d", layer)
 	}
 }
 
@@ -37176,7 +37176,7 @@ func (m *TLMessagesGetMessageReadParticipants) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode messages_getMessageReadParticipants#0x31c1c44f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessageReadParticipants#0x31c1c44f: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessageReadParticipants#0x31c1c44f: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -37272,7 +37272,7 @@ func (m *TLMessagesGetSearchResultsCalendar) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSearchResultsCalendar: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSearchResultsCalendar: unsupported layer %d", layer)
 	}
 }
 
@@ -37300,11 +37300,11 @@ func (m *TLMessagesGetSearchResultsCalendar) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_getSearchResultsCalendar#0x6aa3f6bd: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchResultsCalendar#0x6aa3f6bd: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchResultsCalendar#0x6aa3f6bd: field peer: %w", err)
 		}
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSearchResultsCalendar#0x6aa3f6bd: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_getSearchResultsCalendar#0x6aa3f6bd: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -37312,7 +37312,7 @@ func (m *TLMessagesGetSearchResultsCalendar) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_getSearchResultsCalendar#0x6aa3f6bd: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchResultsCalendar#0x6aa3f6bd: field filter: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchResultsCalendar#0x6aa3f6bd: field filter: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.OffsetDate)
@@ -37436,7 +37436,7 @@ func (m *TLMessagesGetSearchResultsPositions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSearchResultsPositions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSearchResultsPositions: unsupported layer %d", layer)
 	}
 }
 
@@ -37464,11 +37464,11 @@ func (m *TLMessagesGetSearchResultsPositions) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode messages_getSearchResultsPositions#0x9c7f2f10: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchResultsPositions#0x9c7f2f10: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchResultsPositions#0x9c7f2f10: field peer: %w", err)
 		}
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSearchResultsPositions#0x9c7f2f10: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_getSearchResultsPositions#0x9c7f2f10: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -37476,7 +37476,7 @@ func (m *TLMessagesGetSearchResultsPositions) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode messages_getSearchResultsPositions#0x9c7f2f10: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSearchResultsPositions#0x9c7f2f10: field filter: %w", err)
+			return fmt.Errorf("unable to encode messages_getSearchResultsPositions#0x9c7f2f10: field filter: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.Limit)
@@ -37592,7 +37592,7 @@ func (m *TLMessagesHideChatJoinRequest) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_hideChatJoinRequest: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_hideChatJoinRequest: unsupported layer %d", layer)
 	}
 }
 
@@ -37620,13 +37620,13 @@ func (m *TLMessagesHideChatJoinRequest) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_hideChatJoinRequest#0x7fe7e815: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_hideChatJoinRequest#0x7fe7e815: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_hideChatJoinRequest#0x7fe7e815: field peer: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_hideChatJoinRequest#0x7fe7e815: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_hideChatJoinRequest#0x7fe7e815: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_hideChatJoinRequest#0x7fe7e815: field user_id: %w", err)
 		}
 
 		return nil
@@ -37722,7 +37722,7 @@ func (m *TLMessagesHideAllChatJoinRequests) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_hideAllChatJoinRequests: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_hideAllChatJoinRequests: unsupported layer %d", layer)
 	}
 }
 
@@ -37754,7 +37754,7 @@ func (m *TLMessagesHideAllChatJoinRequests) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode messages_hideAllChatJoinRequests#0xe085f4ea: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_hideAllChatJoinRequests#0xe085f4ea: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_hideAllChatJoinRequests#0xe085f4ea: field peer: %w", err)
 		}
 		if m.Link != nil {
 			x.PutString(*m.Link)
@@ -37874,7 +37874,7 @@ func (m *TLMessagesToggleNoForwards) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleNoForwards: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleNoForwards: unsupported layer %d", layer)
 	}
 }
 
@@ -37902,13 +37902,13 @@ func (m *TLMessagesToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleNoForwards#0xb2081a35: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field peer: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleNoForwards#0xb2081a35: field enabled: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field enabled: %w", err)
 		}
 		if m.RequestMsgId != nil {
 			x.PutInt32(*m.RequestMsgId)
@@ -37922,13 +37922,13 @@ func (m *TLMessagesToggleNoForwards) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleNoForwards#0xb2081a35: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field peer: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleNoForwards#0xb2081a35: field enabled: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleNoForwards#0xb2081a35: field enabled: %w", err)
 		}
 
 		return nil
@@ -38048,7 +38048,7 @@ func (m *TLMessagesSaveDefaultSendAs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_saveDefaultSendAs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_saveDefaultSendAs: unsupported layer %d", layer)
 	}
 }
 
@@ -38062,13 +38062,13 @@ func (m *TLMessagesSaveDefaultSendAs) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_saveDefaultSendAs#0xccfddf96: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveDefaultSendAs#0xccfddf96: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_saveDefaultSendAs#0xccfddf96: field peer: %w", err)
 		}
 		if m.SendAs == nil {
 			return fmt.Errorf("unable to encode messages_saveDefaultSendAs#0xccfddf96: field send_as is nil")
 		}
 		if err := m.SendAs.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_saveDefaultSendAs#0xccfddf96: field send_as: %w", err)
+			return fmt.Errorf("unable to encode messages_saveDefaultSendAs#0xccfddf96: field send_as: %w", err)
 		}
 
 		return nil
@@ -38159,7 +38159,7 @@ func (m *TLMessagesSendReaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendReaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendReaction: unsupported layer %d", layer)
 	}
 }
 
@@ -38194,12 +38194,12 @@ func (m *TLMessagesSendReaction) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendReaction#0xd30d78d4: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendReaction#0xd30d78d4: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.Reaction != nil {
 			if err := iface.EncodeObjectList(x, m.Reaction, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", err)
+				return fmt.Errorf("unable to encode messages_sendReaction#0xd30d78d4: field reaction: %w", err)
 			}
 		}
 
@@ -38320,7 +38320,7 @@ func (m *TLMessagesGetMessagesReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessagesReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessagesReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -38334,7 +38334,7 @@ func (m *TLMessagesGetMessagesReactions) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getMessagesReactions#0x8bba90e6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessagesReactions#0x8bba90e6: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessagesReactions#0x8bba90e6: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -38427,7 +38427,7 @@ func (m *TLMessagesGetMessageReactionsList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMessageReactionsList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMessageReactionsList: unsupported layer %d", layer)
 	}
 }
 
@@ -38458,12 +38458,12 @@ func (m *TLMessagesGetMessageReactionsList) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode messages_getMessageReactionsList#0x461b3f48: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getMessageReactionsList#0x461b3f48: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getMessageReactionsList#0x461b3f48: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Reaction != nil {
 			if err := m.Reaction.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getMessageReactionsList#0x461b3f48: field reaction: %w", err)
+				return fmt.Errorf("unable to encode messages_getMessageReactionsList#0x461b3f48: field reaction: %w", err)
 			}
 		}
 
@@ -38591,7 +38591,7 @@ func (m *TLMessagesSetChatAvailableReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setChatAvailableReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setChatAvailableReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -38622,13 +38622,13 @@ func (m *TLMessagesSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode messages_setChatAvailableReactions#0x864b2581: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setChatAvailableReactions#0x864b2581: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setChatAvailableReactions#0x864b2581: field peer: %w", err)
 		}
 		if m.AvailableReactions == nil {
 			return fmt.Errorf("unable to encode messages_setChatAvailableReactions#0x864b2581: field available_reactions is nil")
 		}
 		if err := m.AvailableReactions.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setChatAvailableReactions#0x864b2581: field available_reactions: %w", err)
+			return fmt.Errorf("unable to encode messages_setChatAvailableReactions#0x864b2581: field available_reactions: %w", err)
 		}
 		if m.ReactionsLimit != nil {
 			x.PutInt32(*m.ReactionsLimit)
@@ -38636,7 +38636,7 @@ func (m *TLMessagesSetChatAvailableReactions) Encode(x *bin.Encoder, layer int32
 
 		if m.PaidEnabled != nil {
 			if err := m.PaidEnabled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setChatAvailableReactions#0x864b2581: field paid_enabled: %w", err)
+				return fmt.Errorf("unable to encode messages_setChatAvailableReactions#0x864b2581: field paid_enabled: %w", err)
 			}
 		}
 
@@ -38738,7 +38738,7 @@ func (m *TLMessagesGetAvailableReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAvailableReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAvailableReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -38817,7 +38817,7 @@ func (m *TLMessagesSetDefaultReaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setDefaultReaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setDefaultReaction: unsupported layer %d", layer)
 	}
 }
 
@@ -38831,7 +38831,7 @@ func (m *TLMessagesSetDefaultReaction) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_setDefaultReaction#0x4f47a016: field reaction is nil")
 		}
 		if err := m.Reaction.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setDefaultReaction#0x4f47a016: field reaction: %w", err)
+			return fmt.Errorf("unable to encode messages_setDefaultReaction#0x4f47a016: field reaction: %w", err)
 		}
 
 		return nil
@@ -38951,7 +38951,7 @@ func (m *TLMessagesTranslateText) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_translateText: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_translateText: unsupported layer %d", layer)
 	}
 }
 
@@ -38987,7 +38987,7 @@ func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_translateText#0xa5eec345: field peer: %w", err)
 			}
 		}
 
@@ -38996,7 +38996,7 @@ func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 		}
 		if m.Text != nil {
 			if err := iface.EncodeObjectList(x, m.Text, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err)
+				return fmt.Errorf("unable to encode messages_translateText#0xa5eec345: field text: %w", err)
 			}
 		}
 		x.PutString(m.ToLang)
@@ -39030,7 +39030,7 @@ func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_translateText#0xa5eec345: field peer: %w", err)
 			}
 		}
 
@@ -39039,7 +39039,7 @@ func (m *TLMessagesTranslateText) Encode(x *bin.Encoder, layer int32) error {
 		}
 		if m.Text != nil {
 			if err := iface.EncodeObjectList(x, m.Text, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err)
+				return fmt.Errorf("unable to encode messages_translateText#0xa5eec345: field text: %w", err)
 			}
 		}
 		x.PutString(m.ToLang)
@@ -39228,7 +39228,7 @@ func (m *TLMessagesGetUnreadReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getUnreadReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getUnreadReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -39259,7 +39259,7 @@ func (m *TLMessagesGetUnreadReactions) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_getUnreadReactions#0xbd7f90ac: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getUnreadReactions#0xbd7f90ac: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getUnreadReactions#0xbd7f90ac: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -39267,7 +39267,7 @@ func (m *TLMessagesGetUnreadReactions) Encode(x *bin.Encoder, layer int32) error
 
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getUnreadReactions#0xbd7f90ac: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_getUnreadReactions#0xbd7f90ac: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -39400,7 +39400,7 @@ func (m *TLMessagesReadReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -39431,7 +39431,7 @@ func (m *TLMessagesReadReactions) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readReactions#0x9ec44f93: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readReactions#0x9ec44f93: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readReactions#0x9ec44f93: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -39439,7 +39439,7 @@ func (m *TLMessagesReadReactions) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.SavedPeerId != nil {
 			if err := m.SavedPeerId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_readReactions#0x9ec44f93: field saved_peer_id: %w", err)
+				return fmt.Errorf("unable to encode messages_readReactions#0x9ec44f93: field saved_peer_id: %w", err)
 			}
 		}
 
@@ -39544,7 +39544,7 @@ func (m *TLMessagesSearchSentMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchSentMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchSentMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -39559,7 +39559,7 @@ func (m *TLMessagesSearchSentMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_searchSentMedia#0x107e31a0: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_searchSentMedia#0x107e31a0: field filter: %w", err)
+			return fmt.Errorf("unable to encode messages_searchSentMedia#0x107e31a0: field filter: %w", err)
 		}
 		x.PutInt32(m.Limit)
 
@@ -39640,7 +39640,7 @@ func (m *TLMessagesGetAttachMenuBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAttachMenuBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAttachMenuBots: unsupported layer %d", layer)
 	}
 }
 
@@ -39719,7 +39719,7 @@ func (m *TLMessagesGetAttachMenuBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAttachMenuBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAttachMenuBot: unsupported layer %d", layer)
 	}
 }
 
@@ -39733,7 +39733,7 @@ func (m *TLMessagesGetAttachMenuBot) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getAttachMenuBot#0x77216192: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getAttachMenuBot#0x77216192: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_getAttachMenuBot#0x77216192: field bot: %w", err)
 		}
 
 		return nil
@@ -39815,7 +39815,7 @@ func (m *TLMessagesToggleBotInAttachMenu) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleBotInAttachMenu: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu: unsupported layer %d", layer)
 	}
 }
 
@@ -39843,13 +39843,13 @@ func (m *TLMessagesToggleBotInAttachMenu) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu#0x69f59d69: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleBotInAttachMenu#0x69f59d69: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu#0x69f59d69: field bot: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu#0x69f59d69: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleBotInAttachMenu#0x69f59d69: field enabled: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleBotInAttachMenu#0x69f59d69: field enabled: %w", err)
 		}
 
 		return nil
@@ -39980,7 +39980,7 @@ func (m *TLMessagesRequestWebView) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestWebView: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestWebView: unsupported layer %d", layer)
 	}
 }
 
@@ -40034,13 +40034,13 @@ func (m *TLMessagesRequestWebView) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestWebView#0x269dc2c1: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field peer: %w", err)
 		}
 		if m.Bot == nil {
 			return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestWebView#0x269dc2c1: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field bot: %w", err)
 		}
 		if m.Url != nil {
 			x.PutString(*m.Url)
@@ -40052,20 +40052,20 @@ func (m *TLMessagesRequestWebView) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.ThemeParams != nil {
 			if err := m.ThemeParams.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestWebView#0x269dc2c1: field theme_params: %w", err)
+				return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field theme_params: %w", err)
 			}
 		}
 
 		x.PutString(m.Platform)
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestWebView#0x269dc2c1: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field reply_to: %w", err)
 			}
 		}
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestWebView#0x269dc2c1: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_requestWebView#0x269dc2c1: field send_as: %w", err)
 			}
 		}
 
@@ -40232,7 +40232,7 @@ func (m *TLMessagesProlongWebView) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_prolongWebView: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_prolongWebView: unsupported layer %d", layer)
 	}
 }
 
@@ -40267,24 +40267,24 @@ func (m *TLMessagesProlongWebView) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_prolongWebView#0xb0d81a83: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field peer: %w", err)
 		}
 		if m.Bot == nil {
 			return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_prolongWebView#0xb0d81a83: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field bot: %w", err)
 		}
 		x.PutInt64(m.QueryId)
 		if m.ReplyTo != nil {
 			if err := m.ReplyTo.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_prolongWebView#0xb0d81a83: field reply_to: %w", err)
+				return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field reply_to: %w", err)
 			}
 		}
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_prolongWebView#0xb0d81a83: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_prolongWebView#0xb0d81a83: field send_as: %w", err)
 			}
 		}
 
@@ -40424,7 +40424,7 @@ func (m *TLMessagesRequestSimpleWebView) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestSimpleWebView: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestSimpleWebView: unsupported layer %d", layer)
 	}
 }
 
@@ -40471,7 +40471,7 @@ func (m *TLMessagesRequestSimpleWebView) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_requestSimpleWebView#0x413a3e73: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestSimpleWebView#0x413a3e73: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_requestSimpleWebView#0x413a3e73: field bot: %w", err)
 		}
 		if m.Url != nil {
 			x.PutString(*m.Url)
@@ -40483,7 +40483,7 @@ func (m *TLMessagesRequestSimpleWebView) Encode(x *bin.Encoder, layer int32) err
 
 		if m.ThemeParams != nil {
 			if err := m.ThemeParams.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestSimpleWebView#0x413a3e73: field theme_params: %w", err)
+				return fmt.Errorf("unable to encode messages_requestSimpleWebView#0x413a3e73: field theme_params: %w", err)
 			}
 		}
 
@@ -40613,7 +40613,7 @@ func (m *TLMessagesSendWebViewResultMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendWebViewResultMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendWebViewResultMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -40628,7 +40628,7 @@ func (m *TLMessagesSendWebViewResultMessage) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_sendWebViewResultMessage#0xa4314f5: field result is nil")
 		}
 		if err := m.Result.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendWebViewResultMessage#0xa4314f5: field result: %w", err)
+			return fmt.Errorf("unable to encode messages_sendWebViewResultMessage#0xa4314f5: field result: %w", err)
 		}
 
 		return nil
@@ -40720,7 +40720,7 @@ func (m *TLMessagesSendWebViewData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendWebViewData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendWebViewData: unsupported layer %d", layer)
 	}
 }
 
@@ -40734,7 +40734,7 @@ func (m *TLMessagesSendWebViewData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendWebViewData#0xdc0242c8: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendWebViewData#0xdc0242c8: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_sendWebViewData#0xdc0242c8: field bot: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		x.PutString(m.ButtonText)
@@ -40826,7 +40826,7 @@ func (m *TLMessagesTranscribeAudio) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_transcribeAudio: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_transcribeAudio: unsupported layer %d", layer)
 	}
 }
 
@@ -40840,7 +40840,7 @@ func (m *TLMessagesTranscribeAudio) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_transcribeAudio#0x269e9a49: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_transcribeAudio#0x269e9a49: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_transcribeAudio#0x269e9a49: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -40930,7 +40930,7 @@ func (m *TLMessagesRateTranscribedAudio) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_rateTranscribedAudio: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_rateTranscribedAudio: unsupported layer %d", layer)
 	}
 }
 
@@ -40944,7 +40944,7 @@ func (m *TLMessagesRateTranscribedAudio) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_rateTranscribedAudio#0x7f1d072f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_rateTranscribedAudio#0x7f1d072f: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_rateTranscribedAudio#0x7f1d072f: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutInt64(m.TranscriptionId)
@@ -40952,7 +40952,7 @@ func (m *TLMessagesRateTranscribedAudio) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_rateTranscribedAudio#0x7f1d072f: field good is nil")
 		}
 		if err := m.Good.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_rateTranscribedAudio#0x7f1d072f: field good: %w", err)
+			return fmt.Errorf("unable to encode messages_rateTranscribedAudio#0x7f1d072f: field good: %w", err)
 		}
 
 		return nil
@@ -41043,7 +41043,7 @@ func (m *TLMessagesGetCustomEmojiDocuments) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getCustomEmojiDocuments: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getCustomEmojiDocuments: unsupported layer %d", layer)
 	}
 }
 
@@ -41117,7 +41117,7 @@ func (m *TLMessagesGetEmojiStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -41193,7 +41193,7 @@ func (m *TLMessagesGetFeaturedEmojiStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFeaturedEmojiStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFeaturedEmojiStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -41280,7 +41280,7 @@ func (m *TLMessagesReportReaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportReaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportReaction: unsupported layer %d", layer)
 	}
 }
 
@@ -41294,14 +41294,14 @@ func (m *TLMessagesReportReaction) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_reportReaction#0x3f64c076: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportReaction#0x3f64c076: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportReaction#0x3f64c076: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.ReactionPeer == nil {
 			return fmt.Errorf("unable to encode messages_reportReaction#0x3f64c076: field reaction_peer is nil")
 		}
 		if err := m.ReactionPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportReaction#0x3f64c076: field reaction_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportReaction#0x3f64c076: field reaction_peer: %w", err)
 		}
 
 		return nil
@@ -41387,7 +41387,7 @@ func (m *TLMessagesGetTopReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getTopReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getTopReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -41470,7 +41470,7 @@ func (m *TLMessagesGetRecentReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getRecentReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getRecentReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -41549,7 +41549,7 @@ func (m *TLMessagesClearRecentReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_clearRecentReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_clearRecentReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -41628,7 +41628,7 @@ func (m *TLMessagesGetExtendedMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getExtendedMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getExtendedMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -41642,7 +41642,7 @@ func (m *TLMessagesGetExtendedMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getExtendedMedia#0x84f80814: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getExtendedMedia#0x84f80814: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getExtendedMedia#0x84f80814: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -41717,7 +41717,7 @@ func (m *TLMessagesSetDefaultHistoryTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setDefaultHistoryTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setDefaultHistoryTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -41791,7 +41791,7 @@ func (m *TLMessagesGetDefaultHistoryTTL) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDefaultHistoryTTL: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDefaultHistoryTTL: unsupported layer %d", layer)
 	}
 }
 
@@ -41902,7 +41902,7 @@ func (m *TLMessagesSendBotRequestedPeer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendBotRequestedPeer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendBotRequestedPeer: unsupported layer %d", layer)
 	}
 }
 
@@ -41933,7 +41933,7 @@ func (m *TLMessagesSendBotRequestedPeer) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer: %w", err)
 		}
 		if m.MsgId_FLAGINT32 != nil {
 			x.PutInt32(*m.MsgId_FLAGINT32)
@@ -41946,7 +41946,7 @@ func (m *TLMessagesSendBotRequestedPeer) Encode(x *bin.Encoder, layer int32) err
 		x.PutInt32(m.ButtonId)
 
 		if err := iface.EncodeObjectList(x, m.RequestedPeers, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err)
+			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err)
 		}
 
 		return nil
@@ -41957,13 +41957,13 @@ func (m *TLMessagesSendBotRequestedPeer) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId_INT32)
 		x.PutInt32(m.ButtonId)
 
 		if err := iface.EncodeObjectList(x, m.RequestedPeers, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err)
+			return fmt.Errorf("unable to encode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err)
 		}
 
 		return nil
@@ -42123,7 +42123,7 @@ func (m *TLMessagesGetEmojiGroups) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiGroups: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiGroups: unsupported layer %d", layer)
 	}
 }
 
@@ -42199,7 +42199,7 @@ func (m *TLMessagesGetEmojiStatusGroups) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiStatusGroups: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiStatusGroups: unsupported layer %d", layer)
 	}
 }
 
@@ -42275,7 +42275,7 @@ func (m *TLMessagesGetEmojiProfilePhotoGroups) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiProfilePhotoGroups: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiProfilePhotoGroups: unsupported layer %d", layer)
 	}
 }
 
@@ -42356,7 +42356,7 @@ func (m *TLMessagesSearchCustomEmoji) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchCustomEmoji: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchCustomEmoji: unsupported layer %d", layer)
 	}
 }
 
@@ -42442,7 +42442,7 @@ func (m *TLMessagesTogglePeerTranslations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_togglePeerTranslations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_togglePeerTranslations: unsupported layer %d", layer)
 	}
 }
 
@@ -42470,7 +42470,7 @@ func (m *TLMessagesTogglePeerTranslations) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_togglePeerTranslations#0xe47cb579: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_togglePeerTranslations#0xe47cb579: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_togglePeerTranslations#0xe47cb579: field peer: %w", err)
 		}
 
 		return nil
@@ -42554,7 +42554,7 @@ func (m *TLMessagesGetBotApp) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getBotApp: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getBotApp: unsupported layer %d", layer)
 	}
 }
 
@@ -42568,7 +42568,7 @@ func (m *TLMessagesGetBotApp) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getBotApp#0x34fdc5c3: field app is nil")
 		}
 		if err := m.App.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getBotApp#0x34fdc5c3: field app: %w", err)
+			return fmt.Errorf("unable to encode messages_getBotApp#0x34fdc5c3: field app: %w", err)
 		}
 		x.PutInt64(m.Hash)
 
@@ -42674,7 +42674,7 @@ func (m *TLMessagesRequestAppWebView) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestAppWebView: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestAppWebView: unsupported layer %d", layer)
 	}
 }
 
@@ -42715,13 +42715,13 @@ func (m *TLMessagesRequestAppWebView) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_requestAppWebView#0x53618bce: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestAppWebView#0x53618bce: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_requestAppWebView#0x53618bce: field peer: %w", err)
 		}
 		if m.App == nil {
 			return fmt.Errorf("unable to encode messages_requestAppWebView#0x53618bce: field app is nil")
 		}
 		if err := m.App.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestAppWebView#0x53618bce: field app: %w", err)
+			return fmt.Errorf("unable to encode messages_requestAppWebView#0x53618bce: field app: %w", err)
 		}
 		if m.StartParam != nil {
 			x.PutString(*m.StartParam)
@@ -42729,7 +42729,7 @@ func (m *TLMessagesRequestAppWebView) Encode(x *bin.Encoder, layer int32) error 
 
 		if m.ThemeParams != nil {
 			if err := m.ThemeParams.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestAppWebView#0x53618bce: field theme_params: %w", err)
+				return fmt.Errorf("unable to encode messages_requestAppWebView#0x53618bce: field theme_params: %w", err)
 			}
 		}
 
@@ -42867,7 +42867,7 @@ func (m *TLMessagesSetChatWallPaper) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_setChatWallPaper: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_setChatWallPaper: unsupported layer %d", layer)
 	}
 }
 
@@ -42908,17 +42908,17 @@ func (m *TLMessagesSetChatWallPaper) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_setChatWallPaper#0x8ffacae1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_setChatWallPaper#0x8ffacae1: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_setChatWallPaper#0x8ffacae1: field peer: %w", err)
 		}
 		if m.Wallpaper != nil {
 			if err := m.Wallpaper.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setChatWallPaper#0x8ffacae1: field wallpaper: %w", err)
+				return fmt.Errorf("unable to encode messages_setChatWallPaper#0x8ffacae1: field wallpaper: %w", err)
 			}
 		}
 
 		if m.Settings != nil {
 			if err := m.Settings.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_setChatWallPaper#0x8ffacae1: field settings: %w", err)
+				return fmt.Errorf("unable to encode messages_setChatWallPaper#0x8ffacae1: field settings: %w", err)
 			}
 		}
 
@@ -43038,7 +43038,7 @@ func (m *TLMessagesSearchEmojiStickerSets) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchEmojiStickerSets: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchEmojiStickerSets: unsupported layer %d", layer)
 	}
 }
 
@@ -43160,7 +43160,7 @@ func (m *TLMessagesGetSavedDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSavedDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -43189,7 +43189,7 @@ func (m *TLMessagesGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSavedDialogs#0x1e91fc99: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_getSavedDialogs#0x1e91fc99: field parent_peer: %w", err)
 			}
 		}
 
@@ -43199,7 +43199,7 @@ func (m *TLMessagesGetSavedDialogs) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getSavedDialogs#0x1e91fc99: field offset_peer is nil")
 		}
 		if err := m.OffsetPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSavedDialogs#0x1e91fc99: field offset_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSavedDialogs#0x1e91fc99: field offset_peer: %w", err)
 		}
 		x.PutInt32(m.Limit)
 		x.PutInt64(m.Hash)
@@ -43330,7 +43330,7 @@ func (m *TLMessagesGetSavedHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSavedHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSavedHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -43356,7 +43356,7 @@ func (m *TLMessagesGetSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSavedHistory#0x998ab009: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_getSavedHistory#0x998ab009: field parent_peer: %w", err)
 			}
 		}
 
@@ -43364,7 +43364,7 @@ func (m *TLMessagesGetSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getSavedHistory#0x998ab009: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSavedHistory#0x998ab009: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSavedHistory#0x998ab009: field peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.OffsetDate)
@@ -43506,7 +43506,7 @@ func (m *TLMessagesDeleteSavedHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteSavedHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteSavedHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -43539,7 +43539,7 @@ func (m *TLMessagesDeleteSavedHistory) Encode(x *bin.Encoder, layer int32) error
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_deleteSavedHistory#0x4dc5085f: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_deleteSavedHistory#0x4dc5085f: field parent_peer: %w", err)
 			}
 		}
 
@@ -43547,7 +43547,7 @@ func (m *TLMessagesDeleteSavedHistory) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_deleteSavedHistory#0x4dc5085f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteSavedHistory#0x4dc5085f: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteSavedHistory#0x4dc5085f: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 		if m.MinDate != nil {
@@ -43657,7 +43657,7 @@ func (m *TLMessagesGetPinnedSavedDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPinnedSavedDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -43732,7 +43732,7 @@ func (m *TLMessagesToggleSavedDialogPin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleSavedDialogPin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleSavedDialogPin: unsupported layer %d", layer)
 	}
 }
 
@@ -43760,7 +43760,7 @@ func (m *TLMessagesToggleSavedDialogPin) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_toggleSavedDialogPin#0xac81bbde: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleSavedDialogPin#0xac81bbde: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleSavedDialogPin#0xac81bbde: field peer: %w", err)
 		}
 
 		return nil
@@ -43844,7 +43844,7 @@ func (m *TLMessagesReorderPinnedSavedDialogs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reorderPinnedSavedDialogs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reorderPinnedSavedDialogs: unsupported layer %d", layer)
 	}
 }
 
@@ -43870,7 +43870,7 @@ func (m *TLMessagesReorderPinnedSavedDialogs) Encode(x *bin.Encoder, layer int32
 		x.PutUint32(flags)
 
 		if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err)
+			return fmt.Errorf("unable to encode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err)
 		}
 
 		return nil
@@ -43969,7 +43969,7 @@ func (m *TLMessagesGetSavedReactionTags) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSavedReactionTags: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSavedReactionTags: unsupported layer %d", layer)
 	}
 }
 
@@ -43995,7 +43995,7 @@ func (m *TLMessagesGetSavedReactionTags) Encode(x *bin.Encoder, layer int32) err
 		x.PutUint32(flags)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSavedReactionTags#0x3637e05b: field peer: %w", err)
+				return fmt.Errorf("unable to encode messages_getSavedReactionTags#0x3637e05b: field peer: %w", err)
 			}
 		}
 
@@ -44087,7 +44087,7 @@ func (m *TLMessagesUpdateSavedReactionTag) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_updateSavedReactionTag: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_updateSavedReactionTag: unsupported layer %d", layer)
 	}
 }
 
@@ -44115,7 +44115,7 @@ func (m *TLMessagesUpdateSavedReactionTag) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_updateSavedReactionTag#0x60297dec: field reaction is nil")
 		}
 		if err := m.Reaction.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_updateSavedReactionTag#0x60297dec: field reaction: %w", err)
+			return fmt.Errorf("unable to encode messages_updateSavedReactionTag#0x60297dec: field reaction: %w", err)
 		}
 		if m.Title != nil {
 			x.PutString(*m.Title)
@@ -44202,7 +44202,7 @@ func (m *TLMessagesGetDefaultTagReactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getDefaultTagReactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getDefaultTagReactions: unsupported layer %d", layer)
 	}
 }
 
@@ -44283,7 +44283,7 @@ func (m *TLMessagesGetOutboxReadDate) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getOutboxReadDate: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getOutboxReadDate: unsupported layer %d", layer)
 	}
 }
 
@@ -44297,7 +44297,7 @@ func (m *TLMessagesGetOutboxReadDate) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_getOutboxReadDate#0x8c4bfe5d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getOutboxReadDate#0x8c4bfe5d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getOutboxReadDate#0x8c4bfe5d: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -44374,7 +44374,7 @@ func (m *TLMessagesGetQuickReplies) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getQuickReplies: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getQuickReplies: unsupported layer %d", layer)
 	}
 }
 
@@ -44453,7 +44453,7 @@ func (m *TLMessagesReorderQuickReplies) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reorderQuickReplies: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reorderQuickReplies: unsupported layer %d", layer)
 	}
 }
 
@@ -44530,7 +44530,7 @@ func (m *TLMessagesCheckQuickReplyShortcut) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_checkQuickReplyShortcut: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_checkQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
 
@@ -44611,7 +44611,7 @@ func (m *TLMessagesEditQuickReplyShortcut) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editQuickReplyShortcut: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
 
@@ -44692,7 +44692,7 @@ func (m *TLMessagesDeleteQuickReplyShortcut) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteQuickReplyShortcut: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteQuickReplyShortcut: unsupported layer %d", layer)
 	}
 }
 
@@ -44776,7 +44776,7 @@ func (m *TLMessagesGetQuickReplyMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getQuickReplyMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -44899,7 +44899,7 @@ func (m *TLMessagesSendQuickReplyMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendQuickReplyMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -44913,7 +44913,7 @@ func (m *TLMessagesSendQuickReplyMessages) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_sendQuickReplyMessages#0x6c750de1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendQuickReplyMessages#0x6c750de1: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendQuickReplyMessages#0x6c750de1: field peer: %w", err)
 		}
 		x.PutInt32(m.ShortcutId)
 
@@ -45003,7 +45003,7 @@ func (m *TLMessagesDeleteQuickReplyMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteQuickReplyMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteQuickReplyMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -45086,7 +45086,7 @@ func (m *TLMessagesToggleDialogFilterTags) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleDialogFilterTags: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleDialogFilterTags: unsupported layer %d", layer)
 	}
 }
 
@@ -45100,7 +45100,7 @@ func (m *TLMessagesToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_toggleDialogFilterTags#0xfd2dda49: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleDialogFilterTags#0xfd2dda49: field enabled: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleDialogFilterTags#0xfd2dda49: field enabled: %w", err)
 		}
 
 		return nil
@@ -45173,7 +45173,7 @@ func (m *TLMessagesGetMyStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getMyStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getMyStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -45254,7 +45254,7 @@ func (m *TLMessagesGetEmojiStickerGroups) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiStickerGroups: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiStickerGroups: unsupported layer %d", layer)
 	}
 }
 
@@ -45330,7 +45330,7 @@ func (m *TLMessagesGetAvailableEffects) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getAvailableEffects: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getAvailableEffects: unsupported layer %d", layer)
 	}
 }
 
@@ -45417,7 +45417,7 @@ func (m *TLMessagesEditFactCheck) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editFactCheck: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editFactCheck: unsupported layer %d", layer)
 	}
 }
 
@@ -45431,14 +45431,14 @@ func (m *TLMessagesEditFactCheck) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editFactCheck#0x589ee75: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editFactCheck#0x589ee75: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editFactCheck#0x589ee75: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.Text == nil {
 			return fmt.Errorf("unable to encode messages_editFactCheck#0x589ee75: field text is nil")
 		}
 		if err := m.Text.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editFactCheck#0x589ee75: field text: %w", err)
+			return fmt.Errorf("unable to encode messages_editFactCheck#0x589ee75: field text: %w", err)
 		}
 
 		return nil
@@ -45527,7 +45527,7 @@ func (m *TLMessagesDeleteFactCheck) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteFactCheck: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteFactCheck: unsupported layer %d", layer)
 	}
 }
 
@@ -45541,7 +45541,7 @@ func (m *TLMessagesDeleteFactCheck) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_deleteFactCheck#0xd1da940c: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteFactCheck#0xd1da940c: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteFactCheck#0xd1da940c: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -45627,7 +45627,7 @@ func (m *TLMessagesGetFactCheck) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFactCheck: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFactCheck: unsupported layer %d", layer)
 	}
 }
 
@@ -45641,7 +45641,7 @@ func (m *TLMessagesGetFactCheck) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getFactCheck#0xb9cdc5ee: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getFactCheck#0xb9cdc5ee: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getFactCheck#0xb9cdc5ee: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.MsgId)
@@ -45744,7 +45744,7 @@ func (m *TLMessagesRequestMainWebView) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_requestMainWebView: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_requestMainWebView: unsupported layer %d", layer)
 	}
 }
 
@@ -45782,13 +45782,13 @@ func (m *TLMessagesRequestMainWebView) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_requestMainWebView#0xc9e01e7b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestMainWebView#0xc9e01e7b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_requestMainWebView#0xc9e01e7b: field peer: %w", err)
 		}
 		if m.Bot == nil {
 			return fmt.Errorf("unable to encode messages_requestMainWebView#0xc9e01e7b: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_requestMainWebView#0xc9e01e7b: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_requestMainWebView#0xc9e01e7b: field bot: %w", err)
 		}
 		if m.StartParam != nil {
 			x.PutString(*m.StartParam)
@@ -45796,7 +45796,7 @@ func (m *TLMessagesRequestMainWebView) Encode(x *bin.Encoder, layer int32) error
 
 		if m.ThemeParams != nil {
 			if err := m.ThemeParams.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_requestMainWebView#0xc9e01e7b: field theme_params: %w", err)
+				return fmt.Errorf("unable to encode messages_requestMainWebView#0xc9e01e7b: field theme_params: %w", err)
 			}
 		}
 
@@ -45925,7 +45925,7 @@ func (m *TLMessagesSendPaidReaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_sendPaidReaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_sendPaidReaction: unsupported layer %d", layer)
 	}
 }
 
@@ -45953,14 +45953,14 @@ func (m *TLMessagesSendPaidReaction) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_sendPaidReaction#0x58bbcb50: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_sendPaidReaction#0x58bbcb50: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_sendPaidReaction#0x58bbcb50: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutInt32(m.Count)
 		x.PutInt64(m.RandomId)
 		if m.Private != nil {
 			if err := m.Private.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_sendPaidReaction#0x58bbcb50: field private: %w", err)
+				return fmt.Errorf("unable to encode messages_sendPaidReaction#0x58bbcb50: field private: %w", err)
 			}
 		}
 
@@ -46070,7 +46070,7 @@ func (m *TLMessagesTogglePaidReactionPrivacy) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_togglePaidReactionPrivacy: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy: unsupported layer %d", layer)
 	}
 }
 
@@ -46084,14 +46084,14 @@ func (m *TLMessagesTogglePaidReactionPrivacy) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy#0x435885b5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_togglePaidReactionPrivacy#0x435885b5: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy#0x435885b5: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.Private == nil {
 			return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy#0x435885b5: field private is nil")
 		}
 		if err := m.Private.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_togglePaidReactionPrivacy#0x435885b5: field private: %w", err)
+			return fmt.Errorf("unable to encode messages_togglePaidReactionPrivacy#0x435885b5: field private: %w", err)
 		}
 
 		return nil
@@ -46173,7 +46173,7 @@ func (m *TLMessagesGetPaidReactionPrivacy) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPaidReactionPrivacy: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPaidReactionPrivacy: unsupported layer %d", layer)
 	}
 }
 
@@ -46246,7 +46246,7 @@ func (m *TLMessagesViewSponsoredMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_viewSponsoredMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_viewSponsoredMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -46328,7 +46328,7 @@ func (m *TLMessagesClickSponsoredMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_clickSponsoredMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_clickSponsoredMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -46441,7 +46441,7 @@ func (m *TLMessagesReportSponsoredMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportSponsoredMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportSponsoredMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -46530,7 +46530,7 @@ func (m *TLMessagesGetSponsoredMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSponsoredMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSponsoredMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -46558,7 +46558,7 @@ func (m *TLMessagesGetSponsoredMessages) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_getSponsoredMessages#0x3d6ce850: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSponsoredMessages#0x3d6ce850: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getSponsoredMessages#0x3d6ce850: field peer: %w", err)
 		}
 		if m.MsgId != nil {
 			x.PutInt32(*m.MsgId)
@@ -46659,7 +46659,7 @@ func (m *TLMessagesSavePreparedInlineMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_savePreparedInlineMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_savePreparedInlineMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -46687,17 +46687,17 @@ func (m *TLMessagesSavePreparedInlineMessage) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode messages_savePreparedInlineMessage#0xf21f7f2f: field result is nil")
 		}
 		if err := m.Result.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field result: %w", err)
+			return fmt.Errorf("unable to encode messages_savePreparedInlineMessage#0xf21f7f2f: field result: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_savePreparedInlineMessage#0xf21f7f2f: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_savePreparedInlineMessage#0xf21f7f2f: field user_id: %w", err)
 		}
 		if m.PeerTypes != nil {
 			if err := iface.EncodeObjectList(x, m.PeerTypes, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err)
+				return fmt.Errorf("unable to encode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err)
 			}
 		}
 
@@ -46816,7 +46816,7 @@ func (m *TLMessagesGetPreparedInlineMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getPreparedInlineMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getPreparedInlineMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -46830,7 +46830,7 @@ func (m *TLMessagesGetPreparedInlineMessage) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_getPreparedInlineMessage#0x857ebdb8: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getPreparedInlineMessage#0x857ebdb8: field bot: %w", err)
+			return fmt.Errorf("unable to encode messages_getPreparedInlineMessage#0x857ebdb8: field bot: %w", err)
 		}
 		x.PutString(m.Id)
 
@@ -46930,7 +46930,7 @@ func (m *TLMessagesSearchStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_searchStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_searchStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -47065,7 +47065,7 @@ func (m *TLMessagesReportMessagesDelivery) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportMessagesDelivery: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportMessagesDelivery: unsupported layer %d", layer)
 	}
 }
 
@@ -47093,7 +47093,7 @@ func (m *TLMessagesReportMessagesDelivery) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_reportMessagesDelivery#0x5a6d7395: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportMessagesDelivery#0x5a6d7395: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportMessagesDelivery#0x5a6d7395: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -47186,7 +47186,7 @@ func (m *TLMessagesGetSavedDialogsByID) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getSavedDialogsByID: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getSavedDialogsByID: unsupported layer %d", layer)
 	}
 }
 
@@ -47212,12 +47212,12 @@ func (m *TLMessagesGetSavedDialogsByID) Encode(x *bin.Encoder, layer int32) erro
 		x.PutUint32(flags)
 		if m.ParentPeer != nil {
 			if err := m.ParentPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field parent_peer: %w", err)
+				return fmt.Errorf("unable to encode messages_getSavedDialogsByID#0x6f6f9c96: field parent_peer: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.Ids, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err)
+			return fmt.Errorf("unable to encode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err)
 		}
 
 		return nil
@@ -47327,7 +47327,7 @@ func (m *TLMessagesReadSavedHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readSavedHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readSavedHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -47341,13 +47341,13 @@ func (m *TLMessagesReadSavedHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readSavedHistory#0xba4a3b5b: field parent_peer is nil")
 		}
 		if err := m.ParentPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readSavedHistory#0xba4a3b5b: field parent_peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readSavedHistory#0xba4a3b5b: field parent_peer: %w", err)
 		}
 		if m.Peer == nil {
 			return fmt.Errorf("unable to encode messages_readSavedHistory#0xba4a3b5b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readSavedHistory#0xba4a3b5b: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readSavedHistory#0xba4a3b5b: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 
@@ -47449,7 +47449,7 @@ func (m *TLMessagesToggleTodoCompleted) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleTodoCompleted: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleTodoCompleted: unsupported layer %d", layer)
 	}
 }
 
@@ -47463,7 +47463,7 @@ func (m *TLMessagesToggleTodoCompleted) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode messages_toggleTodoCompleted#0xd3e03124: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleTodoCompleted#0xd3e03124: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleTodoCompleted#0xd3e03124: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -47559,7 +47559,7 @@ func (m *TLMessagesAppendTodoList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_appendTodoList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_appendTodoList: unsupported layer %d", layer)
 	}
 }
 
@@ -47573,12 +47573,12 @@ func (m *TLMessagesAppendTodoList) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_appendTodoList#0x21a61057: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_appendTodoList#0x21a61057: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
 		if err := iface.EncodeObjectList(x, m.List, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", err)
+			return fmt.Errorf("unable to encode messages_appendTodoList#0x21a61057: field list: %w", err)
 		}
 
 		return nil
@@ -47692,7 +47692,7 @@ func (m *TLMessagesToggleSuggestedPostApproval) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_toggleSuggestedPostApproval: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_toggleSuggestedPostApproval: unsupported layer %d", layer)
 	}
 }
 
@@ -47727,7 +47727,7 @@ func (m *TLMessagesToggleSuggestedPostApproval) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode messages_toggleSuggestedPostApproval#0x8107455c: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_toggleSuggestedPostApproval#0x8107455c: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_toggleSuggestedPostApproval#0x8107455c: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.ScheduleDate != nil {
@@ -47850,7 +47850,7 @@ func (m *TLMessagesGetForumTopics) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getForumTopics: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getForumTopics: unsupported layer %d", layer)
 	}
 }
 
@@ -47878,7 +47878,7 @@ func (m *TLMessagesGetForumTopics) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_getForumTopics#0x3ba47bff: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getForumTopics#0x3ba47bff: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getForumTopics#0x3ba47bff: field peer: %w", err)
 		}
 		if m.Q != nil {
 			x.PutString(*m.Q)
@@ -47996,7 +47996,7 @@ func (m *TLMessagesGetForumTopicsByID) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getForumTopicsByID: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getForumTopicsByID: unsupported layer %d", layer)
 	}
 }
 
@@ -48010,7 +48010,7 @@ func (m *TLMessagesGetForumTopicsByID) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_getForumTopicsByID#0xaf0a4a08: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getForumTopicsByID#0xaf0a4a08: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getForumTopicsByID#0xaf0a4a08: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Topics)
@@ -48110,7 +48110,7 @@ func (m *TLMessagesEditForumTopic) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editForumTopic: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editForumTopic: unsupported layer %d", layer)
 	}
 }
 
@@ -48147,7 +48147,7 @@ func (m *TLMessagesEditForumTopic) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editForumTopic#0xcecc1134: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editForumTopic#0xcecc1134: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editForumTopic#0xcecc1134: field peer: %w", err)
 		}
 		x.PutInt32(m.TopicId)
 		if m.Title != nil {
@@ -48160,13 +48160,13 @@ func (m *TLMessagesEditForumTopic) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Closed != nil {
 			if err := m.Closed.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editForumTopic#0xcecc1134: field closed: %w", err)
+				return fmt.Errorf("unable to encode messages_editForumTopic#0xcecc1134: field closed: %w", err)
 			}
 		}
 
 		if m.Hidden != nil {
 			if err := m.Hidden.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_editForumTopic#0xcecc1134: field hidden: %w", err)
+				return fmt.Errorf("unable to encode messages_editForumTopic#0xcecc1134: field hidden: %w", err)
 			}
 		}
 
@@ -48293,7 +48293,7 @@ func (m *TLMessagesUpdatePinnedForumTopic) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_updatePinnedForumTopic: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_updatePinnedForumTopic: unsupported layer %d", layer)
 	}
 }
 
@@ -48307,14 +48307,14 @@ func (m *TLMessagesUpdatePinnedForumTopic) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode messages_updatePinnedForumTopic#0x175df251: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_updatePinnedForumTopic#0x175df251: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_updatePinnedForumTopic#0x175df251: field peer: %w", err)
 		}
 		x.PutInt32(m.TopicId)
 		if m.Pinned == nil {
 			return fmt.Errorf("unable to encode messages_updatePinnedForumTopic#0x175df251: field pinned is nil")
 		}
 		if err := m.Pinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_updatePinnedForumTopic#0x175df251: field pinned: %w", err)
+			return fmt.Errorf("unable to encode messages_updatePinnedForumTopic#0x175df251: field pinned: %w", err)
 		}
 
 		return nil
@@ -48409,7 +48409,7 @@ func (m *TLMessagesReorderPinnedForumTopics) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reorderPinnedForumTopics: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reorderPinnedForumTopics: unsupported layer %d", layer)
 	}
 }
 
@@ -48437,7 +48437,7 @@ func (m *TLMessagesReorderPinnedForumTopics) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode messages_reorderPinnedForumTopics#0xe7841f0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reorderPinnedForumTopics#0xe7841f0: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reorderPinnedForumTopics#0xe7841f0: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Order)
@@ -48547,7 +48547,7 @@ func (m *TLMessagesCreateForumTopic) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_createForumTopic: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_createForumTopic: unsupported layer %d", layer)
 	}
 }
 
@@ -48586,7 +48586,7 @@ func (m *TLMessagesCreateForumTopic) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_createForumTopic#0x2f98c3d5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_createForumTopic#0x2f98c3d5: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_createForumTopic#0x2f98c3d5: field peer: %w", err)
 		}
 		x.PutString(m.Title)
 		if m.IconColor != nil {
@@ -48600,7 +48600,7 @@ func (m *TLMessagesCreateForumTopic) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.RandomId)
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode messages_createForumTopic#0x2f98c3d5: field send_as: %w", err)
+				return fmt.Errorf("unable to encode messages_createForumTopic#0x2f98c3d5: field send_as: %w", err)
 			}
 		}
 
@@ -48718,7 +48718,7 @@ func (m *TLMessagesDeleteTopicHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deleteTopicHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deleteTopicHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -48732,7 +48732,7 @@ func (m *TLMessagesDeleteTopicHistory) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_deleteTopicHistory#0xd2816f10: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deleteTopicHistory#0xd2816f10: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deleteTopicHistory#0xd2816f10: field peer: %w", err)
 		}
 		x.PutInt32(m.TopMsgId)
 
@@ -48807,7 +48807,7 @@ func (m *TLMessagesGetEmojiGameInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getEmojiGameInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getEmojiGameInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -48908,7 +48908,7 @@ func (m *TLMessagesSummarizeText) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_summarizeText: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_summarizeText: unsupported layer %d", layer)
 	}
 }
 
@@ -48939,7 +48939,7 @@ func (m *TLMessagesSummarizeText) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_summarizeText#0xabbbd346: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_summarizeText#0xabbbd346: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_summarizeText#0xabbbd346: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.ToLang != nil {
@@ -48972,7 +48972,7 @@ func (m *TLMessagesSummarizeText) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_summarizeText#0xabbbd346: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_summarizeText#0xabbbd346: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_summarizeText#0xabbbd346: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.ToLang != nil {
@@ -49115,7 +49115,7 @@ func (m *TLMessagesEditChatCreator) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatCreator: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatCreator: unsupported layer %d", layer)
 	}
 }
 
@@ -49129,19 +49129,19 @@ func (m *TLMessagesEditChatCreator) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatCreator#0xf743b857: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field peer: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatCreator#0xf743b857: field user_id: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field user_id: %w", err)
 		}
 		if m.Password == nil {
 			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatCreator#0xf743b857: field password: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatCreator#0xf743b857: field password: %w", err)
 		}
 
 		return nil
@@ -49231,7 +49231,7 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getFutureChatCreatorAfterLeave: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getFutureChatCreatorAfterLeave: unsupported layer %d", layer)
 	}
 }
 
@@ -49245,7 +49245,7 @@ func (m *TLMessagesGetFutureChatCreatorAfterLeave) Encode(x *bin.Encoder, layer 
 			return fmt.Errorf("unable to encode messages_getFutureChatCreatorAfterLeave#0x3b7d0ea6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getFutureChatCreatorAfterLeave#0x3b7d0ea6: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getFutureChatCreatorAfterLeave#0x3b7d0ea6: field peer: %w", err)
 		}
 
 		return nil
@@ -49331,7 +49331,7 @@ func (m *TLMessagesEditChatParticipantRank) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_editChatParticipantRank: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_editChatParticipantRank: unsupported layer %d", layer)
 	}
 }
 
@@ -49345,13 +49345,13 @@ func (m *TLMessagesEditChatParticipantRank) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode messages_editChatParticipantRank#0xa00f32b0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatParticipantRank#0xa00f32b0: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatParticipantRank#0xa00f32b0: field peer: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode messages_editChatParticipantRank#0xa00f32b0: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_editChatParticipantRank#0xa00f32b0: field participant: %w", err)
+			return fmt.Errorf("unable to encode messages_editChatParticipantRank#0xa00f32b0: field participant: %w", err)
 		}
 		x.PutString(m.Rank)
 
@@ -49439,7 +49439,7 @@ func (m *TLMessagesDeclineUrlAuth) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_declineUrlAuth: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_declineUrlAuth: unsupported layer %d", layer)
 	}
 }
 
@@ -49524,7 +49524,7 @@ func (m *TLMessagesCheckUrlAuthMatchCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_checkUrlAuthMatchCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_checkUrlAuthMatchCode: unsupported layer %d", layer)
 	}
 }
 
@@ -49620,7 +49620,7 @@ func (m *TLMessagesComposeMessageWithAI) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_composeMessageWithAI: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_composeMessageWithAI: unsupported layer %d", layer)
 	}
 }
 
@@ -49658,7 +49658,7 @@ func (m *TLMessagesComposeMessageWithAI) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode messages_composeMessageWithAI#0xfd426afe: field text is nil")
 		}
 		if err := m.Text.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_composeMessageWithAI#0xfd426afe: field text: %w", err)
+			return fmt.Errorf("unable to encode messages_composeMessageWithAI#0xfd426afe: field text: %w", err)
 		}
 		if m.TranslateToLang != nil {
 			x.PutString(*m.TranslateToLang)
@@ -49772,7 +49772,7 @@ func (m *TLMessagesReportReadMetrics) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportReadMetrics: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportReadMetrics: unsupported layer %d", layer)
 	}
 }
 
@@ -49786,11 +49786,11 @@ func (m *TLMessagesReportReadMetrics) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_reportReadMetrics#0x4067c5e6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_reportReadMetrics#0x4067c5e6: field peer: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Metrics, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err)
+			return fmt.Errorf("unable to encode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err)
 		}
 
 		return nil
@@ -49889,7 +49889,7 @@ func (m *TLMessagesReportMusicListen) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_reportMusicListen: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_reportMusicListen: unsupported layer %d", layer)
 	}
 }
 
@@ -49903,7 +49903,7 @@ func (m *TLMessagesReportMusicListen) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode messages_reportMusicListen#0xddbcd819: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_reportMusicListen#0xddbcd819: field id: %w", err)
+			return fmt.Errorf("unable to encode messages_reportMusicListen#0xddbcd819: field id: %w", err)
 		}
 		x.PutInt32(m.ListenedDuration)
 
@@ -49991,7 +49991,7 @@ func (m *TLMessagesAddPollAnswer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_addPollAnswer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_addPollAnswer: unsupported layer %d", layer)
 	}
 }
 
@@ -50005,14 +50005,14 @@ func (m *TLMessagesAddPollAnswer) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_addPollAnswer#0x19bc4b6d: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_addPollAnswer#0x19bc4b6d: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_addPollAnswer#0x19bc4b6d: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		if m.Answer == nil {
 			return fmt.Errorf("unable to encode messages_addPollAnswer#0x19bc4b6d: field answer is nil")
 		}
 		if err := m.Answer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_addPollAnswer#0x19bc4b6d: field answer: %w", err)
+			return fmt.Errorf("unable to encode messages_addPollAnswer#0x19bc4b6d: field answer: %w", err)
 		}
 
 		return nil
@@ -50107,7 +50107,7 @@ func (m *TLMessagesDeletePollAnswer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_deletePollAnswer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_deletePollAnswer: unsupported layer %d", layer)
 	}
 }
 
@@ -50121,7 +50121,7 @@ func (m *TLMessagesDeletePollAnswer) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_deletePollAnswer#0xac8505a5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_deletePollAnswer#0xac8505a5: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_deletePollAnswer#0xac8505a5: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutBytes(m.Option)
@@ -50222,7 +50222,7 @@ func (m *TLMessagesGetUnreadPollVotes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_getUnreadPollVotes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_getUnreadPollVotes: unsupported layer %d", layer)
 	}
 }
 
@@ -50250,7 +50250,7 @@ func (m *TLMessagesGetUnreadPollVotes) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode messages_getUnreadPollVotes#0x43286cf2: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_getUnreadPollVotes#0x43286cf2: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_getUnreadPollVotes#0x43286cf2: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -50371,7 +50371,7 @@ func (m *TLMessagesReadPollVotes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate messages_readPollVotes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode messages_readPollVotes: unsupported layer %d", layer)
 	}
 }
 
@@ -50399,7 +50399,7 @@ func (m *TLMessagesReadPollVotes) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode messages_readPollVotes#0x1720b4d8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode messages_readPollVotes#0x1720b4d8: field peer: %w", err)
+			return fmt.Errorf("unable to encode messages_readPollVotes#0x1720b4d8: field peer: %w", err)
 		}
 		if m.TopMsgId != nil {
 			x.PutInt32(*m.TopMsgId)
@@ -50484,7 +50484,7 @@ func (m *TLUpdatesGetState) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate updates_getState: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getState: unsupported layer %d", layer)
 	}
 }
 
@@ -50573,7 +50573,7 @@ func (m *TLUpdatesGetDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate updates_getDifference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getDifference: unsupported layer %d", layer)
 	}
 }
 
@@ -50732,7 +50732,7 @@ func (m *TLUpdatesGetChannelDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate updates_getChannelDifference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getChannelDifference: unsupported layer %d", layer)
 	}
 }
 
@@ -50760,13 +50760,13 @@ func (m *TLUpdatesGetChannelDifference) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode updates_getChannelDifference#0x3173d78: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode updates_getChannelDifference#0x3173d78: field channel: %w", err)
+			return fmt.Errorf("unable to encode updates_getChannelDifference#0x3173d78: field channel: %w", err)
 		}
 		if m.Filter == nil {
 			return fmt.Errorf("unable to encode updates_getChannelDifference#0x3173d78: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode updates_getChannelDifference#0x3173d78: field filter: %w", err)
+			return fmt.Errorf("unable to encode updates_getChannelDifference#0x3173d78: field filter: %w", err)
 		}
 		x.PutInt32(m.Pts)
 		x.PutInt32(m.Limit)
@@ -50875,7 +50875,7 @@ func (m *TLPhotosUpdateProfilePhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photos_updateProfilePhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photos_updateProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -50904,7 +50904,7 @@ func (m *TLPhotosUpdateProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Bot != nil {
 			if err := m.Bot.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_updateProfilePhoto#0x9e82039: field bot: %w", err)
+				return fmt.Errorf("unable to encode photos_updateProfilePhoto#0x9e82039: field bot: %w", err)
 			}
 		}
 
@@ -50912,7 +50912,7 @@ func (m *TLPhotosUpdateProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode photos_updateProfilePhoto#0x9e82039: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode photos_updateProfilePhoto#0x9e82039: field id: %w", err)
+			return fmt.Errorf("unable to encode photos_updateProfilePhoto#0x9e82039: field id: %w", err)
 		}
 
 		return nil
@@ -51024,7 +51024,7 @@ func (m *TLPhotosUploadProfilePhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photos_uploadProfilePhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photos_uploadProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -51065,19 +51065,19 @@ func (m *TLPhotosUploadProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Bot != nil {
 			if err := m.Bot.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadProfilePhoto#0x388a3b5: field bot: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadProfilePhoto#0x388a3b5: field bot: %w", err)
 			}
 		}
 
 		if m.File != nil {
 			if err := m.File.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadProfilePhoto#0x388a3b5: field file: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadProfilePhoto#0x388a3b5: field file: %w", err)
 			}
 		}
 
 		if m.Video != nil {
 			if err := m.Video.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadProfilePhoto#0x388a3b5: field video: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadProfilePhoto#0x388a3b5: field video: %w", err)
 			}
 		}
 
@@ -51087,7 +51087,7 @@ func (m *TLPhotosUploadProfilePhoto) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.VideoEmojiMarkup != nil {
 			if err := m.VideoEmojiMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadProfilePhoto#0x388a3b5: field video_emoji_markup: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadProfilePhoto#0x388a3b5: field video_emoji_markup: %w", err)
 			}
 		}
 
@@ -51206,7 +51206,7 @@ func (m *TLPhotosDeletePhotos) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photos_deletePhotos: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photos_deletePhotos: unsupported layer %d", layer)
 	}
 }
 
@@ -51217,7 +51217,7 @@ func (m *TLPhotosDeletePhotos) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x87cf7f2f)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", err)
+			return fmt.Errorf("unable to encode photos_deletePhotos#0x87cf7f2f: field id: %w", err)
 		}
 
 		return nil
@@ -51311,7 +51311,7 @@ func (m *TLPhotosGetUserPhotos) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photos_getUserPhotos: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photos_getUserPhotos: unsupported layer %d", layer)
 	}
 }
 
@@ -51325,7 +51325,7 @@ func (m *TLPhotosGetUserPhotos) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode photos_getUserPhotos#0x91cd32a8: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode photos_getUserPhotos#0x91cd32a8: field user_id: %w", err)
+			return fmt.Errorf("unable to encode photos_getUserPhotos#0x91cd32a8: field user_id: %w", err)
 		}
 		x.PutInt32(m.Offset)
 		x.PutInt64(m.MaxId)
@@ -51437,7 +51437,7 @@ func (m *TLPhotosUploadContactProfilePhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photos_uploadContactProfilePhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -51481,17 +51481,17 @@ func (m *TLPhotosUploadContactProfilePhoto) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto#0xe14c4a71: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode photos_uploadContactProfilePhoto#0xe14c4a71: field user_id: %w", err)
+			return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto#0xe14c4a71: field user_id: %w", err)
 		}
 		if m.File != nil {
 			if err := m.File.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadContactProfilePhoto#0xe14c4a71: field file: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto#0xe14c4a71: field file: %w", err)
 			}
 		}
 
 		if m.Video != nil {
 			if err := m.Video.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadContactProfilePhoto#0xe14c4a71: field video: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto#0xe14c4a71: field video: %w", err)
 			}
 		}
 
@@ -51501,7 +51501,7 @@ func (m *TLPhotosUploadContactProfilePhoto) Encode(x *bin.Encoder, layer int32) 
 
 		if m.VideoEmojiMarkup != nil {
 			if err := m.VideoEmojiMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode photos_uploadContactProfilePhoto#0xe14c4a71: field video_emoji_markup: %w", err)
+				return fmt.Errorf("unable to encode photos_uploadContactProfilePhoto#0xe14c4a71: field video_emoji_markup: %w", err)
 			}
 		}
 
@@ -51627,7 +51627,7 @@ func (m *TLUploadSaveFilePart) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_saveFilePart: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_saveFilePart: unsupported layer %d", layer)
 	}
 }
 
@@ -51723,7 +51723,7 @@ func (m *TLUploadGetFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_getFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_getFile: unsupported layer %d", layer)
 	}
 }
 
@@ -51754,7 +51754,7 @@ func (m *TLUploadGetFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode upload_getFile#0xbe5335be: field location is nil")
 		}
 		if err := m.Location.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode upload_getFile#0xbe5335be: field location: %w", err)
+			return fmt.Errorf("unable to encode upload_getFile#0xbe5335be: field location: %w", err)
 		}
 		x.PutInt64(m.Offset)
 		x.PutInt32(m.Limit)
@@ -51856,7 +51856,7 @@ func (m *TLUploadSaveBigFilePart) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_saveBigFilePart: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_saveBigFilePart: unsupported layer %d", layer)
 	}
 }
 
@@ -51954,7 +51954,7 @@ func (m *TLUploadGetWebFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_getWebFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_getWebFile: unsupported layer %d", layer)
 	}
 }
 
@@ -51968,7 +51968,7 @@ func (m *TLUploadGetWebFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode upload_getWebFile#0x24e6818d: field location is nil")
 		}
 		if err := m.Location.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode upload_getWebFile#0x24e6818d: field location: %w", err)
+			return fmt.Errorf("unable to encode upload_getWebFile#0x24e6818d: field location: %w", err)
 		}
 		x.PutInt32(m.Offset)
 		x.PutInt32(m.Limit)
@@ -52057,7 +52057,7 @@ func (m *TLUploadGetCdnFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_getCdnFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_getCdnFile: unsupported layer %d", layer)
 	}
 }
 
@@ -52152,7 +52152,7 @@ func (m *TLUploadReuploadCdnFile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_reuploadCdnFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_reuploadCdnFile: unsupported layer %d", layer)
 	}
 }
 
@@ -52238,7 +52238,7 @@ func (m *TLUploadGetCdnFileHashes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_getCdnFileHashes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_getCdnFileHashes: unsupported layer %d", layer)
 	}
 }
 
@@ -52324,7 +52324,7 @@ func (m *TLUploadGetFileHashes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate upload_getFileHashes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode upload_getFileHashes: unsupported layer %d", layer)
 	}
 }
 
@@ -52338,7 +52338,7 @@ func (m *TLUploadGetFileHashes) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode upload_getFileHashes#0x9156982a: field location is nil")
 		}
 		if err := m.Location.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode upload_getFileHashes#0x9156982a: field location: %w", err)
+			return fmt.Errorf("unable to encode upload_getFileHashes#0x9156982a: field location: %w", err)
 		}
 		x.PutInt64(m.Offset)
 
@@ -52413,7 +52413,7 @@ func (m *TLHelpGetConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -52481,7 +52481,7 @@ func (m *TLHelpGetNearestDc) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getNearestDc: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getNearestDc: unsupported layer %d", layer)
 	}
 }
 
@@ -52554,7 +52554,7 @@ func (m *TLHelpGetAppUpdate) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getAppUpdate: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getAppUpdate: unsupported layer %d", layer)
 	}
 }
 
@@ -52628,7 +52628,7 @@ func (m *TLHelpGetInviteText) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getInviteText: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getInviteText: unsupported layer %d", layer)
 	}
 }
 
@@ -52696,7 +52696,7 @@ func (m *TLHelpGetSupport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getSupport: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getSupport: unsupported layer %d", layer)
 	}
 }
 
@@ -52771,7 +52771,7 @@ func (m *TLHelpSetBotUpdatesStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_setBotUpdatesStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_setBotUpdatesStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -52850,7 +52850,7 @@ func (m *TLHelpGetCdnConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getCdnConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getCdnConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -52923,7 +52923,7 @@ func (m *TLHelpGetRecentMeUrls) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getRecentMeUrls: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getRecentMeUrls: unsupported layer %d", layer)
 	}
 }
 
@@ -52997,7 +52997,7 @@ func (m *TLHelpGetTermsOfServiceUpdate) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getTermsOfServiceUpdate: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getTermsOfServiceUpdate: unsupported layer %d", layer)
 	}
 }
 
@@ -53070,7 +53070,7 @@ func (m *TLHelpAcceptTermsOfService) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_acceptTermsOfService: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_acceptTermsOfService: unsupported layer %d", layer)
 	}
 }
 
@@ -53084,7 +53084,7 @@ func (m *TLHelpAcceptTermsOfService) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode help_acceptTermsOfService#0xee72f79a: field id is nil")
 		}
 		if err := m.Id.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode help_acceptTermsOfService#0xee72f79a: field id: %w", err)
+			return fmt.Errorf("unable to encode help_acceptTermsOfService#0xee72f79a: field id: %w", err)
 		}
 
 		return nil
@@ -53158,7 +53158,7 @@ func (m *TLHelpGetDeepLinkInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getDeepLinkInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getDeepLinkInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -53234,7 +53234,7 @@ func (m *TLHelpGetAppConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getAppConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getAppConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -53313,7 +53313,7 @@ func (m *TLHelpSaveAppLog) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_saveAppLog: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_saveAppLog: unsupported layer %d", layer)
 	}
 }
 
@@ -53324,7 +53324,7 @@ func (m *TLHelpSaveAppLog) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x6f02f748)
 
 		if err := iface.EncodeObjectList(x, m.Events, layer); err != nil {
-			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", err)
+			return fmt.Errorf("unable to encode help_saveAppLog#0x6f02f748: field events: %w", err)
 		}
 
 		return nil
@@ -53409,7 +53409,7 @@ func (m *TLHelpGetPassportConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getPassportConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getPassportConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -53483,7 +53483,7 @@ func (m *TLHelpGetSupportName) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getSupportName: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getSupportName: unsupported layer %d", layer)
 	}
 }
 
@@ -53556,7 +53556,7 @@ func (m *TLHelpGetUserInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getUserInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getUserInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -53570,7 +53570,7 @@ func (m *TLHelpGetUserInfo) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode help_getUserInfo#0x38a08d3: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode help_getUserInfo#0x38a08d3: field user_id: %w", err)
+			return fmt.Errorf("unable to encode help_getUserInfo#0x38a08d3: field user_id: %w", err)
 		}
 
 		return nil
@@ -53656,7 +53656,7 @@ func (m *TLHelpEditUserInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_editUserInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_editUserInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -53670,12 +53670,12 @@ func (m *TLHelpEditUserInfo) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode help_editUserInfo#0x66b91b70: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field user_id: %w", err)
+			return fmt.Errorf("unable to encode help_editUserInfo#0x66b91b70: field user_id: %w", err)
 		}
 		x.PutString(m.Message)
 
 		if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", err)
+			return fmt.Errorf("unable to encode help_editUserInfo#0x66b91b70: field entities: %w", err)
 		}
 
 		return nil
@@ -53771,7 +53771,7 @@ func (m *TLHelpGetPromoData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getPromoData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getPromoData: unsupported layer %d", layer)
 	}
 }
 
@@ -53844,7 +53844,7 @@ func (m *TLHelpHidePromoData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_hidePromoData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_hidePromoData: unsupported layer %d", layer)
 	}
 }
 
@@ -53858,7 +53858,7 @@ func (m *TLHelpHidePromoData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode help_hidePromoData#0x1e251c95: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode help_hidePromoData#0x1e251c95: field peer: %w", err)
+			return fmt.Errorf("unable to encode help_hidePromoData#0x1e251c95: field peer: %w", err)
 		}
 
 		return nil
@@ -53938,7 +53938,7 @@ func (m *TLHelpDismissSuggestion) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_dismissSuggestion: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_dismissSuggestion: unsupported layer %d", layer)
 	}
 }
 
@@ -53952,7 +53952,7 @@ func (m *TLHelpDismissSuggestion) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode help_dismissSuggestion#0xf50dbaa1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode help_dismissSuggestion#0xf50dbaa1: field peer: %w", err)
+			return fmt.Errorf("unable to encode help_dismissSuggestion#0xf50dbaa1: field peer: %w", err)
 		}
 		x.PutString(m.Suggestion)
 
@@ -54034,7 +54034,7 @@ func (m *TLHelpGetCountriesList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getCountriesList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getCountriesList: unsupported layer %d", layer)
 	}
 }
 
@@ -54113,7 +54113,7 @@ func (m *TLHelpGetPremiumPromo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getPremiumPromo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getPremiumPromo: unsupported layer %d", layer)
 	}
 }
 
@@ -54183,7 +54183,7 @@ func (m *TLHelpGetPeerColors) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getPeerColors: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getPeerColors: unsupported layer %d", layer)
 	}
 }
 
@@ -54259,7 +54259,7 @@ func (m *TLHelpGetPeerProfileColors) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getPeerProfileColors: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getPeerProfileColors: unsupported layer %d", layer)
 	}
 }
 
@@ -54335,7 +54335,7 @@ func (m *TLHelpGetTimezonesList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_getTimezonesList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_getTimezonesList: unsupported layer %d", layer)
 	}
 }
 
@@ -54416,7 +54416,7 @@ func (m *TLChannelsReadHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_readHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_readHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -54430,7 +54430,7 @@ func (m *TLChannelsReadHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_readHistory#0xcc104937: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_readHistory#0xcc104937: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_readHistory#0xcc104937: field channel: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 
@@ -54516,7 +54516,7 @@ func (m *TLChannelsDeleteMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_deleteMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_deleteMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -54530,7 +54530,7 @@ func (m *TLChannelsDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_deleteMessages#0x84c1fd4e: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deleteMessages#0x84c1fd4e: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_deleteMessages#0x84c1fd4e: field channel: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -54620,7 +54620,7 @@ func (m *TLChannelsReportSpam) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_reportSpam: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_reportSpam: unsupported layer %d", layer)
 	}
 }
 
@@ -54634,13 +54634,13 @@ func (m *TLChannelsReportSpam) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_reportSpam#0xf44a8315: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_reportSpam#0xf44a8315: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_reportSpam#0xf44a8315: field channel: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode channels_reportSpam#0xf44a8315: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_reportSpam#0xf44a8315: field participant: %w", err)
+			return fmt.Errorf("unable to encode channels_reportSpam#0xf44a8315: field participant: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -54749,7 +54749,7 @@ func (m *TLChannelsGetMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -54763,11 +54763,11 @@ func (m *TLChannelsGetMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getMessages#0xad8c9a23: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getMessages#0xad8c9a23: field channel: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Id_VECTORINPUTMESSAGE, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err)
+			return fmt.Errorf("unable to encode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err)
 		}
 
 		return nil
@@ -54778,7 +54778,7 @@ func (m *TLChannelsGetMessages) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getMessages#0xad8c9a23: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getMessages#0xad8c9a23: field channel: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id_VECTORINT32)
@@ -54902,7 +54902,7 @@ func (m *TLChannelsGetParticipants) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getParticipants: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getParticipants: unsupported layer %d", layer)
 	}
 }
 
@@ -54916,13 +54916,13 @@ func (m *TLChannelsGetParticipants) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getParticipants#0x77ced9d0: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getParticipants#0x77ced9d0: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getParticipants#0x77ced9d0: field channel: %w", err)
 		}
 		if m.Filter == nil {
 			return fmt.Errorf("unable to encode channels_getParticipants#0x77ced9d0: field filter is nil")
 		}
 		if err := m.Filter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getParticipants#0x77ced9d0: field filter: %w", err)
+			return fmt.Errorf("unable to encode channels_getParticipants#0x77ced9d0: field filter: %w", err)
 		}
 		x.PutInt32(m.Offset)
 		x.PutInt32(m.Limit)
@@ -55026,7 +55026,7 @@ func (m *TLChannelsGetParticipant) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getParticipant: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getParticipant: unsupported layer %d", layer)
 	}
 }
 
@@ -55040,13 +55040,13 @@ func (m *TLChannelsGetParticipant) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getParticipant#0xa0ab6cc6: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getParticipant#0xa0ab6cc6: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getParticipant#0xa0ab6cc6: field channel: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode channels_getParticipant#0xa0ab6cc6: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getParticipant#0xa0ab6cc6: field participant: %w", err)
+			return fmt.Errorf("unable to encode channels_getParticipant#0xa0ab6cc6: field participant: %w", err)
 		}
 
 		return nil
@@ -55128,7 +55128,7 @@ func (m *TLChannelsGetChannels) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getChannels: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getChannels: unsupported layer %d", layer)
 	}
 }
 
@@ -55139,7 +55139,7 @@ func (m *TLChannelsGetChannels) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xa7f6bbb)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", err)
+			return fmt.Errorf("unable to encode channels_getChannels#0xa7f6bbb: field id: %w", err)
 		}
 
 		return nil
@@ -55227,7 +55227,7 @@ func (m *TLChannelsGetFullChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getFullChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getFullChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -55241,7 +55241,7 @@ func (m *TLChannelsGetFullChannel) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getFullChannel#0x8736a09: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getFullChannel#0x8736a09: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getFullChannel#0x8736a09: field channel: %w", err)
 		}
 
 		return nil
@@ -55340,7 +55340,7 @@ func (m *TLChannelsCreateChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_createChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_createChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -55387,7 +55387,7 @@ func (m *TLChannelsCreateChannel) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.About)
 		if m.GeoPoint != nil {
 			if err := m.GeoPoint.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode channels_createChannel#0x91006707: field geo_point: %w", err)
+				return fmt.Errorf("unable to encode channels_createChannel#0x91006707: field geo_point: %w", err)
 			}
 		}
 
@@ -55555,7 +55555,7 @@ func (m *TLChannelsEditAdmin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editAdmin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editAdmin: unsupported layer %d", layer)
 	}
 }
 
@@ -55583,19 +55583,19 @@ func (m *TLChannelsEditAdmin) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field channel: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field user_id: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field user_id: %w", err)
 		}
 		if m.AdminRights == nil {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field admin_rights is nil")
 		}
 		if err := m.AdminRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field admin_rights: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field admin_rights: %w", err)
 		}
 		if m.Rank_FLAGSTRING != nil {
 			x.PutString(*m.Rank_FLAGSTRING)
@@ -55609,19 +55609,19 @@ func (m *TLChannelsEditAdmin) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field channel: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field user_id: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field user_id: %w", err)
 		}
 		if m.AdminRights == nil {
 			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field admin_rights is nil")
 		}
 		if err := m.AdminRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editAdmin#0x9a98ad68: field admin_rights: %w", err)
+			return fmt.Errorf("unable to encode channels_editAdmin#0x9a98ad68: field admin_rights: %w", err)
 		}
 		x.PutString(m.Rank_STRING)
 
@@ -55763,7 +55763,7 @@ func (m *TLChannelsEditTitle) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editTitle: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editTitle: unsupported layer %d", layer)
 	}
 }
 
@@ -55777,7 +55777,7 @@ func (m *TLChannelsEditTitle) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editTitle#0x566decd0: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editTitle#0x566decd0: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editTitle#0x566decd0: field channel: %w", err)
 		}
 		x.PutString(m.Title)
 
@@ -55863,7 +55863,7 @@ func (m *TLChannelsEditPhoto) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editPhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editPhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -55877,13 +55877,13 @@ func (m *TLChannelsEditPhoto) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editPhoto#0xf12e57c9: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editPhoto#0xf12e57c9: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editPhoto#0xf12e57c9: field channel: %w", err)
 		}
 		if m.Photo == nil {
 			return fmt.Errorf("unable to encode channels_editPhoto#0xf12e57c9: field photo is nil")
 		}
 		if err := m.Photo.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editPhoto#0xf12e57c9: field photo: %w", err)
+			return fmt.Errorf("unable to encode channels_editPhoto#0xf12e57c9: field photo: %w", err)
 		}
 
 		return nil
@@ -55971,7 +55971,7 @@ func (m *TLChannelsCheckUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_checkUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_checkUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -55985,7 +55985,7 @@ func (m *TLChannelsCheckUsername) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_checkUsername#0x10e6bd2c: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_checkUsername#0x10e6bd2c: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_checkUsername#0x10e6bd2c: field channel: %w", err)
 		}
 		x.PutString(m.Username)
 
@@ -56071,7 +56071,7 @@ func (m *TLChannelsUpdateUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_updateUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_updateUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -56085,7 +56085,7 @@ func (m *TLChannelsUpdateUsername) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_updateUsername#0x3514b3de: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_updateUsername#0x3514b3de: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_updateUsername#0x3514b3de: field channel: %w", err)
 		}
 		x.PutString(m.Username)
 
@@ -56165,7 +56165,7 @@ func (m *TLChannelsJoinChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_joinChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_joinChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -56179,7 +56179,7 @@ func (m *TLChannelsJoinChannel) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_joinChannel#0x24b524c5: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_joinChannel#0x24b524c5: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_joinChannel#0x24b524c5: field channel: %w", err)
 		}
 
 		return nil
@@ -56253,7 +56253,7 @@ func (m *TLChannelsLeaveChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_leaveChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_leaveChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -56267,7 +56267,7 @@ func (m *TLChannelsLeaveChannel) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_leaveChannel#0xf836aa95: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_leaveChannel#0xf836aa95: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_leaveChannel#0xf836aa95: field channel: %w", err)
 		}
 
 		return nil
@@ -56347,7 +56347,7 @@ func (m *TLChannelsInviteToChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_inviteToChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_inviteToChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -56361,11 +56361,11 @@ func (m *TLChannelsInviteToChannel) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_inviteToChannel#0xc9e33d54: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_inviteToChannel#0xc9e33d54: field channel: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", err)
+			return fmt.Errorf("unable to encode channels_inviteToChannel#0xc9e33d54: field users: %w", err)
 		}
 
 		return nil
@@ -56462,7 +56462,7 @@ func (m *TLChannelsDeleteChannel) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_deleteChannel: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_deleteChannel: unsupported layer %d", layer)
 	}
 }
 
@@ -56476,7 +56476,7 @@ func (m *TLChannelsDeleteChannel) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_deleteChannel#0xc0111fe3: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deleteChannel#0xc0111fe3: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_deleteChannel#0xc0111fe3: field channel: %w", err)
 		}
 
 		return nil
@@ -56555,7 +56555,7 @@ func (m *TLChannelsExportMessageLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_exportMessageLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_exportMessageLink: unsupported layer %d", layer)
 	}
 }
 
@@ -56586,7 +56586,7 @@ func (m *TLChannelsExportMessageLink) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode channels_exportMessageLink#0xe63fadeb: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_exportMessageLink#0xe63fadeb: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_exportMessageLink#0xe63fadeb: field channel: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -56680,7 +56680,7 @@ func (m *TLChannelsToggleSignatures) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleSignatures: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleSignatures: unsupported layer %d", layer)
 	}
 }
 
@@ -56711,7 +56711,7 @@ func (m *TLChannelsToggleSignatures) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleSignatures#0x418d549c: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleSignatures#0x418d549c: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleSignatures#0x418d549c: field channel: %w", err)
 		}
 
 		return nil
@@ -56795,7 +56795,7 @@ func (m *TLChannelsGetAdminedPublicChannels) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getAdminedPublicChannels: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getAdminedPublicChannels: unsupported layer %d", layer)
 	}
 }
 
@@ -56915,7 +56915,7 @@ func (m *TLChannelsEditBanned) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editBanned: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editBanned: unsupported layer %d", layer)
 	}
 }
 
@@ -56929,19 +56929,19 @@ func (m *TLChannelsEditBanned) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editBanned#0x96e6cd81: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field channel: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editBanned#0x96e6cd81: field participant: %w", err)
+			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field participant: %w", err)
 		}
 		if m.BannedRights == nil {
 			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field banned_rights is nil")
 		}
 		if err := m.BannedRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editBanned#0x96e6cd81: field banned_rights: %w", err)
+			return fmt.Errorf("unable to encode channels_editBanned#0x96e6cd81: field banned_rights: %w", err)
 		}
 
 		return nil
@@ -57054,7 +57054,7 @@ func (m *TLChannelsGetAdminLog) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getAdminLog: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getAdminLog: unsupported layer %d", layer)
 	}
 }
 
@@ -57085,18 +57085,18 @@ func (m *TLChannelsGetAdminLog) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getAdminLog#0x33ddf480: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getAdminLog#0x33ddf480: field channel: %w", err)
 		}
 		x.PutString(m.Q)
 		if m.EventsFilter != nil {
 			if err := m.EventsFilter.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field events_filter: %w", err)
+				return fmt.Errorf("unable to encode channels_getAdminLog#0x33ddf480: field events_filter: %w", err)
 			}
 		}
 
 		if m.Admins != nil {
 			if err := iface.EncodeObjectList(x, m.Admins, layer); err != nil {
-				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", err)
+				return fmt.Errorf("unable to encode channels_getAdminLog#0x33ddf480: field admins: %w", err)
 			}
 		}
 		x.PutInt64(m.MaxId)
@@ -57235,7 +57235,7 @@ func (m *TLChannelsSetStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_setStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_setStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -57249,13 +57249,13 @@ func (m *TLChannelsSetStickers) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_setStickers#0xea8ca4f9: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setStickers#0xea8ca4f9: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_setStickers#0xea8ca4f9: field channel: %w", err)
 		}
 		if m.Stickerset == nil {
 			return fmt.Errorf("unable to encode channels_setStickers#0xea8ca4f9: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setStickers#0xea8ca4f9: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode channels_setStickers#0xea8ca4f9: field stickerset: %w", err)
 		}
 
 		return nil
@@ -57343,7 +57343,7 @@ func (m *TLChannelsReadMessageContents) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_readMessageContents: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_readMessageContents: unsupported layer %d", layer)
 	}
 }
 
@@ -57357,7 +57357,7 @@ func (m *TLChannelsReadMessageContents) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode channels_readMessageContents#0xeab5dc38: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_readMessageContents#0xeab5dc38: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_readMessageContents#0xeab5dc38: field channel: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -57439,7 +57439,7 @@ func (m *TLChannelsDeleteHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_deleteHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_deleteHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -57467,7 +57467,7 @@ func (m *TLChannelsDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_deleteHistory#0x9baa9647: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deleteHistory#0x9baa9647: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_deleteHistory#0x9baa9647: field channel: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 
@@ -57561,7 +57561,7 @@ func (m *TLChannelsTogglePreHistoryHidden) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_togglePreHistoryHidden: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_togglePreHistoryHidden: unsupported layer %d", layer)
 	}
 }
 
@@ -57575,13 +57575,13 @@ func (m *TLChannelsTogglePreHistoryHidden) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode channels_togglePreHistoryHidden#0xeabbb94c: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_togglePreHistoryHidden#0xeabbb94c: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_togglePreHistoryHidden#0xeabbb94c: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_togglePreHistoryHidden#0xeabbb94c: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_togglePreHistoryHidden#0xeabbb94c: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_togglePreHistoryHidden#0xeabbb94c: field enabled: %w", err)
 		}
 
 		return nil
@@ -57660,7 +57660,7 @@ func (m *TLChannelsGetLeftChannels) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getLeftChannels: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getLeftChannels: unsupported layer %d", layer)
 	}
 }
 
@@ -57734,7 +57734,7 @@ func (m *TLChannelsGetGroupsForDiscussion) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getGroupsForDiscussion: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getGroupsForDiscussion: unsupported layer %d", layer)
 	}
 }
 
@@ -57813,7 +57813,7 @@ func (m *TLChannelsSetDiscussionGroup) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_setDiscussionGroup: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_setDiscussionGroup: unsupported layer %d", layer)
 	}
 }
 
@@ -57827,13 +57827,13 @@ func (m *TLChannelsSetDiscussionGroup) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode channels_setDiscussionGroup#0x40582bb2: field broadcast is nil")
 		}
 		if err := m.Broadcast.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setDiscussionGroup#0x40582bb2: field broadcast: %w", err)
+			return fmt.Errorf("unable to encode channels_setDiscussionGroup#0x40582bb2: field broadcast: %w", err)
 		}
 		if m.Group == nil {
 			return fmt.Errorf("unable to encode channels_setDiscussionGroup#0x40582bb2: field group is nil")
 		}
 		if err := m.Group.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setDiscussionGroup#0x40582bb2: field group: %w", err)
+			return fmt.Errorf("unable to encode channels_setDiscussionGroup#0x40582bb2: field group: %w", err)
 		}
 
 		return nil
@@ -57927,7 +57927,7 @@ func (m *TLChannelsEditLocation) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editLocation: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editLocation: unsupported layer %d", layer)
 	}
 }
 
@@ -57941,13 +57941,13 @@ func (m *TLChannelsEditLocation) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editLocation#0x58e63f6d: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editLocation#0x58e63f6d: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editLocation#0x58e63f6d: field channel: %w", err)
 		}
 		if m.GeoPoint == nil {
 			return fmt.Errorf("unable to encode channels_editLocation#0x58e63f6d: field geo_point is nil")
 		}
 		if err := m.GeoPoint.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editLocation#0x58e63f6d: field geo_point: %w", err)
+			return fmt.Errorf("unable to encode channels_editLocation#0x58e63f6d: field geo_point: %w", err)
 		}
 		x.PutString(m.Address)
 
@@ -58037,7 +58037,7 @@ func (m *TLChannelsToggleSlowMode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleSlowMode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleSlowMode: unsupported layer %d", layer)
 	}
 }
 
@@ -58051,7 +58051,7 @@ func (m *TLChannelsToggleSlowMode) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleSlowMode#0xedd49ef0: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleSlowMode#0xedd49ef0: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleSlowMode#0xedd49ef0: field channel: %w", err)
 		}
 		x.PutInt32(m.Seconds)
 
@@ -58126,7 +58126,7 @@ func (m *TLChannelsGetInactiveChannels) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getInactiveChannels: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getInactiveChannels: unsupported layer %d", layer)
 	}
 }
 
@@ -58199,7 +58199,7 @@ func (m *TLChannelsConvertToGigagroup) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_convertToGigagroup: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_convertToGigagroup: unsupported layer %d", layer)
 	}
 }
 
@@ -58213,7 +58213,7 @@ func (m *TLChannelsConvertToGigagroup) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode channels_convertToGigagroup#0xb290c69: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_convertToGigagroup#0xb290c69: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_convertToGigagroup#0xb290c69: field channel: %w", err)
 		}
 
 		return nil
@@ -58290,7 +58290,7 @@ func (m *TLChannelsGetSendAs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getSendAs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getSendAs: unsupported layer %d", layer)
 	}
 }
 
@@ -58321,7 +58321,7 @@ func (m *TLChannelsGetSendAs) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getSendAs#0xe785a43f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getSendAs#0xe785a43f: field peer: %w", err)
+			return fmt.Errorf("unable to encode channels_getSendAs#0xe785a43f: field peer: %w", err)
 		}
 
 		return nil
@@ -58412,7 +58412,7 @@ func (m *TLChannelsDeleteParticipantHistory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_deleteParticipantHistory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_deleteParticipantHistory: unsupported layer %d", layer)
 	}
 }
 
@@ -58426,13 +58426,13 @@ func (m *TLChannelsDeleteParticipantHistory) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode channels_deleteParticipantHistory#0x367544db: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deleteParticipantHistory#0x367544db: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_deleteParticipantHistory#0x367544db: field channel: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode channels_deleteParticipantHistory#0x367544db: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deleteParticipantHistory#0x367544db: field participant: %w", err)
+			return fmt.Errorf("unable to encode channels_deleteParticipantHistory#0x367544db: field participant: %w", err)
 		}
 
 		return nil
@@ -58520,7 +58520,7 @@ func (m *TLChannelsToggleJoinToSend) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleJoinToSend: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleJoinToSend: unsupported layer %d", layer)
 	}
 }
 
@@ -58534,13 +58534,13 @@ func (m *TLChannelsToggleJoinToSend) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleJoinToSend#0xe4cb9580: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleJoinToSend#0xe4cb9580: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleJoinToSend#0xe4cb9580: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleJoinToSend#0xe4cb9580: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleJoinToSend#0xe4cb9580: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleJoinToSend#0xe4cb9580: field enabled: %w", err)
 		}
 
 		return nil
@@ -58628,7 +58628,7 @@ func (m *TLChannelsToggleJoinRequest) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleJoinRequest: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleJoinRequest: unsupported layer %d", layer)
 	}
 }
 
@@ -58642,13 +58642,13 @@ func (m *TLChannelsToggleJoinRequest) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode channels_toggleJoinRequest#0x4c2985b6: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleJoinRequest#0x4c2985b6: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleJoinRequest#0x4c2985b6: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleJoinRequest#0x4c2985b6: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleJoinRequest#0x4c2985b6: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleJoinRequest#0x4c2985b6: field enabled: %w", err)
 		}
 
 		return nil
@@ -58736,7 +58736,7 @@ func (m *TLChannelsReorderUsernames) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_reorderUsernames: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_reorderUsernames: unsupported layer %d", layer)
 	}
 }
 
@@ -58750,7 +58750,7 @@ func (m *TLChannelsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_reorderUsernames#0xb45ced1d: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_reorderUsernames#0xb45ced1d: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_reorderUsernames#0xb45ced1d: field channel: %w", err)
 		}
 
 		iface.EncodeStringList(x, m.Order)
@@ -58840,7 +58840,7 @@ func (m *TLChannelsToggleUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -58854,14 +58854,14 @@ func (m *TLChannelsToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleUsername#0x50f24105: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleUsername#0x50f24105: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleUsername#0x50f24105: field channel: %w", err)
 		}
 		x.PutString(m.Username)
 		if m.Active == nil {
 			return fmt.Errorf("unable to encode channels_toggleUsername#0x50f24105: field active is nil")
 		}
 		if err := m.Active.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleUsername#0x50f24105: field active: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleUsername#0x50f24105: field active: %w", err)
 		}
 
 		return nil
@@ -58948,7 +58948,7 @@ func (m *TLChannelsDeactivateAllUsernames) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_deactivateAllUsernames: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_deactivateAllUsernames: unsupported layer %d", layer)
 	}
 }
 
@@ -58962,7 +58962,7 @@ func (m *TLChannelsDeactivateAllUsernames) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode channels_deactivateAllUsernames#0xa245dd3: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_deactivateAllUsernames#0xa245dd3: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_deactivateAllUsernames#0xa245dd3: field channel: %w", err)
 		}
 
 		return nil
@@ -59048,7 +59048,7 @@ func (m *TLChannelsToggleForum) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleForum: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleForum: unsupported layer %d", layer)
 	}
 }
 
@@ -59062,19 +59062,19 @@ func (m *TLChannelsToggleForum) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleForum#0x3ff75734: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleForum#0x3ff75734: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field enabled: %w", err)
 		}
 		if m.Tabs == nil {
 			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field tabs is nil")
 		}
 		if err := m.Tabs.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleForum#0x3ff75734: field tabs: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleForum#0x3ff75734: field tabs: %w", err)
 		}
 
 		return nil
@@ -59170,7 +59170,7 @@ func (m *TLChannelsToggleAntiSpam) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleAntiSpam: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleAntiSpam: unsupported layer %d", layer)
 	}
 }
 
@@ -59184,13 +59184,13 @@ func (m *TLChannelsToggleAntiSpam) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_toggleAntiSpam#0x68f3e4eb: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleAntiSpam#0x68f3e4eb: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleAntiSpam#0x68f3e4eb: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleAntiSpam#0x68f3e4eb: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleAntiSpam#0x68f3e4eb: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleAntiSpam#0x68f3e4eb: field enabled: %w", err)
 		}
 
 		return nil
@@ -59274,7 +59274,7 @@ func (m *TLChannelsReportAntiSpamFalsePositive) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_reportAntiSpamFalsePositive: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_reportAntiSpamFalsePositive: unsupported layer %d", layer)
 	}
 }
 
@@ -59288,7 +59288,7 @@ func (m *TLChannelsReportAntiSpamFalsePositive) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode channels_reportAntiSpamFalsePositive#0xa850a693: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_reportAntiSpamFalsePositive#0xa850a693: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_reportAntiSpamFalsePositive#0xa850a693: field channel: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -59374,7 +59374,7 @@ func (m *TLChannelsToggleParticipantsHidden) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleParticipantsHidden: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleParticipantsHidden: unsupported layer %d", layer)
 	}
 }
 
@@ -59388,13 +59388,13 @@ func (m *TLChannelsToggleParticipantsHidden) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode channels_toggleParticipantsHidden#0x6a6e7854: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleParticipantsHidden#0x6a6e7854: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleParticipantsHidden#0x6a6e7854: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleParticipantsHidden#0x6a6e7854: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleParticipantsHidden#0x6a6e7854: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleParticipantsHidden#0x6a6e7854: field enabled: %w", err)
 		}
 
 		return nil
@@ -59487,7 +59487,7 @@ func (m *TLChannelsUpdateColor) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_updateColor: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_updateColor: unsupported layer %d", layer)
 	}
 }
 
@@ -59522,7 +59522,7 @@ func (m *TLChannelsUpdateColor) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_updateColor#0xd8aa3671: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_updateColor#0xd8aa3671: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_updateColor#0xd8aa3671: field channel: %w", err)
 		}
 		if m.Color != nil {
 			x.PutInt32(*m.Color)
@@ -59632,7 +59632,7 @@ func (m *TLChannelsToggleViewForumAsMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleViewForumAsMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -59646,13 +59646,13 @@ func (m *TLChannelsToggleViewForumAsMessages) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages#0x9738bb15: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleViewForumAsMessages#0x9738bb15: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages#0x9738bb15: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages#0x9738bb15: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleViewForumAsMessages#0x9738bb15: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleViewForumAsMessages#0x9738bb15: field enabled: %w", err)
 		}
 
 		return nil
@@ -59734,7 +59734,7 @@ func (m *TLChannelsGetChannelRecommendations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getChannelRecommendations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getChannelRecommendations: unsupported layer %d", layer)
 	}
 }
 
@@ -59760,7 +59760,7 @@ func (m *TLChannelsGetChannelRecommendations) Encode(x *bin.Encoder, layer int32
 		x.PutUint32(flags)
 		if m.Channel != nil {
 			if err := m.Channel.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode channels_getChannelRecommendations#0x25a71742: field channel: %w", err)
+				return fmt.Errorf("unable to encode channels_getChannelRecommendations#0x25a71742: field channel: %w", err)
 			}
 		}
 
@@ -59847,7 +59847,7 @@ func (m *TLChannelsUpdateEmojiStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_updateEmojiStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_updateEmojiStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -59861,13 +59861,13 @@ func (m *TLChannelsUpdateEmojiStatus) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode channels_updateEmojiStatus#0xf0d3e6a8: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_updateEmojiStatus#0xf0d3e6a8: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_updateEmojiStatus#0xf0d3e6a8: field channel: %w", err)
 		}
 		if m.EmojiStatus == nil {
 			return fmt.Errorf("unable to encode channels_updateEmojiStatus#0xf0d3e6a8: field emoji_status is nil")
 		}
 		if err := m.EmojiStatus.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_updateEmojiStatus#0xf0d3e6a8: field emoji_status: %w", err)
+			return fmt.Errorf("unable to encode channels_updateEmojiStatus#0xf0d3e6a8: field emoji_status: %w", err)
 		}
 
 		return nil
@@ -59951,7 +59951,7 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_setBoostsToUnblockRestrictions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_setBoostsToUnblockRestrictions: unsupported layer %d", layer)
 	}
 }
 
@@ -59965,7 +59965,7 @@ func (m *TLChannelsSetBoostsToUnblockRestrictions) Encode(x *bin.Encoder, layer 
 			return fmt.Errorf("unable to encode channels_setBoostsToUnblockRestrictions#0xad399cee: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setBoostsToUnblockRestrictions#0xad399cee: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_setBoostsToUnblockRestrictions#0xad399cee: field channel: %w", err)
 		}
 		x.PutInt32(m.Boosts)
 
@@ -60051,7 +60051,7 @@ func (m *TLChannelsSetEmojiStickers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_setEmojiStickers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_setEmojiStickers: unsupported layer %d", layer)
 	}
 }
 
@@ -60065,13 +60065,13 @@ func (m *TLChannelsSetEmojiStickers) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_setEmojiStickers#0x3cd930b7: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setEmojiStickers#0x3cd930b7: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_setEmojiStickers#0x3cd930b7: field channel: %w", err)
 		}
 		if m.Stickerset == nil {
 			return fmt.Errorf("unable to encode channels_setEmojiStickers#0x3cd930b7: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setEmojiStickers#0x3cd930b7: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode channels_setEmojiStickers#0x3cd930b7: field stickerset: %w", err)
 		}
 
 		return nil
@@ -60159,7 +60159,7 @@ func (m *TLChannelsRestrictSponsoredMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_restrictSponsoredMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_restrictSponsoredMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -60173,13 +60173,13 @@ func (m *TLChannelsRestrictSponsoredMessages) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode channels_restrictSponsoredMessages#0x9ae91519: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_restrictSponsoredMessages#0x9ae91519: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_restrictSponsoredMessages#0x9ae91519: field channel: %w", err)
 		}
 		if m.Restricted == nil {
 			return fmt.Errorf("unable to encode channels_restrictSponsoredMessages#0x9ae91519: field restricted is nil")
 		}
 		if err := m.Restricted.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_restrictSponsoredMessages#0x9ae91519: field restricted: %w", err)
+			return fmt.Errorf("unable to encode channels_restrictSponsoredMessages#0x9ae91519: field restricted: %w", err)
 		}
 
 		return nil
@@ -60283,7 +60283,7 @@ func (m *TLChannelsSearchPosts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_searchPosts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_searchPosts: unsupported layer %d", layer)
 	}
 }
 
@@ -60327,7 +60327,7 @@ func (m *TLChannelsSearchPosts) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_searchPosts#0xf2c4f24d: field offset_peer is nil")
 		}
 		if err := m.OffsetPeer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_searchPosts#0xf2c4f24d: field offset_peer: %w", err)
+			return fmt.Errorf("unable to encode channels_searchPosts#0xf2c4f24d: field offset_peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.Limit)
@@ -60451,7 +60451,7 @@ func (m *TLChannelsUpdatePaidMessagesPrice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_updatePaidMessagesPrice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_updatePaidMessagesPrice: unsupported layer %d", layer)
 	}
 }
 
@@ -60479,7 +60479,7 @@ func (m *TLChannelsUpdatePaidMessagesPrice) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode channels_updatePaidMessagesPrice#0x4b12327b: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_updatePaidMessagesPrice#0x4b12327b: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_updatePaidMessagesPrice#0x4b12327b: field channel: %w", err)
 		}
 		x.PutInt64(m.SendPaidMessagesStars)
 
@@ -60573,7 +60573,7 @@ func (m *TLChannelsToggleAutotranslation) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_toggleAutotranslation: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_toggleAutotranslation: unsupported layer %d", layer)
 	}
 }
 
@@ -60587,13 +60587,13 @@ func (m *TLChannelsToggleAutotranslation) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode channels_toggleAutotranslation#0x167fc0a1: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleAutotranslation#0x167fc0a1: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleAutotranslation#0x167fc0a1: field channel: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode channels_toggleAutotranslation#0x167fc0a1: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_toggleAutotranslation#0x167fc0a1: field enabled: %w", err)
+			return fmt.Errorf("unable to encode channels_toggleAutotranslation#0x167fc0a1: field enabled: %w", err)
 		}
 
 		return nil
@@ -60677,7 +60677,7 @@ func (m *TLChannelsGetMessageAuthor) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getMessageAuthor: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getMessageAuthor: unsupported layer %d", layer)
 	}
 }
 
@@ -60691,7 +60691,7 @@ func (m *TLChannelsGetMessageAuthor) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_getMessageAuthor#0xece2a0e6: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getMessageAuthor#0xece2a0e6: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getMessageAuthor#0xece2a0e6: field channel: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -60771,7 +60771,7 @@ func (m *TLChannelsCheckSearchPostsFlood) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_checkSearchPostsFlood: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_checkSearchPostsFlood: unsupported layer %d", layer)
 	}
 }
 
@@ -60880,7 +60880,7 @@ func (m *TLChannelsSetMainProfileTab) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_setMainProfileTab: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_setMainProfileTab: unsupported layer %d", layer)
 	}
 }
 
@@ -60894,13 +60894,13 @@ func (m *TLChannelsSetMainProfileTab) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode channels_setMainProfileTab#0x3583fcb1: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setMainProfileTab#0x3583fcb1: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_setMainProfileTab#0x3583fcb1: field channel: %w", err)
 		}
 		if m.Tab == nil {
 			return fmt.Errorf("unable to encode channels_setMainProfileTab#0x3583fcb1: field tab is nil")
 		}
 		if err := m.Tab.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_setMainProfileTab#0x3583fcb1: field tab: %w", err)
+			return fmt.Errorf("unable to encode channels_setMainProfileTab#0x3583fcb1: field tab: %w", err)
 		}
 
 		return nil
@@ -60988,7 +60988,7 @@ func (m *TLBotsSendCustomRequest) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_sendCustomRequest: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_sendCustomRequest: unsupported layer %d", layer)
 	}
 }
 
@@ -61003,7 +61003,7 @@ func (m *TLBotsSendCustomRequest) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_sendCustomRequest#0xaa2769ed: field params is nil")
 		}
 		if err := m.Params.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_sendCustomRequest#0xaa2769ed: field params: %w", err)
+			return fmt.Errorf("unable to encode bots_sendCustomRequest#0xaa2769ed: field params: %w", err)
 		}
 
 		return nil
@@ -61083,7 +61083,7 @@ func (m *TLBotsAnswerWebhookJSONQuery) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_answerWebhookJSONQuery: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_answerWebhookJSONQuery: unsupported layer %d", layer)
 	}
 }
 
@@ -61098,7 +61098,7 @@ func (m *TLBotsAnswerWebhookJSONQuery) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode bots_answerWebhookJSONQuery#0xe6213f4d: field data is nil")
 		}
 		if err := m.Data.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_answerWebhookJSONQuery#0xe6213f4d: field data: %w", err)
+			return fmt.Errorf("unable to encode bots_answerWebhookJSONQuery#0xe6213f4d: field data: %w", err)
 		}
 
 		return nil
@@ -61188,7 +61188,7 @@ func (m *TLBotsSetBotCommands) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setBotCommands: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setBotCommands: unsupported layer %d", layer)
 	}
 }
 
@@ -61202,12 +61202,12 @@ func (m *TLBotsSetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_setBotCommands#0x517165a: field scope is nil")
 		}
 		if err := m.Scope.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field scope: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotCommands#0x517165a: field scope: %w", err)
 		}
 		x.PutString(m.LangCode)
 
 		if err := iface.EncodeObjectList(x, m.Commands, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotCommands#0x517165a: field commands: %w", err)
 		}
 
 		return nil
@@ -61314,7 +61314,7 @@ func (m *TLBotsResetBotCommands) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_resetBotCommands: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_resetBotCommands: unsupported layer %d", layer)
 	}
 }
 
@@ -61328,7 +61328,7 @@ func (m *TLBotsResetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_resetBotCommands#0x3d8de0f9: field scope is nil")
 		}
 		if err := m.Scope.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_resetBotCommands#0x3d8de0f9: field scope: %w", err)
+			return fmt.Errorf("unable to encode bots_resetBotCommands#0x3d8de0f9: field scope: %w", err)
 		}
 		x.PutString(m.LangCode)
 
@@ -61414,7 +61414,7 @@ func (m *TLBotsGetBotCommands) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getBotCommands: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getBotCommands: unsupported layer %d", layer)
 	}
 }
 
@@ -61428,7 +61428,7 @@ func (m *TLBotsGetBotCommands) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_getBotCommands#0xe34c0dd6: field scope is nil")
 		}
 		if err := m.Scope.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getBotCommands#0xe34c0dd6: field scope: %w", err)
+			return fmt.Errorf("unable to encode bots_getBotCommands#0xe34c0dd6: field scope: %w", err)
 		}
 		x.PutString(m.LangCode)
 
@@ -61514,7 +61514,7 @@ func (m *TLBotsSetBotMenuButton) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setBotMenuButton: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setBotMenuButton: unsupported layer %d", layer)
 	}
 }
 
@@ -61528,13 +61528,13 @@ func (m *TLBotsSetBotMenuButton) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_setBotMenuButton#0x4504d54f: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotMenuButton#0x4504d54f: field user_id: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotMenuButton#0x4504d54f: field user_id: %w", err)
 		}
 		if m.Button == nil {
 			return fmt.Errorf("unable to encode bots_setBotMenuButton#0x4504d54f: field button is nil")
 		}
 		if err := m.Button.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotMenuButton#0x4504d54f: field button: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotMenuButton#0x4504d54f: field button: %w", err)
 		}
 
 		return nil
@@ -61616,7 +61616,7 @@ func (m *TLBotsGetBotMenuButton) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getBotMenuButton: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getBotMenuButton: unsupported layer %d", layer)
 	}
 }
 
@@ -61630,7 +61630,7 @@ func (m *TLBotsGetBotMenuButton) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_getBotMenuButton#0x9c60eb28: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getBotMenuButton#0x9c60eb28: field user_id: %w", err)
+			return fmt.Errorf("unable to encode bots_getBotMenuButton#0x9c60eb28: field user_id: %w", err)
 		}
 
 		return nil
@@ -61704,7 +61704,7 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setBotBroadcastDefaultAdminRights: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setBotBroadcastDefaultAdminRights: unsupported layer %d", layer)
 	}
 }
 
@@ -61718,7 +61718,7 @@ func (m *TLBotsSetBotBroadcastDefaultAdminRights) Encode(x *bin.Encoder, layer i
 			return fmt.Errorf("unable to encode bots_setBotBroadcastDefaultAdminRights#0x788464e1: field admin_rights is nil")
 		}
 		if err := m.AdminRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotBroadcastDefaultAdminRights#0x788464e1: field admin_rights: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotBroadcastDefaultAdminRights#0x788464e1: field admin_rights: %w", err)
 		}
 
 		return nil
@@ -61792,7 +61792,7 @@ func (m *TLBotsSetBotGroupDefaultAdminRights) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setBotGroupDefaultAdminRights: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setBotGroupDefaultAdminRights: unsupported layer %d", layer)
 	}
 }
 
@@ -61806,7 +61806,7 @@ func (m *TLBotsSetBotGroupDefaultAdminRights) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode bots_setBotGroupDefaultAdminRights#0x925ec9ea: field admin_rights is nil")
 		}
 		if err := m.AdminRights.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setBotGroupDefaultAdminRights#0x925ec9ea: field admin_rights: %w", err)
+			return fmt.Errorf("unable to encode bots_setBotGroupDefaultAdminRights#0x925ec9ea: field admin_rights: %w", err)
 		}
 
 		return nil
@@ -61901,7 +61901,7 @@ func (m *TLBotsSetBotInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setBotInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setBotInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -61937,7 +61937,7 @@ func (m *TLBotsSetBotInfo) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Bot != nil {
 			if err := m.Bot.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode bots_setBotInfo#0x10cf3123: field bot: %w", err)
+				return fmt.Errorf("unable to encode bots_setBotInfo#0x10cf3123: field bot: %w", err)
 			}
 		}
 
@@ -62065,7 +62065,7 @@ func (m *TLBotsGetBotInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getBotInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getBotInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -62091,7 +62091,7 @@ func (m *TLBotsGetBotInfo) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		if m.Bot != nil {
 			if err := m.Bot.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode bots_getBotInfo#0xdcd914fd: field bot: %w", err)
+				return fmt.Errorf("unable to encode bots_getBotInfo#0xdcd914fd: field bot: %w", err)
 			}
 		}
 
@@ -62184,7 +62184,7 @@ func (m *TLBotsReorderUsernames) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_reorderUsernames: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_reorderUsernames: unsupported layer %d", layer)
 	}
 }
 
@@ -62198,7 +62198,7 @@ func (m *TLBotsReorderUsernames) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_reorderUsernames#0x9709b1c2: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_reorderUsernames#0x9709b1c2: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_reorderUsernames#0x9709b1c2: field bot: %w", err)
 		}
 
 		iface.EncodeStringList(x, m.Order)
@@ -62288,7 +62288,7 @@ func (m *TLBotsToggleUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_toggleUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_toggleUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -62302,14 +62302,14 @@ func (m *TLBotsToggleUsername) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_toggleUsername#0x53ca973: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_toggleUsername#0x53ca973: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_toggleUsername#0x53ca973: field bot: %w", err)
 		}
 		x.PutString(m.Username)
 		if m.Active == nil {
 			return fmt.Errorf("unable to encode bots_toggleUsername#0x53ca973: field active is nil")
 		}
 		if err := m.Active.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_toggleUsername#0x53ca973: field active: %w", err)
+			return fmt.Errorf("unable to encode bots_toggleUsername#0x53ca973: field active: %w", err)
 		}
 
 		return nil
@@ -62396,7 +62396,7 @@ func (m *TLBotsCanSendMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_canSendMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_canSendMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -62410,7 +62410,7 @@ func (m *TLBotsCanSendMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_canSendMessage#0x1359f4e6: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_canSendMessage#0x1359f4e6: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_canSendMessage#0x1359f4e6: field bot: %w", err)
 		}
 
 		return nil
@@ -62484,7 +62484,7 @@ func (m *TLBotsAllowSendMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_allowSendMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_allowSendMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -62498,7 +62498,7 @@ func (m *TLBotsAllowSendMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_allowSendMessage#0xf132e3ef: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_allowSendMessage#0xf132e3ef: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_allowSendMessage#0xf132e3ef: field bot: %w", err)
 		}
 
 		return nil
@@ -62584,7 +62584,7 @@ func (m *TLBotsInvokeWebViewCustomMethod) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_invokeWebViewCustomMethod: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod: unsupported layer %d", layer)
 	}
 }
 
@@ -62598,14 +62598,14 @@ func (m *TLBotsInvokeWebViewCustomMethod) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod#0x87fc5e7: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_invokeWebViewCustomMethod#0x87fc5e7: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod#0x87fc5e7: field bot: %w", err)
 		}
 		x.PutString(m.CustomMethod)
 		if m.Params == nil {
 			return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod#0x87fc5e7: field params is nil")
 		}
 		if err := m.Params.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_invokeWebViewCustomMethod#0x87fc5e7: field params: %w", err)
+			return fmt.Errorf("unable to encode bots_invokeWebViewCustomMethod#0x87fc5e7: field params: %w", err)
 		}
 
 		return nil
@@ -62694,7 +62694,7 @@ func (m *TLBotsGetPopularAppBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getPopularAppBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getPopularAppBots: unsupported layer %d", layer)
 	}
 }
 
@@ -62790,7 +62790,7 @@ func (m *TLBotsAddPreviewMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_addPreviewMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_addPreviewMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -62804,14 +62804,14 @@ func (m *TLBotsAddPreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_addPreviewMedia#0x17aeb75a: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_addPreviewMedia#0x17aeb75a: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_addPreviewMedia#0x17aeb75a: field bot: %w", err)
 		}
 		x.PutString(m.LangCode)
 		if m.Media == nil {
 			return fmt.Errorf("unable to encode bots_addPreviewMedia#0x17aeb75a: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_addPreviewMedia#0x17aeb75a: field media: %w", err)
+			return fmt.Errorf("unable to encode bots_addPreviewMedia#0x17aeb75a: field media: %w", err)
 		}
 
 		return nil
@@ -62916,7 +62916,7 @@ func (m *TLBotsEditPreviewMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_editPreviewMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_editPreviewMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -62930,20 +62930,20 @@ func (m *TLBotsEditPreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_editPreviewMedia#0x8525606f: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field bot: %w", err)
 		}
 		x.PutString(m.LangCode)
 		if m.Media == nil {
 			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_editPreviewMedia#0x8525606f: field media: %w", err)
+			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field media: %w", err)
 		}
 		if m.NewMedia == nil {
 			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field new_media is nil")
 		}
 		if err := m.NewMedia.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_editPreviewMedia#0x8525606f: field new_media: %w", err)
+			return fmt.Errorf("unable to encode bots_editPreviewMedia#0x8525606f: field new_media: %w", err)
 		}
 
 		return nil
@@ -63050,7 +63050,7 @@ func (m *TLBotsDeletePreviewMedia) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_deletePreviewMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_deletePreviewMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -63064,12 +63064,12 @@ func (m *TLBotsDeletePreviewMedia) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_deletePreviewMedia#0x2d0135b3: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_deletePreviewMedia#0x2d0135b3: field bot: %w", err)
 		}
 		x.PutString(m.LangCode)
 
 		if err := iface.EncodeObjectList(x, m.Media, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err)
+			return fmt.Errorf("unable to encode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err)
 		}
 
 		return nil
@@ -63182,7 +63182,7 @@ func (m *TLBotsReorderPreviewMedias) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_reorderPreviewMedias: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_reorderPreviewMedias: unsupported layer %d", layer)
 	}
 }
 
@@ -63196,12 +63196,12 @@ func (m *TLBotsReorderPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_reorderPreviewMedias#0xb627f3aa: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_reorderPreviewMedias#0xb627f3aa: field bot: %w", err)
 		}
 		x.PutString(m.LangCode)
 
 		if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err)
+			return fmt.Errorf("unable to encode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err)
 		}
 
 		return nil
@@ -63308,7 +63308,7 @@ func (m *TLBotsGetPreviewInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getPreviewInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getPreviewInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -63322,7 +63322,7 @@ func (m *TLBotsGetPreviewInfo) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_getPreviewInfo#0x423ab3ad: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getPreviewInfo#0x423ab3ad: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_getPreviewInfo#0x423ab3ad: field bot: %w", err)
 		}
 		x.PutString(m.LangCode)
 
@@ -63402,7 +63402,7 @@ func (m *TLBotsGetPreviewMedias) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getPreviewMedias: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getPreviewMedias: unsupported layer %d", layer)
 	}
 }
 
@@ -63416,7 +63416,7 @@ func (m *TLBotsGetPreviewMedias) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_getPreviewMedias#0xa2a5594d: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getPreviewMedias#0xa2a5594d: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_getPreviewMedias#0xa2a5594d: field bot: %w", err)
 		}
 
 		return nil
@@ -63496,7 +63496,7 @@ func (m *TLBotsUpdateUserEmojiStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_updateUserEmojiStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_updateUserEmojiStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -63510,13 +63510,13 @@ func (m *TLBotsUpdateUserEmojiStatus) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode bots_updateUserEmojiStatus#0xed9f30c5: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_updateUserEmojiStatus#0xed9f30c5: field user_id: %w", err)
+			return fmt.Errorf("unable to encode bots_updateUserEmojiStatus#0xed9f30c5: field user_id: %w", err)
 		}
 		if m.EmojiStatus == nil {
 			return fmt.Errorf("unable to encode bots_updateUserEmojiStatus#0xed9f30c5: field emoji_status is nil")
 		}
 		if err := m.EmojiStatus.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_updateUserEmojiStatus#0xed9f30c5: field emoji_status: %w", err)
+			return fmt.Errorf("unable to encode bots_updateUserEmojiStatus#0xed9f30c5: field emoji_status: %w", err)
 		}
 
 		return nil
@@ -63604,7 +63604,7 @@ func (m *TLBotsToggleUserEmojiStatusPermission) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_toggleUserEmojiStatusPermission: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission: unsupported layer %d", layer)
 	}
 }
 
@@ -63618,13 +63618,13 @@ func (m *TLBotsToggleUserEmojiStatusPermission) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission#0x6de6392: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_toggleUserEmojiStatusPermission#0x6de6392: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission#0x6de6392: field bot: %w", err)
 		}
 		if m.Enabled == nil {
 			return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission#0x6de6392: field enabled is nil")
 		}
 		if err := m.Enabled.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_toggleUserEmojiStatusPermission#0x6de6392: field enabled: %w", err)
+			return fmt.Errorf("unable to encode bots_toggleUserEmojiStatusPermission#0x6de6392: field enabled: %w", err)
 		}
 
 		return nil
@@ -63718,7 +63718,7 @@ func (m *TLBotsCheckDownloadFileParams) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_checkDownloadFileParams: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_checkDownloadFileParams: unsupported layer %d", layer)
 	}
 }
 
@@ -63732,7 +63732,7 @@ func (m *TLBotsCheckDownloadFileParams) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode bots_checkDownloadFileParams#0x50077589: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_checkDownloadFileParams#0x50077589: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_checkDownloadFileParams#0x50077589: field bot: %w", err)
 		}
 		x.PutString(m.FileName)
 		x.PutString(m.Url)
@@ -63812,7 +63812,7 @@ func (m *TLBotsGetAdminedBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getAdminedBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getAdminedBots: unsupported layer %d", layer)
 	}
 }
 
@@ -63892,7 +63892,7 @@ func (m *TLBotsUpdateStarRefProgram) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_updateStarRefProgram: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_updateStarRefProgram: unsupported layer %d", layer)
 	}
 }
 
@@ -63920,7 +63920,7 @@ func (m *TLBotsUpdateStarRefProgram) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_updateStarRefProgram#0x778b5ab3: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_updateStarRefProgram#0x778b5ab3: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_updateStarRefProgram#0x778b5ab3: field bot: %w", err)
 		}
 		x.PutInt32(m.CommissionPermille)
 		if m.DurationMonths != nil {
@@ -64027,7 +64027,7 @@ func (m *TLBotsSetCustomVerification) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_setCustomVerification: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_setCustomVerification: unsupported layer %d", layer)
 	}
 }
 
@@ -64060,7 +64060,7 @@ func (m *TLBotsSetCustomVerification) Encode(x *bin.Encoder, layer int32) error 
 		x.PutUint32(flags)
 		if m.Bot != nil {
 			if err := m.Bot.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode bots_setCustomVerification#0x8b89dfbd: field bot: %w", err)
+				return fmt.Errorf("unable to encode bots_setCustomVerification#0x8b89dfbd: field bot: %w", err)
 			}
 		}
 
@@ -64068,7 +64068,7 @@ func (m *TLBotsSetCustomVerification) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode bots_setCustomVerification#0x8b89dfbd: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_setCustomVerification#0x8b89dfbd: field peer: %w", err)
+			return fmt.Errorf("unable to encode bots_setCustomVerification#0x8b89dfbd: field peer: %w", err)
 		}
 		if m.CustomDescription != nil {
 			x.PutString(*m.CustomDescription)
@@ -64170,7 +64170,7 @@ func (m *TLBotsGetBotRecommendations) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getBotRecommendations: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getBotRecommendations: unsupported layer %d", layer)
 	}
 }
 
@@ -64184,7 +64184,7 @@ func (m *TLBotsGetBotRecommendations) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode bots_getBotRecommendations#0xa1b70815: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getBotRecommendations#0xa1b70815: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_getBotRecommendations#0xa1b70815: field bot: %w", err)
 		}
 
 		return nil
@@ -64258,7 +64258,7 @@ func (m *TLBotsCheckUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_checkUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_checkUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -64351,7 +64351,7 @@ func (m *TLBotsCreateBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_createBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_createBot: unsupported layer %d", layer)
 	}
 }
 
@@ -64381,7 +64381,7 @@ func (m *TLBotsCreateBot) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_createBot#0xe5b17f2b: field manager_id is nil")
 		}
 		if err := m.ManagerId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_createBot#0xe5b17f2b: field manager_id: %w", err)
+			return fmt.Errorf("unable to encode bots_createBot#0xe5b17f2b: field manager_id: %w", err)
 		}
 
 		return nil
@@ -64477,7 +64477,7 @@ func (m *TLBotsExportBotToken) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_exportBotToken: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_exportBotToken: unsupported layer %d", layer)
 	}
 }
 
@@ -64491,13 +64491,13 @@ func (m *TLBotsExportBotToken) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_exportBotToken#0xbd0d99eb: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_exportBotToken#0xbd0d99eb: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_exportBotToken#0xbd0d99eb: field bot: %w", err)
 		}
 		if m.Revoke == nil {
 			return fmt.Errorf("unable to encode bots_exportBotToken#0xbd0d99eb: field revoke is nil")
 		}
 		if err := m.Revoke.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_exportBotToken#0xbd0d99eb: field revoke: %w", err)
+			return fmt.Errorf("unable to encode bots_exportBotToken#0xbd0d99eb: field revoke: %w", err)
 		}
 
 		return nil
@@ -64585,7 +64585,7 @@ func (m *TLBotsRequestWebViewButton) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_requestWebViewButton: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_requestWebViewButton: unsupported layer %d", layer)
 	}
 }
 
@@ -64599,13 +64599,13 @@ func (m *TLBotsRequestWebViewButton) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode bots_requestWebViewButton#0x31a2a35e: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_requestWebViewButton#0x31a2a35e: field user_id: %w", err)
+			return fmt.Errorf("unable to encode bots_requestWebViewButton#0x31a2a35e: field user_id: %w", err)
 		}
 		if m.Button == nil {
 			return fmt.Errorf("unable to encode bots_requestWebViewButton#0x31a2a35e: field button is nil")
 		}
 		if err := m.Button.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_requestWebViewButton#0x31a2a35e: field button: %w", err)
+			return fmt.Errorf("unable to encode bots_requestWebViewButton#0x31a2a35e: field button: %w", err)
 		}
 
 		return nil
@@ -64693,7 +64693,7 @@ func (m *TLBotsGetRequestedWebViewButton) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bots_getRequestedWebViewButton: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bots_getRequestedWebViewButton: unsupported layer %d", layer)
 	}
 }
 
@@ -64707,7 +64707,7 @@ func (m *TLBotsGetRequestedWebViewButton) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode bots_getRequestedWebViewButton#0xbf25b7f3: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode bots_getRequestedWebViewButton#0xbf25b7f3: field bot: %w", err)
+			return fmt.Errorf("unable to encode bots_getRequestedWebViewButton#0xbf25b7f3: field bot: %w", err)
 		}
 		x.PutString(m.WebappReqId)
 
@@ -64792,7 +64792,7 @@ func (m *TLPaymentsGetPaymentForm) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getPaymentForm: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getPaymentForm: unsupported layer %d", layer)
 	}
 }
 
@@ -64820,11 +64820,11 @@ func (m *TLPaymentsGetPaymentForm) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_getPaymentForm#0x37148dbb: field invoice is nil")
 		}
 		if err := m.Invoice.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getPaymentForm#0x37148dbb: field invoice: %w", err)
+			return fmt.Errorf("unable to encode payments_getPaymentForm#0x37148dbb: field invoice: %w", err)
 		}
 		if m.ThemeParams != nil {
 			if err := m.ThemeParams.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_getPaymentForm#0x37148dbb: field theme_params: %w", err)
+				return fmt.Errorf("unable to encode payments_getPaymentForm#0x37148dbb: field theme_params: %w", err)
 			}
 		}
 
@@ -64916,7 +64916,7 @@ func (m *TLPaymentsGetPaymentReceipt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getPaymentReceipt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getPaymentReceipt: unsupported layer %d", layer)
 	}
 }
 
@@ -64930,7 +64930,7 @@ func (m *TLPaymentsGetPaymentReceipt) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode payments_getPaymentReceipt#0x2478d1cc: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getPaymentReceipt#0x2478d1cc: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getPaymentReceipt#0x2478d1cc: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -65018,7 +65018,7 @@ func (m *TLPaymentsValidateRequestedInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_validateRequestedInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_validateRequestedInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -65046,13 +65046,13 @@ func (m *TLPaymentsValidateRequestedInfo) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode payments_validateRequestedInfo#0xb6c8f12b: field invoice is nil")
 		}
 		if err := m.Invoice.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_validateRequestedInfo#0xb6c8f12b: field invoice: %w", err)
+			return fmt.Errorf("unable to encode payments_validateRequestedInfo#0xb6c8f12b: field invoice: %w", err)
 		}
 		if m.Info == nil {
 			return fmt.Errorf("unable to encode payments_validateRequestedInfo#0xb6c8f12b: field info is nil")
 		}
 		if err := m.Info.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_validateRequestedInfo#0xb6c8f12b: field info: %w", err)
+			return fmt.Errorf("unable to encode payments_validateRequestedInfo#0xb6c8f12b: field info: %w", err)
 		}
 
 		return nil
@@ -65165,7 +65165,7 @@ func (m *TLPaymentsSendPaymentForm) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_sendPaymentForm: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_sendPaymentForm: unsupported layer %d", layer)
 	}
 }
 
@@ -65201,7 +65201,7 @@ func (m *TLPaymentsSendPaymentForm) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_sendPaymentForm#0x2d03522f: field invoice is nil")
 		}
 		if err := m.Invoice.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_sendPaymentForm#0x2d03522f: field invoice: %w", err)
+			return fmt.Errorf("unable to encode payments_sendPaymentForm#0x2d03522f: field invoice: %w", err)
 		}
 		if m.RequestedInfoId != nil {
 			x.PutString(*m.RequestedInfoId)
@@ -65215,7 +65215,7 @@ func (m *TLPaymentsSendPaymentForm) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_sendPaymentForm#0x2d03522f: field credentials is nil")
 		}
 		if err := m.Credentials.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_sendPaymentForm#0x2d03522f: field credentials: %w", err)
+			return fmt.Errorf("unable to encode payments_sendPaymentForm#0x2d03522f: field credentials: %w", err)
 		}
 		if m.TipAmount != nil {
 			x.PutInt64(*m.TipAmount)
@@ -65328,7 +65328,7 @@ func (m *TLPaymentsGetSavedInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getSavedInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getSavedInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -65399,7 +65399,7 @@ func (m *TLPaymentsClearSavedInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_clearSavedInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_clearSavedInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -65501,7 +65501,7 @@ func (m *TLPaymentsGetBankCardData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getBankCardData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getBankCardData: unsupported layer %d", layer)
 	}
 }
 
@@ -65580,7 +65580,7 @@ func (m *TLPaymentsExportInvoice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_exportInvoice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_exportInvoice: unsupported layer %d", layer)
 	}
 }
 
@@ -65594,7 +65594,7 @@ func (m *TLPaymentsExportInvoice) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_exportInvoice#0xf91b065: field invoice_media is nil")
 		}
 		if err := m.InvoiceMedia.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_exportInvoice#0xf91b065: field invoice_media: %w", err)
+			return fmt.Errorf("unable to encode payments_exportInvoice#0xf91b065: field invoice_media: %w", err)
 		}
 
 		return nil
@@ -65674,7 +65674,7 @@ func (m *TLPaymentsAssignAppStoreTransaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_assignAppStoreTransaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_assignAppStoreTransaction: unsupported layer %d", layer)
 	}
 }
 
@@ -65689,7 +65689,7 @@ func (m *TLPaymentsAssignAppStoreTransaction) Encode(x *bin.Encoder, layer int32
 			return fmt.Errorf("unable to encode payments_assignAppStoreTransaction#0x80ed747d: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_assignAppStoreTransaction#0x80ed747d: field purpose: %w", err)
+			return fmt.Errorf("unable to encode payments_assignAppStoreTransaction#0x80ed747d: field purpose: %w", err)
 		}
 
 		return nil
@@ -65773,7 +65773,7 @@ func (m *TLPaymentsAssignPlayMarketTransaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_assignPlayMarketTransaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction: unsupported layer %d", layer)
 	}
 }
 
@@ -65787,13 +65787,13 @@ func (m *TLPaymentsAssignPlayMarketTransaction) Encode(x *bin.Encoder, layer int
 			return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction#0xdffd50d3: field receipt is nil")
 		}
 		if err := m.Receipt.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_assignPlayMarketTransaction#0xdffd50d3: field receipt: %w", err)
+			return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction#0xdffd50d3: field receipt: %w", err)
 		}
 		if m.Purpose == nil {
 			return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction#0xdffd50d3: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_assignPlayMarketTransaction#0xdffd50d3: field purpose: %w", err)
+			return fmt.Errorf("unable to encode payments_assignPlayMarketTransaction#0xdffd50d3: field purpose: %w", err)
 		}
 
 		return nil
@@ -65875,7 +65875,7 @@ func (m *TLPaymentsGetPremiumGiftCodeOptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getPremiumGiftCodeOptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getPremiumGiftCodeOptions: unsupported layer %d", layer)
 	}
 }
 
@@ -65901,7 +65901,7 @@ func (m *TLPaymentsGetPremiumGiftCodeOptions) Encode(x *bin.Encoder, layer int32
 		x.PutUint32(flags)
 		if m.BoostPeer != nil {
 			if err := m.BoostPeer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_getPremiumGiftCodeOptions#0x2757ba54: field boost_peer: %w", err)
+				return fmt.Errorf("unable to encode payments_getPremiumGiftCodeOptions#0x2757ba54: field boost_peer: %w", err)
 			}
 		}
 
@@ -65982,7 +65982,7 @@ func (m *TLPaymentsCheckGiftCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_checkGiftCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_checkGiftCode: unsupported layer %d", layer)
 	}
 }
 
@@ -66061,7 +66061,7 @@ func (m *TLPaymentsApplyGiftCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_applyGiftCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_applyGiftCode: unsupported layer %d", layer)
 	}
 }
 
@@ -66142,7 +66142,7 @@ func (m *TLPaymentsGetGiveawayInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getGiveawayInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getGiveawayInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -66156,7 +66156,7 @@ func (m *TLPaymentsGetGiveawayInfo) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_getGiveawayInfo#0xf4239425: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getGiveawayInfo#0xf4239425: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getGiveawayInfo#0xf4239425: field peer: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -66244,7 +66244,7 @@ func (m *TLPaymentsLaunchPrepaidGiveaway) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_launchPrepaidGiveaway: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway: unsupported layer %d", layer)
 	}
 }
 
@@ -66258,14 +66258,14 @@ func (m *TLPaymentsLaunchPrepaidGiveaway) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway#0x5ff58f20: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_launchPrepaidGiveaway#0x5ff58f20: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway#0x5ff58f20: field peer: %w", err)
 		}
 		x.PutInt64(m.GiveawayId)
 		if m.Purpose == nil {
 			return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway#0x5ff58f20: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_launchPrepaidGiveaway#0x5ff58f20: field purpose: %w", err)
+			return fmt.Errorf("unable to encode payments_launchPrepaidGiveaway#0x5ff58f20: field purpose: %w", err)
 		}
 
 		return nil
@@ -66347,7 +66347,7 @@ func (m *TLPaymentsGetStarsTopupOptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsTopupOptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsTopupOptions: unsupported layer %d", layer)
 	}
 }
 
@@ -66422,7 +66422,7 @@ func (m *TLPaymentsGetStarsStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -66450,7 +66450,7 @@ func (m *TLPaymentsGetStarsStatus) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_getStarsStatus#0x4ea9b3bf: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsStatus#0x4ea9b3bf: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsStatus#0x4ea9b3bf: field peer: %w", err)
 		}
 
 		return nil
@@ -66551,7 +66551,7 @@ func (m *TLPaymentsGetStarsTransactions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsTransactions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsTransactions: unsupported layer %d", layer)
 	}
 }
 
@@ -66595,7 +66595,7 @@ func (m *TLPaymentsGetStarsTransactions) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode payments_getStarsTransactions#0x69da4557: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsTransactions#0x69da4557: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsTransactions#0x69da4557: field peer: %w", err)
 		}
 		x.PutString(m.Offset)
 		x.PutInt32(m.Limit)
@@ -66706,7 +66706,7 @@ func (m *TLPaymentsSendStarsForm) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_sendStarsForm: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_sendStarsForm: unsupported layer %d", layer)
 	}
 }
 
@@ -66721,7 +66721,7 @@ func (m *TLPaymentsSendStarsForm) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_sendStarsForm#0x7998c914: field invoice is nil")
 		}
 		if err := m.Invoice.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_sendStarsForm#0x7998c914: field invoice: %w", err)
+			return fmt.Errorf("unable to encode payments_sendStarsForm#0x7998c914: field invoice: %w", err)
 		}
 
 		return nil
@@ -66805,7 +66805,7 @@ func (m *TLPaymentsRefundStarsCharge) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_refundStarsCharge: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_refundStarsCharge: unsupported layer %d", layer)
 	}
 }
 
@@ -66819,7 +66819,7 @@ func (m *TLPaymentsRefundStarsCharge) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode payments_refundStarsCharge#0x25ae8f4a: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_refundStarsCharge#0x25ae8f4a: field user_id: %w", err)
+			return fmt.Errorf("unable to encode payments_refundStarsCharge#0x25ae8f4a: field user_id: %w", err)
 		}
 		x.PutString(m.ChargeId)
 
@@ -66902,7 +66902,7 @@ func (m *TLPaymentsGetStarsRevenueStats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsRevenueStats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsRevenueStats: unsupported layer %d", layer)
 	}
 }
 
@@ -66933,7 +66933,7 @@ func (m *TLPaymentsGetStarsRevenueStats) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode payments_getStarsRevenueStats#0xd91ffad6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsRevenueStats#0xd91ffad6: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsRevenueStats#0xd91ffad6: field peer: %w", err)
 		}
 
 		return nil
@@ -67031,7 +67031,7 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsRevenueWithdrawalUrl: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl: unsupported layer %d", layer)
 	}
 }
 
@@ -67063,7 +67063,7 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field peer: %w", err)
 		}
 		if m.Amount != nil {
 			x.PutInt64(*m.Amount)
@@ -67073,7 +67073,7 @@ func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field password: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsRevenueWithdrawalUrl#0x2433dc92: field password: %w", err)
 		}
 
 		return nil
@@ -67171,7 +67171,7 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsRevenueAdsAccountUrl: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsRevenueAdsAccountUrl: unsupported layer %d", layer)
 	}
 }
 
@@ -67185,7 +67185,7 @@ func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode payments_getStarsRevenueAdsAccountUrl#0xd1d7efc5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsRevenueAdsAccountUrl#0xd1d7efc5: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsRevenueAdsAccountUrl#0xd1d7efc5: field peer: %w", err)
 		}
 
 		return nil
@@ -67267,7 +67267,7 @@ func (m *TLPaymentsGetStarsTransactionsByID) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsTransactionsByID: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsTransactionsByID: unsupported layer %d", layer)
 	}
 }
 
@@ -67295,11 +67295,11 @@ func (m *TLPaymentsGetStarsTransactionsByID) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_getStarsTransactionsByID#0x2dca16b8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsTransactionsByID#0x2dca16b8: field peer: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err)
 		}
 
 		return nil
@@ -67404,7 +67404,7 @@ func (m *TLPaymentsGetStarsGiftOptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsGiftOptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsGiftOptions: unsupported layer %d", layer)
 	}
 }
 
@@ -67430,7 +67430,7 @@ func (m *TLPaymentsGetStarsGiftOptions) Encode(x *bin.Encoder, layer int32) erro
 		x.PutUint32(flags)
 		if m.UserId != nil {
 			if err := m.UserId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_getStarsGiftOptions#0xd3c96bc8: field user_id: %w", err)
+				return fmt.Errorf("unable to encode payments_getStarsGiftOptions#0xd3c96bc8: field user_id: %w", err)
 			}
 		}
 
@@ -67519,7 +67519,7 @@ func (m *TLPaymentsGetStarsSubscriptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsSubscriptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsSubscriptions: unsupported layer %d", layer)
 	}
 }
 
@@ -67547,7 +67547,7 @@ func (m *TLPaymentsGetStarsSubscriptions) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode payments_getStarsSubscriptions#0x32512c5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarsSubscriptions#0x32512c5: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarsSubscriptions#0x32512c5: field peer: %w", err)
 		}
 		x.PutString(m.Offset)
 
@@ -67646,7 +67646,7 @@ func (m *TLPaymentsChangeStarsSubscription) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_changeStarsSubscription: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_changeStarsSubscription: unsupported layer %d", layer)
 	}
 }
 
@@ -67674,12 +67674,12 @@ func (m *TLPaymentsChangeStarsSubscription) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode payments_changeStarsSubscription#0xc7770878: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_changeStarsSubscription#0xc7770878: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_changeStarsSubscription#0xc7770878: field peer: %w", err)
 		}
 		x.PutString(m.SubscriptionId)
 		if m.Canceled != nil {
 			if err := m.Canceled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_changeStarsSubscription#0xc7770878: field canceled: %w", err)
+				return fmt.Errorf("unable to encode payments_changeStarsSubscription#0xc7770878: field canceled: %w", err)
 			}
 		}
 
@@ -67779,7 +67779,7 @@ func (m *TLPaymentsFulfillStarsSubscription) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_fulfillStarsSubscription: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_fulfillStarsSubscription: unsupported layer %d", layer)
 	}
 }
 
@@ -67793,7 +67793,7 @@ func (m *TLPaymentsFulfillStarsSubscription) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_fulfillStarsSubscription#0xcc5bebb3: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_fulfillStarsSubscription#0xcc5bebb3: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_fulfillStarsSubscription#0xcc5bebb3: field peer: %w", err)
 		}
 		x.PutString(m.SubscriptionId)
 
@@ -67868,7 +67868,7 @@ func (m *TLPaymentsGetStarsGiveawayOptions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarsGiveawayOptions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarsGiveawayOptions: unsupported layer %d", layer)
 	}
 }
 
@@ -67938,7 +67938,7 @@ func (m *TLPaymentsGetStarGifts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGifts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGifts: unsupported layer %d", layer)
 	}
 }
 
@@ -68019,7 +68019,7 @@ func (m *TLPaymentsSaveStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_saveStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_saveStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -68047,7 +68047,7 @@ func (m *TLPaymentsSaveStarGift) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_saveStarGift#0x2a2a697c: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_saveStarGift#0x2a2a697c: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_saveStarGift#0x2a2a697c: field stargift: %w", err)
 		}
 
 		return nil
@@ -68129,7 +68129,7 @@ func (m *TLPaymentsConvertStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_convertStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_convertStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -68143,7 +68143,7 @@ func (m *TLPaymentsConvertStarGift) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_convertStarGift#0x74bf076b: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_convertStarGift#0x74bf076b: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_convertStarGift#0x74bf076b: field stargift: %w", err)
 		}
 
 		return nil
@@ -68225,7 +68225,7 @@ func (m *TLPaymentsBotCancelStarsSubscription) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_botCancelStarsSubscription: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_botCancelStarsSubscription: unsupported layer %d", layer)
 	}
 }
 
@@ -68253,7 +68253,7 @@ func (m *TLPaymentsBotCancelStarsSubscription) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode payments_botCancelStarsSubscription#0x6dfa0622: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_botCancelStarsSubscription#0x6dfa0622: field user_id: %w", err)
+			return fmt.Errorf("unable to encode payments_botCancelStarsSubscription#0x6dfa0622: field user_id: %w", err)
 		}
 		x.PutString(m.ChargeId)
 
@@ -68354,7 +68354,7 @@ func (m *TLPaymentsGetConnectedStarRefBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getConnectedStarRefBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getConnectedStarRefBots: unsupported layer %d", layer)
 	}
 }
 
@@ -68385,7 +68385,7 @@ func (m *TLPaymentsGetConnectedStarRefBots) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode payments_getConnectedStarRefBots#0x5869a553: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getConnectedStarRefBots#0x5869a553: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getConnectedStarRefBots#0x5869a553: field peer: %w", err)
 		}
 		if m.OffsetDate != nil {
 			x.PutInt32(*m.OffsetDate)
@@ -68499,7 +68499,7 @@ func (m *TLPaymentsGetConnectedStarRefBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getConnectedStarRefBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getConnectedStarRefBot: unsupported layer %d", layer)
 	}
 }
 
@@ -68513,13 +68513,13 @@ func (m *TLPaymentsGetConnectedStarRefBot) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode payments_getConnectedStarRefBot#0xb7d998f0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getConnectedStarRefBot#0xb7d998f0: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getConnectedStarRefBot#0xb7d998f0: field peer: %w", err)
 		}
 		if m.Bot == nil {
 			return fmt.Errorf("unable to encode payments_getConnectedStarRefBot#0xb7d998f0: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getConnectedStarRefBot#0xb7d998f0: field bot: %w", err)
+			return fmt.Errorf("unable to encode payments_getConnectedStarRefBot#0xb7d998f0: field bot: %w", err)
 		}
 
 		return nil
@@ -68612,7 +68612,7 @@ func (m *TLPaymentsGetSuggestedStarRefBots) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getSuggestedStarRefBots: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getSuggestedStarRefBots: unsupported layer %d", layer)
 	}
 }
 
@@ -68643,7 +68643,7 @@ func (m *TLPaymentsGetSuggestedStarRefBots) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode payments_getSuggestedStarRefBots#0xd6b48f7: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getSuggestedStarRefBots#0xd6b48f7: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getSuggestedStarRefBots#0xd6b48f7: field peer: %w", err)
 		}
 		x.PutString(m.Offset)
 		x.PutInt32(m.Limit)
@@ -68745,7 +68745,7 @@ func (m *TLPaymentsConnectStarRefBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_connectStarRefBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_connectStarRefBot: unsupported layer %d", layer)
 	}
 }
 
@@ -68759,13 +68759,13 @@ func (m *TLPaymentsConnectStarRefBot) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode payments_connectStarRefBot#0x7ed5348a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_connectStarRefBot#0x7ed5348a: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_connectStarRefBot#0x7ed5348a: field peer: %w", err)
 		}
 		if m.Bot == nil {
 			return fmt.Errorf("unable to encode payments_connectStarRefBot#0x7ed5348a: field bot is nil")
 		}
 		if err := m.Bot.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_connectStarRefBot#0x7ed5348a: field bot: %w", err)
+			return fmt.Errorf("unable to encode payments_connectStarRefBot#0x7ed5348a: field bot: %w", err)
 		}
 
 		return nil
@@ -68855,7 +68855,7 @@ func (m *TLPaymentsEditConnectedStarRefBot) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_editConnectedStarRefBot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_editConnectedStarRefBot: unsupported layer %d", layer)
 	}
 }
 
@@ -68883,7 +68883,7 @@ func (m *TLPaymentsEditConnectedStarRefBot) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode payments_editConnectedStarRefBot#0xe4fca4a3: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_editConnectedStarRefBot#0xe4fca4a3: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_editConnectedStarRefBot#0xe4fca4a3: field peer: %w", err)
 		}
 		x.PutString(m.Link)
 
@@ -68968,7 +68968,7 @@ func (m *TLPaymentsGetStarGiftUpgradePreview) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftUpgradePreview: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftUpgradePreview: unsupported layer %d", layer)
 	}
 }
 
@@ -69049,7 +69049,7 @@ func (m *TLPaymentsUpgradeStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_upgradeStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_upgradeStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -69077,7 +69077,7 @@ func (m *TLPaymentsUpgradeStarGift) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_upgradeStarGift#0xaed6e4f5: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_upgradeStarGift#0xaed6e4f5: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_upgradeStarGift#0xaed6e4f5: field stargift: %w", err)
 		}
 
 		return nil
@@ -69165,7 +69165,7 @@ func (m *TLPaymentsTransferStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_transferStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_transferStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -69179,13 +69179,13 @@ func (m *TLPaymentsTransferStarGift) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_transferStarGift#0x7f18176a: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_transferStarGift#0x7f18176a: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_transferStarGift#0x7f18176a: field stargift: %w", err)
 		}
 		if m.ToId == nil {
 			return fmt.Errorf("unable to encode payments_transferStarGift#0x7f18176a: field to_id is nil")
 		}
 		if err := m.ToId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_transferStarGift#0x7f18176a: field to_id: %w", err)
+			return fmt.Errorf("unable to encode payments_transferStarGift#0x7f18176a: field to_id: %w", err)
 		}
 
 		return nil
@@ -69267,7 +69267,7 @@ func (m *TLPaymentsGetUniqueStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getUniqueStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getUniqueStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -69369,7 +69369,7 @@ func (m *TLPaymentsGetSavedStarGifts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getSavedStarGifts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getSavedStarGifts: unsupported layer %d", layer)
 	}
 }
 
@@ -69425,7 +69425,7 @@ func (m *TLPaymentsGetSavedStarGifts) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode payments_getSavedStarGifts#0xa319e569: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getSavedStarGifts#0xa319e569: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getSavedStarGifts#0xa319e569: field peer: %w", err)
 		}
 		if m.CollectionId != nil {
 			x.PutInt32(*m.CollectionId)
@@ -69553,7 +69553,7 @@ func (m *TLPaymentsGetSavedStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getSavedStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getSavedStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -69564,7 +69564,7 @@ func (m *TLPaymentsGetSavedStarGift) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xb455a106)
 
 		if err := iface.EncodeObjectList(x, m.Stargift, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_getSavedStarGift#0xb455a106: field stargift: %w", err)
 		}
 
 		return nil
@@ -69658,7 +69658,7 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftWithdrawalUrl: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl: unsupported layer %d", layer)
 	}
 }
 
@@ -69672,13 +69672,13 @@ func (m *TLPaymentsGetStarGiftWithdrawalUrl) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field stargift: %w", err)
 		}
 		if m.Password == nil {
 			return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field password: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarGiftWithdrawalUrl#0xd06e93a8: field password: %w", err)
 		}
 
 		return nil
@@ -69762,7 +69762,7 @@ func (m *TLPaymentsToggleChatStarGiftNotifications) Validate(layer int32) error 
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_toggleChatStarGiftNotifications: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_toggleChatStarGiftNotifications: unsupported layer %d", layer)
 	}
 }
 
@@ -69790,7 +69790,7 @@ func (m *TLPaymentsToggleChatStarGiftNotifications) Encode(x *bin.Encoder, layer
 			return fmt.Errorf("unable to encode payments_toggleChatStarGiftNotifications#0x60eaefa1: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_toggleChatStarGiftNotifications#0x60eaefa1: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_toggleChatStarGiftNotifications#0x60eaefa1: field peer: %w", err)
 		}
 
 		return nil
@@ -69878,7 +69878,7 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_toggleStarGiftsPinnedToTop: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_toggleStarGiftsPinnedToTop: unsupported layer %d", layer)
 	}
 }
 
@@ -69892,11 +69892,11 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field peer: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Stargift, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err)
 		}
 
 		return nil
@@ -69993,7 +69993,7 @@ func (m *TLPaymentsCanPurchaseStore) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_canPurchaseStore: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_canPurchaseStore: unsupported layer %d", layer)
 	}
 }
 
@@ -70007,7 +70007,7 @@ func (m *TLPaymentsCanPurchaseStore) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode payments_canPurchaseStore#0x4fdc5ea7: field purpose is nil")
 		}
 		if err := m.Purpose.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_canPurchaseStore#0x4fdc5ea7: field purpose: %w", err)
+			return fmt.Errorf("unable to encode payments_canPurchaseStore#0x4fdc5ea7: field purpose: %w", err)
 		}
 
 		return nil
@@ -70101,7 +70101,7 @@ func (m *TLPaymentsGetResaleStarGifts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getResaleStarGifts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getResaleStarGifts: unsupported layer %d", layer)
 	}
 }
 
@@ -70148,7 +70148,7 @@ func (m *TLPaymentsGetResaleStarGifts) Encode(x *bin.Encoder, layer int32) error
 		x.PutInt64(m.GiftId)
 		if m.Attributes != nil {
 			if err := iface.EncodeObjectList(x, m.Attributes, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err)
+				return fmt.Errorf("unable to encode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err)
 			}
 		}
 		x.PutString(m.Offset)
@@ -70284,7 +70284,7 @@ func (m *TLPaymentsUpdateStarGiftPrice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_updateStarGiftPrice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_updateStarGiftPrice: unsupported layer %d", layer)
 	}
 }
 
@@ -70298,13 +70298,13 @@ func (m *TLPaymentsUpdateStarGiftPrice) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode payments_updateStarGiftPrice#0xedbe6ccb: field stargift is nil")
 		}
 		if err := m.Stargift.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_updateStarGiftPrice#0xedbe6ccb: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_updateStarGiftPrice#0xedbe6ccb: field stargift: %w", err)
 		}
 		if m.ResellAmount == nil {
 			return fmt.Errorf("unable to encode payments_updateStarGiftPrice#0xedbe6ccb: field resell_amount is nil")
 		}
 		if err := m.ResellAmount.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_updateStarGiftPrice#0xedbe6ccb: field resell_amount: %w", err)
+			return fmt.Errorf("unable to encode payments_updateStarGiftPrice#0xedbe6ccb: field resell_amount: %w", err)
 		}
 
 		return nil
@@ -70398,7 +70398,7 @@ func (m *TLPaymentsCreateStarGiftCollection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_createStarGiftCollection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_createStarGiftCollection: unsupported layer %d", layer)
 	}
 }
 
@@ -70412,12 +70412,12 @@ func (m *TLPaymentsCreateStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_createStarGiftCollection#0x1f4a0e87: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_createStarGiftCollection#0x1f4a0e87: field peer: %w", err)
 		}
 		x.PutString(m.Title)
 
 		if err := iface.EncodeObjectList(x, m.Stargift, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err)
 		}
 
 		return nil
@@ -70540,7 +70540,7 @@ func (m *TLPaymentsUpdateStarGiftCollection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_updateStarGiftCollection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_updateStarGiftCollection: unsupported layer %d", layer)
 	}
 }
 
@@ -70577,7 +70577,7 @@ func (m *TLPaymentsUpdateStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_updateStarGiftCollection#0x4fddbee7: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_updateStarGiftCollection#0x4fddbee7: field peer: %w", err)
 		}
 		x.PutInt32(m.CollectionId)
 		if m.Title != nil {
@@ -70586,17 +70586,17 @@ func (m *TLPaymentsUpdateStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 
 		if m.DeleteStargift != nil {
 			if err := iface.EncodeObjectList(x, m.DeleteStargift, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err)
+				return fmt.Errorf("unable to encode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err)
 			}
 		}
 		if m.AddStargift != nil {
 			if err := iface.EncodeObjectList(x, m.AddStargift, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err)
+				return fmt.Errorf("unable to encode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err)
 			}
 		}
 		if m.Order != nil {
 			if err := iface.EncodeObjectList(x, m.Order, layer); err != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err)
+				return fmt.Errorf("unable to encode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err)
 			}
 		}
 
@@ -70767,7 +70767,7 @@ func (m *TLPaymentsReorderStarGiftCollections) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_reorderStarGiftCollections: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_reorderStarGiftCollections: unsupported layer %d", layer)
 	}
 }
 
@@ -70781,7 +70781,7 @@ func (m *TLPaymentsReorderStarGiftCollections) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode payments_reorderStarGiftCollections#0xc32af4cc: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_reorderStarGiftCollections#0xc32af4cc: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_reorderStarGiftCollections#0xc32af4cc: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Order)
@@ -70861,7 +70861,7 @@ func (m *TLPaymentsDeleteStarGiftCollection) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_deleteStarGiftCollection: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_deleteStarGiftCollection: unsupported layer %d", layer)
 	}
 }
 
@@ -70875,7 +70875,7 @@ func (m *TLPaymentsDeleteStarGiftCollection) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode payments_deleteStarGiftCollection#0xad5648e8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_deleteStarGiftCollection#0xad5648e8: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_deleteStarGiftCollection#0xad5648e8: field peer: %w", err)
 		}
 		x.PutInt32(m.CollectionId)
 
@@ -70957,7 +70957,7 @@ func (m *TLPaymentsGetStarGiftCollections) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftCollections: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftCollections: unsupported layer %d", layer)
 	}
 }
 
@@ -70971,7 +70971,7 @@ func (m *TLPaymentsGetStarGiftCollections) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode payments_getStarGiftCollections#0x981b91dd: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarGiftCollections#0x981b91dd: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarGiftCollections#0x981b91dd: field peer: %w", err)
 		}
 		x.PutInt64(m.Hash)
 
@@ -71051,7 +71051,7 @@ func (m *TLPaymentsGetUniqueStarGiftValueInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getUniqueStarGiftValueInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getUniqueStarGiftValueInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -71127,7 +71127,7 @@ func (m *TLPaymentsCheckCanSendGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_checkCanSendGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_checkCanSendGift: unsupported layer %d", layer)
 	}
 }
 
@@ -71208,7 +71208,7 @@ func (m *TLPaymentsGetStarGiftAuctionState) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftAuctionState: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftAuctionState: unsupported layer %d", layer)
 	}
 }
 
@@ -71222,7 +71222,7 @@ func (m *TLPaymentsGetStarGiftAuctionState) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode payments_getStarGiftAuctionState#0x5c9ff4d6: field auction is nil")
 		}
 		if err := m.Auction.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_getStarGiftAuctionState#0x5c9ff4d6: field auction: %w", err)
+			return fmt.Errorf("unable to encode payments_getStarGiftAuctionState#0x5c9ff4d6: field auction: %w", err)
 		}
 		x.PutInt32(m.Version)
 
@@ -71299,7 +71299,7 @@ func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) Validate(layer int32) error 
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftAuctionAcquiredGifts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftAuctionAcquiredGifts: unsupported layer %d", layer)
 	}
 }
 
@@ -71375,7 +71375,7 @@ func (m *TLPaymentsGetStarGiftActiveAuctions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftActiveAuctions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftActiveAuctions: unsupported layer %d", layer)
 	}
 }
 
@@ -71453,7 +71453,7 @@ func (m *TLPaymentsResolveStarGiftOffer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_resolveStarGiftOffer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_resolveStarGiftOffer: unsupported layer %d", layer)
 	}
 }
 
@@ -71575,7 +71575,7 @@ func (m *TLPaymentsSendStarGiftOffer) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_sendStarGiftOffer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_sendStarGiftOffer: unsupported layer %d", layer)
 	}
 }
 
@@ -71603,14 +71603,14 @@ func (m *TLPaymentsSendStarGiftOffer) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode payments_sendStarGiftOffer#0x8fb86b41: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_sendStarGiftOffer#0x8fb86b41: field peer: %w", err)
+			return fmt.Errorf("unable to encode payments_sendStarGiftOffer#0x8fb86b41: field peer: %w", err)
 		}
 		x.PutString(m.Slug)
 		if m.Price == nil {
 			return fmt.Errorf("unable to encode payments_sendStarGiftOffer#0x8fb86b41: field price is nil")
 		}
 		if err := m.Price.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_sendStarGiftOffer#0x8fb86b41: field price: %w", err)
+			return fmt.Errorf("unable to encode payments_sendStarGiftOffer#0x8fb86b41: field price: %w", err)
 		}
 		x.PutInt32(m.Duration)
 		x.PutInt64(m.RandomId)
@@ -71720,7 +71720,7 @@ func (m *TLPaymentsGetStarGiftUpgradeAttributes) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getStarGiftUpgradeAttributes: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getStarGiftUpgradeAttributes: unsupported layer %d", layer)
 	}
 }
 
@@ -71803,7 +71803,7 @@ func (m *TLPaymentsGetCraftStarGifts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_getCraftStarGifts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_getCraftStarGifts: unsupported layer %d", layer)
 	}
 }
 
@@ -71892,7 +71892,7 @@ func (m *TLPaymentsCraftStarGift) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate payments_craftStarGift: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode payments_craftStarGift: unsupported layer %d", layer)
 	}
 }
 
@@ -71903,7 +71903,7 @@ func (m *TLPaymentsCraftStarGift) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xb0f9684f)
 
 		if err := iface.EncodeObjectList(x, m.Stargift, layer); err != nil {
-			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", err)
+			return fmt.Errorf("unable to encode payments_craftStarGift#0xb0f9684f: field stargift: %w", err)
 		}
 
 		return nil
@@ -72022,7 +72022,7 @@ func (m *TLStickersCreateStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_createStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_createStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -72064,18 +72064,18 @@ func (m *TLStickersCreateStickerSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_createStickerSet#0x9021ab67: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field user_id: %w", err)
+			return fmt.Errorf("unable to encode stickers_createStickerSet#0x9021ab67: field user_id: %w", err)
 		}
 		x.PutString(m.Title)
 		x.PutString(m.ShortName)
 		if m.Thumb != nil {
 			if err := m.Thumb.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field thumb: %w", err)
+				return fmt.Errorf("unable to encode stickers_createStickerSet#0x9021ab67: field thumb: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.Stickers, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", err)
+			return fmt.Errorf("unable to encode stickers_createStickerSet#0x9021ab67: field stickers: %w", err)
 		}
 
 		if m.Software != nil {
@@ -72215,7 +72215,7 @@ func (m *TLStickersRemoveStickerFromSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_removeStickerFromSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_removeStickerFromSet: unsupported layer %d", layer)
 	}
 }
 
@@ -72229,7 +72229,7 @@ func (m *TLStickersRemoveStickerFromSet) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode stickers_removeStickerFromSet#0xf7760f51: field sticker is nil")
 		}
 		if err := m.Sticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_removeStickerFromSet#0xf7760f51: field sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_removeStickerFromSet#0xf7760f51: field sticker: %w", err)
 		}
 
 		return nil
@@ -72305,7 +72305,7 @@ func (m *TLStickersChangeStickerPosition) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_changeStickerPosition: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_changeStickerPosition: unsupported layer %d", layer)
 	}
 }
 
@@ -72319,7 +72319,7 @@ func (m *TLStickersChangeStickerPosition) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode stickers_changeStickerPosition#0xffb6d4ca: field sticker is nil")
 		}
 		if err := m.Sticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_changeStickerPosition#0xffb6d4ca: field sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_changeStickerPosition#0xffb6d4ca: field sticker: %w", err)
 		}
 		x.PutInt32(m.Position)
 
@@ -72405,7 +72405,7 @@ func (m *TLStickersAddStickerToSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_addStickerToSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_addStickerToSet: unsupported layer %d", layer)
 	}
 }
 
@@ -72419,13 +72419,13 @@ func (m *TLStickersAddStickerToSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_addStickerToSet#0x8653febe: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_addStickerToSet#0x8653febe: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode stickers_addStickerToSet#0x8653febe: field stickerset: %w", err)
 		}
 		if m.Sticker == nil {
 			return fmt.Errorf("unable to encode stickers_addStickerToSet#0x8653febe: field sticker is nil")
 		}
 		if err := m.Sticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_addStickerToSet#0x8653febe: field sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_addStickerToSet#0x8653febe: field sticker: %w", err)
 		}
 
 		return nil
@@ -72517,7 +72517,7 @@ func (m *TLStickersSetStickerSetThumb) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_setStickerSetThumb: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_setStickerSetThumb: unsupported layer %d", layer)
 	}
 }
 
@@ -72548,11 +72548,11 @@ func (m *TLStickersSetStickerSetThumb) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode stickers_setStickerSetThumb#0xa76a5392: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_setStickerSetThumb#0xa76a5392: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode stickers_setStickerSetThumb#0xa76a5392: field stickerset: %w", err)
 		}
 		if m.Thumb != nil {
 			if err := m.Thumb.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stickers_setStickerSetThumb#0xa76a5392: field thumb: %w", err)
+				return fmt.Errorf("unable to encode stickers_setStickerSetThumb#0xa76a5392: field thumb: %w", err)
 			}
 		}
 
@@ -72653,7 +72653,7 @@ func (m *TLStickersCheckShortName) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_checkShortName: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_checkShortName: unsupported layer %d", layer)
 	}
 }
 
@@ -72732,7 +72732,7 @@ func (m *TLStickersSuggestShortName) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_suggestShortName: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_suggestShortName: unsupported layer %d", layer)
 	}
 }
 
@@ -72826,7 +72826,7 @@ func (m *TLStickersChangeSticker) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_changeSticker: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_changeSticker: unsupported layer %d", layer)
 	}
 }
 
@@ -72860,7 +72860,7 @@ func (m *TLStickersChangeSticker) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_changeSticker#0xf5537ebc: field sticker is nil")
 		}
 		if err := m.Sticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_changeSticker#0xf5537ebc: field sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_changeSticker#0xf5537ebc: field sticker: %w", err)
 		}
 		if m.Emoji != nil {
 			x.PutString(*m.Emoji)
@@ -72868,7 +72868,7 @@ func (m *TLStickersChangeSticker) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.MaskCoords != nil {
 			if err := m.MaskCoords.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stickers_changeSticker#0xf5537ebc: field mask_coords: %w", err)
+				return fmt.Errorf("unable to encode stickers_changeSticker#0xf5537ebc: field mask_coords: %w", err)
 			}
 		}
 
@@ -72983,7 +72983,7 @@ func (m *TLStickersRenameStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_renameStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_renameStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -72997,7 +72997,7 @@ func (m *TLStickersRenameStickerSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_renameStickerSet#0x124b1c00: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_renameStickerSet#0x124b1c00: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode stickers_renameStickerSet#0x124b1c00: field stickerset: %w", err)
 		}
 		x.PutString(m.Title)
 
@@ -73077,7 +73077,7 @@ func (m *TLStickersDeleteStickerSet) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_deleteStickerSet: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_deleteStickerSet: unsupported layer %d", layer)
 	}
 }
 
@@ -73091,7 +73091,7 @@ func (m *TLStickersDeleteStickerSet) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_deleteStickerSet#0x87704394: field stickerset is nil")
 		}
 		if err := m.Stickerset.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_deleteStickerSet#0x87704394: field stickerset: %w", err)
+			return fmt.Errorf("unable to encode stickers_deleteStickerSet#0x87704394: field stickerset: %w", err)
 		}
 
 		return nil
@@ -73171,7 +73171,7 @@ func (m *TLStickersReplaceSticker) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stickers_replaceSticker: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stickers_replaceSticker: unsupported layer %d", layer)
 	}
 }
 
@@ -73185,13 +73185,13 @@ func (m *TLStickersReplaceSticker) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stickers_replaceSticker#0x4696459a: field sticker is nil")
 		}
 		if err := m.Sticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_replaceSticker#0x4696459a: field sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_replaceSticker#0x4696459a: field sticker: %w", err)
 		}
 		if m.NewSticker == nil {
 			return fmt.Errorf("unable to encode stickers_replaceSticker#0x4696459a: field new_sticker is nil")
 		}
 		if err := m.NewSticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stickers_replaceSticker#0x4696459a: field new_sticker: %w", err)
+			return fmt.Errorf("unable to encode stickers_replaceSticker#0x4696459a: field new_sticker: %w", err)
 		}
 
 		return nil
@@ -73268,7 +73268,7 @@ func (m *TLPhoneGetCallConfig) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getCallConfig: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getCallConfig: unsupported layer %d", layer)
 	}
 }
 
@@ -73357,7 +73357,7 @@ func (m *TLPhoneRequestCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_requestCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_requestCall: unsupported layer %d", layer)
 	}
 }
 
@@ -73385,7 +73385,7 @@ func (m *TLPhoneRequestCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_requestCall#0x42ff96ed: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_requestCall#0x42ff96ed: field user_id: %w", err)
+			return fmt.Errorf("unable to encode phone_requestCall#0x42ff96ed: field user_id: %w", err)
 		}
 		x.PutInt32(m.RandomId)
 		x.PutBytes(m.GAHash)
@@ -73393,7 +73393,7 @@ func (m *TLPhoneRequestCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_requestCall#0x42ff96ed: field protocol is nil")
 		}
 		if err := m.Protocol.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_requestCall#0x42ff96ed: field protocol: %w", err)
+			return fmt.Errorf("unable to encode phone_requestCall#0x42ff96ed: field protocol: %w", err)
 		}
 
 		return nil
@@ -73504,7 +73504,7 @@ func (m *TLPhoneAcceptCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_acceptCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_acceptCall: unsupported layer %d", layer)
 	}
 }
 
@@ -73518,14 +73518,14 @@ func (m *TLPhoneAcceptCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_acceptCall#0x3bd2b4a0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_acceptCall#0x3bd2b4a0: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_acceptCall#0x3bd2b4a0: field peer: %w", err)
 		}
 		x.PutBytes(m.GB)
 		if m.Protocol == nil {
 			return fmt.Errorf("unable to encode phone_acceptCall#0x3bd2b4a0: field protocol is nil")
 		}
 		if err := m.Protocol.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_acceptCall#0x3bd2b4a0: field protocol: %w", err)
+			return fmt.Errorf("unable to encode phone_acceptCall#0x3bd2b4a0: field protocol: %w", err)
 		}
 
 		return nil
@@ -73626,7 +73626,7 @@ func (m *TLPhoneConfirmCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_confirmCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_confirmCall: unsupported layer %d", layer)
 	}
 }
 
@@ -73640,7 +73640,7 @@ func (m *TLPhoneConfirmCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_confirmCall#0x2efe1722: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_confirmCall#0x2efe1722: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_confirmCall#0x2efe1722: field peer: %w", err)
 		}
 		x.PutBytes(m.GA)
 		x.PutInt64(m.KeyFingerprint)
@@ -73648,7 +73648,7 @@ func (m *TLPhoneConfirmCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_confirmCall#0x2efe1722: field protocol is nil")
 		}
 		if err := m.Protocol.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_confirmCall#0x2efe1722: field protocol: %w", err)
+			return fmt.Errorf("unable to encode phone_confirmCall#0x2efe1722: field protocol: %w", err)
 		}
 
 		return nil
@@ -73739,7 +73739,7 @@ func (m *TLPhoneReceivedCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_receivedCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_receivedCall: unsupported layer %d", layer)
 	}
 }
 
@@ -73753,7 +73753,7 @@ func (m *TLPhoneReceivedCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_receivedCall#0x17d54f61: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_receivedCall#0x17d54f61: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_receivedCall#0x17d54f61: field peer: %w", err)
 		}
 
 		return nil
@@ -73839,7 +73839,7 @@ func (m *TLPhoneDiscardCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_discardCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_discardCall: unsupported layer %d", layer)
 	}
 }
 
@@ -73867,14 +73867,14 @@ func (m *TLPhoneDiscardCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_discardCall#0xb2cbc1c0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_discardCall#0xb2cbc1c0: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_discardCall#0xb2cbc1c0: field peer: %w", err)
 		}
 		x.PutInt32(m.Duration)
 		if m.Reason == nil {
 			return fmt.Errorf("unable to encode phone_discardCall#0xb2cbc1c0: field reason is nil")
 		}
 		if err := m.Reason.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_discardCall#0xb2cbc1c0: field reason: %w", err)
+			return fmt.Errorf("unable to encode phone_discardCall#0xb2cbc1c0: field reason: %w", err)
 		}
 		x.PutInt64(m.ConnectionId)
 
@@ -73985,7 +73985,7 @@ func (m *TLPhoneSetCallRating) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_setCallRating: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_setCallRating: unsupported layer %d", layer)
 	}
 }
 
@@ -74013,7 +74013,7 @@ func (m *TLPhoneSetCallRating) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_setCallRating#0x59ead627: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_setCallRating#0x59ead627: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_setCallRating#0x59ead627: field peer: %w", err)
 		}
 		x.PutInt32(m.Rating)
 		x.PutString(m.Comment)
@@ -74112,7 +74112,7 @@ func (m *TLPhoneSaveCallDebug) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_saveCallDebug: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_saveCallDebug: unsupported layer %d", layer)
 	}
 }
 
@@ -74126,13 +74126,13 @@ func (m *TLPhoneSaveCallDebug) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_saveCallDebug#0x277add7e: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveCallDebug#0x277add7e: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_saveCallDebug#0x277add7e: field peer: %w", err)
 		}
 		if m.Debug == nil {
 			return fmt.Errorf("unable to encode phone_saveCallDebug#0x277add7e: field debug is nil")
 		}
 		if err := m.Debug.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveCallDebug#0x277add7e: field debug: %w", err)
+			return fmt.Errorf("unable to encode phone_saveCallDebug#0x277add7e: field debug: %w", err)
 		}
 
 		return nil
@@ -74220,7 +74220,7 @@ func (m *TLPhoneSendSignalingData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_sendSignalingData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_sendSignalingData: unsupported layer %d", layer)
 	}
 }
 
@@ -74234,7 +74234,7 @@ func (m *TLPhoneSendSignalingData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_sendSignalingData#0xff7a9383: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_sendSignalingData#0xff7a9383: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_sendSignalingData#0xff7a9383: field peer: %w", err)
 		}
 		x.PutBytes(m.Data)
 
@@ -74327,7 +74327,7 @@ func (m *TLPhoneCreateGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_createGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_createGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -74362,7 +74362,7 @@ func (m *TLPhoneCreateGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_createGroupCall#0x48cdc6d8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_createGroupCall#0x48cdc6d8: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_createGroupCall#0x48cdc6d8: field peer: %w", err)
 		}
 		x.PutInt32(m.RandomId)
 		if m.Title != nil {
@@ -74502,7 +74502,7 @@ func (m *TLPhoneJoinGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_joinGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_joinGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -74543,13 +74543,13 @@ func (m *TLPhoneJoinGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_joinGroupCall#0x8fb53057: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field call: %w", err)
 		}
 		if m.JoinAs == nil {
 			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field join_as is nil")
 		}
 		if err := m.JoinAs.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_joinGroupCall#0x8fb53057: field join_as: %w", err)
+			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field join_as: %w", err)
 		}
 		if m.InviteHash != nil {
 			x.PutString(*m.InviteHash)
@@ -74567,7 +74567,7 @@ func (m *TLPhoneJoinGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field params is nil")
 		}
 		if err := m.Params.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_joinGroupCall#0x8fb53057: field params: %w", err)
+			return fmt.Errorf("unable to encode phone_joinGroupCall#0x8fb53057: field params: %w", err)
 		}
 
 		return nil
@@ -74693,7 +74693,7 @@ func (m *TLPhoneLeaveGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_leaveGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_leaveGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -74707,7 +74707,7 @@ func (m *TLPhoneLeaveGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_leaveGroupCall#0x500377f9: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_leaveGroupCall#0x500377f9: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_leaveGroupCall#0x500377f9: field call: %w", err)
 		}
 		x.PutInt32(m.Source)
 
@@ -74793,7 +74793,7 @@ func (m *TLPhoneInviteToGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_inviteToGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_inviteToGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -74807,11 +74807,11 @@ func (m *TLPhoneInviteToGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_inviteToGroupCall#0x7b393160: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_inviteToGroupCall#0x7b393160: field call: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", err)
+			return fmt.Errorf("unable to encode phone_inviteToGroupCall#0x7b393160: field users: %w", err)
 		}
 
 		return nil
@@ -74908,7 +74908,7 @@ func (m *TLPhoneDiscardGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_discardGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_discardGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -74922,7 +74922,7 @@ func (m *TLPhoneDiscardGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_discardGroupCall#0x7a777135: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_discardGroupCall#0x7a777135: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_discardGroupCall#0x7a777135: field call: %w", err)
 		}
 
 		return nil
@@ -75012,7 +75012,7 @@ func (m *TLPhoneToggleGroupCallSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_toggleGroupCallSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_toggleGroupCallSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -75050,17 +75050,17 @@ func (m *TLPhoneToggleGroupCallSettings) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode phone_toggleGroupCallSettings#0x974392f2: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_toggleGroupCallSettings#0x974392f2: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_toggleGroupCallSettings#0x974392f2: field call: %w", err)
 		}
 		if m.JoinMuted != nil {
 			if err := m.JoinMuted.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_toggleGroupCallSettings#0x974392f2: field join_muted: %w", err)
+				return fmt.Errorf("unable to encode phone_toggleGroupCallSettings#0x974392f2: field join_muted: %w", err)
 			}
 		}
 
 		if m.MessagesEnabled != nil {
 			if err := m.MessagesEnabled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_toggleGroupCallSettings#0x974392f2: field messages_enabled: %w", err)
+				return fmt.Errorf("unable to encode phone_toggleGroupCallSettings#0x974392f2: field messages_enabled: %w", err)
 			}
 		}
 
@@ -75175,7 +75175,7 @@ func (m *TLPhoneGetGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -75189,7 +75189,7 @@ func (m *TLPhoneGetGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_getGroupCall#0x41845db: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCall#0x41845db: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCall#0x41845db: field call: %w", err)
 		}
 		x.PutInt32(m.Limit)
 
@@ -75289,7 +75289,7 @@ func (m *TLPhoneGetGroupParticipants) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupParticipants: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupParticipants: unsupported layer %d", layer)
 	}
 }
 
@@ -75303,11 +75303,11 @@ func (m *TLPhoneGetGroupParticipants) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode phone_getGroupParticipants#0xc558d8ab: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupParticipants#0xc558d8ab: field call: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Ids, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Sources)
@@ -75426,7 +75426,7 @@ func (m *TLPhoneCheckGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_checkGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_checkGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -75440,7 +75440,7 @@ func (m *TLPhoneCheckGroupCall) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_checkGroupCall#0xb59cf977: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_checkGroupCall#0xb59cf977: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_checkGroupCall#0xb59cf977: field call: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Sources)
@@ -75530,7 +75530,7 @@ func (m *TLPhoneToggleGroupCallRecord) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_toggleGroupCallRecord: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_toggleGroupCallRecord: unsupported layer %d", layer)
 	}
 }
 
@@ -75568,7 +75568,7 @@ func (m *TLPhoneToggleGroupCallRecord) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode phone_toggleGroupCallRecord#0xf128c708: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_toggleGroupCallRecord#0xf128c708: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_toggleGroupCallRecord#0xf128c708: field call: %w", err)
 		}
 		if m.Title != nil {
 			x.PutString(*m.Title)
@@ -75576,7 +75576,7 @@ func (m *TLPhoneToggleGroupCallRecord) Encode(x *bin.Encoder, layer int32) error
 
 		if m.VideoPortrait != nil {
 			if err := m.VideoPortrait.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_toggleGroupCallRecord#0xf128c708: field video_portrait: %w", err)
+				return fmt.Errorf("unable to encode phone_toggleGroupCallRecord#0xf128c708: field video_portrait: %w", err)
 			}
 		}
 
@@ -75716,7 +75716,7 @@ func (m *TLPhoneEditGroupCallParticipant) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_editGroupCallParticipant: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_editGroupCallParticipant: unsupported layer %d", layer)
 	}
 }
 
@@ -75759,17 +75759,17 @@ func (m *TLPhoneEditGroupCallParticipant) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field call: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field participant: %w", err)
+			return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field participant: %w", err)
 		}
 		if m.Muted != nil {
 			if err := m.Muted.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field muted: %w", err)
+				return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field muted: %w", err)
 			}
 		}
 
@@ -75779,25 +75779,25 @@ func (m *TLPhoneEditGroupCallParticipant) Encode(x *bin.Encoder, layer int32) er
 
 		if m.RaiseHand != nil {
 			if err := m.RaiseHand.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field raise_hand: %w", err)
+				return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field raise_hand: %w", err)
 			}
 		}
 
 		if m.VideoStopped != nil {
 			if err := m.VideoStopped.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field video_stopped: %w", err)
+				return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field video_stopped: %w", err)
 			}
 		}
 
 		if m.VideoPaused != nil {
 			if err := m.VideoPaused.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field video_paused: %w", err)
+				return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field video_paused: %w", err)
 			}
 		}
 
 		if m.PresentationPaused != nil {
 			if err := m.PresentationPaused.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_editGroupCallParticipant#0xa5273abf: field presentation_paused: %w", err)
+				return fmt.Errorf("unable to encode phone_editGroupCallParticipant#0xa5273abf: field presentation_paused: %w", err)
 			}
 		}
 
@@ -75944,7 +75944,7 @@ func (m *TLPhoneEditGroupCallTitle) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_editGroupCallTitle: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_editGroupCallTitle: unsupported layer %d", layer)
 	}
 }
 
@@ -75958,7 +75958,7 @@ func (m *TLPhoneEditGroupCallTitle) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_editGroupCallTitle#0x1ca6ac0a: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_editGroupCallTitle#0x1ca6ac0a: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_editGroupCallTitle#0x1ca6ac0a: field call: %w", err)
 		}
 		x.PutString(m.Title)
 
@@ -76038,7 +76038,7 @@ func (m *TLPhoneGetGroupCallJoinAs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCallJoinAs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCallJoinAs: unsupported layer %d", layer)
 	}
 }
 
@@ -76052,7 +76052,7 @@ func (m *TLPhoneGetGroupCallJoinAs) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_getGroupCallJoinAs#0xef7c213a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallJoinAs#0xef7c213a: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallJoinAs#0xef7c213a: field peer: %w", err)
 		}
 
 		return nil
@@ -76128,7 +76128,7 @@ func (m *TLPhoneExportGroupCallInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_exportGroupCallInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_exportGroupCallInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -76156,7 +76156,7 @@ func (m *TLPhoneExportGroupCallInvite) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode phone_exportGroupCallInvite#0xe6aa647f: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_exportGroupCallInvite#0xe6aa647f: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_exportGroupCallInvite#0xe6aa647f: field call: %w", err)
 		}
 
 		return nil
@@ -76244,7 +76244,7 @@ func (m *TLPhoneToggleGroupCallStartSubscription) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_toggleGroupCallStartSubscription: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription: unsupported layer %d", layer)
 	}
 }
 
@@ -76258,13 +76258,13 @@ func (m *TLPhoneToggleGroupCallStartSubscription) Encode(x *bin.Encoder, layer i
 			return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription#0x219c34e6: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_toggleGroupCallStartSubscription#0x219c34e6: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription#0x219c34e6: field call: %w", err)
 		}
 		if m.Subscribed == nil {
 			return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription#0x219c34e6: field subscribed is nil")
 		}
 		if err := m.Subscribed.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_toggleGroupCallStartSubscription#0x219c34e6: field subscribed: %w", err)
+			return fmt.Errorf("unable to encode phone_toggleGroupCallStartSubscription#0x219c34e6: field subscribed: %w", err)
 		}
 
 		return nil
@@ -76346,7 +76346,7 @@ func (m *TLPhoneStartScheduledGroupCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_startScheduledGroupCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_startScheduledGroupCall: unsupported layer %d", layer)
 	}
 }
 
@@ -76360,7 +76360,7 @@ func (m *TLPhoneStartScheduledGroupCall) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode phone_startScheduledGroupCall#0x5680e342: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_startScheduledGroupCall#0x5680e342: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_startScheduledGroupCall#0x5680e342: field call: %w", err)
 		}
 
 		return nil
@@ -76440,7 +76440,7 @@ func (m *TLPhoneSaveDefaultGroupCallJoinAs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_saveDefaultGroupCallJoinAs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs: unsupported layer %d", layer)
 	}
 }
 
@@ -76454,13 +76454,13 @@ func (m *TLPhoneSaveDefaultGroupCallJoinAs) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field peer: %w", err)
 		}
 		if m.JoinAs == nil {
 			return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field join_as is nil")
 		}
 		if err := m.JoinAs.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field join_as: %w", err)
+			return fmt.Errorf("unable to encode phone_saveDefaultGroupCallJoinAs#0x575e1f8c: field join_as: %w", err)
 		}
 
 		return nil
@@ -76548,7 +76548,7 @@ func (m *TLPhoneJoinGroupCallPresentation) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_joinGroupCallPresentation: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_joinGroupCallPresentation: unsupported layer %d", layer)
 	}
 }
 
@@ -76562,13 +76562,13 @@ func (m *TLPhoneJoinGroupCallPresentation) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode phone_joinGroupCallPresentation#0xcbea6bc4: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_joinGroupCallPresentation#0xcbea6bc4: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_joinGroupCallPresentation#0xcbea6bc4: field call: %w", err)
 		}
 		if m.Params == nil {
 			return fmt.Errorf("unable to encode phone_joinGroupCallPresentation#0xcbea6bc4: field params is nil")
 		}
 		if err := m.Params.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_joinGroupCallPresentation#0xcbea6bc4: field params: %w", err)
+			return fmt.Errorf("unable to encode phone_joinGroupCallPresentation#0xcbea6bc4: field params: %w", err)
 		}
 
 		return nil
@@ -76650,7 +76650,7 @@ func (m *TLPhoneLeaveGroupCallPresentation) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_leaveGroupCallPresentation: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_leaveGroupCallPresentation: unsupported layer %d", layer)
 	}
 }
 
@@ -76664,7 +76664,7 @@ func (m *TLPhoneLeaveGroupCallPresentation) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode phone_leaveGroupCallPresentation#0x1c50d144: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_leaveGroupCallPresentation#0x1c50d144: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_leaveGroupCallPresentation#0x1c50d144: field call: %w", err)
 		}
 
 		return nil
@@ -76738,7 +76738,7 @@ func (m *TLPhoneGetGroupCallStreamChannels) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCallStreamChannels: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCallStreamChannels: unsupported layer %d", layer)
 	}
 }
 
@@ -76752,7 +76752,7 @@ func (m *TLPhoneGetGroupCallStreamChannels) Encode(x *bin.Encoder, layer int32) 
 			return fmt.Errorf("unable to encode phone_getGroupCallStreamChannels#0x1ab21940: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallStreamChannels#0x1ab21940: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallStreamChannels#0x1ab21940: field call: %w", err)
 		}
 
 		return nil
@@ -76834,7 +76834,7 @@ func (m *TLPhoneGetGroupCallStreamRtmpUrl) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCallStreamRtmpUrl: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl: unsupported layer %d", layer)
 	}
 }
 
@@ -76862,13 +76862,13 @@ func (m *TLPhoneGetGroupCallStreamRtmpUrl) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field peer: %w", err)
 		}
 		if m.Revoke == nil {
 			return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field revoke is nil")
 		}
 		if err := m.Revoke.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field revoke: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallStreamRtmpUrl#0x5af4c73a: field revoke: %w", err)
 		}
 
 		return nil
@@ -76964,7 +76964,7 @@ func (m *TLPhoneSaveCallLog) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_saveCallLog: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_saveCallLog: unsupported layer %d", layer)
 	}
 }
 
@@ -76978,13 +76978,13 @@ func (m *TLPhoneSaveCallLog) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_saveCallLog#0x41248786: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveCallLog#0x41248786: field peer: %w", err)
+			return fmt.Errorf("unable to encode phone_saveCallLog#0x41248786: field peer: %w", err)
 		}
 		if m.File == nil {
 			return fmt.Errorf("unable to encode phone_saveCallLog#0x41248786: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveCallLog#0x41248786: field file: %w", err)
+			return fmt.Errorf("unable to encode phone_saveCallLog#0x41248786: field file: %w", err)
 		}
 
 		return nil
@@ -77081,7 +77081,7 @@ func (m *TLPhoneCreateConferenceCall) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_createConferenceCall: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_createConferenceCall: unsupported layer %d", layer)
 	}
 }
 
@@ -77132,7 +77132,7 @@ func (m *TLPhoneCreateConferenceCall) Encode(x *bin.Encoder, layer int32) error 
 
 		if m.Params != nil {
 			if err := m.Params.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_createConferenceCall#0x7d0444bb: field params: %w", err)
+				return fmt.Errorf("unable to encode phone_createConferenceCall#0x7d0444bb: field params: %w", err)
 			}
 		}
 
@@ -77256,7 +77256,7 @@ func (m *TLPhoneDeleteConferenceCallParticipants) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_deleteConferenceCallParticipants: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_deleteConferenceCallParticipants: unsupported layer %d", layer)
 	}
 }
 
@@ -77287,7 +77287,7 @@ func (m *TLPhoneDeleteConferenceCallParticipants) Encode(x *bin.Encoder, layer i
 			return fmt.Errorf("unable to encode phone_deleteConferenceCallParticipants#0x8ca60525: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_deleteConferenceCallParticipants#0x8ca60525: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_deleteConferenceCallParticipants#0x8ca60525: field call: %w", err)
 		}
 
 		iface.EncodeInt64List(x, m.Ids)
@@ -77389,7 +77389,7 @@ func (m *TLPhoneSendConferenceCallBroadcast) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_sendConferenceCallBroadcast: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_sendConferenceCallBroadcast: unsupported layer %d", layer)
 	}
 }
 
@@ -77403,7 +77403,7 @@ func (m *TLPhoneSendConferenceCallBroadcast) Encode(x *bin.Encoder, layer int32)
 			return fmt.Errorf("unable to encode phone_sendConferenceCallBroadcast#0xc6701900: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_sendConferenceCallBroadcast#0xc6701900: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_sendConferenceCallBroadcast#0xc6701900: field call: %w", err)
 		}
 		x.PutBytes(m.Block)
 
@@ -77491,7 +77491,7 @@ func (m *TLPhoneInviteConferenceCallParticipant) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_inviteConferenceCallParticipant: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant: unsupported layer %d", layer)
 	}
 }
 
@@ -77519,13 +77519,13 @@ func (m *TLPhoneInviteConferenceCallParticipant) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant#0xbcf22685: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_inviteConferenceCallParticipant#0xbcf22685: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant#0xbcf22685: field call: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant#0xbcf22685: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_inviteConferenceCallParticipant#0xbcf22685: field user_id: %w", err)
+			return fmt.Errorf("unable to encode phone_inviteConferenceCallParticipant#0xbcf22685: field user_id: %w", err)
 		}
 
 		return nil
@@ -77612,7 +77612,7 @@ func (m *TLPhoneDeclineConferenceCallInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_declineConferenceCallInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_declineConferenceCallInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -77697,7 +77697,7 @@ func (m *TLPhoneGetGroupCallChainBlocks) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCallChainBlocks: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCallChainBlocks: unsupported layer %d", layer)
 	}
 }
 
@@ -77711,7 +77711,7 @@ func (m *TLPhoneGetGroupCallChainBlocks) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode phone_getGroupCallChainBlocks#0xee9f88a6: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallChainBlocks#0xee9f88a6: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallChainBlocks#0xee9f88a6: field call: %w", err)
 		}
 		x.PutInt32(m.SubChainId)
 		x.PutInt32(m.Offset)
@@ -77819,7 +77819,7 @@ func (m *TLPhoneSendGroupCallMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_sendGroupCallMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_sendGroupCallMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -77850,14 +77850,14 @@ func (m *TLPhoneSendGroupCallMessage) Encode(x *bin.Encoder, layer int32) error 
 			return fmt.Errorf("unable to encode phone_sendGroupCallMessage#0xb1d11410: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_sendGroupCallMessage#0xb1d11410: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_sendGroupCallMessage#0xb1d11410: field call: %w", err)
 		}
 		x.PutInt64(m.RandomId)
 		if m.Message == nil {
 			return fmt.Errorf("unable to encode phone_sendGroupCallMessage#0xb1d11410: field message is nil")
 		}
 		if err := m.Message.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_sendGroupCallMessage#0xb1d11410: field message: %w", err)
+			return fmt.Errorf("unable to encode phone_sendGroupCallMessage#0xb1d11410: field message: %w", err)
 		}
 		if m.AllowPaidStars != nil {
 			x.PutInt64(*m.AllowPaidStars)
@@ -77865,7 +77865,7 @@ func (m *TLPhoneSendGroupCallMessage) Encode(x *bin.Encoder, layer int32) error 
 
 		if m.SendAs != nil {
 			if err := m.SendAs.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode phone_sendGroupCallMessage#0xb1d11410: field send_as: %w", err)
+				return fmt.Errorf("unable to encode phone_sendGroupCallMessage#0xb1d11410: field send_as: %w", err)
 			}
 		}
 
@@ -77982,7 +77982,7 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_sendGroupCallEncryptedMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_sendGroupCallEncryptedMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -77996,7 +77996,7 @@ func (m *TLPhoneSendGroupCallEncryptedMessage) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode phone_sendGroupCallEncryptedMessage#0xe5afa56d: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_sendGroupCallEncryptedMessage#0xe5afa56d: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_sendGroupCallEncryptedMessage#0xe5afa56d: field call: %w", err)
 		}
 		x.PutBytes(m.EncryptedMessage)
 
@@ -78084,7 +78084,7 @@ func (m *TLPhoneDeleteGroupCallMessages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_deleteGroupCallMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_deleteGroupCallMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -78112,7 +78112,7 @@ func (m *TLPhoneDeleteGroupCallMessages) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode phone_deleteGroupCallMessages#0xf64f54f7: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_deleteGroupCallMessages#0xf64f54f7: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_deleteGroupCallMessages#0xf64f54f7: field call: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Messages)
@@ -78206,7 +78206,7 @@ func (m *TLPhoneDeleteGroupCallParticipantMessages) Validate(layer int32) error 
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_deleteGroupCallParticipantMessages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages: unsupported layer %d", layer)
 	}
 }
 
@@ -78234,13 +78234,13 @@ func (m *TLPhoneDeleteGroupCallParticipantMessages) Encode(x *bin.Encoder, layer
 			return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field call: %w", err)
 		}
 		if m.Participant == nil {
 			return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field participant is nil")
 		}
 		if err := m.Participant.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field participant: %w", err)
+			return fmt.Errorf("unable to encode phone_deleteGroupCallParticipantMessages#0x1dbfeca0: field participant: %w", err)
 		}
 
 		return nil
@@ -78330,7 +78330,7 @@ func (m *TLPhoneGetGroupCallStars) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_getGroupCallStars: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_getGroupCallStars: unsupported layer %d", layer)
 	}
 }
 
@@ -78344,7 +78344,7 @@ func (m *TLPhoneGetGroupCallStars) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_getGroupCallStars#0x6f636302: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_getGroupCallStars#0x6f636302: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_getGroupCallStars#0x6f636302: field call: %w", err)
 		}
 
 		return nil
@@ -78424,7 +78424,7 @@ func (m *TLPhoneSaveDefaultSendAs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate phone_saveDefaultSendAs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode phone_saveDefaultSendAs: unsupported layer %d", layer)
 	}
 }
 
@@ -78438,13 +78438,13 @@ func (m *TLPhoneSaveDefaultSendAs) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode phone_saveDefaultSendAs#0x4167add1: field call is nil")
 		}
 		if err := m.Call.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveDefaultSendAs#0x4167add1: field call: %w", err)
+			return fmt.Errorf("unable to encode phone_saveDefaultSendAs#0x4167add1: field call: %w", err)
 		}
 		if m.SendAs == nil {
 			return fmt.Errorf("unable to encode phone_saveDefaultSendAs#0x4167add1: field send_as is nil")
 		}
 		if err := m.SendAs.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode phone_saveDefaultSendAs#0x4167add1: field send_as: %w", err)
+			return fmt.Errorf("unable to encode phone_saveDefaultSendAs#0x4167add1: field send_as: %w", err)
 		}
 
 		return nil
@@ -78543,7 +78543,7 @@ func (m *TLLangpackGetLangPack) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate langpack_getLangPack: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode langpack_getLangPack: unsupported layer %d", layer)
 	}
 }
 
@@ -78668,7 +78668,7 @@ func (m *TLLangpackGetStrings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate langpack_getStrings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode langpack_getStrings: unsupported layer %d", layer)
 	}
 }
 
@@ -78781,7 +78781,7 @@ func (m *TLLangpackGetDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate langpack_getDifference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode langpack_getDifference: unsupported layer %d", layer)
 	}
 }
 
@@ -78877,7 +78877,7 @@ func (m *TLLangpackGetLanguages) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate langpack_getLanguages: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode langpack_getLanguages: unsupported layer %d", layer)
 	}
 }
 
@@ -78969,7 +78969,7 @@ func (m *TLLangpackGetLanguage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate langpack_getLanguage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode langpack_getLanguage: unsupported layer %d", layer)
 	}
 }
 
@@ -79053,7 +79053,7 @@ func (m *TLFoldersEditPeerFolders) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate folders_editPeerFolders: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode folders_editPeerFolders: unsupported layer %d", layer)
 	}
 }
 
@@ -79064,7 +79064,7 @@ func (m *TLFoldersEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x6847d0ab)
 
 		if err := iface.EncodeObjectList(x, m.FolderPeers, layer); err != nil {
-			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err)
+			return fmt.Errorf("unable to encode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err)
 		}
 
 		return nil
@@ -79154,7 +79154,7 @@ func (m *TLStatsGetBroadcastStats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getBroadcastStats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getBroadcastStats: unsupported layer %d", layer)
 	}
 }
 
@@ -79182,7 +79182,7 @@ func (m *TLStatsGetBroadcastStats) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stats_getBroadcastStats#0xab42441a: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getBroadcastStats#0xab42441a: field channel: %w", err)
+			return fmt.Errorf("unable to encode stats_getBroadcastStats#0xab42441a: field channel: %w", err)
 		}
 
 		return nil
@@ -79269,7 +79269,7 @@ func (m *TLStatsLoadAsyncGraph) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_loadAsyncGraph: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_loadAsyncGraph: unsupported layer %d", layer)
 	}
 }
 
@@ -79379,7 +79379,7 @@ func (m *TLStatsGetMegagroupStats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getMegagroupStats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getMegagroupStats: unsupported layer %d", layer)
 	}
 }
 
@@ -79407,7 +79407,7 @@ func (m *TLStatsGetMegagroupStats) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stats_getMegagroupStats#0xdcdf8607: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getMegagroupStats#0xdcdf8607: field channel: %w", err)
+			return fmt.Errorf("unable to encode stats_getMegagroupStats#0xdcdf8607: field channel: %w", err)
 		}
 
 		return nil
@@ -79499,7 +79499,7 @@ func (m *TLStatsGetMessagePublicForwards) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getMessagePublicForwards: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getMessagePublicForwards: unsupported layer %d", layer)
 	}
 }
 
@@ -79513,7 +79513,7 @@ func (m *TLStatsGetMessagePublicForwards) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode stats_getMessagePublicForwards#0x5f150144: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getMessagePublicForwards#0x5f150144: field channel: %w", err)
+			return fmt.Errorf("unable to encode stats_getMessagePublicForwards#0x5f150144: field channel: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 		x.PutString(m.Offset)
@@ -79607,7 +79607,7 @@ func (m *TLStatsGetMessageStats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getMessageStats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getMessageStats: unsupported layer %d", layer)
 	}
 }
 
@@ -79635,7 +79635,7 @@ func (m *TLStatsGetMessageStats) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stats_getMessageStats#0xb6e0a3f5: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getMessageStats#0xb6e0a3f5: field channel: %w", err)
+			return fmt.Errorf("unable to encode stats_getMessageStats#0xb6e0a3f5: field channel: %w", err)
 		}
 		x.PutInt32(m.MsgId)
 
@@ -79727,7 +79727,7 @@ func (m *TLStatsGetStoryStats) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getStoryStats: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getStoryStats: unsupported layer %d", layer)
 	}
 }
 
@@ -79755,7 +79755,7 @@ func (m *TLStatsGetStoryStats) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stats_getStoryStats#0x374fef40: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getStoryStats#0x374fef40: field peer: %w", err)
+			return fmt.Errorf("unable to encode stats_getStoryStats#0x374fef40: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -79853,7 +79853,7 @@ func (m *TLStatsGetStoryPublicForwards) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stats_getStoryPublicForwards: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stats_getStoryPublicForwards: unsupported layer %d", layer)
 	}
 }
 
@@ -79867,7 +79867,7 @@ func (m *TLStatsGetStoryPublicForwards) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode stats_getStoryPublicForwards#0xa6437ef6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stats_getStoryPublicForwards#0xa6437ef6: field peer: %w", err)
+			return fmt.Errorf("unable to encode stats_getStoryPublicForwards#0xa6437ef6: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		x.PutString(m.Offset)
@@ -79969,7 +79969,7 @@ func (m *TLChatlistsExportChatlistInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_exportChatlistInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_exportChatlistInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -79983,12 +79983,12 @@ func (m *TLChatlistsExportChatlistInvite) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode chatlists_exportChatlistInvite#0x8472478e: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_exportChatlistInvite#0x8472478e: field chatlist: %w", err)
 		}
 		x.PutString(m.Title)
 
 		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err)
+			return fmt.Errorf("unable to encode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err)
 		}
 
 		return nil
@@ -80095,7 +80095,7 @@ func (m *TLChatlistsDeleteExportedInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_deleteExportedInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_deleteExportedInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -80109,7 +80109,7 @@ func (m *TLChatlistsDeleteExportedInvite) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode chatlists_deleteExportedInvite#0x719c5c5e: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_deleteExportedInvite#0x719c5c5e: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_deleteExportedInvite#0x719c5c5e: field chatlist: %w", err)
 		}
 		x.PutString(m.Slug)
 
@@ -80205,7 +80205,7 @@ func (m *TLChatlistsEditExportedInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_editExportedInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_editExportedInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -80236,7 +80236,7 @@ func (m *TLChatlistsEditExportedInvite) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode chatlists_editExportedInvite#0x653db63d: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_editExportedInvite#0x653db63d: field chatlist: %w", err)
 		}
 		x.PutString(m.Slug)
 		if m.Title != nil {
@@ -80245,7 +80245,7 @@ func (m *TLChatlistsEditExportedInvite) Encode(x *bin.Encoder, layer int32) erro
 
 		if m.Peers != nil {
 			if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", err)
+				return fmt.Errorf("unable to encode chatlists_editExportedInvite#0x653db63d: field peers: %w", err)
 			}
 		}
 
@@ -80362,7 +80362,7 @@ func (m *TLChatlistsGetExportedInvites) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_getExportedInvites: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_getExportedInvites: unsupported layer %d", layer)
 	}
 }
 
@@ -80376,7 +80376,7 @@ func (m *TLChatlistsGetExportedInvites) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode chatlists_getExportedInvites#0xce03da83: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_getExportedInvites#0xce03da83: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_getExportedInvites#0xce03da83: field chatlist: %w", err)
 		}
 
 		return nil
@@ -80450,7 +80450,7 @@ func (m *TLChatlistsCheckChatlistInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_checkChatlistInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_checkChatlistInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -80535,7 +80535,7 @@ func (m *TLChatlistsJoinChatlistInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_joinChatlistInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_joinChatlistInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -80548,7 +80548,7 @@ func (m *TLChatlistsJoinChatlistInvite) Encode(x *bin.Encoder, layer int32) erro
 		x.PutString(m.Slug)
 
 		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err)
+			return fmt.Errorf("unable to encode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err)
 		}
 
 		return nil
@@ -80640,7 +80640,7 @@ func (m *TLChatlistsGetChatlistUpdates) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_getChatlistUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_getChatlistUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -80654,7 +80654,7 @@ func (m *TLChatlistsGetChatlistUpdates) Encode(x *bin.Encoder, layer int32) erro
 			return fmt.Errorf("unable to encode chatlists_getChatlistUpdates#0x89419521: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_getChatlistUpdates#0x89419521: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_getChatlistUpdates#0x89419521: field chatlist: %w", err)
 		}
 
 		return nil
@@ -80734,7 +80734,7 @@ func (m *TLChatlistsJoinChatlistUpdates) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_joinChatlistUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_joinChatlistUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -80748,11 +80748,11 @@ func (m *TLChatlistsJoinChatlistUpdates) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode chatlists_joinChatlistUpdates#0xe089f8f5: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_joinChatlistUpdates#0xe089f8f5: field chatlist: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err)
+			return fmt.Errorf("unable to encode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err)
 		}
 
 		return nil
@@ -80849,7 +80849,7 @@ func (m *TLChatlistsHideChatlistUpdates) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_hideChatlistUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_hideChatlistUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -80863,7 +80863,7 @@ func (m *TLChatlistsHideChatlistUpdates) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode chatlists_hideChatlistUpdates#0x66e486fb: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_hideChatlistUpdates#0x66e486fb: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_hideChatlistUpdates#0x66e486fb: field chatlist: %w", err)
 		}
 
 		return nil
@@ -80937,7 +80937,7 @@ func (m *TLChatlistsGetLeaveChatlistSuggestions) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_getLeaveChatlistSuggestions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_getLeaveChatlistSuggestions: unsupported layer %d", layer)
 	}
 }
 
@@ -80951,7 +80951,7 @@ func (m *TLChatlistsGetLeaveChatlistSuggestions) Encode(x *bin.Encoder, layer in
 			return fmt.Errorf("unable to encode chatlists_getLeaveChatlistSuggestions#0xfdbcd714: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_getLeaveChatlistSuggestions#0xfdbcd714: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_getLeaveChatlistSuggestions#0xfdbcd714: field chatlist: %w", err)
 		}
 
 		return nil
@@ -81031,7 +81031,7 @@ func (m *TLChatlistsLeaveChatlist) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatlists_leaveChatlist: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatlists_leaveChatlist: unsupported layer %d", layer)
 	}
 }
 
@@ -81045,11 +81045,11 @@ func (m *TLChatlistsLeaveChatlist) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode chatlists_leaveChatlist#0x74fae13a: field chatlist is nil")
 		}
 		if err := m.Chatlist.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field chatlist: %w", err)
+			return fmt.Errorf("unable to encode chatlists_leaveChatlist#0x74fae13a: field chatlist: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
-			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err)
+			return fmt.Errorf("unable to encode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err)
 		}
 
 		return nil
@@ -81146,7 +81146,7 @@ func (m *TLStoriesCanSendStory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_canSendStory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_canSendStory: unsupported layer %d", layer)
 	}
 }
 
@@ -81160,7 +81160,7 @@ func (m *TLStoriesCanSendStory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_canSendStory#0x30eb63f0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_canSendStory#0x30eb63f0: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_canSendStory#0x30eb63f0: field peer: %w", err)
 		}
 
 		return nil
@@ -81341,7 +81341,7 @@ func (m *TLStoriesSendStory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_sendStory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_sendStory: unsupported layer %d", layer)
 	}
 }
 
@@ -81401,17 +81401,17 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field peer: %w", err)
 		}
 		if m.Media == nil {
 			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media: %w", err)
 		}
 		if m.MediaAreas != nil {
 			if err := iface.EncodeObjectList(x, m.MediaAreas, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media_areas: %w", err)
 			}
 		}
 		if m.Caption != nil {
@@ -81420,12 +81420,12 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field entities: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.PrivacyRules, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err)
 		}
 
 		x.PutInt64(m.RandomId)
@@ -81435,7 +81435,7 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.FwdFromId != nil {
 			if err := m.FwdFromId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field fwd_from_id: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field fwd_from_id: %w", err)
 			}
 		}
 
@@ -81448,7 +81448,7 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 		}
 		if m.Music != nil {
 			if err := m.Music.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field music: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field music: %w", err)
 			}
 		}
 
@@ -81503,17 +81503,17 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field peer: %w", err)
 		}
 		if m.Media == nil {
 			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media: %w", err)
 		}
 		if m.MediaAreas != nil {
 			if err := iface.EncodeObjectList(x, m.MediaAreas, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field media_areas: %w", err)
 			}
 		}
 		if m.Caption != nil {
@@ -81522,12 +81522,12 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field entities: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.PrivacyRules, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err)
+			return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err)
 		}
 
 		x.PutInt64(m.RandomId)
@@ -81537,7 +81537,7 @@ func (m *TLStoriesSendStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.FwdFromId != nil {
 			if err := m.FwdFromId.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field fwd_from_id: %w", err)
+				return fmt.Errorf("unable to encode stories_sendStory#0x8f9e6898: field fwd_from_id: %w", err)
 			}
 		}
 
@@ -81968,7 +81968,7 @@ func (m *TLStoriesEditStory) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_editStory: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_editStory: unsupported layer %d", layer)
 	}
 }
 
@@ -82011,18 +82011,18 @@ func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Media != nil {
 			if err := m.Media.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field media: %w", err)
 			}
 		}
 
 		if m.MediaAreas != nil {
 			if err := iface.EncodeObjectList(x, m.MediaAreas, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field media_areas: %w", err)
 			}
 		}
 		if m.Caption != nil {
@@ -82031,17 +82031,17 @@ func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field entities: %w", err)
 			}
 		}
 		if m.PrivacyRules != nil {
 			if err := iface.EncodeObjectList(x, m.PrivacyRules, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field privacy_rules: %w", err)
 			}
 		}
 		if m.Music != nil {
 			if err := m.Music.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field music: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field music: %w", err)
 			}
 		}
 
@@ -82079,18 +82079,18 @@ func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Media != nil {
 			if err := m.Media.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field media: %w", err)
 			}
 		}
 
 		if m.MediaAreas != nil {
 			if err := iface.EncodeObjectList(x, m.MediaAreas, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field media_areas: %w", err)
 			}
 		}
 		if m.Caption != nil {
@@ -82099,12 +82099,12 @@ func (m *TLStoriesEditStory) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field entities: %w", err)
 			}
 		}
 		if m.PrivacyRules != nil {
 			if err := iface.EncodeObjectList(x, m.PrivacyRules, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err)
+				return fmt.Errorf("unable to encode stories_editStory#0x2c63a72b: field privacy_rules: %w", err)
 			}
 		}
 
@@ -82403,7 +82403,7 @@ func (m *TLStoriesDeleteStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_deleteStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_deleteStories: unsupported layer %d", layer)
 	}
 }
 
@@ -82417,7 +82417,7 @@ func (m *TLStoriesDeleteStories) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_deleteStories#0xae59db5f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_deleteStories#0xae59db5f: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_deleteStories#0xae59db5f: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -82507,7 +82507,7 @@ func (m *TLStoriesTogglePinned) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_togglePinned: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_togglePinned: unsupported layer %d", layer)
 	}
 }
 
@@ -82521,7 +82521,7 @@ func (m *TLStoriesTogglePinned) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_togglePinned#0x9a75a1ef: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_togglePinned#0x9a75a1ef: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_togglePinned#0x9a75a1ef: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -82530,7 +82530,7 @@ func (m *TLStoriesTogglePinned) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_togglePinned#0x9a75a1ef: field pinned is nil")
 		}
 		if err := m.Pinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_togglePinned#0x9a75a1ef: field pinned: %w", err)
+			return fmt.Errorf("unable to encode stories_togglePinned#0x9a75a1ef: field pinned: %w", err)
 		}
 
 		return nil
@@ -82616,7 +82616,7 @@ func (m *TLStoriesGetAllStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getAllStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getAllStories: unsupported layer %d", layer)
 	}
 }
 
@@ -82735,7 +82735,7 @@ func (m *TLStoriesGetPinnedStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getPinnedStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getPinnedStories: unsupported layer %d", layer)
 	}
 }
 
@@ -82749,7 +82749,7 @@ func (m *TLStoriesGetPinnedStories) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getPinnedStories#0x5821a5dc: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getPinnedStories#0x5821a5dc: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getPinnedStories#0x5821a5dc: field peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.Limit)
@@ -82838,7 +82838,7 @@ func (m *TLStoriesGetStoriesArchive) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getStoriesArchive: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getStoriesArchive: unsupported layer %d", layer)
 	}
 }
 
@@ -82852,7 +82852,7 @@ func (m *TLStoriesGetStoriesArchive) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getStoriesArchive#0xb4352016: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getStoriesArchive#0xb4352016: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getStoriesArchive#0xb4352016: field peer: %w", err)
 		}
 		x.PutInt32(m.OffsetId)
 		x.PutInt32(m.Limit)
@@ -82943,7 +82943,7 @@ func (m *TLStoriesGetStoriesByID) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getStoriesByID: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getStoriesByID: unsupported layer %d", layer)
 	}
 }
 
@@ -82957,7 +82957,7 @@ func (m *TLStoriesGetStoriesByID) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getStoriesByID#0x5774ca74: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getStoriesByID#0x5774ca74: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getStoriesByID#0x5774ca74: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -83035,7 +83035,7 @@ func (m *TLStoriesToggleAllStoriesHidden) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_toggleAllStoriesHidden: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_toggleAllStoriesHidden: unsupported layer %d", layer)
 	}
 }
 
@@ -83049,7 +83049,7 @@ func (m *TLStoriesToggleAllStoriesHidden) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode stories_toggleAllStoriesHidden#0x7c2557c4: field hidden is nil")
 		}
 		if err := m.Hidden.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_toggleAllStoriesHidden#0x7c2557c4: field hidden: %w", err)
+			return fmt.Errorf("unable to encode stories_toggleAllStoriesHidden#0x7c2557c4: field hidden: %w", err)
 		}
 
 		return nil
@@ -83125,7 +83125,7 @@ func (m *TLStoriesReadStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_readStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_readStories: unsupported layer %d", layer)
 	}
 }
 
@@ -83139,7 +83139,7 @@ func (m *TLStoriesReadStories) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_readStories#0xa556dac8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_readStories#0xa556dac8: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_readStories#0xa556dac8: field peer: %w", err)
 		}
 		x.PutInt32(m.MaxId)
 
@@ -83225,7 +83225,7 @@ func (m *TLStoriesIncrementStoryViews) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_incrementStoryViews: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_incrementStoryViews: unsupported layer %d", layer)
 	}
 }
 
@@ -83239,7 +83239,7 @@ func (m *TLStoriesIncrementStoryViews) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode stories_incrementStoryViews#0xb2028afb: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_incrementStoryViews#0xb2028afb: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_incrementStoryViews#0xb2028afb: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -83336,7 +83336,7 @@ func (m *TLStoriesGetStoryViewsList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getStoryViewsList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getStoryViewsList: unsupported layer %d", layer)
 	}
 }
 
@@ -83374,7 +83374,7 @@ func (m *TLStoriesGetStoryViewsList) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getStoryViewsList#0x7ed23c57: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getStoryViewsList#0x7ed23c57: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getStoryViewsList#0x7ed23c57: field peer: %w", err)
 		}
 		if m.Q != nil {
 			x.PutString(*m.Q)
@@ -83496,7 +83496,7 @@ func (m *TLStoriesGetStoriesViews) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getStoriesViews: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getStoriesViews: unsupported layer %d", layer)
 	}
 }
 
@@ -83510,7 +83510,7 @@ func (m *TLStoriesGetStoriesViews) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getStoriesViews#0x28e16cc8: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getStoriesViews#0x28e16cc8: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getStoriesViews#0x28e16cc8: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -83590,7 +83590,7 @@ func (m *TLStoriesExportStoryLink) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_exportStoryLink: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_exportStoryLink: unsupported layer %d", layer)
 	}
 }
 
@@ -83604,7 +83604,7 @@ func (m *TLStoriesExportStoryLink) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_exportStoryLink#0x7b8def20: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_exportStoryLink#0x7b8def20: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_exportStoryLink#0x7b8def20: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 
@@ -83702,7 +83702,7 @@ func (m *TLStoriesReport) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_report: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_report: unsupported layer %d", layer)
 	}
 }
 
@@ -83716,7 +83716,7 @@ func (m *TLStoriesReport) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_report#0x19d8eb45: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_report#0x19d8eb45: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_report#0x19d8eb45: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -83804,7 +83804,7 @@ func (m *TLStoriesActivateStealthMode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_activateStealthMode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_activateStealthMode: unsupported layer %d", layer)
 	}
 }
 
@@ -83916,7 +83916,7 @@ func (m *TLStoriesSendReaction) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_sendReaction: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_sendReaction: unsupported layer %d", layer)
 	}
 }
 
@@ -83944,14 +83944,14 @@ func (m *TLStoriesSendReaction) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_sendReaction#0x7fd736b2: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendReaction#0x7fd736b2: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_sendReaction#0x7fd736b2: field peer: %w", err)
 		}
 		x.PutInt32(m.StoryId)
 		if m.Reaction == nil {
 			return fmt.Errorf("unable to encode stories_sendReaction#0x7fd736b2: field reaction is nil")
 		}
 		if err := m.Reaction.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_sendReaction#0x7fd736b2: field reaction: %w", err)
+			return fmt.Errorf("unable to encode stories_sendReaction#0x7fd736b2: field reaction: %w", err)
 		}
 
 		return nil
@@ -84046,7 +84046,7 @@ func (m *TLStoriesGetPeerStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getPeerStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getPeerStories: unsupported layer %d", layer)
 	}
 }
 
@@ -84060,7 +84060,7 @@ func (m *TLStoriesGetPeerStories) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getPeerStories#0x2c4ada50: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getPeerStories#0x2c4ada50: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getPeerStories#0x2c4ada50: field peer: %w", err)
 		}
 
 		return nil
@@ -84129,7 +84129,7 @@ func (m *TLStoriesGetAllReadPeerStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getAllReadPeerStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getAllReadPeerStories: unsupported layer %d", layer)
 	}
 }
 
@@ -84202,7 +84202,7 @@ func (m *TLStoriesGetPeerMaxIDs) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getPeerMaxIDs: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getPeerMaxIDs: unsupported layer %d", layer)
 	}
 }
 
@@ -84213,7 +84213,7 @@ func (m *TLStoriesGetPeerMaxIDs) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x78499170)
 
 		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", err)
+			return fmt.Errorf("unable to encode stories_getPeerMaxIDs#0x78499170: field id: %w", err)
 		}
 
 		return nil
@@ -84296,7 +84296,7 @@ func (m *TLStoriesGetChatsToSend) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getChatsToSend: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getChatsToSend: unsupported layer %d", layer)
 	}
 }
 
@@ -84375,7 +84375,7 @@ func (m *TLStoriesTogglePeerStoriesHidden) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_togglePeerStoriesHidden: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden: unsupported layer %d", layer)
 	}
 }
 
@@ -84389,13 +84389,13 @@ func (m *TLStoriesTogglePeerStoriesHidden) Encode(x *bin.Encoder, layer int32) e
 			return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden#0xbd0415c4: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_togglePeerStoriesHidden#0xbd0415c4: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden#0xbd0415c4: field peer: %w", err)
 		}
 		if m.Hidden == nil {
 			return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden#0xbd0415c4: field hidden is nil")
 		}
 		if err := m.Hidden.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_togglePeerStoriesHidden#0xbd0415c4: field hidden: %w", err)
+			return fmt.Errorf("unable to encode stories_togglePeerStoriesHidden#0xbd0415c4: field hidden: %w", err)
 		}
 
 		return nil
@@ -84493,7 +84493,7 @@ func (m *TLStoriesGetStoryReactionsList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getStoryReactionsList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getStoryReactionsList: unsupported layer %d", layer)
 	}
 }
 
@@ -84528,12 +84528,12 @@ func (m *TLStoriesGetStoryReactionsList) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode stories_getStoryReactionsList#0xb9b2881f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getStoryReactionsList#0xb9b2881f: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getStoryReactionsList#0xb9b2881f: field peer: %w", err)
 		}
 		x.PutInt32(m.Id)
 		if m.Reaction != nil {
 			if err := m.Reaction.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_getStoryReactionsList#0xb9b2881f: field reaction: %w", err)
+				return fmt.Errorf("unable to encode stories_getStoryReactionsList#0xb9b2881f: field reaction: %w", err)
 			}
 		}
 
@@ -84654,7 +84654,7 @@ func (m *TLStoriesTogglePinnedToTop) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_togglePinnedToTop: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_togglePinnedToTop: unsupported layer %d", layer)
 	}
 }
 
@@ -84668,7 +84668,7 @@ func (m *TLStoriesTogglePinnedToTop) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_togglePinnedToTop#0xb297e9b: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_togglePinnedToTop#0xb297e9b: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_togglePinnedToTop#0xb297e9b: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Id)
@@ -84765,7 +84765,7 @@ func (m *TLStoriesSearchPosts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_searchPosts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_searchPosts: unsupported layer %d", layer)
 	}
 }
 
@@ -84801,13 +84801,13 @@ func (m *TLStoriesSearchPosts) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Area != nil {
 			if err := m.Area.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_searchPosts#0xd1810907: field area: %w", err)
+				return fmt.Errorf("unable to encode stories_searchPosts#0xd1810907: field area: %w", err)
 			}
 		}
 
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_searchPosts#0xd1810907: field peer: %w", err)
+				return fmt.Errorf("unable to encode stories_searchPosts#0xd1810907: field peer: %w", err)
 			}
 		}
 
@@ -84928,7 +84928,7 @@ func (m *TLStoriesCreateAlbum) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_createAlbum: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_createAlbum: unsupported layer %d", layer)
 	}
 }
 
@@ -84942,7 +84942,7 @@ func (m *TLStoriesCreateAlbum) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_createAlbum#0xa36396e5: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_createAlbum#0xa36396e5: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_createAlbum#0xa36396e5: field peer: %w", err)
 		}
 		x.PutString(m.Title)
 
@@ -85048,7 +85048,7 @@ func (m *TLStoriesUpdateAlbum) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_updateAlbum: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_updateAlbum: unsupported layer %d", layer)
 	}
 }
 
@@ -85085,7 +85085,7 @@ func (m *TLStoriesUpdateAlbum) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_updateAlbum#0x5e5259b6: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_updateAlbum#0x5e5259b6: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_updateAlbum#0x5e5259b6: field peer: %w", err)
 		}
 		x.PutInt32(m.AlbumId)
 		if m.Title != nil {
@@ -85206,7 +85206,7 @@ func (m *TLStoriesReorderAlbums) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_reorderAlbums: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_reorderAlbums: unsupported layer %d", layer)
 	}
 }
 
@@ -85220,7 +85220,7 @@ func (m *TLStoriesReorderAlbums) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_reorderAlbums#0x8535fbd9: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_reorderAlbums#0x8535fbd9: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_reorderAlbums#0x8535fbd9: field peer: %w", err)
 		}
 
 		iface.EncodeInt32List(x, m.Order)
@@ -85300,7 +85300,7 @@ func (m *TLStoriesDeleteAlbum) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_deleteAlbum: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_deleteAlbum: unsupported layer %d", layer)
 	}
 }
 
@@ -85314,7 +85314,7 @@ func (m *TLStoriesDeleteAlbum) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_deleteAlbum#0x8d3456d0: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_deleteAlbum#0x8d3456d0: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_deleteAlbum#0x8d3456d0: field peer: %w", err)
 		}
 		x.PutInt32(m.AlbumId)
 
@@ -85396,7 +85396,7 @@ func (m *TLStoriesGetAlbums) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getAlbums: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getAlbums: unsupported layer %d", layer)
 	}
 }
 
@@ -85410,7 +85410,7 @@ func (m *TLStoriesGetAlbums) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getAlbums#0x25b3eac7: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getAlbums#0x25b3eac7: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getAlbums#0x25b3eac7: field peer: %w", err)
 		}
 		x.PutInt64(m.Hash)
 
@@ -85496,7 +85496,7 @@ func (m *TLStoriesGetAlbumStories) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_getAlbumStories: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_getAlbumStories: unsupported layer %d", layer)
 	}
 }
 
@@ -85510,7 +85510,7 @@ func (m *TLStoriesGetAlbumStories) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_getAlbumStories#0xac806d61: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_getAlbumStories#0xac806d61: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_getAlbumStories#0xac806d61: field peer: %w", err)
 		}
 		x.PutInt32(m.AlbumId)
 		x.PutInt32(m.Offset)
@@ -85631,7 +85631,7 @@ func (m *TLStoriesStartLive) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate stories_startLive: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode stories_startLive: unsupported layer %d", layer)
 	}
 }
 
@@ -85679,7 +85679,7 @@ func (m *TLStoriesStartLive) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode stories_startLive#0xd069ccde: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field peer: %w", err)
+			return fmt.Errorf("unable to encode stories_startLive#0xd069ccde: field peer: %w", err)
 		}
 		if m.Caption != nil {
 			x.PutString(*m.Caption)
@@ -85687,18 +85687,18 @@ func (m *TLStoriesStartLive) Encode(x *bin.Encoder, layer int32) error {
 
 		if m.Entities != nil {
 			if err := iface.EncodeObjectList(x, m.Entities, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", err)
+				return fmt.Errorf("unable to encode stories_startLive#0xd069ccde: field entities: %w", err)
 			}
 		}
 
 		if err := iface.EncodeObjectList(x, m.PrivacyRules, layer); err != nil {
-			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", err)
+			return fmt.Errorf("unable to encode stories_startLive#0xd069ccde: field privacy_rules: %w", err)
 		}
 
 		x.PutInt64(m.RandomId)
 		if m.MessagesEnabled != nil {
 			if err := m.MessagesEnabled.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field messages_enabled: %w", err)
+				return fmt.Errorf("unable to encode stories_startLive#0xd069ccde: field messages_enabled: %w", err)
 			}
 		}
 
@@ -85877,7 +85877,7 @@ func (m *TLPremiumGetBoostsList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate premium_getBoostsList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode premium_getBoostsList: unsupported layer %d", layer)
 	}
 }
 
@@ -85905,7 +85905,7 @@ func (m *TLPremiumGetBoostsList) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode premium_getBoostsList#0x60f67660: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode premium_getBoostsList#0x60f67660: field peer: %w", err)
+			return fmt.Errorf("unable to encode premium_getBoostsList#0x60f67660: field peer: %w", err)
 		}
 		x.PutString(m.Offset)
 		x.PutInt32(m.Limit)
@@ -85993,7 +85993,7 @@ func (m *TLPremiumGetMyBoosts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate premium_getMyBoosts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode premium_getMyBoosts: unsupported layer %d", layer)
 	}
 }
 
@@ -86073,7 +86073,7 @@ func (m *TLPremiumApplyBoost) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate premium_applyBoost: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode premium_applyBoost: unsupported layer %d", layer)
 	}
 }
 
@@ -86104,7 +86104,7 @@ func (m *TLPremiumApplyBoost) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode premium_applyBoost#0x6b7da746: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode premium_applyBoost#0x6b7da746: field peer: %w", err)
+			return fmt.Errorf("unable to encode premium_applyBoost#0x6b7da746: field peer: %w", err)
 		}
 
 		return nil
@@ -86186,7 +86186,7 @@ func (m *TLPremiumGetBoostsStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate premium_getBoostsStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode premium_getBoostsStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -86200,7 +86200,7 @@ func (m *TLPremiumGetBoostsStatus) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode premium_getBoostsStatus#0x42f1f61: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode premium_getBoostsStatus#0x42f1f61: field peer: %w", err)
+			return fmt.Errorf("unable to encode premium_getBoostsStatus#0x42f1f61: field peer: %w", err)
 		}
 
 		return nil
@@ -86280,7 +86280,7 @@ func (m *TLPremiumGetUserBoosts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate premium_getUserBoosts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode premium_getUserBoosts: unsupported layer %d", layer)
 	}
 }
 
@@ -86294,13 +86294,13 @@ func (m *TLPremiumGetUserBoosts) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode premium_getUserBoosts#0x39854d1f: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode premium_getUserBoosts#0x39854d1f: field peer: %w", err)
+			return fmt.Errorf("unable to encode premium_getUserBoosts#0x39854d1f: field peer: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode premium_getUserBoosts#0x39854d1f: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode premium_getUserBoosts#0x39854d1f: field user_id: %w", err)
+			return fmt.Errorf("unable to encode premium_getUserBoosts#0x39854d1f: field user_id: %w", err)
 		}
 
 		return nil
@@ -86377,7 +86377,7 @@ func (m *TLSmsjobsIsEligibleToJoin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_isEligibleToJoin: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_isEligibleToJoin: unsupported layer %d", layer)
 	}
 }
 
@@ -86445,7 +86445,7 @@ func (m *TLSmsjobsJoin) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_join: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_join: unsupported layer %d", layer)
 	}
 }
 
@@ -86513,7 +86513,7 @@ func (m *TLSmsjobsLeave) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_leave: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_leave: unsupported layer %d", layer)
 	}
 }
 
@@ -86583,7 +86583,7 @@ func (m *TLSmsjobsUpdateSettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_updateSettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_updateSettings: unsupported layer %d", layer)
 	}
 }
 
@@ -86674,7 +86674,7 @@ func (m *TLSmsjobsGetStatus) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_getStatus: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_getStatus: unsupported layer %d", layer)
 	}
 }
 
@@ -86747,7 +86747,7 @@ func (m *TLSmsjobsGetSmsJob) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_getSmsJob: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_getSmsJob: unsupported layer %d", layer)
 	}
 }
 
@@ -86831,7 +86831,7 @@ func (m *TLSmsjobsFinishJob) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate smsjobs_finishJob: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode smsjobs_finishJob: unsupported layer %d", layer)
 	}
 }
 
@@ -86939,7 +86939,7 @@ func (m *TLFragmentGetCollectibleInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate fragment_getCollectibleInfo: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode fragment_getCollectibleInfo: unsupported layer %d", layer)
 	}
 }
 
@@ -86953,7 +86953,7 @@ func (m *TLFragmentGetCollectibleInfo) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode fragment_getCollectibleInfo#0xbe1e85ba: field collectible is nil")
 		}
 		if err := m.Collectible.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode fragment_getCollectibleInfo#0xbe1e85ba: field collectible: %w", err)
+			return fmt.Errorf("unable to encode fragment_getCollectibleInfo#0xbe1e85ba: field collectible: %w", err)
 		}
 
 		return nil
@@ -87039,7 +87039,7 @@ func (m *TLChannelsEditCreator) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_editCreator: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_editCreator: unsupported layer %d", layer)
 	}
 }
 
@@ -87053,19 +87053,19 @@ func (m *TLChannelsEditCreator) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editCreator#0x8f38cd1f: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field channel: %w", err)
 		}
 		if m.UserId == nil {
 			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field user_id is nil")
 		}
 		if err := m.UserId.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editCreator#0x8f38cd1f: field user_id: %w", err)
+			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field user_id: %w", err)
 		}
 		if m.Password == nil {
 			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field password is nil")
 		}
 		if err := m.Password.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_editCreator#0x8f38cd1f: field password: %w", err)
+			return fmt.Errorf("unable to encode channels_editCreator#0x8f38cd1f: field password: %w", err)
 		}
 
 		return nil
@@ -87155,7 +87155,7 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channels_getFutureCreatorAfterLeave: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channels_getFutureCreatorAfterLeave: unsupported layer %d", layer)
 	}
 }
 
@@ -87169,7 +87169,7 @@ func (m *TLChannelsGetFutureCreatorAfterLeave) Encode(x *bin.Encoder, layer int3
 			return fmt.Errorf("unable to encode channels_getFutureCreatorAfterLeave#0xa00918af: field channel is nil")
 		}
 		if err := m.Channel.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode channels_getFutureCreatorAfterLeave#0xa00918af: field channel: %w", err)
+			return fmt.Errorf("unable to encode channels_getFutureCreatorAfterLeave#0xa00918af: field channel: %w", err)
 		}
 
 		return nil
@@ -87238,7 +87238,7 @@ func (m *TLTestParseInputAppEvent) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate test_parseInputAppEvent: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode test_parseInputAppEvent: unsupported layer %d", layer)
 	}
 }
 
@@ -87306,7 +87306,7 @@ func (m *TLHelpTest) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_test: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_test: unsupported layer %d", layer)
 	}
 }
 
@@ -87402,7 +87402,7 @@ func (m *TLPredefinedCreatePredefinedUser) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_createPredefinedUser: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_createPredefinedUser: unsupported layer %d", layer)
 	}
 }
 
@@ -87560,7 +87560,7 @@ func (m *TLPredefinedUpdatePredefinedUsername) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_updatePredefinedUsername: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_updatePredefinedUsername: unsupported layer %d", layer)
 	}
 }
 
@@ -87659,7 +87659,7 @@ func (m *TLPredefinedUpdatePredefinedProfile) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_updatePredefinedProfile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_updatePredefinedProfile: unsupported layer %d", layer)
 	}
 }
 
@@ -87799,7 +87799,7 @@ func (m *TLPredefinedUpdatePredefinedVerified) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_updatePredefinedVerified: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_updatePredefinedVerified: unsupported layer %d", layer)
 	}
 }
 
@@ -87906,7 +87906,7 @@ func (m *TLPredefinedUpdatePredefinedCode) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_updatePredefinedCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_updatePredefinedCode: unsupported layer %d", layer)
 	}
 }
 
@@ -87990,7 +87990,7 @@ func (m *TLPredefinedGetPredefinedUser) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_getPredefinedUser: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_getPredefinedUser: unsupported layer %d", layer)
 	}
 }
 
@@ -88064,7 +88064,7 @@ func (m *TLPredefinedGetPredefinedUsers) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate predefined_getPredefinedUsers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode predefined_getPredefinedUsers: unsupported layer %d", layer)
 	}
 }
 
@@ -88139,7 +88139,7 @@ func (m *TLUsersGetMe) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate users_getMe: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode users_getMe: unsupported layer %d", layer)
 	}
 }
 
@@ -88222,7 +88222,7 @@ func (m *TLAccountUpdateVerified) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate account_updateVerified: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode account_updateVerified: unsupported layer %d", layer)
 	}
 }
 
@@ -88334,7 +88334,7 @@ func (m *TLAuthToggleBan) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate auth_toggleBan: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode auth_toggleBan: unsupported layer %d", layer)
 	}
 }
 
@@ -88462,7 +88462,7 @@ func (m *TLBizInvokeBizDataRaw) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate biz_invokeBizDataRaw: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode biz_invokeBizDataRaw: unsupported layer %d", layer)
 	}
 }
 
@@ -88476,7 +88476,7 @@ func (m *TLBizInvokeBizDataRaw) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode biz_invokeBizDataRaw#0x5a191146: field biz_data is nil")
 		}
 		if err := m.BizData.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode biz_invokeBizDataRaw#0x5a191146: field biz_data: %w", err)
+			return fmt.Errorf("unable to encode biz_invokeBizDataRaw#0x5a191146: field biz_data: %w", err)
 		}
 
 		return nil

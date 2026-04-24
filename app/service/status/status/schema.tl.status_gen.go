@@ -136,7 +136,7 @@ func (m *TLSessionEntry) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate sessionEntry: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sessionEntry: unsupported layer %d", layer)
 	}
 }
 
@@ -298,7 +298,7 @@ func (m *TLUserSessionEntryList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate userSessionEntryList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode userSessionEntryList: unsupported layer %d", layer)
 	}
 }
 
@@ -311,7 +311,7 @@ func (m *TLUserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.UserId)
 
 		if err := iface.EncodeObjectList(x, m.UserSessions, layer); err != nil {
-			return fmt.Errorf("unable to decode userSessionEntryList#0xefecb398: field user_sessions: %w", err)
+			return fmt.Errorf("unable to encode userSessionEntryList#0xefecb398: field user_sessions: %w", err)
 		}
 
 		return nil

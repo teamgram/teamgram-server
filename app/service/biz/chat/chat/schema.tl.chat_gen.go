@@ -137,7 +137,7 @@ func (m *TLChatInviteAlready) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatInviteAlready: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatInviteAlready: unsupported layer %d", layer)
 	}
 }
 
@@ -151,7 +151,7 @@ func (m *TLChatInviteAlready) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode chatInviteAlready#0xa40e7d5e: field chat is nil")
 		}
 		if err := m.Chat.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatInviteAlready#0xa40e7d5e: field chat: %w", err)
+			return fmt.Errorf("unable to encode chatInviteAlready#0xa40e7d5e: field chat: %w", err)
 		}
 
 		return nil
@@ -265,7 +265,7 @@ func (m *TLChatInvite) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatInvite: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatInvite: unsupported layer %d", layer)
 	}
 }
 
@@ -306,7 +306,7 @@ func (m *TLChatInvite) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode chatInvite#0xdb75d1a7: field photo is nil")
 		}
 		if err := m.Photo.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatInvite#0xdb75d1a7: field photo: %w", err)
+			return fmt.Errorf("unable to encode chatInvite#0xdb75d1a7: field photo: %w", err)
 		}
 		x.PutInt32(m.ParticipantsCount)
 		if m.Participants != nil {
@@ -437,7 +437,7 @@ func (m *TLChatInvitePeek) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatInvitePeek: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatInvitePeek: unsupported layer %d", layer)
 	}
 }
 
@@ -451,7 +451,7 @@ func (m *TLChatInvitePeek) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode chatInvitePeek#0xace3e26e: field chat is nil")
 		}
 		if err := m.Chat.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatInvitePeek#0xace3e26e: field chat: %w", err)
+			return fmt.Errorf("unable to encode chatInvitePeek#0xace3e26e: field chat: %w", err)
 		}
 		x.PutInt32(m.Expires)
 
@@ -694,7 +694,7 @@ func (m *TLChatInviteImported) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate chatInviteImported: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode chatInviteImported: unsupported layer %d", layer)
 	}
 }
 
@@ -722,11 +722,11 @@ func (m *TLChatInviteImported) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode chatInviteImported#0x721051f6: field chat is nil")
 		}
 		if err := m.Chat.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode chatInviteImported#0x721051f6: field chat: %w", err)
+			return fmt.Errorf("unable to encode chatInviteImported#0x721051f6: field chat: %w", err)
 		}
 		if m.Requesters != nil {
 			if err := m.Requesters.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode chatInviteImported#0x721051f6: field requesters: %w", err)
+				return fmt.Errorf("unable to encode chatInviteImported#0x721051f6: field requesters: %w", err)
 			}
 		}
 
@@ -863,7 +863,7 @@ func (m *TLRecentChatInviteRequesters) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate recentChatInviteRequesters: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode recentChatInviteRequesters: unsupported layer %d", layer)
 	}
 }
 
@@ -1002,7 +1002,7 @@ func (m *TLUserChatIdList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate userChatIdList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode userChatIdList: unsupported layer %d", layer)
 	}
 }
 

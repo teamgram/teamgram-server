@@ -52,7 +52,7 @@ func (m *TLUpdatesGetStateV2) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate updates_getStateV2: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getStateV2: unsupported layer %d", layer)
 	}
 }
 
@@ -128,7 +128,7 @@ func (m *TLUpdatesGetDifferenceV2) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate updates_getDifferenceV2: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getDifferenceV2: unsupported layer %d", layer)
 	}
 }
 
@@ -207,7 +207,7 @@ func (m *TLUpdatesGetChannelDifferenceV2) Encode(x *bin.Encoder, layer int32) er
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate updates_getChannelDifferenceV2: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updates_getChannelDifferenceV2: unsupported layer %d", layer)
 	}
 }
 

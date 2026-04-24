@@ -125,7 +125,7 @@ func (m *TLContentMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate contentMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode contentMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -308,7 +308,7 @@ func (m *TLOutboxMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate outboxMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode outboxMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -344,7 +344,7 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode outboxMessage#0x539524b1: field message is nil")
 		}
 		if err := m.Message.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode outboxMessage#0x539524b1: field message: %w", err)
+			return fmt.Errorf("unable to encode outboxMessage#0x539524b1: field message: %w", err)
 		}
 		if m.ScheduleDate != nil {
 			x.PutInt32(*m.ScheduleDate)
@@ -493,7 +493,7 @@ func (m *TLSender) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate sender: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sender: unsupported layer %d", layer)
 	}
 }
 

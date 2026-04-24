@@ -75,7 +75,7 @@ func (m *TLCodeCreatePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate code_createPhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode code_createPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -154,7 +154,7 @@ func (m *TLCodeGetPhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate code_getPhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode code_getPhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -213,7 +213,7 @@ func (m *TLCodeDeletePhoneCode) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate code_deletePhoneCode: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode code_deletePhoneCode: unsupported layer %d", layer)
 	}
 }
 
@@ -273,13 +273,13 @@ func (m *TLCodeUpdatePhoneCodeData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode code_updatePhoneCodeData#0xb6950a95: field code_data is nil")
 		}
 		if err := m.CodeData.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode code_updatePhoneCodeData#0xb6950a95: field code_data: %w", err)
+			return fmt.Errorf("unable to encode code_updatePhoneCodeData#0xb6950a95: field code_data: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate code_updatePhoneCodeData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode code_updatePhoneCodeData: unsupported layer %d", layer)
 	}
 }
 

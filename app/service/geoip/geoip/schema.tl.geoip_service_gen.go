@@ -50,7 +50,7 @@ func (m *TLGeoipGetCountryAndRegionByIp) Encode(x *bin.Encoder, layer int32) err
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate geoip_getCountryAndRegionByIp: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode geoip_getCountryAndRegionByIp: unsupported layer %d", layer)
 	}
 }
 

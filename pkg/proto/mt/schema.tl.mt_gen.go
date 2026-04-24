@@ -119,7 +119,7 @@ func (m *TLBindAuthKeyInner) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bind_auth_key_inner: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bind_auth_key_inner: unsupported layer %d", layer)
 	}
 }
 
@@ -275,7 +275,7 @@ func (m *TLClientDHInnerData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate client_DH_inner_data: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode client_DH_inner_data: unsupported layer %d", layer)
 	}
 }
 
@@ -432,7 +432,7 @@ func (m *TLDestroyAuthKeyOk) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_auth_key_ok: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_auth_key_ok: unsupported layer %d", layer)
 	}
 }
 
@@ -524,7 +524,7 @@ func (m *TLDestroyAuthKeyNone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_auth_key_none: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_auth_key_none: unsupported layer %d", layer)
 	}
 }
 
@@ -616,7 +616,7 @@ func (m *TLDestroyAuthKeyFail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_auth_key_fail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_auth_key_fail: unsupported layer %d", layer)
 	}
 }
 
@@ -892,7 +892,7 @@ func (m *TLPQInnerData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate p_q_inner_data: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode p_q_inner_data: unsupported layer %d", layer)
 	}
 }
 
@@ -1040,7 +1040,7 @@ func (m *TLPQInnerDataDc) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate p_q_inner_data_dc: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode p_q_inner_data_dc: unsupported layer %d", layer)
 	}
 }
 
@@ -1193,7 +1193,7 @@ func (m *TLPQInnerDataTemp) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate p_q_inner_data_temp: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode p_q_inner_data_temp: unsupported layer %d", layer)
 	}
 }
 
@@ -1348,7 +1348,7 @@ func (m *TLPQInnerDataTempDc) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate p_q_inner_data_temp_dc: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode p_q_inner_data_temp_dc: unsupported layer %d", layer)
 	}
 }
 
@@ -1650,7 +1650,7 @@ func (m *TLResPQ) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate resPQ: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode resPQ: unsupported layer %d", layer)
 	}
 }
 
@@ -1811,7 +1811,7 @@ func (m *TLServerDHInnerData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate server_DH_inner_data: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode server_DH_inner_data: unsupported layer %d", layer)
 	}
 }
 
@@ -1977,7 +1977,7 @@ func (m *TLServerDHParamsFail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate server_DH_params_fail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode server_DH_params_fail: unsupported layer %d", layer)
 	}
 }
 
@@ -2094,7 +2094,7 @@ func (m *TLServerDHParamsOk) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate server_DH_params_ok: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode server_DH_params_ok: unsupported layer %d", layer)
 	}
 }
 
@@ -2345,7 +2345,7 @@ func (m *TLDhGenOk) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dh_gen_ok: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dh_gen_ok: unsupported layer %d", layer)
 	}
 }
 
@@ -2459,7 +2459,7 @@ func (m *TLDhGenRetry) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dh_gen_retry: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dh_gen_retry: unsupported layer %d", layer)
 	}
 }
 
@@ -2573,7 +2573,7 @@ func (m *TLDhGenFail) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dh_gen_fail: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dh_gen_fail: unsupported layer %d", layer)
 	}
 }
 
@@ -2831,7 +2831,7 @@ func (m *TLAccessPointRule) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate accessPointRule: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode accessPointRule: unsupported layer %d", layer)
 	}
 }
 
@@ -3004,7 +3004,7 @@ func (m *TLBadMsgNotification) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bad_msg_notification: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bad_msg_notification: unsupported layer %d", layer)
 	}
 }
 
@@ -3120,7 +3120,7 @@ func (m *TLBadServerSalt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate bad_server_salt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode bad_server_salt: unsupported layer %d", layer)
 	}
 }
 
@@ -3365,7 +3365,7 @@ func (m *TLDestroySessionOk) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_session_ok: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_session_ok: unsupported layer %d", layer)
 	}
 }
 
@@ -3465,7 +3465,7 @@ func (m *TLDestroySessionNone) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_session_none: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_session_none: unsupported layer %d", layer)
 	}
 }
 
@@ -3689,7 +3689,7 @@ func (m *TLFutureSalt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate future_salt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode future_salt: unsupported layer %d", layer)
 	}
 }
 
@@ -3833,7 +3833,7 @@ func (m *TLFutureSalts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate future_salts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode future_salts: unsupported layer %d", layer)
 	}
 }
 
@@ -4000,7 +4000,7 @@ func (m *TLHelpConfigSimple) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_configSimple: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_configSimple: unsupported layer %d", layer)
 	}
 }
 
@@ -4163,7 +4163,7 @@ func (m *TLHttpWait) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate http_wait: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode http_wait: unsupported layer %d", layer)
 	}
 }
 
@@ -4312,7 +4312,7 @@ func (m *TLIpPort) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate ipPort: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode ipPort: unsupported layer %d", layer)
 	}
 }
 
@@ -4424,7 +4424,7 @@ func (m *TLIpPortSecret) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate ipPortSecret: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode ipPortSecret: unsupported layer %d", layer)
 	}
 }
 
@@ -4670,7 +4670,7 @@ func (m *TLMsgDetailedInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msg_detailed_info: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msg_detailed_info: unsupported layer %d", layer)
 	}
 }
 
@@ -4789,7 +4789,7 @@ func (m *TLMsgNewDetailedInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msg_new_detailed_info: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msg_new_detailed_info: unsupported layer %d", layer)
 	}
 }
 
@@ -5022,7 +5022,7 @@ func (m *TLMsgResendReq) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msg_resend_req: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msg_resend_req: unsupported layer %d", layer)
 	}
 }
 
@@ -5153,7 +5153,7 @@ func (m *TLMsgsAck) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msgs_ack: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msgs_ack: unsupported layer %d", layer)
 	}
 }
 
@@ -5290,7 +5290,7 @@ func (m *TLMsgsAllInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msgs_all_info: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msgs_all_info: unsupported layer %d", layer)
 	}
 }
 
@@ -5430,7 +5430,7 @@ func (m *TLMsgsStateInfo) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msgs_state_info: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msgs_state_info: unsupported layer %d", layer)
 	}
 }
 
@@ -5565,7 +5565,7 @@ func (m *TLMsgsStateReq) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate msgs_state_req: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msgs_state_req: unsupported layer %d", layer)
 	}
 }
 
@@ -5697,7 +5697,7 @@ func (m *TLNewSessionCreated) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate new_session_created: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode new_session_created: unsupported layer %d", layer)
 	}
 }
 
@@ -5836,7 +5836,7 @@ func (m *TLPong) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate pong: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode pong: unsupported layer %d", layer)
 	}
 }
 
@@ -5983,7 +5983,7 @@ func (m *TLRpcAnswerUnknown) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate rpc_answer_unknown: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode rpc_answer_unknown: unsupported layer %d", layer)
 	}
 }
 
@@ -6075,7 +6075,7 @@ func (m *TLRpcAnswerDroppedRunning) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate rpc_answer_dropped_running: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode rpc_answer_dropped_running: unsupported layer %d", layer)
 	}
 }
 
@@ -6173,7 +6173,7 @@ func (m *TLRpcAnswerDropped) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate rpc_answer_dropped: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode rpc_answer_dropped: unsupported layer %d", layer)
 	}
 }
 
@@ -6425,7 +6425,7 @@ func (m *TLRpcError) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate rpc_error: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode rpc_error: unsupported layer %d", layer)
 	}
 }
 
@@ -6605,7 +6605,7 @@ func (m *TLTlsBlockString) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockString: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockString: unsupported layer %d", layer)
 	}
 }
 
@@ -6705,7 +6705,7 @@ func (m *TLTlsBlockRandom) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockRandom: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockRandom: unsupported layer %d", layer)
 	}
 }
 
@@ -6805,7 +6805,7 @@ func (m *TLTlsBlockZero) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockZero: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockZero: unsupported layer %d", layer)
 	}
 }
 
@@ -6903,7 +6903,7 @@ func (m *TLTlsBlockDomain) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockDomain: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockDomain: unsupported layer %d", layer)
 	}
 }
 
@@ -6997,7 +6997,7 @@ func (m *TLTlsBlockGrease) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockGrease: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockGrease: unsupported layer %d", layer)
 	}
 }
 
@@ -7095,7 +7095,7 @@ func (m *TLTlsBlockPublicKey) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockPublicKey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockPublicKey: unsupported layer %d", layer)
 	}
 }
 
@@ -7192,7 +7192,7 @@ func (m *TLTlsBlockScope) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsBlockScope: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsBlockScope: unsupported layer %d", layer)
 	}
 }
 
@@ -7203,7 +7203,7 @@ func (m *TLTlsBlockScope) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xe725d44f)
 
 		if err := iface.EncodeObjectList(x, m.Entries, layer); err != nil {
-			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", err)
+			return fmt.Errorf("unable to encode tlsBlockScope#0xe725d44f: field entries: %w", err)
 		}
 
 		return nil
@@ -7515,7 +7515,7 @@ func (m *TLTlsClientHello) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate tlsClientHello: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode tlsClientHello: unsupported layer %d", layer)
 	}
 }
 

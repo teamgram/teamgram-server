@@ -51,13 +51,13 @@ func (m *TLStatusSetSessionOnline) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode status_setSessionOnline#0x52518bcf: field session is nil")
 		}
 		if err := m.Session.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode status_setSessionOnline#0x52518bcf: field session: %w", err)
+			return fmt.Errorf("unable to encode status_setSessionOnline#0x52518bcf: field session: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setSessionOnline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setSessionOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -111,7 +111,7 @@ func (m *TLStatusSetSessionOffline) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setSessionOffline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setSessionOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -162,7 +162,7 @@ func (m *TLStatusGetUserOnlineSessions) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_getUserOnlineSessions: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_getUserOnlineSessions: unsupported layer %d", layer)
 	}
 }
 
@@ -209,7 +209,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) Encode(x *bin.Encoder, layer int32)
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_getUsersOnlineSessionsList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_getUsersOnlineSessionsList: unsupported layer %d", layer)
 	}
 }
 
@@ -257,7 +257,7 @@ func (m *TLStatusGetChannelOnlineUsers) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_getChannelOnlineUsers: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_getChannelOnlineUsers: unsupported layer %d", layer)
 	}
 }
 
@@ -307,7 +307,7 @@ func (m *TLStatusSetUserChannelsOnline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setUserChannelsOnline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setUserChannelsOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -362,7 +362,7 @@ func (m *TLStatusSetUserChannelsOffline) Encode(x *bin.Encoder, layer int32) err
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setUserChannelsOffline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setUserChannelsOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -416,7 +416,7 @@ func (m *TLStatusSetChannelUserOffline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setChannelUserOffline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setChannelUserOffline: unsupported layer %d", layer)
 	}
 }
 
@@ -470,7 +470,7 @@ func (m *TLStatusSetChannelUsersOnline) Encode(x *bin.Encoder, layer int32) erro
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setChannelUsersOnline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setChannelUsersOnline: unsupported layer %d", layer)
 	}
 }
 
@@ -522,7 +522,7 @@ func (m *TLStatusSetChannelOffline) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate status_setChannelOffline: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode status_setChannelOffline: unsupported layer %d", layer)
 	}
 }
 

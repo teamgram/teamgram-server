@@ -120,7 +120,7 @@ func (m *TLHttpSessionData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate httpSessionData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode httpSessionData: unsupported layer %d", layer)
 	}
 }
 
@@ -276,7 +276,7 @@ func (m *TLSessionClientData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate sessionClientData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sessionClientData: unsupported layer %d", layer)
 	}
 }
 
@@ -467,7 +467,7 @@ func (m *TLSessionClientEvent) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate sessionClientEvent: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sessionClientEvent: unsupported layer %d", layer)
 	}
 }
 

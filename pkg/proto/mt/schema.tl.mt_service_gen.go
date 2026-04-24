@@ -41,7 +41,7 @@ func (m *TLReqPq) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate req_pq: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode req_pq: unsupported layer %d", layer)
 	}
 }
 
@@ -85,7 +85,7 @@ func (m *TLReqPqMulti) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate req_pq_multi: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode req_pq_multi: unsupported layer %d", layer)
 	}
 }
 
@@ -139,7 +139,7 @@ func (m *TLReqDHParams) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate req_DH_params: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode req_DH_params: unsupported layer %d", layer)
 	}
 }
 
@@ -207,7 +207,7 @@ func (m *TLSetClientDHParams) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate set_client_DH_params: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode set_client_DH_params: unsupported layer %d", layer)
 	}
 }
 
@@ -256,7 +256,7 @@ func (m *TLDestroyAuthKey) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_auth_key: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_auth_key: unsupported layer %d", layer)
 	}
 }
 
@@ -293,7 +293,7 @@ func (m *TLHelpTest) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate help_test: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode help_test: unsupported layer %d", layer)
 	}
 }
 
@@ -330,7 +330,7 @@ func (m *TLTestUseError) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate test_useError: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode test_useError: unsupported layer %d", layer)
 	}
 }
 
@@ -367,7 +367,7 @@ func (m *TLTestUseConfigSimple) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate test_useConfigSimple: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode test_useConfigSimple: unsupported layer %d", layer)
 	}
 }
 
@@ -407,7 +407,7 @@ func (m *TLRpcDropAnswer) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate rpc_drop_answer: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode rpc_drop_answer: unsupported layer %d", layer)
 	}
 }
 
@@ -451,7 +451,7 @@ func (m *TLGetFutureSalts) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate get_future_salts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode get_future_salts: unsupported layer %d", layer)
 	}
 }
 
@@ -495,7 +495,7 @@ func (m *TLPing) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate ping: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode ping: unsupported layer %d", layer)
 	}
 }
 
@@ -541,7 +541,7 @@ func (m *TLPingDelayDisconnect) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate ping_delay_disconnect: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode ping_delay_disconnect: unsupported layer %d", layer)
 	}
 }
 
@@ -589,7 +589,7 @@ func (m *TLDestroySession) Encode(x *bin.Encoder, layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate destroy_session: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode destroy_session: unsupported layer %d", layer)
 	}
 }
 

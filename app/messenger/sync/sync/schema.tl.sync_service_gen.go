@@ -88,13 +88,13 @@ func (m *TLSyncUpdatesMe) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_updatesMe#0xe57d411f: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_updatesMe#0xe57d411f: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_updatesMe#0xe57d411f: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_updatesMe: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_updatesMe: unsupported layer %d", layer)
 	}
 }
 
@@ -181,13 +181,13 @@ func (m *TLSyncUpdatesNotMe) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_updatesNotMe#0x97ac5031: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_updatesNotMe#0x97ac5031: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_updatesNotMe#0x97ac5031: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_updatesNotMe: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_updatesNotMe: unsupported layer %d", layer)
 	}
 }
 
@@ -244,13 +244,13 @@ func (m *TLSyncPushUpdates) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_pushUpdates#0x8f0ad9be: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_pushUpdates#0x8f0ad9be: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_pushUpdates#0x8f0ad9be: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_pushUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_pushUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -328,13 +328,13 @@ func (m *TLSyncPushUpdatesIfNot) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_pushUpdatesIfNot#0x2d3778bc: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_pushUpdatesIfNot#0x2d3778bc: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_pushUpdatesIfNot#0x2d3778bc: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_pushUpdatesIfNot: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_pushUpdatesIfNot: unsupported layer %d", layer)
 	}
 }
 
@@ -404,13 +404,13 @@ func (m *TLSyncPushBotUpdates) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_pushBotUpdates#0xadc3f000: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_pushBotUpdates#0xadc3f000: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_pushBotUpdates#0xadc3f000: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_pushBotUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_pushBotUpdates: unsupported layer %d", layer)
 	}
 }
 
@@ -474,7 +474,7 @@ func (m *TLSyncPushRpcResult) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_pushRpcResult: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_pushRpcResult: unsupported layer %d", layer)
 	}
 }
 
@@ -552,13 +552,13 @@ func (m *TLSyncBroadcastUpdates) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode sync_broadcastUpdates#0xf5e35cb6: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode sync_broadcastUpdates#0xf5e35cb6: field updates: %w", err)
+			return fmt.Errorf("unable to encode sync_broadcastUpdates#0xf5e35cb6: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate sync_broadcastUpdates: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode sync_broadcastUpdates: unsupported layer %d", layer)
 	}
 }
 

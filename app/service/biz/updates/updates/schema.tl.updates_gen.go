@@ -130,7 +130,7 @@ func (m *TLChannelDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate channelDifference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode channelDifference: unsupported layer %d", layer)
 	}
 }
 
@@ -157,11 +157,11 @@ func (m *TLChannelDifference) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.Pts)
 
 		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", err)
+			return fmt.Errorf("unable to encode channelDifference#0xcd19034a: field new_messages: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", err)
+			return fmt.Errorf("unable to encode channelDifference#0xcd19034a: field other_updates: %w", err)
 		}
 
 		return nil
@@ -353,7 +353,7 @@ func (m *TLDifferenceEmpty) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate differenceEmpty: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode differenceEmpty: unsupported layer %d", layer)
 	}
 }
 
@@ -367,7 +367,7 @@ func (m *TLDifferenceEmpty) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode differenceEmpty#0x8bdbda4e: field state is nil")
 		}
 		if err := m.State.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode differenceEmpty#0x8bdbda4e: field state: %w", err)
+			return fmt.Errorf("unable to encode differenceEmpty#0x8bdbda4e: field state: %w", err)
 		}
 
 		return nil
@@ -474,7 +474,7 @@ func (m *TLDifference) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate difference: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode difference: unsupported layer %d", layer)
 	}
 }
 
@@ -485,18 +485,18 @@ func (m *TLDifference) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x5482832b)
 
 		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", err)
+			return fmt.Errorf("unable to encode difference#0x5482832b: field new_messages: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", err)
+			return fmt.Errorf("unable to encode difference#0x5482832b: field other_updates: %w", err)
 		}
 
 		if m.State == nil {
 			return fmt.Errorf("unable to encode difference#0x5482832b: field state is nil")
 		}
 		if err := m.State.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field state: %w", err)
+			return fmt.Errorf("unable to encode difference#0x5482832b: field state: %w", err)
 		}
 
 		return nil
@@ -642,7 +642,7 @@ func (m *TLDifferenceSlice) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate differenceSlice: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode differenceSlice: unsupported layer %d", layer)
 	}
 }
 
@@ -653,18 +653,18 @@ func (m *TLDifferenceSlice) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0xcb965ddf)
 
 		if err := iface.EncodeObjectList(x, m.NewMessages, layer); err != nil {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", err)
+			return fmt.Errorf("unable to encode differenceSlice#0xcb965ddf: field new_messages: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.OtherUpdates, layer); err != nil {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", err)
+			return fmt.Errorf("unable to encode differenceSlice#0xcb965ddf: field other_updates: %w", err)
 		}
 
 		if m.IntermediateState == nil {
 			return fmt.Errorf("unable to encode differenceSlice#0xcb965ddf: field intermediate_state is nil")
 		}
 		if err := m.IntermediateState.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field intermediate_state: %w", err)
+			return fmt.Errorf("unable to encode differenceSlice#0xcb965ddf: field intermediate_state: %w", err)
 		}
 
 		return nil
@@ -795,7 +795,7 @@ func (m *TLDifferenceTooLong) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate differenceTooLong: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode differenceTooLong: unsupported layer %d", layer)
 	}
 }
 

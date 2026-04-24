@@ -134,7 +134,7 @@ func (m *TLIdVal) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate idVal: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode idVal: unsupported layer %d", layer)
 	}
 }
 
@@ -237,7 +237,7 @@ func (m *TLIdVals) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate idVals: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode idVals: unsupported layer %d", layer)
 	}
 }
 
@@ -338,7 +338,7 @@ func (m *TLSeqIdVal) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate seqIdVal: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode seqIdVal: unsupported layer %d", layer)
 	}
 }
 
@@ -597,7 +597,7 @@ func (m *TLInputId) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inputId: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inputId: unsupported layer %d", layer)
 	}
 }
 
@@ -691,7 +691,7 @@ func (m *TLInputIds) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inputIds: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inputIds: unsupported layer %d", layer)
 	}
 }
 
@@ -794,7 +794,7 @@ func (m *TLInputSeqId) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inputSeqId: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inputSeqId: unsupported layer %d", layer)
 	}
 }
 
@@ -899,7 +899,7 @@ func (m *TLInputNSeqId) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inputNSeqId: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inputNSeqId: unsupported layer %d", layer)
 	}
 }
 

@@ -135,7 +135,7 @@ func (m *TLBotInfoData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate botInfoData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode botInfoData: unsupported layer %d", layer)
 	}
 }
 
@@ -166,7 +166,7 @@ func (m *TLBotInfoData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode botInfoData#0x1835d1c: field bot_info is nil")
 		}
 		if err := m.BotInfo.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode botInfoData#0x1835d1c: field bot_info: %w", err)
+			return fmt.Errorf("unable to encode botInfoData#0x1835d1c: field bot_info: %w", err)
 		}
 		if m.MainAppUrl != nil {
 			x.PutString(*m.MainAppUrl)
@@ -320,7 +320,7 @@ func (m *TLLastSeenData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate lastSeenData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode lastSeenData: unsupported layer %d", layer)
 	}
 }
 
@@ -464,7 +464,7 @@ func (m *TLPeerPeerNotifySettings) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate peerPeerNotifySettings: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode peerPeerNotifySettings: unsupported layer %d", layer)
 	}
 }
 
@@ -480,7 +480,7 @@ func (m *TLPeerPeerNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode peerPeerNotifySettings#0x70ea3fa9: field settings is nil")
 		}
 		if err := m.Settings.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode peerPeerNotifySettings#0x70ea3fa9: field settings: %w", err)
+			return fmt.Errorf("unable to encode peerPeerNotifySettings#0x70ea3fa9: field settings: %w", err)
 		}
 
 		return nil
@@ -634,7 +634,7 @@ func (m *TLUserImportedContacts) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate userImportedContacts: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode userImportedContacts: unsupported layer %d", layer)
 	}
 }
 
@@ -645,17 +645,17 @@ func (m *TLUserImportedContacts) Encode(x *bin.Encoder, layer int32) error {
 		x.PutClazzID(0x4adf7bc0)
 
 		if err := iface.EncodeObjectList(x, m.Imported, layer); err != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", err)
+			return fmt.Errorf("unable to encode userImportedContacts#0x4adf7bc0: field imported: %w", err)
 		}
 
 		if err := iface.EncodeObjectList(x, m.PopularInvites, layer); err != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err)
+			return fmt.Errorf("unable to encode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err)
 		}
 
 		iface.EncodeInt64List(x, m.RetryContacts)
 
 		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", err)
+			return fmt.Errorf("unable to encode userImportedContacts#0x4adf7bc0: field users: %w", err)
 		}
 
 		iface.EncodeInt64List(x, m.UpdateIdList)
@@ -850,7 +850,7 @@ func (m *TLUsernameData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usernameData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usernameData: unsupported layer %d", layer)
 	}
 }
 
@@ -883,7 +883,7 @@ func (m *TLUsernameData) Encode(x *bin.Encoder, layer int32) error {
 		x.PutString(m.Username)
 		if m.Peer != nil {
 			if err := m.Peer.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode usernameData#0xaa4000bf: field peer: %w", err)
+				return fmt.Errorf("unable to encode usernameData#0xaa4000bf: field peer: %w", err)
 			}
 		}
 
@@ -1041,7 +1041,7 @@ func (m *TLUsernameNotExisted) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usernameNotExisted: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usernameNotExisted: unsupported layer %d", layer)
 	}
 }
 
@@ -1133,7 +1133,7 @@ func (m *TLUsernameExisted) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usernameExisted: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usernameExisted: unsupported layer %d", layer)
 	}
 }
 
@@ -1225,7 +1225,7 @@ func (m *TLUsernameExistedNotMe) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usernameExistedNotMe: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usernameExistedNotMe: unsupported layer %d", layer)
 	}
 }
 
@@ -1317,7 +1317,7 @@ func (m *TLUsernameExistedIsMe) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usernameExistedIsMe: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usernameExistedIsMe: unsupported layer %d", layer)
 	}
 }
 
@@ -1586,7 +1586,7 @@ func (m *TLUsersDataFound) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usersDataFound: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usersDataFound: unsupported layer %d", layer)
 	}
 }
 
@@ -1599,7 +1599,7 @@ func (m *TLUsersDataFound) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.Count)
 
 		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
-			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", err)
+			return fmt.Errorf("unable to encode usersDataFound#0x3fa3dbc7: field users: %w", err)
 		}
 
 		x.PutString(m.NextOffset)
@@ -1719,7 +1719,7 @@ func (m *TLUsersIdFound) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate usersIdFound: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode usersIdFound: unsupported layer %d", layer)
 	}
 }
 

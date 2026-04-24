@@ -133,7 +133,7 @@ func (m *TLAuthKeyStateData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate authKeyStateData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode authKeyStateData: unsupported layer %d", layer)
 	}
 }
 
@@ -166,7 +166,7 @@ func (m *TLAuthKeyStateData) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.AccessHash)
 		if m.Client != nil {
 			if err := m.Client.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode authKeyStateData#0xe0408f17: field client: %w", err)
+				return fmt.Errorf("unable to encode authKeyStateData#0xe0408f17: field client: %w", err)
 			}
 		}
 
@@ -376,7 +376,7 @@ func (m *TLClientSession) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate clientSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode clientSession: unsupported layer %d", layer)
 	}
 }
 

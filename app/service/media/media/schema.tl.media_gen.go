@@ -124,7 +124,7 @@ func (m *TLPhotoSizeList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate photoSizeList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode photoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -137,7 +137,7 @@ func (m *TLPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.SizeId)
 
 		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
-			return fmt.Errorf("unable to decode photoSizeList#0x67139b3: field sizes: %w", err)
+			return fmt.Errorf("unable to encode photoSizeList#0x67139b3: field sizes: %w", err)
 		}
 
 		x.PutInt32(m.DcId)
@@ -288,7 +288,7 @@ func (m *TLVideoSizeList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate videoSizeList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode videoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -301,7 +301,7 @@ func (m *TLVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.SizeId)
 
 		if err := iface.EncodeObjectList(x, m.Sizes, layer); err != nil {
-			return fmt.Errorf("unable to decode videoSizeList#0x38d19bf2: field sizes: %w", err)
+			return fmt.Errorf("unable to encode videoSizeList#0x38d19bf2: field sizes: %w", err)
 		}
 
 		x.PutInt32(m.DcId)

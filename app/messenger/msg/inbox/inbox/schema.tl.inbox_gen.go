@@ -124,7 +124,7 @@ func (m *TLInboxMessageData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inboxMessageData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inboxMessageData: unsupported layer %d", layer)
 	}
 }
 
@@ -140,7 +140,7 @@ func (m *TLInboxMessageData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode inboxMessageData#0x3bbdadd4: field message is nil")
 		}
 		if err := m.Message.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode inboxMessageData#0x3bbdadd4: field message: %w", err)
+			return fmt.Errorf("unable to encode inboxMessageData#0x3bbdadd4: field message: %w", err)
 		}
 
 		return nil
@@ -269,7 +269,7 @@ func (m *TLInboxMessageId) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate inboxMessageId: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode inboxMessageId: unsupported layer %d", layer)
 	}
 }
 

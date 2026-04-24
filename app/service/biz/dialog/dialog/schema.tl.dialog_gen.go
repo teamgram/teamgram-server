@@ -138,7 +138,7 @@ func (m *TLDialogExt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dialogExt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dialogExt: unsupported layer %d", layer)
 	}
 }
 
@@ -167,7 +167,7 @@ func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode dialogExt#0x730ba93f: field dialog is nil")
 		}
 		if err := m.Dialog.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode dialogExt#0x730ba93f: field dialog: %w", err)
+			return fmt.Errorf("unable to encode dialogExt#0x730ba93f: field dialog: %w", err)
 		}
 		x.PutInt32(m.AvailableMinId)
 		x.PutInt64(m.Date)
@@ -339,7 +339,7 @@ func (m *TLDialogFilterExt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dialogFilterExt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dialogFilterExt: unsupported layer %d", layer)
 	}
 }
 
@@ -369,7 +369,7 @@ func (m *TLDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode dialogFilterExt#0xa6d498fe: field dialog_filter is nil")
 		}
 		if err := m.DialogFilter.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode dialogFilterExt#0xa6d498fe: field dialog_filter: %w", err)
+			return fmt.Errorf("unable to encode dialogFilterExt#0xa6d498fe: field dialog_filter: %w", err)
 		}
 		x.PutInt64(m.Order)
 
@@ -514,7 +514,7 @@ func (m *TLDialogPinnedExt) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate dialogPinnedExt: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode dialogPinnedExt: unsupported layer %d", layer)
 	}
 }
 
@@ -666,7 +666,7 @@ func (m *TLSimpleDialogsData) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate simpleDialogsData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode simpleDialogsData: unsupported layer %d", layer)
 	}
 }
 
@@ -817,7 +817,7 @@ func (m *TLUpdateDraftMessage) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate updateDraftMessage: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode updateDraftMessage: unsupported layer %d", layer)
 	}
 }
 
@@ -831,13 +831,13 @@ func (m *TLUpdateDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode updateDraftMessage#0xf6bdc4b2: field peer is nil")
 		}
 		if err := m.Peer.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode updateDraftMessage#0xf6bdc4b2: field peer: %w", err)
+			return fmt.Errorf("unable to encode updateDraftMessage#0xf6bdc4b2: field peer: %w", err)
 		}
 		if m.Draft == nil {
 			return fmt.Errorf("unable to encode updateDraftMessage#0xf6bdc4b2: field draft is nil")
 		}
 		if err := m.Draft.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode updateDraftMessage#0xf6bdc4b2: field draft: %w", err)
+			return fmt.Errorf("unable to encode updateDraftMessage#0xf6bdc4b2: field draft: %w", err)
 		}
 
 		return nil
@@ -966,7 +966,7 @@ func (m *TLSavedDialogList) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate savedDialogList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode savedDialogList: unsupported layer %d", layer)
 	}
 }
 
@@ -979,7 +979,7 @@ func (m *TLSavedDialogList) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.Count)
 
 		if err := iface.EncodeObjectList(x, m.Dialogs, layer); err != nil {
-			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", err)
+			return fmt.Errorf("unable to encode savedDialogList#0x778fe85a: field dialogs: %w", err)
 		}
 
 		return nil

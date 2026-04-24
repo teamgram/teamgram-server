@@ -50,7 +50,7 @@ func (m *TLSessionQueryAuthKey) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_queryAuthKey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_queryAuthKey: unsupported layer %d", layer)
 	}
 }
 
@@ -98,20 +98,20 @@ func (m *TLSessionSetAuthKey) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field auth_key is nil")
 		}
 		if err := m.AuthKey.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field auth_key: %w", err)
+			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field auth_key: %w", err)
 		}
 		if m.FutureSalt == nil {
 			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field future_salt is nil")
 		}
 		if err := m.FutureSalt.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_setAuthKey#0x1d11490b: field future_salt: %w", err)
+			return fmt.Errorf("unable to encode session_setAuthKey#0x1d11490b: field future_salt: %w", err)
 		}
 		x.PutInt32(m.ExpiresIn)
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_setAuthKey: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_setAuthKey: unsupported layer %d", layer)
 	}
 }
 
@@ -168,13 +168,13 @@ func (m *TLSessionCreateSession) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode session_createSession#0x410cb20d: field client is nil")
 		}
 		if err := m.Client.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_createSession#0x410cb20d: field client: %w", err)
+			return fmt.Errorf("unable to encode session_createSession#0x410cb20d: field client: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_createSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_createSession: unsupported layer %d", layer)
 	}
 }
 
@@ -221,13 +221,13 @@ func (m *TLSessionSendDataToSession) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode session_sendDataToSession#0x876b2dec: field data is nil")
 		}
 		if err := m.Data.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_sendDataToSession#0x876b2dec: field data: %w", err)
+			return fmt.Errorf("unable to encode session_sendDataToSession#0x876b2dec: field data: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_sendDataToSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_sendDataToSession: unsupported layer %d", layer)
 	}
 }
 
@@ -274,13 +274,13 @@ func (m *TLSessionSendHttpDataToSession) Encode(x *bin.Encoder, layer int32) err
 			return fmt.Errorf("unable to encode session_sendHttpDataToSession#0xbbec23ae: field client is nil")
 		}
 		if err := m.Client.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_sendHttpDataToSession#0xbbec23ae: field client: %w", err)
+			return fmt.Errorf("unable to encode session_sendHttpDataToSession#0xbbec23ae: field client: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_sendHttpDataToSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_sendHttpDataToSession: unsupported layer %d", layer)
 	}
 }
 
@@ -327,13 +327,13 @@ func (m *TLSessionCloseSession) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode session_closeSession#0x176fc253: field client is nil")
 		}
 		if err := m.Client.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_closeSession#0x176fc253: field client: %w", err)
+			return fmt.Errorf("unable to encode session_closeSession#0x176fc253: field client: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_closeSession: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_closeSession: unsupported layer %d", layer)
 	}
 }
 
@@ -397,13 +397,13 @@ func (m *TLSessionPushUpdatesData) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode session_pushUpdatesData#0xa574d829: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_pushUpdatesData#0xa574d829: field updates: %w", err)
+			return fmt.Errorf("unable to encode session_pushUpdatesData#0xa574d829: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_pushUpdatesData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_pushUpdatesData: unsupported layer %d", layer)
 	}
 }
 
@@ -478,13 +478,13 @@ func (m *TLSessionPushSessionUpdatesData) Encode(x *bin.Encoder, layer int32) er
 			return fmt.Errorf("unable to encode session_pushSessionUpdatesData#0x45f3fda0: field updates is nil")
 		}
 		if err := m.Updates.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode session_pushSessionUpdatesData#0x45f3fda0: field updates: %w", err)
+			return fmt.Errorf("unable to encode session_pushSessionUpdatesData#0x45f3fda0: field updates: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_pushSessionUpdatesData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_pushSessionUpdatesData: unsupported layer %d", layer)
 	}
 }
 
@@ -557,7 +557,7 @@ func (m *TLSessionPushRpcResultData) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate session_pushRpcResultData: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode session_pushRpcResultData: unsupported layer %d", layer)
 	}
 }
 

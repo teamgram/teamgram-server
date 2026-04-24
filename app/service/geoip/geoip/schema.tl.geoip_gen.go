@@ -126,7 +126,7 @@ func (m *TLRegion) Validate(layer int32) error {
 
 		return nil
 	default:
-		return fmt.Errorf("unable to validate region: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode region: unsupported layer %d", layer)
 	}
 }
 

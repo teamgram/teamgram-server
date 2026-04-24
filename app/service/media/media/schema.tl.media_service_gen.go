@@ -70,11 +70,11 @@ func (m *TLMediaUploadPhotoFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadPhotoFile#0x3c2b0b17: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadPhotoFile#0x3c2b0b17: field file: %w", err)
 		}
 		if m.Stickers != nil {
 			if err := iface.EncodeObjectList(x, m.Stickers, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err)
+				return fmt.Errorf("unable to encode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err)
 			}
 		}
 		if m.TtlSeconds != nil {
@@ -84,7 +84,7 @@ func (m *TLMediaUploadPhotoFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadPhotoFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadPhotoFile: unsupported layer %d", layer)
 	}
 }
 
@@ -195,13 +195,13 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *bin.Encoder, layer int32) erro
 		x.PutInt64(m.OwnerId)
 		if m.File != nil {
 			if err := m.File.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field file: %w", err)
+				return fmt.Errorf("unable to encode media_uploadProfilePhotoFile#0xb6a04cc4: field file: %w", err)
 			}
 		}
 
 		if m.Video != nil {
 			if err := m.Video.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video: %w", err)
+				return fmt.Errorf("unable to encode media_uploadProfilePhotoFile#0xb6a04cc4: field video: %w", err)
 			}
 		}
 
@@ -211,14 +211,14 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *bin.Encoder, layer int32) erro
 
 		if m.VideoEmojiMarkup != nil {
 			if err := m.VideoEmojiMarkup.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadProfilePhotoFile#0xb6a04cc4: field video_emoji_markup: %w", err)
+				return fmt.Errorf("unable to encode media_uploadProfilePhotoFile#0xb6a04cc4: field video_emoji_markup: %w", err)
 			}
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadProfilePhotoFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadProfilePhotoFile: unsupported layer %d", layer)
 	}
 }
 
@@ -296,7 +296,7 @@ func (m *TLMediaGetPhoto) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getPhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getPhoto: unsupported layer %d", layer)
 	}
 }
 
@@ -343,7 +343,7 @@ func (m *TLMediaGetPhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getPhotoSizeList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getPhotoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -390,7 +390,7 @@ func (m *TLMediaGetPhotoSizeListList) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getPhotoSizeListList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getPhotoSizeListList: unsupported layer %d", layer)
 	}
 }
 
@@ -438,7 +438,7 @@ func (m *TLMediaGetVideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getVideoSizeList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getVideoSizeList: unsupported layer %d", layer)
 	}
 }
 
@@ -486,13 +486,13 @@ func (m *TLMediaUploadedDocumentMedia) Encode(x *bin.Encoder, layer int32) error
 			return fmt.Errorf("unable to encode media_uploadedDocumentMedia#0x4f5fb06c: field media is nil")
 		}
 		if err := m.Media.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadedDocumentMedia#0x4f5fb06c: field media: %w", err)
+			return fmt.Errorf("unable to encode media_uploadedDocumentMedia#0x4f5fb06c: field media: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadedDocumentMedia: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadedDocumentMedia: unsupported layer %d", layer)
 	}
 }
 
@@ -544,7 +544,7 @@ func (m *TLMediaGetDocument) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getDocument: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getDocument: unsupported layer %d", layer)
 	}
 }
 
@@ -591,7 +591,7 @@ func (m *TLMediaGetDocumentList) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getDocumentList: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getDocumentList: unsupported layer %d", layer)
 	}
 }
 
@@ -640,13 +640,13 @@ func (m *TLMediaUploadEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadEncryptedFile#0xab00c69b: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadEncryptedFile#0xab00c69b: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadEncryptedFile#0xab00c69b: field file: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadEncryptedFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -700,7 +700,7 @@ func (m *TLMediaGetEncryptedFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_getEncryptedFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_getEncryptedFile: unsupported layer %d", layer)
 	}
 }
 
@@ -754,20 +754,20 @@ func (m *TLMediaUploadWallPaperFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field file: %w", err)
 		}
 		x.PutString(m.MimeType)
 		if m.Admin == nil {
 			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field admin is nil")
 		}
 		if err := m.Admin.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadWallPaperFile#0x9cfaadfe: field admin: %w", err)
+			return fmt.Errorf("unable to encode media_uploadWallPaperFile#0x9cfaadfe: field admin: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadWallPaperFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadWallPaperFile: unsupported layer %d", layer)
 	}
 }
 
@@ -847,11 +847,11 @@ func (m *TLMediaUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadThemeFile#0x42e6b860: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadThemeFile#0x42e6b860: field file: %w", err)
 		}
 		if m.Thumb != nil {
 			if err := m.Thumb.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadThemeFile#0x42e6b860: field thumb: %w", err)
+				return fmt.Errorf("unable to encode media_uploadThemeFile#0x42e6b860: field thumb: %w", err)
 			}
 		}
 
@@ -861,7 +861,7 @@ func (m *TLMediaUploadThemeFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadThemeFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadThemeFile: unsupported layer %d", layer)
 	}
 }
 
@@ -952,11 +952,11 @@ func (m *TLMediaUploadStickerFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field file: %w", err)
 		}
 		if m.Thumb != nil {
 			if err := m.Thumb.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field thumb: %w", err)
+				return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field thumb: %w", err)
 			}
 		}
 
@@ -966,13 +966,13 @@ func (m *TLMediaUploadStickerFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker is nil")
 		}
 		if err := m.DocumentAttributeSticker.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker: %w", err)
+			return fmt.Errorf("unable to encode media_uploadStickerFile#0xacb624ed: field document_attribute_sticker: %w", err)
 		}
 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadStickerFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadStickerFile: unsupported layer %d", layer)
 	}
 }
 
@@ -1062,7 +1062,7 @@ func (m *TLMediaUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 			return fmt.Errorf("unable to encode media_uploadRingtoneFile#0x3dbab209: field file is nil")
 		}
 		if err := m.File.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to decode media_uploadRingtoneFile#0x3dbab209: field file: %w", err)
+			return fmt.Errorf("unable to encode media_uploadRingtoneFile#0x3dbab209: field file: %w", err)
 		}
 		x.PutString(m.MimeType)
 		x.PutString(m.FileName)
@@ -1070,7 +1070,7 @@ func (m *TLMediaUploadRingtoneFile) Encode(x *bin.Encoder, layer int32) error {
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadRingtoneFile: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadRingtoneFile: unsupported layer %d", layer)
 	}
 }
 
@@ -1138,7 +1138,7 @@ func (m *TLMediaUploadedProfilePhoto) Encode(x *bin.Encoder, layer int32) error 
 		return nil
 	default:
 		// TODO(@benqi): handle error
-		return fmt.Errorf("unable to validate media_uploadedProfilePhoto: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode media_uploadedProfilePhoto: unsupported layer %d", layer)
 	}
 }
 
