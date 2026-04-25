@@ -11,7 +11,7 @@
 package geoipservice
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
 	"github.com/cloudwego/kitex/server"

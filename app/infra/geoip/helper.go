@@ -14,21 +14,18 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package svc
+package geoiphelper
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/svc"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
-}
+type (
+	Config = config.Config
+)
 
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c),
-	}
+func New(c Config) *service.Service {
+	return service.New(svc.NewServiceContext(c))
 }

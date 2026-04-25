@@ -16,7 +16,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"

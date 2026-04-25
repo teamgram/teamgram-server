@@ -19,7 +19,7 @@ package core
 import (
 	"net"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
 )
 
 var (

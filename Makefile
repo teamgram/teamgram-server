@@ -15,7 +15,11 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: idgen status dfs media authsession biz msg sync bff session gnetway
+all: geoip idgen status dfs media authsession biz msg sync bff session gnetway
+
+geoip:
+	@echo "build geoip..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/geoip -tags=jsoniter app/infra/geoip/cmd/geoip/*.go
 
 idgen:
 	@echo "build idgen..."
@@ -66,6 +70,7 @@ gnetway:
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/gnetway -tags=jsoniter app/interface/gnetway/cmd/gnetway/*.go
 
 clean:
+	@rm -rf ${INSTALL}/bin/geoip
 	@rm -rf ${INSTALL}/bin/idgen
 	@rm -rf ${INSTALL}/bin/status
 	@rm -rf ${INSTALL}/bin/dfs

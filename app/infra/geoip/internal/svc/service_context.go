@@ -14,29 +14,21 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package svc
 
 import (
-	"context"
-
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/svc"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/repository"
 )
 
-type GeoipCore struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
-	logx.Logger
-	MD *metadata.RpcMetadata
+type ServiceContext struct {
+	Config config.Config
+	Repo   *repository.Repository
 }
 
-func New(ctx context.Context, svcCtx *svc.ServiceContext) *GeoipCore {
-	return &GeoipCore{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-		MD:     metadata.RpcMetadataFromIncoming(ctx),
+func NewServiceContext(c config.Config) *ServiceContext {
+	return &ServiceContext{
+		Config: c,
+		Repo:   repository.NewRepository(c),
 	}
 }

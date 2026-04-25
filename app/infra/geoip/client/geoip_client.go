@@ -13,8 +13,8 @@ package geoipclient
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip/geoipservice"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip/geoipservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"

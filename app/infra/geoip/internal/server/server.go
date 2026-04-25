@@ -19,10 +19,10 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip/geoipservice"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip/geoipservice"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"

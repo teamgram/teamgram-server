@@ -11,7 +11,7 @@
 package geoipclient
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip/geoipservice"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip/geoipservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"

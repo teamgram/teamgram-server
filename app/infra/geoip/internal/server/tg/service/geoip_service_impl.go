@@ -13,8 +13,8 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/geoip"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/core"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 

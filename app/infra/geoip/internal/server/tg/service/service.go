@@ -11,7 +11,7 @@
 package service
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/svc"
 )
 
 type Service struct {

@@ -13,7 +13,7 @@ package main
 import (
 	"github.com/teamgram/marmota/pkg/commands"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/server"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/server"
 )
 
 func main() {

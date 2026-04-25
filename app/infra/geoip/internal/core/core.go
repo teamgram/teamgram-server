@@ -14,28 +14,29 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package repository
+package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/config"
+	"context"
 
-	"github.com/oschwald/geoip2-golang"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// Repository is the dependency container for repository instances.
-type Repository struct {
-	MMDB *geoip2.Reader
+type GeoipCore struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+	MD *metadata.RpcMetadata
 }
 
-// NewRepository creates a new Repository.
-func NewRepository(c config.Config) *Repository {
-	MMDB, err := geoip2.Open(c.MMDB)
-	if err != nil {
-		// panic(err)
-		// logx.Errorf("")
-	}
-
-	return &Repository{
-		MMDB: MMDB,
+func New(ctx context.Context, svcCtx *svc.ServiceContext) *GeoipCore {
+	return &GeoipCore{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+		MD:     metadata.RpcMetadataFromIncoming(ctx),
 	}
 }

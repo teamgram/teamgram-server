@@ -14,18 +14,28 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package geoiphelper
+package repository
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/service/geoip/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/config"
+
+	"github.com/oschwald/geoip2-golang"
 )
 
-type (
-	Config = config.Config
-)
+// Repository is the dependency container for repository instances.
+type Repository struct {
+	MMDB *geoip2.Reader
+}
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+// NewRepository creates a new Repository.
+func NewRepository(c config.Config) *Repository {
+	MMDB, err := geoip2.Open(c.MMDB)
+	if err != nil {
+		// panic(err)
+		// logx.Errorf("")
+	}
+
+	return &Repository{
+		MMDB: MMDB,
+	}
 }
