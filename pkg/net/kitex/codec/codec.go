@@ -17,6 +17,7 @@
 package codec
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"encoding/hex"
@@ -25,8 +26,8 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/teamgram-server/v2/pkg/xerr"
 
 	"github.com/bytedance/gopkg/lang/dirtmake"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -40,6 +41,12 @@ const (
 	zrpcMagicNumber     = uint32(0x5A525043)
 	defaultMaxFrameSize = 16 << 20
 	defaultTLLayer      = int32(223)
+)
+
+const (
+	exceptionPayloadVersion byte = 1
+	exceptionKindGeneric    byte = 1
+	exceptionKindCode       byte = 2
 )
 
 type ZRpcCodec struct {
@@ -71,37 +78,41 @@ func (c *ZRpcCodec) resolveEncodeLayer(obj iface.TLObject) int32 {
 }
 
 func (c *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remote.ByteBuffer) error {
-	var validData interface{}
+	var payload []byte
 	switch message.MessageType() {
 	case remote.Exception:
+		var errData error
 		switch e := message.Data().(type) {
 		case *remote.TransError:
-			validData = tg.NewRpcError(e)
+			errData = e
 		case error:
-			validData = tg.NewRpcError(e)
+			errData = e
 		default:
 			return errors.New("exception relay must implement error type")
 		}
+		var err error
+		payload, err = encodeExceptionPayload(errData)
+		if err != nil {
+			return perrors.NewProtocolError(fmt.Errorf("binary encode, encode exception payload failed: %w", err))
+		}
 	default:
-		validData = message.Data()
-	}
+		if c.printDebugInfo {
+			klog.Infof("trans: %v", message.TransInfo().TransStrInfo())
+		}
 
-	if c.printDebugInfo {
-		klog.Infof("trans: %v", message.TransInfo().TransStrInfo())
-	}
+		obj, ok := message.Data().(iface.TLObject)
+		if !ok {
+			return perrors.NewProtocolError(fmt.Errorf("binary encode, invalid payload type: %T", message.Data()))
+		}
 
-	obj, ok := validData.(iface.TLObject)
-	if !ok {
-		return perrors.NewProtocolError(fmt.Errorf("binary encode, invalid payload type: %T", validData))
+		// Encode payload using TL binary protocol
+		x := bin.NewEncoder()
+		defer x.End()
+		if err := obj.Encode(x, c.resolveEncodeLayer(obj)); err != nil {
+			return perrors.NewProtocolError(fmt.Errorf("binary encode, encode payload failed: %w", err))
+		}
+		payload = x.Bytes()
 	}
-
-	// Encode payload using TL binary protocol
-	x := bin.NewEncoder()
-	defer x.End()
-	if err := obj.Encode(x, c.resolveEncodeLayer(obj)); err != nil {
-		return perrors.NewProtocolError(fmt.Errorf("binary encode, encode payload failed: %w", err))
-	}
-	payload := x.Bytes()
 
 	if c.printDebugInfo {
 		klog.Infof("encoded payload: %s\n", hex.EncodeToString(payload))
@@ -199,14 +210,11 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 	}
 
 	if remote.MessageType(data.MsgType) == remote.Exception {
-		exception, err2 := tg.DecodeRpcErrorClazz(bin.NewDecoder(data.Payload))
+		exception, err2 := decodeExceptionPayload(data.Payload)
 		if err2 != nil {
 			return perrors.NewProtocolError(fmt.Errorf("binary decode, unmarshal Exception payload failed: %w", err2))
 		}
-		if exception == nil {
-			return perrors.NewProtocolError(errors.New("binary decode, invalid Exception type: nil"))
-		}
-		return xerr.NewCodeError(exception.Code(), exception.ErrorMessage)
+		return exception
 	}
 
 	// Decode payload using TL binary protocol
@@ -227,6 +235,143 @@ func (c *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remot
 
 func (c *ZRpcCodec) Name() string {
 	return "ZRPC"
+}
+
+func encodeExceptionPayload(err error) ([]byte, error) {
+	if err == nil {
+		return nil, errors.New("exception payload error is nil")
+	}
+
+	var (
+		code   int32
+		msg    string
+		detail string
+		kind   = exceptionKindGeneric
+	)
+
+	var rpcErr *tg.TLRpcError
+	switch {
+	case errors.As(err, &rpcErr) && rpcErr != nil:
+		kind = exceptionKindCode
+		code = rpcErr.ErrorCode
+		msg = rpcErr.ErrorMessage
+	case func() bool {
+		var codeErr ecode.CodeError
+		if errors.As(err, &codeErr) && codeErr != nil {
+			kind = exceptionKindCode
+			code = int32(codeErr.Code())
+			msg = codeErr.Msg()
+			detail = codeErr.Detail()
+			return true
+		}
+		return false
+	}():
+	default:
+		msg = err.Error()
+	}
+
+	var buf bytes.Buffer
+	buf.WriteByte(exceptionPayloadVersion)
+	buf.WriteByte(kind)
+	if kind == exceptionKindCode {
+		var codeBuf [4]byte
+		binary.BigEndian.PutUint32(codeBuf[:], uint32(code))
+		buf.Write(codeBuf[:])
+	}
+	if err := writeExceptionString(&buf, msg); err != nil {
+		return nil, err
+	}
+	if kind == exceptionKindCode {
+		if err := writeExceptionString(&buf, detail); err != nil {
+			return nil, err
+		}
+	}
+	return buf.Bytes(), nil
+}
+
+func decodeExceptionPayload(payload []byte) (error, error) {
+	if len(payload) >= 2 && payload[0] == exceptionPayloadVersion {
+		err, decodeErr := decodeInternalExceptionPayload(payload)
+		if decodeErr == nil {
+			return err, nil
+		}
+	}
+
+	exception, err := tg.DecodeRpcErrorClazz(bin.NewDecoder(payload))
+	if err != nil {
+		return nil, err
+	}
+	if exception == nil {
+		return nil, errors.New("invalid Exception type: nil")
+	}
+	return ecode.NewCodeError(exception.Code(), exception.ErrorMessage), nil
+}
+
+func decodeInternalExceptionPayload(payload []byte) (error, error) {
+	if len(payload) < 2 {
+		return nil, errors.New("internal exception payload too short")
+	}
+
+	kind := payload[1]
+	offset := 2
+	var code int32
+	if kind == exceptionKindCode {
+		if len(payload) < offset+4 {
+			return nil, errors.New("internal coded exception payload missing code")
+		}
+		code = int32(binary.BigEndian.Uint32(payload[offset:]))
+		offset += 4
+	}
+
+	msg, next, err := readExceptionString(payload, offset)
+	if err != nil {
+		return nil, err
+	}
+	offset = next
+
+	switch kind {
+	case exceptionKindGeneric:
+		return errors.New(msg), nil
+	case exceptionKindCode:
+		detail, _, err := readExceptionString(payload, offset)
+		if err != nil {
+			return nil, err
+		}
+		codeErr := ecode.NewCodeError(int(code), msg)
+		if detail != "" {
+			codeErr = codeErr.WithDetail(detail)
+		}
+		return codeErr, nil
+	default:
+		return nil, fmt.Errorf("unknown internal exception payload kind %d", kind)
+	}
+}
+
+func writeExceptionString(buf *bytes.Buffer, s string) error {
+	if len(s) > int(^uint16(0)) {
+		return fmt.Errorf("exception string too long: %d", len(s))
+	}
+	var lenBuf [2]byte
+	binary.BigEndian.PutUint16(lenBuf[:], uint16(len(s)))
+	if _, err := buf.Write(lenBuf[:]); err != nil {
+		return err
+	}
+	if _, err := buf.WriteString(s); err != nil {
+		return err
+	}
+	return nil
+}
+
+func readExceptionString(payload []byte, offset int) (string, int, error) {
+	if len(payload) < offset+2 {
+		return "", offset, errors.New("internal exception payload missing string length")
+	}
+	l := int(binary.BigEndian.Uint16(payload[offset:]))
+	offset += 2
+	if len(payload) < offset+l {
+		return "", offset, errors.New("internal exception payload missing string bytes")
+	}
+	return string(payload[offset : offset+l]), offset + l, nil
 }
 
 // encodeMeta encodes Meta struct into binary format

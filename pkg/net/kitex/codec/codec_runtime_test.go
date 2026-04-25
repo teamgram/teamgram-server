@@ -10,6 +10,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/remote"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
@@ -136,6 +137,11 @@ func newTestMessage(data iface.TLObject) remote.Message {
 	return remote.NewMessage(data, ri, remote.Call, remote.Client)
 }
 
+func newTestExceptionMessage(data interface{}) remote.Message {
+	ri := rpcinfo.NewRPCInfo(nil, nil, rpcinfo.NewInvocation("svc.test", "TestMethod"), nil, nil)
+	return remote.NewMessage(data, ri, remote.Exception, remote.Client)
+}
+
 func TestEncodePropagatesEncodeError(t *testing.T) {
 	c := NewZRpcCodec(false)
 	obj := &testTLObject{encodeErr: errors.New("boom")}
@@ -167,5 +173,51 @@ func TestDecodeRejectsOversizedFrame(t *testing.T) {
 	err := c.Decode(context.Background(), newTestMessage(&testTLObject{}), &testByteBuffer{readBuf: frame})
 	if err == nil {
 		t.Fatal("expected oversized frame error")
+	}
+}
+
+func TestExceptionRoundTripPreservesPlainErrorWithoutTGCode(t *testing.T) {
+	c := NewZRpcCodec(false)
+	buf := &testByteBuffer{}
+	src := errors.New("plain internal error")
+
+	if err := c.Encode(context.Background(), newTestExceptionMessage(src), buf); err != nil {
+		t.Fatalf("encode failed: %v", err)
+	}
+
+	decodeBuf := &testByteBuffer{readBuf: buf.writeBuf}
+	err := c.Decode(context.Background(), newTestMessage(&testTLObject{}), decodeBuf)
+	if err == nil {
+		t.Fatal("expected decode to return exception error")
+	}
+	var codeErr ecode.CodeError
+	if errors.As(err, &codeErr) {
+		t.Fatalf("expected plain error, got ecode %d %q", codeErr.Code(), codeErr.Msg())
+	}
+	if err.Error() != src.Error() {
+		t.Fatalf("expected %q, got %q", src.Error(), err.Error())
+	}
+}
+
+func TestExceptionRoundTripPreservesCodeError(t *testing.T) {
+	c := NewZRpcCodec(false)
+	buf := &testByteBuffer{}
+	src := ecode.NewCodeError(403, "USER_PRIVACY_RESTRICTED")
+
+	if err := c.Encode(context.Background(), newTestExceptionMessage(src), buf); err != nil {
+		t.Fatalf("encode failed: %v", err)
+	}
+
+	decodeBuf := &testByteBuffer{readBuf: buf.writeBuf}
+	err := c.Decode(context.Background(), newTestMessage(&testTLObject{}), decodeBuf)
+	if err == nil {
+		t.Fatal("expected decode to return exception error")
+	}
+	var codeErr ecode.CodeError
+	if !errors.As(err, &codeErr) {
+		t.Fatalf("expected ecode.CodeError, got %T: %v", err, err)
+	}
+	if codeErr.Code() != src.Code() || codeErr.Msg() != src.Msg() {
+		t.Fatalf("expected code=%d msg=%q, got code=%d msg=%q", src.Code(), src.Msg(), codeErr.Code(), codeErr.Msg())
 	}
 }
