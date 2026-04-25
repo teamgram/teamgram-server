@@ -17,6 +17,8 @@ package iface
 
 import (
 	"reflect"
+	"strings"
+	"unicode"
 )
 
 type newRPCReplyFunc func() interface{}
@@ -56,6 +58,46 @@ func FindRPCContextTuple(t interface{}) *RPCContextTuple {
 	return &m
 }
 
+func FindRPCContextTupleByClazzID(clazzID uint32) *RPCContextTuple {
+	clazzName := GetClazzNameByID(clazzID)
+	if clazzName == "" {
+		return nil
+	}
+
+	m, ok := rpcContextRegisters[tlObjectNameFromClazzName(clazzName)]
+	if !ok {
+		return nil
+	}
+	return &m
+}
+
+func (m RPCContextTuple) ServiceName() string {
+	method := strings.TrimPrefix(m.Method, "/tg.")
+	if idx := strings.IndexByte(method, '/'); idx >= 0 {
+		return method[:idx]
+	}
+	return ""
+}
+
 func GetRPCContextRegisters() map[string]RPCContextTuple {
 	return rpcContextRegisters
+}
+
+func tlObjectNameFromClazzName(clazzName string) string {
+	var b strings.Builder
+	b.WriteString("TL")
+	upperNext := true
+	for _, r := range clazzName {
+		if r == '_' {
+			upperNext = true
+			continue
+		}
+		if upperNext {
+			b.WriteRune(unicode.ToUpper(r))
+			upperNext = false
+			continue
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
 }
