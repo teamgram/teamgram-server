@@ -18,4 +18,4 @@ package bin
 // PreallocateLimit is a vector pre-allocation limit.
 const PreallocateLimit = 1024
 
-const MaxVectorLen = 1000000
+const MaxVectorLen = 131072

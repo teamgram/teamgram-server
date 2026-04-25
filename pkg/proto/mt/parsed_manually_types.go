@@ -26,6 +26,7 @@ import (
 const (
 	//
 	MaxMessageByteSize = 1024 * 1024
+	minMessage2Size    = 8 + 4 + 4 + 4
 )
 
 const (
@@ -61,16 +62,25 @@ func (m *TLMessageRawData) ClazzName() string {
 }
 
 func (m *TLMessageRawData) Encode(x *bin.Encoder, layer int32) error {
-	if m.Bytes < 0 || m.Bytes > MaxMessageByteSize {
-		return fmt.Errorf("unable to encode message2(raw_data): message length %d is invalid", m.Bytes)
+	bodySize := iface.Size32 + len(m.Body)
+	if bodySize > MaxMessageByteSize {
+		return fmt.Errorf("unable to encode message2(raw_data): message length %d is invalid", bodySize)
+	}
+	if m.Bytes != 0 && int(m.Bytes) != bodySize {
+		return fmt.Errorf("unable to encode message2(raw_data): message length %d does not match body length %d", m.Bytes, bodySize)
+	}
+	if m.ClazzID == 0 {
+		return fmt.Errorf("unable to encode message2(raw_data): field clazz_id is empty")
 	}
 
 	_ = layer
 
 	x.PutInt64(m.MsgId)
 	x.PutInt32(m.Seqno)
-	x.PutInt32(m.Bytes)
+	x.PutInt32(int32(bodySize))
+	x.PutClazzID(m.ClazzID)
 	x.Put(m.Body)
+	m.Bytes = int32(bodySize)
 
 	return nil
 }
@@ -94,12 +104,19 @@ func (m *TLMessageRawData) Decode(d *bin.Decoder) (err error) {
 		return fmt.Errorf("unable to decode message2(raw_data): message length (%d) is too big", m.Bytes)
 	}
 
-	m.ClazzID, err = d.ClazzID()
+	b := make([]byte, m.Bytes)
+	err = d.ConsumeN(b, int(m.Bytes))
+	if err != nil {
+		return fmt.Errorf("unable to decode message2: field body bytes: %w", err)
+	}
+
+	bodyDecoder := bin.NewDecoder(b)
+	m.ClazzID, err = bodyDecoder.ClazzID()
 	if err != nil {
 		return fmt.Errorf("unable to decode message2: field clazz_id: %w", err)
 	}
 
-	m.Body = d.Raw()
+	m.Body = bodyDecoder.Raw()
 
 	return nil
 }
@@ -130,7 +147,7 @@ func (m *TLMsgRawDataContainer) Encode(x *bin.Encoder, layer int32) error {
 }
 
 func (m *TLMsgRawDataContainer) Decode(d *bin.Decoder) error {
-	len2, err := d.Int()
+	len2, err := decodeMessageContainerLength(d)
 	if err != nil {
 		return fmt.Errorf("unable to decode msg_container: field messages length: %w", err)
 	}
@@ -245,7 +262,7 @@ func (m *TLMsgContainer) Encode(x *bin.Encoder, layer int32) error {
 }
 
 func (m *TLMsgContainer) Decode(d *bin.Decoder) error {
-	len2, err := d.Int()
+	len2, err := decodeMessageContainerLength(d)
 	if err != nil {
 		return fmt.Errorf("unable to decode msg_container: field messages length: %w", err)
 	}
@@ -262,6 +279,21 @@ func (m *TLMsgContainer) Decode(d *bin.Decoder) error {
 	}
 
 	return nil
+}
+
+func decodeMessageContainerLength(d *bin.Decoder) (int, error) {
+	n, err := d.Int()
+	if err != nil {
+		return 0, err
+	}
+	if n < 0 || n > d.Remaining()/minMessage2Size {
+		return 0, &bin.InvalidLengthError{
+			Type:   "messages",
+			Length: n,
+			Offset: d.Offset() - iface.Size32,
+		}
+	}
+	return n, nil
 }
 
 // TLMsgCopy
