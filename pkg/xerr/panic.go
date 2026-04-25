@@ -18,10 +18,9 @@ func ErrPanicMsg(r any, code int, msg string, skip int) error {
 	if r == nil {
 		return nil
 	}
-	err := &codeError{
-		code:   code,
-		msg:    msg,
-		detail: fmt.Sprint(r),
+	if msg == "" {
+		msg = "panic error"
 	}
-	return stack.New(err, skip)
+	_ = code
+	return stack.New(fmt.Errorf("%s: %v", msg, r), skip)
 }

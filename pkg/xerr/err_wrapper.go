@@ -1,12 +1,10 @@
 package xerr
 
 import (
-	"errors"
 	"fmt"
 )
 
 type ErrWrapper interface {
-	Is(err error) bool
 	Wrap() error
 	Unwrap() error
 	WrapMsg(msg string, kv ...any) error
@@ -20,15 +18,6 @@ func NewErrorWrapper(err error, s string) ErrWrapper {
 type errorWrapper struct {
 	error
 	s string
-}
-
-func (e *errorWrapper) Is(err error) bool {
-	if err == nil {
-		return false
-	}
-	var t *errorWrapper
-	ok := errors.As(err, &t)
-	return ok && e.s == t.s
 }
 
 func (e *errorWrapper) Error() string {
