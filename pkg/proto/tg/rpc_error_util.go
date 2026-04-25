@@ -20,8 +20,8 @@ package tg
 import (
 	"errors"
 
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
-	"github.com/teamgram/teamgram-server/v2/pkg/xerr"
 )
 
 type (
@@ -47,7 +47,7 @@ func NewRpcError(e error) *TLRpcError {
 	}
 
 	var (
-		err xerr.CodeError
+		err ecode.CodeError
 	)
 	ok := errors.As(e, &err)
 	if ok {
