@@ -37,11 +37,11 @@ type Repository struct {
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
 	db := sqlx.NewMySQL(&c.Mysql)
-	kv := kv.NewStore(c.KV)
+	kv2 := kv.NewStore(c.KV)
 
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
 		model:            model.NewModels(db, c.Cache),
-		futureSaltsModel: xkv.NewFutureSaltsModel(kv, "future_salts"),
+		futureSaltsModel: xkv.NewFutureSaltsModel(kv2, "future_salts"),
 	}
 }
