@@ -2,6 +2,7 @@ package mt
 
 import (
 	"bytes"
+	"compress/zlib"
 	"fmt"
 	"io"
 	"sync"
@@ -17,6 +18,17 @@ import (
 type gzipPool struct {
 	writers sync.Pool
 	readers sync.Pool
+}
+
+type pooledGzipReader struct {
+	*gzip.Reader
+	pool *gzipPool
+}
+
+func (p *pooledGzipReader) Close() error {
+	err := p.Reader.Close()
+	p.pool.PutReader(p.Reader)
+	return err
 }
 
 func newGzipPool() *gzipPool {
@@ -59,6 +71,21 @@ func (g *gzipPool) GetReader(r io.Reader) (*gzip.Reader, error) {
 
 func (g *gzipPool) PutReader(w *gzip.Reader) {
 	g.readers.Put(w)
+}
+
+func newCompressedReader(buf []byte) (io.ReadCloser, error) {
+	r, err := gzipRWPool.GetReader(bytes.NewReader(buf))
+	if err == nil {
+		return &pooledGzipReader{Reader: r, pool: gzipRWPool}, nil
+	}
+
+	// zlib is a compatibility fallback, so keep it simple unless metrics show it is hot.
+	// Track decode counts by codec and only consider pooling if zlib becomes a meaningful share.
+	zr, zErr := zlib.NewReader(bytes.NewReader(buf))
+	if zErr != nil {
+		return nil, fmt.Errorf("create decompressor: gzip: %v; zlib: %w", err, zErr)
+	}
+	return zr, nil
 }
 
 // GZIP represents a Packed Object.
@@ -145,16 +172,15 @@ func (g *GZIP) Decode(b *bin.Decoder) (rErr error) {
 		return err
 	}
 
-	r, err := gzipRWPool.GetReader(bytes.NewReader(buf))
+	r, err := newCompressedReader(buf)
 	if err != nil {
-		return errors.Wrap(err, "gzip error")
+		return err
 	}
 	defer func() {
 		if closeErr := r.Close(); closeErr != nil {
 			closeErr = errors.Wrap(closeErr, "close")
 			multierr.AppendInto(&rErr, closeErr)
 		}
-		gzipRWPool.PutReader(r)
 	}()
 
 	// Apply mitigation for reading too much data which can result in OOM.
@@ -171,10 +197,6 @@ func (g *GZIP) Decode(b *bin.Decoder) (rErr error) {
 			Compressed:   maxUncompressedSize,
 			Decompressed: int(reader.Total()),
 		}, "decompress")
-	}
-
-	if err := r.Close(); err != nil {
-		return errors.Wrap(err, "checksum")
 	}
 
 	return nil

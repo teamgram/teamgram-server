@@ -3,6 +3,7 @@ package mt
 import (
 	"bytes"
 	"compress/gzip"
+	"compress/zlib"
 	"io"
 	"strings"
 	"testing"
@@ -49,6 +50,22 @@ func TestGZIP_Decode(t *testing.T) {
 	if err := (GZIP{Data: payload}).Encode(x); err != nil {
 		t.Fatalf("Encode() error = %v", err)
 	}
+
+	var got GZIP
+	if err := got.Decode(bin.NewDecoder(x.Bytes())); err != nil {
+		t.Fatalf("Decode() error = %v", err)
+	}
+	if !bytes.Equal(got.Data, payload) {
+		t.Fatalf("Data = %x, want %x", got.Data, payload)
+	}
+}
+
+func TestGZIP_DecodeZlibPayload(t *testing.T) {
+	payload := testGzipPayload(t)
+	x := bin.NewEncoder()
+	defer x.End()
+	x.PutClazzID(ClazzID_gzip_packed)
+	x.PutBytes(zlibBytes(t, payload))
 
 	var got GZIP
 	if err := got.Decode(bin.NewDecoder(x.Bytes())); err != nil {
@@ -115,4 +132,18 @@ func gunzipBytes(tb testing.TB, payload []byte) []byte {
 		tb.Fatalf("gzip read: %v", err)
 	}
 	return data
+}
+
+func zlibBytes(tb testing.TB, payload []byte) []byte {
+	tb.Helper()
+
+	var buf bytes.Buffer
+	zw := zlib.NewWriter(&buf)
+	if _, err := zw.Write(payload); err != nil {
+		tb.Fatalf("zlib write: %v", err)
+	}
+	if err := zw.Close(); err != nil {
+		tb.Fatalf("zlib close: %v", err)
+	}
+	return buf.Bytes()
 }
