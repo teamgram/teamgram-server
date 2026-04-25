@@ -18,16 +18,17 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/bytedance/gopkg/cloud/metainfo"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	echo1client "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/client"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
-	"github.com/zeromicro/go-zero/core/conf"
 	"log"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	echo1client "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1"
 	_ "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/echo2/echo2service"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+
+	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/zeromicro/go-zero/core/conf"
 )
 
 var configFile = flag.String("f", "cli.yaml", "the config file")
