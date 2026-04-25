@@ -34,6 +34,7 @@ import (
 type BFFProxyClient2 struct {
 	// zrpc.Client
 	BFFClients map[string]kitex.Client
+	RawClients map[string]kitex.Client
 }
 
 func NewBFFProxyClient2(cList []BFFProxyClientConf) *BFFProxyClient2 {
@@ -65,6 +66,7 @@ func NewBFFProxyClient2(cList []BFFProxyClientConf) *BFFProxyClient2 {
 
 	return &BFFProxyClient2{
 		BFFClients: bizClients,
+		RawClients: clients,
 	}
 }
 
@@ -88,6 +90,28 @@ func (c *BFFProxyClient2) GetRpcClientByRequest(t interface{}) (kitex.Client, er
 
 func (c *BFFProxyClient2) Invoke(rpcMetaData *metadata.RpcMetadata, object iface.TLObject) (iface.TLObject, error) {
 	return c.InvokeContext(context.Background(), rpcMetaData, object)
+}
+
+func (c *BFFProxyClient2) InvokeRaw(rpcMetaData *metadata.RpcMetadata, payload []byte) (*kitex.RawRPCResponse, error) {
+	return c.InvokeRawContext(context.Background(), rpcMetaData, payload)
+}
+
+func (c *BFFProxyClient2) InvokeRawContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, payload []byte) (*kitex.RawRPCResponse, error) {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return kitex.NewRawInvoker(c.RawClients).InvokeRaw(ctxWithTimeout, rpcMetaData, payload)
+}
+
+func (c *BFFProxyClient2) InvokeRawMethod(rpcMetaData *metadata.RpcMetadata, serviceName, methodName string, payload []byte) (*kitex.RawRPCResponse, error) {
+	return c.InvokeRawMethodContext(context.Background(), rpcMetaData, serviceName, methodName, payload)
+}
+
+func (c *BFFProxyClient2) InvokeRawMethodContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, serviceName, methodName string, payload []byte) (*kitex.RawRPCResponse, error) {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return kitex.NewRawInvoker(c.RawClients).InvokeRawMethod(ctxWithTimeout, rpcMetaData, serviceName, methodName, payload)
 }
 
 // InvokeContext 通用grpc转发器

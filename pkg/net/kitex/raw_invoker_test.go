@@ -57,6 +57,35 @@ func TestRawInvokerInvokeRawRoutesByConstructor(t *testing.T) {
 	}
 }
 
+func TestRawInvokerInvokeRawMethodUsesExplicitRoute(t *testing.T) {
+	reqPayload := []byte{0x05, 0x10, 0xed, 0xfe, 0x11, 0x22}
+	respPayload := []byte{0x06, 0x10, 0xed, 0xfe, 0x33, 0x44}
+	client := &fakeRawClient{respPayload: respPayload}
+	invoker := NewRawInvoker(map[string]Client{
+		"RPCRawExplicit": client,
+	})
+
+	resp, err := invoker.InvokeRawMethod(
+		context.Background(),
+		&metadata.RpcMetadata{},
+		"RPCRawExplicit",
+		"/tg.RPCRawExplicit/raw.explicit",
+		reqPayload)
+	if err != nil {
+		t.Fatalf("InvokeRawMethod() error = %v", err)
+	}
+
+	if client.method != "/tg.RPCRawExplicit/raw.explicit" {
+		t.Fatalf("method = %q, want %q", client.method, "/tg.RPCRawExplicit/raw.explicit")
+	}
+	if string(client.reqPayload) != string(reqPayload) {
+		t.Fatalf("request payload = %x, want %x", client.reqPayload, reqPayload)
+	}
+	if string(resp.Payload) != string(respPayload) {
+		t.Fatalf("response payload = %x, want %x", resp.Payload, respPayload)
+	}
+}
+
 func TestRawInvokerInvokeRawRejectsUnknownConstructor(t *testing.T) {
 	invoker := NewRawInvoker(nil)
 
