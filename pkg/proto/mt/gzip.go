@@ -9,6 +9,7 @@ import (
 	"sync/atomic"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 
 	"github.com/go-faster/errors"
 	"github.com/klauspost/compress/gzip"
@@ -88,12 +89,13 @@ func newCompressedReader(buf []byte) (io.ReadCloser, error) {
 	return zr, nil
 }
 
-// GZIP represents a Packed Object.
+// TLGzipPacked represents a Packed Object.
 //
 // Used to replace any other object (or rather, a serialization thereof)
 // with its archived (gzipped) representation.
-type GZIP struct {
-	Data []byte
+type TLGzipPacked struct {
+	PackedData []byte
+	Obj        iface.TLObject
 }
 
 var (
@@ -103,9 +105,17 @@ var (
 	}}
 )
 
-// Encode implements bin.Encoder.
-func (g GZIP) Encode(b *bin.Encoder) (rErr error) {
+func (g *TLGzipPacked) ClazzName() string {
+	return "gzip_packed"
+}
+
+func (g *TLGzipPacked) Encode(b *bin.Encoder, layer int32) (rErr error) {
+	_ = layer
+
 	b.PutClazzID(ClazzID_gzip_packed)
+	if len(g.PackedData) == 0 {
+		return fmt.Errorf("unable to encode gzip_packed: field packed_data is empty")
+	}
 
 	// Writing compressed data to buf.
 	buf := gzipBufPool.Get().(*bytes.Buffer)
@@ -120,11 +130,11 @@ func (g GZIP) Encode(b *bin.Encoder) (rErr error) {
 		}
 		gzipRWPool.PutWriter(w)
 	}()
-	if _, err := w.Write(g.Data); err != nil {
-		return errors.Wrap(err, "compress")
+	if _, err := w.Write(g.PackedData); err != nil {
+		return fmt.Errorf("unable to encode gzip_packed: compress packed_data: %w", err)
 	}
 	if err := w.Close(); err != nil {
-		return errors.Wrap(err, "close")
+		return fmt.Errorf("unable to encode gzip_packed: close gzip writer: %w", err)
 	}
 
 	// Writing compressed data as bytes.
@@ -148,7 +158,7 @@ func (c *countReader) Read(p []byte) (n int, err error) {
 	return n, err
 }
 
-// DecompressionBombErr means that GZIP decode detected decompression bomb
+// DecompressionBombErr means that gzip_packed decode detected decompression bomb
 // which decompressed payload is significantly higher than initial compressed
 // size and stopped decompression to prevent OOM.
 type DecompressionBombErr struct {
@@ -162,19 +172,15 @@ func (d *DecompressionBombErr) Error() string {
 	)
 }
 
-// Decode implements bin.Decoder.
-func (g *GZIP) Decode(b *bin.Decoder) (rErr error) {
-	if err := b.ConsumeClazzID(ClazzID_gzip_packed); err != nil {
-		return err
-	}
+func (g *TLGzipPacked) Decode(b *bin.Decoder) (rErr error) {
 	buf, err := b.Bytes()
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode gzip_packed: field packed_data: %w", err)
 	}
 
 	r, err := newCompressedReader(buf)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode gzip_packed: create decompressor: %w", err)
 	}
 	defer func() {
 		if closeErr := r.Close(); closeErr != nil {
@@ -188,15 +194,20 @@ func (g *GZIP) Decode(b *bin.Decoder) (rErr error) {
 	reader := &countReader{
 		reader: io.LimitReader(r, maxUncompressedSize),
 	}
-	if g.Data, err = io.ReadAll(reader); err != nil {
-		return errors.Wrap(err, "decompress")
+	if g.PackedData, err = io.ReadAll(reader); err != nil {
+		return fmt.Errorf("unable to decode gzip_packed: decompress packed_data: %w", err)
 	}
 	if reader.Total() >= maxUncompressedSize {
 		// Read limit reached, possible decompression bomb detected.
-		return errors.Wrap(&DecompressionBombErr{
+		return fmt.Errorf("unable to decode gzip_packed: decompress packed_data: %w", &DecompressionBombErr{
 			Compressed:   maxUncompressedSize,
 			Decompressed: int(reader.Total()),
-		}, "decompress")
+		})
+	}
+
+	g.Obj, err = iface.DecodeObject(bin.NewDecoder(g.PackedData))
+	if err != nil {
+		return fmt.Errorf("unable to decode gzip_packed: field object: %w", err)
 	}
 
 	return nil

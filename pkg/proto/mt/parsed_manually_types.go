@@ -16,12 +16,8 @@
 package mt
 
 import (
-	"bytes"
-	"compress/gzip"
-	"compress/zlib"
 	"encoding/binary"
 	"fmt"
-	"io"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -278,92 +274,6 @@ func (m *TLMsgCopy) Decode(d *bin.Decoder) error {
 		return fmt.Errorf("unable to decode msg_copy: field orig_message: %w", err)
 	}
 	m.OrigMessage = message2
-
-	return nil
-}
-
-// TLGzipPacked
-// gzip_packed#3072cfa1 packed_data:string = Object; // parsed manually
-type TLGzipPacked struct {
-	PackedData []byte
-	Obj        iface.TLObject
-}
-
-func (m *TLGzipPacked) ClazzName() string {
-	return "gzip_packed"
-}
-
-func (m *TLGzipPacked) Encode(x *bin.Encoder, layer int32) error {
-	_ = layer
-
-	if len(m.PackedData) == 0 {
-		return fmt.Errorf("unable to encode gzip_packed: field packed_data is empty")
-	}
-
-	var (
-		err error
-		b   = new(bytes.Buffer)
-	)
-	gz := gzip.NewWriter(b)
-	_, err = gz.Write(m.PackedData)
-	if err == nil {
-		err = gz.Flush()
-	}
-	clErr := gz.Close()
-
-	if err != nil {
-		return fmt.Errorf("unable to encode gzip_packed: compress packed_data: %w", err)
-	}
-	if clErr != nil {
-		return fmt.Errorf("unable to encode gzip_packed: close gzip writer: %w", clErr)
-	}
-
-	x.PutClazzID(ClazzID_gzip_packed)
-	x.PutBytes(b.Bytes())
-
-	return nil
-}
-
-func (m *TLGzipPacked) Decode(d *bin.Decoder) error {
-	data, err := d.Bytes()
-	if err != nil {
-		return fmt.Errorf("unable to decode gzip_packed: field packed_data: %w", err)
-	}
-
-	var (
-		gz io.ReadCloser
-		// err error
-	)
-
-	gz, err = gzip.NewReader(bytes.NewBuffer(data))
-	if err != nil {
-		gz, err = zlib.NewReader(bytes.NewBuffer(data))
-		if err != nil {
-			return fmt.Errorf("unable to decode gzip_packed: create decompressor: %w", err)
-		}
-	}
-
-	var (
-		buf bytes.Buffer
-	)
-
-	_, err = io.Copy(&buf, gz)
-	clErr := gz.Close()
-
-	if err != nil {
-		return fmt.Errorf("unable to decode gzip_packed: decompress packed_data: %w", err)
-	}
-	if clErr != nil {
-		return fmt.Errorf("unable to decode gzip_packed: close decompressor: %w", clErr)
-	}
-
-	m.PackedData = buf.Bytes()
-
-	d2 := bin.NewDecoder(m.PackedData)
-	m.Obj, err = iface.DecodeObject(d2)
-	if err != nil {
-		return fmt.Errorf("unable to decode gzip_packed: field object: %w", err)
-	}
 
 	return nil
 }
