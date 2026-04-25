@@ -34,7 +34,7 @@ func TestTLReqPqDecodePropagatesClazzIDReadError(t *testing.T) {
 }
 
 func TestGeneratedMTServiceUsesSwitchAndNoIgnoredClazzIDError(t *testing.T) {
-	data, err := os.ReadFile("schema.tl.mt_service.pb.go")
+	data, err := os.ReadFile("schema.tl.mt_service_gen.go")
 	if err != nil {
 		t.Fatalf("read generated file: %v", err)
 	}
@@ -53,8 +53,8 @@ func TestGeneratedMTServiceUsesSwitchAndNoIgnoredClazzIDError(t *testing.T) {
 
 func TestGeneratedMTCodeDoesNotOverwriteDecodeErrors(t *testing.T) {
 	files := []string{
-		"schema.tl.mt.pb.go",
-		"schema.tl.mt_service.pb.go",
+		"schema.tl.mt_gen.go",
+		"schema.tl.mt_service_gen.go",
 	}
 	re := regexp.MustCompile(`err = [^\n]+\n\s*err = `)
 
