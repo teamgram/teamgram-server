@@ -2143,23 +2143,24 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field force: %w", err)
 		}
 
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err3)
 		}
-		v3 := make([]tg.PeerUtilClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = tg.DecodePeerUtilClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]tg.PeerUtilClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := tg.DecodePeerUtilClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode dialog_reorderPinnedSavedDialogs#0xd85ccbd2: field order: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Order = v3
 

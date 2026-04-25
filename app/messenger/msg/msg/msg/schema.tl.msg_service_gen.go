@@ -172,23 +172,24 @@ func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field peer_id: %w", err)
 		}
-		c5, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err2)
-		}
-		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: invalid vector constructor %x", c5)
-		}
-		l5, err3 := d.Int()
+		l5, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3)
 		}
-		v5 := make([]ContentMessageClazz, l5)
-		for i := 0; i < l5; i++ {
-			v5[i], err3 = DecodeContentMessageClazz(d)
+		if l5 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		}
+		prealloc5 := int(l5)
+		if prealloc5 > bin.PreallocateLimit {
+			prealloc5 = bin.PreallocateLimit
+		}
+		v5 := make([]ContentMessageClazz, 0, prealloc5)
+		for i := int32(0); i < l5; i++ {
+			vv5, err3 := DecodeContentMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3)
 			}
+			v5 = append(v5, vv5)
 		}
 		m.Id = v5
 
@@ -260,23 +261,24 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field peer_id: %w", err)
 		}
-		c5, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err2)
-		}
-		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: invalid vector constructor %x", c5)
-		}
-		l5, err3 := d.Int()
+		l5, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err3)
 		}
-		v5 := make([]OutboxMessageClazz, l5)
-		for i := 0; i < l5; i++ {
-			v5[i], err3 = DecodeOutboxMessageClazz(d)
+		if l5 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		}
+		prealloc5 := int(l5)
+		if prealloc5 > bin.PreallocateLimit {
+			prealloc5 = bin.PreallocateLimit
+		}
+		v5 := make([]OutboxMessageClazz, 0, prealloc5)
+		for i := int32(0); i < l5; i++ {
+			vv5, err3 := DecodeOutboxMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err3)
 			}
+			v5 = append(v5, vv5)
 		}
 		m.Message = v5
 

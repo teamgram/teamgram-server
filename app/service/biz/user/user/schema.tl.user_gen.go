@@ -667,43 +667,45 @@ func (m *TLUserImportedContacts) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x4adf7bc0:
-		c0, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", err2)
-		}
-		if c0 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: invalid vector constructor %x", c0)
-		}
-		l0, err3 := d.Int()
+		l0, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", err3)
 		}
-		v0 := make([]tg.ImportedContactClazz, l0)
-		for i := 0; i < l0; i++ {
-			v0[i], err3 = tg.DecodeImportedContactClazz(d)
+		if l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l0)})
+		}
+		prealloc0 := int(l0)
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]tg.ImportedContactClazz, 0, prealloc0)
+		for i := int32(0); i < l0; i++ {
+			vv0, err3 := tg.DecodeImportedContactClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field imported: %w", err3)
 			}
+			v0 = append(v0, vv0)
 		}
 		m.Imported = v0
 
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err3)
 		}
-		v1 := make([]tg.PopularContactClazz, l1)
-		for i := 0; i < l1; i++ {
-			v1[i], err3 = tg.DecodePopularContactClazz(d)
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.PopularContactClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodePopularContactClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field popular_invites: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.PopularInvites = v1
 
@@ -712,23 +714,24 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field retry_contacts: %w", err)
 		}
 
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", err3)
 		}
-		v3 := make([]tg.UserClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = tg.DecodeUserClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]tg.UserClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := tg.DecodeUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode userImportedContacts#0x4adf7bc0: field users: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Users = v3
 
@@ -1614,23 +1617,24 @@ func (m *TLUsersDataFound) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field count: %w", err)
 		}
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", err3)
 		}
-		v1 := make([]tg.UserDataClazz, l1)
-		for i := 0; i < l1; i++ {
-			v1[i], err3 = tg.DecodeUserDataClazz(d)
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.UserDataClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeUserDataClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode usersDataFound#0x3fa3dbc7: field users: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Users = v1
 

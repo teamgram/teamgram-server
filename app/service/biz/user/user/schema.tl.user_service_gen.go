@@ -603,23 +603,24 @@ func (m *TLUserGetNotifySettingsList) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field user_id: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field peers: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field peers: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field peers: %w", err3)
 		}
-		v2 := make([]tg.PeerUtilClazz, l2)
-		for i := 0; i < l2; i++ {
-			v2[i], err3 = tg.DecodePeerUtilClazz(d)
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]tg.PeerUtilClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := tg.DecodePeerUtilClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode user_getNotifySettingsList#0xe465159c: field peers: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Peers = v2
 
@@ -997,23 +998,24 @@ func (m *TLUserSetPrivacy) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field key_type: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field rules: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field rules: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field rules: %w", err3)
 		}
-		v3 := make([]tg.PrivacyRuleClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = tg.DecodePrivacyRuleClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]tg.PrivacyRuleClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := tg.DecodePrivacyRuleClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode user_setPrivacy#0x8855ad8f: field rules: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Rules = v3
 
@@ -2480,23 +2482,24 @@ func (m *TLUserImportContacts) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field user_id: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field contacts: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field contacts: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field contacts: %w", err3)
 		}
-		v2 := make([]tg.InputContactClazz, l2)
-		for i := 0; i < l2; i++ {
-			v2[i], err3 = tg.DecodeInputContactClazz(d)
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field contacts: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]tg.InputContactClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := tg.DecodeInputContactClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode user_importContacts#0x9a00f792: field contacts: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Contacts = v2
 
@@ -2974,23 +2977,24 @@ func (m *TLUserSetBotCommands) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field bot_id: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field commands: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field commands: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field commands: %w", err3)
 		}
-		v3 := make([]tg.BotCommandClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = tg.DecodeBotCommandClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field commands: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]tg.BotCommandClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := tg.DecodeBotCommandClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode user_setBotCommands#0x753ba916: field commands: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Commands = v3
 

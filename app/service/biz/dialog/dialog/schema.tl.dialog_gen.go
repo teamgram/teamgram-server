@@ -991,23 +991,24 @@ func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field count: %w", err)
 		}
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", err3)
 		}
-		v1 := make([]tg.SavedDialogClazz, l1)
-		for i := 0; i < l1; i++ {
-			v1[i], err3 = tg.DecodeSavedDialogClazz(d)
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.SavedDialogClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeSavedDialogClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode savedDialogList#0x778fe85a: field dialogs: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Dialogs = v1
 

@@ -113,23 +113,24 @@ func (m *TLMediaUploadPhotoFile) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 0)) != 0 {
-			c4, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err2)
-			}
-			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: invalid vector constructor %x", c4)
-			}
-			l4, err3 := d.Int()
+			l4, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err3)
 			}
-			v4 := make([]tg.InputDocumentClazz, l4)
-			for i := 0; i < l4; i++ {
-				v4[i], err3 = tg.DecodeInputDocumentClazz(d)
+			if l4 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+			}
+			prealloc4 := int(l4)
+			if prealloc4 > bin.PreallocateLimit {
+				prealloc4 = bin.PreallocateLimit
+			}
+			v4 := make([]tg.InputDocumentClazz, 0, prealloc4)
+			for i := int32(0); i < l4; i++ {
+				vv4, err3 := tg.DecodeInputDocumentClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode media_uploadPhotoFile#0x3c2b0b17: field stickers: %w", err3)
 				}
+				v4 = append(v4, vv4)
 			}
 			m.Stickers = v4
 		}

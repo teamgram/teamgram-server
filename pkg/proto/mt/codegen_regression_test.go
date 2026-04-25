@@ -23,6 +23,7 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
 func TestTLReqPqDecodePropagatesClazzIDReadError(t *testing.T) {
@@ -78,5 +79,100 @@ func TestValidateRecursesIntoRequiredObjectSlices(t *testing.T) {
 
 	if err := msg.Validate(223); err == nil {
 		t.Fatalf("expected nested validation error, got nil")
+	}
+}
+
+func TestGeneratedMTVectorRoundTrip(t *testing.T) {
+	t.Run("future_salts", func(t *testing.T) {
+		want := &TLFutureSalts{
+			ReqMsgId: 1,
+			Now:      2,
+			Salts: []*TLFutureSalt{
+				{ValidSince: 3, ValidUntil: 4, Salt: 5},
+			},
+		}
+
+		data, err := iface.EncodeObject(want, 0)
+		if err != nil {
+			t.Fatalf("encode error: %v", err)
+		}
+
+		gotObj, err := iface.DecodeObject(bin.NewDecoder(data))
+		if err != nil {
+			t.Fatalf("decode error: %v", err)
+		}
+
+		got, ok := gotObj.(*TLFutureSalts)
+		if !ok {
+			t.Fatalf("decoded object = %T, want *TLFutureSalts", gotObj)
+		}
+		if got.ReqMsgId != want.ReqMsgId || got.Now != want.Now {
+			t.Fatalf("decoded header = (%d,%d), want (%d,%d)", got.ReqMsgId, got.Now, want.ReqMsgId, want.Now)
+		}
+		if len(got.Salts) != 1 {
+			t.Fatalf("decoded salts len = %d, want 1", len(got.Salts))
+		}
+		if got.Salts[0].ValidSince != want.Salts[0].ValidSince ||
+			got.Salts[0].ValidUntil != want.Salts[0].ValidUntil ||
+			got.Salts[0].Salt != want.Salts[0].Salt {
+			t.Fatalf("decoded salt fields = (%d,%d,%d), want (%d,%d,%d)",
+				got.Salts[0].ValidSince, got.Salts[0].ValidUntil, got.Salts[0].Salt,
+				want.Salts[0].ValidSince, want.Salts[0].ValidUntil, want.Salts[0].Salt)
+		}
+	})
+
+	t.Run("tls_client_hello", func(t *testing.T) {
+		want := &TLTlsClientHello{
+			Blocks: []TlsBlockClazz{
+				&TLTlsBlockRandom{Length: 8},
+				&TLTlsBlockDomain{},
+			},
+		}
+
+		data, err := iface.EncodeObject(want, 0)
+		if err != nil {
+			t.Fatalf("encode error: %v", err)
+		}
+
+		gotObj, err := iface.DecodeObject(bin.NewDecoder(data))
+		if err != nil {
+			t.Fatalf("decode error: %v", err)
+		}
+
+		got, ok := gotObj.(*TLTlsClientHello)
+		if !ok {
+			t.Fatalf("decoded object = %T, want *TLTlsClientHello", gotObj)
+		}
+		if len(got.Blocks) != len(want.Blocks) {
+			t.Fatalf("decoded blocks len = %d, want %d", len(got.Blocks), len(want.Blocks))
+		}
+		random, ok := got.Blocks[0].(*TLTlsBlockRandom)
+		if !ok || random.Length != 8 {
+			t.Fatalf("decoded first block = %#v, want *TLTlsBlockRandom{Length:8}", got.Blocks[0])
+		}
+		if _, ok := got.Blocks[1].(*TLTlsBlockDomain); !ok {
+			t.Fatalf("decoded second block = %#v, want *TLTlsBlockDomain", got.Blocks[1])
+		}
+	})
+}
+
+func TestGeneratedMTVectorDecodeRejectsNegativeLength(t *testing.T) {
+	x := bin.NewEncoder()
+	x.PutInt64(1)
+	x.PutInt32(2)
+	x.PutInt32(-1)
+
+	msg := &TLFutureSalts{ClazzID: ClazzID_future_salts}
+	err := msg.Decode(bin.NewDecoder(x.Bytes()))
+	if err == nil {
+		t.Fatal("expected decode error")
+	}
+
+	var invalidLen *bin.InvalidLengthError
+	if !errors.As(err, &invalidLen) {
+		t.Fatalf("expected invalid length error, got %v", err)
+	}
+	if invalidLen.Length != -1 {
+		t.Fatalf("invalid length = %d, want -1", invalidLen.Length)
 	}
 }

@@ -411,23 +411,24 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field peer_user_id: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err3)
 		}
-		v3 := make([]InboxMessageIdClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = DecodeInboxMessageIdClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InboxMessageIdClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := DecodeInboxMessageIdClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_readUserMediaUnreadToInbox#0x15c1034b: field id: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Id = v3
 
@@ -487,23 +488,24 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field peer_chat_id: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err3)
 		}
-		v3 := make([]InboxMessageIdClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = DecodeInboxMessageIdClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InboxMessageIdClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := DecodeInboxMessageIdClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_readChatMediaUnreadToInbox#0x55415dd4: field id: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Id = v3
 
@@ -890,65 +892,68 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field peer_id: %w", err)
 		}
-		c8, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err2)
-		}
-		if c8 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: invalid vector constructor %x", c8)
-		}
-		l8, err3 := d.Int()
+		l8, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err3)
 		}
-		v8 := make([]tg.MessageBoxClazz, l8)
-		for i := 0; i < l8; i++ {
-			v8[i], err3 = tg.DecodeMessageBoxClazz(d)
+		if l8 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+		}
+		prealloc8 := int(l8)
+		if prealloc8 > bin.PreallocateLimit {
+			prealloc8 = bin.PreallocateLimit
+		}
+		v8 := make([]tg.MessageBoxClazz, 0, prealloc8)
+		for i := int32(0); i < l8; i++ {
+			vv8, err3 := tg.DecodeMessageBoxClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field box_list: %w", err3)
 			}
+			v8 = append(v8, vv8)
 		}
 		m.BoxList = v8
 
 		if (flags & (1 << 1)) != 0 {
-			c9, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err2)
-			}
-			if c9 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: invalid vector constructor %x", c9)
-			}
-			l9, err3 := d.Int()
+			l9, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err3)
 			}
-			v9 := make([]tg.UserClazz, l9)
-			for i := 0; i < l9; i++ {
-				v9[i], err3 = tg.DecodeUserClazz(d)
+			if l9 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+			}
+			prealloc9 := int(l9)
+			if prealloc9 > bin.PreallocateLimit {
+				prealloc9 = bin.PreallocateLimit
+			}
+			v9 := make([]tg.UserClazz, 0, prealloc9)
+			for i := int32(0); i < l9; i++ {
+				vv9, err3 := tg.DecodeUserClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field users: %w", err3)
 				}
+				v9 = append(v9, vv9)
 			}
 			m.Users = v9
 		}
 		if (flags & (1 << 2)) != 0 {
-			c10, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err2)
-			}
-			if c10 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: invalid vector constructor %x", c10)
-			}
-			l10, err3 := d.Int()
+			l10, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err3)
 			}
-			v10 := make([]tg.ChatClazz, l10)
-			for i := 0; i < l10; i++ {
-				v10[i], err3 = tg.DecodeChatClazz(d)
+			if l10 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l10)})
+			}
+			prealloc10 := int(l10)
+			if prealloc10 > bin.PreallocateLimit {
+				prealloc10 = bin.PreallocateLimit
+			}
+			v10 := make([]tg.ChatClazz, 0, prealloc10)
+			for i := int32(0); i < l10; i++ {
+				vv10, err3 := tg.DecodeChatClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode inbox_sendUserMessageToInboxV2#0x5bd7522: field chats: %w", err3)
 				}
+				v10 = append(v10, vv10)
 			}
 			m.Chats = v10
 		}
@@ -1132,44 +1137,46 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
-			c10, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err2)
-			}
-			if c10 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: invalid vector constructor %x", c10)
-			}
-			l10, err3 := d.Int()
+			l10, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err3)
 			}
-			v10 := make([]tg.UserClazz, l10)
-			for i := 0; i < l10; i++ {
-				v10[i], err3 = tg.DecodeUserClazz(d)
+			if l10 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l10)})
+			}
+			prealloc10 := int(l10)
+			if prealloc10 > bin.PreallocateLimit {
+				prealloc10 = bin.PreallocateLimit
+			}
+			v10 := make([]tg.UserClazz, 0, prealloc10)
+			for i := int32(0); i < l10; i++ {
+				vv10, err3 := tg.DecodeUserClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field users: %w", err3)
 				}
+				v10 = append(v10, vv10)
 			}
 			m.Users = v10
 		}
 		if (flags & (1 << 3)) != 0 {
-			c11, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err2)
-			}
-			if c11 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: invalid vector constructor %x", c11)
-			}
-			l11, err3 := d.Int()
+			l11, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err3)
 			}
-			v11 := make([]tg.ChatClazz, l11)
-			for i := 0; i < l11; i++ {
-				v11[i], err3 = tg.DecodeChatClazz(d)
+			if l11 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l11)})
+			}
+			prealloc11 := int(l11)
+			if prealloc11 > bin.PreallocateLimit {
+				prealloc11 = bin.PreallocateLimit
+			}
+			v11 := make([]tg.ChatClazz, 0, prealloc11)
+			for i := int32(0); i < l11; i++ {
+				vv11, err3 := tg.DecodeChatClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode inbox_editMessageToInboxV2#0xdabb9e69: field chats: %w", err3)
 				}
+				v11 = append(v11, vv11)
 			}
 			m.Chats = v11
 		}

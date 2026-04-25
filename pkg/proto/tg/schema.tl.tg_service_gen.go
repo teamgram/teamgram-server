@@ -5127,28 +5127,28 @@ func (m *TLAccountSetPrivacy) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field key: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", err3)
 		}
-		// v2 := make([]*InputPrivacyRule, l2)
-		v2 := make([]InputPrivacyRuleClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputPrivacyRuleClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputPrivacyRule)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputPrivacyRuleClazz(d)
+			vv2, err3 := DecodeInputPrivacyRuleClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_setPrivacy#0xc9f81ce8: field rules: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Rules = v2
 
@@ -6731,28 +6731,28 @@ func (m *TLAccountGetSecureValue) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x73665bc2:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", err3)
 		}
-		// v1 := make([]*SecureValueType, l1)
-		v1 := make([]SecureValueTypeClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]SecureValueTypeClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(SecureValueType)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeSecureValueTypeClazz(d)
+			vv1, err3 := DecodeSecureValueTypeClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_getSecureValue#0x73665bc2: field types: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Types = v1
 
@@ -6926,28 +6926,28 @@ func (m *TLAccountDeleteSecureValue) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xb880bc4b:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", err3)
 		}
-		// v1 := make([]*SecureValueType, l1)
-		v1 := make([]SecureValueTypeClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]SecureValueTypeClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(SecureValueType)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeSecureValueTypeClazz(d)
+			vv1, err3 := DecodeSecureValueTypeClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_deleteSecureValue#0xb880bc4b: field types: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Types = v1
 
@@ -7165,28 +7165,28 @@ func (m *TLAccountAcceptAuthorization) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field public_key: %w", err)
 		}
-		c4, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err2)
-		}
-		if c4 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: invalid vector constructor %x", c4)
-		}
-		l4, err3 := d.Int()
+		l4, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err3)
 		}
-		// v4 := make([]*SecureValueHash, l4)
-		v4 := make([]SecureValueHashClazz, l4)
-		for i := 0; i < l4; i++ {
+		if l4 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+		}
+		prealloc4 := int(l4)
+		if prealloc4 > bin.PreallocateLimit {
+			prealloc4 = bin.PreallocateLimit
+		}
+		v4 := make([]SecureValueHashClazz, 0, prealloc4)
+		for i := int32(0); i < l4; i++ {
 			// vv := new(SecureValueHash)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v4[i] = vv
-			v4[i], err3 = DecodeSecureValueHashClazz(d)
+			vv4, err3 := DecodeSecureValueHashClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_acceptAuthorization#0xf3ed4c73: field value_hashes: %w", err3)
 			}
+			v4 = append(v4, vv4)
 		}
 		m.ValueHashes = v4
 
@@ -9331,28 +9331,28 @@ func (m *TLAccountCreateTheme) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", err3)
 			}
-			// v5 := make([]*InputThemeSettings, l5)
-			v5 := make([]InputThemeSettingsClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]InputThemeSettingsClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(InputThemeSettings)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeInputThemeSettingsClazz(d)
+				vv5, err3 := DecodeInputThemeSettingsClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode account_createTheme#0x652e4400: field settings: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.Settings = v5
 		}
@@ -9548,28 +9548,28 @@ func (m *TLAccountUpdateTheme) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", err3)
 			}
-			// v7 := make([]*InputThemeSettings, l7)
-			v7 := make([]InputThemeSettingsClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]InputThemeSettingsClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(InputThemeSettings)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeInputThemeSettingsClazz(d)
+				vv7, err3 := DecodeInputThemeSettingsClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode account_updateTheme#0x2bf40ccc: field settings: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Settings = v7
 		}
@@ -10331,28 +10331,28 @@ func (m *TLAccountGetMultiWallPapers) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x65ad71dc:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err3)
 		}
-		// v1 := make([]*InputWallPaper, l1)
-		v1 := make([]InputWallPaperClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputWallPaperClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputWallPaper)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputWallPaperClazz(d)
+			vv1, err3 := DecodeInputWallPaperClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode account_getMultiWallPapers#0x65ad71dc: field wallpapers: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Wallpapers = v1
 
@@ -15686,28 +15686,28 @@ func (m *TLUsersGetUsers) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xd91a548:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", err3)
 		}
-		// v1 := make([]*InputUser, l1)
-		v1 := make([]InputUserClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputUserClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputUserClazz(d)
+			vv1, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode users_getUsers#0xd91a548: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -15895,28 +15895,28 @@ func (m *TLUsersSetSecureValueErrors) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field id: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", err3)
 		}
-		// v2 := make([]*SecureValueError, l2)
-		v2 := make([]SecureValueErrorClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]SecureValueErrorClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(SecureValueError)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeSecureValueErrorClazz(d)
+			vv2, err3 := DecodeSecureValueErrorClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode users_setSecureValueErrors#0x90c894b5: field errors: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Errors = v2
 
@@ -15995,28 +15995,28 @@ func (m *TLUsersGetRequirementsToContact) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xd89a83a3:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", err3)
 		}
-		// v1 := make([]*InputUser, l1)
-		v1 := make([]InputUserClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputUserClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputUserClazz(d)
+			vv1, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode users_getRequirementsToContact#0xd89a83a3: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -16226,28 +16226,28 @@ func (m *TLUsersGetSavedMusicByID) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field id: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err3)
 		}
-		// v2 := make([]*InputDocument, l2)
-		v2 := make([]InputDocumentClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputDocumentClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputDocument)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputDocumentClazz(d)
+			vv2, err3 := DecodeInputDocumentClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode users_getSavedMusicByID#0x7573a4e9: field documents: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Documents = v2
 
@@ -16650,28 +16650,28 @@ func (m *TLContactsImportContacts) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x2c800be5:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", err3)
 		}
-		// v1 := make([]*InputContact, l1)
-		v1 := make([]InputContactClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputContactClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputContact)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputContactClazz(d)
+			vv1, err3 := DecodeInputContactClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode contacts_importContacts#0x2c800be5: field contacts: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Contacts = v1
 
@@ -16750,28 +16750,28 @@ func (m *TLContactsDeleteContacts) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x96a0e00:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", err3)
 		}
-		// v1 := make([]*InputUser, l1)
-		v1 := make([]InputUserClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputUserClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputUserClazz(d)
+			vv1, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode contacts_deleteContacts#0x96a0e00: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -18773,28 +18773,28 @@ func (m *TLContactsSetBlocked) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 0)) != 0 {
 			m.MyStoriesFrom = true
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", err3)
 		}
-		// v3 := make([]*InputPeer, l3)
-		v3 := make([]InputPeerClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputPeerClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputPeerClazz(d)
+			vv3, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode contacts_setBlocked#0x94c65c76: field id: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Id = v3
 
@@ -19148,28 +19148,28 @@ func (m *TLMessagesGetMessages) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x63c66506:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err3)
 		}
-		// v1 := make([]*InputMessage, l1)
-		v1 := make([]InputMessageClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputMessageClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputMessage)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputMessageClazz(d)
+			vv1, err3 := DecodeInputMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_getMessages#0x63c66506: field id_VECTORINPUTMESSAGE: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id_VECTORINPUTMESSAGE = v1
 
@@ -19697,28 +19697,28 @@ func (m *TLMessagesSearch) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c6, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", err2)
-			}
-			if c6 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: invalid vector constructor %x", c6)
-			}
-			l6, err3 := d.Int()
+			l6, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", err3)
 			}
-			// v6 := make([]*Reaction, l6)
-			v6 := make([]ReactionClazz, l6)
-			for i := 0; i < l6; i++ {
+			if l6 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l6)})
+			}
+			prealloc6 := int(l6)
+			if prealloc6 > bin.PreallocateLimit {
+				prealloc6 = bin.PreallocateLimit
+			}
+			v6 := make([]ReactionClazz, 0, prealloc6)
+			for i := int32(0); i < l6; i++ {
 				// vv := new(Reaction)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v6[i] = vv
-				v6[i], err3 = DecodeReactionClazz(d)
+				vv6, err3 := DecodeReactionClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_search#0x29ee847a: field saved_reaction: %w", err3)
 				}
+				v6 = append(v6, vv6)
 			}
 			m.SavedReaction = v6
 		}
@@ -20677,28 +20677,28 @@ func (m *TLMessagesSendMessage) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c15, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", err2)
-			}
-			if c15 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: invalid vector constructor %x", c15)
-			}
-			l15, err3 := d.Int()
+			l15, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", err3)
 			}
-			// v15 := make([]*MessageEntity, l15)
-			v15 := make([]MessageEntityClazz, l15)
-			for i := 0; i < l15; i++ {
+			if l15 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l15)})
+			}
+			prealloc15 := int(l15)
+			if prealloc15 > bin.PreallocateLimit {
+				prealloc15 = bin.PreallocateLimit
+			}
+			v15 := make([]MessageEntityClazz, 0, prealloc15)
+			for i := int32(0); i < l15; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v15[i] = vv
-				v15[i], err3 = DecodeMessageEntityClazz(d)
+				vv15, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_sendMessage#0x545cd15a: field entities: %w", err3)
 				}
+				v15 = append(v15, vv15)
 			}
 			m.Entities = v15
 		}
@@ -21102,28 +21102,28 @@ func (m *TLMessagesSendMedia) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c15, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", err2)
-			}
-			if c15 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: invalid vector constructor %x", c15)
-			}
-			l15, err3 := d.Int()
+			l15, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", err3)
 			}
-			// v15 := make([]*MessageEntity, l15)
-			v15 := make([]MessageEntityClazz, l15)
-			for i := 0; i < l15; i++ {
+			if l15 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l15)})
+			}
+			prealloc15 := int(l15)
+			if prealloc15 > bin.PreallocateLimit {
+				prealloc15 = bin.PreallocateLimit
+			}
+			v15 := make([]MessageEntityClazz, 0, prealloc15)
+			for i := int32(0); i < l15; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v15[i] = vv
-				v15[i], err3 = DecodeMessageEntityClazz(d)
+				vv15, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_sendMedia#0x330e77f: field entities: %w", err3)
 				}
+				v15 = append(v15, vv15)
 			}
 			m.Entities = v15
 		}
@@ -22543,28 +22543,28 @@ func (m *TLMessagesCreateChat) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_createChat: field flags: %w", err)
 		}
 		_ = flags
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", err3)
 		}
-		// v2 := make([]*InputUser, l2)
-		v2 := make([]InputUserClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputUserClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputUserClazz(d)
+			vv2, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_createChat#0x92ceddd4: field users: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Users = v2
 
@@ -24066,28 +24066,28 @@ func (m *TLMessagesGetWebPagePreview) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field message: %w", err)
 		}
 		if (flags & (1 << 3)) != 0 {
-			c3, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err2)
-			}
-			if c3 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: invalid vector constructor %x", c3)
-			}
-			l3, err3 := d.Int()
+			l3, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err3)
 			}
-			// v3 := make([]*MessageEntity, l3)
-			v3 := make([]MessageEntityClazz, l3)
-			for i := 0; i < l3; i++ {
+			if l3 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+			}
+			prealloc3 := int(l3)
+			if prealloc3 > bin.PreallocateLimit {
+				prealloc3 = bin.PreallocateLimit
+			}
+			v3 := make([]MessageEntityClazz, 0, prealloc3)
+			for i := int32(0); i < l3; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v3[i] = vv
-				v3[i], err3 = DecodeMessageEntityClazz(d)
+				vv3, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_getWebPagePreview#0x570d6f6f: field entities: %w", err3)
 				}
+				v3 = append(v3, vv3)
 			}
 			m.Entities = v3
 		}
@@ -26127,28 +26127,28 @@ func (m *TLMessagesSetInlineBotResults) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field query_id: %w", err)
 		}
-		c5, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", err2)
-		}
-		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: invalid vector constructor %x", c5)
-		}
-		l5, err3 := d.Int()
+		l5, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", err3)
 		}
-		// v5 := make([]*InputBotInlineResult, l5)
-		v5 := make([]InputBotInlineResultClazz, l5)
-		for i := 0; i < l5; i++ {
+		if l5 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		}
+		prealloc5 := int(l5)
+		if prealloc5 > bin.PreallocateLimit {
+			prealloc5 = bin.PreallocateLimit
+		}
+		v5 := make([]InputBotInlineResultClazz, 0, prealloc5)
+		for i := int32(0); i < l5; i++ {
 			// vv := new(InputBotInlineResult)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v5[i] = vv
-			v5[i], err3 = DecodeInputBotInlineResultClazz(d)
+			vv5, err3 := DecodeInputBotInlineResultClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_setInlineBotResults#0xbb12a419: field results: %w", err3)
 			}
+			v5 = append(v5, vv5)
 		}
 		m.Results = v5
 
@@ -26783,28 +26783,28 @@ func (m *TLMessagesEditMessage) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c9, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", err2)
-			}
-			if c9 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: invalid vector constructor %x", c9)
-			}
-			l9, err3 := d.Int()
+			l9, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", err3)
 			}
-			// v9 := make([]*MessageEntity, l9)
-			v9 := make([]MessageEntityClazz, l9)
-			for i := 0; i < l9; i++ {
+			if l9 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+			}
+			prealloc9 := int(l9)
+			if prealloc9 > bin.PreallocateLimit {
+				prealloc9 = bin.PreallocateLimit
+			}
+			v9 := make([]MessageEntityClazz, 0, prealloc9)
+			for i := int32(0); i < l9; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v9[i] = vv
-				v9[i], err3 = DecodeMessageEntityClazz(d)
+				vv9, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_editMessage#0x51e842e1: field entities: %w", err3)
 				}
+				v9 = append(v9, vv9)
 			}
 			m.Entities = v9
 		}
@@ -27028,28 +27028,28 @@ func (m *TLMessagesEditInlineBotMessage) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c8, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", err2)
-			}
-			if c8 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: invalid vector constructor %x", c8)
-			}
-			l8, err3 := d.Int()
+			l8, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", err3)
 			}
-			// v8 := make([]*MessageEntity, l8)
-			v8 := make([]MessageEntityClazz, l8)
-			for i := 0; i < l8; i++ {
+			if l8 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+			}
+			prealloc8 := int(l8)
+			if prealloc8 > bin.PreallocateLimit {
+				prealloc8 = bin.PreallocateLimit
+			}
+			v8 := make([]MessageEntityClazz, 0, prealloc8)
+			for i := int32(0); i < l8; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v8[i] = vv
-				v8[i], err3 = DecodeMessageEntityClazz(d)
+				vv8, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_editInlineBotMessage#0x83557dba: field entities: %w", err3)
 				}
+				v8 = append(v8, vv8)
 			}
 			m.Entities = v8
 		}
@@ -27436,28 +27436,28 @@ func (m *TLMessagesGetPeerDialogs) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xe470bcfd:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err3)
 		}
-		// v1 := make([]*InputDialogPeer, l1)
-		v1 := make([]InputDialogPeerClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputDialogPeerClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputDialogPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputDialogPeerClazz(d)
+			vv1, err3 := DecodeInputDialogPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_getPeerDialogs#0xe470bcfd: field peers: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Peers = v1
 
@@ -27667,28 +27667,28 @@ func (m *TLMessagesSaveDraft) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field message: %w", err)
 		}
 		if (flags & (1 << 3)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", err3)
 			}
-			// v7 := make([]*MessageEntity, l7)
-			v7 := make([]MessageEntityClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MessageEntityClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMessageEntityClazz(d)
+				vv7, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_saveDraft#0x54ae308e: field entities: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Entities = v7
 		}
@@ -29461,28 +29461,28 @@ func (m *TLMessagesReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field folder_id: %w", err)
 		}
-		c4, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err2)
-		}
-		if c4 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: invalid vector constructor %x", c4)
-		}
-		l4, err3 := d.Int()
+		l4, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err3)
 		}
-		// v4 := make([]*InputDialogPeer, l4)
-		v4 := make([]InputDialogPeerClazz, l4)
-		for i := 0; i < l4; i++ {
+		if l4 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+		}
+		prealloc4 := int(l4)
+		if prealloc4 > bin.PreallocateLimit {
+			prealloc4 = bin.PreallocateLimit
+		}
+		v4 := make([]InputDialogPeerClazz, 0, prealloc4)
+		for i := int32(0); i < l4; i++ {
 			// vv := new(InputDialogPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v4[i] = vv
-			v4[i], err3 = DecodeInputDialogPeerClazz(d)
+			vv4, err3 := DecodeInputDialogPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_reorderPinnedDialogs#0x3b1adf37: field order: %w", err3)
 			}
+			v4 = append(v4, vv4)
 		}
 		m.Order = v4
 
@@ -29685,28 +29685,28 @@ func (m *TLMessagesSetBotShippingResults) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c4, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err2)
-			}
-			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: invalid vector constructor %x", c4)
-			}
-			l4, err3 := d.Int()
+			l4, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err3)
 			}
-			// v4 := make([]*ShippingOption, l4)
-			v4 := make([]ShippingOptionClazz, l4)
-			for i := 0; i < l4; i++ {
+			if l4 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+			}
+			prealloc4 := int(l4)
+			if prealloc4 > bin.PreallocateLimit {
+				prealloc4 = bin.PreallocateLimit
+			}
+			v4 := make([]ShippingOptionClazz, 0, prealloc4)
+			for i := int32(0); i < l4; i++ {
 				// vv := new(ShippingOption)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v4[i] = vv
-				v4[i], err3 = DecodeShippingOptionClazz(d)
+				vv4, err3 := DecodeShippingOptionClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_setBotShippingResults#0xe5f672fa: field shipping_options: %w", err3)
 				}
+				v4 = append(v4, vv4)
 			}
 			m.ShippingOptions = v4
 		}
@@ -30902,28 +30902,28 @@ func (m *TLMessagesSendMultiMedia) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field reply_to: %w", err)
 			}
 		}
-		c11, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err2)
-		}
-		if c11 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: invalid vector constructor %x", c11)
-		}
-		l11, err3 := d.Int()
+		l11, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err3)
 		}
-		// v11 := make([]*InputSingleMedia, l11)
-		v11 := make([]InputSingleMediaClazz, l11)
-		for i := 0; i < l11; i++ {
+		if l11 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l11)})
+		}
+		prealloc11 := int(l11)
+		if prealloc11 > bin.PreallocateLimit {
+			prealloc11 = bin.PreallocateLimit
+		}
+		v11 := make([]InputSingleMediaClazz, 0, prealloc11)
+		for i := int32(0); i < l11; i++ {
 			// vv := new(InputSingleMedia)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v11[i] = vv
-			v11[i], err3 = DecodeInputSingleMediaClazz(d)
+			vv11, err3 := DecodeInputSingleMediaClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendMultiMedia#0x1bf89d74: field multi_media: %w", err3)
 			}
+			v11 = append(v11, vv11)
 		}
 		m.MultiMedia = v11
 
@@ -32704,28 +32704,28 @@ func (m *TLMessagesGetSearchCounters) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field top_msg_id: %w", err)
 			}
 		}
-		c5, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", err2)
-		}
-		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: invalid vector constructor %x", c5)
-		}
-		l5, err3 := d.Int()
+		l5, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", err3)
 		}
-		// v5 := make([]*MessagesFilter, l5)
-		v5 := make([]MessagesFilterClazz, l5)
-		for i := 0; i < l5; i++ {
+		if l5 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		}
+		prealloc5 := int(l5)
+		if prealloc5 > bin.PreallocateLimit {
+			prealloc5 = bin.PreallocateLimit
+		}
+		v5 := make([]MessagesFilterClazz, 0, prealloc5)
+		for i := int32(0); i < l5; i++ {
 			// vv := new(MessagesFilter)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v5[i] = vv
-			v5[i], err3 = DecodeMessagesFilterClazz(d)
+			vv5, err3 := DecodeMessagesFilterClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_getSearchCounters#0x1bbcf300: field filters: %w", err3)
 			}
+			v5 = append(v5, vv5)
 		}
 		m.Filters = v5
 
@@ -34078,28 +34078,28 @@ func (m *TLMessagesToggleStickerSets) Decode(d *bin.Decoder) (err error) {
 		if (flags & (1 << 2)) != 0 {
 			m.Unarchive = true
 		}
-		c5, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err2)
-		}
-		if c5 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: invalid vector constructor %x", c5)
-		}
-		l5, err3 := d.Int()
+		l5, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err3)
 		}
-		// v5 := make([]*InputStickerSet, l5)
-		v5 := make([]InputStickerSetClazz, l5)
-		for i := 0; i < l5; i++ {
+		if l5 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		}
+		prealloc5 := int(l5)
+		if prealloc5 > bin.PreallocateLimit {
+			prealloc5 = bin.PreallocateLimit
+		}
+		v5 := make([]InputStickerSetClazz, 0, prealloc5)
+		for i := int32(0); i < l5; i++ {
 			// vv := new(InputStickerSet)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v5[i] = vv
-			v5[i], err3 = DecodeInputStickerSetClazz(d)
+			vv5, err3 := DecodeInputStickerSetClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_toggleStickerSets#0xb5052fea: field stickersets: %w", err3)
 			}
+			v5 = append(v5, vv5)
 		}
 		m.Stickersets = v5
 
@@ -37961,28 +37961,28 @@ func (m *TLMessagesSendReaction) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field msg_id: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
-			c6, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", err2)
-			}
-			if c6 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: invalid vector constructor %x", c6)
-			}
-			l6, err3 := d.Int()
+			l6, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", err3)
 			}
-			// v6 := make([]*Reaction, l6)
-			v6 := make([]ReactionClazz, l6)
-			for i := 0; i < l6; i++ {
+			if l6 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l6)})
+			}
+			prealloc6 := int(l6)
+			if prealloc6 > bin.PreallocateLimit {
+				prealloc6 = bin.PreallocateLimit
+			}
+			v6 := make([]ReactionClazz, 0, prealloc6)
+			for i := int32(0); i < l6; i++ {
 				// vv := new(Reaction)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v6[i] = vv
-				v6[i], err3 = DecodeReactionClazz(d)
+				vv6, err3 := DecodeReactionClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_sendReaction#0xd30d78d4: field reaction: %w", err3)
 				}
+				v6 = append(v6, vv6)
 			}
 			m.Reaction = v6
 		}
@@ -38791,28 +38791,28 @@ func (m *TLMessagesTranslateText) Decode(d *bin.Decoder) (err error) {
 			m.Id, err = iface.DecodeInt32List(d)
 		}
 		if (flags & (1 << 1)) != 0 {
-			c4, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err2)
-			}
-			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: invalid vector constructor %x", c4)
-			}
-			l4, err3 := d.Int()
+			l4, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err3)
 			}
-			// v4 := make([]*TextWithEntities, l4)
-			v4 := make([]TextWithEntitiesClazz, l4)
-			for i := 0; i < l4; i++ {
+			if l4 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+			}
+			prealloc4 := int(l4)
+			if prealloc4 > bin.PreallocateLimit {
+				prealloc4 = bin.PreallocateLimit
+			}
+			v4 := make([]TextWithEntitiesClazz, 0, prealloc4)
+			for i := int32(0); i < l4; i++ {
 				// vv := new(TextWithEntities)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v4[i] = vv
-				v4[i], err3 = DecodeTextWithEntitiesClazz(d)
+				vv4, err3 := DecodeTextWithEntitiesClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err3)
 				}
+				v4 = append(v4, vv4)
 			}
 			m.Text = v4
 		}
@@ -38848,28 +38848,28 @@ func (m *TLMessagesTranslateText) Decode(d *bin.Decoder) (err error) {
 			m.Id, err = iface.DecodeInt32List(d)
 		}
 		if (flags & (1 << 1)) != 0 {
-			c4, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err2)
-			}
-			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: invalid vector constructor %x", c4)
-			}
-			l4, err3 := d.Int()
+			l4, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err3)
 			}
-			// v4 := make([]*TextWithEntities, l4)
-			v4 := make([]TextWithEntitiesClazz, l4)
-			for i := 0; i < l4; i++ {
+			if l4 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+			}
+			prealloc4 := int(l4)
+			if prealloc4 > bin.PreallocateLimit {
+				prealloc4 = bin.PreallocateLimit
+			}
+			v4 := make([]TextWithEntitiesClazz, 0, prealloc4)
+			for i := int32(0); i < l4; i++ {
 				// vv := new(TextWithEntities)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v4[i] = vv
-				v4[i], err3 = DecodeTextWithEntitiesClazz(d)
+				vv4, err3 := DecodeTextWithEntitiesClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_translateText#0xa5eec345: field text: %w", err3)
 				}
+				v4 = append(v4, vv4)
 			}
 			m.Text = v4
 		}
@@ -41708,28 +41708,28 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field button_id: %w", err)
 		}
-		c6, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err2)
-		}
-		if c6 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: invalid vector constructor %x", c6)
-		}
-		l6, err3 := d.Int()
+		l6, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err3)
 		}
-		// v6 := make([]*InputPeer, l6)
-		v6 := make([]InputPeerClazz, l6)
-		for i := 0; i < l6; i++ {
+		if l6 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l6)})
+		}
+		prealloc6 := int(l6)
+		if prealloc6 > bin.PreallocateLimit {
+			prealloc6 = bin.PreallocateLimit
+		}
+		v6 := make([]InputPeerClazz, 0, prealloc6)
+		for i := int32(0); i < l6; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v6[i] = vv
-			v6[i], err3 = DecodeInputPeerClazz(d)
+			vv6, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err3)
 			}
+			v6 = append(v6, vv6)
 		}
 		m.RequestedPeers = v6
 
@@ -41752,28 +41752,28 @@ func (m *TLMessagesSendBotRequestedPeer) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field button_id: %w", err)
 		}
-		c6, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err2)
-		}
-		if c6 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: invalid vector constructor %x", c6)
-		}
-		l6, err3 := d.Int()
+		l6, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err3)
 		}
-		// v6 := make([]*InputPeer, l6)
-		v6 := make([]InputPeerClazz, l6)
-		for i := 0; i < l6; i++ {
+		if l6 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l6)})
+		}
+		prealloc6 := int(l6)
+		if prealloc6 > bin.PreallocateLimit {
+			prealloc6 = bin.PreallocateLimit
+		}
+		v6 := make([]InputPeerClazz, 0, prealloc6)
+		for i := int32(0); i < l6; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v6[i] = vv
-			v6[i], err3 = DecodeInputPeerClazz(d)
+			vv6, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_sendBotRequestedPeer#0x6c5cf2a7: field requested_peers: %w", err3)
 			}
+			v6 = append(v6, vv6)
 		}
 		m.RequestedPeers = v6
 
@@ -43579,28 +43579,28 @@ func (m *TLMessagesReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error)
 		if (flags & (1 << 0)) != 0 {
 			m.Force = true
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err3)
 		}
-		// v3 := make([]*InputDialogPeer, l3)
-		v3 := make([]InputDialogPeerClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputDialogPeerClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputDialogPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputDialogPeerClazz(d)
+			vv3, err3 := DecodeInputDialogPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_reorderPinnedSavedDialogs#0x8b716587: field order: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Order = v3
 
@@ -46396,28 +46396,28 @@ func (m *TLMessagesSavePreparedInlineMessage) Decode(d *bin.Decoder) (err error)
 		}
 
 		if (flags & (1 << 0)) != 0 {
-			c4, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err2)
-			}
-			if c4 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: invalid vector constructor %x", c4)
-			}
-			l4, err3 := d.Int()
+			l4, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err3)
 			}
-			// v4 := make([]*InlineQueryPeerType, l4)
-			v4 := make([]InlineQueryPeerTypeClazz, l4)
-			for i := 0; i < l4; i++ {
+			if l4 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+			}
+			prealloc4 := int(l4)
+			if prealloc4 > bin.PreallocateLimit {
+				prealloc4 = bin.PreallocateLimit
+			}
+			v4 := make([]InlineQueryPeerTypeClazz, 0, prealloc4)
+			for i := int32(0); i < l4; i++ {
 				// vv := new(InlineQueryPeerType)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v4[i] = vv
-				v4[i], err3 = DecodeInlineQueryPeerTypeClazz(d)
+				vv4, err3 := DecodeInlineQueryPeerTypeClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode messages_savePreparedInlineMessage#0xf21f7f2f: field peer_types: %w", err3)
 				}
+				v4 = append(v4, vv4)
 			}
 			m.PeerTypes = v4
 		}
@@ -46904,28 +46904,28 @@ func (m *TLMessagesGetSavedDialogsByID) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field parent_peer: %w", err)
 			}
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err3)
 		}
-		// v3 := make([]*InputPeer, l3)
-		v3 := make([]InputPeerClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputPeerClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputPeerClazz(d)
+			vv3, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_getSavedDialogsByID#0x6f6f9c96: field ids: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Ids = v3
 
@@ -47263,28 +47263,28 @@ func (m *TLMessagesAppendTodoList) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field msg_id: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", err3)
 		}
-		// v3 := make([]*TodoItem, l3)
-		v3 := make([]TodoItemClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]TodoItemClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(TodoItem)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeTodoItemClazz(d)
+			vv3, err3 := DecodeTodoItemClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_appendTodoList#0x21a61057: field list: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.List = v3
 
@@ -49456,28 +49456,28 @@ func (m *TLMessagesReportReadMetrics) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field peer: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err3)
 		}
-		// v2 := make([]*InputMessageReadMetric, l2)
-		v2 := make([]InputMessageReadMetricClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputMessageReadMetricClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputMessageReadMetric)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputMessageReadMetricClazz(d)
+			vv2, err3 := DecodeInputMessageReadMetricClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode messages_reportReadMetrics#0x4067c5e6: field metrics: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Metrics = v2
 
@@ -50865,28 +50865,28 @@ func (m *TLPhotosDeletePhotos) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x87cf7f2f:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", err3)
 		}
-		// v1 := make([]*InputPhoto, l1)
-		v1 := make([]InputPhotoClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputPhotoClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputPhoto)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputPhotoClazz(d)
+			vv1, err3 := DecodeInputPhotoClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode photos_deletePhotos#0x87cf7f2f: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -52951,28 +52951,28 @@ func (m *TLHelpSaveAppLog) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x6f02f748:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", err3)
 		}
-		// v1 := make([]*InputAppEvent, l1)
-		v1 := make([]InputAppEventClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputAppEventClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputAppEvent)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputAppEventClazz(d)
+			vv1, err3 := DecodeInputAppEventClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode help_saveAppLog#0x6f02f748: field events: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Events = v1
 
@@ -53313,28 +53313,28 @@ func (m *TLHelpEditUserInfo) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field message: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", err3)
 		}
-		// v3 := make([]*MessageEntity, l3)
-		v3 := make([]MessageEntityClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]MessageEntityClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(MessageEntity)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeMessageEntityClazz(d)
+			vv3, err3 := DecodeMessageEntityClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode help_editUserInfo#0x66b91b70: field entities: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Entities = v3
 
@@ -54404,28 +54404,28 @@ func (m *TLChannelsGetMessages) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field channel: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err3)
 		}
-		// v2 := make([]*InputMessage, l2)
-		v2 := make([]InputMessageClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputMessageClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputMessage)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputMessageClazz(d)
+			vv2, err3 := DecodeInputMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channels_getMessages#0xad8c9a23: field id_VECTORINPUTMESSAGE: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Id_VECTORINPUTMESSAGE = v2
 
@@ -54753,28 +54753,28 @@ func (m *TLChannelsGetChannels) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xa7f6bbb:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", err3)
 		}
-		// v1 := make([]*InputChannel, l1)
-		v1 := make([]InputChannelClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputChannelClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputChannel)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputChannelClazz(d)
+			vv1, err3 := DecodeInputChannelClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channels_getChannels#0xa7f6bbb: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -55980,28 +55980,28 @@ func (m *TLChannelsInviteToChannel) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field channel: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", err3)
 		}
-		// v2 := make([]*InputUser, l2)
-		v2 := make([]InputUserClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputUserClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputUserClazz(d)
+			vv2, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channels_inviteToChannel#0xc9e33d54: field users: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Users = v2
 
@@ -56730,28 +56730,28 @@ func (m *TLChannelsGetAdminLog) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", err3)
 			}
-			// v5 := make([]*InputUser, l5)
-			v5 := make([]InputUserClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]InputUserClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(InputUser)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeInputUserClazz(d)
+				vv5, err3 := DecodeInputUserClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode channels_getAdminLog#0x33ddf480: field admins: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.Admins = v5
 		}
@@ -60786,28 +60786,28 @@ func (m *TLBotsSetBotCommands) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field lang_code: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", err3)
 		}
-		// v3 := make([]*BotCommand, l3)
-		v3 := make([]BotCommandClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]BotCommandClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(BotCommand)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeBotCommandClazz(d)
+			vv3, err3 := DecodeBotCommandClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode bots_setBotCommands#0x517165a: field commands: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Commands = v3
 
@@ -62633,28 +62633,28 @@ func (m *TLBotsDeletePreviewMedia) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field lang_code: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err3)
 		}
-		// v3 := make([]*InputMedia, l3)
-		v3 := make([]InputMediaClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputMediaClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputMedia)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputMediaClazz(d)
+			vv3, err3 := DecodeInputMediaClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode bots_deletePreviewMedia#0x2d0135b3: field media: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Media = v3
 
@@ -62766,28 +62766,28 @@ func (m *TLBotsReorderPreviewMedias) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field lang_code: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err3)
 		}
-		// v3 := make([]*InputMedia, l3)
-		v3 := make([]InputMediaClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputMediaClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputMedia)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputMediaClazz(d)
+			vv3, err3 := DecodeInputMediaClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode bots_reorderPreviewMedias#0xb627f3aa: field order: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Order = v3
 
@@ -66832,28 +66832,28 @@ func (m *TLPaymentsGetStarsTransactionsByID) Decode(d *bin.Decoder) (err error) 
 			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field peer: %w", err)
 		}
 
-		c4, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err2)
-		}
-		if c4 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: invalid vector constructor %x", c4)
-		}
-		l4, err3 := d.Int()
+		l4, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err3)
 		}
-		// v4 := make([]*InputStarsTransaction, l4)
-		v4 := make([]InputStarsTransactionClazz, l4)
-		for i := 0; i < l4; i++ {
+		if l4 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+		}
+		prealloc4 := int(l4)
+		if prealloc4 > bin.PreallocateLimit {
+			prealloc4 = bin.PreallocateLimit
+		}
+		v4 := make([]InputStarsTransactionClazz, 0, prealloc4)
+		for i := int32(0); i < l4; i++ {
 			// vv := new(InputStarsTransaction)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v4[i] = vv
-			v4[i], err3 = DecodeInputStarsTransactionClazz(d)
+			vv4, err3 := DecodeInputStarsTransactionClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_getStarsTransactionsByID#0x2dca16b8: field id: %w", err3)
 			}
+			v4 = append(v4, vv4)
 		}
 		m.Id = v4
 
@@ -69062,28 +69062,28 @@ func (m *TLPaymentsGetSavedStarGift) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xb455a106:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", err3)
 		}
-		// v1 := make([]*InputSavedStarGift, l1)
-		v1 := make([]InputSavedStarGiftClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputSavedStarGiftClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputSavedStarGift)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputSavedStarGiftClazz(d)
+			vv1, err3 := DecodeInputSavedStarGiftClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_getSavedStarGift#0xb455a106: field stargift: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Stargift = v1
 
@@ -69402,28 +69402,28 @@ func (m *TLPaymentsToggleStarGiftsPinnedToTop) Decode(d *bin.Decoder) (err error
 			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field peer: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err3)
 		}
-		// v2 := make([]*InputSavedStarGift, l2)
-		v2 := make([]InputSavedStarGiftClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputSavedStarGiftClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputSavedStarGift)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputSavedStarGiftClazz(d)
+			vv2, err3 := DecodeInputSavedStarGiftClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_toggleStarGiftsPinnedToTop#0x1513e7b0: field stargift: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Stargift = v2
 
@@ -69678,28 +69678,28 @@ func (m *TLPaymentsGetResaleStarGifts) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field gift_id: %w", err)
 		}
 		if (flags & (1 << 3)) != 0 {
-			c8, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err2)
-			}
-			if c8 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: invalid vector constructor %x", c8)
-			}
-			l8, err3 := d.Int()
+			l8, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err3)
 			}
-			// v8 := make([]*StarGiftAttributeId, l8)
-			v8 := make([]StarGiftAttributeIdClazz, l8)
-			for i := 0; i < l8; i++ {
+			if l8 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+			}
+			prealloc8 := int(l8)
+			if prealloc8 > bin.PreallocateLimit {
+				prealloc8 = bin.PreallocateLimit
+			}
+			v8 := make([]StarGiftAttributeIdClazz, 0, prealloc8)
+			for i := int32(0); i < l8; i++ {
 				// vv := new(StarGiftAttributeId)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v8[i] = vv
-				v8[i], err3 = DecodeStarGiftAttributeIdClazz(d)
+				vv8, err3 := DecodeStarGiftAttributeIdClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode payments_getResaleStarGifts#0x7a5fa236: field attributes: %w", err3)
 				}
+				v8 = append(v8, vv8)
 			}
 			m.Attributes = v8
 		}
@@ -69927,28 +69927,28 @@ func (m *TLPaymentsCreateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 		if err != nil {
 			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field title: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err3)
 		}
-		// v3 := make([]*InputSavedStarGift, l3)
-		v3 := make([]InputSavedStarGiftClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputSavedStarGiftClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputSavedStarGift)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputSavedStarGiftClazz(d)
+			vv3, err3 := DecodeInputSavedStarGiftClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_createStarGiftCollection#0x1f4a0e87: field stargift: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Stargift = v3
 
@@ -70122,80 +70122,80 @@ func (m *TLPaymentsUpdateStarGiftCollection) Decode(d *bin.Decoder) (err error) 
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err3)
 			}
-			// v5 := make([]*InputSavedStarGift, l5)
-			v5 := make([]InputSavedStarGiftClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]InputSavedStarGiftClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(InputSavedStarGift)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeInputSavedStarGiftClazz(d)
+				vv5, err3 := DecodeInputSavedStarGiftClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field delete_stargift: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.DeleteStargift = v5
 		}
 		if (flags & (1 << 2)) != 0 {
-			c6, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err2)
-			}
-			if c6 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: invalid vector constructor %x", c6)
-			}
-			l6, err3 := d.Int()
+			l6, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err3)
 			}
-			// v6 := make([]*InputSavedStarGift, l6)
-			v6 := make([]InputSavedStarGiftClazz, l6)
-			for i := 0; i < l6; i++ {
+			if l6 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l6)})
+			}
+			prealloc6 := int(l6)
+			if prealloc6 > bin.PreallocateLimit {
+				prealloc6 = bin.PreallocateLimit
+			}
+			v6 := make([]InputSavedStarGiftClazz, 0, prealloc6)
+			for i := int32(0); i < l6; i++ {
 				// vv := new(InputSavedStarGift)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v6[i] = vv
-				v6[i], err3 = DecodeInputSavedStarGiftClazz(d)
+				vv6, err3 := DecodeInputSavedStarGiftClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field add_stargift: %w", err3)
 				}
+				v6 = append(v6, vv6)
 			}
 			m.AddStargift = v6
 		}
 		if (flags & (1 << 3)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err3)
 			}
-			// v7 := make([]*InputSavedStarGift, l7)
-			v7 := make([]InputSavedStarGiftClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]InputSavedStarGiftClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(InputSavedStarGift)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeInputSavedStarGiftClazz(d)
+				vv7, err3 := DecodeInputSavedStarGiftClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode payments_updateStarGiftCollection#0x4fddbee7: field order: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Order = v7
 		}
@@ -71394,28 +71394,28 @@ func (m *TLPaymentsCraftStarGift) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0xb0f9684f:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", err3)
 		}
-		// v1 := make([]*InputSavedStarGift, l1)
-		v1 := make([]InputSavedStarGiftClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputSavedStarGiftClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputSavedStarGift)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputSavedStarGiftClazz(d)
+			vv1, err3 := DecodeInputSavedStarGiftClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode payments_craftStarGift#0xb0f9684f: field stargift: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Stargift = v1
 
@@ -71611,28 +71611,28 @@ func (m *TLStickersCreateStickerSet) Decode(d *bin.Decoder) (err error) {
 				return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field thumb: %w", err)
 			}
 		}
-		c9, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", err2)
-		}
-		if c9 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: invalid vector constructor %x", c9)
-		}
-		l9, err3 := d.Int()
+		l9, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", err3)
 		}
-		// v9 := make([]*InputStickerSetItem, l9)
-		v9 := make([]InputStickerSetItemClazz, l9)
-		for i := 0; i < l9; i++ {
+		if l9 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+		}
+		prealloc9 := int(l9)
+		if prealloc9 > bin.PreallocateLimit {
+			prealloc9 = bin.PreallocateLimit
+		}
+		v9 := make([]InputStickerSetItemClazz, 0, prealloc9)
+		for i := int32(0); i < l9; i++ {
 			// vv := new(InputStickerSetItem)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v9[i] = vv
-			v9[i], err3 = DecodeInputStickerSetItemClazz(d)
+			vv9, err3 := DecodeInputStickerSetItemClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stickers_createStickerSet#0x9021ab67: field stickers: %w", err3)
 			}
+			v9 = append(v9, vv9)
 		}
 		m.Stickers = v9
 
@@ -74291,28 +74291,28 @@ func (m *TLPhoneInviteToGroupCall) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field call: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", err3)
 		}
-		// v2 := make([]*InputUser, l2)
-		v2 := make([]InputUserClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputUserClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputUser)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputUserClazz(d)
+			vv2, err3 := DecodeInputUserClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode phone_inviteToGroupCall#0x7b393160: field users: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Users = v2
 
@@ -74790,28 +74790,28 @@ func (m *TLPhoneGetGroupParticipants) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field call: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err3)
 		}
-		// v2 := make([]*InputPeer, l2)
-		v2 := make([]InputPeerClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputPeerClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputPeerClazz(d)
+			vv2, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode phone_getGroupParticipants#0xc558d8ab: field ids: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Ids = v2
 
@@ -78503,28 +78503,28 @@ func (m *TLFoldersEditPeerFolders) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x6847d0ab:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err3)
 		}
-		// v1 := make([]*InputFolderPeer, l1)
-		v1 := make([]InputFolderPeerClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputFolderPeerClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputFolderPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputFolderPeerClazz(d)
+			vv1, err3 := DecodeInputFolderPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode folders_editPeerFolders#0x6847d0ab: field folder_peers: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.FolderPeers = v1
 
@@ -79434,28 +79434,28 @@ func (m *TLChatlistsExportChatlistInvite) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field title: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err3)
 		}
-		// v3 := make([]*InputPeer, l3)
-		v3 := make([]InputPeerClazz, l3)
-		for i := 0; i < l3; i++ {
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]InputPeerClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v3[i] = vv
-			v3[i], err3 = DecodeInputPeerClazz(d)
+			vv3, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode chatlists_exportChatlistInvite#0x8472478e: field peers: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Peers = v3
 
@@ -79706,28 +79706,28 @@ func (m *TLChatlistsEditExportedInvite) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 2)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", err3)
 			}
-			// v5 := make([]*InputPeer, l5)
-			v5 := make([]InputPeerClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]InputPeerClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(InputPeer)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeInputPeerClazz(d)
+				vv5, err3 := DecodeInputPeerClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode chatlists_editExportedInvite#0x653db63d: field peers: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.Peers = v5
 		}
@@ -79984,28 +79984,28 @@ func (m *TLChatlistsJoinChatlistInvite) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field slug: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err3)
 		}
-		// v2 := make([]*InputPeer, l2)
-		v2 := make([]InputPeerClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputPeerClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputPeerClazz(d)
+			vv2, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode chatlists_joinChatlistInvite#0xa6b1e39a: field peers: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Peers = v2
 
@@ -80193,28 +80193,28 @@ func (m *TLChatlistsJoinChatlistUpdates) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field chatlist: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err3)
 		}
-		// v2 := make([]*InputPeer, l2)
-		v2 := make([]InputPeerClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputPeerClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputPeerClazz(d)
+			vv2, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode chatlists_joinChatlistUpdates#0xe089f8f5: field peers: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Peers = v2
 
@@ -80489,28 +80489,28 @@ func (m *TLChatlistsLeaveChatlist) Decode(d *bin.Decoder) (err error) {
 			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field chatlist: %w", err)
 		}
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err3)
 		}
-		// v2 := make([]*InputPeer, l2)
-		v2 := make([]InputPeerClazz, l2)
-		for i := 0; i < l2; i++ {
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]InputPeerClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v2[i] = vv
-			v2[i], err3 = DecodeInputPeerClazz(d)
+			vv2, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode chatlists_leaveChatlist#0x74fae13a: field peers: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Peers = v2
 
@@ -81009,28 +81009,28 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 5)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err3)
 			}
-			// v7 := make([]*MediaArea, l7)
-			v7 := make([]MediaAreaClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MediaAreaClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MediaArea)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMediaAreaClazz(d)
+				vv7, err3 := DecodeMediaAreaClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.MediaAreas = v7
 		}
@@ -81043,53 +81043,53 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c9, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err2)
-			}
-			if c9 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: invalid vector constructor %x", c9)
-			}
-			l9, err3 := d.Int()
+			l9, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err3)
 			}
-			// v9 := make([]*MessageEntity, l9)
-			v9 := make([]MessageEntityClazz, l9)
-			for i := 0; i < l9; i++ {
+			if l9 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+			}
+			prealloc9 := int(l9)
+			if prealloc9 > bin.PreallocateLimit {
+				prealloc9 = bin.PreallocateLimit
+			}
+			v9 := make([]MessageEntityClazz, 0, prealloc9)
+			for i := int32(0); i < l9; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v9[i] = vv
-				v9[i], err3 = DecodeMessageEntityClazz(d)
+				vv9, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err3)
 				}
+				v9 = append(v9, vv9)
 			}
 			m.Entities = v9
 		}
-		c10, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err2)
-		}
-		if c10 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: invalid vector constructor %x", c10)
-		}
-		l10, err3 := d.Int()
+		l10, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err3)
 		}
-		// v10 := make([]*InputPrivacyRule, l10)
-		v10 := make([]InputPrivacyRuleClazz, l10)
-		for i := 0; i < l10; i++ {
+		if l10 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l10)})
+		}
+		prealloc10 := int(l10)
+		if prealloc10 > bin.PreallocateLimit {
+			prealloc10 = bin.PreallocateLimit
+		}
+		v10 := make([]InputPrivacyRuleClazz, 0, prealloc10)
+		for i := int32(0); i < l10; i++ {
 			// vv := new(InputPrivacyRule)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v10[i] = vv
-			v10[i], err3 = DecodeInputPrivacyRuleClazz(d)
+			vv10, err3 := DecodeInputPrivacyRuleClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err3)
 			}
+			v10 = append(v10, vv10)
 		}
 		m.PrivacyRules = v10
 
@@ -81167,28 +81167,28 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 5)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err3)
 			}
-			// v7 := make([]*MediaArea, l7)
-			v7 := make([]MediaAreaClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MediaAreaClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MediaArea)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMediaAreaClazz(d)
+				vv7, err3 := DecodeMediaAreaClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field media_areas: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.MediaAreas = v7
 		}
@@ -81201,53 +81201,53 @@ func (m *TLStoriesSendStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c9, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err2)
-			}
-			if c9 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: invalid vector constructor %x", c9)
-			}
-			l9, err3 := d.Int()
+			l9, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err3)
 			}
-			// v9 := make([]*MessageEntity, l9)
-			v9 := make([]MessageEntityClazz, l9)
-			for i := 0; i < l9; i++ {
+			if l9 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+			}
+			prealloc9 := int(l9)
+			if prealloc9 > bin.PreallocateLimit {
+				prealloc9 = bin.PreallocateLimit
+			}
+			v9 := make([]MessageEntityClazz, 0, prealloc9)
+			for i := int32(0); i < l9; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v9[i] = vv
-				v9[i], err3 = DecodeMessageEntityClazz(d)
+				vv9, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field entities: %w", err3)
 				}
+				v9 = append(v9, vv9)
 			}
 			m.Entities = v9
 		}
-		c10, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err2)
-		}
-		if c10 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: invalid vector constructor %x", c10)
-		}
-		l10, err3 := d.Int()
+		l10, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err3)
 		}
-		// v10 := make([]*InputPrivacyRule, l10)
-		v10 := make([]InputPrivacyRuleClazz, l10)
-		for i := 0; i < l10; i++ {
+		if l10 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l10)})
+		}
+		prealloc10 := int(l10)
+		if prealloc10 > bin.PreallocateLimit {
+			prealloc10 = bin.PreallocateLimit
+		}
+		v10 := make([]InputPrivacyRuleClazz, 0, prealloc10)
+		for i := int32(0); i < l10; i++ {
 			// vv := new(InputPrivacyRule)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v10[i] = vv
-			v10[i], err3 = DecodeInputPrivacyRuleClazz(d)
+			vv10, err3 := DecodeInputPrivacyRuleClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_sendStory#0x8f9e6898: field privacy_rules: %w", err3)
 			}
+			v10 = append(v10, vv10)
 		}
 		m.PrivacyRules = v10
 
@@ -81575,28 +81575,28 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err3)
 			}
-			// v5 := make([]*MediaArea, l5)
-			v5 := make([]MediaAreaClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]MediaAreaClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(MediaArea)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeMediaAreaClazz(d)
+				vv5, err3 := DecodeMediaAreaClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.MediaAreas = v5
 		}
@@ -81609,54 +81609,54 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err3)
 			}
-			// v7 := make([]*MessageEntity, l7)
-			v7 := make([]MessageEntityClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MessageEntityClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMessageEntityClazz(d)
+				vv7, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Entities = v7
 		}
 		if (flags & (1 << 2)) != 0 {
-			c8, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err2)
-			}
-			if c8 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: invalid vector constructor %x", c8)
-			}
-			l8, err3 := d.Int()
+			l8, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err3)
 			}
-			// v8 := make([]*InputPrivacyRule, l8)
-			v8 := make([]InputPrivacyRuleClazz, l8)
-			for i := 0; i < l8; i++ {
+			if l8 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+			}
+			prealloc8 := int(l8)
+			if prealloc8 > bin.PreallocateLimit {
+				prealloc8 = bin.PreallocateLimit
+			}
+			v8 := make([]InputPrivacyRuleClazz, 0, prealloc8)
+			for i := int32(0); i < l8; i++ {
 				// vv := new(InputPrivacyRule)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v8[i] = vv
-				v8[i], err3 = DecodeInputPrivacyRuleClazz(d)
+				vv8, err3 := DecodeInputPrivacyRuleClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err3)
 				}
+				v8 = append(v8, vv8)
 			}
 			m.PrivacyRules = v8
 		}
@@ -81700,28 +81700,28 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 			}
 		}
 		if (flags & (1 << 3)) != 0 {
-			c5, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err2)
-			}
-			if c5 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: invalid vector constructor %x", c5)
-			}
-			l5, err3 := d.Int()
+			l5, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err3)
 			}
-			// v5 := make([]*MediaArea, l5)
-			v5 := make([]MediaAreaClazz, l5)
-			for i := 0; i < l5; i++ {
+			if l5 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+			}
+			prealloc5 := int(l5)
+			if prealloc5 > bin.PreallocateLimit {
+				prealloc5 = bin.PreallocateLimit
+			}
+			v5 := make([]MediaAreaClazz, 0, prealloc5)
+			for i := int32(0); i < l5; i++ {
 				// vv := new(MediaArea)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v5[i] = vv
-				v5[i], err3 = DecodeMediaAreaClazz(d)
+				vv5, err3 := DecodeMediaAreaClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field media_areas: %w", err3)
 				}
+				v5 = append(v5, vv5)
 			}
 			m.MediaAreas = v5
 		}
@@ -81734,54 +81734,54 @@ func (m *TLStoriesEditStory) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err3)
 			}
-			// v7 := make([]*MessageEntity, l7)
-			v7 := make([]MessageEntityClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MessageEntityClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMessageEntityClazz(d)
+				vv7, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field entities: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Entities = v7
 		}
 		if (flags & (1 << 2)) != 0 {
-			c8, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err2)
-			}
-			if c8 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: invalid vector constructor %x", c8)
-			}
-			l8, err3 := d.Int()
+			l8, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err3)
 			}
-			// v8 := make([]*InputPrivacyRule, l8)
-			v8 := make([]InputPrivacyRuleClazz, l8)
-			for i := 0; i < l8; i++ {
+			if l8 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+			}
+			prealloc8 := int(l8)
+			if prealloc8 > bin.PreallocateLimit {
+				prealloc8 = bin.PreallocateLimit
+			}
+			v8 := make([]InputPrivacyRuleClazz, 0, prealloc8)
+			for i := int32(0); i < l8; i++ {
 				// vv := new(InputPrivacyRule)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v8[i] = vv
-				v8[i], err3 = DecodeInputPrivacyRuleClazz(d)
+				vv8, err3 := DecodeInputPrivacyRuleClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_editStory#0x2c63a72b: field privacy_rules: %w", err3)
 				}
+				v8 = append(v8, vv8)
 			}
 			m.PrivacyRules = v8
 		}
@@ -83649,28 +83649,28 @@ func (m *TLStoriesGetPeerMaxIDs) Decode(d *bin.Decoder) (err error) {
 	}
 	switch m.ClazzID {
 	case 0x78499170:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", err3)
 		}
-		// v1 := make([]*InputPeer, l1)
-		v1 := make([]InputPeerClazz, l1)
-		for i := 0; i < l1; i++ {
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]InputPeerClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
 			// vv := new(InputPeer)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v1[i] = vv
-			v1[i], err3 = DecodeInputPeerClazz(d)
+			vv1, err3 := DecodeInputPeerClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_getPeerMaxIDs#0x78499170: field id: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.Id = v1
 
@@ -85161,53 +85161,53 @@ func (m *TLStoriesStartLive) Decode(d *bin.Decoder) (err error) {
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			c7, err2 := d.ClazzID()
-			if err2 != nil {
-				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", err2)
-			}
-			if c7 != iface.ClazzID_vector {
-				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: invalid vector constructor %x", c7)
-			}
-			l7, err3 := d.Int()
+			l7, err3 := d.VectorHeader()
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", err3)
 			}
-			// v7 := make([]*MessageEntity, l7)
-			v7 := make([]MessageEntityClazz, l7)
-			for i := 0; i < l7; i++ {
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]MessageEntityClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
 				// vv := new(MessageEntity)
 				// err3 = vv.Decode(d)
 				// _ = err3
 				// v7[i] = vv
-				v7[i], err3 = DecodeMessageEntityClazz(d)
+				vv7, err3 := DecodeMessageEntityClazz(d)
 				if err3 != nil {
 					return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field entities: %w", err3)
 				}
+				v7 = append(v7, vv7)
 			}
 			m.Entities = v7
 		}
-		c8, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", err2)
-		}
-		if c8 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: invalid vector constructor %x", c8)
-		}
-		l8, err3 := d.Int()
+		l8, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", err3)
 		}
-		// v8 := make([]*InputPrivacyRule, l8)
-		v8 := make([]InputPrivacyRuleClazz, l8)
-		for i := 0; i < l8; i++ {
+		if l8 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l8)})
+		}
+		prealloc8 := int(l8)
+		if prealloc8 > bin.PreallocateLimit {
+			prealloc8 = bin.PreallocateLimit
+		}
+		v8 := make([]InputPrivacyRuleClazz, 0, prealloc8)
+		for i := int32(0); i < l8; i++ {
 			// vv := new(InputPrivacyRule)
 			// err3 = vv.Decode(d)
 			// _ = err3
 			// v8[i] = vv
-			v8[i], err3 = DecodeInputPrivacyRuleClazz(d)
+			vv8, err3 := DecodeInputPrivacyRuleClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode stories_startLive#0xd069ccde: field privacy_rules: %w", err3)
 			}
+			v8 = append(v8, vv8)
 		}
 		m.PrivacyRules = v8
 

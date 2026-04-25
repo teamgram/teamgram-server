@@ -2876,23 +2876,24 @@ func (m *TLAccessPointRule) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field dc_id: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: invalid vector constructor %x", c2)
-		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
 		}
-		v2 := make([]IpPortClazz, l2)
+		if l2 < 0 || l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", &bin.InvalidLengthError{Type: "vector", Length: l2})
+		}
+		prealloc2 := l2
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]IpPortClazz, 0, prealloc2)
 		for i := 0; i < l2; i++ {
-			v2[i], err2 = DecodeIpPortClazz(d)
+			vv2, err2 := DecodeIpPortClazz(d)
 			if err2 != nil {
 				return fmt.Errorf("unable to decode accessPointRule#0x4679b65f: field ips: %w", err2)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Ips = v2
 
@@ -3826,7 +3827,7 @@ func (m *TLFutureSalts) CalcSize(layer int32) int {
 		size := 4
 		size += 8
 		size += 4
-		size += iface.CalcBareObjectVectorSize(m.Salts, layer)
+		size += 4 + len(m.Salts)*16
 
 		return size
 	default:
@@ -3861,9 +3862,9 @@ func (m *TLFutureSalts) Encode(x *bin.Encoder, layer int32) error {
 			if v == nil {
 				return fmt.Errorf("unable to encode future_salts#0xae500895: field salts element %d is nil", i)
 			}
-			if err := v.Encode(x, layer); err != nil {
-				return fmt.Errorf("unable to encode future_salts#0xae500895: field salts element %d: %w", i, err)
-			}
+			x.PutInt32(v.ValidSince)
+			x.PutInt32(v.ValidUntil)
+			x.PutInt64(v.Salt)
 		}
 
 		return nil
@@ -3884,24 +3885,25 @@ func (m *TLFutureSalts) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode future_salts#0xae500895: field now: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: invalid vector constructor %x", c2)
-		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
 		}
-		v2 := make([]*TLFutureSalt, l2)
+		if l2 < 0 || l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", &bin.InvalidLengthError{Type: "vector", Length: l2})
+		}
+		prealloc2 := l2
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]*TLFutureSalt, 0, prealloc2)
 		for i := 0; i < l2; i++ {
-			v2[i] = &TLFutureSalt{ClazzID: ClazzID_future_salts}
-			err2 = v2[i].Decode(d)
+			vv2 := &TLFutureSalt{ClazzID: ClazzID_future_salt}
+			err2 = vv2.Decode(d)
 			if err2 != nil {
 				return fmt.Errorf("unable to decode future_salts#0xae500895: field salts: %w", err2)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Salts = v2
 
@@ -4052,23 +4054,24 @@ func (m *TLHelpConfigSimple) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field expires: %w", err)
 		}
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: invalid vector constructor %x", c2)
-		}
 		l2, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
 		}
-		v2 := make([]AccessPointRuleClazz, l2)
+		if l2 < 0 || l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", &bin.InvalidLengthError{Type: "vector", Length: l2})
+		}
+		prealloc2 := l2
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]AccessPointRuleClazz, 0, prealloc2)
 		for i := 0; i < l2; i++ {
-			v2[i], err2 = DecodeAccessPointRuleClazz(d)
+			vv2, err2 := DecodeAccessPointRuleClazz(d)
 			if err2 != nil {
 				return fmt.Errorf("unable to decode help_configSimple#0x5a592a6c: field rules: %w", err2)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.Rules = v2
 
@@ -7221,23 +7224,24 @@ func (m *TLTlsBlockScope) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLTlsBlockScope) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xe725d44f:
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", err3)
 		}
-		v3 := make([]TlsBlockClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = DecodeTlsBlockClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]TlsBlockClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := DecodeTlsBlockClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode tlsBlockScope#0xe725d44f: field entries: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.Entries = v3
 
@@ -7557,23 +7561,24 @@ func (m *TLTlsClientHello) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLTlsClientHello) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x6c52c484:
-		c0, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)
-		}
-		if c0 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: invalid vector constructor %x", c0)
-		}
 		l0, err2 := d.Int()
 		if err2 != nil {
 			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)
 		}
-		v0 := make([]TlsBlockClazz, l0)
+		if l0 < 0 || l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", &bin.InvalidLengthError{Type: "vector", Length: l0})
+		}
+		prealloc0 := l0
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]TlsBlockClazz, 0, prealloc0)
 		for i := 0; i < l0; i++ {
-			v0[i], err2 = DecodeTlsBlockClazz(d)
+			vv0, err2 := DecodeTlsBlockClazz(d)
 			if err2 != nil {
 				return fmt.Errorf("unable to decode tlsClientHello#0x6c52c484: field blocks: %w", err2)
 			}
+			v0 = append(v0, vv0)
 		}
 		m.Blocks = v0
 

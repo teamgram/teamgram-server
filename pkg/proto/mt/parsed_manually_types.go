@@ -24,6 +24,11 @@ import (
 )
 
 const (
+	//
+	MaxMessageByteSize = 1024 * 1024
+)
+
+const (
 	// ClazzID_message2      = 1538843921 // parsed_manually_types
 
 	ClazzID_msg_container = 0x73f1f8dc // parsed_manually_types
@@ -56,6 +61,10 @@ func (m *TLMessageRawData) ClazzName() string {
 }
 
 func (m *TLMessageRawData) Encode(x *bin.Encoder, layer int32) error {
+	if m.Bytes < 0 || m.Bytes > MaxMessageByteSize {
+		return fmt.Errorf("unable to encode message2(raw_data): message length %d is invalid", m.Bytes)
+	}
+
 	_ = layer
 
 	x.PutInt64(m.MsgId)
@@ -80,6 +89,9 @@ func (m *TLMessageRawData) Decode(d *bin.Decoder) (err error) {
 	m.Bytes, err = d.Int32()
 	if err != nil {
 		return fmt.Errorf("unable to decode message2: field bytes: %w", err)
+	}
+	if m.Bytes < 0 || m.Bytes > MaxMessageByteSize {
+		return fmt.Errorf("unable to decode message2(raw_data): message length (%d) is too big", m.Bytes)
 	}
 
 	m.ClazzID, err = d.ClazzID()
@@ -150,6 +162,10 @@ func (m *TLMessage2) ClazzName() string {
 }
 
 func (m *TLMessage2) Encode(x *bin.Encoder, layer int32) error {
+	if m.Bytes < 0 || m.Bytes > MaxMessageByteSize {
+		return fmt.Errorf("unable to encode message2: message length %d is invalid", m.Bytes)
+	}
+
 	x.PutInt64(m.MsgId)
 	x.PutInt32(m.Seqno)
 
@@ -183,6 +199,9 @@ func (m *TLMessage2) Decode(d *bin.Decoder) (err error) {
 	m.Bytes, err = d.Int32()
 	if err != nil {
 		return fmt.Errorf("unable to decode message2: field bytes: %w", err)
+	}
+	if m.Bytes < 0 || m.Bytes > MaxMessageByteSize {
+		return fmt.Errorf("unable to decode message2: message length (%d) is too big", m.Bytes)
 	}
 
 	b := make([]byte, m.Bytes)

@@ -186,43 +186,45 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 		if err != nil {
 			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field pts: %w", err)
 		}
-		c3, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", err2)
-		}
-		if c3 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: invalid vector constructor %x", c3)
-		}
-		l3, err3 := d.Int()
+		l3, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", err3)
 		}
-		v3 := make([]tg.MessageClazz, l3)
-		for i := 0; i < l3; i++ {
-			v3[i], err3 = tg.DecodeMessageClazz(d)
+		if l3 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l3)})
+		}
+		prealloc3 := int(l3)
+		if prealloc3 > bin.PreallocateLimit {
+			prealloc3 = bin.PreallocateLimit
+		}
+		v3 := make([]tg.MessageClazz, 0, prealloc3)
+		for i := int32(0); i < l3; i++ {
+			vv3, err3 := tg.DecodeMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field new_messages: %w", err3)
 			}
+			v3 = append(v3, vv3)
 		}
 		m.NewMessages = v3
 
-		c4, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", err2)
-		}
-		if c4 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: invalid vector constructor %x", c4)
-		}
-		l4, err3 := d.Int()
+		l4, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", err3)
 		}
-		v4 := make([]tg.UpdateClazz, l4)
-		for i := 0; i < l4; i++ {
-			v4[i], err3 = tg.DecodeUpdateClazz(d)
+		if l4 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l4)})
+		}
+		prealloc4 := int(l4)
+		if prealloc4 > bin.PreallocateLimit {
+			prealloc4 = bin.PreallocateLimit
+		}
+		v4 := make([]tg.UpdateClazz, 0, prealloc4)
+		for i := int32(0); i < l4; i++ {
+			vv4, err3 := tg.DecodeUpdateClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode channelDifference#0xcd19034a: field other_updates: %w", err3)
 			}
+			v4 = append(v4, vv4)
 		}
 		m.OtherUpdates = v4
 
@@ -507,43 +509,45 @@ func (m *TLDifference) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0x5482832b:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", err3)
 		}
-		v1 := make([]tg.MessageClazz, l1)
-		for i := 0; i < l1; i++ {
-			v1[i], err3 = tg.DecodeMessageClazz(d)
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.MessageClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode difference#0x5482832b: field new_messages: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.NewMessages = v1
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", err3)
 		}
-		v2 := make([]tg.UpdateClazz, l2)
-		for i := 0; i < l2; i++ {
-			v2[i], err3 = tg.DecodeUpdateClazz(d)
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]tg.UpdateClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := tg.DecodeUpdateClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode difference#0x5482832b: field other_updates: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.OtherUpdates = v2
 
@@ -674,43 +678,45 @@ func (m *TLDifferenceSlice) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
 	case 0xcb965ddf:
-		c1, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", err2)
-		}
-		if c1 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: invalid vector constructor %x", c1)
-		}
-		l1, err3 := d.Int()
+		l1, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", err3)
 		}
-		v1 := make([]tg.MessageClazz, l1)
-		for i := 0; i < l1; i++ {
-			v1[i], err3 = tg.DecodeMessageClazz(d)
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.MessageClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeMessageClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field new_messages: %w", err3)
 			}
+			v1 = append(v1, vv1)
 		}
 		m.NewMessages = v1
 
-		c2, err2 := d.ClazzID()
-		if err2 != nil {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", err2)
-		}
-		if c2 != iface.ClazzID_vector {
-			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: invalid vector constructor %x", c2)
-		}
-		l2, err3 := d.Int()
+		l2, err3 := d.VectorHeader()
 		if err3 != nil {
 			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", err3)
 		}
-		v2 := make([]tg.UpdateClazz, l2)
-		for i := 0; i < l2; i++ {
-			v2[i], err3 = tg.DecodeUpdateClazz(d)
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]tg.UpdateClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := tg.DecodeUpdateClazz(d)
 			if err3 != nil {
 				return fmt.Errorf("unable to decode differenceSlice#0xcb965ddf: field other_updates: %w", err3)
 			}
+			v2 = append(v2, vv2)
 		}
 		m.OtherUpdates = v2
 
