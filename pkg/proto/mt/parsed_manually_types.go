@@ -73,27 +73,27 @@ func (m *TLMessageRawData) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLMessageRawData) Decode(d *bin.Decoder) (err error) {
 	m.MsgId, err = d.Int64()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field msg_id: %w", err)
 	}
 
 	m.Seqno, err = d.Int32()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field seqno: %w", err)
 	}
 
 	m.Bytes, err = d.Int32()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field bytes: %w", err)
 	}
 
 	m.ClazzID, err = d.ClazzID()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field clazz_id: %w", err)
 	}
 
 	m.Body = d.Raw()
 
-	return
+	return nil
 }
 
 // TLMsgRawDataContainer
@@ -109,8 +109,13 @@ func (m *TLMsgRawDataContainer) ClazzName() string {
 func (m *TLMsgRawDataContainer) Encode(x *bin.Encoder, layer int32) error {
 	x.PutClazzID(ClazzID_msg_container)
 	x.PutInt(len(m.Messages))
-	for _, v := range m.Messages {
-		_ = v.Encode(x, layer)
+	for i, v := range m.Messages {
+		if v == nil {
+			return fmt.Errorf("unable to encode msg_container: field messages element %d is nil", i)
+		}
+		if err := v.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode msg_container: field messages element %d: %w", i, err)
+		}
 	}
 
 	return nil
@@ -119,7 +124,7 @@ func (m *TLMsgRawDataContainer) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLMsgRawDataContainer) Decode(d *bin.Decoder) error {
 	len2, err := d.Int()
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode msg_container: field messages length: %w", err)
 	}
 
 	m.Messages = make([]*TLMessageRawData, 0, len2)
@@ -127,7 +132,7 @@ func (m *TLMsgRawDataContainer) Decode(d *bin.Decoder) error {
 		message2 := new(TLMessageRawData)
 		err = message2.Decode(d)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to decode msg_container: field messages element %d: %w", i, err)
 		}
 		m.Messages = append(m.Messages, message2)
 	}
@@ -155,7 +160,12 @@ func (m *TLMessage2) Encode(x *bin.Encoder, layer int32) error {
 	offset := x.Len()
 
 	x.PutInt32(m.Bytes)
-	_ = m.Object.Encode(x, layer)
+	if m.Object == nil {
+		return fmt.Errorf("unable to encode message2: field body is nil")
+	}
+	if err := m.Object.Encode(x, layer); err != nil {
+		return fmt.Errorf("unable to encode message2: field body: %w", err)
+	}
 	b := x.Bytes()
 
 	binary.LittleEndian.PutUint32(b[offset:], uint32(x.Len()-offset-4))
@@ -166,31 +176,31 @@ func (m *TLMessage2) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLMessage2) Decode(d *bin.Decoder) (err error) {
 	m.MsgId, err = d.Int64()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field msg_id: %w", err)
 	}
 
 	m.Seqno, err = d.Int32()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field seqno: %w", err)
 	}
 
 	m.Bytes, err = d.Int32()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field bytes: %w", err)
 	}
 
 	b := make([]byte, m.Bytes)
 	err = d.ConsumeN(b, int(m.Bytes))
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field body bytes: %w", err)
 	}
 
 	m.Object, err = iface.DecodeObject(bin.NewDecoder(b))
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode message2: field body: %w", err)
 	}
 
-	return
+	return nil
 }
 
 // TLMsgContainer
@@ -207,8 +217,13 @@ func (m *TLMsgContainer) Encode(x *bin.Encoder, layer int32) error {
 	x.PutClazzID(ClazzID_msg_container)
 
 	x.PutInt(len(m.Messages))
-	for _, v := range m.Messages {
-		_ = v.Encode(x, layer)
+	for i, v := range m.Messages {
+		if v == nil {
+			return fmt.Errorf("unable to encode msg_container: field messages element %d is nil", i)
+		}
+		if err := v.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode msg_container: field messages element %d: %w", i, err)
+		}
 	}
 
 	return nil
@@ -217,7 +232,7 @@ func (m *TLMsgContainer) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLMsgContainer) Decode(d *bin.Decoder) error {
 	len2, err := d.Int()
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode msg_container: field messages length: %w", err)
 	}
 
 	m.Messages = make([]*TLMessage2, 0, len2)
@@ -226,8 +241,7 @@ func (m *TLMsgContainer) Decode(d *bin.Decoder) error {
 		message2 := new(TLMessage2)
 		err = message2.Decode(d)
 		if err != nil {
-			fmt.Printf("decode message2 error: %v\n", err)
-			return err
+			return fmt.Errorf("unable to decode msg_container: field messages element %d: %w", i, err)
 		}
 		m.Messages = append(m.Messages, message2)
 	}
@@ -247,7 +261,12 @@ func (m *TLMsgCopy) ClazzName() string {
 
 func (m *TLMsgCopy) Encode(x *bin.Encoder, layer int32) error {
 	x.PutClazzID(ClazzID_msg_copy)
-	_ = m.OrigMessage.Encode(x, layer)
+	if m.OrigMessage == nil {
+		return fmt.Errorf("unable to encode msg_copy: field orig_message is nil")
+	}
+	if err := m.OrigMessage.Encode(x, layer); err != nil {
+		return fmt.Errorf("unable to encode msg_copy: field orig_message: %w", err)
+	}
 
 	return nil
 }
@@ -256,7 +275,7 @@ func (m *TLMsgCopy) Decode(d *bin.Decoder) error {
 	message2 := new(TLMessage2)
 	err := message2.Decode(d)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode msg_copy: field orig_message: %w", err)
 	}
 	m.OrigMessage = message2
 
@@ -278,7 +297,7 @@ func (m *TLGzipPacked) Encode(x *bin.Encoder, layer int32) error {
 	_ = layer
 
 	if len(m.PackedData) == 0 {
-		return nil
+		return fmt.Errorf("unable to encode gzip_packed: field packed_data is empty")
 	}
 
 	var (
@@ -286,20 +305,17 @@ func (m *TLGzipPacked) Encode(x *bin.Encoder, layer int32) error {
 		b   = new(bytes.Buffer)
 	)
 	gz := gzip.NewWriter(b)
-	// _, err = io.Copy(gz, bytes.NewBuffer(m.PackedData))
 	_, err = gz.Write(m.PackedData)
-	_ = gz.Flush()
+	if err == nil {
+		err = gz.Flush()
+	}
 	clErr := gz.Close()
 
 	if err != nil {
-		// log.Errorf("gzip write: %v", err)
-		x.Put(m.PackedData)
-		return nil
+		return fmt.Errorf("unable to encode gzip_packed: compress packed_data: %w", err)
 	}
 	if clErr != nil {
-		// log.Errorf("gzip write: %v", err)
-		x.Put(m.PackedData)
-		return nil
+		return fmt.Errorf("unable to encode gzip_packed: close gzip writer: %w", clErr)
 	}
 
 	x.PutClazzID(ClazzID_gzip_packed)
@@ -311,7 +327,7 @@ func (m *TLGzipPacked) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLGzipPacked) Decode(d *bin.Decoder) error {
 	data, err := d.Bytes()
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode gzip_packed: field packed_data: %w", err)
 	}
 
 	var (
@@ -323,7 +339,7 @@ func (m *TLGzipPacked) Decode(d *bin.Decoder) error {
 	if err != nil {
 		gz, err = zlib.NewReader(bytes.NewBuffer(data))
 		if err != nil {
-			return fmt.Errorf("gzip read1: %v", err)
+			return fmt.Errorf("unable to decode gzip_packed: create decompressor: %w", err)
 		}
 	}
 
@@ -335,10 +351,10 @@ func (m *TLGzipPacked) Decode(d *bin.Decoder) error {
 	clErr := gz.Close()
 
 	if err != nil {
-		return fmt.Errorf("gzip read2: %v", err)
+		return fmt.Errorf("unable to decode gzip_packed: decompress packed_data: %w", err)
 	}
 	if clErr != nil {
-		return clErr
+		return fmt.Errorf("unable to decode gzip_packed: close decompressor: %w", clErr)
 	}
 
 	m.PackedData = buf.Bytes()
@@ -346,7 +362,7 @@ func (m *TLGzipPacked) Decode(d *bin.Decoder) error {
 	d2 := bin.NewDecoder(m.PackedData)
 	m.Obj, err = iface.DecodeObject(d2)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to decode gzip_packed: field object: %w", err)
 	}
 
 	return nil
@@ -374,7 +390,12 @@ func (m *TLRpcResult) Encode(x *bin.Encoder, layer int32) error {
 	x2 := bin.NewEncoder()
 	defer x2.End()
 
-	_ = m.Result.Encode(x2, layer)
+	if m.Result == nil {
+		return fmt.Errorf("unable to encode rpc_result: field result is nil")
+	}
+	if err := m.Result.Encode(x2, layer); err != nil {
+		return fmt.Errorf("unable to encode rpc_result: field result: %w", err)
+	}
 	// rawBody := x2.GetBuf()
 
 	if x2.Len() > 256 {
@@ -389,7 +410,9 @@ func (m *TLRpcResult) Encode(x *bin.Encoder, layer int32) error {
 			gzipPacked := &TLGzipPacked{
 				PackedData: x2.Bytes(),
 			}
-			_ = gzipPacked.Encode(x, layer)
+			if err := gzipPacked.Encode(x, layer); err != nil {
+				return fmt.Errorf("unable to encode rpc_result: gzip packed result: %w", err)
+			}
 		}
 	} else {
 		x.Put(x2.Bytes())
@@ -401,10 +424,13 @@ func (m *TLRpcResult) Encode(x *bin.Encoder, layer int32) error {
 func (m *TLRpcResult) Decode(d *bin.Decoder) (err error) {
 	m.ReqMsgId, err = d.Int64()
 	if err != nil {
-		return
+		return fmt.Errorf("unable to decode rpc_result: field req_msg_id: %w", err)
 	}
 
 	m.Result, err = iface.DecodeObject(d)
+	if err != nil {
+		return fmt.Errorf("unable to decode rpc_result: field result: %w", err)
+	}
 
-	return
+	return nil
 }
