@@ -113,18 +113,9 @@ func EncodeObjectList[T TLObject](x *bin.Encoder, vList []T, layer int32) error 
 }
 
 func DecodeObjectList[T TLObject](d *bin.Decoder) ([]T, error) {
-	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-		return nil, err
-	}
-	n, err := d.Int()
+	n, err := decodeVectorLength(d, Size32)
 	if err != nil {
 		return nil, err
-	}
-	if n < 0 {
-		return nil, &bin.InvalidLengthError{
-			Type:   "vector",
-			Length: n,
-		}
 	}
 
 	vList := make([]T, n)
@@ -137,7 +128,11 @@ func DecodeObjectList[T TLObject](d *bin.Decoder) ([]T, error) {
 		if err != nil {
 			return nil, err
 		}
-		vList[i] = obj.(T)
+		v, ok := obj.(T)
+		if !ok {
+			return nil, fmt.Errorf("vector[%d] decoded %T does not implement expected element type", i, obj)
+		}
+		vList[i] = v
 	}
 
 	return vList, nil
@@ -167,10 +162,14 @@ func DecodeBool(d *bin.Decoder) (bool, error) {
 	}
 	switch v {
 	case ClazzID_boolTrue:
-		_ = d.ConsumeClazzID(ClazzID_boolTrue)
+		if err := d.ConsumeClazzID(ClazzID_boolTrue); err != nil {
+			return false, err
+		}
 		return true, nil
 	case ClazzID_boolFalse:
-		_ = d.ConsumeClazzID(ClazzID_boolTrue)
+		if err := d.ConsumeClazzID(ClazzID_boolFalse); err != nil {
+			return false, err
+		}
 		return false, nil
 	default:
 		return false, bin.NewUnexpectedClazzID(0, v, d.Offset())
@@ -186,18 +185,9 @@ func EncodeInt32List(x *bin.Encoder, vList []int32) {
 }
 
 func DecodeInt32List(d *bin.Decoder) ([]int32, error) {
-	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-		return nil, err
-	}
-	n, err := d.Int()
+	n, err := decodeVectorLength(d, Size32)
 	if err != nil {
 		return nil, err
-	}
-	if n < 0 {
-		return nil, &bin.InvalidLengthError{
-			Type:   "vector",
-			Length: n,
-		}
 	}
 
 	vList := make([]int32, n)
@@ -220,18 +210,9 @@ func EncodeInt64List(x *bin.Encoder, vList []int64) {
 }
 
 func DecodeInt64List(d *bin.Decoder) ([]int64, error) {
-	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-		return nil, err
-	}
-	n, err := d.Int()
+	n, err := decodeVectorLength(d, Size32*2)
 	if err != nil {
 		return nil, err
-	}
-	if n < 0 {
-		return nil, &bin.InvalidLengthError{
-			Type:   "vector",
-			Length: n,
-		}
 	}
 
 	vList := make([]int64, n)
@@ -254,18 +235,9 @@ func EncodeStringList(x *bin.Encoder, vList []string) {
 }
 
 func DecodeStringList(d *bin.Decoder) ([]string, error) {
-	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-		return nil, err
-	}
-	n, err := d.Int()
+	n, err := decodeVectorLength(d, Size32)
 	if err != nil {
 		return nil, err
-	}
-	if n < 0 {
-		return nil, &bin.InvalidLengthError{
-			Type:   "vector",
-			Length: n,
-		}
 	}
 
 	vList := make([]string, n)
@@ -288,18 +260,9 @@ func EncodeBytesList(x *bin.Encoder, vList [][]byte) {
 }
 
 func DecodeBytesList(d *bin.Decoder) ([][]byte, error) {
-	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
-		return nil, err
-	}
-	n, err := d.Int()
+	n, err := decodeVectorLength(d, Size32)
 	if err != nil {
 		return nil, err
-	}
-	if n < 0 {
-		return nil, &bin.InvalidLengthError{
-			Type:   "vector",
-			Length: n,
-		}
 	}
 
 	vList := make([][]byte, n)
@@ -311,4 +274,22 @@ func DecodeBytesList(d *bin.Decoder) ([][]byte, error) {
 	}
 
 	return vList, nil
+}
+
+func decodeVectorLength(d *bin.Decoder, minItemSize int) (int, error) {
+	if err := d.ConsumeClazzID(ClazzID_vector); err != nil {
+		return 0, err
+	}
+	n, err := d.Int()
+	if err != nil {
+		return 0, err
+	}
+	if n < 0 || n > d.Remaining()/minItemSize {
+		return 0, &bin.InvalidLengthError{
+			Type:   "vector",
+			Length: n,
+			Offset: d.Offset() - Size32,
+		}
+	}
+	return n, nil
 }
