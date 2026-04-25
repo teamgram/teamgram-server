@@ -10,8 +10,8 @@ import (
 	"github.com/cloudwego/kitex/pkg/remote"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 )
 
 type testTLObject struct {
@@ -161,6 +161,25 @@ func TestEncodeUsesDefaultTLLayer(t *testing.T) {
 	}
 	if obj.seenLayer != defaultTLLayer {
 		t.Fatalf("expected layer %d, got %d", defaultTLLayer, obj.seenLayer)
+	}
+}
+
+func TestRawTLObjectRoundTripPreservesPayload(t *testing.T) {
+	c := NewZRpcCodec(false)
+	payload := []byte{0xe2, 0x06, 0x05, 0x9f, 0x04, 0x00, 0x00, 0x00}
+	buf := &testByteBuffer{}
+
+	if err := c.Encode(context.Background(), newTestMessage(NewRawTLObject(payload)), buf); err != nil {
+		t.Fatalf("encode failed: %v", err)
+	}
+
+	out := NewRawTLObject(nil)
+	if err := c.Decode(context.Background(), newTestMessage(out), &testByteBuffer{readBuf: buf.writeBuf}); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+
+	if string(out.Payload) != string(payload) {
+		t.Fatalf("decoded payload = %x, want %x", out.Payload, payload)
 	}
 }
 
