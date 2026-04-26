@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionGetUserId(in *authsession.TLAuthsessionGetU
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt64(&tg.TLInt64{V: userId}).ToInt64(), nil
+	return tg.MakeInt64(userId), nil
 }

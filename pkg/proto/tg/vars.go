@@ -55,15 +55,17 @@ func ChatIdIsChannel(id int64) bool {
 	return id >= MinNebulaChatChannelID
 }
 
-func MakeInt32Helper(v int32) *Int32 {
+// helper
+
+func MakeInt32(v int32) *Int32 {
 	return &TLInt32{ClazzName2: ClazzName_int32, V: v}
 }
 
-func MakeInt64Helper(v int64) *Int64 {
+func MakeInt64(v int64) *Int64 {
 	return &TLInt64{ClazzName2: ClazzName_int64, V: v}
 }
 
-func MakeStringHelper(v string) *String {
+func MakeString(v string) *String {
 	return &TLString{ClazzName2: ClazzName_string, V: v}
 }
 

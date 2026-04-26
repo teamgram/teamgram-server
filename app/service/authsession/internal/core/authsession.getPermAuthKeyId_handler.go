@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionGetPermAuthKeyId(in *authsession.TLAuthsess
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt64(&tg.TLInt64{V: permAuthKeyId}).ToInt64(), nil
+	return tg.MakeInt64(permAuthKeyId), nil
 }

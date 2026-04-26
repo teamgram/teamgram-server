@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionGetLayer(in *authsession.TLAuthsessionGetLa
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt32(&tg.TLInt32{V: layer}).ToInt32(), nil
+	return tg.MakeInt32(layer), nil
 }

@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionBindAuthKeyUser(in *authsession.TLAuthsessi
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt64(&tg.TLInt64{V: hash}).ToInt64(), nil
+	return tg.MakeInt64(hash), nil
 }

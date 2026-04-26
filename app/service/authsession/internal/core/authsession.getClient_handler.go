@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionGetClient(in *authsession.TLAuthsessionGetC
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLString(&tg.TLString{V: client}).ToString(), nil
+	return tg.MakeString(client), nil
 }

@@ -28,5 +28,5 @@ func (c *AuthsessionCore) AuthsessionGetLangPack(in *authsession.TLAuthsessionGe
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLString(&tg.TLString{V: langPack}).ToString(), nil
+	return tg.MakeString(langPack), nil
 }
