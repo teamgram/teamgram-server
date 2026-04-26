@@ -93,15 +93,19 @@ func (r *Repository) GetAuthData(ctx context.Context, permAuthKeyId int64) (*cac
 
 		authRow, err := r.model.AuthsModel.SelectByAuthKeyId(ctx, permAuthKeyId)
 		if err != nil {
-			return err
+			if !isNotFound(err) {
+				return err
+			}
+		} else {
+			cacheData.Client = toClientSession(permAuthKeyId, authRow)
 		}
-		cacheData.Client = toClientSession(permAuthKeyId, authRow)
 
 		userRow, err := r.model.AuthUsersModel.Select(ctx, permAuthKeyId)
 		if err != nil {
-			return err
-		}
-		if userRow != nil {
+			if !isNotFound(err) {
+				return err
+			}
+		} else if userRow != nil {
 			cacheData.BindUser = &bindUser{
 				UserId:               userRow.UserId,
 				Hash:                 userRow.Hash,

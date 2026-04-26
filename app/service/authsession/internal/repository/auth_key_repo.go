@@ -68,6 +68,9 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 		}
 		return nil, wrapStorage(err)
 	}
+	if key == nil {
+		return nil, authsession.ErrAuthKeyNotFound
+	}
 
 	keyInfo, err := toAuthKeyInfo(key)
 	if err != nil {
