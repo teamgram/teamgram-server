@@ -19,14 +19,13 @@ package repository
 import (
 	"errors"
 
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	geoipclient "github.com/teamgram/teamgram-server/v2/app/infra/geoip/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
-
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 // Repository is the dependency container for repository instances.
@@ -37,7 +36,7 @@ import (
 type Repository struct {
 	sqlc.CachedConn
 	db                    *sqlx.DB
-	kv                    kv.Store
+	kv                    kv.ExtStore
 	model                 *model.Models
 	futureSaltsModel      FutureSaltsModelType
 	authKeyLifecycleModel AuthKeyLifecycleModelType

@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/kv"
+
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 const (
@@ -36,13 +37,13 @@ type FutureSaltRecord struct {
 }
 
 type futureSaltsModel struct {
-	kv     kv.Store
+	kv     kv.ExtStore
 	prefix string
 }
 
 // NewFutureSaltsModel builds a kv-backed model. prefix is prepended to every
 // key so multiple services can share the same kv store without collisions.
-func NewFutureSaltsModel(kv kv.Store, prefix string) FutureSaltsModel {
+func NewFutureSaltsModel(kv kv.ExtStore, prefix string) FutureSaltsModel {
 	return &futureSaltsModel{
 		kv:     kv,
 		prefix: prefix,

@@ -19,7 +19,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/zeromicro/go-zero/core/stores/kv"
+	"github.com/teamgram/marmota/pkg/stores/kv"
 )
 
 // AuthKeyLifecycleModel tracks the validity window of a temporary auth key.
@@ -48,12 +48,12 @@ var ErrInvalidTTL = errors.New("xkv: invalid auth key ttl")
 const authKeyLifecycleValue = "1"
 
 type authKeyLifecycleModel struct {
-	kv     kv.Store
+	kv     kv.ExtStore
 	prefix string
 }
 
 // NewAuthKeyLifecycleModel builds the kv-backed lifecycle model.
-func NewAuthKeyLifecycleModel(store kv.Store, prefix string) AuthKeyLifecycleModel {
+func NewAuthKeyLifecycleModel(store kv.ExtStore, prefix string) AuthKeyLifecycleModel {
 	return &authKeyLifecycleModel{
 		kv:     store,
 		prefix: prefix,
