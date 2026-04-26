@@ -93,19 +93,18 @@ func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, e
 }
 
 func (r *Repository) BindKeyId(ctx context.Context, keyId int64, bindType int32, bindKeyId int64) error {
-	cMap := map[string]interface{}{}
+	var err error
 	switch bindType {
 	case tg.AuthKeyTypePerm:
-		cMap["perm_auth_key_id"] = bindKeyId
+		_, err = r.model.AuthKeysModel.UpdatePermBinding(ctx, bindKeyId, keyId)
 	case tg.AuthKeyTypeTemp:
-		cMap["temp_auth_key_id"] = bindKeyId
+		_, err = r.model.AuthKeysModel.UpdateTempBinding(ctx, bindKeyId, keyId)
 	case tg.AuthKeyTypeMediaTemp:
-		cMap["media_temp_auth_key_id"] = bindKeyId
+		_, err = r.model.AuthKeysModel.UpdateMediaTempBinding(ctx, bindKeyId, keyId)
 	default:
 		return authsession.ErrAuthKeyInvalid
 	}
-
-	if _, err := r.model.AuthKeysModel.UpdateCustomMap(ctx, cMap, keyId); err != nil {
+	if err != nil {
 		return wrapStorage(err)
 	}
 	return nil

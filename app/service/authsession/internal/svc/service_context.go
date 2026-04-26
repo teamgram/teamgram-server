@@ -23,15 +23,24 @@ import (
 )
 
 type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
+	Config      config.Config
+	GeoipClient geoipclient.GeoipClient
+	Repo        *repository.Repository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	geoipCli := geoipclient.NewGeoipClient(geoipclient.MustNewKitexClient(c.Geoip))
 
 	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c, geoipCli),
+		Config:      c,
+		GeoipClient: geoipCli,
+		Repo:        repository.NewRepository(c, geoipCli),
 	}
+}
+
+func (s *ServiceContext) Close() error {
+	if s == nil || s.Repo == nil {
+		return nil
+	}
+	return s.Repo.Close()
 }

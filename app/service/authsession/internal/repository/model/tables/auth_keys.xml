@@ -20,17 +20,36 @@
         </sql>
     </operation>
 
-    <operation name="UpdateCustomMap" cache="invalidate">
-        <params>
-            <param name="cMap" type="map" />
-        </params>
+    <operation name="UpdatePermBinding" cache="invalidate">
         <sql>
             UPDATE
-            auth_keys
+                auth_keys
             SET
-                cMap = :cMap
+                perm_auth_key_id = :perm_auth_key_id
             WHERE
-                auth_key_id=:auth_key_id
+                auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateTempBinding" cache="invalidate">
+        <sql>
+            UPDATE
+                auth_keys
+            SET
+                temp_auth_key_id = :temp_auth_key_id
+            WHERE
+                auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateMediaTempBinding" cache="invalidate">
+        <sql>
+            UPDATE
+                auth_keys
+            SET
+                media_temp_auth_key_id = :media_temp_auth_key_id
+            WHERE
+                auth_key_id = :auth_key_id
         </sql>
     </operation>
 </table>

@@ -12,6 +12,7 @@ import (
 type fakeGeoipClient struct {
 	region *geoip.Region
 	err    error
+	closed *bool
 }
 
 func (f fakeGeoipClient) GeoipGetCountryAndRegionByIp(context.Context, *geoip.TLGeoipGetCountryAndRegionByIp) (*geoip.Region, error) {
@@ -19,6 +20,9 @@ func (f fakeGeoipClient) GeoipGetCountryAndRegionByIp(context.Context, *geoip.TL
 }
 
 func (f fakeGeoipClient) Close() error {
+	if f.closed != nil {
+		*f.closed = true
+	}
 	return nil
 }
 
@@ -62,5 +66,19 @@ func TestGeoipLookupDegradesOnError(t *testing.T) {
 	country, region := r.getCountryAndRegionByIP(context.Background(), "127.0.0.1")
 	if country != "" || region != "" {
 		t.Fatalf("geoip mapping = (%q, %q), want empty values", country, region)
+	}
+}
+
+func TestRepositoryCloseClosesGeoipClient(t *testing.T) {
+	closed := false
+	r := &Repository{
+		geoipClient: fakeGeoipClient{closed: &closed},
+	}
+
+	if err := r.Close(); err != nil {
+		t.Fatalf("Close() error = %v", err)
+	}
+	if !closed {
+		t.Fatal("Close() did not close geoip client")
 	}
 }

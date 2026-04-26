@@ -49,3 +49,11 @@ func NewRepository(c config.Config, geoipClient geoipclient.GeoipClient) *Reposi
 		geoipClient:      geoipClient,
 	}
 }
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil || r.geoipClient == nil {
+		return nil
+	}
+	return r.geoipClient.Close()
+}

@@ -34,6 +34,7 @@ var configFile = flag.String("f", "etc/authsession.yaml", "the config file")
 
 type Server struct {
 	kitexSrv *kitex.RpcServer
+	ctx      *svc.ServiceContext
 }
 
 func New() *Server {
@@ -48,6 +49,7 @@ func (s *Server) Initialize() error {
 
 	ctx := svc.NewServiceContext(c)
 	_ = ctx
+	s.ctx = ctx
 
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
@@ -60,16 +62,17 @@ func (s *Server) Initialize() error {
 
 func (s *Server) RunLoop() {
 	if err := s.kitexSrv.Run(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("server run failed: %v", err)
 	}
 }
 
 func (s *Server) Destroy() {
 	if err := s.kitexSrv.Stop(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("server stop failed: %v", err)
+	}
+	if s.ctx != nil {
+		if err := s.ctx.Close(); err != nil {
+			logx.Errorf("service context close failed: %v", err)
+		}
 	}
 }
