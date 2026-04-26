@@ -60,7 +60,10 @@ func (r *Repository) SetSessionOnline(ctx context.Context, userID int64, session
 	userKey := getUserKey(userID)
 	field := strconv.FormatInt(session.AuthKeyId, 10)
 
-	sessData, err := json.Marshal(session)
+	// Bypass the custom MarshalJSON on TLSessionEntry (which wraps output
+	// in {"_name":"...","_object":...}) so we store plain JSON.
+	type plainSessionEntry status.TLSessionEntry
+	sessData, err := json.Marshal((*plainSessionEntry)(session))
 	if err != nil {
 		return fmt.Errorf("marshal session entry: %w", err)
 	}
