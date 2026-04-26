@@ -27,10 +27,10 @@ import (
 // status.setSessionOffline user_id:long auth_key_id:long = Bool;
 func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOffline) (*tg.Bool, error) {
 	if in.UserId <= 0 {
-		return nil, fmt.Errorf("setSessionOffline: invalid user_id %d", in.UserId)
+		return nil, fmt.Errorf("%w: setSessionOffline: invalid user_id %d", status.ErrStatusInvalidArgument, in.UserId)
 	}
 	if in.AuthKeyId == 0 {
-		return nil, fmt.Errorf("setSessionOffline: invalid auth_key_id")
+		return nil, fmt.Errorf("%w: setSessionOffline: invalid auth_key_id", status.ErrStatusInvalidArgument)
 	}
 
 	err := c.svcCtx.Repo.SetSessionOffline(c.ctx, in.UserId, in.AuthKeyId)

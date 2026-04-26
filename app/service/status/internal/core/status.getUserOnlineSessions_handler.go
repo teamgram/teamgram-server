@@ -26,7 +26,7 @@ import (
 // status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error) {
 	if in.UserId <= 0 {
-		return nil, fmt.Errorf("getUserOnlineSessions: invalid user_id %d", in.UserId)
+		return nil, fmt.Errorf("%w: getUserOnlineSessions: invalid user_id %d", status.ErrStatusInvalidArgument, in.UserId)
 	}
 
 	r, err := c.svcCtx.Repo.GetUserOnlineSessions(c.ctx, in.UserId)

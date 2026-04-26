@@ -65,12 +65,12 @@ func (r *Repository) SetSessionOnline(ctx context.Context, userID int64, session
 	type plainSessionEntry status.TLSessionEntry
 	sessData, err := json.Marshal((*plainSessionEntry)(session))
 	if err != nil {
-		return fmt.Errorf("marshal session entry: %w", err)
+		return wrapStorageError("marshal session entry", err)
 	}
 
 	_, err = r.kv.EvalCtx(ctx, hsetAndExpireScript, userKey, field, string(sessData), strconv.Itoa(expireSeconds))
 	if err != nil {
-		return fmt.Errorf("set session online: %w", err)
+		return wrapStorageError("set session online", err)
 	}
 	return nil
 }
@@ -83,7 +83,7 @@ func (r *Repository) SetSessionOffline(ctx context.Context, userID, authKeyID in
 
 	_, err := r.kv.HdelCtx(ctx, userKey, field)
 	if err != nil {
-		return fmt.Errorf("set session offline: %w", err)
+		return wrapStorageError("set session offline", err)
 	}
 	return nil
 }
@@ -95,7 +95,7 @@ func (r *Repository) GetUserOnlineSessions(ctx context.Context, userID int64) (*
 
 	rMap, err := r.kv.HgetallCtx(ctx, userKey)
 	if err != nil {
-		return nil, fmt.Errorf("get user online sessions: %w", err)
+		return nil, wrapStorageError("get user online sessions", err)
 	}
 
 	rValues := &status.TLUserSessionEntryList{
@@ -141,11 +141,11 @@ func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []i
 		k := getUserKey(id)
 		rawPipe, err := r.kv.GetPipeline(k)
 		if err != nil {
-			return nil, fmt.Errorf("get pipeline for user %d: %w", id, err)
+			return nil, wrapStorageError(fmt.Sprintf("get pipeline for user %d", id), err)
 		}
 		pipe, ok := rawPipe.(kv.Pipeline)
 		if !ok {
-			return nil, fmt.Errorf("unexpected pipeline type for user %d", id)
+			return nil, wrapStorageError(fmt.Sprintf("unexpected pipeline type for user %d", id), fmt.Errorf("%T", rawPipe))
 		}
 		groups[pipe] = append(groups[pipe], keyEntry{key: k, userID: id})
 	}
@@ -163,13 +163,13 @@ func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []i
 			return nil
 		})
 		if err != nil {
-			return nil, fmt.Errorf("pipeline execute: %w", err)
+			return nil, wrapStorageError("pipeline execute", err)
 		}
 
 		for i, cmd := range cmds {
 			rMap, cmdErr := cmd.Result()
 			if cmdErr != nil {
-				return nil, fmt.Errorf("hgetall for user %d: %w", entries[i].userID, cmdErr)
+				return nil, wrapStorageError(fmt.Sprintf("hgetall for user %d", entries[i].userID), cmdErr)
 			}
 
 			entry := &status.TLUserSessionEntryList{

@@ -28,7 +28,7 @@ const maxBatchUsers = 500
 // status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUsersOnlineSessionsList) (*status.VectorUserSessionEntryList, error) {
 	if len(in.Users) > maxBatchUsers {
-		return nil, fmt.Errorf("getUsersOnlineSessionsList: too many users %d, max %d", len(in.Users), maxBatchUsers)
+		return nil, fmt.Errorf("%w: getUsersOnlineSessionsList: too many users %d, max %d", status.ErrStatusInvalidArgument, len(in.Users), maxBatchUsers)
 	}
 
 	r, err := c.svcCtx.Repo.GetUsersOnlineSessionsList(c.ctx, in.Users)

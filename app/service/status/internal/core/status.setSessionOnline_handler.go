@@ -27,13 +27,13 @@ import (
 // status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline) (*tg.Bool, error) {
 	if in.UserId <= 0 {
-		return nil, fmt.Errorf("setSessionOnline: invalid user_id %d", in.UserId)
+		return nil, fmt.Errorf("%w: setSessionOnline: invalid user_id %d", status.ErrStatusInvalidArgument, in.UserId)
 	}
 	if in.Session == nil {
-		return nil, fmt.Errorf("setSessionOnline: session is nil")
+		return nil, fmt.Errorf("%w: setSessionOnline: session is nil", status.ErrStatusInvalidArgument)
 	}
 	if in.Session.AuthKeyId == 0 {
-		return nil, fmt.Errorf("setSessionOnline: invalid auth_key_id")
+		return nil, fmt.Errorf("%w: setSessionOnline: invalid auth_key_id", status.ErrStatusInvalidArgument)
 	}
 
 	err := c.svcCtx.Repo.SetSessionOnline(c.ctx, in.UserId, in.Session, c.svcCtx.Config.StatusExpire)
