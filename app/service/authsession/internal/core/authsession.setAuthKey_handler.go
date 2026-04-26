@@ -36,11 +36,11 @@ func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSet
 		salt = in.FutureSalt
 	}
 	if salt == nil {
-		err = c.svcCtx.Repo.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+		err = c.svcCtx.Repo.SaveAuthKey(c.ctx, keyInfo, in.ExpiresIn)
 	} else {
 		err = mr.Finish(
 			func() error {
-				return c.svcCtx.Repo.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+				return c.svcCtx.Repo.SaveAuthKey(c.ctx, keyInfo, in.ExpiresIn)
 			},
 			func() error {
 				return c.svcCtx.Repo.PutSaltCache(c.ctx, keyInfo.AuthKeyId, salt)

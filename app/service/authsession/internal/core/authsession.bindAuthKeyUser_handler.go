@@ -24,23 +24,13 @@ import (
 // AuthsessionBindAuthKeyUser
 // authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 func (c *AuthsessionCore) AuthsessionBindAuthKeyUser(in *authsession.TLAuthsessionBindAuthKeyUser) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.bindTempAuthKey - error: method AuthsessionBindTempAuthKey not impl")
-
-	//var (
-	//	inKeyId = in.AuthKeyId
-	//)
-	//
-	//keyData, err := c.svcCtx.Repo.AuthKeysModel.QueryAuthKeyV2(c.ctx, inKeyId)
-	//if err != nil {
-	//	c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
-	//	return nil, err
-	//} else if keyData.PermAuthKeyId == 0 {
-	//	c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
-	//	return nil, mtproto.ErrAuthKeyPermEmpty
-	//}
-	//
-	//hash := c.svcCtx.Dao.BindAuthKeyUser(c.ctx, keyData.PermAuthKeyId, in.GetUserId())
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	hash, err := c.svcCtx.Repo.BindAuthKeyUser(c.ctx, keyData.PermAuthKeyId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: hash}).ToInt64(), nil
 }

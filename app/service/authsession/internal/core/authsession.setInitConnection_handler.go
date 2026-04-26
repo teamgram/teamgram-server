@@ -24,8 +24,13 @@ import (
 // AuthsessionSetInitConnection
 // authsession.setInitConnection auth_key_id:long ip:string api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = Bool;
 func (c *AuthsessionCore) AuthsessionSetInitConnection(in *authsession.TLAuthsessionSetInitConnection) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.setInitConnection - error: method AuthsessionSetInitConnection not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	in.AuthKeyId = keyData.PermAuthKeyId
+	if err := c.svcCtx.Repo.SetInitConnection(c.ctx, in); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

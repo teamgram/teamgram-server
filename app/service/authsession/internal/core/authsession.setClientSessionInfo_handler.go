@@ -24,8 +24,16 @@ import (
 // AuthsessionSetClientSessionInfo
 // authsession.setClientSessionInfo data:ClientSession = Bool;
 func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuthsessionSetClientSessionInfo) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.setClientSessionInfo - error: method AuthsessionSetClientSessionInfo not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in.Data == nil {
+		return nil, authsession.ErrClientSessionEmpty
+	}
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.Data.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	in.Data.AuthKeyId = keyData.PermAuthKeyId
+	if err := c.svcCtx.Repo.SetClientSessionInfo(c.ctx, in.Data); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }
