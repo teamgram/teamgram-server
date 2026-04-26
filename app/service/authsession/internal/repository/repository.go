@@ -17,6 +17,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	geoipclient "github.com/teamgram/teamgram-server/v2/app/infra/geoip/client"
@@ -30,6 +32,7 @@ import (
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	sqlc.CachedConn
+	db               *sqlx.DB
 	kv               kv.Store
 	model            *model.Models
 	futureSaltsModel FutureSaltsModelType
@@ -43,6 +46,7 @@ func NewRepository(c config.Config, geoipClient geoipclient.GeoipClient) *Reposi
 
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
+		db:               db,
 		kv:               kv2,
 		model:            model.NewModels(db, c.Cache),
 		futureSaltsModel: xkv.NewFutureSaltsModel(kv2, "future_salts"),
@@ -52,8 +56,22 @@ func NewRepository(c config.Config, geoipClient geoipclient.GeoipClient) *Reposi
 
 // Close releases repository-owned clients.
 func (r *Repository) Close() error {
-	if r == nil || r.geoipClient == nil {
+	if r == nil {
 		return nil
 	}
-	return r.geoipClient.Close()
+
+	var err error
+	if closer, ok := any(r.CachedConn).(interface{ Close() error }); ok {
+		err = errors.Join(err, closer.Close())
+	}
+	if closer, ok := any(r.db).(interface{ Close() error }); ok {
+		err = errors.Join(err, closer.Close())
+	}
+	if closer, ok := any(r.kv).(interface{ Close() error }); ok {
+		err = errors.Join(err, closer.Close())
+	}
+	if r.geoipClient != nil {
+		err = errors.Join(err, r.geoipClient.Close())
+	}
+	return err
 }
