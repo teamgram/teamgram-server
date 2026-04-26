@@ -17,15 +17,25 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+const maxBatchUsers = 500
 
 // StatusGetUsersOnlineSessionsList
 // status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUsersOnlineSessionsList) (*status.VectorUserSessionEntryList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("status.getUsersOnlineSessionsList - error: method StatusGetUsersOnlineSessionsList not impl")
+	if len(in.Users) > maxBatchUsers {
+		return nil, fmt.Errorf("getUsersOnlineSessionsList: too many users %d, max %d", len(in.Users), maxBatchUsers)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	r, err := c.svcCtx.Repo.GetUsersOnlineSessionsList(c.ctx, in.Users)
+	if err != nil {
+		c.Logger.Errorf("status.getUsersOnlineSessionsList - error: %v", err)
+		return nil, err
+	}
+
+	return r, nil
 }
