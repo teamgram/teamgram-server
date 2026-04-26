@@ -89,9 +89,14 @@ func (m *defaultHashTagsModel) FindOne(ctx context.Context, id int64) (*HashTags
 	var resp HashTags
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "hash_tags",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("hash_tags.FindOne: %w", err)
 	}
@@ -134,7 +139,11 @@ func (m *defaultHashTagsModel) FindOneByUserIdHashTagHashTagMessageId(ctx contex
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "hash_tags",
+				Key:      fmt.Sprintf("user_id=%v,hash_tag=%v,hash_tag_message_id=%v", userId, hashTag, hashTagMessageId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("hash_tags.FindOneByUserIdHashTagHashTagMessageId: %w", err)
 	}

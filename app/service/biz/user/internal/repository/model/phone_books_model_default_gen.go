@@ -89,9 +89,14 @@ func (m *defaultPhoneBooksModel) FindOne(ctx context.Context, id int64) (*PhoneB
 	var resp PhoneBooks
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "phone_books",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("phone_books.FindOne: %w", err)
 	}
@@ -134,7 +139,11 @@ func (m *defaultPhoneBooksModel) FindOneByAuthKeyIdClientId(ctx context.Context,
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "phone_books",
+				Key:      fmt.Sprintf("auth_key_id=%v,client_id=%v", authKeyId, clientId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("phone_books.FindOneByAuthKeyIdClientId: %w", err)
 	}

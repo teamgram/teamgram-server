@@ -87,9 +87,14 @@ func (m *defaultUserPresencesModel) FindOne(ctx context.Context, id int64) (*Use
 	var resp UserPresences
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_presences",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_presences.FindOne: %w", err)
 	}
@@ -132,7 +137,11 @@ func (m *defaultUserPresencesModel) FindOneByUserId(ctx context.Context, userId 
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_presences",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_presences.FindOneByUserId: %w", err)
 	}

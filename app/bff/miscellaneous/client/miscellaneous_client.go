@@ -27,11 +27,13 @@ type MiscellaneousClient interface {
 
 type defaultMiscellaneousClient struct {
 	cli client.Client
+	rpc miscellaneousservice.Client
 }
 
 func NewMiscellaneousClient(cli client.Client) MiscellaneousClient {
 	return &defaultMiscellaneousClient{
 		cli: cli,
+		rpc: miscellaneousservice.NewRPCMiscellaneousClient(cli),
 	}
 }
 
@@ -45,13 +47,11 @@ func (m *defaultMiscellaneousClient) Close() error {
 // HelpSaveAppLog
 // help.saveAppLog#6f02f748 events:Vector<InputAppEvent> = Bool;
 func (m *defaultMiscellaneousClient) HelpSaveAppLog(ctx context.Context, in *tg.TLHelpSaveAppLog) (*tg.Bool, error) {
-	cli := miscellaneousservice.NewRPCMiscellaneousClient(m.cli)
-	return cli.HelpSaveAppLog(ctx, in)
+	return m.rpc.HelpSaveAppLog(ctx, in)
 }
 
 // HelpTest
 // help.test#c0e202f7 = Bool;
 func (m *defaultMiscellaneousClient) HelpTest(ctx context.Context, in *tg.TLHelpTest) (*tg.Bool, error) {
-	cli := miscellaneousservice.NewRPCMiscellaneousClient(m.cli)
-	return cli.HelpTest(ctx, in)
+	return m.rpc.HelpTest(ctx, in)
 }

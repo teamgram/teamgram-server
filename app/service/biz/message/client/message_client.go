@@ -48,11 +48,13 @@ type MessageClient interface {
 
 type defaultMessageClient struct {
 	cli client.Client
+	rpc messageservice.Client
 }
 
 func NewMessageClient(cli client.Client) MessageClient {
 	return &defaultMessageClient{
 		cli: cli,
+		rpc: messageservice.NewRPCMessageClient(cli),
 	}
 }
 
@@ -66,139 +68,119 @@ func (m *defaultMessageClient) Close() error {
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
 func (m *defaultMessageClient) MessageGetUserMessage(ctx context.Context, in *message.TLMessageGetUserMessage) (*tg.MessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUserMessage(ctx, in)
+	return m.rpc.MessageGetUserMessage(ctx, in)
 }
 
 // MessageGetUserMessageList
 // message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUserMessageList(ctx, in)
+	return m.rpc.MessageGetUserMessageList(ctx, in)
 }
 
 // MessageGetUserMessageListByDataIdList
 // message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetUserMessageListByDataIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdList) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUserMessageListByDataIdList(ctx, in)
+	return m.rpc.MessageGetUserMessageListByDataIdList(ctx, in)
 }
 
 // MessageGetUserMessageListByDataIdUserIdList
 // message.getUserMessageListByDataIdUserIdList id:long user_id_list:Vector<long> = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetUserMessageListByDataIdUserIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdUserIdList) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUserMessageListByDataIdUserIdList(ctx, in)
+	return m.rpc.MessageGetUserMessageListByDataIdUserIdList(ctx, in)
 }
 
 // MessageGetHistoryMessages
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetHistoryMessages(ctx, in)
+	return m.rpc.MessageGetHistoryMessages(ctx, in)
 }
 
 // MessageGetHistoryMessagesCount
 // message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 func (m *defaultMessageClient) MessageGetHistoryMessagesCount(ctx context.Context, in *message.TLMessageGetHistoryMessagesCount) (*tg.Int32, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetHistoryMessagesCount(ctx, in)
+	return m.rpc.MessageGetHistoryMessagesCount(ctx, in)
 }
 
 // MessageGetPeerUserMessageId
 // message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 func (m *defaultMessageClient) MessageGetPeerUserMessageId(ctx context.Context, in *message.TLMessageGetPeerUserMessageId) (*tg.Int32, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetPeerUserMessageId(ctx, in)
+	return m.rpc.MessageGetPeerUserMessageId(ctx, in)
 }
 
 // MessageGetPeerUserMessage
 // message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 func (m *defaultMessageClient) MessageGetPeerUserMessage(ctx context.Context, in *message.TLMessageGetPeerUserMessage) (*tg.MessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetPeerUserMessage(ctx, in)
+	return m.rpc.MessageGetPeerUserMessage(ctx, in)
 }
 
 // MessageSearchByMediaType
 // message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageSearchByMediaType(ctx context.Context, in *message.TLMessageSearchByMediaType) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageSearchByMediaType(ctx, in)
+	return m.rpc.MessageSearchByMediaType(ctx, in)
 }
 
 // MessageSearch
 // message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageSearch(ctx context.Context, in *message.TLMessageSearch) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageSearch(ctx, in)
+	return m.rpc.MessageSearch(ctx, in)
 }
 
 // MessageSearchGlobal
 // message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageSearchGlobal(ctx context.Context, in *message.TLMessageSearchGlobal) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageSearchGlobal(ctx, in)
+	return m.rpc.MessageSearchGlobal(ctx, in)
 }
 
 // MessageSearchByPinned
 // message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageSearchByPinned(ctx context.Context, in *message.TLMessageSearchByPinned) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageSearchByPinned(ctx, in)
+	return m.rpc.MessageSearchByPinned(ctx, in)
 }
 
 // MessageGetSearchCounter
 // message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 func (m *defaultMessageClient) MessageGetSearchCounter(ctx context.Context, in *message.TLMessageGetSearchCounter) (*tg.Int32, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetSearchCounter(ctx, in)
+	return m.rpc.MessageGetSearchCounter(ctx, in)
 }
 
 // MessageSearchV2
 // message.searchV2 user_id:long peer_type:int peer_id:long q:string from_id:long min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageSearchV2(ctx context.Context, in *message.TLMessageSearchV2) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageSearchV2(ctx, in)
+	return m.rpc.MessageSearchV2(ctx, in)
 }
 
 // MessageGetLastTwoPinnedMessageId
 // message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
 func (m *defaultMessageClient) MessageGetLastTwoPinnedMessageId(ctx context.Context, in *message.TLMessageGetLastTwoPinnedMessageId) (*message.VectorInt, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetLastTwoPinnedMessageId(ctx, in)
+	return m.rpc.MessageGetLastTwoPinnedMessageId(ctx, in)
 }
 
 // MessageUpdatePinnedMessageId
 // message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 func (m *defaultMessageClient) MessageUpdatePinnedMessageId(ctx context.Context, in *message.TLMessageUpdatePinnedMessageId) (*tg.Bool, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageUpdatePinnedMessageId(ctx, in)
+	return m.rpc.MessageUpdatePinnedMessageId(ctx, in)
 }
 
 // MessageGetPinnedMessageIdList
 // message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 func (m *defaultMessageClient) MessageGetPinnedMessageIdList(ctx context.Context, in *message.TLMessageGetPinnedMessageIdList) (*message.VectorInt, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetPinnedMessageIdList(ctx, in)
+	return m.rpc.MessageGetPinnedMessageIdList(ctx, in)
 }
 
 // MessageUnPinAllMessages
 // message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 func (m *defaultMessageClient) MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.VectorInt, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageUnPinAllMessages(ctx, in)
+	return m.rpc.MessageUnPinAllMessages(ctx, in)
 }
 
 // MessageGetUnreadMentions
 // message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.VectorMessageBox, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUnreadMentions(ctx, in)
+	return m.rpc.MessageGetUnreadMentions(ctx, in)
 }
 
 // MessageGetUnreadMentionsCount
 // message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 func (m *defaultMessageClient) MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*tg.Int32, error) {
-	cli := messageservice.NewRPCMessageClient(m.cli)
-	return cli.MessageGetUnreadMentionsCount(ctx, in)
+	return m.rpc.MessageGetUnreadMentionsCount(ctx, in)
 }

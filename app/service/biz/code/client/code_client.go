@@ -32,11 +32,13 @@ type CodeClient interface {
 
 type defaultCodeClient struct {
 	cli client.Client
+	rpc codeservice.Client
 }
 
 func NewCodeClient(cli client.Client) CodeClient {
 	return &defaultCodeClient{
 		cli: cli,
+		rpc: codeservice.NewRPCCodeClient(cli),
 	}
 }
 
@@ -50,27 +52,23 @@ func (m *defaultCodeClient) Close() error {
 // CodeCreatePhoneCode
 // code.createPhoneCode flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true sent_code_type:int next_code_type:int state:int = PhoneCodeTransaction;
 func (m *defaultCodeClient) CodeCreatePhoneCode(ctx context.Context, in *code.TLCodeCreatePhoneCode) (*code.PhoneCodeTransaction, error) {
-	cli := codeservice.NewRPCCodeClient(m.cli)
-	return cli.CodeCreatePhoneCode(ctx, in)
+	return m.rpc.CodeCreatePhoneCode(ctx, in)
 }
 
 // CodeGetPhoneCode
 // code.getPhoneCode auth_key_id:long phone:string phone_code_hash:string = PhoneCodeTransaction;
 func (m *defaultCodeClient) CodeGetPhoneCode(ctx context.Context, in *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error) {
-	cli := codeservice.NewRPCCodeClient(m.cli)
-	return cli.CodeGetPhoneCode(ctx, in)
+	return m.rpc.CodeGetPhoneCode(ctx, in)
 }
 
 // CodeDeletePhoneCode
 // code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 func (m *defaultCodeClient) CodeDeletePhoneCode(ctx context.Context, in *code.TLCodeDeletePhoneCode) (*tg.Bool, error) {
-	cli := codeservice.NewRPCCodeClient(m.cli)
-	return cli.CodeDeletePhoneCode(ctx, in)
+	return m.rpc.CodeDeletePhoneCode(ctx, in)
 }
 
 // CodeUpdatePhoneCodeData
 // code.updatePhoneCodeData auth_key_id:long phone:string phone_code_hash:string code_data:PhoneCodeTransaction = Bool;
 func (m *defaultCodeClient) CodeUpdatePhoneCodeData(ctx context.Context, in *code.TLCodeUpdatePhoneCodeData) (*tg.Bool, error) {
-	cli := codeservice.NewRPCCodeClient(m.cli)
-	return cli.CodeUpdatePhoneCodeData(ctx, in)
+	return m.rpc.CodeUpdatePhoneCodeData(ctx, in)
 }

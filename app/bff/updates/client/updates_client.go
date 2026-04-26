@@ -28,11 +28,13 @@ type UpdatesClient interface {
 
 type defaultUpdatesClient struct {
 	cli client.Client
+	rpc updatesservice.Client
 }
 
 func NewUpdatesClient(cli client.Client) UpdatesClient {
 	return &defaultUpdatesClient{
 		cli: cli,
+		rpc: updatesservice.NewRPCUpdatesClient(cli),
 	}
 }
 
@@ -46,20 +48,17 @@ func (m *defaultUpdatesClient) Close() error {
 // UpdatesGetState
 // updates.getState#edd4882a = updates.State;
 func (m *defaultUpdatesClient) UpdatesGetState(ctx context.Context, in *tg.TLUpdatesGetState) (*tg.UpdatesState, error) {
-	cli := updatesservice.NewRPCUpdatesClient(m.cli)
-	return cli.UpdatesGetState(ctx, in)
+	return m.rpc.UpdatesGetState(ctx, in)
 }
 
 // UpdatesGetDifference
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (m *defaultUpdatesClient) UpdatesGetDifference(ctx context.Context, in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
-	cli := updatesservice.NewRPCUpdatesClient(m.cli)
-	return cli.UpdatesGetDifference(ctx, in)
+	return m.rpc.UpdatesGetDifference(ctx, in)
 }
 
 // UpdatesGetChannelDifference
 // updates.getChannelDifference#3173d78 flags:# force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
 func (m *defaultUpdatesClient) UpdatesGetChannelDifference(ctx context.Context, in *tg.TLUpdatesGetChannelDifference) (*tg.UpdatesChannelDifference, error) {
-	cli := updatesservice.NewRPCUpdatesClient(m.cli)
-	return cli.UpdatesGetChannelDifference(ctx, in)
+	return m.rpc.UpdatesGetChannelDifference(ctx, in)
 }

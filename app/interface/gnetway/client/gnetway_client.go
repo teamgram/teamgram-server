@@ -29,11 +29,13 @@ type GnetwayClient interface {
 
 type defaultGnetwayClient struct {
 	cli client.Client
+	rpc gnetwayservice.Client
 }
 
 func NewGnetwayClient(cli client.Client) GnetwayClient {
 	return &defaultGnetwayClient{
 		cli: cli,
+		rpc: gnetwayservice.NewRPCGnetwayClient(cli),
 	}
 }
 
@@ -47,6 +49,5 @@ func (m *defaultGnetwayClient) Close() error {
 // GnetwaySendDataToGateway
 // gnetway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (m *defaultGnetwayClient) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error) {
-	cli := gnetwayservice.NewRPCGnetwayClient(m.cli)
-	return cli.GnetwaySendDataToGateway(ctx, in)
+	return m.rpc.GnetwaySendDataToGateway(ctx, in)
 }

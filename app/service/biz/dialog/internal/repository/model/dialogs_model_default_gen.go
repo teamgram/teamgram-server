@@ -38,9 +38,9 @@ type (
 		Update2(ctx context.Context, data *Dialogs) error
 		Delete2(ctx context.Context, id int64) error
 
-		FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error)
-
 		FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error)
+
+		FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error)
 	}
 
 	defaultDialogsModel struct {
@@ -109,9 +109,14 @@ func (m *defaultDialogsModel) FindOne(ctx context.Context, id int64) (*Dialogs, 
 	var resp Dialogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "dialogs",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("dialogs.FindOne: %w", err)
 	}
@@ -146,22 +151,6 @@ func (m *defaultDialogsModel) Update2(ctx context.Context, data *Dialogs) error 
 	return nil
 }
 
-func (m *defaultDialogsModel) FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error) {
-	query := fmt.Sprintf("select %s from dialogs where user_id = ? AND peer_dialog_id = ? limit 1", dialogsRows)
-	var resp Dialogs
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("dialogs.FindOneByUserIdPeerDialogId: %w", err)
-	}
-
-	return &resp, nil
-}
-
 func (m *defaultDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*Dialogs, error) {
 	query := fmt.Sprintf("select %s from dialogs where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", dialogsRows)
 	var resp Dialogs
@@ -170,9 +159,33 @@ func (m *defaultDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context,
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "dialogs",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("dialogs.FindOneByUserIdPeerTypePeerId: %w", err)
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultDialogsModel) FindOneByUserIdPeerDialogId(ctx context.Context, userId int64, peerDialogId int64) (*Dialogs, error) {
+	query := fmt.Sprintf("select %s from dialogs where user_id = ? AND peer_dialog_id = ? limit 1", dialogsRows)
+	var resp Dialogs
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerDialogId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialogs",
+				Key:      fmt.Sprintf("user_id=%v,peer_dialog_id=%v", userId, peerDialogId),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("dialogs.FindOneByUserIdPeerDialogId: %w", err)
 	}
 
 	return &resp, nil

@@ -88,9 +88,14 @@ func (m *defaultDraftsModel) FindOne(ctx context.Context, id int32) (*Drafts, er
 	var resp Drafts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "drafts",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("drafts.FindOne: %w", err)
 	}
@@ -132,7 +137,11 @@ func (m *defaultDraftsModel) FindOneByUserIdPeerDialogId(ctx context.Context, us
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "drafts",
+				Key:      fmt.Sprintf("user_id=%v,peer_dialog_id=%v", userId, peerDialogId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("drafts.FindOneByUserIdPeerDialogId: %w", err)
 	}

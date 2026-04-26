@@ -86,9 +86,14 @@ func (m *defaultUserPrivaciesModel) FindOne(ctx context.Context, id int64) (*Use
 	var resp UserPrivacies
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_privacies",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_privacies.FindOne: %w", err)
 	}
@@ -131,7 +136,11 @@ func (m *defaultUserPrivaciesModel) FindOneByUserIdKeyType(ctx context.Context, 
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_privacies",
+				Key:      fmt.Sprintf("user_id=%v,key_type=%v", userId, keyType),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_privacies.FindOneByUserIdKeyType: %w", err)
 	}

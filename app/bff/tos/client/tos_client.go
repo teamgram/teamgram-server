@@ -27,11 +27,13 @@ type TosClient interface {
 
 type defaultTosClient struct {
 	cli client.Client
+	rpc tosservice.Client
 }
 
 func NewTosClient(cli client.Client) TosClient {
 	return &defaultTosClient{
 		cli: cli,
+		rpc: tosservice.NewRPCTosClient(cli),
 	}
 }
 
@@ -45,13 +47,11 @@ func (m *defaultTosClient) Close() error {
 // HelpGetTermsOfServiceUpdate
 // help.getTermsOfServiceUpdate#2ca51fd1 = help.TermsOfServiceUpdate;
 func (m *defaultTosClient) HelpGetTermsOfServiceUpdate(ctx context.Context, in *tg.TLHelpGetTermsOfServiceUpdate) (*tg.HelpTermsOfServiceUpdate, error) {
-	cli := tosservice.NewRPCTosClient(m.cli)
-	return cli.HelpGetTermsOfServiceUpdate(ctx, in)
+	return m.rpc.HelpGetTermsOfServiceUpdate(ctx, in)
 }
 
 // HelpAcceptTermsOfService
 // help.acceptTermsOfService#ee72f79a id:DataJSON = Bool;
 func (m *defaultTosClient) HelpAcceptTermsOfService(ctx context.Context, in *tg.TLHelpAcceptTermsOfService) (*tg.Bool, error) {
-	cli := tosservice.NewRPCTosClient(m.cli)
-	return cli.HelpAcceptTermsOfService(ctx, in)
+	return m.rpc.HelpAcceptTermsOfService(ctx, in)
 }

@@ -91,9 +91,14 @@ func (m *defaultUsernameModel) FindOne(ctx context.Context, id int64) (*Username
 	var resp Username
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("username.FindOne: %w", err)
 	}
@@ -136,7 +141,11 @@ func (m *defaultUsernameModel) FindOneByUsername(ctx context.Context, username s
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("username=%v", username),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("username.FindOneByUsername: %w", err)
 	}

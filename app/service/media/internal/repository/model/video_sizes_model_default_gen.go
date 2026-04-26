@@ -90,9 +90,14 @@ func (m *defaultVideoSizesModel) FindOne(ctx context.Context, id int64) (*VideoS
 	var resp VideoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "video_sizes",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("video_sizes.FindOne: %w", err)
 	}
@@ -135,7 +140,11 @@ func (m *defaultVideoSizesModel) FindOneByVideoSizeIdSizeType(ctx context.Contex
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "video_sizes",
+				Key:      fmt.Sprintf("video_size_id=%v,size_type=%v", videoSizeId, sizeType),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("video_sizes.FindOneByVideoSizeIdSizeType: %w", err)
 	}

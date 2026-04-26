@@ -28,11 +28,13 @@ type QrCodeClient interface {
 
 type defaultQrCodeClient struct {
 	cli client.Client
+	rpc qrcodeservice.Client
 }
 
 func NewQrCodeClient(cli client.Client) QrCodeClient {
 	return &defaultQrCodeClient{
 		cli: cli,
+		rpc: qrcodeservice.NewRPCQrCodeClient(cli),
 	}
 }
 
@@ -46,20 +48,17 @@ func (m *defaultQrCodeClient) Close() error {
 // AuthExportLoginToken
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (m *defaultQrCodeClient) AuthExportLoginToken(ctx context.Context, in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error) {
-	cli := qrcodeservice.NewRPCQrCodeClient(m.cli)
-	return cli.AuthExportLoginToken(ctx, in)
+	return m.rpc.AuthExportLoginToken(ctx, in)
 }
 
 // AuthImportLoginToken
 // auth.importLoginToken#95ac5ce4 token:bytes = auth.LoginToken;
 func (m *defaultQrCodeClient) AuthImportLoginToken(ctx context.Context, in *tg.TLAuthImportLoginToken) (*tg.AuthLoginToken, error) {
-	cli := qrcodeservice.NewRPCQrCodeClient(m.cli)
-	return cli.AuthImportLoginToken(ctx, in)
+	return m.rpc.AuthImportLoginToken(ctx, in)
 }
 
 // AuthAcceptLoginToken
 // auth.acceptLoginToken#e894ad4d token:bytes = Authorization;
 func (m *defaultQrCodeClient) AuthAcceptLoginToken(ctx context.Context, in *tg.TLAuthAcceptLoginToken) (*tg.Authorization, error) {
-	cli := qrcodeservice.NewRPCQrCodeClient(m.cli)
-	return cli.AuthAcceptLoginToken(ctx, in)
+	return m.rpc.AuthAcceptLoginToken(ctx, in)
 }

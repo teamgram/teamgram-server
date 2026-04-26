@@ -108,9 +108,14 @@ func (m *defaultMessagesModel) FindOne(ctx context.Context, id int64) (*Messages
 	var resp Messages
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("messages.FindOne: %w", err)
 	}
@@ -153,7 +158,11 @@ func (m *defaultMessagesModel) FindOneByUserIdUserMessageBoxId(ctx context.Conte
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,user_message_box_id=%v", userId, userMessageBoxId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("messages.FindOneByUserIdUserMessageBoxId: %w", err)
 	}

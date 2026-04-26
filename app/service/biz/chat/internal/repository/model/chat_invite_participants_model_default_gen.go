@@ -90,9 +90,14 @@ func (m *defaultChatInviteParticipantsModel) FindOne(ctx context.Context, id int
 	var resp ChatInviteParticipants
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "chat_invite_participants",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("chat_invite_participants.FindOne: %w", err)
 	}
@@ -135,7 +140,11 @@ func (m *defaultChatInviteParticipantsModel) FindOneByLinkUserId(ctx context.Con
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "chat_invite_participants",
+				Key:      fmt.Sprintf("link=%v,user_id=%v", link, userId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("chat_invite_participants.FindOneByLinkUserId: %w", err)
 	}

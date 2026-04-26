@@ -88,9 +88,14 @@ func (m *defaultUnregisteredContactsModel) FindOne(ctx context.Context, id int64
 	var resp UnregisteredContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "unregistered_contacts",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("unregistered_contacts.FindOne: %w", err)
 	}
@@ -133,7 +138,11 @@ func (m *defaultUnregisteredContactsModel) FindOneByPhoneImporterUserId(ctx cont
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "unregistered_contacts",
+				Key:      fmt.Sprintf("phone=%v,importer_user_id=%v", phone, importerUserId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("unregistered_contacts.FindOneByPhoneImporterUserId: %w", err)
 	}

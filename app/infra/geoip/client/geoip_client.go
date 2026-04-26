@@ -29,11 +29,13 @@ type GeoipClient interface {
 
 type defaultGeoipClient struct {
 	cli client.Client
+	rpc geoipservice.Client
 }
 
 func NewGeoipClient(cli client.Client) GeoipClient {
 	return &defaultGeoipClient{
 		cli: cli,
+		rpc: geoipservice.NewRPCGeoipClient(cli),
 	}
 }
 
@@ -47,6 +49,5 @@ func (m *defaultGeoipClient) Close() error {
 // GeoipGetCountryAndRegionByIp
 // geoip.getCountryAndRegionByIp ip:string = Region;
 func (m *defaultGeoipClient) GeoipGetCountryAndRegionByIp(ctx context.Context, in *geoip.TLGeoipGetCountryAndRegionByIp) (*geoip.Region, error) {
-	cli := geoipservice.NewRPCGeoipClient(m.cli)
-	return cli.GeoipGetCountryAndRegionByIp(ctx, in)
+	return m.rpc.GeoipGetCountryAndRegionByIp(ctx, in)
 }

@@ -88,9 +88,14 @@ func (m *defaultPopularContactsModel) FindOne(ctx context.Context, id int64) (*P
 	var resp PopularContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "popular_contacts",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("popular_contacts.FindOne: %w", err)
 	}
@@ -133,7 +138,11 @@ func (m *defaultPopularContactsModel) FindOneByPhone(ctx context.Context, phone 
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "popular_contacts",
+				Key:      fmt.Sprintf("phone=%v", phone),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("popular_contacts.FindOneByPhone: %w", err)
 	}

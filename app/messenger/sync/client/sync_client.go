@@ -35,11 +35,13 @@ type SyncClient interface {
 
 type defaultSyncClient struct {
 	cli client.Client
+	rpc syncservice.Client
 }
 
 func NewSyncClient(cli client.Client) SyncClient {
 	return &defaultSyncClient{
 		cli: cli,
+		rpc: syncservice.NewRPCSyncClient(cli),
 	}
 }
 
@@ -53,48 +55,41 @@ func (m *defaultSyncClient) Close() error {
 // SyncUpdatesMe
 // sync.updatesMe flags:# user_id:long perm_auth_key_id:long server_id:flags.0?string auth_key_id:flags.1?long session_id:flags.1?long updates:Updates = Void;
 func (m *defaultSyncClient) SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncUpdatesMe(ctx, in)
+	return m.rpc.SyncUpdatesMe(ctx, in)
 }
 
 // SyncUpdatesNotMe
 // sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
 func (m *defaultSyncClient) SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncUpdatesNotMe(ctx, in)
+	return m.rpc.SyncUpdatesNotMe(ctx, in)
 }
 
 // SyncPushUpdates
 // sync.pushUpdates user_id:long updates:Updates = Void;
 func (m *defaultSyncClient) SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncPushUpdates(ctx, in)
+	return m.rpc.SyncPushUpdates(ctx, in)
 }
 
 // SyncPushUpdatesIfNot
 // sync.pushUpdatesIfNot flags:# user_id:long includes:flags.0?Vector<long> excludes:flags.1?Vector<long> updates:Updates = Void;
 func (m *defaultSyncClient) SyncPushUpdatesIfNot(ctx context.Context, in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncPushUpdatesIfNot(ctx, in)
+	return m.rpc.SyncPushUpdatesIfNot(ctx, in)
 }
 
 // SyncPushBotUpdates
 // sync.pushBotUpdates user_id:long updates:Updates = Void;
 func (m *defaultSyncClient) SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncPushBotUpdates(ctx, in)
+	return m.rpc.SyncPushBotUpdates(ctx, in)
 }
 
 // SyncPushRpcResult
 // sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 func (m *defaultSyncClient) SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncPushRpcResult(ctx, in)
+	return m.rpc.SyncPushRpcResult(ctx, in)
 }
 
 // SyncBroadcastUpdates
 // sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 func (m *defaultSyncClient) SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	cli := syncservice.NewRPCSyncClient(m.cli)
-	return cli.SyncBroadcastUpdates(ctx, in)
+	return m.rpc.SyncBroadcastUpdates(ctx, in)
 }

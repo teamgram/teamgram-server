@@ -87,9 +87,14 @@ func (m *defaultUserProfilePhotosModel) FindOne(ctx context.Context, id int64) (
 	var resp UserProfilePhotos
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_profile_photos",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_profile_photos.FindOne: %w", err)
 	}
@@ -132,7 +137,11 @@ func (m *defaultUserProfilePhotosModel) FindOneByUserIdPhotoId(ctx context.Conte
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_profile_photos",
+				Key:      fmt.Sprintf("user_id=%v,photo_id=%v", userId, photoId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_profile_photos.FindOneByUserIdPhotoId: %w", err)
 	}

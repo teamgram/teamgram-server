@@ -93,9 +93,14 @@ func (m *defaultUserContactsModel) FindOne(ctx context.Context, id int64) (*User
 	var resp UserContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_contacts",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_contacts.FindOne: %w", err)
 	}
@@ -138,7 +143,11 @@ func (m *defaultUserContactsModel) FindOneByOwnerUserIdContactUserId(ctx context
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_contacts",
+				Key:      fmt.Sprintf("owner_user_id=%v,contact_user_id=%v", ownerUserId, contactUserId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_contacts.FindOneByOwnerUserIdContactUserId: %w", err)
 	}

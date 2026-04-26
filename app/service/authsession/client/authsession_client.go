@@ -49,11 +49,13 @@ type AuthsessionClient interface {
 
 type defaultAuthsessionClient struct {
 	cli client.Client
+	rpc authsessionservice.Client
 }
 
 func NewAuthsessionClient(cli client.Client) AuthsessionClient {
 	return &defaultAuthsessionClient{
 		cli: cli,
+		rpc: authsessionservice.NewRPCAuthsessionClient(cli),
 	}
 }
 
@@ -67,146 +69,125 @@ func (m *defaultAuthsessionClient) Close() error {
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 func (m *defaultAuthsessionClient) AuthsessionGetAuthorizations(ctx context.Context, in *authsession.TLAuthsessionGetAuthorizations) (*tg.AccountAuthorizations, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetAuthorizations(ctx, in)
+	return m.rpc.AuthsessionGetAuthorizations(ctx, in)
 }
 
 // AuthsessionResetAuthorization
 // authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 func (m *defaultAuthsessionClient) AuthsessionResetAuthorization(ctx context.Context, in *authsession.TLAuthsessionResetAuthorization) (*authsession.VectorLong, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionResetAuthorization(ctx, in)
+	return m.rpc.AuthsessionResetAuthorization(ctx, in)
 }
 
 // AuthsessionGetLayer
 // authsession.getLayer auth_key_id:long = Int32;
 func (m *defaultAuthsessionClient) AuthsessionGetLayer(ctx context.Context, in *authsession.TLAuthsessionGetLayer) (*tg.Int32, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetLayer(ctx, in)
+	return m.rpc.AuthsessionGetLayer(ctx, in)
 }
 
 // AuthsessionGetLangPack
 // authsession.getLangPack auth_key_id:long = String;
 func (m *defaultAuthsessionClient) AuthsessionGetLangPack(ctx context.Context, in *authsession.TLAuthsessionGetLangPack) (*tg.String, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetLangPack(ctx, in)
+	return m.rpc.AuthsessionGetLangPack(ctx, in)
 }
 
 // AuthsessionGetClient
 // authsession.getClient auth_key_id:long = String;
 func (m *defaultAuthsessionClient) AuthsessionGetClient(ctx context.Context, in *authsession.TLAuthsessionGetClient) (*tg.String, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetClient(ctx, in)
+	return m.rpc.AuthsessionGetClient(ctx, in)
 }
 
 // AuthsessionGetLangCode
 // authsession.getLangCode auth_key_id:long = String;
 func (m *defaultAuthsessionClient) AuthsessionGetLangCode(ctx context.Context, in *authsession.TLAuthsessionGetLangCode) (*tg.String, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetLangCode(ctx, in)
+	return m.rpc.AuthsessionGetLangCode(ctx, in)
 }
 
 // AuthsessionGetUserId
 // authsession.getUserId auth_key_id:long = Int64;
 func (m *defaultAuthsessionClient) AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetUserId(ctx, in)
+	return m.rpc.AuthsessionGetUserId(ctx, in)
 }
 
 // AuthsessionGetPushSessionId
 // authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 func (m *defaultAuthsessionClient) AuthsessionGetPushSessionId(ctx context.Context, in *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetPushSessionId(ctx, in)
+	return m.rpc.AuthsessionGetPushSessionId(ctx, in)
 }
 
 // AuthsessionGetFutureSalts
 // authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 func (m *defaultAuthsessionClient) AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetFutureSalts(ctx, in)
+	return m.rpc.AuthsessionGetFutureSalts(ctx, in)
 }
 
 // AuthsessionQueryAuthKey
 // authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (m *defaultAuthsessionClient) AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionQueryAuthKey(ctx, in)
+	return m.rpc.AuthsessionQueryAuthKey(ctx, in)
 }
 
 // AuthsessionSetAuthKey
 // authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (m *defaultAuthsessionClient) AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionSetAuthKey(ctx, in)
+	return m.rpc.AuthsessionSetAuthKey(ctx, in)
 }
 
 // AuthsessionBindAuthKeyUser
 // authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 func (m *defaultAuthsessionClient) AuthsessionBindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionBindAuthKeyUser) (*tg.Int64, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionBindAuthKeyUser(ctx, in)
+	return m.rpc.AuthsessionBindAuthKeyUser(ctx, in)
 }
 
 // AuthsessionUnbindAuthKeyUser
 // authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 func (m *defaultAuthsessionClient) AuthsessionUnbindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionUnbindAuthKeyUser) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionUnbindAuthKeyUser(ctx, in)
+	return m.rpc.AuthsessionUnbindAuthKeyUser(ctx, in)
 }
 
 // AuthsessionGetPermAuthKeyId
 // authsession.getPermAuthKeyId auth_key_id:long= Int64;
 func (m *defaultAuthsessionClient) AuthsessionGetPermAuthKeyId(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyId) (*tg.Int64, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetPermAuthKeyId(ctx, in)
+	return m.rpc.AuthsessionGetPermAuthKeyId(ctx, in)
 }
 
 // AuthsessionBindTempAuthKey
 // authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 func (m *defaultAuthsessionClient) AuthsessionBindTempAuthKey(ctx context.Context, in *authsession.TLAuthsessionBindTempAuthKey) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionBindTempAuthKey(ctx, in)
+	return m.rpc.AuthsessionBindTempAuthKey(ctx, in)
 }
 
 // AuthsessionSetClientSessionInfo
 // authsession.setClientSessionInfo data:ClientSession = Bool;
 func (m *defaultAuthsessionClient) AuthsessionSetClientSessionInfo(ctx context.Context, in *authsession.TLAuthsessionSetClientSessionInfo) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionSetClientSessionInfo(ctx, in)
+	return m.rpc.AuthsessionSetClientSessionInfo(ctx, in)
 }
 
 // AuthsessionGetAuthorization
 // authsession.getAuthorization auth_key_id:long = Authorization;
 func (m *defaultAuthsessionClient) AuthsessionGetAuthorization(ctx context.Context, in *authsession.TLAuthsessionGetAuthorization) (*tg.Authorization, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetAuthorization(ctx, in)
+	return m.rpc.AuthsessionGetAuthorization(ctx, in)
 }
 
 // AuthsessionGetAuthStateData
 // authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 func (m *defaultAuthsessionClient) AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionGetAuthStateData(ctx, in)
+	return m.rpc.AuthsessionGetAuthStateData(ctx, in)
 }
 
 // AuthsessionSetLayer
 // authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
 func (m *defaultAuthsessionClient) AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionSetLayer(ctx, in)
+	return m.rpc.AuthsessionSetLayer(ctx, in)
 }
 
 // AuthsessionSetInitConnection
 // authsession.setInitConnection auth_key_id:long ip:string api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = Bool;
 func (m *defaultAuthsessionClient) AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionSetInitConnection(ctx, in)
+	return m.rpc.AuthsessionSetInitConnection(ctx, in)
 }
 
 // AuthsessionSetAndroidPushSessionId
 // authsession.setAndroidPushSessionId user_id:long auth_key_id:long session_id:long = Bool;
 func (m *defaultAuthsessionClient) AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*tg.Bool, error) {
-	cli := authsessionservice.NewRPCAuthsessionClient(m.cli)
-	return cli.AuthsessionSetAndroidPushSessionId(ctx, in)
+	return m.rpc.AuthsessionSetAndroidPushSessionId(ctx, in)
 }

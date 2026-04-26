@@ -120,9 +120,14 @@ func (m *defaultUsersModel) FindOne(ctx context.Context, id int64) (*Users, erro
 	var resp Users
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "users",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("users.FindOne: %w", err)
 	}
@@ -165,7 +170,11 @@ func (m *defaultUsersModel) FindOneByPhone(ctx context.Context, phone string) (*
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "users",
+				Key:      fmt.Sprintf("phone=%v", phone),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("users.FindOneByPhone: %w", err)
 	}

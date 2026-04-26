@@ -116,9 +116,14 @@ func (m *defaultBotsModel) FindOne(ctx context.Context, id int64) (*Bots, error)
 	var resp Bots
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("bots.FindOne: %w", err)
 	}
@@ -161,7 +166,11 @@ func (m *defaultBotsModel) FindOneByBotId(ctx context.Context, botId int64) (*Bo
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("bot_id=%v", botId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("bots.FindOneByBotId: %w", err)
 	}

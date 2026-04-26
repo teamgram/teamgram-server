@@ -18,7 +18,34 @@
 package model
 
 import (
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"errors"
 )
 
-var ErrNotFound = sqlx.ErrNotFound
+var ErrNotFound = errors.New("repository model: not found")
+
+type NotFoundError struct {
+	Resource string
+	Key      string
+	Cause    error
+}
+
+func (e *NotFoundError) Error() string {
+	if e == nil {
+		return ErrNotFound.Error()
+	}
+	if e.Cause == nil {
+		return e.Resource + " not found: " + e.Key
+	}
+	return e.Resource + " not found: " + e.Key + ": " + e.Cause.Error()
+}
+
+func (e *NotFoundError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.Cause
+}
+
+func (e *NotFoundError) Is(target error) bool {
+	return target == ErrNotFound
+}

@@ -38,11 +38,13 @@ type StatusClient interface {
 
 type defaultStatusClient struct {
 	cli client.Client
+	rpc statusservice.Client
 }
 
 func NewStatusClient(cli client.Client) StatusClient {
 	return &defaultStatusClient{
 		cli: cli,
+		rpc: statusservice.NewRPCStatusClient(cli),
 	}
 }
 
@@ -56,69 +58,59 @@ func (m *defaultStatusClient) Close() error {
 // StatusSetSessionOnline
 // status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (m *defaultStatusClient) StatusSetSessionOnline(ctx context.Context, in *status.TLStatusSetSessionOnline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetSessionOnline(ctx, in)
+	return m.rpc.StatusSetSessionOnline(ctx, in)
 }
 
 // StatusSetSessionOffline
 // status.setSessionOffline user_id:long auth_key_id:long = Bool;
 func (m *defaultStatusClient) StatusSetSessionOffline(ctx context.Context, in *status.TLStatusSetSessionOffline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetSessionOffline(ctx, in)
+	return m.rpc.StatusSetSessionOffline(ctx, in)
 }
 
 // StatusGetUserOnlineSessions
 // status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 func (m *defaultStatusClient) StatusGetUserOnlineSessions(ctx context.Context, in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusGetUserOnlineSessions(ctx, in)
+	return m.rpc.StatusGetUserOnlineSessions(ctx, in)
 }
 
 // StatusGetUsersOnlineSessionsList
 // status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 func (m *defaultStatusClient) StatusGetUsersOnlineSessionsList(ctx context.Context, in *status.TLStatusGetUsersOnlineSessionsList) (*status.VectorUserSessionEntryList, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusGetUsersOnlineSessionsList(ctx, in)
+	return m.rpc.StatusGetUsersOnlineSessionsList(ctx, in)
 }
 
 // StatusGetChannelOnlineUsers
 // status.getChannelOnlineUsers channel_id:long = Vector<long>;
 func (m *defaultStatusClient) StatusGetChannelOnlineUsers(ctx context.Context, in *status.TLStatusGetChannelOnlineUsers) (*status.VectorLong, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusGetChannelOnlineUsers(ctx, in)
+	return m.rpc.StatusGetChannelOnlineUsers(ctx, in)
 }
 
 // StatusSetUserChannelsOnline
 // status.setUserChannelsOnline user_id:long channels:Vector<long> = Bool;
 func (m *defaultStatusClient) StatusSetUserChannelsOnline(ctx context.Context, in *status.TLStatusSetUserChannelsOnline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetUserChannelsOnline(ctx, in)
+	return m.rpc.StatusSetUserChannelsOnline(ctx, in)
 }
 
 // StatusSetUserChannelsOffline
 // status.setUserChannelsOffline user_id:long channels:Vector<long> = Bool;
 func (m *defaultStatusClient) StatusSetUserChannelsOffline(ctx context.Context, in *status.TLStatusSetUserChannelsOffline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetUserChannelsOffline(ctx, in)
+	return m.rpc.StatusSetUserChannelsOffline(ctx, in)
 }
 
 // StatusSetChannelUserOffline
 // status.setChannelUserOffline channel_id:long user_id:long = Bool;
 func (m *defaultStatusClient) StatusSetChannelUserOffline(ctx context.Context, in *status.TLStatusSetChannelUserOffline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetChannelUserOffline(ctx, in)
+	return m.rpc.StatusSetChannelUserOffline(ctx, in)
 }
 
 // StatusSetChannelUsersOnline
 // status.setChannelUsersOnline channel_id:long id:Vector<long> = Bool;
 func (m *defaultStatusClient) StatusSetChannelUsersOnline(ctx context.Context, in *status.TLStatusSetChannelUsersOnline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetChannelUsersOnline(ctx, in)
+	return m.rpc.StatusSetChannelUsersOnline(ctx, in)
 }
 
 // StatusSetChannelOffline
 // status.setChannelOffline channel_id:long = Bool;
 func (m *defaultStatusClient) StatusSetChannelOffline(ctx context.Context, in *status.TLStatusSetChannelOffline) (*tg.Bool, error) {
-	cli := statusservice.NewRPCStatusClient(m.cli)
-	return cli.StatusSetChannelOffline(ctx, in)
+	return m.rpc.StatusSetChannelOffline(ctx, in)
 }

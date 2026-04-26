@@ -117,11 +117,11 @@ func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 	query := "delete from `auth_keys` where `id` = ?"
 
 	oldData, err := m.FindOne(ctx, id)
-	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			return nil
+		}
 		return fmt.Errorf("auth_keys.Delete2 find one: %w", err)
-	}
-	if oldData == nil {
-		return nil
 	}
 
 	keys := []string{m.formatPrimary(id)}
@@ -149,9 +149,14 @@ func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys
 	err := m.QueryRow(ctx, &resp, cacheKey, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 		return conn.QueryRowPartial(ctx, v, query, id)
 	})
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auth_keys.FindOne: %w", err)
 	}
@@ -179,11 +184,11 @@ func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) erro
 	query := fmt.Sprintf("update `auth_keys` set %s where `id` = ?", authKeysRowsWithPlaceHolder)
 
 	oldData, err := m.FindOne(ctx, data.Id)
-	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			return nil
+		}
 		return fmt.Errorf("auth_keys.Update2 find one: %w", err)
-	}
-	if oldData == nil {
-		return nil
 	}
 
 	keys := m.cacheKeys(data)
@@ -217,7 +222,11 @@ func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auth_keys.FindOneByAuthKeyId: %w", err)
 	}

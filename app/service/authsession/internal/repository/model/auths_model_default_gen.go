@@ -99,9 +99,14 @@ func (m *defaultAuthsModel) FindOne(ctx context.Context, id int64) (*Auths, erro
 	var resp Auths
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auths",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auths.FindOne: %w", err)
 	}
@@ -144,7 +149,11 @@ func (m *defaultAuthsModel) FindOneByAuthKeyId(ctx context.Context, authKeyId in
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auths",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auths.FindOneByAuthKeyId: %w", err)
 	}

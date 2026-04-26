@@ -44,11 +44,13 @@ type InboxClient interface {
 
 type defaultInboxClient struct {
 	cli client.Client
+	rpc inboxservice.Client
 }
 
 func NewInboxClient(cli client.Client) InboxClient {
 	return &defaultInboxClient{
 		cli: cli,
+		rpc: inboxservice.NewRPCInboxClient(cli),
 	}
 }
 
@@ -62,111 +64,95 @@ func (m *defaultInboxClient) Close() error {
 // InboxEditUserMessageToInbox
 // inbox.editUserMessageToInbox from_id:long peer_user_id:long message:Message = Void;
 func (m *defaultInboxClient) InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxEditUserMessageToInbox(ctx, in)
+	return m.rpc.InboxEditUserMessageToInbox(ctx, in)
 }
 
 // InboxEditChatMessageToInbox
 // inbox.editChatMessageToInbox from_id:long peer_chat_id:long message:Message = Void;
 func (m *defaultInboxClient) InboxEditChatMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChatMessageToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxEditChatMessageToInbox(ctx, in)
+	return m.rpc.InboxEditChatMessageToInbox(ctx, in)
 }
 
 // InboxDeleteMessagesToInbox
 // inbox.deleteMessagesToInbox from_id:long peer_type:int peer_id:long id:Vector<long> = Void;
 func (m *defaultInboxClient) InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxDeleteMessagesToInbox(ctx, in)
+	return m.rpc.InboxDeleteMessagesToInbox(ctx, in)
 }
 
 // InboxDeleteUserHistoryToInbox
 // inbox.deleteUserHistoryToInbox flags:# from_id:long peer_user_id:long just_clear:flags.1?true max_id:int = Void;
 func (m *defaultInboxClient) InboxDeleteUserHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteUserHistoryToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxDeleteUserHistoryToInbox(ctx, in)
+	return m.rpc.InboxDeleteUserHistoryToInbox(ctx, in)
 }
 
 // InboxDeleteChatHistoryToInbox
 // inbox.deleteChatHistoryToInbox from_id:long peer_chat_id:long max_id:int = Void;
 func (m *defaultInboxClient) InboxDeleteChatHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteChatHistoryToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxDeleteChatHistoryToInbox(ctx, in)
+	return m.rpc.InboxDeleteChatHistoryToInbox(ctx, in)
 }
 
 // InboxReadUserMediaUnreadToInbox
 // inbox.readUserMediaUnreadToInbox from_id:long peer_user_id:long id:Vector<InboxMessageId> = Void;
 func (m *defaultInboxClient) InboxReadUserMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadUserMediaUnreadToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxReadUserMediaUnreadToInbox(ctx, in)
+	return m.rpc.InboxReadUserMediaUnreadToInbox(ctx, in)
 }
 
 // InboxReadChatMediaUnreadToInbox
 // inbox.readChatMediaUnreadToInbox from_id:long peer_chat_id:long id:Vector<InboxMessageId> = Void;
 func (m *defaultInboxClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChatMediaUnreadToInbox) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxReadChatMediaUnreadToInbox(ctx, in)
+	return m.rpc.InboxReadChatMediaUnreadToInbox(ctx, in)
 }
 
 // InboxUpdateHistoryReaded
 // inbox.updateHistoryReaded from_id:long peer_type:int peer_id:long max_id:int sender:long = Void;
 func (m *defaultInboxClient) InboxUpdateHistoryReaded(ctx context.Context, in *inbox.TLInboxUpdateHistoryReaded) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxUpdateHistoryReaded(ctx, in)
+	return m.rpc.InboxUpdateHistoryReaded(ctx, in)
 }
 
 // InboxUpdatePinnedMessage
 // inbox.updatePinnedMessage flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long = Void;
 func (m *defaultInboxClient) InboxUpdatePinnedMessage(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessage) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxUpdatePinnedMessage(ctx, in)
+	return m.rpc.InboxUpdatePinnedMessage(ctx, in)
 }
 
 // InboxUnpinAllMessages
 // inbox.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = Void;
 func (m *defaultInboxClient) InboxUnpinAllMessages(ctx context.Context, in *inbox.TLInboxUnpinAllMessages) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxUnpinAllMessages(ctx, in)
+	return m.rpc.InboxUnpinAllMessages(ctx, in)
 }
 
 // InboxSendUserMessageToInboxV2
 // inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long auth_key_id:flags.7?long= Void;
 func (m *defaultInboxClient) InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxSendUserMessageToInboxV2(ctx, in)
+	return m.rpc.InboxSendUserMessageToInboxV2(ctx, in)
 }
 
 // InboxEditMessageToInboxV2
 // inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long new_message:MessageBox dst_message:flags.1?MessageBox users:flags.2?Vector<User> chats:flags.3?Vector<Chat> = Void;
 func (m *defaultInboxClient) InboxEditMessageToInboxV2(ctx context.Context, in *inbox.TLInboxEditMessageToInboxV2) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxEditMessageToInboxV2(ctx, in)
+	return m.rpc.InboxEditMessageToInboxV2(ctx, in)
 }
 
 // InboxReadInboxHistory
 // inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
 func (m *defaultInboxClient) InboxReadInboxHistory(ctx context.Context, in *inbox.TLInboxReadInboxHistory) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxReadInboxHistory(ctx, in)
+	return m.rpc.InboxReadInboxHistory(ctx, in)
 }
 
 // InboxReadOutboxHistory
 // inbox.readOutboxHistory user_id:long peer_type:int peer_id:long max_dialog_message_id:long = Void;
 func (m *defaultInboxClient) InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxReadOutboxHistory(ctx, in)
+	return m.rpc.InboxReadOutboxHistory(ctx, in)
 }
 
 // InboxReadMediaUnreadToInboxV2
 // inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long dialog_message_id:long = Void;
 func (m *defaultInboxClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxReadMediaUnreadToInboxV2(ctx, in)
+	return m.rpc.InboxReadMediaUnreadToInboxV2(ctx, in)
 }
 
 // InboxUpdatePinnedMessageV2
 // inbox.updatePinnedMessageV2 flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
 func (m *defaultInboxClient) InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*tg.Void, error) {
-	cli := inboxservice.NewRPCInboxClient(m.cli)
-	return cli.InboxUpdatePinnedMessageV2(ctx, in)
+	return m.rpc.InboxUpdatePinnedMessageV2(ctx, in)
 }

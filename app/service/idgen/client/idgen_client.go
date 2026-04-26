@@ -36,11 +36,13 @@ type IdgenClient interface {
 
 type defaultIdgenClient struct {
 	cli client.Client
+	rpc idgenservice.Client
 }
 
 func NewIdgenClient(cli client.Client) IdgenClient {
 	return &defaultIdgenClient{
 		cli: cli,
+		rpc: idgenservice.NewRPCIdgenClient(cli),
 	}
 }
 
@@ -54,55 +56,47 @@ func (m *defaultIdgenClient) Close() error {
 // IdgenNextId
 // idgen.nextId = Int64;
 func (m *defaultIdgenClient) IdgenNextId(ctx context.Context, in *idgen.TLIdgenNextId) (*tg.Int64, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenNextId(ctx, in)
+	return m.rpc.IdgenNextId(ctx, in)
 }
 
 // IdgenNextIds
 // idgen.nextIds num:int = Vector<long>;
 func (m *defaultIdgenClient) IdgenNextIds(ctx context.Context, in *idgen.TLIdgenNextIds) (*idgen.VectorLong, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenNextIds(ctx, in)
+	return m.rpc.IdgenNextIds(ctx, in)
 }
 
 // IdgenGetCurrentSeqId
 // idgen.getCurrentSeqId key:string = Int64;
 func (m *defaultIdgenClient) IdgenGetCurrentSeqId(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqId) (*tg.Int64, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenGetCurrentSeqId(ctx, in)
+	return m.rpc.IdgenGetCurrentSeqId(ctx, in)
 }
 
 // IdgenSetCurrentSeqId
 // idgen.setCurrentSeqId key:string id:long = Bool;
 func (m *defaultIdgenClient) IdgenSetCurrentSeqId(ctx context.Context, in *idgen.TLIdgenSetCurrentSeqId) (*tg.Bool, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenSetCurrentSeqId(ctx, in)
+	return m.rpc.IdgenSetCurrentSeqId(ctx, in)
 }
 
 // IdgenGetNextSeqId
 // idgen.getNextSeqId key:string = Int64;
 func (m *defaultIdgenClient) IdgenGetNextSeqId(ctx context.Context, in *idgen.TLIdgenGetNextSeqId) (*tg.Int64, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenGetNextSeqId(ctx, in)
+	return m.rpc.IdgenGetNextSeqId(ctx, in)
 }
 
 // IdgenGetNextNSeqId
 // idgen.getNextNSeqId key:string n:int = Int64;
 func (m *defaultIdgenClient) IdgenGetNextNSeqId(ctx context.Context, in *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenGetNextNSeqId(ctx, in)
+	return m.rpc.IdgenGetNextNSeqId(ctx, in)
 }
 
 // IdgenGetNextIdValList
 // idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
 func (m *defaultIdgenClient) IdgenGetNextIdValList(ctx context.Context, in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenGetNextIdValList(ctx, in)
+	return m.rpc.IdgenGetNextIdValList(ctx, in)
 }
 
 // IdgenGetCurrentSeqIdList
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (m *defaultIdgenClient) IdgenGetCurrentSeqIdList(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
-	cli := idgenservice.NewRPCIdgenClient(m.cli)
-	return cli.IdgenGetCurrentSeqIdList(ctx, in)
+	return m.rpc.IdgenGetCurrentSeqIdList(ctx, in)
 }

@@ -88,9 +88,14 @@ func (m *defaultMessageReadOutboxModel) FindOne(ctx context.Context, id int64) (
 	var resp MessageReadOutbox
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "message_read_outbox",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("message_read_outbox.FindOne: %w", err)
 	}
@@ -133,7 +138,11 @@ func (m *defaultMessageReadOutboxModel) FindOneByUserIdPeerDialogIdReadUserIdRea
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "message_read_outbox",
+				Key:      fmt.Sprintf("user_id=%v,peer_dialog_id=%v,read_user_id=%v,read_outbox_max_id=%v", userId, peerDialogId, readUserId, readOutboxMaxId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("message_read_outbox.FindOneByUserIdPeerDialogIdReadUserIdReadOutboxMaxId: %w", err)
 	}

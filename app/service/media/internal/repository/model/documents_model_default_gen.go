@@ -99,9 +99,14 @@ func (m *defaultDocumentsModel) FindOne(ctx context.Context, id int64) (*Documen
 	var resp Documents
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "documents",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("documents.FindOne: %w", err)
 	}
@@ -144,7 +149,11 @@ func (m *defaultDocumentsModel) FindOneByDocumentId(ctx context.Context, documen
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "documents",
+				Key:      fmt.Sprintf("document_id=%v", documentId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("documents.FindOneByDocumentId: %w", err)
 	}

@@ -85,9 +85,14 @@ func (m *defaultAuthOpLogsModel) FindOne(ctx context.Context, id int64) (*AuthOp
 	var resp AuthOpLogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auth_op_logs",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auth_op_logs.FindOne: %w", err)
 	}

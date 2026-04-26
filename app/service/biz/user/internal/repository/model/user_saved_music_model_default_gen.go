@@ -87,9 +87,14 @@ func (m *defaultUserSavedMusicModel) FindOne(ctx context.Context, id int32) (*Us
 	var resp UserSavedMusic
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_saved_music",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_saved_music.FindOne: %w", err)
 	}
@@ -131,7 +136,11 @@ func (m *defaultUserSavedMusicModel) FindOneByUserIdSavedMusicId(ctx context.Con
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_saved_music",
+				Key:      fmt.Sprintf("user_id=%v,saved_music_id=%v", userId, savedMusicId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_saved_music.FindOneByUserIdSavedMusicId: %w", err)
 	}

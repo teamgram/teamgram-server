@@ -89,9 +89,14 @@ func (m *defaultSavedDialogsModel) FindOne(ctx context.Context, id int64) (*Save
 	var resp SavedDialogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "saved_dialogs",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("saved_dialogs.FindOne: %w", err)
 	}
@@ -134,7 +139,11 @@ func (m *defaultSavedDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Con
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "saved_dialogs",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("saved_dialogs.FindOneByUserIdPeerTypePeerId: %w", err)
 	}

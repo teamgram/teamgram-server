@@ -27,11 +27,13 @@ type AutoDownloadClient interface {
 
 type defaultAutoDownloadClient struct {
 	cli client.Client
+	rpc autodownloadservice.Client
 }
 
 func NewAutoDownloadClient(cli client.Client) AutoDownloadClient {
 	return &defaultAutoDownloadClient{
 		cli: cli,
+		rpc: autodownloadservice.NewRPCAutoDownloadClient(cli),
 	}
 }
 
@@ -45,13 +47,11 @@ func (m *defaultAutoDownloadClient) Close() error {
 // AccountGetAutoDownloadSettings
 // account.getAutoDownloadSettings#56da0b3f = account.AutoDownloadSettings;
 func (m *defaultAutoDownloadClient) AccountGetAutoDownloadSettings(ctx context.Context, in *tg.TLAccountGetAutoDownloadSettings) (*tg.AccountAutoDownloadSettings, error) {
-	cli := autodownloadservice.NewRPCAutoDownloadClient(m.cli)
-	return cli.AccountGetAutoDownloadSettings(ctx, in)
+	return m.rpc.AccountGetAutoDownloadSettings(ctx, in)
 }
 
 // AccountSaveAutoDownloadSettings
 // account.saveAutoDownloadSettings#76f36233 flags:# low:flags.0?true high:flags.1?true settings:AutoDownloadSettings = Bool;
 func (m *defaultAutoDownloadClient) AccountSaveAutoDownloadSettings(ctx context.Context, in *tg.TLAccountSaveAutoDownloadSettings) (*tg.Bool, error) {
-	cli := autodownloadservice.NewRPCAutoDownloadClient(m.cli)
-	return cli.AccountSaveAutoDownloadSettings(ctx, in)
+	return m.rpc.AccountSaveAutoDownloadSettings(ctx, in)
 }

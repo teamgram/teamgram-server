@@ -106,10 +106,12 @@ func (m *defaultAuthKeysModel) UpdateCustomMap(ctx context.Context, cMap map[str
 
 	oldData, err := m.FindOneByAuthKeyId(ctx, authKeyId)
 
-	if err != nil && !errors.Is(err, sqlx.ErrNotFound) {
-		return
-	}
-	if oldData == nil {
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			err = nil
+			return
+		}
+		err = fmt.Errorf("auth_keys.UpdateCustomMap find one: %w", err)
 		return
 	}
 

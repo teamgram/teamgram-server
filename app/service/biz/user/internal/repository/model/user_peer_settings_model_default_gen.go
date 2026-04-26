@@ -96,9 +96,14 @@ func (m *defaultUserPeerSettingsModel) FindOne(ctx context.Context, id int64) (*
 	var resp UserPeerSettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_peer_settings",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_peer_settings.FindOne: %w", err)
 	}
@@ -141,7 +146,11 @@ func (m *defaultUserPeerSettingsModel) FindOneByUserIdPeerTypePeerId(ctx context
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_peer_settings",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_peer_settings.FindOneByUserIdPeerTypePeerId: %w", err)
 	}

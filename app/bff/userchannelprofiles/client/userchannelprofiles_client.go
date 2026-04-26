@@ -43,11 +43,13 @@ type UserChannelProfilesClient interface {
 
 type defaultUserChannelProfilesClient struct {
 	cli client.Client
+	rpc userchannelprofilesservice.Client
 }
 
 func NewUserChannelProfilesClient(cli client.Client) UserChannelProfilesClient {
 	return &defaultUserChannelProfilesClient{
 		cli: cli,
+		rpc: userchannelprofilesservice.NewRPCUserChannelProfilesClient(cli),
 	}
 }
 
@@ -61,125 +63,107 @@ func (m *defaultUserChannelProfilesClient) Close() error {
 // AccountUpdateProfile
 // account.updateProfile#78515775 flags:# first_name:flags.0?string last_name:flags.1?string about:flags.2?string = User;
 func (m *defaultUserChannelProfilesClient) AccountUpdateProfile(ctx context.Context, in *tg.TLAccountUpdateProfile) (*tg.User, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountUpdateProfile(ctx, in)
+	return m.rpc.AccountUpdateProfile(ctx, in)
 }
 
 // AccountUpdateStatus
 // account.updateStatus#6628562c offline:Bool = Bool;
 func (m *defaultUserChannelProfilesClient) AccountUpdateStatus(ctx context.Context, in *tg.TLAccountUpdateStatus) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountUpdateStatus(ctx, in)
+	return m.rpc.AccountUpdateStatus(ctx, in)
 }
 
 // AccountUpdateBirthday
 // account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
 func (m *defaultUserChannelProfilesClient) AccountUpdateBirthday(ctx context.Context, in *tg.TLAccountUpdateBirthday) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountUpdateBirthday(ctx, in)
+	return m.rpc.AccountUpdateBirthday(ctx, in)
 }
 
 // AccountUpdatePersonalChannel
 // account.updatePersonalChannel#d94305e0 channel:InputChannel = Bool;
 func (m *defaultUserChannelProfilesClient) AccountUpdatePersonalChannel(ctx context.Context, in *tg.TLAccountUpdatePersonalChannel) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountUpdatePersonalChannel(ctx, in)
+	return m.rpc.AccountUpdatePersonalChannel(ctx, in)
 }
 
 // AccountSetMainProfileTab
 // account.setMainProfileTab#5dee78b0 tab:ProfileTab = Bool;
 func (m *defaultUserChannelProfilesClient) AccountSetMainProfileTab(ctx context.Context, in *tg.TLAccountSetMainProfileTab) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountSetMainProfileTab(ctx, in)
+	return m.rpc.AccountSetMainProfileTab(ctx, in)
 }
 
 // AccountSaveMusic
 // account.saveMusic#b26732a9 flags:# unsave:flags.0?true id:InputDocument after_id:flags.1?InputDocument = Bool;
 func (m *defaultUserChannelProfilesClient) AccountSaveMusic(ctx context.Context, in *tg.TLAccountSaveMusic) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountSaveMusic(ctx, in)
+	return m.rpc.AccountSaveMusic(ctx, in)
 }
 
 // AccountGetSavedMusicIds
 // account.getSavedMusicIds#e09d5faf hash:long = account.SavedMusicIds;
 func (m *defaultUserChannelProfilesClient) AccountGetSavedMusicIds(ctx context.Context, in *tg.TLAccountGetSavedMusicIds) (*tg.AccountSavedMusicIds, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountGetSavedMusicIds(ctx, in)
+	return m.rpc.AccountGetSavedMusicIds(ctx, in)
 }
 
 // UsersGetSavedMusic
 // users.getSavedMusic#788d7fe3 id:InputUser offset:int limit:int hash:long = users.SavedMusic;
 func (m *defaultUserChannelProfilesClient) UsersGetSavedMusic(ctx context.Context, in *tg.TLUsersGetSavedMusic) (*tg.UsersSavedMusic, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.UsersGetSavedMusic(ctx, in)
+	return m.rpc.UsersGetSavedMusic(ctx, in)
 }
 
 // UsersGetSavedMusicByID
 // users.getSavedMusicByID#7573a4e9 id:InputUser documents:Vector<InputDocument> = users.SavedMusic;
 func (m *defaultUserChannelProfilesClient) UsersGetSavedMusicByID(ctx context.Context, in *tg.TLUsersGetSavedMusicByID) (*tg.UsersSavedMusic, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.UsersGetSavedMusicByID(ctx, in)
+	return m.rpc.UsersGetSavedMusicByID(ctx, in)
 }
 
 // UsersSuggestBirthday
 // users.suggestBirthday#fc533372 id:InputUser birthday:Birthday = Updates;
 func (m *defaultUserChannelProfilesClient) UsersSuggestBirthday(ctx context.Context, in *tg.TLUsersSuggestBirthday) (*tg.Updates, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.UsersSuggestBirthday(ctx, in)
+	return m.rpc.UsersSuggestBirthday(ctx, in)
 }
 
 // ContactsGetBirthdays
 // contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
 func (m *defaultUserChannelProfilesClient) ContactsGetBirthdays(ctx context.Context, in *tg.TLContactsGetBirthdays) (*tg.ContactsContactBirthdays, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.ContactsGetBirthdays(ctx, in)
+	return m.rpc.ContactsGetBirthdays(ctx, in)
 }
 
 // PhotosUpdateProfilePhoto
 // photos.updateProfilePhoto#9e82039 flags:# fallback:flags.0?true bot:flags.1?InputUser id:InputPhoto = photos.Photo;
 func (m *defaultUserChannelProfilesClient) PhotosUpdateProfilePhoto(ctx context.Context, in *tg.TLPhotosUpdateProfilePhoto) (*tg.PhotosPhoto, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.PhotosUpdateProfilePhoto(ctx, in)
+	return m.rpc.PhotosUpdateProfilePhoto(ctx, in)
 }
 
 // PhotosUploadProfilePhoto
 // photos.uploadProfilePhoto#388a3b5 flags:# fallback:flags.3?true bot:flags.5?InputUser file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = photos.Photo;
 func (m *defaultUserChannelProfilesClient) PhotosUploadProfilePhoto(ctx context.Context, in *tg.TLPhotosUploadProfilePhoto) (*tg.PhotosPhoto, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.PhotosUploadProfilePhoto(ctx, in)
+	return m.rpc.PhotosUploadProfilePhoto(ctx, in)
 }
 
 // PhotosDeletePhotos
 // photos.deletePhotos#87cf7f2f id:Vector<InputPhoto> = Vector<long>;
 func (m *defaultUserChannelProfilesClient) PhotosDeletePhotos(ctx context.Context, in *tg.TLPhotosDeletePhotos) (*tg.VectorLong, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.PhotosDeletePhotos(ctx, in)
+	return m.rpc.PhotosDeletePhotos(ctx, in)
 }
 
 // PhotosGetUserPhotos
 // photos.getUserPhotos#91cd32a8 user_id:InputUser offset:int max_id:long limit:int = photos.Photos;
 func (m *defaultUserChannelProfilesClient) PhotosGetUserPhotos(ctx context.Context, in *tg.TLPhotosGetUserPhotos) (*tg.PhotosPhotos, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.PhotosGetUserPhotos(ctx, in)
+	return m.rpc.PhotosGetUserPhotos(ctx, in)
 }
 
 // PhotosUploadContactProfilePhoto
 // photos.uploadContactProfilePhoto#e14c4a71 flags:# suggest:flags.3?true save:flags.4?true user_id:InputUser file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.5?VideoSize = photos.Photo;
 func (m *defaultUserChannelProfilesClient) PhotosUploadContactProfilePhoto(ctx context.Context, in *tg.TLPhotosUploadContactProfilePhoto) (*tg.PhotosPhoto, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.PhotosUploadContactProfilePhoto(ctx, in)
+	return m.rpc.PhotosUploadContactProfilePhoto(ctx, in)
 }
 
 // ChannelsSetMainProfileTab
 // channels.setMainProfileTab#3583fcb1 channel:InputChannel tab:ProfileTab = Bool;
 func (m *defaultUserChannelProfilesClient) ChannelsSetMainProfileTab(ctx context.Context, in *tg.TLChannelsSetMainProfileTab) (*tg.Bool, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.ChannelsSetMainProfileTab(ctx, in)
+	return m.rpc.ChannelsSetMainProfileTab(ctx, in)
 }
 
 // AccountUpdateVerified
 // account.updateVerified flags:# id:long verified:flags.0?true = User;
 func (m *defaultUserChannelProfilesClient) AccountUpdateVerified(ctx context.Context, in *tg.TLAccountUpdateVerified) (*tg.User, error) {
-	cli := userchannelprofilesservice.NewRPCUserChannelProfilesClient(m.cli)
-	return cli.AccountUpdateVerified(ctx, in)
+	return m.rpc.AccountUpdateVerified(ctx, in)
 }

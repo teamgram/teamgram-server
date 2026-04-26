@@ -87,9 +87,14 @@ func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*Us
 	var resp UserPtsUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_pts_updates",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_pts_updates.FindOne: %w", err)
 	}

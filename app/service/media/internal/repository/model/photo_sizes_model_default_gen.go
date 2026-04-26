@@ -96,9 +96,14 @@ func (m *defaultPhotoSizesModel) FindOne(ctx context.Context, id int64) (*PhotoS
 	var resp PhotoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "photo_sizes",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("photo_sizes.FindOne: %w", err)
 	}
@@ -141,7 +146,11 @@ func (m *defaultPhotoSizesModel) FindOneByPhotoSizeIdSizeType(ctx context.Contex
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "photo_sizes",
+				Key:      fmt.Sprintf("photo_size_id=%v,size_type=%v", photoSizeId, sizeType),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("photo_sizes.FindOneByPhotoSizeIdSizeType: %w", err)
 	}

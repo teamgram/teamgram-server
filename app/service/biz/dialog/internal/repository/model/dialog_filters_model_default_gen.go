@@ -93,9 +93,14 @@ func (m *defaultDialogFiltersModel) FindOne(ctx context.Context, id int64) (*Dia
 	var resp DialogFilters
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("dialog_filters.FindOne: %w", err)
 	}
@@ -138,7 +143,11 @@ func (m *defaultDialogFiltersModel) FindOneByUserIdDialogFilterId(ctx context.Co
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("user_id=%v,dialog_filter_id=%v", userId, dialogFilterId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("dialog_filters.FindOneByUserIdDialogFilterId: %w", err)
 	}

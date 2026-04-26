@@ -89,9 +89,14 @@ func (m *defaultAuthSeqUpdatesModel) FindOne(ctx context.Context, id int64) (*Au
 	var resp AuthSeqUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auth_seq_updates",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auth_seq_updates.FindOne: %w", err)
 	}
@@ -134,7 +139,11 @@ func (m *defaultAuthSeqUpdatesModel) FindOneByAuthIdUserIdSeq(ctx context.Contex
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "auth_seq_updates",
+				Key:      fmt.Sprintf("auth_id=%v,user_id=%v,seq=%v", authId, userId, seq),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("auth_seq_updates.FindOneByAuthIdUserIdSeq: %w", err)
 	}

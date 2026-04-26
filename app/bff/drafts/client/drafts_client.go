@@ -28,11 +28,13 @@ type DraftsClient interface {
 
 type defaultDraftsClient struct {
 	cli client.Client
+	rpc draftsservice.Client
 }
 
 func NewDraftsClient(cli client.Client) DraftsClient {
 	return &defaultDraftsClient{
 		cli: cli,
+		rpc: draftsservice.NewRPCDraftsClient(cli),
 	}
 }
 
@@ -46,20 +48,17 @@ func (m *defaultDraftsClient) Close() error {
 // MessagesSaveDraft
 // messages.saveDraft#54ae308e flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long suggested_post:flags.8?SuggestedPost = Bool;
 func (m *defaultDraftsClient) MessagesSaveDraft(ctx context.Context, in *tg.TLMessagesSaveDraft) (*tg.Bool, error) {
-	cli := draftsservice.NewRPCDraftsClient(m.cli)
-	return cli.MessagesSaveDraft(ctx, in)
+	return m.rpc.MessagesSaveDraft(ctx, in)
 }
 
 // MessagesGetAllDrafts
 // messages.getAllDrafts#6a3f8d65 = Updates;
 func (m *defaultDraftsClient) MessagesGetAllDrafts(ctx context.Context, in *tg.TLMessagesGetAllDrafts) (*tg.Updates, error) {
-	cli := draftsservice.NewRPCDraftsClient(m.cli)
-	return cli.MessagesGetAllDrafts(ctx, in)
+	return m.rpc.MessagesGetAllDrafts(ctx, in)
 }
 
 // MessagesClearAllDrafts
 // messages.clearAllDrafts#7e58ee9c = Bool;
 func (m *defaultDraftsClient) MessagesClearAllDrafts(ctx context.Context, in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error) {
-	cli := draftsservice.NewRPCDraftsClient(m.cli)
-	return cli.MessagesClearAllDrafts(ctx, in)
+	return m.rpc.MessagesClearAllDrafts(ctx, in)
 }

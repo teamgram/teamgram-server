@@ -89,9 +89,14 @@ func (m *defaultPredefinedUsersModel) FindOne(ctx context.Context, id int64) (*P
 	var resp PredefinedUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "predefined_users",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("predefined_users.FindOne: %w", err)
 	}

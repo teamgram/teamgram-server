@@ -88,9 +88,14 @@ func (m *defaultUserPeerBlocksModel) FindOne(ctx context.Context, id int64) (*Us
 	var resp UserPeerBlocks
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_peer_blocks",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_peer_blocks.FindOne: %w", err)
 	}
@@ -133,7 +138,11 @@ func (m *defaultUserPeerBlocksModel) FindOneByUserIdPeerTypePeerId(ctx context.C
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_peer_blocks",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_peer_blocks.FindOneByUserIdPeerTypePeerId: %w", err)
 	}

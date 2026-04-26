@@ -86,9 +86,14 @@ func (m *defaultDefaultHistoryTtlModel) FindOne(ctx context.Context, id int64) (
 	var resp DefaultHistoryTtl
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "default_history_ttl",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("default_history_ttl.FindOne: %w", err)
 	}
@@ -131,7 +136,11 @@ func (m *defaultDefaultHistoryTtlModel) FindOneByUserId(ctx context.Context, use
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "default_history_ttl",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("default_history_ttl.FindOneByUserId: %w", err)
 	}

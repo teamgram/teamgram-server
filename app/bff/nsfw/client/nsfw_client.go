@@ -27,11 +27,13 @@ type NsfwClient interface {
 
 type defaultNsfwClient struct {
 	cli client.Client
+	rpc nsfwservice.Client
 }
 
 func NewNsfwClient(cli client.Client) NsfwClient {
 	return &defaultNsfwClient{
 		cli: cli,
+		rpc: nsfwservice.NewRPCNsfwClient(cli),
 	}
 }
 
@@ -45,13 +47,11 @@ func (m *defaultNsfwClient) Close() error {
 // AccountSetContentSettings
 // account.setContentSettings#b574b16b flags:# sensitive_enabled:flags.0?true = Bool;
 func (m *defaultNsfwClient) AccountSetContentSettings(ctx context.Context, in *tg.TLAccountSetContentSettings) (*tg.Bool, error) {
-	cli := nsfwservice.NewRPCNsfwClient(m.cli)
-	return cli.AccountSetContentSettings(ctx, in)
+	return m.rpc.AccountSetContentSettings(ctx, in)
 }
 
 // AccountGetContentSettings
 // account.getContentSettings#8b9b4dae = account.ContentSettings;
 func (m *defaultNsfwClient) AccountGetContentSettings(ctx context.Context, in *tg.TLAccountGetContentSettings) (*tg.AccountContentSettings, error) {
-	cli := nsfwservice.NewRPCNsfwClient(m.cli)
-	return cli.AccountGetContentSettings(ctx, in)
+	return m.rpc.AccountGetContentSettings(ctx, in)
 }

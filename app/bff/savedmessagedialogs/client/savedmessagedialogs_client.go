@@ -34,11 +34,13 @@ type SavedMessageDialogsClient interface {
 
 type defaultSavedMessageDialogsClient struct {
 	cli client.Client
+	rpc savedmessagedialogsservice.Client
 }
 
 func NewSavedMessageDialogsClient(cli client.Client) SavedMessageDialogsClient {
 	return &defaultSavedMessageDialogsClient{
 		cli: cli,
+		rpc: savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(cli),
 	}
 }
 
@@ -52,62 +54,53 @@ func (m *defaultSavedMessageDialogsClient) Close() error {
 // MessagesGetSavedDialogs
 // messages.getSavedDialogs#1e91fc99 flags:# exclude_pinned:flags.0?true parent_peer:flags.1?InputPeer offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
 func (m *defaultSavedMessageDialogsClient) MessagesGetSavedDialogs(ctx context.Context, in *tg.TLMessagesGetSavedDialogs) (*tg.MessagesSavedDialogs, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesGetSavedDialogs(ctx, in)
+	return m.rpc.MessagesGetSavedDialogs(ctx, in)
 }
 
 // MessagesGetSavedHistory
 // messages.getSavedHistory#998ab009 flags:# parent_peer:flags.0?InputPeer peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (m *defaultSavedMessageDialogsClient) MessagesGetSavedHistory(ctx context.Context, in *tg.TLMessagesGetSavedHistory) (*tg.MessagesMessages, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesGetSavedHistory(ctx, in)
+	return m.rpc.MessagesGetSavedHistory(ctx, in)
 }
 
 // MessagesDeleteSavedHistory
 // messages.deleteSavedHistory#4dc5085f flags:# parent_peer:flags.0?InputPeer peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (m *defaultSavedMessageDialogsClient) MessagesDeleteSavedHistory(ctx context.Context, in *tg.TLMessagesDeleteSavedHistory) (*tg.MessagesAffectedHistory, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesDeleteSavedHistory(ctx, in)
+	return m.rpc.MessagesDeleteSavedHistory(ctx, in)
 }
 
 // MessagesGetPinnedSavedDialogs
 // messages.getPinnedSavedDialogs#d63d94e0 = messages.SavedDialogs;
 func (m *defaultSavedMessageDialogsClient) MessagesGetPinnedSavedDialogs(ctx context.Context, in *tg.TLMessagesGetPinnedSavedDialogs) (*tg.MessagesSavedDialogs, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesGetPinnedSavedDialogs(ctx, in)
+	return m.rpc.MessagesGetPinnedSavedDialogs(ctx, in)
 }
 
 // MessagesToggleSavedDialogPin
 // messages.toggleSavedDialogPin#ac81bbde flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
 func (m *defaultSavedMessageDialogsClient) MessagesToggleSavedDialogPin(ctx context.Context, in *tg.TLMessagesToggleSavedDialogPin) (*tg.Bool, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesToggleSavedDialogPin(ctx, in)
+	return m.rpc.MessagesToggleSavedDialogPin(ctx, in)
 }
 
 // MessagesReorderPinnedSavedDialogs
 // messages.reorderPinnedSavedDialogs#8b716587 flags:# force:flags.0?true order:Vector<InputDialogPeer> = Bool;
 func (m *defaultSavedMessageDialogsClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, in *tg.TLMessagesReorderPinnedSavedDialogs) (*tg.Bool, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesReorderPinnedSavedDialogs(ctx, in)
+	return m.rpc.MessagesReorderPinnedSavedDialogs(ctx, in)
 }
 
 // MessagesGetSavedDialogsByID
 // messages.getSavedDialogsByID#6f6f9c96 flags:# parent_peer:flags.1?InputPeer ids:Vector<InputPeer> = messages.SavedDialogs;
 func (m *defaultSavedMessageDialogsClient) MessagesGetSavedDialogsByID(ctx context.Context, in *tg.TLMessagesGetSavedDialogsByID) (*tg.MessagesSavedDialogs, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesGetSavedDialogsByID(ctx, in)
+	return m.rpc.MessagesGetSavedDialogsByID(ctx, in)
 }
 
 // MessagesReadSavedHistory
 // messages.readSavedHistory#ba4a3b5b parent_peer:InputPeer peer:InputPeer max_id:int = Bool;
 func (m *defaultSavedMessageDialogsClient) MessagesReadSavedHistory(ctx context.Context, in *tg.TLMessagesReadSavedHistory) (*tg.Bool, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.MessagesReadSavedHistory(ctx, in)
+	return m.rpc.MessagesReadSavedHistory(ctx, in)
 }
 
 // ChannelsGetMessageAuthor
 // channels.getMessageAuthor#ece2a0e6 channel:InputChannel id:int = User;
 func (m *defaultSavedMessageDialogsClient) ChannelsGetMessageAuthor(ctx context.Context, in *tg.TLChannelsGetMessageAuthor) (*tg.User, error) {
-	cli := savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(m.cli)
-	return cli.ChannelsGetMessageAuthor(ctx, in)
+	return m.rpc.ChannelsGetMessageAuthor(ctx, in)
 }

@@ -90,9 +90,14 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindOne(ctx context.Context, id 
 	var resp UserGlobalPrivacySettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_global_privacy_settings",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_global_privacy_settings.FindOne: %w", err)
 	}
@@ -135,7 +140,11 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindOneByUserId(ctx context.Cont
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, nil
+			return nil, &NotFoundError{
+				Resource: "user_global_privacy_settings",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
 		return nil, fmt.Errorf("user_global_privacy_settings.FindOneByUserId: %w", err)
 	}
