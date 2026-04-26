@@ -29,7 +29,6 @@ type ConfigurationClient interface {
 	HelpGetSupportName(ctx context.Context, in *tg.TLHelpGetSupportName) (*tg.HelpSupportName, error)
 	HelpDismissSuggestion(ctx context.Context, in *tg.TLHelpDismissSuggestion) (*tg.Bool, error)
 	HelpGetCountriesList(ctx context.Context, in *tg.TLHelpGetCountriesList) (*tg.HelpCountriesList, error)
-	Close() error
 }
 
 type defaultConfigurationClient struct {
@@ -42,13 +41,6 @@ func NewConfigurationClient(cli client.Client) ConfigurationClient {
 		cli: cli,
 		rpc: configurationservice.NewRPCConfigurationClient(cli),
 	}
-}
-
-func (m *defaultConfigurationClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // HelpGetConfig

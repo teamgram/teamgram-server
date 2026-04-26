@@ -43,7 +43,6 @@ type ContactsClient interface {
 	ContactsEditCloseFriends(ctx context.Context, in *tg.TLContactsEditCloseFriends) (*tg.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *tg.TLContactsSetBlocked) (*tg.Bool, error)
 	ContactsUpdateContactNote(ctx context.Context, in *tg.TLContactsUpdateContactNote) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultContactsClient struct {
@@ -56,13 +55,6 @@ func NewContactsClient(cli client.Client) ContactsClient {
 		cli: cli,
 		rpc: contactsservice.NewRPCContactsClient(cli),
 	}
-}
-
-func (m *defaultContactsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountGetContactSignUpNotification

@@ -39,7 +39,6 @@ type ChatsClient interface {
 	MessagesEditChatParticipantRank(ctx context.Context, in *tg.TLMessagesEditChatParticipantRank) (*tg.Updates, error)
 	ChannelsConvertToGigagroup(ctx context.Context, in *tg.TLChannelsConvertToGigagroup) (*tg.Updates, error)
 	ChannelsSetEmojiStickers(ctx context.Context, in *tg.TLChannelsSetEmojiStickers) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultChatsClient struct {
@@ -52,13 +51,6 @@ func NewChatsClient(cli client.Client) ChatsClient {
 		cli: cli,
 		rpc: chatsservice.NewRPCChatsClient(cli),
 	}
-}
-
-func (m *defaultChatsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesGetChats

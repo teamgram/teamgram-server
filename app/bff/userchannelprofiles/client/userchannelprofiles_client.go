@@ -38,7 +38,6 @@ type UserChannelProfilesClient interface {
 	PhotosUploadContactProfilePhoto(ctx context.Context, in *tg.TLPhotosUploadContactProfilePhoto) (*tg.PhotosPhoto, error)
 	ChannelsSetMainProfileTab(ctx context.Context, in *tg.TLChannelsSetMainProfileTab) (*tg.Bool, error)
 	AccountUpdateVerified(ctx context.Context, in *tg.TLAccountUpdateVerified) (*tg.User, error)
-	Close() error
 }
 
 type defaultUserChannelProfilesClient struct {
@@ -51,13 +50,6 @@ func NewUserChannelProfilesClient(cli client.Client) UserChannelProfilesClient {
 		cli: cli,
 		rpc: userchannelprofilesservice.NewRPCUserChannelProfilesClient(cli),
 	}
-}
-
-func (m *defaultUserChannelProfilesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountUpdateProfile

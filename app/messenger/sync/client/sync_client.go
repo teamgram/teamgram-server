@@ -30,7 +30,6 @@ type SyncClient interface {
 	SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*tg.Void, error)
 	SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*tg.Void, error)
 	SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*tg.Void, error)
-	Close() error
 }
 
 type defaultSyncClient struct {
@@ -43,13 +42,6 @@ func NewSyncClient(cli client.Client) SyncClient {
 		cli: cli,
 		rpc: syncservice.NewRPCSyncClient(cli),
 	}
-}
-
-func (m *defaultSyncClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // SyncUpdatesMe

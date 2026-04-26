@@ -23,7 +23,6 @@ type UpdatesClient interface {
 	UpdatesGetState(ctx context.Context, in *tg.TLUpdatesGetState) (*tg.UpdatesState, error)
 	UpdatesGetDifference(ctx context.Context, in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error)
 	UpdatesGetChannelDifference(ctx context.Context, in *tg.TLUpdatesGetChannelDifference) (*tg.UpdatesChannelDifference, error)
-	Close() error
 }
 
 type defaultUpdatesClient struct {
@@ -36,13 +35,6 @@ func NewUpdatesClient(cli client.Client) UpdatesClient {
 		cli: cli,
 		rpc: updatesservice.NewRPCUpdatesClient(cli),
 	}
-}
-
-func (m *defaultUpdatesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // UpdatesGetState

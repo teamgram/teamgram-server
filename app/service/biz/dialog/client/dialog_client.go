@@ -63,7 +63,6 @@ type DialogClient interface {
 	DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error)
 	DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error)
 	DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultDialogClient struct {
@@ -76,13 +75,6 @@ func NewDialogClient(cli client.Client) DialogClient {
 		cli: cli,
 		rpc: dialogservice.NewRPCDialogClient(cli),
 	}
-}
-
-func (m *defaultDialogClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // DialogSaveDraftMessage

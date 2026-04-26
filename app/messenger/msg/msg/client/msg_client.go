@@ -35,7 +35,6 @@ type MsgClient interface {
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
-	Close() error
 }
 
 type defaultMsgClient struct {
@@ -48,13 +47,6 @@ func NewMsgClient(cli client.Client) MsgClient {
 		cli: cli,
 		rpc: msgservice.NewRPCMsgClient(cli),
 	}
-}
-
-func (m *defaultMsgClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MsgPushUserMessage

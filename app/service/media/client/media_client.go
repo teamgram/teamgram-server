@@ -39,7 +39,6 @@ type MediaClient interface {
 	MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*tg.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*tg.Document, error)
 	MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*tg.Photo, error)
-	Close() error
 }
 
 type defaultMediaClient struct {
@@ -52,13 +51,6 @@ func NewMediaClient(cli client.Client) MediaClient {
 		cli: cli,
 		rpc: mediaservice.NewRPCMediaClient(cli),
 	}
-}
-
-func (m *defaultMediaClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MediaUploadPhotoFile

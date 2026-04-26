@@ -28,7 +28,6 @@ type AccountClient interface {
 	AccountResetAuthorization(ctx context.Context, in *tg.TLAccountResetAuthorization) (*tg.Bool, error)
 	AccountSendConfirmPhoneCode(ctx context.Context, in *tg.TLAccountSendConfirmPhoneCode) (*tg.AuthSentCode, error)
 	AccountConfirmPhone(ctx context.Context, in *tg.TLAccountConfirmPhone) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultAccountClient struct {
@@ -41,13 +40,6 @@ func NewAccountClient(cli client.Client) AccountClient {
 		cli: cli,
 		rpc: accountservice.NewRPCAccountClient(cli),
 	}
-}
-
-func (m *defaultAccountClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountDeleteAccount

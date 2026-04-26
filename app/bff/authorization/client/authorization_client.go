@@ -48,7 +48,6 @@ type AuthorizationClient interface {
 	AccountChangeAuthorizationSettings(ctx context.Context, in *tg.TLAccountChangeAuthorizationSettings) (*tg.Bool, error)
 	AccountInvalidateSignInCodes(ctx context.Context, in *tg.TLAccountInvalidateSignInCodes) (*tg.Bool, error)
 	AuthToggleBan(ctx context.Context, in *tg.TLAuthToggleBan) (*tg.PredefinedUser, error)
-	Close() error
 }
 
 type defaultAuthorizationClient struct {
@@ -61,13 +60,6 @@ func NewAuthorizationClient(cli client.Client) AuthorizationClient {
 		cli: cli,
 		rpc: authorizationservice.NewRPCAuthorizationClient(cli),
 	}
-}
-
-func (m *defaultAuthorizationClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AuthSendCode

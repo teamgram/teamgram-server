@@ -27,7 +27,6 @@ type PrivacySettingsClient interface {
 	UsersGetRequirementsToContact(ctx context.Context, in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesSetDefaultHistoryTTL) (*tg.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error)
-	Close() error
 }
 
 type defaultPrivacySettingsClient struct {
@@ -40,13 +39,6 @@ func NewPrivacySettingsClient(cli client.Client) PrivacySettingsClient {
 		cli: cli,
 		rpc: privacysettingsservice.NewRPCPrivacySettingsClient(cli),
 	}
-}
-
-func (m *defaultPrivacySettingsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountGetPrivacy

@@ -23,7 +23,6 @@ type DraftsClient interface {
 	MessagesSaveDraft(ctx context.Context, in *tg.TLMessagesSaveDraft) (*tg.Bool, error)
 	MessagesGetAllDrafts(ctx context.Context, in *tg.TLMessagesGetAllDrafts) (*tg.Updates, error)
 	MessagesClearAllDrafts(ctx context.Context, in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultDraftsClient struct {
@@ -36,13 +35,6 @@ func NewDraftsClient(cli client.Client) DraftsClient {
 		cli: cli,
 		rpc: draftsservice.NewRPCDraftsClient(cli),
 	}
-}
-
-func (m *defaultDraftsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesSaveDraft

@@ -31,7 +31,6 @@ type PassportClient interface {
 	AccountVerifyPhone(ctx context.Context, in *tg.TLAccountVerifyPhone) (*tg.Bool, error)
 	UsersSetSecureValueErrors(ctx context.Context, in *tg.TLUsersSetSecureValueErrors) (*tg.Bool, error)
 	HelpGetPassportConfig(ctx context.Context, in *tg.TLHelpGetPassportConfig) (*tg.HelpPassportConfig, error)
-	Close() error
 }
 
 type defaultPassportClient struct {
@@ -44,13 +43,6 @@ func NewPassportClient(cli client.Client) PassportClient {
 		cli: cli,
 		rpc: passportservice.NewRPCPassportClient(cli),
 	}
-}
-
-func (m *defaultPassportClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountGetAuthorizations

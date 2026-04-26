@@ -44,7 +44,6 @@ type AuthsessionClient interface {
 	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error)
 	AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*tg.Bool, error)
 	AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultAuthsessionClient struct {
@@ -57,13 +56,6 @@ func NewAuthsessionClient(cli client.Client) AuthsessionClient {
 		cli: cli,
 		rpc: authsessionservice.NewRPCAuthsessionClient(cli),
 	}
-}
-
-func (m *defaultAuthsessionClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AuthsessionGetAuthorizations

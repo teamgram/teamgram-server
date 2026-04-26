@@ -24,7 +24,6 @@ var _ *tg.Bool
 
 type GnetwayClient interface {
 	GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultGnetwayClient struct {
@@ -37,13 +36,6 @@ func NewGnetwayClient(cli client.Client) GnetwayClient {
 		cli: cli,
 		rpc: gnetwayservice.NewRPCGnetwayClient(cli),
 	}
-}
-
-func (m *defaultGnetwayClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // GnetwaySendDataToGateway

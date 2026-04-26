@@ -22,7 +22,6 @@ import (
 type MiscellaneousClient interface {
 	HelpSaveAppLog(ctx context.Context, in *tg.TLHelpSaveAppLog) (*tg.Bool, error)
 	HelpTest(ctx context.Context, in *tg.TLHelpTest) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultMiscellaneousClient struct {
@@ -35,13 +34,6 @@ func NewMiscellaneousClient(cli client.Client) MiscellaneousClient {
 		cli: cli,
 		rpc: miscellaneousservice.NewRPCMiscellaneousClient(cli),
 	}
-}
-
-func (m *defaultMiscellaneousClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // HelpSaveAppLog

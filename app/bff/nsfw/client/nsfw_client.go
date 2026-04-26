@@ -22,7 +22,6 @@ import (
 type NsfwClient interface {
 	AccountSetContentSettings(ctx context.Context, in *tg.TLAccountSetContentSettings) (*tg.Bool, error)
 	AccountGetContentSettings(ctx context.Context, in *tg.TLAccountGetContentSettings) (*tg.AccountContentSettings, error)
-	Close() error
 }
 
 type defaultNsfwClient struct {
@@ -35,13 +34,6 @@ func NewNsfwClient(cli client.Client) NsfwClient {
 		cli: cli,
 		rpc: nsfwservice.NewRPCNsfwClient(cli),
 	}
-}
-
-func (m *defaultNsfwClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountSetContentSettings

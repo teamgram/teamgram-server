@@ -24,7 +24,6 @@ var _ *tg.Bool
 
 type GeoipClient interface {
 	GeoipGetCountryAndRegionByIp(ctx context.Context, in *geoip.TLGeoipGetCountryAndRegionByIp) (*geoip.Region, error)
-	Close() error
 }
 
 type defaultGeoipClient struct {
@@ -37,13 +36,6 @@ func NewGeoipClient(cli client.Client) GeoipClient {
 		cli: cli,
 		rpc: geoipservice.NewRPCGeoipClient(cli),
 	}
-}
-
-func (m *defaultGeoipClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // GeoipGetCountryAndRegionByIp

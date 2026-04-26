@@ -39,7 +39,6 @@ type InboxClient interface {
 	InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*tg.Void, error)
 	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error)
 	InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*tg.Void, error)
-	Close() error
 }
 
 type defaultInboxClient struct {
@@ -52,13 +51,6 @@ func NewInboxClient(cli client.Client) InboxClient {
 		cli: cli,
 		rpc: inboxservice.NewRPCInboxClient(cli),
 	}
-}
-
-func (m *defaultInboxClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // InboxEditUserMessageToInbox

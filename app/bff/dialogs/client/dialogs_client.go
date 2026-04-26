@@ -33,7 +33,6 @@ type DialogsClient interface {
 	MessagesGetOnlines(ctx context.Context, in *tg.TLMessagesGetOnlines) (*tg.ChatOnlines, error)
 	MessagesHidePeerSettingsBar(ctx context.Context, in *tg.TLMessagesHidePeerSettingsBar) (*tg.Bool, error)
 	MessagesSetHistoryTTL(ctx context.Context, in *tg.TLMessagesSetHistoryTTL) (*tg.Updates, error)
-	Close() error
 }
 
 type defaultDialogsClient struct {
@@ -46,13 +45,6 @@ func NewDialogsClient(cli client.Client) DialogsClient {
 		cli: cli,
 		rpc: dialogsservice.NewRPCDialogsClient(cli),
 	}
-}
-
-func (m *defaultDialogsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesGetDialogs

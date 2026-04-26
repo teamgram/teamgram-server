@@ -17,8 +17,6 @@
 package repository
 
 import (
-	"errors"
-
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -65,18 +63,5 @@ func (r *Repository) Close() error {
 		return nil
 	}
 
-	var err error
-	if closer, ok := any(r.CachedConn).(interface{ Close() error }); ok {
-		err = errors.Join(err, closer.Close())
-	}
-	if closer, ok := any(r.db).(interface{ Close() error }); ok {
-		err = errors.Join(err, closer.Close())
-	}
-	if closer, ok := any(r.kv).(interface{ Close() error }); ok {
-		err = errors.Join(err, closer.Close())
-	}
-	if r.geoipClient != nil {
-		err = errors.Join(err, r.geoipClient.Close())
-	}
-	return err
+	return nil
 }

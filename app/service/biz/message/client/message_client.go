@@ -43,7 +43,6 @@ type MessageClient interface {
 	MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.VectorInt, error)
 	MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.VectorMessageBox, error)
 	MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*tg.Int32, error)
-	Close() error
 }
 
 type defaultMessageClient struct {
@@ -56,13 +55,6 @@ func NewMessageClient(cli client.Client) MessageClient {
 		cli: cli,
 		rpc: messageservice.NewRPCMessageClient(cli),
 	}
-}
-
-func (m *defaultMessageClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessageGetUserMessage

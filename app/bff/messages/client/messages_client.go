@@ -55,7 +55,6 @@ type MessagesClient interface {
 	ChannelsGetSendAs(ctx context.Context, in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error)
 	ChannelsSearchPosts(ctx context.Context, in *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error)
 	ChannelsCheckSearchPostsFlood(ctx context.Context, in *tg.TLChannelsCheckSearchPostsFlood) (*tg.SearchPostsFlood, error)
-	Close() error
 }
 
 type defaultMessagesClient struct {
@@ -68,13 +67,6 @@ func NewMessagesClient(cli client.Client) MessagesClient {
 		cli: cli,
 		rpc: messagesservice.NewRPCMessagesClient(cli),
 	}
-}
-
-func (m *defaultMessagesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesGetMessages

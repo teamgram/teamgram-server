@@ -121,7 +121,6 @@ type UserClient interface {
 	UserToggleUsername(ctx context.Context, in *user.TLUserToggleUsername) (*tg.Bool, error)
 	UserReorderUsernames(ctx context.Context, in *user.TLUserReorderUsernames) (*tg.Bool, error)
 	UserDeactivateAllChannelUsernames(ctx context.Context, in *user.TLUserDeactivateAllChannelUsernames) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultUserClient struct {
@@ -134,13 +133,6 @@ func NewUserClient(cli client.Client) UserClient {
 		cli: cli,
 		rpc: userservice.NewRPCUserClient(cli),
 	}
-}
-
-func (m *defaultUserClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // UserGetLastSeens

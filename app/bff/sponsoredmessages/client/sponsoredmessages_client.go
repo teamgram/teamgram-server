@@ -27,7 +27,6 @@ type SponsoredMessagesClient interface {
 	MessagesReportSponsoredMessage(ctx context.Context, in *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error)
 	MessagesGetSponsoredMessages(ctx context.Context, in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error)
 	ChannelsRestrictSponsoredMessages(ctx context.Context, in *tg.TLChannelsRestrictSponsoredMessages) (*tg.Updates, error)
-	Close() error
 }
 
 type defaultSponsoredMessagesClient struct {
@@ -40,13 +39,6 @@ func NewSponsoredMessagesClient(cli client.Client) SponsoredMessagesClient {
 		cli: cli,
 		rpc: sponsoredmessagesservice.NewRPCSponsoredMessagesClient(cli),
 	}
-}
-
-func (m *defaultSponsoredMessagesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountToggleSponsoredMessages

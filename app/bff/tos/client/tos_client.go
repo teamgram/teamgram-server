@@ -22,7 +22,6 @@ import (
 type TosClient interface {
 	HelpGetTermsOfServiceUpdate(ctx context.Context, in *tg.TLHelpGetTermsOfServiceUpdate) (*tg.HelpTermsOfServiceUpdate, error)
 	HelpAcceptTermsOfService(ctx context.Context, in *tg.TLHelpAcceptTermsOfService) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultTosClient struct {
@@ -35,13 +34,6 @@ func NewTosClient(cli client.Client) TosClient {
 		cli: cli,
 		rpc: tosservice.NewRPCTosClient(cli),
 	}
-}
-
-func (m *defaultTosClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // HelpGetTermsOfServiceUpdate

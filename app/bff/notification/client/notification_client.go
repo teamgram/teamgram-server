@@ -27,7 +27,6 @@ type NotificationClient interface {
 	AccountResetNotifySettings(ctx context.Context, in *tg.TLAccountResetNotifySettings) (*tg.Bool, error)
 	AccountUpdateDeviceLocked(ctx context.Context, in *tg.TLAccountUpdateDeviceLocked) (*tg.Bool, error)
 	AccountGetNotifyExceptions(ctx context.Context, in *tg.TLAccountGetNotifyExceptions) (*tg.Updates, error)
-	Close() error
 }
 
 type defaultNotificationClient struct {
@@ -40,13 +39,6 @@ func NewNotificationClient(cli client.Client) NotificationClient {
 		cli: cli,
 		rpc: notificationservice.NewRPCNotificationClient(cli),
 	}
-}
-
-func (m *defaultNotificationClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountRegisterDevice

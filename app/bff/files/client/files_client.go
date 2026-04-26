@@ -32,7 +32,6 @@ type FilesClient interface {
 	UploadGetCdnFileHashes(ctx context.Context, in *tg.TLUploadGetCdnFileHashes) (*tg.VectorFileHash, error)
 	UploadGetFileHashes(ctx context.Context, in *tg.TLUploadGetFileHashes) (*tg.VectorFileHash, error)
 	HelpGetCdnConfig(ctx context.Context, in *tg.TLHelpGetCdnConfig) (*tg.CdnConfig, error)
-	Close() error
 }
 
 type defaultFilesClient struct {
@@ -45,13 +44,6 @@ func NewFilesClient(cli client.Client) FilesClient {
 		cli: cli,
 		rpc: filesservice.NewRPCFilesClient(cli),
 	}
-}
-
-func (m *defaultFilesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesGetDocumentByHash

@@ -29,7 +29,6 @@ type SavedMessageDialogsClient interface {
 	MessagesGetSavedDialogsByID(ctx context.Context, in *tg.TLMessagesGetSavedDialogsByID) (*tg.MessagesSavedDialogs, error)
 	MessagesReadSavedHistory(ctx context.Context, in *tg.TLMessagesReadSavedHistory) (*tg.Bool, error)
 	ChannelsGetMessageAuthor(ctx context.Context, in *tg.TLChannelsGetMessageAuthor) (*tg.User, error)
-	Close() error
 }
 
 type defaultSavedMessageDialogsClient struct {
@@ -42,13 +41,6 @@ func NewSavedMessageDialogsClient(cli client.Client) SavedMessageDialogsClient {
 		cli: cli,
 		rpc: savedmessagedialogsservice.NewRPCSavedMessageDialogsClient(cli),
 	}
-}
-
-func (m *defaultSavedMessageDialogsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesGetSavedDialogs

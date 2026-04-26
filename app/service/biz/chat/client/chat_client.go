@@ -57,7 +57,6 @@ type ChatClient interface {
 	ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error)
 	ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error)
 	ChatImportChatInvite2(ctx context.Context, in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error)
-	Close() error
 }
 
 type defaultChatClient struct {
@@ -70,13 +69,6 @@ func NewChatClient(cli client.Client) ChatClient {
 		cli: cli,
 		rpc: chatservice.NewRPCChatClient(cli),
 	}
-}
-
-func (m *defaultChatClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // ChatGetMutableChat

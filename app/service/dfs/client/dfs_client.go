@@ -35,7 +35,6 @@ type DfsClient interface {
 	DfsUploadThemeFile(ctx context.Context, in *dfs.TLDfsUploadThemeFile) (*tg.Document, error)
 	DfsUploadRingtoneFile(ctx context.Context, in *dfs.TLDfsUploadRingtoneFile) (*tg.Document, error)
 	DfsUploadedProfilePhoto(ctx context.Context, in *dfs.TLDfsUploadedProfilePhoto) (*tg.Photo, error)
-	Close() error
 }
 
 type defaultDfsClient struct {
@@ -48,13 +47,6 @@ func NewDfsClient(cli client.Client) DfsClient {
 		cli: cli,
 		rpc: dfsservice.NewRPCDfsClient(cli),
 	}
-}
-
-func (m *defaultDfsClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // DfsWriteFilePartData

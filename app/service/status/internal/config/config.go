@@ -19,8 +19,8 @@ package config
 import (
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/marmota/pkg/stores/kv"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {

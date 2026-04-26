@@ -27,7 +27,6 @@ type CodeClient interface {
 	CodeGetPhoneCode(ctx context.Context, in *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error)
 	CodeDeletePhoneCode(ctx context.Context, in *code.TLCodeDeletePhoneCode) (*tg.Bool, error)
 	CodeUpdatePhoneCodeData(ctx context.Context, in *code.TLCodeUpdatePhoneCodeData) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultCodeClient struct {
@@ -40,13 +39,6 @@ func NewCodeClient(cli client.Client) CodeClient {
 		cli: cli,
 		rpc: codeservice.NewRPCCodeClient(cli),
 	}
-}
-
-func (m *defaultCodeClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // CodeCreatePhoneCode

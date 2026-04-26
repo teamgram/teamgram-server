@@ -31,7 +31,6 @@ type IdgenClient interface {
 	IdgenGetNextNSeqId(ctx context.Context, in *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error)
 	IdgenGetNextIdValList(ctx context.Context, in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error)
 	IdgenGetCurrentSeqIdList(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error)
-	Close() error
 }
 
 type defaultIdgenClient struct {
@@ -44,13 +43,6 @@ func NewIdgenClient(cli client.Client) IdgenClient {
 		cli: cli,
 		rpc: idgenservice.NewRPCIdgenClient(cli),
 	}
-}
-
-func (m *defaultIdgenClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // IdgenNextId

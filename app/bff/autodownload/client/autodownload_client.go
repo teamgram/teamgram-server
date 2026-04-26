@@ -22,7 +22,6 @@ import (
 type AutoDownloadClient interface {
 	AccountGetAutoDownloadSettings(ctx context.Context, in *tg.TLAccountGetAutoDownloadSettings) (*tg.AccountAutoDownloadSettings, error)
 	AccountSaveAutoDownloadSettings(ctx context.Context, in *tg.TLAccountSaveAutoDownloadSettings) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultAutoDownloadClient struct {
@@ -35,13 +34,6 @@ func NewAutoDownloadClient(cli client.Client) AutoDownloadClient {
 		cli: cli,
 		rpc: autodownloadservice.NewRPCAutoDownloadClient(cli),
 	}
-}
-
-func (m *defaultAutoDownloadClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AccountGetAutoDownloadSettings

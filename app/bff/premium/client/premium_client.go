@@ -24,7 +24,6 @@ type PremiumClient interface {
 	PaymentsAssignAppStoreTransaction(ctx context.Context, in *tg.TLPaymentsAssignAppStoreTransaction) (*tg.Updates, error)
 	PaymentsAssignPlayMarketTransaction(ctx context.Context, in *tg.TLPaymentsAssignPlayMarketTransaction) (*tg.Updates, error)
 	PaymentsCanPurchaseStore(ctx context.Context, in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error)
-	Close() error
 }
 
 type defaultPremiumClient struct {
@@ -37,13 +36,6 @@ func NewPremiumClient(cli client.Client) PremiumClient {
 		cli: cli,
 		rpc: premiumservice.NewRPCPremiumClient(cli),
 	}
-}
-
-func (m *defaultPremiumClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // HelpGetPremiumPromo

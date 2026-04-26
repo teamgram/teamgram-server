@@ -24,7 +24,6 @@ type UsersClient interface {
 	UsersGetFullUser(ctx context.Context, in *tg.TLUsersGetFullUser) (*tg.UsersUserFull, error)
 	ContactsResolvePhone(ctx context.Context, in *tg.TLContactsResolvePhone) (*tg.ContactsResolvedPeer, error)
 	UsersGetMe(ctx context.Context, in *tg.TLUsersGetMe) (*tg.User, error)
-	Close() error
 }
 
 type defaultUsersClient struct {
@@ -37,13 +36,6 @@ func NewUsersClient(cli client.Client) UsersClient {
 		cli: cli,
 		rpc: usersservice.NewRPCUsersClient(cli),
 	}
-}
-
-func (m *defaultUsersClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // UsersGetUsers

@@ -23,7 +23,6 @@ type QrCodeClient interface {
 	AuthExportLoginToken(ctx context.Context, in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error)
 	AuthImportLoginToken(ctx context.Context, in *tg.TLAuthImportLoginToken) (*tg.AuthLoginToken, error)
 	AuthAcceptLoginToken(ctx context.Context, in *tg.TLAuthAcceptLoginToken) (*tg.Authorization, error)
-	Close() error
 }
 
 type defaultQrCodeClient struct {
@@ -36,13 +35,6 @@ func NewQrCodeClient(cli client.Client) QrCodeClient {
 		cli: cli,
 		rpc: qrcodeservice.NewRPCQrCodeClient(cli),
 	}
-}
-
-func (m *defaultQrCodeClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // AuthExportLoginToken

@@ -34,7 +34,6 @@ type ChatInvitesClient interface {
 	MessagesHideAllChatJoinRequests(ctx context.Context, in *tg.TLMessagesHideAllChatJoinRequests) (*tg.Updates, error)
 	ChannelsToggleJoinToSend(ctx context.Context, in *tg.TLChannelsToggleJoinToSend) (*tg.Updates, error)
 	ChannelsToggleJoinRequest(ctx context.Context, in *tg.TLChannelsToggleJoinRequest) (*tg.Updates, error)
-	Close() error
 }
 
 type defaultChatInvitesClient struct {
@@ -47,13 +46,6 @@ func NewChatInvitesClient(cli client.Client) ChatInvitesClient {
 		cli: cli,
 		rpc: chatinvitesservice.NewRPCChatInvitesClient(cli),
 	}
-}
-
-func (m *defaultChatInvitesClient) Close() error {
-	if closer, ok := any(m.cli).(interface{ Close() error }); ok {
-		return closer.Close()
-	}
-	return nil
 }
 
 // MessagesExportChatInvite
