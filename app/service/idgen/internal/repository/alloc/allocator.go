@@ -89,6 +89,11 @@ type Cache interface {
 	// SetSeq commits a freshly fetched segment [currSeq, lastSeq) under the
 	// lock identified by owner.
 	SetSeq(ctx context.Context, key, owner string, currSeq, lastSeq, mill int64) (SetSeqState, error)
+
+	// Invalidate drops any cached segment for key so the next Malloc is
+	// served from the store. Used to re-sync the cache after the store's
+	// max_seq is mutated out-of-band (e.g. SetMaxSeq).
+	Invalidate(ctx context.Context, key string) error
 }
 
 // SeqStore is the authoritative store for max_seq.
@@ -259,8 +264,30 @@ func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
 
 // SetMaxSeq forces the persisted max_seq to a value. The store must reject
 // regressions; see SeqStore.SetMaxSeq.
+//
+// On success the cached segment for key is invalidated so the next Malloc
+// re-reads the just-written value from the store, guaranteeing that no id
+// below the new max_seq is allocated. The pre-existing cached segment (if
+// any) is dropped — its remaining ids are wasted, but SetMaxSeq is a
+// low-frequency administrative operation so this is acceptable.
+//
+// A cache invalidation failure is logged but does not fail the call: the
+// store write is already durable, and the next cache miss will refresh
+// against the store.
 func (a *Allocator) SetMaxSeq(ctx context.Context, key string, seq int64) error {
-	return a.store.SetMaxSeq(ctx, key, seq)
+	if err := a.store.SetMaxSeq(ctx, key, seq); err != nil {
+		return err
+	}
+	if a.cache == nil {
+		return nil
+	}
+	if err := a.cache.Invalidate(ctx, cacheKey(key)); err != nil {
+		logx.WithContext(ctx).Errorf(
+			"alloc: invalidate cache after SetMaxSeq failed: key=%s seq=%d err=%v",
+			key, seq, err,
+		)
+	}
+	return nil
 }
 
 // MallocTime reserves `size` ids and returns the first allocated id together

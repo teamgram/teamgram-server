@@ -18,10 +18,12 @@ import (
 // fakeCache is a scriptable cache that returns a queue of pre-baked
 // MallocResults and SetSeqStates, recording every interaction for assertion.
 type fakeCache struct {
-	mallocResults []mallocStep
-	setSeqResults []setSeqStep
-	mallocCalls   []mallocCall
-	setSeqCalls   []setSeqCall
+	mallocResults   []mallocStep
+	setSeqResults   []setSeqStep
+	invalidateErrs  []error
+	mallocCalls     []mallocCall
+	setSeqCalls     []setSeqCall
+	invalidatedKeys []string
 }
 
 type mallocStep struct {
@@ -73,12 +75,29 @@ func (f *fakeCache) SetSeq(_ context.Context, key, owner string, curr, last, mil
 	return step.state, step.err
 }
 
+func (f *fakeCache) Invalidate(_ context.Context, key string) error {
+	f.invalidatedKeys = append(f.invalidatedKeys, key)
+	if len(f.invalidateErrs) == 0 {
+		return nil
+	}
+	err := f.invalidateErrs[0]
+	f.invalidateErrs = f.invalidateErrs[1:]
+	return err
+}
+
 type fakeSeqStore struct {
-	mallocCalls []mallocCall
-	mallocSeqs  []int64
-	mallocErrs  []error
-	maxSeq      int64
-	maxSeqErr   error
+	mallocCalls    []mallocCall
+	mallocSeqs     []int64
+	mallocErrs     []error
+	maxSeq         int64
+	maxSeqErr      error
+	setMaxSeqCalls []setMaxSeqCall
+	setMaxSeqErr   error
+}
+
+type setMaxSeqCall struct {
+	key string
+	seq int64
 }
 
 func (f *fakeSeqStore) Malloc(_ context.Context, key string, size int64) (int64, error) {
@@ -102,7 +121,10 @@ func (f *fakeSeqStore) GetMaxSeq(_ context.Context, _ string) (int64, error) {
 	return f.maxSeq, f.maxSeqErr
 }
 
-func (f *fakeSeqStore) SetMaxSeq(_ context.Context, _ string, _ int64) error { return nil }
+func (f *fakeSeqStore) SetMaxSeq(_ context.Context, key string, seq int64) error {
+	f.setMaxSeqCalls = append(f.setMaxSeqCalls, setMaxSeqCall{key: key, seq: seq})
+	return f.setMaxSeqErr
+}
 
 func newAllocator(cache *fakeCache, store *fakeSeqStore) *Allocator {
 	return NewAllocator(cache, store, WithWait(time.Microsecond), WithRetries(3))
@@ -337,11 +359,13 @@ func TestMallocSetSeqLockLostMarksWaste(t *testing.T) {
 }
 
 // TestGetMaxSeqDoesNotPoisonCacheOnMiss: GetMaxSeq must fall through to the
-// store on cache miss without committing an empty segment.
+// store on cache miss without committing an empty segment. The Lua script
+// signals a lock-less peek-Miss with an empty Owner so the Allocator must
+// tolerate that too.
 func TestGetMaxSeqDoesNotPoisonCacheOnMiss(t *testing.T) {
 	cache := &fakeCache{
 		mallocResults: []mallocStep{
-			{res: MallocResult{State: MallocMiss, Owner: "owner-A"}},
+			{res: MallocResult{State: MallocMiss, Owner: ""}},
 		},
 	}
 	store := &fakeSeqStore{maxSeq: 12345}
@@ -410,6 +434,69 @@ func TestNilCacheGoesDirectToStore(t *testing.T) {
 	}
 	if got != 99 {
 		t.Fatalf("GetMaxSeq() = %d, want 99", got)
+	}
+}
+
+// TestSetMaxSeqInvalidatesCache: after a successful store write the cached
+// segment must be dropped so subsequent Mallocs cannot serve ids below the
+// new max_seq.
+func TestSetMaxSeqInvalidatesCache(t *testing.T) {
+	cache := &fakeCache{}
+	store := &fakeSeqStore{}
+	a := newAllocator(cache, store)
+
+	if err := a.SetMaxSeq(context.Background(), "inbox:1", 999); err != nil {
+		t.Fatalf("SetMaxSeq() err = %v", err)
+	}
+	if len(store.setMaxSeqCalls) != 1 || store.setMaxSeqCalls[0].seq != 999 {
+		t.Fatalf("store.SetMaxSeq calls = %+v, want one call with seq=999", store.setMaxSeqCalls)
+	}
+	wantKey := cacheKey("inbox:1")
+	if len(cache.invalidatedKeys) != 1 || cache.invalidatedKeys[0] != wantKey {
+		t.Fatalf("cache.Invalidate keys = %+v, want [%s]", cache.invalidatedKeys, wantKey)
+	}
+}
+
+// TestSetMaxSeqStoreErrorSkipsInvalidate: when the store write fails the
+// cache must be left untouched (the prior segment is still authoritative).
+func TestSetMaxSeqStoreErrorSkipsInvalidate(t *testing.T) {
+	storeErr := errors.New("db down")
+	cache := &fakeCache{}
+	store := &fakeSeqStore{setMaxSeqErr: storeErr}
+	a := newAllocator(cache, store)
+
+	if err := a.SetMaxSeq(context.Background(), "inbox:1", 999); !errors.Is(err, storeErr) {
+		t.Fatalf("SetMaxSeq() err = %v, want %v", err, storeErr)
+	}
+	if len(cache.invalidatedKeys) != 0 {
+		t.Fatalf("cache.Invalidate invoked despite store error: %+v", cache.invalidatedKeys)
+	}
+}
+
+// TestSetMaxSeqInvalidateFailureNotFatal: Invalidate is best-effort. The
+// store write is durable, so a cache invalidation hiccup must not make the
+// whole call fail; the next cache miss will refresh against the store.
+func TestSetMaxSeqInvalidateFailureNotFatal(t *testing.T) {
+	cache := &fakeCache{invalidateErrs: []error{errors.New("redis down")}}
+	store := &fakeSeqStore{}
+	a := newAllocator(cache, store)
+
+	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err != nil {
+		t.Fatalf("SetMaxSeq() err = %v, want nil", err)
+	}
+}
+
+// TestSetMaxSeqWithoutCacheNoOpInvalidate: in DB-direct mode there is no
+// cache to invalidate; SetMaxSeq must not panic.
+func TestSetMaxSeqWithoutCacheNoOpInvalidate(t *testing.T) {
+	store := &fakeSeqStore{}
+	a := NewAllocator(nil, store)
+
+	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err != nil {
+		t.Fatalf("SetMaxSeq() err = %v", err)
+	}
+	if len(store.setMaxSeqCalls) != 1 {
+		t.Fatalf("store.SetMaxSeq calls = %d, want 1", len(store.setMaxSeqCalls))
 	}
 }
 

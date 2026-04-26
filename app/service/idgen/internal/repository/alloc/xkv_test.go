@@ -20,6 +20,14 @@ import (
 type fakeEvalStore struct {
 	results []evalStep
 	calls   []evalCall
+
+	delErrs    []error
+	delDeleted []int
+	delCalls   []delCall
+}
+
+type delCall struct {
+	keys []string
 }
 
 type evalStep struct {
@@ -41,6 +49,25 @@ func (f *fakeEvalStore) EvalCtx(_ context.Context, script, key string, args ...a
 	step := f.results[0]
 	f.results = f.results[1:]
 	return step.res, step.err
+}
+
+func (f *fakeEvalStore) DelCtx(_ context.Context, keys ...string) (int, error) {
+	f.delCalls = append(f.delCalls, delCall{keys: append([]string(nil), keys...)})
+	var deleted int
+	if len(f.delDeleted) > 0 {
+		deleted = f.delDeleted[0]
+		f.delDeleted = f.delDeleted[1:]
+	} else {
+		deleted = len(keys)
+	}
+	if len(f.delErrs) > 0 {
+		err := f.delErrs[0]
+		f.delErrs = f.delErrs[1:]
+		if err != nil {
+			return 0, err
+		}
+	}
+	return deleted, nil
 }
 
 // fixedClock returns a constant millis value, decoupling tests from wall time.
@@ -105,6 +132,24 @@ func TestXKVMallocMissParsesOwner(t *testing.T) {
 	}
 	if got.State != MallocMiss || got.Owner != "owner-1234" || got.Mill != 1_700_000_000_000 {
 		t.Fatalf("Malloc() = %+v, want Miss owner=owner-1234", got)
+	}
+}
+
+// TestXKVMallocColdPeekParsesEmptyOwner: the Lua script returns Miss with an
+// empty owner string for a cold peek (size==0 on a missing key) so that no
+// LOCK is left behind. The Go parser must accept that shape.
+func TestXKVMallocColdPeekParsesEmptyOwner(t *testing.T) {
+	store := &fakeEvalStore{results: []evalStep{
+		{res: []any{int64(1), "", int64(1_700_000_000_000)}},
+	}}
+	c := newCacheForTest(store)
+
+	got, err := c.Malloc(context.Background(), "k", 0)
+	if err != nil {
+		t.Fatalf("Malloc() err = %v", err)
+	}
+	if got.State != MallocMiss || got.Owner != "" {
+		t.Fatalf("Malloc() = %+v, want Miss owner=\"\"", got)
 	}
 }
 
@@ -217,6 +262,34 @@ func TestXKVSetSeqRejectsEmptyOwner(t *testing.T) {
 	c := newCacheForTest(&fakeEvalStore{})
 	if _, err := c.SetSeq(context.Background(), "k", "", 100, 200, 0); err == nil {
 		t.Fatal("SetSeq(owner=\"\") err = nil, want validation error")
+	}
+}
+
+// --- Invalidate -------------------------------------------------------------
+
+func TestXKVInvalidateDeletesKey(t *testing.T) {
+	store := &fakeEvalStore{}
+	c := newCacheForTest(store)
+
+	if err := c.Invalidate(context.Background(), "k"); err != nil {
+		t.Fatalf("Invalidate() err = %v", err)
+	}
+	if len(store.delCalls) != 1 {
+		t.Fatalf("DelCtx invocations = %d, want 1", len(store.delCalls))
+	}
+	if got := store.delCalls[0].keys; len(got) != 1 || got[0] != "k" {
+		t.Fatalf("DelCtx keys = %v, want [k]", got)
+	}
+}
+
+func TestXKVInvalidatePropagatesError(t *testing.T) {
+	wantErr := errors.New("redis down")
+	store := &fakeEvalStore{delErrs: []error{wantErr}}
+	c := newCacheForTest(store)
+
+	err := c.Invalidate(context.Background(), "k")
+	if !errors.Is(err, wantErr) {
+		t.Fatalf("Invalidate() err = %v, want wrapped %v", err, wantErr)
 	}
 }
 

@@ -18,23 +18,32 @@ import (
 )
 
 // DefaultSeqTable is the default name of the table backing the SeqStore.
+//
+// The DDL for this table lives in app/service/idgen/sql/seq_conversations.sql
+// and must be applied to every database referenced by the idgen service's
+// Mysql.DSN before the service is started — the allocator will fail at
+// runtime with "table doesn't exist" otherwise.
 const DefaultSeqTable = "seq_conversations"
 
-// mysqlStore implements SeqStore on top of a MySQL row that holds (key,
-// min_seq, max_seq). max_seq is the next id to be allocated.
+// mysqlStore implements SeqStore on top of a MySQL row that holds
+// (conversation_id, min_seq, max_seq). max_seq is the next id to be
+// allocated.
 type mysqlStore struct {
 	db    *sqlx.DB
 	table string
 }
 
 // NewMySQLStore returns a SeqStore backed by the default seq table.
+//
+// See app/service/idgen/sql/seq_conversations.sql for the required schema.
 func NewMySQLStore(db *sqlx.DB) SeqStore {
 	return NewMySQLStoreWithTable(db, DefaultSeqTable)
 }
 
-// NewMySQLStoreWithTable returns a SeqStore backed by a caller-provided table
-// name. The table schema must expose at least (conversation_id PK,
-// min_seq BIGINT, max_seq BIGINT).
+// NewMySQLStoreWithTable returns a SeqStore backed by a caller-provided
+// table name. The table schema must expose at least (conversation_id PK,
+// min_seq BIGINT, max_seq BIGINT); use app/service/idgen/sql/seq_conversations.sql
+// as the canonical template.
 func NewMySQLStoreWithTable(db *sqlx.DB, table string) SeqStore {
 	return &mysqlStore{db: db, table: table}
 }

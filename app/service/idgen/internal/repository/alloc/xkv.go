@@ -18,13 +18,15 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/kv"
 )
 
-// evalStore is the minimal Redis EVAL surface the Lua scripts need.
+// evalStore is the minimal Redis surface the cache needs: EVAL for the Lua
+// scripts plus DEL for cache invalidation.
 //
 // It is satisfied by go-zero's kv.Store (and therefore by marmota's
 // kv.ExtStore) but is kept as a private interface so tests can plug in a
 // fake without depending on the full Redis stack.
 type evalStore interface {
 	EvalCtx(ctx context.Context, script, key string, args ...any) (any, error)
+	DelCtx(ctx context.Context, keys ...string) (int, error)
 }
 
 // Defaults for XKVCache. lockTTL is intentionally generous to absorb p99
@@ -218,6 +220,14 @@ func (c *xkvCache) Malloc(ctx context.Context, key string, size int64) (MallocRe
 	default:
 		return MallocResult{}, fmt.Errorf("%w: xkv malloc state=%d", ErrInvalidState, state)
 	}
+}
+
+// Invalidate implements Cache.
+func (c *xkvCache) Invalidate(ctx context.Context, key string) error {
+	if _, err := c.kv.DelCtx(ctx, key); err != nil {
+		return fmt.Errorf("alloc: xkv invalidate: %w", err)
+	}
+	return nil
 }
 
 // SetSeq implements Cache.

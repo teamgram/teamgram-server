@@ -39,9 +39,13 @@ package alloc
 // Return values are arrays whose first element is the state code:
 //
 //	{0, currSeq, lastSeq, time}        - Success: caller may use [currSeq, currSeq+size)
-//	{1, owner, time}                   - Miss:    cache is empty, lock acquired,
-//	                                              caller must replenish from store
-//	                                              and call setSeq with this owner
+//	{1, owner, time}                   - Miss:    cache is empty; if size>0 the
+//	                                              lock is acquired and the caller
+//	                                              must replenish from store and
+//	                                              call setSeq with this owner.
+//	                                              For a size==0 peek the lock is
+//	                                              NOT taken and owner is "" so the
+//	                                              caller can simply read-through.
 //	{2}                                - Locked:  another caller holds the lock
 //	{3, currSeq, lastSeq, owner, time} - Exceed:  segment exhausted, lock acquired;
 //	                                              caller may use [currSeq, lastSeq)
@@ -74,6 +78,12 @@ if nowMillis < prev then
 end
 
 if redis.call("HEXISTS", key, "CURR") == 0 then
+    -- Read-only peek on a cold key must not mutate the cache: returning a
+    -- lock-less Miss lets the Go caller fall through to the store without
+    -- leaving an orphaned LOCK that would block a concurrent real Malloc.
+    if size == 0 then
+        return {1, "", nowMillis}
+    end
     redis.call("HSET", key, "LOCK", owner, "LOCK_AT", nowMillis)
     redis.call("EXPIRE", key, dataSecond)
     return {1, owner, nowMillis}
