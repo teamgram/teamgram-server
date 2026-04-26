@@ -17,9 +17,21 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type Config struct {
 	kitex.RpcServerConf
+	KV           kv.KvConf
+	StatusExpire int `json:",default=300"`
+}
+
+func (c *Config) Validate() error {
+	if c.StatusExpire <= 0 {
+		return fmt.Errorf("StatusExpire must be positive, got %d", c.StatusExpire)
+	}
+	return nil
 }
