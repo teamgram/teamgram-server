@@ -265,15 +265,22 @@ func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
 // SetMaxSeq forces the persisted max_seq to a value. The store must reject
 // regressions; see SeqStore.SetMaxSeq.
 //
-// On success the cached segment for key is invalidated so the next Malloc
-// re-reads the just-written value from the store, guaranteeing that no id
-// below the new max_seq is allocated. The pre-existing cached segment (if
-// any) is dropped — its remaining ids are wasted, but SetMaxSeq is a
-// low-frequency administrative operation so this is acceptable.
+// SetMaxSeq's contract to its caller is "after this returns nil, the next
+// id allocated from key will be >= seq". Honouring that requires both
+// halves: persist the new max_seq in the store AND drop any cached segment
+// that could still serve ids below it. Therefore:
 //
-// A cache invalidation failure is logged but does not fail the call: the
-// store write is already durable, and the next cache miss will refresh
-// against the store.
+//   - if the store write fails, SetMaxSeq returns the store error and the
+//     cache is left untouched (the previous segment is still authoritative);
+//   - if the store write succeeds but the cache invalidation fails,
+//     SetMaxSeq returns the wrapped invalidation error so the caller knows
+//     the cache may still serve stale ids. Both store.SetMaxSeq (GREATEST
+//     in MySQL) and cache.Invalidate (DEL) are idempotent, so the caller
+//     can simply retry SetMaxSeq with the same seq.
+//
+// The previously cached segment is unconditionally dropped on success; its
+// remaining ids are wasted, but SetMaxSeq is a low-frequency administrative
+// operation so the gap is acceptable.
 func (a *Allocator) SetMaxSeq(ctx context.Context, key string, seq int64) error {
 	if err := a.store.SetMaxSeq(ctx, key, seq); err != nil {
 		return err
@@ -286,6 +293,7 @@ func (a *Allocator) SetMaxSeq(ctx context.Context, key string, seq int64) error 
 			"alloc: invalidate cache after SetMaxSeq failed: key=%s seq=%d err=%v",
 			key, seq, err,
 		)
+		return fmt.Errorf("alloc: invalidate cache after SetMaxSeq(key=%s, seq=%d): %w", key, seq, err)
 	}
 	return nil
 }

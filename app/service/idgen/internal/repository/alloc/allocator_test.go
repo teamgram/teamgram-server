@@ -473,16 +473,49 @@ func TestSetMaxSeqStoreErrorSkipsInvalidate(t *testing.T) {
 	}
 }
 
-// TestSetMaxSeqInvalidateFailureNotFatal: Invalidate is best-effort. The
-// store write is durable, so a cache invalidation hiccup must not make the
-// whole call fail; the next cache miss will refresh against the store.
-func TestSetMaxSeqInvalidateFailureNotFatal(t *testing.T) {
-	cache := &fakeCache{invalidateErrs: []error{errors.New("redis down")}}
+// TestSetMaxSeqInvalidateFailureSurfacesError: Invalidate failure must be
+// surfaced to the caller — returning nil here would silently allow the
+// cached segment to keep serving ids below the new max_seq, which is the
+// exact correctness gap SetMaxSeq is supposed to close. The store write
+// has already happened so the caller can simply retry (both store and
+// cache operations are idempotent on the same seq).
+func TestSetMaxSeqInvalidateFailureSurfacesError(t *testing.T) {
+	wantErr := errors.New("redis down")
+	cache := &fakeCache{invalidateErrs: []error{wantErr}}
 	store := &fakeSeqStore{}
 	a := newAllocator(cache, store)
 
+	err := a.SetMaxSeq(context.Background(), "inbox:1", 42)
+	if !errors.Is(err, wantErr) {
+		t.Fatalf("SetMaxSeq() err = %v, want wrapped %v", err, wantErr)
+	}
+	if len(store.setMaxSeqCalls) != 1 || store.setMaxSeqCalls[0].seq != 42 {
+		t.Fatalf("store.SetMaxSeq calls = %+v, want one call with seq=42", store.setMaxSeqCalls)
+	}
+	if len(cache.invalidatedKeys) != 1 {
+		t.Fatalf("cache.Invalidate calls = %d, want 1", len(cache.invalidatedKeys))
+	}
+}
+
+// TestSetMaxSeqInvalidateRetryIsIdempotent: after a transient invalidation
+// failure the caller is expected to retry; the second attempt must succeed
+// without double-counting or rejecting the unchanged seq value.
+func TestSetMaxSeqInvalidateRetryIsIdempotent(t *testing.T) {
+	cache := &fakeCache{invalidateErrs: []error{errors.New("redis down"), nil}}
+	store := &fakeSeqStore{}
+	a := newAllocator(cache, store)
+
+	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err == nil {
+		t.Fatal("first SetMaxSeq() err = nil, want error")
+	}
 	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err != nil {
-		t.Fatalf("SetMaxSeq() err = %v, want nil", err)
+		t.Fatalf("retry SetMaxSeq() err = %v, want nil", err)
+	}
+	if len(store.setMaxSeqCalls) != 2 {
+		t.Fatalf("store.SetMaxSeq calls = %d, want 2 (idempotent retry)", len(store.setMaxSeqCalls))
+	}
+	if len(cache.invalidatedKeys) != 2 {
+		t.Fatalf("cache.Invalidate calls = %d, want 2", len(cache.invalidatedKeys))
 	}
 }
 
