@@ -24,11 +24,7 @@ import (
 // AuthsessionGetLayer
 // authsession.getLayer auth_key_id:long = Int32;
 func (c *AuthsessionCore) AuthsessionGetLayer(in *authsession.TLAuthsessionGetLayer) (*tg.Int32, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	layer, err := c.svcCtx.Repo.GetApiLayer(c.ctx, keyData.PermAuthKeyId)
+	layer, err := c.svcCtx.Repo.GetApiLayerByAuthKeyId(c.ctx, in.AuthKeyId)
 	if err != nil {
 		return nil, err
 	}

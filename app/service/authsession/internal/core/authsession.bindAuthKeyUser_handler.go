@@ -24,11 +24,7 @@ import (
 // AuthsessionBindAuthKeyUser
 // authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 func (c *AuthsessionCore) AuthsessionBindAuthKeyUser(in *authsession.TLAuthsessionBindAuthKeyUser) (*tg.Int64, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	hash, err := c.svcCtx.Repo.BindAuthKeyUser(c.ctx, keyData.PermAuthKeyId, in.UserId)
+	hash, err := c.svcCtx.Repo.BindAuthKeyUserByAuthKeyId(c.ctx, in.AuthKeyId, in.UserId)
 	if err != nil {
 		return nil, err
 	}

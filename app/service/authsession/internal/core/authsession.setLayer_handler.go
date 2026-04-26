@@ -24,11 +24,7 @@ import (
 // AuthsessionSetLayer
 // authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
 func (c *AuthsessionCore) AuthsessionSetLayer(in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	if err := c.svcCtx.Repo.SetLayer(c.ctx, keyData.PermAuthKeyId, in.Ip, in.Layer); err != nil {
+	if err := c.svcCtx.Repo.SetLayerByAuthKeyId(c.ctx, in.AuthKeyId, in.Ip, in.Layer); err != nil {
 		return nil, err
 	}
 	return tg.BoolTrue, nil

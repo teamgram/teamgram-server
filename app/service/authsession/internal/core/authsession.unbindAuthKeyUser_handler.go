@@ -24,15 +24,7 @@ import (
 // AuthsessionUnbindAuthKeyUser
 // authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 func (c *AuthsessionCore) AuthsessionUnbindAuthKeyUser(in *authsession.TLAuthsessionUnbindAuthKeyUser) (*tg.Bool, error) {
-	permAuthKeyId := int64(0)
-	if in.AuthKeyId != 0 {
-		keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-		if err != nil {
-			return nil, err
-		}
-		permAuthKeyId = keyData.PermAuthKeyId
-	}
-	if err := c.svcCtx.Repo.UnbindAuthKeyUser(c.ctx, permAuthKeyId, in.UserId); err != nil {
+	if err := c.svcCtx.Repo.UnbindAuthKeyUserByAuthKeyId(c.ctx, in.AuthKeyId, in.UserId); err != nil {
 		return nil, err
 	}
 	return tg.BoolTrue, nil

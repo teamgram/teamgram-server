@@ -24,11 +24,7 @@ import (
 // AuthsessionSetAndroidPushSessionId
 // authsession.setAndroidPushSessionId user_id:long auth_key_id:long session_id:long = Bool;
 func (c *AuthsessionCore) AuthsessionSetAndroidPushSessionId(in *authsession.TLAuthsessionSetAndroidPushSessionId) (*tg.Bool, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	if err := c.svcCtx.Repo.SetAndroidPushSessionId(c.ctx, in.UserId, keyData.PermAuthKeyId, in.SessionId); err != nil {
+	if err := c.svcCtx.Repo.SetAndroidPushSessionIdByAuthKeyId(c.ctx, in.UserId, in.AuthKeyId, in.SessionId); err != nil {
 		return nil, err
 	}
 	return tg.BoolTrue, nil

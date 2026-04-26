@@ -23,9 +23,5 @@ import (
 // AuthsessionGetAuthStateData
 // authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 func (c *AuthsessionCore) AuthsessionGetAuthStateData(in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	return c.svcCtx.Repo.GetAuthStateData(c.ctx, in.AuthKeyId, keyData.PermAuthKeyId)
+	return c.svcCtx.Repo.GetAuthStateDataByAuthKeyId(c.ctx, in.AuthKeyId)
 }

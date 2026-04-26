@@ -27,12 +27,7 @@ func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuth
 	if in.Data == nil {
 		return nil, authsession.ErrClientSessionEmpty
 	}
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.Data.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	in.Data.AuthKeyId = keyData.PermAuthKeyId
-	if err := c.svcCtx.Repo.SetClientSessionInfo(c.ctx, in.Data); err != nil {
+	if err := c.svcCtx.Repo.SetClientSessionInfoByAuthKeyId(c.ctx, in.Data); err != nil {
 		return nil, err
 	}
 	return tg.BoolTrue, nil

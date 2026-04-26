@@ -52,14 +52,6 @@ func fromAuthKeyInfo(v *tg.AuthKeyInfo) *model.AuthKeys {
 	}
 }
 
-func (r *Repository) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
-	return r.QueryAuthKey(ctx, authKeyId)
-}
-
-func (r *Repository) SetAuthKeyV2(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
-	return r.SaveAuthKey(ctx, authKey, expiredIn)
-}
-
 func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
 	key, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
 	if err != nil {
@@ -77,6 +69,48 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 		return nil, authsession.ErrAuthKeyInvalid
 	}
 	return keyInfo, nil
+}
+
+func (r *Repository) ListAuthKeysByIds(ctx context.Context, authKeyIds []int64) (map[int64]*tg.AuthKeyInfo, error) {
+	if len(authKeyIds) == 0 {
+		return map[int64]*tg.AuthKeyInfo{}, nil
+	}
+
+	rows, err := r.model.AuthKeysModel.FindListByAuthKeyIdList(ctx, authKeyIds...)
+	if err != nil {
+		return nil, wrapStorage(err)
+	}
+
+	keys := make(map[int64]*tg.AuthKeyInfo, len(rows))
+	for i := range rows {
+		keyInfo, err := toAuthKeyInfo(&rows[i])
+		if err != nil {
+			return nil, authsession.ErrAuthKeyInvalid
+		}
+		keys[keyInfo.AuthKeyId] = keyInfo
+	}
+	return keys, nil
+}
+
+func (r *Repository) ExpandAuthKeyIds(ctx context.Context, authKeyIds []int64) ([]int64, error) {
+	keys, err := r.ListAuthKeysByIds(ctx, authKeyIds)
+	if err != nil {
+		return nil, err
+	}
+
+	expandedKeyIds := make([]int64, 0, len(authKeyIds))
+	for _, authKeyId := range authKeyIds {
+		keyData := keys[authKeyId]
+		if keyData == nil {
+			return nil, authsession.ErrAuthKeyNotFound
+		}
+		if keyData.TempAuthKeyId != 0 {
+			expandedKeyIds = append(expandedKeyIds, keyData.TempAuthKeyId)
+		} else {
+			expandedKeyIds = append(expandedKeyIds, authKeyId)
+		}
+	}
+	return expandedKeyIds, nil
 }
 
 func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
@@ -119,4 +153,12 @@ func (r *Repository) ResolvePermAuthKey(ctx context.Context, authKeyId int64) (*
 		return nil, authsession.ErrPermAuthKeyEmpty
 	}
 	return keyData, nil
+}
+
+func (r *Repository) GetPermAuthKeyIdByAuthKeyId(ctx context.Context, authKeyId int64) (int64, error) {
+	keyData, err := r.ResolvePermAuthKey(ctx, authKeyId)
+	if err != nil {
+		return 0, err
+	}
+	return keyData.PermAuthKeyId, nil
 }

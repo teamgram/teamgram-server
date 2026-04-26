@@ -17,7 +17,6 @@ package repository
 
 import (
 	"context"
-	"math/rand"
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
@@ -108,19 +107,20 @@ func (r *Repository) getOrNotInsertSaltList(ctx context.Context, keyId int64, si
 			lastSalt = saltList[len(saltList)-1]
 		}
 
-		// check ValidUntil
-		if lastSalt != nil && lastSalt.ValidUntil+300 < date {
-			lastSalt = nil
-		}
+		lastSalt = previousSaltForCompatibility(lastSalt, date)
 	}
 
 	left := size - int32(len(saltsData))
 	if left > 0 {
-		for i := int32(0); i < size; i++ {
+		for i := int32(0); i < left; i++ {
+			saltValue, err := secureRandInt63()
+			if err != nil {
+				return nil, err
+			}
 			salt := tg.MakeTLFutureSalt(&tg.TLFutureSalt{
 				ValidSince: lastValidUntil,
 				ValidUntil: lastValidUntil + saltTimeout,
-				Salt:       rand.Int63(),
+				Salt:       saltValue,
 			})
 			saltsData = append(saltsData, salt)
 			lastValidUntil += saltTimeout
@@ -151,6 +151,20 @@ func (r *Repository) getOrNotInsertSaltList(ctx context.Context, keyId int64, si
 		}
 	}
 	return salts2, nil
+}
+
+func previousSaltForCompatibility(lastSalt *tg.TLFutureSalt, now int32) *tg.TLFutureSalt {
+	if lastSalt == nil {
+		return nil
+	}
+
+	// MTProto clients can legitimately send messages from the previous salt
+	// window during clock skew or transport delay. Keep one just-expired salt
+	// for a short grace period, but drop older salts from the response/cache.
+	if lastSalt.ValidUntil+300 < now {
+		return nil
+	}
+	return lastSalt
 }
 
 func (r *Repository) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.TLFutureSalts, error) {

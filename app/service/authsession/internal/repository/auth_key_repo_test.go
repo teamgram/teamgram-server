@@ -13,11 +13,16 @@ import (
 
 type fakeAuthKeysModel struct {
 	model.AuthKeysModel
-	findOneByAuthKeyId func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error)
+	findOneByAuthKeyId  func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error)
+	findListByAuthKeyId func(ctx context.Context, authKeyId ...int64) ([]model.AuthKeys, error)
 }
 
 func (m fakeAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
 	return m.findOneByAuthKeyId(ctx, authKeyId)
+}
+
+func (m fakeAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, authKeyId ...int64) ([]model.AuthKeys, error) {
+	return m.findListByAuthKeyId(ctx, authKeyId...)
 }
 
 func TestAuthKeyInfoMapping(t *testing.T) {
@@ -103,5 +108,31 @@ func TestQueryAuthKeyReturnsDomainNotFoundOnNilModelRow(t *testing.T) {
 	_, err := repo.QueryAuthKey(context.Background(), 1001)
 	if !errors.Is(err, authsession.ErrAuthKeyNotFound) {
 		t.Fatalf("QueryAuthKey() error = %v, want ErrAuthKeyNotFound", err)
+	}
+}
+
+func TestExpandAuthKeyIdsUsesBatchRows(t *testing.T) {
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findListByAuthKeyId: func(ctx context.Context, authKeyId ...int64) ([]model.AuthKeys, error) {
+					if len(authKeyId) != 2 || authKeyId[0] != 1001 || authKeyId[1] != 1002 {
+						t.Fatalf("FindListByAuthKeyIdList ids = %v, want [1001 1002]", authKeyId)
+					}
+					return []model.AuthKeys{
+						{AuthKeyId: 1001, Body: "YWJj", TempAuthKeyId: 2001},
+						{AuthKeyId: 1002, Body: "ZGVm"},
+					}, nil
+				},
+			},
+		},
+	}
+
+	got, err := repo.ExpandAuthKeyIds(context.Background(), []int64{1001, 1002})
+	if err != nil {
+		t.Fatalf("ExpandAuthKeyIds() error = %v", err)
+	}
+	if len(got) != 2 || got[0] != 2001 || got[1] != 1002 {
+		t.Fatalf("ExpandAuthKeyIds() = %v, want [2001 1002]", got)
 	}
 }

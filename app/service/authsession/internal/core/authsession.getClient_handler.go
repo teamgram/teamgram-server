@@ -24,11 +24,7 @@ import (
 // AuthsessionGetClient
 // authsession.getClient auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetClient(in *authsession.TLAuthsessionGetClient) (*tg.String, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	client, err := c.svcCtx.Repo.GetClientKind(c.ctx, keyData.PermAuthKeyId)
+	client, err := c.svcCtx.Repo.GetClientKindByAuthKeyId(c.ctx, in.AuthKeyId)
 	if err != nil {
 		return nil, err
 	}

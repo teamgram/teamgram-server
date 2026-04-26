@@ -62,6 +62,15 @@ func (r *Repository) SetClientSessionInfo(ctx context.Context, session *authsess
 	return wrapStorage(err)
 }
 
+func (r *Repository) SetClientSessionInfoByAuthKeyId(ctx context.Context, session *authsession.ClientSession) error {
+	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, session.AuthKeyId)
+	if err != nil {
+		return err
+	}
+	session.AuthKeyId = permAuthKeyId
+	return r.SetClientSessionInfo(ctx, session)
+}
+
 func (r *Repository) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
 	row := &model.Auths{
 		AuthKeyId:  authKeyId,
@@ -75,10 +84,27 @@ func (r *Repository) SetLayer(ctx context.Context, authKeyId int64, ip string, l
 	return wrapStorage(err)
 }
 
+func (r *Repository) SetLayerByAuthKeyId(ctx context.Context, authKeyId int64, ip string, layer int32) error {
+	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
+	if err != nil {
+		return err
+	}
+	return r.SetLayer(ctx, permAuthKeyId, ip, layer)
+}
+
 func (r *Repository) SetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) error {
 	row := authsFromInitConnection(in)
 	_, _, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		return r.model.AuthsModel.InsertOrUpdate(ctx, row)
 	}, authDataCacheKey(row.AuthKeyId))
 	return wrapStorage(err)
+}
+
+func (r *Repository) SetInitConnectionByAuthKeyId(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) error {
+	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, in.AuthKeyId)
+	if err != nil {
+		return err
+	}
+	in.AuthKeyId = permAuthKeyId
+	return r.SetInitConnection(ctx, in)
 }

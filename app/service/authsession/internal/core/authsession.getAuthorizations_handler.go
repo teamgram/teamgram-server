@@ -24,15 +24,7 @@ import (
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 func (c *AuthsessionCore) AuthsessionGetAuthorizations(in *authsession.TLAuthsessionGetAuthorizations) (*tg.AccountAuthorizations, error) {
-	excludePermAuthKeyId := int64(0)
-	if in.ExcludeAuthKeyId != 0 {
-		keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.ExcludeAuthKeyId)
-		if err != nil {
-			return nil, err
-		}
-		excludePermAuthKeyId = keyData.PermAuthKeyId
-	}
-	authorizations, err := c.svcCtx.Repo.GetAuthorizations(c.ctx, in.UserId, excludePermAuthKeyId)
+	authorizations, err := c.svcCtx.Repo.GetAuthorizationsByAuthKeyId(c.ctx, in.UserId, in.ExcludeAuthKeyId)
 	if err != nil {
 		return nil, err
 	}

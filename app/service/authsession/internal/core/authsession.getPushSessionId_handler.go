@@ -24,11 +24,7 @@ import (
 // AuthsessionGetPushSessionId
 // authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 func (c *AuthsessionCore) AuthsessionGetPushSessionId(in *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error) {
-	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
-	if err != nil {
-		return nil, err
-	}
-	sessionId, err := c.svcCtx.Repo.GetAndroidPushSessionId(c.ctx, keyData.PermAuthKeyId)
+	sessionId, err := c.svcCtx.Repo.GetAndroidPushSessionIdByAuthKeyId(c.ctx, in.AuthKeyId)
 	if err != nil {
 		return nil, err
 	}

@@ -52,7 +52,7 @@ func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSet
 			keyInfo.AuthKeyId,
 			salt != nil,
 			err)
-		return tg.BoolFalse, nil
+		return nil, err
 	}
 
 	return tg.BoolTrue, nil
