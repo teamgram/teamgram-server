@@ -57,13 +57,12 @@ func (m *futureSaltsModel) PutSalts(ctx context.Context, keyId int64, salts []*F
 	)
 
 	if b, err = json.Marshal(salts); err != nil {
-		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", key, err)
 		return
 	}
 
 	// 误差 500
 	if err = m.kv.SetexCtx(ctx, key, string(b), len(salts)*saltTimeout); err != nil {
-		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", key, err)
+		return
 	}
 
 	return
@@ -77,7 +76,6 @@ func (m *futureSaltsModel) GetSalts(ctx context.Context, keyId int64) (salts []*
 
 	bBuf, err = m.kv.GetCtx(ctx, key)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("conn.Do(GET %s) error(%v)", key, err)
 		return
 	} else if bBuf == "" {
 		return nil, nil

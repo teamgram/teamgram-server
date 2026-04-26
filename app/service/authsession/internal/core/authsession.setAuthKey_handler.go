@@ -48,7 +48,10 @@ func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSet
 	}
 
 	if err != nil {
-		c.Logger.Errorf("authsession.setAuthKey - error: %v", err)
+		c.Logger.Errorf("authsession.setAuthKey - save failed: auth_key_id: %d, has_future_salt: %t, err: %v",
+			keyInfo.AuthKeyId,
+			salt != nil,
+			err)
 		return tg.BoolFalse, nil
 	}
 

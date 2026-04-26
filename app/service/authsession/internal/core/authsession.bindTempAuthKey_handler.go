@@ -29,28 +29,45 @@ import (
 func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessionBindTempAuthKey) (*tg.Bool, error) {
 	permKeyData, err := c.svcCtx.Repo.QueryAuthKey(c.ctx, in.PermAuthKeyId)
 	if err != nil {
+		c.Logger.Errorf("authsession.bindTempAuthKey - perm key query failed: perm_auth_key_id: %d, err: %v", in.PermAuthKeyId, err)
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 	if len(in.EncryptedMessage) < 24 {
+		c.Logger.Errorf("authsession.bindTempAuthKey - encrypted message too short: perm_auth_key_id: %d, encrypted_message_len: %d",
+			in.PermAuthKeyId,
+			len(in.EncryptedMessage))
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 
 	permAuthKey := crypto.NewAuthKey(in.PermAuthKeyId, permKeyData.AuthKey)
 	innerData, err := permAuthKey.AesIgeDecryptV1(in.EncryptedMessage[8:24], in.EncryptedMessage[24:])
 	if err != nil || len(innerData) < 32 {
+		c.Logger.Errorf("authsession.bindTempAuthKey - decrypt failed: perm_auth_key_id: %d, err: %v, inner_len: %d",
+			in.PermAuthKeyId,
+			err,
+			len(innerData))
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 
 	inner, err := mt.DecodeBindAuthKeyInnerClazz(bin.NewDecoder(innerData[32:]))
 	if err != nil || inner == nil {
+		c.Logger.Errorf("authsession.bindTempAuthKey - decode inner failed: perm_auth_key_id: %d, err: %v", in.PermAuthKeyId, err)
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 	if inner.PermAuthKeyId != in.PermAuthKeyId || inner.Nonce != in.Nonce || inner.ExpiresAt != in.ExpiresAt {
+		c.Logger.Errorf("authsession.bindTempAuthKey - inner mismatch: perm_auth_key_id: %d, inner_perm_auth_key_id: %d, nonce: %d, inner_nonce: %d, expires_at: %d, inner_expires_at: %d",
+			in.PermAuthKeyId,
+			inner.PermAuthKeyId,
+			in.Nonce,
+			inner.Nonce,
+			in.ExpiresAt,
+			inner.ExpiresAt)
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 
 	tempKeyData, err := c.svcCtx.Repo.QueryAuthKey(c.ctx, inner.TempAuthKeyId)
 	if err != nil {
+		c.Logger.Errorf("authsession.bindTempAuthKey - temp key query failed: temp_auth_key_id: %d, err: %v", inner.TempAuthKeyId, err)
 		return nil, authsession.ErrEncryptedMessageInvalid
 	}
 	if err := c.svcCtx.Repo.BindKeyId(c.ctx, inner.PermAuthKeyId, tempKeyData.AuthKeyType, inner.TempAuthKeyId); err != nil {
