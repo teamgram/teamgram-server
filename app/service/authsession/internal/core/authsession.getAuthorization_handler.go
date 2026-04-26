@@ -24,8 +24,9 @@ import (
 // AuthsessionGetAuthorization
 // authsession.getAuthorization auth_key_id:long = Authorization;
 func (c *AuthsessionCore) AuthsessionGetAuthorization(in *authsession.TLAuthsessionGetAuthorization) (*tg.Authorization, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getAuthorization - error: method AuthsessionGetAuthorization not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return c.svcCtx.Repo.GetAuthorization(c.ctx, keyData.PermAuthKeyId)
 }

@@ -18,14 +18,37 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthsessionResetAuthorization
 // authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 func (c *AuthsessionCore) AuthsessionResetAuthorization(in *authsession.TLAuthsessionResetAuthorization) (*authsession.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.resetAuthorization - error: method AuthsessionResetAuthorization not impl")
+	excludePermAuthKeyId := int64(0)
+	if in.AuthKeyId != 0 {
+		keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+		if err != nil {
+			return nil, err
+		}
+		excludePermAuthKeyId = keyData.PermAuthKeyId
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	keyIds, err := c.svcCtx.Repo.ResetAuthorization(c.ctx, in.UserId, excludePermAuthKeyId, in.Hash)
+	if err != nil {
+		return nil, err
+	}
+
+	expandedKeyIds := make([]int64, 0, len(keyIds))
+	for _, keyId := range keyIds {
+		keyData, err := c.svcCtx.Repo.QueryAuthKey(c.ctx, keyId)
+		if err != nil {
+			return nil, err
+		}
+		if keyData.TempAuthKeyId != 0 {
+			expandedKeyIds = append(expandedKeyIds, keyData.TempAuthKeyId)
+		} else {
+			expandedKeyIds = append(expandedKeyIds, keyId)
+		}
+	}
+
+	return &authsession.VectorLong{Datas: expandedKeyIds}, nil
 }
