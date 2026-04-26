@@ -18,8 +18,8 @@ package repository
 import (
 	"context"
 	"encoding/base64"
-	"errors"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -53,27 +53,68 @@ func fromAuthKeyInfo(v *tg.AuthKeyInfo) *model.AuthKeys {
 }
 
 func (r *Repository) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
-	key, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
-
-	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
-			return nil, tg.ErrAuthKeyUnregistered
-		}
-		return nil, err
-	}
-
-	return toAuthKeyInfo(key)
+	return r.QueryAuthKey(ctx, authKeyId)
 }
 
-func (r *Repository) SetAuthKeyV2(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) (err error) {
+func (r *Repository) SetAuthKeyV2(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
+	return r.SaveAuthKey(ctx, authKey, expiredIn)
+}
+
+func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
+	key, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, authKeyId)
+	if err != nil {
+		if isNotFound(err) {
+			return nil, authsession.ErrAuthKeyNotFound
+		}
+		return nil, wrapStorage(err)
+	}
+
+	keyInfo, err := toAuthKeyInfo(key)
+	if err != nil {
+		return nil, authsession.ErrAuthKeyInvalid
+	}
+	return keyInfo, nil
+}
+
+func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
 	// TODO(@benqi): expiredIn
 	_ = expiredIn
 
 	key := fromAuthKeyInfo(authKey)
-	_, _, err = r.model.AuthKeysModel.InsertIgnore(ctx, key)
+	_, _, err := r.model.AuthKeysModel.InsertIgnore(ctx, key)
 	if err != nil {
-		return err
+		return wrapStorage(err)
 	}
 
-	return
+	return nil
+}
+
+func (r *Repository) BindKeyId(ctx context.Context, keyId int64, bindType int32, bindKeyId int64) error {
+	cMap := map[string]interface{}{}
+	switch bindType {
+	case tg.AuthKeyTypePerm:
+		cMap["perm_auth_key_id"] = bindKeyId
+	case tg.AuthKeyTypeTemp:
+		cMap["temp_auth_key_id"] = bindKeyId
+	case tg.AuthKeyTypeMediaTemp:
+		cMap["media_temp_auth_key_id"] = bindKeyId
+	default:
+		return authsession.ErrAuthKeyInvalid
+	}
+
+	if _, err := r.model.AuthKeysModel.UpdateCustomMap(ctx, cMap, keyId); err != nil {
+		return wrapStorage(err)
+	}
+	return nil
+}
+
+func (r *Repository) ResolvePermAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
+	keyData, err := r.QueryAuthKey(ctx, authKeyId)
+	if err != nil {
+		return nil, err
+	}
+	if keyData.PermAuthKeyId == 0 {
+		return nil, authsession.ErrPermAuthKeyEmpty
+	}
+	return keyData, nil
 }
