@@ -17,6 +17,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -24,8 +26,18 @@ import (
 // StatusSetSessionOffline
 // status.setSessionOffline user_id:long auth_key_id:long = Bool;
 func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOffline) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("status.setSessionOffline - error: method StatusSetSessionOffline not impl")
+	if in.UserId <= 0 {
+		return nil, fmt.Errorf("setSessionOffline: invalid user_id %d", in.UserId)
+	}
+	if in.AuthKeyId == 0 {
+		return nil, fmt.Errorf("setSessionOffline: invalid auth_key_id")
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	err := c.svcCtx.Repo.SetSessionOffline(c.ctx, in.UserId, in.AuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("status.setSessionOffline - error: %v", err)
+		return nil, err
+	}
+
+	return tg.MakeTLBoolTrue(&tg.TLBoolTrue{}).ToBool(), nil
 }
