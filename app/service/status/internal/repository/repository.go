@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,4 +28,13 @@ type Repository struct {
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
 	return &Repository{}
+}
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
+	}
+
+	return nil
 }
