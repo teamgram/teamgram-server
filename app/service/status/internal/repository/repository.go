@@ -54,6 +54,12 @@ func getUserKey(userID int64) string {
 	return fmt.Sprintf("%s#%d", userKeyPrefix, userID)
 }
 
+type userSessionBatchEntry struct {
+	index  int
+	key    string
+	userID int64
+}
+
 // SetSessionOnline atomically sets the session entry in the user's online hash
 // and refreshes the key-level TTL.
 func (r *Repository) SetSessionOnline(ctx context.Context, userID int64, session *status.SessionEntry, expireSeconds int) error {
@@ -98,10 +104,14 @@ func (r *Repository) GetUserOnlineSessions(ctx context.Context, userID int64) (*
 		return nil, wrapStorageError("get user online sessions", err)
 	}
 
+	return buildUserSessionEntryList(ctx, userID, rMap), nil
+}
+
+func buildUserSessionEntryList(ctx context.Context, userID int64, rMap map[string]string) *status.TLUserSessionEntryList {
 	rValues := &status.TLUserSessionEntryList{
+		UserId:       userID,
 		UserSessions: make([]*status.TLSessionEntry, 0, len(rMap)),
 	}
-
 	for field, rawValue := range rMap {
 		sess := new(status.TLSessionEntry)
 		if err := json.Unmarshal([]byte(rawValue), sess); err != nil {
@@ -119,7 +129,13 @@ func (r *Repository) GetUserOnlineSessions(ctx context.Context, userID int64) (*
 		rValues.UserSessions = append(rValues.UserSessions, sess)
 	}
 
-	return rValues, nil
+	return rValues
+}
+
+func assignUserSessionBatchResult(ctx context.Context, result *status.VectorUserSessionEntryList, entries []userSessionBatchEntry, maps []map[string]string) {
+	for i, rMap := range maps {
+		result.Datas[entries[i].index] = buildUserSessionEntryList(ctx, entries[i].userID, rMap)
+	}
 }
 
 // GetUsersOnlineSessionsList returns online sessions for multiple users.
@@ -130,14 +146,9 @@ func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []i
 		return &status.VectorUserSessionEntryList{}, nil
 	}
 
-	type keyEntry struct {
-		key    string
-		userID int64
-	}
-
 	// Group keys by pipeline node (consistent-hash routing for Redis cluster).
-	groups := make(map[kv.Pipeline][]keyEntry)
-	for _, id := range userIDs {
+	groups := make(map[kv.Pipeline][]userSessionBatchEntry)
+	for idx, id := range userIDs {
 		k := getUserKey(id)
 		rawPipe, err := r.kv.GetPipeline(k)
 		if err != nil {
@@ -147,11 +158,11 @@ func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []i
 		if !ok {
 			return nil, wrapStorageError(fmt.Sprintf("unexpected pipeline type for user %d", id), fmt.Errorf("%T", rawPipe))
 		}
-		groups[pipe] = append(groups[pipe], keyEntry{key: k, userID: id})
+		groups[pipe] = append(groups[pipe], userSessionBatchEntry{index: idx, key: k, userID: id})
 	}
 
 	result := &status.VectorUserSessionEntryList{
-		Datas: make([]*status.TLUserSessionEntryList, 0, len(userIDs)),
+		Datas: make([]*status.TLUserSessionEntryList, len(userIDs)),
 	}
 
 	for pipe, entries := range groups {
@@ -166,36 +177,15 @@ func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []i
 			return nil, wrapStorageError("pipeline execute", err)
 		}
 
+		maps := make([]map[string]string, len(cmds))
 		for i, cmd := range cmds {
 			rMap, cmdErr := cmd.Result()
 			if cmdErr != nil {
 				return nil, wrapStorageError(fmt.Sprintf("hgetall for user %d", entries[i].userID), cmdErr)
 			}
-
-			entry := &status.TLUserSessionEntryList{
-				UserId:       entries[i].userID,
-				UserSessions: make([]*status.TLSessionEntry, 0, len(rMap)),
-			}
-
-			for field, rawValue := range rMap {
-				sess := new(status.TLSessionEntry)
-				if err := json.Unmarshal([]byte(rawValue), sess); err != nil {
-					authKeyID, _ := strconv.ParseInt(field, 10, 64)
-					preview := rawValue
-					if len(preview) > 100 {
-						preview = preview[:100]
-					}
-					logx.WithContext(ctx).Infof(
-						"status: skip bad session JSON: user_id=%d auth_key_id=%d payload_preview=%s err=%v",
-						entries[i].userID, authKeyID, preview, err,
-					)
-					continue
-				}
-				entry.UserSessions = append(entry.UserSessions, sess)
-			}
-
-			result.Datas = append(result.Datas, entry)
+			maps[i] = rMap
 		}
+		assignUserSessionBatchResult(ctx, result, entries, maps)
 	}
 
 	return result, nil
