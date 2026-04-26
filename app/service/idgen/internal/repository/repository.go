@@ -18,13 +18,31 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository/alloc"
+
+	"github.com/teamgram/marmota/pkg/stores/kv"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	SeqAlloc *alloc.Allocator
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if c.Mysql.DSN == "" {
+		return r
+	}
+
+	store := alloc.NewMySQLStore(sqlx.NewMySQL(&c.Mysql))
+	if len(c.KV) == 0 || cache.TotalWeights(c.KV) <= 0 {
+		r.SeqAlloc = alloc.NewAllocator(nil, store)
+		return r
+	}
+
+	r.SeqAlloc = alloc.NewAllocator(alloc.NewXKVCache(kv.NewStore(c.KV)), store)
+	return r
 }

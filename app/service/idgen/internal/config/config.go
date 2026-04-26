@@ -17,9 +17,13 @@
 package config
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type Config struct {
 	kitex.RpcServerConf
+	Mysql sqlx.Config `json:",optional"`
+	KV    kv.KvConf   `json:",optional"`
 }

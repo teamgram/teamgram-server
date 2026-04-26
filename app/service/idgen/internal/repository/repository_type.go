@@ -16,7 +16,9 @@
 
 package repository
 
+import "github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository/alloc"
+
 // Type aliases for convenience in the Logic layer.
 type (
-// TODO: Add type aliases per business requirements.
+	SeqAllocatorType = alloc.Allocator
 )
