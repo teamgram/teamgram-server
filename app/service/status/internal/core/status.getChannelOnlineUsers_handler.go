@@ -24,8 +24,6 @@ import (
 // StatusGetChannelOnlineUsers
 // status.getChannelOnlineUsers channel_id:long = Vector<long>;
 func (c *StatusCore) StatusGetChannelOnlineUsers(in *status.TLStatusGetChannelOnlineUsers) (*status.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("status.getChannelOnlineUsers - error: method StatusGetChannelOnlineUsers not impl")
-
+	c.Logger.Errorf("status.getChannelOnlineUsers - channel online state is deferred for this version")
 	return nil, tg.ErrMethodNotImpl
 }

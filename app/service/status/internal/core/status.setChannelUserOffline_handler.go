@@ -24,8 +24,6 @@ import (
 // StatusSetChannelUserOffline
 // status.setChannelUserOffline channel_id:long user_id:long = Bool;
 func (c *StatusCore) StatusSetChannelUserOffline(in *status.TLStatusSetChannelUserOffline) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("status.setChannelUserOffline - error: method StatusSetChannelUserOffline not impl")
-
+	c.Logger.Errorf("status.setChannelUserOffline - channel online state is deferred for this version")
 	return nil, tg.ErrMethodNotImpl
 }
