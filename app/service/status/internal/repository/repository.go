@@ -26,13 +26,13 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/status/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	kv kv.Store
+	kv kv.ExtStore
 }
 
 // NewRepository creates a new Repository.
@@ -123,46 +123,79 @@ func (r *Repository) GetUserOnlineSessions(ctx context.Context, userID int64) (*
 }
 
 // GetUsersOnlineSessionsList returns online sessions for multiple users.
-// Uses sequential HGETALL calls since kv.Store does not expose pipeline.
+// Groups user keys by pipeline node and executes per-node batched HGETALL.
 // Users with no online sessions return empty lists.
 func (r *Repository) GetUsersOnlineSessionsList(ctx context.Context, userIDs []int64) (*status.VectorUserSessionEntryList, error) {
 	if len(userIDs) == 0 {
 		return &status.VectorUserSessionEntryList{}, nil
 	}
 
+	type keyEntry struct {
+		key    string
+		userID int64
+	}
+
+	// Group keys by pipeline node (consistent-hash routing for Redis cluster).
+	groups := make(map[kv.Pipeline][]keyEntry)
+	for _, id := range userIDs {
+		k := getUserKey(id)
+		rawPipe, err := r.kv.GetPipeline(k)
+		if err != nil {
+			return nil, fmt.Errorf("get pipeline for user %d: %w", id, err)
+		}
+		pipe, ok := rawPipe.(kv.Pipeline)
+		if !ok {
+			return nil, fmt.Errorf("unexpected pipeline type for user %d", id)
+		}
+		groups[pipe] = append(groups[pipe], keyEntry{key: k, userID: id})
+	}
+
 	result := &status.VectorUserSessionEntryList{
 		Datas: make([]*status.TLUserSessionEntryList, 0, len(userIDs)),
 	}
 
-	for _, userID := range userIDs {
-		rMap, err := r.kv.HgetallCtx(ctx, getUserKey(userID))
-		if err != nil {
-			return nil, fmt.Errorf("get users online sessions list for user %d: %w", userID, err)
-		}
-
-		entry := &status.TLUserSessionEntryList{
-			UserId:       userID,
-			UserSessions: make([]*status.TLSessionEntry, 0, len(rMap)),
-		}
-
-		for field, rawValue := range rMap {
-			sess := new(status.TLSessionEntry)
-			if err := json.Unmarshal([]byte(rawValue), sess); err != nil {
-				authKeyID, _ := strconv.ParseInt(field, 10, 64)
-				preview := rawValue
-				if len(preview) > 100 {
-					preview = preview[:100]
-				}
-				logx.WithContext(ctx).Infof(
-					"status: skip bad session JSON: user_id=%d auth_key_id=%d payload_preview=%s err=%v",
-					userID, authKeyID, preview, err,
-				)
-				continue
+	for pipe, entries := range groups {
+		cmds := make([]*kv.MapStringStringCmd, len(entries))
+		err := pipe.PipelinedCtx(ctx, func(pipeliner kv.Pipeliner) error {
+			for i, e := range entries {
+				cmds[i] = pipeliner.HGetAll(ctx, e.key)
 			}
-			entry.UserSessions = append(entry.UserSessions, sess)
+			return nil
+		})
+		if err != nil {
+			return nil, fmt.Errorf("pipeline execute: %w", err)
 		}
 
-		result.Datas = append(result.Datas, entry)
+		for i, cmd := range cmds {
+			rMap, cmdErr := cmd.Result()
+			if cmdErr != nil {
+				return nil, fmt.Errorf("hgetall for user %d: %w", entries[i].userID, cmdErr)
+			}
+
+			entry := &status.TLUserSessionEntryList{
+				UserId:       entries[i].userID,
+				UserSessions: make([]*status.TLSessionEntry, 0, len(rMap)),
+			}
+
+			for field, rawValue := range rMap {
+				sess := new(status.TLSessionEntry)
+				if err := json.Unmarshal([]byte(rawValue), sess); err != nil {
+					authKeyID, _ := strconv.ParseInt(field, 10, 64)
+					preview := rawValue
+					if len(preview) > 100 {
+						preview = preview[:100]
+					}
+					logx.WithContext(ctx).Infof(
+						"status: skip bad session JSON: user_id=%d auth_key_id=%d payload_preview=%s err=%v",
+						entries[i].userID, authKeyID, preview, err,
+					)
+					continue
+				}
+				entry.UserSessions = append(entry.UserSessions, sess)
+			}
+
+			result.Datas = append(result.Datas, entry)
+		}
 	}
 
 	return result, nil

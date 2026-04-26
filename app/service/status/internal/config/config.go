@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	"github.com/zeromicro/go-zero/core/stores/kv"
+	"github.com/teamgram/marmota/pkg/stores/kv"
 )
 
 type Config struct {
