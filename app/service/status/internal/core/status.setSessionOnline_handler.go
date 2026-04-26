@@ -35,6 +35,9 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 	if in.Session.AuthKeyId == 0 {
 		return nil, fmt.Errorf("%w: setSessionOnline: invalid auth_key_id", status.ErrStatusInvalidArgument)
 	}
+	if in.Session.UserId != in.UserId {
+		return nil, fmt.Errorf("%w: setSessionOnline: session user_id %d does not match request user_id %d", status.ErrStatusInvalidArgument, in.Session.UserId, in.UserId)
+	}
 
 	err := c.svcCtx.Repo.SetSessionOnline(c.ctx, in.UserId, in.Session, c.svcCtx.Config.StatusExpire)
 	if err != nil {

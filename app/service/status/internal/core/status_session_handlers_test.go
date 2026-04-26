@@ -22,6 +22,21 @@ func TestStatusSetSessionOnlineInvalidUserIDReturnsStatusInvalidArgument(t *test
 	}
 }
 
+func TestStatusSetSessionOnlineMismatchedSessionUserReturnsStatusInvalidArgument(t *testing.T) {
+	c := &StatusCore{}
+
+	_, err := c.StatusSetSessionOnline(&status.TLStatusSetSessionOnline{
+		UserId: 1,
+		Session: &status.TLSessionEntry{
+			UserId:    2,
+			AuthKeyId: 1,
+		},
+	})
+	if !errors.Is(err, status.ErrStatusInvalidArgument) {
+		t.Fatalf("StatusSetSessionOnline() error = %v, want ErrStatusInvalidArgument", err)
+	}
+}
+
 func TestStatusGetUsersOnlineSessionsListTooManyUsersReturnsStatusInvalidArgument(t *testing.T) {
 	c := &StatusCore{}
 
