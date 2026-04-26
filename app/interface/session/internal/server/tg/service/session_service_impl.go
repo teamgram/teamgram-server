@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) SessionQueryAuthKey(ctx context.Context, request *session.TLSe
 
 	r, err := c.SessionQueryAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("session.queryAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) SessionSetAuthKey(ctx context.Context, request *session.TLSess
 
 	r, err := c.SessionSetAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("session.setAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 
 	r, err := c.SessionCreateSession(request)
 	if err != nil {
+		c.Logger.Errorf("session.createSession - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 
 	r, err := c.SessionSendDataToSession(request)
 	if err != nil {
+		c.Logger.Errorf("session.sendDataToSession - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *ses
 
 	r, err := c.SessionSendHttpDataToSession(request)
 	if err != nil {
+		c.Logger.Errorf("session.sendHttpDataToSession - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSe
 
 	r, err := c.SessionCloseSession(request)
 	if err != nil {
+		c.Logger.Errorf("session.closeSession - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.T
 
 	r, err := c.SessionPushUpdatesData(request)
 	if err != nil {
+		c.Logger.Errorf("session.pushUpdatesData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 
 	r, err := c.SessionPushSessionUpdatesData(request)
 	if err != nil {
+		c.Logger.Errorf("session.pushSessionUpdatesData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) SessionPushRpcResultData(ctx context.Context, request *session
 
 	r, err := c.SessionPushRpcResultData(request)
 	if err != nil {
+		c.Logger.Errorf("session.pushRpcResultData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

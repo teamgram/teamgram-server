@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) StatusSetSessionOnline(ctx context.Context, request *status.TL
 
 	r, err := c.StatusSetSessionOnline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setSessionOnline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) StatusSetSessionOffline(ctx context.Context, request *status.T
 
 	r, err := c.StatusSetSessionOffline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setSessionOffline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) StatusGetUserOnlineSessions(ctx context.Context, request *stat
 
 	r, err := c.StatusGetUserOnlineSessions(request)
 	if err != nil {
+		c.Logger.Errorf("status.getUserOnlineSessions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) StatusGetUsersOnlineSessionsList(ctx context.Context, request 
 
 	r, err := c.StatusGetUsersOnlineSessionsList(request)
 	if err != nil {
+		c.Logger.Errorf("status.getUsersOnlineSessionsList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) StatusGetChannelOnlineUsers(ctx context.Context, request *stat
 
 	r, err := c.StatusGetChannelOnlineUsers(request)
 	if err != nil {
+		c.Logger.Errorf("status.getChannelOnlineUsers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) StatusSetUserChannelsOnline(ctx context.Context, request *stat
 
 	r, err := c.StatusSetUserChannelsOnline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setUserChannelsOnline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) StatusSetUserChannelsOffline(ctx context.Context, request *sta
 
 	r, err := c.StatusSetUserChannelsOffline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setUserChannelsOffline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) StatusSetChannelUserOffline(ctx context.Context, request *stat
 
 	r, err := c.StatusSetChannelUserOffline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setChannelUserOffline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) StatusSetChannelUsersOnline(ctx context.Context, request *stat
 
 	r, err := c.StatusSetChannelUsersOnline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setChannelUsersOnline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) StatusSetChannelOffline(ctx context.Context, request *status.T
 
 	r, err := c.StatusSetChannelOffline(request)
 	if err != nil {
+		c.Logger.Errorf("status.setChannelOffline - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

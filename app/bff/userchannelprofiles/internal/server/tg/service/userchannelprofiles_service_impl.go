@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountUpdateProfile(ctx context.Context, request *tg.TLAccoun
 
 	r, err := c.AccountUpdateProfile(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateProfile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountUpdateStatus(ctx context.Context, request *tg.TLAccount
 
 	r, err := c.AccountUpdateStatus(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateStatus - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AccountUpdateBirthday(ctx context.Context, request *tg.TLAccou
 
 	r, err := c.AccountUpdateBirthday(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateBirthday - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AccountUpdatePersonalChannel(ctx context.Context, request *tg.
 
 	r, err := c.AccountUpdatePersonalChannel(request)
 	if err != nil {
+		c.Logger.Errorf("account.updatePersonalChannel - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) AccountSetMainProfileTab(ctx context.Context, request *tg.TLAc
 
 	r, err := c.AccountSetMainProfileTab(request)
 	if err != nil {
+		c.Logger.Errorf("account.setMainProfileTab - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) AccountSaveMusic(ctx context.Context, request *tg.TLAccountSav
 
 	r, err := c.AccountSaveMusic(request)
 	if err != nil {
+		c.Logger.Errorf("account.saveMusic - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) AccountGetSavedMusicIds(ctx context.Context, request *tg.TLAcc
 
 	r, err := c.AccountGetSavedMusicIds(request)
 	if err != nil {
+		c.Logger.Errorf("account.getSavedMusicIds - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) UsersGetSavedMusic(ctx context.Context, request *tg.TLUsersGet
 
 	r, err := c.UsersGetSavedMusic(request)
 	if err != nil {
+		c.Logger.Errorf("users.getSavedMusic - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) UsersGetSavedMusicByID(ctx context.Context, request *tg.TLUser
 
 	r, err := c.UsersGetSavedMusicByID(request)
 	if err != nil {
+		c.Logger.Errorf("users.getSavedMusicByID - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) UsersSuggestBirthday(ctx context.Context, request *tg.TLUsersS
 
 	r, err := c.UsersSuggestBirthday(request)
 	if err != nil {
+		c.Logger.Errorf("users.suggestBirthday - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) ContactsGetBirthdays(ctx context.Context, request *tg.TLContac
 
 	r, err := c.ContactsGetBirthdays(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getBirthdays - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) PhotosUpdateProfilePhoto(ctx context.Context, request *tg.TLPh
 
 	r, err := c.PhotosUpdateProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("photos.updateProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) PhotosUploadProfilePhoto(ctx context.Context, request *tg.TLPh
 
 	r, err := c.PhotosUploadProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("photos.uploadProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) PhotosDeletePhotos(ctx context.Context, request *tg.TLPhotosDe
 
 	r, err := c.PhotosDeletePhotos(request)
 	if err != nil {
+		c.Logger.Errorf("photos.deletePhotos - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -235,6 +249,7 @@ func (s *Service) PhotosGetUserPhotos(ctx context.Context, request *tg.TLPhotosG
 
 	r, err := c.PhotosGetUserPhotos(request)
 	if err != nil {
+		c.Logger.Errorf("photos.getUserPhotos - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -250,6 +265,7 @@ func (s *Service) PhotosUploadContactProfilePhoto(ctx context.Context, request *
 
 	r, err := c.PhotosUploadContactProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("photos.uploadContactProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -265,6 +281,7 @@ func (s *Service) ChannelsSetMainProfileTab(ctx context.Context, request *tg.TLC
 
 	r, err := c.ChannelsSetMainProfileTab(request)
 	if err != nil {
+		c.Logger.Errorf("channels.setMainProfileTab - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -280,6 +297,7 @@ func (s *Service) AccountUpdateVerified(ctx context.Context, request *tg.TLAccou
 
 	r, err := c.AccountUpdateVerified(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateVerified - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountGetContactSignUpNotification(ctx context.Context, reque
 
 	r, err := c.AccountGetContactSignUpNotification(request)
 	if err != nil {
+		c.Logger.Errorf("account.getContactSignUpNotification - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountSetContactSignUpNotification(ctx context.Context, reque
 
 	r, err := c.AccountSetContactSignUpNotification(request)
 	if err != nil {
+		c.Logger.Errorf("account.setContactSignUpNotification - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) ContactsGetContactIDs(ctx context.Context, request *tg.TLConta
 
 	r, err := c.ContactsGetContactIDs(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getContactIDs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) ContactsGetStatuses(ctx context.Context, request *tg.TLContact
 
 	r, err := c.ContactsGetStatuses(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getStatuses - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) ContactsGetContacts(ctx context.Context, request *tg.TLContact
 
 	r, err := c.ContactsGetContacts(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getContacts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) ContactsImportContacts(ctx context.Context, request *tg.TLCont
 
 	r, err := c.ContactsImportContacts(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.importContacts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) ContactsDeleteContacts(ctx context.Context, request *tg.TLCont
 
 	r, err := c.ContactsDeleteContacts(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.deleteContacts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) ContactsDeleteByPhones(ctx context.Context, request *tg.TLCont
 
 	r, err := c.ContactsDeleteByPhones(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.deleteByPhones - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) ContactsBlock(ctx context.Context, request *tg.TLContactsBlock
 
 	r, err := c.ContactsBlock(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.block - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) ContactsUnblock(ctx context.Context, request *tg.TLContactsUnb
 
 	r, err := c.ContactsUnblock(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.unblock - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) ContactsGetBlocked(ctx context.Context, request *tg.TLContacts
 
 	r, err := c.ContactsGetBlocked(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getBlocked - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) ContactsSearch(ctx context.Context, request *tg.TLContactsSear
 
 	r, err := c.ContactsSearch(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.search - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) ContactsGetTopPeers(ctx context.Context, request *tg.TLContact
 
 	r, err := c.ContactsGetTopPeers(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getTopPeers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) ContactsResetTopPeerRating(ctx context.Context, request *tg.TL
 
 	r, err := c.ContactsResetTopPeerRating(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.resetTopPeerRating - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -235,6 +249,7 @@ func (s *Service) ContactsResetSaved(ctx context.Context, request *tg.TLContacts
 
 	r, err := c.ContactsResetSaved(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.resetSaved - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -250,6 +265,7 @@ func (s *Service) ContactsGetSaved(ctx context.Context, request *tg.TLContactsGe
 
 	r, err := c.ContactsGetSaved(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getSaved - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -265,6 +281,7 @@ func (s *Service) ContactsToggleTopPeers(ctx context.Context, request *tg.TLCont
 
 	r, err := c.ContactsToggleTopPeers(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.toggleTopPeers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -280,6 +297,7 @@ func (s *Service) ContactsAddContact(ctx context.Context, request *tg.TLContacts
 
 	r, err := c.ContactsAddContact(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.addContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -295,6 +313,7 @@ func (s *Service) ContactsAcceptContact(ctx context.Context, request *tg.TLConta
 
 	r, err := c.ContactsAcceptContact(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.acceptContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -310,6 +329,7 @@ func (s *Service) ContactsGetLocated(ctx context.Context, request *tg.TLContacts
 
 	r, err := c.ContactsGetLocated(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getLocated - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -325,6 +345,7 @@ func (s *Service) ContactsEditCloseFriends(ctx context.Context, request *tg.TLCo
 
 	r, err := c.ContactsEditCloseFriends(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.editCloseFriends - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -340,6 +361,7 @@ func (s *Service) ContactsSetBlocked(ctx context.Context, request *tg.TLContacts
 
 	r, err := c.ContactsSetBlocked(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.setBlocked - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -355,6 +377,7 @@ func (s *Service) ContactsUpdateContactNote(ctx context.Context, request *tg.TLC
 
 	r, err := c.ContactsUpdateContactNote(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.updateContactNote - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

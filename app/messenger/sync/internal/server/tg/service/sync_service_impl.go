@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) SyncUpdatesMe(ctx context.Context, request *sync.TLSyncUpdates
 
 	r, err := c.SyncUpdatesMe(request)
 	if err != nil {
+		c.Logger.Errorf("sync.updatesMe - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) SyncUpdatesNotMe(ctx context.Context, request *sync.TLSyncUpda
 
 	r, err := c.SyncUpdatesNotMe(request)
 	if err != nil {
+		c.Logger.Errorf("sync.updatesNotMe - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) SyncPushUpdates(ctx context.Context, request *sync.TLSyncPushU
 
 	r, err := c.SyncPushUpdates(request)
 	if err != nil {
+		c.Logger.Errorf("sync.pushUpdates - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) SyncPushUpdatesIfNot(ctx context.Context, request *sync.TLSync
 
 	r, err := c.SyncPushUpdatesIfNot(request)
 	if err != nil {
+		c.Logger.Errorf("sync.pushUpdatesIfNot - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) SyncPushBotUpdates(ctx context.Context, request *sync.TLSyncPu
 
 	r, err := c.SyncPushBotUpdates(request)
 	if err != nil {
+		c.Logger.Errorf("sync.pushBotUpdates - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) SyncPushRpcResult(ctx context.Context, request *sync.TLSyncPus
 
 	r, err := c.SyncPushRpcResult(request)
 	if err != nil {
+		c.Logger.Errorf("sync.pushRpcResult - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) SyncBroadcastUpdates(ctx context.Context, request *sync.TLSync
 
 	r, err := c.SyncBroadcastUpdates(request)
 	if err != nil {
+		c.Logger.Errorf("sync.broadcastUpdates - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

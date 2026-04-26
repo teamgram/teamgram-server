@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesGetSavedDialogs(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesGetSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesGetSavedHistory(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesGetSavedHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSavedHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesDeleteSavedHistory(ctx context.Context, request *tg.TL
 
 	r, err := c.MessagesDeleteSavedHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteSavedHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesGetPinnedSavedDialogs(ctx context.Context, request *tg
 
 	r, err := c.MessagesGetPinnedSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getPinnedSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesToggleSavedDialogPin(ctx context.Context, request *tg.
 
 	r, err := c.MessagesToggleSavedDialogPin(request)
 	if err != nil {
+		c.Logger.Errorf("messages.toggleSavedDialogPin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesReorderPinnedSavedDialogs(ctx context.Context, request
 
 	r, err := c.MessagesReorderPinnedSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.reorderPinnedSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesGetSavedDialogsByID(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesGetSavedDialogsByID(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSavedDialogsByID - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) MessagesReadSavedHistory(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesReadSavedHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.readSavedHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) ChannelsGetMessageAuthor(ctx context.Context, request *tg.TLCh
 
 	r, err := c.ChannelsGetMessageAuthor(request)
 	if err != nil {
+		c.Logger.Errorf("channels.getMessageAuthor - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

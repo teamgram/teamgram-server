@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) HelpGetConfig(ctx context.Context, request *tg.TLHelpGetConfig
 
 	r, err := c.HelpGetConfig(request)
 	if err != nil {
+		c.Logger.Errorf("help.getConfig - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) HelpGetNearestDc(ctx context.Context, request *tg.TLHelpGetNea
 
 	r, err := c.HelpGetNearestDc(request)
 	if err != nil {
+		c.Logger.Errorf("help.getNearestDc - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) HelpGetAppUpdate(ctx context.Context, request *tg.TLHelpGetApp
 
 	r, err := c.HelpGetAppUpdate(request)
 	if err != nil {
+		c.Logger.Errorf("help.getAppUpdate - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) HelpGetInviteText(ctx context.Context, request *tg.TLHelpGetIn
 
 	r, err := c.HelpGetInviteText(request)
 	if err != nil {
+		c.Logger.Errorf("help.getInviteText - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) HelpGetSupport(ctx context.Context, request *tg.TLHelpGetSuppo
 
 	r, err := c.HelpGetSupport(request)
 	if err != nil {
+		c.Logger.Errorf("help.getSupport - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) HelpGetAppConfig(ctx context.Context, request *tg.TLHelpGetApp
 
 	r, err := c.HelpGetAppConfig(request)
 	if err != nil {
+		c.Logger.Errorf("help.getAppConfig - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) HelpGetSupportName(ctx context.Context, request *tg.TLHelpGetS
 
 	r, err := c.HelpGetSupportName(request)
 	if err != nil {
+		c.Logger.Errorf("help.getSupportName - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) HelpDismissSuggestion(ctx context.Context, request *tg.TLHelpD
 
 	r, err := c.HelpDismissSuggestion(request)
 	if err != nil {
+		c.Logger.Errorf("help.dismissSuggestion - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) HelpGetCountriesList(ctx context.Context, request *tg.TLHelpGe
 
 	r, err := c.HelpGetCountriesList(request)
 	if err != nil {
+		c.Logger.Errorf("help.getCountriesList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

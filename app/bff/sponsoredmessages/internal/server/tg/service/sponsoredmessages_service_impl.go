@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountToggleSponsoredMessages(ctx context.Context, request *t
 
 	r, err := c.AccountToggleSponsoredMessages(request)
 	if err != nil {
+		c.Logger.Errorf("account.toggleSponsoredMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) ContactsGetSponsoredPeers(ctx context.Context, request *tg.TLC
 
 	r, err := c.ContactsGetSponsoredPeers(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.getSponsoredPeers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesViewSponsoredMessage(ctx context.Context, request *tg.
 
 	r, err := c.MessagesViewSponsoredMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.viewSponsoredMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesClickSponsoredMessage(ctx context.Context, request *tg
 
 	r, err := c.MessagesClickSponsoredMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.clickSponsoredMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesReportSponsoredMessage(ctx context.Context, request *t
 
 	r, err := c.MessagesReportSponsoredMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.reportSponsoredMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesGetSponsoredMessages(ctx context.Context, request *tg.
 
 	r, err := c.MessagesGetSponsoredMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSponsoredMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) ChannelsRestrictSponsoredMessages(ctx context.Context, request
 
 	r, err := c.ChannelsRestrictSponsoredMessages(request)
 	if err != nil {
+		c.Logger.Errorf("channels.restrictSponsoredMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

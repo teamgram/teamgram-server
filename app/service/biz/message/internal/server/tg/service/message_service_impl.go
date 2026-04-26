@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) MessageGetUserMessage(ctx context.Context, request *message.TL
 
 	r, err := c.MessageGetUserMessage(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUserMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) MessageGetUserMessageList(ctx context.Context, request *messag
 
 	r, err := c.MessageGetUserMessageList(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUserMessageList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) MessageGetUserMessageListByDataIdList(ctx context.Context, req
 
 	r, err := c.MessageGetUserMessageListByDataIdList(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUserMessageListByDataIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) MessageGetUserMessageListByDataIdUserIdList(ctx context.Contex
 
 	r, err := c.MessageGetUserMessageListByDataIdUserIdList(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUserMessageListByDataIdUserIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) MessageGetHistoryMessages(ctx context.Context, request *messag
 
 	r, err := c.MessageGetHistoryMessages(request)
 	if err != nil {
+		c.Logger.Errorf("message.getHistoryMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) MessageGetHistoryMessagesCount(ctx context.Context, request *m
 
 	r, err := c.MessageGetHistoryMessagesCount(request)
 	if err != nil {
+		c.Logger.Errorf("message.getHistoryMessagesCount - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) MessageGetPeerUserMessageId(ctx context.Context, request *mess
 
 	r, err := c.MessageGetPeerUserMessageId(request)
 	if err != nil {
+		c.Logger.Errorf("message.getPeerUserMessageId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) MessageGetPeerUserMessage(ctx context.Context, request *messag
 
 	r, err := c.MessageGetPeerUserMessage(request)
 	if err != nil {
+		c.Logger.Errorf("message.getPeerUserMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) MessageSearchByMediaType(ctx context.Context, request *message
 
 	r, err := c.MessageSearchByMediaType(request)
 	if err != nil {
+		c.Logger.Errorf("message.searchByMediaType - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) MessageSearch(ctx context.Context, request *message.TLMessageS
 
 	r, err := c.MessageSearch(request)
 	if err != nil {
+		c.Logger.Errorf("message.search - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) MessageSearchGlobal(ctx context.Context, request *message.TLMe
 
 	r, err := c.MessageSearchGlobal(request)
 	if err != nil {
+		c.Logger.Errorf("message.searchGlobal - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) MessageSearchByPinned(ctx context.Context, request *message.TL
 
 	r, err := c.MessageSearchByPinned(request)
 	if err != nil {
+		c.Logger.Errorf("message.searchByPinned - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) MessageGetSearchCounter(ctx context.Context, request *message.
 
 	r, err := c.MessageGetSearchCounter(request)
 	if err != nil {
+		c.Logger.Errorf("message.getSearchCounter - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) MessageSearchV2(ctx context.Context, request *message.TLMessag
 
 	r, err := c.MessageSearchV2(request)
 	if err != nil {
+		c.Logger.Errorf("message.searchV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) MessageGetLastTwoPinnedMessageId(ctx context.Context, request 
 
 	r, err := c.MessageGetLastTwoPinnedMessageId(request)
 	if err != nil {
+		c.Logger.Errorf("message.getLastTwoPinnedMessageId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) MessageUpdatePinnedMessageId(ctx context.Context, request *mes
 
 	r, err := c.MessageUpdatePinnedMessageId(request)
 	if err != nil {
+		c.Logger.Errorf("message.updatePinnedMessageId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -268,6 +284,7 @@ func (s *Service) MessageGetPinnedMessageIdList(ctx context.Context, request *me
 
 	r, err := c.MessageGetPinnedMessageIdList(request)
 	if err != nil {
+		c.Logger.Errorf("message.getPinnedMessageIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -283,6 +300,7 @@ func (s *Service) MessageUnPinAllMessages(ctx context.Context, request *message.
 
 	r, err := c.MessageUnPinAllMessages(request)
 	if err != nil {
+		c.Logger.Errorf("message.unPinAllMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -298,6 +316,7 @@ func (s *Service) MessageGetUnreadMentions(ctx context.Context, request *message
 
 	r, err := c.MessageGetUnreadMentions(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUnreadMentions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -313,6 +332,7 @@ func (s *Service) MessageGetUnreadMentionsCount(ctx context.Context, request *me
 
 	r, err := c.MessageGetUnreadMentionsCount(request)
 	if err != nil {
+		c.Logger.Errorf("message.getUnreadMentionsCount - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

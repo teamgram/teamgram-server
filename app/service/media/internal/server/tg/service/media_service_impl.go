@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) MediaUploadPhotoFile(ctx context.Context, request *media.TLMed
 
 	r, err := c.MediaUploadPhotoFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadPhotoFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) MediaUploadProfilePhotoFile(ctx context.Context, request *medi
 
 	r, err := c.MediaUploadProfilePhotoFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadProfilePhotoFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) MediaGetPhoto(ctx context.Context, request *media.TLMediaGetPh
 
 	r, err := c.MediaGetPhoto(request)
 	if err != nil {
+		c.Logger.Errorf("media.getPhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) MediaGetPhotoSizeList(ctx context.Context, request *media.TLMe
 
 	r, err := c.MediaGetPhotoSizeList(request)
 	if err != nil {
+		c.Logger.Errorf("media.getPhotoSizeList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) MediaGetPhotoSizeListList(ctx context.Context, request *media.
 
 	r, err := c.MediaGetPhotoSizeListList(request)
 	if err != nil {
+		c.Logger.Errorf("media.getPhotoSizeListList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) MediaGetVideoSizeList(ctx context.Context, request *media.TLMe
 
 	r, err := c.MediaGetVideoSizeList(request)
 	if err != nil {
+		c.Logger.Errorf("media.getVideoSizeList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) MediaUploadedDocumentMedia(ctx context.Context, request *media
 
 	r, err := c.MediaUploadedDocumentMedia(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadedDocumentMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) MediaGetDocument(ctx context.Context, request *media.TLMediaGe
 
 	r, err := c.MediaGetDocument(request)
 	if err != nil {
+		c.Logger.Errorf("media.getDocument - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) MediaGetDocumentList(ctx context.Context, request *media.TLMed
 
 	r, err := c.MediaGetDocumentList(request)
 	if err != nil {
+		c.Logger.Errorf("media.getDocumentList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) MediaUploadEncryptedFile(ctx context.Context, request *media.T
 
 	r, err := c.MediaUploadEncryptedFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadEncryptedFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) MediaGetEncryptedFile(ctx context.Context, request *media.TLMe
 
 	r, err := c.MediaGetEncryptedFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.getEncryptedFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) MediaUploadWallPaperFile(ctx context.Context, request *media.T
 
 	r, err := c.MediaUploadWallPaperFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadWallPaperFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) MediaUploadThemeFile(ctx context.Context, request *media.TLMed
 
 	r, err := c.MediaUploadThemeFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadThemeFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) MediaUploadStickerFile(ctx context.Context, request *media.TLM
 
 	r, err := c.MediaUploadStickerFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadStickerFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) MediaUploadRingtoneFile(ctx context.Context, request *media.TL
 
 	r, err := c.MediaUploadRingtoneFile(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadRingtoneFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) MediaUploadedProfilePhoto(ctx context.Context, request *media.
 
 	r, err := c.MediaUploadedProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("media.uploadedProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

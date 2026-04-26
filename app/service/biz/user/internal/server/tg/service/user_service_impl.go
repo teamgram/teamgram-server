@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) UserGetLastSeens(ctx context.Context, request *user.TLUserGetL
 
 	r, err := c.UserGetLastSeens(request)
 	if err != nil {
+		c.Logger.Errorf("user.getLastSeens - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) UserUpdateLastSeen(ctx context.Context, request *user.TLUserUp
 
 	r, err := c.UserUpdateLastSeen(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateLastSeen - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) UserGetLastSeen(ctx context.Context, request *user.TLUserGetLa
 
 	r, err := c.UserGetLastSeen(request)
 	if err != nil {
+		c.Logger.Errorf("user.getLastSeen - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) UserGetImmutableUser(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserGetImmutableUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.getImmutableUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) UserGetMutableUsers(ctx context.Context, request *user.TLUserG
 
 	r, err := c.UserGetMutableUsers(request)
 	if err != nil {
+		c.Logger.Errorf("user.getMutableUsers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) UserGetImmutableUserByPhone(ctx context.Context, request *user
 
 	r, err := c.UserGetImmutableUserByPhone(request)
 	if err != nil {
+		c.Logger.Errorf("user.getImmutableUserByPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) UserGetImmutableUserByToken(ctx context.Context, request *user
 
 	r, err := c.UserGetImmutableUserByToken(request)
 	if err != nil {
+		c.Logger.Errorf("user.getImmutableUserByToken - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) UserSetAccountDaysTTL(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserSetAccountDaysTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.setAccountDaysTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) UserGetAccountDaysTTL(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserGetAccountDaysTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.getAccountDaysTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) UserGetNotifySettings(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserGetNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.getNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) UserGetNotifySettingsList(ctx context.Context, request *user.T
 
 	r, err := c.UserGetNotifySettingsList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getNotifySettingsList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) UserSetNotifySettings(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserSetNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.setNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) UserResetNotifySettings(ctx context.Context, request *user.TLU
 
 	r, err := c.UserResetNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.resetNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) UserGetAllNotifySettings(ctx context.Context, request *user.TL
 
 	r, err := c.UserGetAllNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.getAllNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) UserGetGlobalPrivacySettings(ctx context.Context, request *use
 
 	r, err := c.UserGetGlobalPrivacySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.getGlobalPrivacySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) UserSetGlobalPrivacySettings(ctx context.Context, request *use
 
 	r, err := c.UserSetGlobalPrivacySettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.setGlobalPrivacySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -268,6 +284,7 @@ func (s *Service) UserGetPrivacy(ctx context.Context, request *user.TLUserGetPri
 
 	r, err := c.UserGetPrivacy(request)
 	if err != nil {
+		c.Logger.Errorf("user.getPrivacy - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -283,6 +300,7 @@ func (s *Service) UserSetPrivacy(ctx context.Context, request *user.TLUserSetPri
 
 	r, err := c.UserSetPrivacy(request)
 	if err != nil {
+		c.Logger.Errorf("user.setPrivacy - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -298,6 +316,7 @@ func (s *Service) UserCheckPrivacy(ctx context.Context, request *user.TLUserChec
 
 	r, err := c.UserCheckPrivacy(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkPrivacy - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -313,6 +332,7 @@ func (s *Service) UserAddPeerSettings(ctx context.Context, request *user.TLUserA
 
 	r, err := c.UserAddPeerSettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.addPeerSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -328,6 +348,7 @@ func (s *Service) UserGetPeerSettings(ctx context.Context, request *user.TLUserG
 
 	r, err := c.UserGetPeerSettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.getPeerSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -343,6 +364,7 @@ func (s *Service) UserDeletePeerSettings(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserDeletePeerSettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.deletePeerSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -358,6 +380,7 @@ func (s *Service) UserChangePhone(ctx context.Context, request *user.TLUserChang
 
 	r, err := c.UserChangePhone(request)
 	if err != nil {
+		c.Logger.Errorf("user.changePhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -373,6 +396,7 @@ func (s *Service) UserCreateNewUser(ctx context.Context, request *user.TLUserCre
 
 	r, err := c.UserCreateNewUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.createNewUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -388,6 +412,7 @@ func (s *Service) UserDeleteUser(ctx context.Context, request *user.TLUserDelete
 
 	r, err := c.UserDeleteUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -403,6 +428,7 @@ func (s *Service) UserBlockPeer(ctx context.Context, request *user.TLUserBlockPe
 
 	r, err := c.UserBlockPeer(request)
 	if err != nil {
+		c.Logger.Errorf("user.blockPeer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -418,6 +444,7 @@ func (s *Service) UserUnBlockPeer(ctx context.Context, request *user.TLUserUnBlo
 
 	r, err := c.UserUnBlockPeer(request)
 	if err != nil {
+		c.Logger.Errorf("user.unBlockPeer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -433,6 +460,7 @@ func (s *Service) UserBlockedByUser(ctx context.Context, request *user.TLUserBlo
 
 	r, err := c.UserBlockedByUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.blockedByUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -448,6 +476,7 @@ func (s *Service) UserIsBlockedByUser(ctx context.Context, request *user.TLUserI
 
 	r, err := c.UserIsBlockedByUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.isBlockedByUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -463,6 +492,7 @@ func (s *Service) UserCheckBlockUserList(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserCheckBlockUserList(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkBlockUserList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -478,6 +508,7 @@ func (s *Service) UserGetBlockedList(ctx context.Context, request *user.TLUserGe
 
 	r, err := c.UserGetBlockedList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getBlockedList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -493,6 +524,7 @@ func (s *Service) UserGetContactSignUpNotification(ctx context.Context, request 
 
 	r, err := c.UserGetContactSignUpNotification(request)
 	if err != nil {
+		c.Logger.Errorf("user.getContactSignUpNotification - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -508,6 +540,7 @@ func (s *Service) UserSetContactSignUpNotification(ctx context.Context, request 
 
 	r, err := c.UserSetContactSignUpNotification(request)
 	if err != nil {
+		c.Logger.Errorf("user.setContactSignUpNotification - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -523,6 +556,7 @@ func (s *Service) UserGetContentSettings(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserGetContentSettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.getContentSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -538,6 +572,7 @@ func (s *Service) UserSetContentSettings(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserSetContentSettings(request)
 	if err != nil {
+		c.Logger.Errorf("user.setContentSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -553,6 +588,7 @@ func (s *Service) UserDeleteContact(ctx context.Context, request *user.TLUserDel
 
 	r, err := c.UserDeleteContact(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -568,6 +604,7 @@ func (s *Service) UserGetContactList(ctx context.Context, request *user.TLUserGe
 
 	r, err := c.UserGetContactList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getContactList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -583,6 +620,7 @@ func (s *Service) UserGetContactIdList(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserGetContactIdList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getContactIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -598,6 +636,7 @@ func (s *Service) UserGetContact(ctx context.Context, request *user.TLUserGetCon
 
 	r, err := c.UserGetContact(request)
 	if err != nil {
+		c.Logger.Errorf("user.getContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -613,6 +652,7 @@ func (s *Service) UserAddContact(ctx context.Context, request *user.TLUserAddCon
 
 	r, err := c.UserAddContact(request)
 	if err != nil {
+		c.Logger.Errorf("user.addContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -628,6 +668,7 @@ func (s *Service) UserCheckContact(ctx context.Context, request *user.TLUserChec
 
 	r, err := c.UserCheckContact(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -643,6 +684,7 @@ func (s *Service) UserGetImportersByPhone(ctx context.Context, request *user.TLU
 
 	r, err := c.UserGetImportersByPhone(request)
 	if err != nil {
+		c.Logger.Errorf("user.getImportersByPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -658,6 +700,7 @@ func (s *Service) UserDeleteImportersByPhone(ctx context.Context, request *user.
 
 	r, err := c.UserDeleteImportersByPhone(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteImportersByPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -673,6 +716,7 @@ func (s *Service) UserImportContacts(ctx context.Context, request *user.TLUserIm
 
 	r, err := c.UserImportContacts(request)
 	if err != nil {
+		c.Logger.Errorf("user.importContacts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -688,6 +732,7 @@ func (s *Service) UserGetCountryCode(ctx context.Context, request *user.TLUserGe
 
 	r, err := c.UserGetCountryCode(request)
 	if err != nil {
+		c.Logger.Errorf("user.getCountryCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -703,6 +748,7 @@ func (s *Service) UserUpdateAbout(ctx context.Context, request *user.TLUserUpdat
 
 	r, err := c.UserUpdateAbout(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateAbout - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -718,6 +764,7 @@ func (s *Service) UserUpdateFirstAndLastName(ctx context.Context, request *user.
 
 	r, err := c.UserUpdateFirstAndLastName(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateFirstAndLastName - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -733,6 +780,7 @@ func (s *Service) UserUpdateVerified(ctx context.Context, request *user.TLUserUp
 
 	r, err := c.UserUpdateVerified(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateVerified - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -748,6 +796,7 @@ func (s *Service) UserUpdateUsername(ctx context.Context, request *user.TLUserUp
 
 	r, err := c.UserUpdateUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -763,6 +812,7 @@ func (s *Service) UserUpdateProfilePhoto(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserUpdateProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -778,6 +828,7 @@ func (s *Service) UserDeleteProfilePhotos(ctx context.Context, request *user.TLU
 
 	r, err := c.UserDeleteProfilePhotos(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteProfilePhotos - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -793,6 +844,7 @@ func (s *Service) UserGetProfilePhotos(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserGetProfilePhotos(request)
 	if err != nil {
+		c.Logger.Errorf("user.getProfilePhotos - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -808,6 +860,7 @@ func (s *Service) UserSetBotCommands(ctx context.Context, request *user.TLUserSe
 
 	r, err := c.UserSetBotCommands(request)
 	if err != nil {
+		c.Logger.Errorf("user.setBotCommands - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -823,6 +876,7 @@ func (s *Service) UserIsBot(ctx context.Context, request *user.TLUserIsBot) (*tg
 
 	r, err := c.UserIsBot(request)
 	if err != nil {
+		c.Logger.Errorf("user.isBot - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -838,6 +892,7 @@ func (s *Service) UserGetBotInfo(ctx context.Context, request *user.TLUserGetBot
 
 	r, err := c.UserGetBotInfo(request)
 	if err != nil {
+		c.Logger.Errorf("user.getBotInfo - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -853,6 +908,7 @@ func (s *Service) UserCheckBots(ctx context.Context, request *user.TLUserCheckBo
 
 	r, err := c.UserCheckBots(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkBots - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -868,6 +924,7 @@ func (s *Service) UserGetFullUser(ctx context.Context, request *user.TLUserGetFu
 
 	r, err := c.UserGetFullUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.getFullUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -883,6 +940,7 @@ func (s *Service) UserUpdateEmojiStatus(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserUpdateEmojiStatus(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateEmojiStatus - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -898,6 +956,7 @@ func (s *Service) UserGetUserDataById(ctx context.Context, request *user.TLUserG
 
 	r, err := c.UserGetUserDataById(request)
 	if err != nil {
+		c.Logger.Errorf("user.getUserDataById - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -913,6 +972,7 @@ func (s *Service) UserGetUserDataListByIdList(ctx context.Context, request *user
 
 	r, err := c.UserGetUserDataListByIdList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getUserDataListByIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -928,6 +988,7 @@ func (s *Service) UserGetUserDataByToken(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserGetUserDataByToken(request)
 	if err != nil {
+		c.Logger.Errorf("user.getUserDataByToken - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -943,6 +1004,7 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 
 	r, err := c.UserSearch(request)
 	if err != nil {
+		c.Logger.Errorf("user.search - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -958,6 +1020,7 @@ func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpd
 
 	r, err := c.UserUpdateBotData(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateBotData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -973,6 +1036,7 @@ func (s *Service) UserGetImmutableUserV2(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserGetImmutableUserV2(request)
 	if err != nil {
+		c.Logger.Errorf("user.getImmutableUserV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -988,6 +1052,7 @@ func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserGetMutableUsersV2(request)
 	if err != nil {
+		c.Logger.Errorf("user.getMutableUsersV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1003,6 +1068,7 @@ func (s *Service) UserCreateNewTestUser(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserCreateNewTestUser(request)
 	if err != nil {
+		c.Logger.Errorf("user.createNewTestUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1018,6 +1084,7 @@ func (s *Service) UserEditCloseFriends(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserEditCloseFriends(request)
 	if err != nil {
+		c.Logger.Errorf("user.editCloseFriends - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1033,6 +1100,7 @@ func (s *Service) UserSetStoriesMaxId(ctx context.Context, request *user.TLUserS
 
 	r, err := c.UserSetStoriesMaxId(request)
 	if err != nil {
+		c.Logger.Errorf("user.setStoriesMaxId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1048,6 +1116,7 @@ func (s *Service) UserSetColor(ctx context.Context, request *user.TLUserSetColor
 
 	r, err := c.UserSetColor(request)
 	if err != nil {
+		c.Logger.Errorf("user.setColor - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1063,6 +1132,7 @@ func (s *Service) UserUpdateBirthday(ctx context.Context, request *user.TLUserUp
 
 	r, err := c.UserUpdateBirthday(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateBirthday - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1078,6 +1148,7 @@ func (s *Service) UserGetBirthdays(ctx context.Context, request *user.TLUserGetB
 
 	r, err := c.UserGetBirthdays(request)
 	if err != nil {
+		c.Logger.Errorf("user.getBirthdays - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1093,6 +1164,7 @@ func (s *Service) UserSetStoriesHidden(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserSetStoriesHidden(request)
 	if err != nil {
+		c.Logger.Errorf("user.setStoriesHidden - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1108,6 +1180,7 @@ func (s *Service) UserUpdatePersonalChannel(ctx context.Context, request *user.T
 
 	r, err := c.UserUpdatePersonalChannel(request)
 	if err != nil {
+		c.Logger.Errorf("user.updatePersonalChannel - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1123,6 +1196,7 @@ func (s *Service) UserGetUserIdByPhone(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserGetUserIdByPhone(request)
 	if err != nil {
+		c.Logger.Errorf("user.getUserIdByPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1138,6 +1212,7 @@ func (s *Service) UserSetAuthorizationTTL(ctx context.Context, request *user.TLU
 
 	r, err := c.UserSetAuthorizationTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.setAuthorizationTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1153,6 +1228,7 @@ func (s *Service) UserGetAuthorizationTTL(ctx context.Context, request *user.TLU
 
 	r, err := c.UserGetAuthorizationTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.getAuthorizationTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1168,6 +1244,7 @@ func (s *Service) UserUpdatePremium(ctx context.Context, request *user.TLUserUpd
 
 	r, err := c.UserUpdatePremium(request)
 	if err != nil {
+		c.Logger.Errorf("user.updatePremium - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1183,6 +1260,7 @@ func (s *Service) UserGetBotInfoV2(ctx context.Context, request *user.TLUserGetB
 
 	r, err := c.UserGetBotInfoV2(request)
 	if err != nil {
+		c.Logger.Errorf("user.getBotInfoV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1198,6 +1276,7 @@ func (s *Service) UserSaveMusic(ctx context.Context, request *user.TLUserSaveMus
 
 	r, err := c.UserSaveMusic(request)
 	if err != nil {
+		c.Logger.Errorf("user.saveMusic - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1213,6 +1292,7 @@ func (s *Service) UserGetSavedMusicIdList(ctx context.Context, request *user.TLU
 
 	r, err := c.UserGetSavedMusicIdList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getSavedMusicIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1228,6 +1308,7 @@ func (s *Service) UserSetMainProfileTab(ctx context.Context, request *user.TLUse
 
 	r, err := c.UserSetMainProfileTab(request)
 	if err != nil {
+		c.Logger.Errorf("user.setMainProfileTab - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1243,6 +1324,7 @@ func (s *Service) UserSetDefaultHistoryTTL(ctx context.Context, request *user.TL
 
 	r, err := c.UserSetDefaultHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.setDefaultHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1258,6 +1340,7 @@ func (s *Service) UserGetDefaultHistoryTTL(ctx context.Context, request *user.TL
 
 	r, err := c.UserGetDefaultHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("user.getDefaultHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1273,6 +1356,7 @@ func (s *Service) UserGetAccountUsername(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserGetAccountUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.getAccountUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1288,6 +1372,7 @@ func (s *Service) UserCheckAccountUsername(ctx context.Context, request *user.TL
 
 	r, err := c.UserCheckAccountUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkAccountUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1303,6 +1388,7 @@ func (s *Service) UserGetChannelUsername(ctx context.Context, request *user.TLUs
 
 	r, err := c.UserGetChannelUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.getChannelUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1318,6 +1404,7 @@ func (s *Service) UserCheckChannelUsername(ctx context.Context, request *user.TL
 
 	r, err := c.UserCheckChannelUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkChannelUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1333,6 +1420,7 @@ func (s *Service) UserUpdateUsernameByPeer(ctx context.Context, request *user.TL
 
 	r, err := c.UserUpdateUsernameByPeer(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateUsernameByPeer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1348,6 +1436,7 @@ func (s *Service) UserCheckUsername(ctx context.Context, request *user.TLUserChe
 
 	r, err := c.UserCheckUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.checkUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1363,6 +1452,7 @@ func (s *Service) UserUpdateUsernameByUsername(ctx context.Context, request *use
 
 	r, err := c.UserUpdateUsernameByUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.updateUsernameByUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1378,6 +1468,7 @@ func (s *Service) UserDeleteUsername(ctx context.Context, request *user.TLUserDe
 
 	r, err := c.UserDeleteUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1393,6 +1484,7 @@ func (s *Service) UserResolveUsername(ctx context.Context, request *user.TLUserR
 
 	r, err := c.UserResolveUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.resolveUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1408,6 +1500,7 @@ func (s *Service) UserGetListByUsernameList(ctx context.Context, request *user.T
 
 	r, err := c.UserGetListByUsernameList(request)
 	if err != nil {
+		c.Logger.Errorf("user.getListByUsernameList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1423,6 +1516,7 @@ func (s *Service) UserDeleteUsernameByPeer(ctx context.Context, request *user.TL
 
 	r, err := c.UserDeleteUsernameByPeer(request)
 	if err != nil {
+		c.Logger.Errorf("user.deleteUsernameByPeer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1438,6 +1532,7 @@ func (s *Service) UserSearchUsername(ctx context.Context, request *user.TLUserSe
 
 	r, err := c.UserSearchUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.searchUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1453,6 +1548,7 @@ func (s *Service) UserToggleUsername(ctx context.Context, request *user.TLUserTo
 
 	r, err := c.UserToggleUsername(request)
 	if err != nil {
+		c.Logger.Errorf("user.toggleUsername - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1468,6 +1564,7 @@ func (s *Service) UserReorderUsernames(ctx context.Context, request *user.TLUser
 
 	r, err := c.UserReorderUsernames(request)
 	if err != nil {
+		c.Logger.Errorf("user.reorderUsernames - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -1483,6 +1580,7 @@ func (s *Service) UserDeactivateAllChannelUsernames(ctx context.Context, request
 
 	r, err := c.UserDeactivateAllChannelUsernames(request)
 	if err != nil {
+		c.Logger.Errorf("user.deactivateAllChannelUsernames - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

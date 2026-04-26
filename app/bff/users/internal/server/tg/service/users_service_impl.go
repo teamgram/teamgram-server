@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) UsersGetUsers(ctx context.Context, request *tg.TLUsersGetUsers
 
 	r, err := c.UsersGetUsers(request)
 	if err != nil {
+		c.Logger.Errorf("users.getUsers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) UsersGetFullUser(ctx context.Context, request *tg.TLUsersGetFu
 
 	r, err := c.UsersGetFullUser(request)
 	if err != nil {
+		c.Logger.Errorf("users.getFullUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) ContactsResolvePhone(ctx context.Context, request *tg.TLContac
 
 	r, err := c.ContactsResolvePhone(request)
 	if err != nil {
+		c.Logger.Errorf("contacts.resolvePhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) UsersGetMe(ctx context.Context, request *tg.TLUsersGetMe) (*tg
 
 	r, err := c.UsersGetMe(request)
 	if err != nil {
+		c.Logger.Errorf("users.getMe - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

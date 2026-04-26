@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogSaveDraftMessage(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.saveDraftMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.T
 
 	r, err := c.DialogClearDraftMessage(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.clearDraftMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) DialogGetAllDrafts(ctx context.Context, request *dialog.TLDial
 
 	r, err := c.DialogGetAllDrafts(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getAllDrafts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) DialogClearAllDrafts(ctx context.Context, request *dialog.TLDi
 
 	r, err := c.DialogClearAllDrafts(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.clearAllDrafts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) DialogMarkDialogUnread(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogMarkDialogUnread(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.markDialogUnread - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) DialogToggleDialogPin(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogToggleDialogPin(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.toggleDialogPin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) DialogGetDialogUnreadMarkList(ctx context.Context, request *di
 
 	r, err := c.DialogGetDialogUnreadMarkList(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogUnreadMarkList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) DialogGetDialogsByOffsetDate(ctx context.Context, request *dia
 
 	r, err := c.DialogGetDialogsByOffsetDate(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsByOffsetDate - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) DialogGetDialogs(ctx context.Context, request *dialog.TLDialog
 
 	r, err := c.DialogGetDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) DialogGetDialogsByIdList(ctx context.Context, request *dialog.
 
 	r, err := c.DialogGetDialogsByIdList(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsByIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) DialogGetDialogsCount(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogGetDialogsCount(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsCount - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) DialogGetPinnedDialogs(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogGetPinnedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getPinnedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialo
 
 	r, err := c.DialogReorderPinnedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.reorderPinnedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) DialogGetDialogById(ctx context.Context, request *dialog.TLDia
 
 	r, err := c.DialogGetDialogById(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogById - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) DialogGetTopMessage(ctx context.Context, request *dialog.TLDia
 
 	r, err := c.DialogGetTopMessage(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getTopMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) DialogInsertOrUpdateDialog(ctx context.Context, request *dialo
 
 	r, err := c.DialogInsertOrUpdateDialog(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.insertOrUpdateDialog - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -268,6 +284,7 @@ func (s *Service) DialogDeleteDialog(ctx context.Context, request *dialog.TLDial
 
 	r, err := c.DialogDeleteDialog(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.deleteDialog - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -283,6 +300,7 @@ func (s *Service) DialogGetUserPinnedMessage(ctx context.Context, request *dialo
 
 	r, err := c.DialogGetUserPinnedMessage(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getUserPinnedMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -298,6 +316,7 @@ func (s *Service) DialogUpdateUserPinnedMessage(ctx context.Context, request *di
 
 	r, err := c.DialogUpdateUserPinnedMessage(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.updateUserPinnedMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -313,6 +332,7 @@ func (s *Service) DialogInsertOrUpdateDialogFilter(ctx context.Context, request 
 
 	r, err := c.DialogInsertOrUpdateDialogFilter(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.insertOrUpdateDialogFilter - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -328,6 +348,7 @@ func (s *Service) DialogDeleteDialogFilter(ctx context.Context, request *dialog.
 
 	r, err := c.DialogDeleteDialogFilter(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.deleteDialogFilter - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -343,6 +364,7 @@ func (s *Service) DialogUpdateDialogFiltersOrder(ctx context.Context, request *d
 
 	r, err := c.DialogUpdateDialogFiltersOrder(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.updateDialogFiltersOrder - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -358,6 +380,7 @@ func (s *Service) DialogGetDialogFilters(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogGetDialogFilters(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogFilters - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -373,6 +396,7 @@ func (s *Service) DialogGetDialogFolder(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogGetDialogFolder(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogFolder - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -388,6 +412,7 @@ func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogEditPeerFolders(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.editPeerFolders - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -403,6 +428,7 @@ func (s *Service) DialogGetChannelMessageReadParticipants(ctx context.Context, r
 
 	r, err := c.DialogGetChannelMessageReadParticipants(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getChannelMessageReadParticipants - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -418,6 +444,7 @@ func (s *Service) DialogSetChatTheme(ctx context.Context, request *dialog.TLDial
 
 	r, err := c.DialogSetChatTheme(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.setChatTheme - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -433,6 +460,7 @@ func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDia
 
 	r, err := c.DialogSetHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.setHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -448,6 +476,7 @@ func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogGetMyDialogsData(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getMyDialogsData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -463,6 +492,7 @@ func (s *Service) DialogGetSavedDialogs(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogGetSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -478,6 +508,7 @@ func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dial
 
 	r, err := c.DialogGetPinnedSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getPinnedSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -493,6 +524,7 @@ func (s *Service) DialogToggleSavedDialogPin(ctx context.Context, request *dialo
 
 	r, err := c.DialogToggleSavedDialogPin(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.toggleSavedDialogPin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -508,6 +540,7 @@ func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *
 
 	r, err := c.DialogReorderPinnedSavedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.reorderPinnedSavedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -523,6 +556,7 @@ func (s *Service) DialogGetDialogFilter(ctx context.Context, request *dialog.TLD
 
 	r, err := c.DialogGetDialogFilter(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogFilter - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -538,6 +572,7 @@ func (s *Service) DialogGetDialogFilterBySlug(ctx context.Context, request *dial
 
 	r, err := c.DialogGetDialogFilterBySlug(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogFilterBySlug - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -553,6 +588,7 @@ func (s *Service) DialogCreateDialogFilter(ctx context.Context, request *dialog.
 
 	r, err := c.DialogCreateDialogFilter(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.createDialogFilter - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -568,6 +604,7 @@ func (s *Service) DialogUpdateUnreadCount(ctx context.Context, request *dialog.T
 
 	r, err := c.DialogUpdateUnreadCount(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.updateUnreadCount - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -583,6 +620,7 @@ func (s *Service) DialogToggleDialogFilterTags(ctx context.Context, request *dia
 
 	r, err := c.DialogToggleDialogFilterTags(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.toggleDialogFilterTags - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -598,6 +636,7 @@ func (s *Service) DialogGetDialogFilterTags(ctx context.Context, request *dialog
 
 	r, err := c.DialogGetDialogFilterTags(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.getDialogFilterTags - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -613,6 +652,7 @@ func (s *Service) DialogSetChatWallpaper(ctx context.Context, request *dialog.TL
 
 	r, err := c.DialogSetChatWallpaper(request)
 	if err != nil {
+		c.Logger.Errorf("dialog.setChatWallpaper - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

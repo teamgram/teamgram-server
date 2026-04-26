@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountGetPrivacy(ctx context.Context, request *tg.TLAccountGe
 
 	r, err := c.AccountGetPrivacy(request)
 	if err != nil {
+		c.Logger.Errorf("account.getPrivacy - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountSetPrivacy(ctx context.Context, request *tg.TLAccountSe
 
 	r, err := c.AccountSetPrivacy(request)
 	if err != nil {
+		c.Logger.Errorf("account.setPrivacy - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AccountGetGlobalPrivacySettings(ctx context.Context, request *
 
 	r, err := c.AccountGetGlobalPrivacySettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.getGlobalPrivacySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 
 	r, err := c.AccountSetGlobalPrivacySettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.setGlobalPrivacySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) UsersGetRequirementsToContact(ctx context.Context, request *tg
 
 	r, err := c.UsersGetRequirementsToContact(request)
 	if err != nil {
+		c.Logger.Errorf("users.getRequirementsToContact - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesSetDefaultHistoryTTL(ctx context.Context, request *tg.
 
 	r, err := c.MessagesSetDefaultHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("messages.setDefaultHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *tg.
 
 	r, err := c.MessagesGetDefaultHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getDefaultHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

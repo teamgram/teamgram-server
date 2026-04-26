@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountGetAutoDownloadSettings(ctx context.Context, request *t
 
 	r, err := c.AccountGetAutoDownloadSettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.getAutoDownloadSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountSaveAutoDownloadSettings(ctx context.Context, request *
 
 	r, err := c.AccountSaveAutoDownloadSettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.saveAutoDownloadSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

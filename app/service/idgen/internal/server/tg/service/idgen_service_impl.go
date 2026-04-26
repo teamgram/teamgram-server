@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) IdgenNextId(ctx context.Context, request *idgen.TLIdgenNextId)
 
 	r, err := c.IdgenNextId(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.nextId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) IdgenNextIds(ctx context.Context, request *idgen.TLIdgenNextId
 
 	r, err := c.IdgenNextIds(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.nextIds - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) IdgenGetCurrentSeqId(ctx context.Context, request *idgen.TLIdg
 
 	r, err := c.IdgenGetCurrentSeqId(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.getCurrentSeqId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) IdgenSetCurrentSeqId(ctx context.Context, request *idgen.TLIdg
 
 	r, err := c.IdgenSetCurrentSeqId(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.setCurrentSeqId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) IdgenGetNextSeqId(ctx context.Context, request *idgen.TLIdgenG
 
 	r, err := c.IdgenGetNextSeqId(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.getNextSeqId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) IdgenGetNextNSeqId(ctx context.Context, request *idgen.TLIdgen
 
 	r, err := c.IdgenGetNextNSeqId(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.getNextNSeqId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) IdgenGetNextIdValList(ctx context.Context, request *idgen.TLId
 
 	r, err := c.IdgenGetNextIdValList(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.getNextIdValList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) IdgenGetCurrentSeqIdList(ctx context.Context, request *idgen.T
 
 	r, err := c.IdgenGetCurrentSeqIdList(request)
 	if err != nil {
+		c.Logger.Errorf("idgen.getCurrentSeqIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

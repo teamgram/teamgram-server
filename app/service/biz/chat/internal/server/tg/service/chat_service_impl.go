@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGe
 
 	r, err := c.ChatGetMutableChat(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getMutableChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLC
 
 	r, err := c.ChatGetChatListByIdList(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getChatListByIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatG
 
 	r, err := c.ChatGetChatBySelfId(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getChatBySelfId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreat
 
 	r, err := c.ChatCreateChat2(request)
 	if err != nil {
+		c.Logger.Errorf("chat.createChat2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDelete
 
 	r, err := c.ChatDeleteChat(request)
 	if err != nil {
+		c.Logger.Errorf("chat.deleteChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDe
 
 	r, err := c.ChatDeleteChatUser(request)
 	if err != nil {
+		c.Logger.Errorf("chat.deleteChatUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEdi
 
 	r, err := c.ChatEditChatTitle(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatTitle - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEdi
 
 	r, err := c.ChatEditChatAbout(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatAbout - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEdi
 
 	r, err := c.ChatEditChatPhoto(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatPhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEdi
 
 	r, err := c.ChatEditChatAdmin(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatAdmin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *
 
 	r, err := c.ChatEditChatDefaultBannedRights(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatDefaultBannedRights - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddCh
 
 	r, err := c.ChatAddChatUser(request)
 	if err != nil {
+		c.Logger.Errorf("chat.addChatUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TL
 
 	r, err := c.ChatGetMutableChatByLink(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getMutableChatByLink - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChat
 
 	r, err := c.ChatToggleNoForwards(request)
 	if err != nil {
+		c.Logger.Errorf("chat.toggleNoForwards - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLCha
 
 	r, err := c.ChatMigratedToChannel(request)
 	if err != nil {
+		c.Logger.Errorf("chat.migratedToChannel - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) ChatGetChatParticipantIdList(ctx context.Context, request *cha
 
 	r, err := c.ChatGetChatParticipantIdList(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getChatParticipantIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -268,6 +284,7 @@ func (s *Service) ChatGetUsersChatIdList(ctx context.Context, request *chat.TLCh
 
 	r, err := c.ChatGetUsersChatIdList(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getUsersChatIdList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -283,6 +300,7 @@ func (s *Service) ChatGetMyChatList(ctx context.Context, request *chat.TLChatGet
 
 	r, err := c.ChatGetMyChatList(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getMyChatList - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -298,6 +316,7 @@ func (s *Service) ChatExportChatInvite(ctx context.Context, request *chat.TLChat
 
 	r, err := c.ChatExportChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.exportChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -313,6 +332,7 @@ func (s *Service) ChatGetAdminsWithInvites(ctx context.Context, request *chat.TL
 
 	r, err := c.ChatGetAdminsWithInvites(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getAdminsWithInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -328,6 +348,7 @@ func (s *Service) ChatGetExportedChatInvite(ctx context.Context, request *chat.T
 
 	r, err := c.ChatGetExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -343,6 +364,7 @@ func (s *Service) ChatGetExportedChatInvites(ctx context.Context, request *chat.
 
 	r, err := c.ChatGetExportedChatInvites(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getExportedChatInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -358,6 +380,7 @@ func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatC
 
 	r, err := c.ChatCheckChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.checkChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -373,6 +396,7 @@ func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChat
 
 	r, err := c.ChatImportChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.importChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -388,6 +412,7 @@ func (s *Service) ChatGetChatInviteImporters(ctx context.Context, request *chat.
 
 	r, err := c.ChatGetChatInviteImporters(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getChatInviteImporters - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -403,6 +428,7 @@ func (s *Service) ChatDeleteExportedChatInvite(ctx context.Context, request *cha
 
 	r, err := c.ChatDeleteExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.deleteExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -418,6 +444,7 @@ func (s *Service) ChatDeleteRevokedExportedChatInvites(ctx context.Context, requ
 
 	r, err := c.ChatDeleteRevokedExportedChatInvites(request)
 	if err != nil {
+		c.Logger.Errorf("chat.deleteRevokedExportedChatInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -433,6 +460,7 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 
 	r, err := c.ChatEditExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("chat.editExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -448,6 +476,7 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 
 	r, err := c.ChatSetChatAvailableReactions(request)
 	if err != nil {
+		c.Logger.Errorf("chat.setChatAvailableReactions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -463,6 +492,7 @@ func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSet
 
 	r, err := c.ChatSetHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("chat.setHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -478,6 +508,7 @@ func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*
 
 	r, err := c.ChatSearch(request)
 	if err != nil {
+		c.Logger.Errorf("chat.search - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -493,6 +524,7 @@ func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request
 
 	r, err := c.ChatGetRecentChatInviteRequesters(request)
 	if err != nil {
+		c.Logger.Errorf("chat.getRecentChatInviteRequesters - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -508,6 +540,7 @@ func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TL
 
 	r, err := c.ChatHideChatJoinRequests(request)
 	if err != nil {
+		c.Logger.Errorf("chat.hideChatJoinRequests - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -523,6 +556,7 @@ func (s *Service) ChatImportChatInvite2(ctx context.Context, request *chat.TLCha
 
 	r, err := c.ChatImportChatInvite2(request)
 	if err != nil {
+		c.Logger.Errorf("chat.importChatInvite2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

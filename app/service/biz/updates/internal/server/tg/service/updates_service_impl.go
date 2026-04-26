@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) UpdatesGetStateV2(ctx context.Context, request *updates.TLUpda
 
 	r, err := c.UpdatesGetStateV2(request)
 	if err != nil {
+		c.Logger.Errorf("updates.getStateV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) UpdatesGetDifferenceV2(ctx context.Context, request *updates.T
 
 	r, err := c.UpdatesGetDifferenceV2(request)
 	if err != nil {
+		c.Logger.Errorf("updates.getDifferenceV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) UpdatesGetChannelDifferenceV2(ctx context.Context, request *up
 
 	r, err := c.UpdatesGetChannelDifferenceV2(request)
 	if err != nil {
+		c.Logger.Errorf("updates.getChannelDifferenceV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

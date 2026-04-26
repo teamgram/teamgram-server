@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesSaveDraft(ctx context.Context, request *tg.TLMessagesS
 
 	r, err := c.MessagesSaveDraft(request)
 	if err != nil {
+		c.Logger.Errorf("messages.saveDraft - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesGetAllDrafts(ctx context.Context, request *tg.TLMessag
 
 	r, err := c.MessagesGetAllDrafts(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getAllDrafts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesClearAllDrafts(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesClearAllDrafts(request)
 	if err != nil {
+		c.Logger.Errorf("messages.clearAllDrafts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

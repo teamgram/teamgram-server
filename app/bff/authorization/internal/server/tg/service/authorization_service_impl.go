@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AuthSendCode(ctx context.Context, request *tg.TLAuthSendCode) 
 
 	r, err := c.AuthSendCode(request)
 	if err != nil {
+		c.Logger.Errorf("auth.sendCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AuthSignUp(ctx context.Context, request *tg.TLAuthSignUp) (*tg
 
 	r, err := c.AuthSignUp(request)
 	if err != nil {
+		c.Logger.Errorf("auth.signUp - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AuthSignIn(ctx context.Context, request *tg.TLAuthSignIn) (*tg
 
 	r, err := c.AuthSignIn(request)
 	if err != nil {
+		c.Logger.Errorf("auth.signIn - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AuthLogOut(ctx context.Context, request *tg.TLAuthLogOut) (*tg
 
 	r, err := c.AuthLogOut(request)
 	if err != nil {
+		c.Logger.Errorf("auth.logOut - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) AuthResetAuthorizations(ctx context.Context, request *tg.TLAut
 
 	r, err := c.AuthResetAuthorizations(request)
 	if err != nil {
+		c.Logger.Errorf("auth.resetAuthorizations - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) AuthExportAuthorization(ctx context.Context, request *tg.TLAut
 
 	r, err := c.AuthExportAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("auth.exportAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) AuthImportAuthorization(ctx context.Context, request *tg.TLAut
 
 	r, err := c.AuthImportAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("auth.importAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) AuthBindTempAuthKey(ctx context.Context, request *tg.TLAuthBin
 
 	r, err := c.AuthBindTempAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("auth.bindTempAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) AuthImportBotAuthorization(ctx context.Context, request *tg.TL
 
 	r, err := c.AuthImportBotAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("auth.importBotAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) AuthCheckPassword(ctx context.Context, request *tg.TLAuthCheck
 
 	r, err := c.AuthCheckPassword(request)
 	if err != nil {
+		c.Logger.Errorf("auth.checkPassword - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) AuthRequestPasswordRecovery(ctx context.Context, request *tg.T
 
 	r, err := c.AuthRequestPasswordRecovery(request)
 	if err != nil {
+		c.Logger.Errorf("auth.requestPasswordRecovery - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) AuthRecoverPassword(ctx context.Context, request *tg.TLAuthRec
 
 	r, err := c.AuthRecoverPassword(request)
 	if err != nil {
+		c.Logger.Errorf("auth.recoverPassword - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) AuthResendCode(ctx context.Context, request *tg.TLAuthResendCo
 
 	r, err := c.AuthResendCode(request)
 	if err != nil {
+		c.Logger.Errorf("auth.resendCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) AuthCancelCode(ctx context.Context, request *tg.TLAuthCancelCo
 
 	r, err := c.AuthCancelCode(request)
 	if err != nil {
+		c.Logger.Errorf("auth.cancelCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -235,6 +249,7 @@ func (s *Service) AuthDropTempAuthKeys(ctx context.Context, request *tg.TLAuthDr
 
 	r, err := c.AuthDropTempAuthKeys(request)
 	if err != nil {
+		c.Logger.Errorf("auth.dropTempAuthKeys - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -250,6 +265,7 @@ func (s *Service) AuthCheckRecoveryPassword(ctx context.Context, request *tg.TLA
 
 	r, err := c.AuthCheckRecoveryPassword(request)
 	if err != nil {
+		c.Logger.Errorf("auth.checkRecoveryPassword - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -265,6 +281,7 @@ func (s *Service) AuthImportWebTokenAuthorization(ctx context.Context, request *
 
 	r, err := c.AuthImportWebTokenAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("auth.importWebTokenAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -280,6 +297,7 @@ func (s *Service) AuthRequestFirebaseSms(ctx context.Context, request *tg.TLAuth
 
 	r, err := c.AuthRequestFirebaseSms(request)
 	if err != nil {
+		c.Logger.Errorf("auth.requestFirebaseSms - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -295,6 +313,7 @@ func (s *Service) AuthResetLoginEmail(ctx context.Context, request *tg.TLAuthRes
 
 	r, err := c.AuthResetLoginEmail(request)
 	if err != nil {
+		c.Logger.Errorf("auth.resetLoginEmail - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -310,6 +329,7 @@ func (s *Service) AuthReportMissingCode(ctx context.Context, request *tg.TLAuthR
 
 	r, err := c.AuthReportMissingCode(request)
 	if err != nil {
+		c.Logger.Errorf("auth.reportMissingCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -325,6 +345,7 @@ func (s *Service) AuthCheckPaidAuth(ctx context.Context, request *tg.TLAuthCheck
 
 	r, err := c.AuthCheckPaidAuth(request)
 	if err != nil {
+		c.Logger.Errorf("auth.checkPaidAuth - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -340,6 +361,7 @@ func (s *Service) AccountSendVerifyEmailCode(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountSendVerifyEmailCode(request)
 	if err != nil {
+		c.Logger.Errorf("account.sendVerifyEmailCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -355,6 +377,7 @@ func (s *Service) AccountVerifyEmail(ctx context.Context, request *tg.TLAccountV
 
 	r, err := c.AccountVerifyEmail(request)
 	if err != nil {
+		c.Logger.Errorf("account.verifyEmail - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -370,6 +393,7 @@ func (s *Service) AccountResetPassword(ctx context.Context, request *tg.TLAccoun
 
 	r, err := c.AccountResetPassword(request)
 	if err != nil {
+		c.Logger.Errorf("account.resetPassword - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -385,6 +409,7 @@ func (s *Service) AccountSetAuthorizationTTL(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountSetAuthorizationTTL(request)
 	if err != nil {
+		c.Logger.Errorf("account.setAuthorizationTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -400,6 +425,7 @@ func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, reques
 
 	r, err := c.AccountChangeAuthorizationSettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.changeAuthorizationSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -415,6 +441,7 @@ func (s *Service) AccountInvalidateSignInCodes(ctx context.Context, request *tg.
 
 	r, err := c.AccountInvalidateSignInCodes(request)
 	if err != nil {
+		c.Logger.Errorf("account.invalidateSignInCodes - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -430,6 +457,7 @@ func (s *Service) AuthToggleBan(ctx context.Context, request *tg.TLAuthToggleBan
 
 	r, err := c.AuthToggleBan(request)
 	if err != nil {
+		c.Logger.Errorf("auth.toggleBan - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

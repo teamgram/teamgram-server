@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesExportChatInvite(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesExportChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.exportChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesCheckChatInvite(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesCheckChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.checkChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesImportChatInvite(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesImportChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.importChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesGetExportedChatInvites(ctx context.Context, request *t
 
 	r, err := c.MessagesGetExportedChatInvites(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getExportedChatInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesGetExportedChatInvite(ctx context.Context, request *tg
 
 	r, err := c.MessagesGetExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesEditExportedChatInvite(ctx context.Context, request *t
 
 	r, err := c.MessagesEditExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesDeleteRevokedExportedChatInvites(ctx context.Context, 
 
 	r, err := c.MessagesDeleteRevokedExportedChatInvites(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) MessagesDeleteExportedChatInvite(ctx context.Context, request 
 
 	r, err := c.MessagesDeleteExportedChatInvite(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteExportedChatInvite - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) MessagesGetAdminsWithInvites(ctx context.Context, request *tg.
 
 	r, err := c.MessagesGetAdminsWithInvites(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getAdminsWithInvites - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) MessagesGetChatInviteImporters(ctx context.Context, request *t
 
 	r, err := c.MessagesGetChatInviteImporters(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getChatInviteImporters - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) MessagesHideChatJoinRequest(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesHideChatJoinRequest(request)
 	if err != nil {
+		c.Logger.Errorf("messages.hideChatJoinRequest - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) MessagesHideAllChatJoinRequests(ctx context.Context, request *
 
 	r, err := c.MessagesHideAllChatJoinRequests(request)
 	if err != nil {
+		c.Logger.Errorf("messages.hideAllChatJoinRequests - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) ChannelsToggleJoinToSend(ctx context.Context, request *tg.TLCh
 
 	r, err := c.ChannelsToggleJoinToSend(request)
 	if err != nil {
+		c.Logger.Errorf("channels.toggleJoinToSend - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) ChannelsToggleJoinRequest(ctx context.Context, request *tg.TLC
 
 	r, err := c.ChannelsToggleJoinRequest(request)
 	if err != nil {
+		c.Logger.Errorf("channels.toggleJoinRequest - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

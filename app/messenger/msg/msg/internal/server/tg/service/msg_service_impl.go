@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) MsgPushUserMessage(ctx context.Context, request *msg.TLMsgPush
 
 	r, err := c.MsgPushUserMessage(request)
 	if err != nil {
+		c.Logger.Errorf("msg.pushUserMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) MsgReadMessageContents(ctx context.Context, request *msg.TLMsg
 
 	r, err := c.MsgReadMessageContents(request)
 	if err != nil {
+		c.Logger.Errorf("msg.readMessageContents - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMe
 
 	r, err := c.MsgSendMessageV2(request)
 	if err != nil {
+		c.Logger.Errorf("msg.sendMessageV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) MsgEditMessageV2(ctx context.Context, request *msg.TLMsgEditMe
 
 	r, err := c.MsgEditMessageV2(request)
 	if err != nil {
+		c.Logger.Errorf("msg.editMessageV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) MsgDeleteMessages(ctx context.Context, request *msg.TLMsgDelet
 
 	r, err := c.MsgDeleteMessages(request)
 	if err != nil {
+		c.Logger.Errorf("msg.deleteMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) MsgDeleteHistory(ctx context.Context, request *msg.TLMsgDelete
 
 	r, err := c.MsgDeleteHistory(request)
 	if err != nil {
+		c.Logger.Errorf("msg.deleteHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) MsgDeletePhoneCallHistory(ctx context.Context, request *msg.TL
 
 	r, err := c.MsgDeletePhoneCallHistory(request)
 	if err != nil {
+		c.Logger.Errorf("msg.deletePhoneCallHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) MsgDeleteChatHistory(ctx context.Context, request *msg.TLMsgDe
 
 	r, err := c.MsgDeleteChatHistory(request)
 	if err != nil {
+		c.Logger.Errorf("msg.deleteChatHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) MsgReadHistory(ctx context.Context, request *msg.TLMsgReadHist
 
 	r, err := c.MsgReadHistory(request)
 	if err != nil {
+		c.Logger.Errorf("msg.readHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) MsgReadHistoryV2(ctx context.Context, request *msg.TLMsgReadHi
 
 	r, err := c.MsgReadHistoryV2(request)
 	if err != nil {
+		c.Logger.Errorf("msg.readHistoryV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) MsgUpdatePinnedMessage(ctx context.Context, request *msg.TLMsg
 
 	r, err := c.MsgUpdatePinnedMessage(request)
 	if err != nil {
+		c.Logger.Errorf("msg.updatePinnedMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) MsgUnpinAllMessages(ctx context.Context, request *msg.TLMsgUnp
 
 	r, err := c.MsgUnpinAllMessages(request)
 	if err != nil {
+		c.Logger.Errorf("msg.unpinAllMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

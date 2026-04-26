@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) GnetwaySendDataToGateway(ctx context.Context, request *gnetway
 
 	r, err := c.GnetwaySendDataToGateway(request)
 	if err != nil {
+		c.Logger.Errorf("gnetway.sendDataToGateway - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

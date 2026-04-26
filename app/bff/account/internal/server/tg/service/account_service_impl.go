@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountDeleteAccount(ctx context.Context, request *tg.TLAccoun
 
 	r, err := c.AccountDeleteAccount(request)
 	if err != nil {
+		c.Logger.Errorf("account.deleteAccount - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountGetAccountTTL(ctx context.Context, request *tg.TLAccoun
 
 	r, err := c.AccountGetAccountTTL(request)
 	if err != nil {
+		c.Logger.Errorf("account.getAccountTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AccountSetAccountTTL(ctx context.Context, request *tg.TLAccoun
 
 	r, err := c.AccountSetAccountTTL(request)
 	if err != nil {
+		c.Logger.Errorf("account.setAccountTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AccountSendChangePhoneCode(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountSendChangePhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("account.sendChangePhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) AccountChangePhone(ctx context.Context, request *tg.TLAccountC
 
 	r, err := c.AccountChangePhone(request)
 	if err != nil {
+		c.Logger.Errorf("account.changePhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) AccountResetAuthorization(ctx context.Context, request *tg.TLA
 
 	r, err := c.AccountResetAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("account.resetAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) AccountSendConfirmPhoneCode(ctx context.Context, request *tg.T
 
 	r, err := c.AccountSendConfirmPhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("account.sendConfirmPhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) AccountConfirmPhone(ctx context.Context, request *tg.TLAccount
 
 	r, err := c.AccountConfirmPhone(request)
 	if err != nil {
+		c.Logger.Errorf("account.confirmPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

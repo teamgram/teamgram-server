@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesGetMessages(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesGetMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesGetHistory(ctx context.Context, request *tg.TLMessages
 
 	r, err := c.MessagesGetHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesSearch(ctx context.Context, request *tg.TLMessagesSear
 
 	r, err := c.MessagesSearch(request)
 	if err != nil {
+		c.Logger.Errorf("messages.search - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesReadHistory(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesReadHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.readHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesDeleteHistory(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesDeleteHistory(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesDeleteMessages(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesDeleteMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesReceivedMessages(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesReceivedMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.receivedMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) MessagesSendMessage(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesSendMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.sendMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) MessagesSendMedia(ctx context.Context, request *tg.TLMessagesS
 
 	r, err := c.MessagesSendMedia(request)
 	if err != nil {
+		c.Logger.Errorf("messages.sendMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) MessagesForwardMessages(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesForwardMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.forwardMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) MessagesReadMessageContents(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesReadMessageContents(request)
 	if err != nil {
+		c.Logger.Errorf("messages.readMessageContents - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) MessagesGetMessagesViews(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesGetMessagesViews(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getMessagesViews - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) MessagesSearchGlobal(ctx context.Context, request *tg.TLMessag
 
 	r, err := c.MessagesSearchGlobal(request)
 	if err != nil {
+		c.Logger.Errorf("messages.searchGlobal - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) MessagesGetMessageEditData(ctx context.Context, request *tg.TL
 
 	r, err := c.MessagesGetMessageEditData(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getMessageEditData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -235,6 +249,7 @@ func (s *Service) MessagesEditMessage(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesEditMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -250,6 +265,7 @@ func (s *Service) MessagesGetUnreadMentions(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesGetUnreadMentions(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getUnreadMentions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -265,6 +281,7 @@ func (s *Service) MessagesReadMentions(ctx context.Context, request *tg.TLMessag
 
 	r, err := c.MessagesReadMentions(request)
 	if err != nil {
+		c.Logger.Errorf("messages.readMentions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -280,6 +297,7 @@ func (s *Service) MessagesGetRecentLocations(ctx context.Context, request *tg.TL
 
 	r, err := c.MessagesGetRecentLocations(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getRecentLocations - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -295,6 +313,7 @@ func (s *Service) MessagesSendMultiMedia(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesSendMultiMedia(request)
 	if err != nil {
+		c.Logger.Errorf("messages.sendMultiMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -310,6 +329,7 @@ func (s *Service) MessagesUpdatePinnedMessage(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesUpdatePinnedMessage(request)
 	if err != nil {
+		c.Logger.Errorf("messages.updatePinnedMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -325,6 +345,7 @@ func (s *Service) MessagesGetSearchCounters(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesGetSearchCounters(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSearchCounters - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -340,6 +361,7 @@ func (s *Service) MessagesUnpinAllMessages(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesUnpinAllMessages(request)
 	if err != nil {
+		c.Logger.Errorf("messages.unpinAllMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -355,6 +377,7 @@ func (s *Service) MessagesGetSearchResultsCalendar(ctx context.Context, request 
 
 	r, err := c.MessagesGetSearchResultsCalendar(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSearchResultsCalendar - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -370,6 +393,7 @@ func (s *Service) MessagesGetSearchResultsPositions(ctx context.Context, request
 
 	r, err := c.MessagesGetSearchResultsPositions(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getSearchResultsPositions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -385,6 +409,7 @@ func (s *Service) MessagesToggleNoForwards(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesToggleNoForwards(request)
 	if err != nil {
+		c.Logger.Errorf("messages.toggleNoForwards - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -400,6 +425,7 @@ func (s *Service) MessagesSaveDefaultSendAs(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesSaveDefaultSendAs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.saveDefaultSendAs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -415,6 +441,7 @@ func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesSearchSentMedia(request)
 	if err != nil {
+		c.Logger.Errorf("messages.searchSentMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -430,6 +457,7 @@ func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesGetOutboxReadDate(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getOutboxReadDate - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -445,6 +473,7 @@ func (s *Service) MessagesSummarizeText(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesSummarizeText(request)
 	if err != nil {
+		c.Logger.Errorf("messages.summarizeText - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -460,6 +489,7 @@ func (s *Service) MessagesComposeMessageWithAI(ctx context.Context, request *tg.
 
 	r, err := c.MessagesComposeMessageWithAI(request)
 	if err != nil {
+		c.Logger.Errorf("messages.composeMessageWithAI - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -475,6 +505,7 @@ func (s *Service) MessagesReportReadMetrics(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesReportReadMetrics(request)
 	if err != nil {
+		c.Logger.Errorf("messages.reportReadMetrics - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -490,6 +521,7 @@ func (s *Service) MessagesReportMusicListen(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesReportMusicListen(request)
 	if err != nil {
+		c.Logger.Errorf("messages.reportMusicListen - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -505,6 +537,7 @@ func (s *Service) ChannelsGetSendAs(ctx context.Context, request *tg.TLChannelsG
 
 	r, err := c.ChannelsGetSendAs(request)
 	if err != nil {
+		c.Logger.Errorf("channels.getSendAs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -520,6 +553,7 @@ func (s *Service) ChannelsSearchPosts(ctx context.Context, request *tg.TLChannel
 
 	r, err := c.ChannelsSearchPosts(request)
 	if err != nil {
+		c.Logger.Errorf("channels.searchPosts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -535,6 +569,7 @@ func (s *Service) ChannelsCheckSearchPostsFlood(ctx context.Context, request *tg
 
 	r, err := c.ChannelsCheckSearchPostsFlood(request)
 	if err != nil {
+		c.Logger.Errorf("channels.checkSearchPostsFlood - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

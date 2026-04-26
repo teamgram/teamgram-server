@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) CodeCreatePhoneCode(ctx context.Context, request *code.TLCodeC
 
 	r, err := c.CodeCreatePhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("code.createPhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) CodeGetPhoneCode(ctx context.Context, request *code.TLCodeGetP
 
 	r, err := c.CodeGetPhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("code.getPhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) CodeDeletePhoneCode(ctx context.Context, request *code.TLCodeD
 
 	r, err := c.CodeDeletePhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("code.deletePhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) CodeUpdatePhoneCodeData(ctx context.Context, request *code.TLC
 
 	r, err := c.CodeUpdatePhoneCodeData(request)
 	if err != nil {
+		c.Logger.Errorf("code.updatePhoneCodeData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

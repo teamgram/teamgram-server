@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountRegisterDevice(ctx context.Context, request *tg.TLAccou
 
 	r, err := c.AccountRegisterDevice(request)
 	if err != nil {
+		c.Logger.Errorf("account.registerDevice - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountUnregisterDevice(ctx context.Context, request *tg.TLAcc
 
 	r, err := c.AccountUnregisterDevice(request)
 	if err != nil {
+		c.Logger.Errorf("account.unregisterDevice - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AccountUpdateNotifySettings(ctx context.Context, request *tg.T
 
 	r, err := c.AccountUpdateNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AccountGetNotifySettings(ctx context.Context, request *tg.TLAc
 
 	r, err := c.AccountGetNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.getNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) AccountResetNotifySettings(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountResetNotifySettings(request)
 	if err != nil {
+		c.Logger.Errorf("account.resetNotifySettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) AccountUpdateDeviceLocked(ctx context.Context, request *tg.TLA
 
 	r, err := c.AccountUpdateDeviceLocked(request)
 	if err != nil {
+		c.Logger.Errorf("account.updateDeviceLocked - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) AccountGetNotifyExceptions(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountGetNotifyExceptions(request)
 	if err != nil {
+		c.Logger.Errorf("account.getNotifyExceptions - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

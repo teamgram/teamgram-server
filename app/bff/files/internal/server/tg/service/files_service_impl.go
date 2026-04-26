@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesGetDocumentByHash(ctx context.Context, request *tg.TLM
 
 	r, err := c.MessagesGetDocumentByHash(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getDocumentByHash - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesUploadMedia(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesUploadMedia(request)
 	if err != nil {
+		c.Logger.Errorf("messages.uploadMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesUploadEncryptedFile(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesUploadEncryptedFile(request)
 	if err != nil {
+		c.Logger.Errorf("messages.uploadEncryptedFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) UploadSaveFilePart(ctx context.Context, request *tg.TLUploadSa
 
 	r, err := c.UploadSaveFilePart(request)
 	if err != nil {
+		c.Logger.Errorf("upload.saveFilePart - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) UploadGetFile(ctx context.Context, request *tg.TLUploadGetFile
 
 	r, err := c.UploadGetFile(request)
 	if err != nil {
+		c.Logger.Errorf("upload.getFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) UploadSaveBigFilePart(ctx context.Context, request *tg.TLUploa
 
 	r, err := c.UploadSaveBigFilePart(request)
 	if err != nil {
+		c.Logger.Errorf("upload.saveBigFilePart - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) UploadGetWebFile(ctx context.Context, request *tg.TLUploadGetW
 
 	r, err := c.UploadGetWebFile(request)
 	if err != nil {
+		c.Logger.Errorf("upload.getWebFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) UploadGetCdnFile(ctx context.Context, request *tg.TLUploadGetC
 
 	r, err := c.UploadGetCdnFile(request)
 	if err != nil {
+		c.Logger.Errorf("upload.getCdnFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) UploadReuploadCdnFile(ctx context.Context, request *tg.TLUploa
 
 	r, err := c.UploadReuploadCdnFile(request)
 	if err != nil {
+		c.Logger.Errorf("upload.reuploadCdnFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) UploadGetCdnFileHashes(ctx context.Context, request *tg.TLUplo
 
 	r, err := c.UploadGetCdnFileHashes(request)
 	if err != nil {
+		c.Logger.Errorf("upload.getCdnFileHashes - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) UploadGetFileHashes(ctx context.Context, request *tg.TLUploadG
 
 	r, err := c.UploadGetFileHashes(request)
 	if err != nil {
+		c.Logger.Errorf("upload.getFileHashes - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) HelpGetCdnConfig(ctx context.Context, request *tg.TLHelpGetCdn
 
 	r, err := c.HelpGetCdnConfig(request)
 	if err != nil {
+		c.Logger.Errorf("help.getCdnConfig - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

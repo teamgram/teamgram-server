@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) HelpSaveAppLog(ctx context.Context, request *tg.TLHelpSaveAppL
 
 	r, err := c.HelpSaveAppLog(request)
 	if err != nil {
+		c.Logger.Errorf("help.saveAppLog - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) HelpTest(ctx context.Context, request *tg.TLHelpTest) (*tg.Boo
 
 	r, err := c.HelpTest(request)
 	if err != nil {
+		c.Logger.Errorf("help.test - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AuthExportLoginToken(ctx context.Context, request *tg.TLAuthEx
 
 	r, err := c.AuthExportLoginToken(request)
 	if err != nil {
+		c.Logger.Errorf("auth.exportLoginToken - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AuthImportLoginToken(ctx context.Context, request *tg.TLAuthIm
 
 	r, err := c.AuthImportLoginToken(request)
 	if err != nil {
+		c.Logger.Errorf("auth.importLoginToken - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AuthAcceptLoginToken(ctx context.Context, request *tg.TLAuthAc
 
 	r, err := c.AuthAcceptLoginToken(request)
 	if err != nil {
+		c.Logger.Errorf("auth.acceptLoginToken - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

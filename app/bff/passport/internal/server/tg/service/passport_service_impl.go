@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) AccountGetAuthorizations(ctx context.Context, request *tg.TLAc
 
 	r, err := c.AccountGetAuthorizations(request)
 	if err != nil {
+		c.Logger.Errorf("account.getAuthorizations - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) AccountGetAllSecureValues(ctx context.Context, request *tg.TLA
 
 	r, err := c.AccountGetAllSecureValues(request)
 	if err != nil {
+		c.Logger.Errorf("account.getAllSecureValues - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) AccountGetSecureValue(ctx context.Context, request *tg.TLAccou
 
 	r, err := c.AccountGetSecureValue(request)
 	if err != nil {
+		c.Logger.Errorf("account.getSecureValue - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) AccountSaveSecureValue(ctx context.Context, request *tg.TLAcco
 
 	r, err := c.AccountSaveSecureValue(request)
 	if err != nil {
+		c.Logger.Errorf("account.saveSecureValue - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) AccountDeleteSecureValue(ctx context.Context, request *tg.TLAc
 
 	r, err := c.AccountDeleteSecureValue(request)
 	if err != nil {
+		c.Logger.Errorf("account.deleteSecureValue - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) AccountGetAuthorizationForm(ctx context.Context, request *tg.T
 
 	r, err := c.AccountGetAuthorizationForm(request)
 	if err != nil {
+		c.Logger.Errorf("account.getAuthorizationForm - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) AccountAcceptAuthorization(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountAcceptAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("account.acceptAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) AccountSendVerifyPhoneCode(ctx context.Context, request *tg.TL
 
 	r, err := c.AccountSendVerifyPhoneCode(request)
 	if err != nil {
+		c.Logger.Errorf("account.sendVerifyPhoneCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) AccountVerifyPhone(ctx context.Context, request *tg.TLAccountV
 
 	r, err := c.AccountVerifyPhone(request)
 	if err != nil {
+		c.Logger.Errorf("account.verifyPhone - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) UsersSetSecureValueErrors(ctx context.Context, request *tg.TLU
 
 	r, err := c.UsersSetSecureValueErrors(request)
 	if err != nil {
+		c.Logger.Errorf("users.setSecureValueErrors - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) HelpGetPassportConfig(ctx context.Context, request *tg.TLHelpG
 
 	r, err := c.HelpGetPassportConfig(request)
 	if err != nil {
+		c.Logger.Errorf("help.getPassportConfig - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesGetChats(ctx context.Context, request *tg.TLMessagesGe
 
 	r, err := c.MessagesGetChats(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getChats - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesGetFullChat(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesGetFullChat(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getFullChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesEditChatTitle(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesEditChatTitle(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatTitle - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesEditChatPhoto(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesEditChatPhoto(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatPhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesAddChatUser(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesAddChatUser(request)
 	if err != nil {
+		c.Logger.Errorf("messages.addChatUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesDeleteChatUser(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesDeleteChatUser(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteChatUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesCreateChat(ctx context.Context, request *tg.TLMessages
 
 	r, err := c.MessagesCreateChat(request)
 	if err != nil {
+		c.Logger.Errorf("messages.createChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) MessagesEditChatAdmin(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesEditChatAdmin(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatAdmin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) MessagesMigrateChat(ctx context.Context, request *tg.TLMessage
 
 	r, err := c.MessagesMigrateChat(request)
 	if err != nil {
+		c.Logger.Errorf("messages.migrateChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) MessagesGetCommonChats(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesGetCommonChats(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getCommonChats - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) MessagesEditChatAbout(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesEditChatAbout(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatAbout - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) MessagesEditChatDefaultBannedRights(ctx context.Context, reque
 
 	r, err := c.MessagesEditChatDefaultBannedRights(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatDefaultBannedRights - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) MessagesDeleteChat(ctx context.Context, request *tg.TLMessages
 
 	r, err := c.MessagesDeleteChat(request)
 	if err != nil {
+		c.Logger.Errorf("messages.deleteChat - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -220,6 +233,7 @@ func (s *Service) MessagesGetMessageReadParticipants(ctx context.Context, reques
 
 	r, err := c.MessagesGetMessageReadParticipants(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getMessageReadParticipants - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -235,6 +249,7 @@ func (s *Service) MessagesEditChatCreator(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesEditChatCreator(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatCreator - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -250,6 +265,7 @@ func (s *Service) MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, re
 
 	r, err := c.MessagesGetFutureChatCreatorAfterLeave(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getFutureChatCreatorAfterLeave - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -265,6 +281,7 @@ func (s *Service) MessagesEditChatParticipantRank(ctx context.Context, request *
 
 	r, err := c.MessagesEditChatParticipantRank(request)
 	if err != nil {
+		c.Logger.Errorf("messages.editChatParticipantRank - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -280,6 +297,7 @@ func (s *Service) ChannelsConvertToGigagroup(ctx context.Context, request *tg.TL
 
 	r, err := c.ChannelsConvertToGigagroup(request)
 	if err != nil {
+		c.Logger.Errorf("channels.convertToGigagroup - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -295,6 +313,7 @@ func (s *Service) ChannelsSetEmojiStickers(ctx context.Context, request *tg.TLCh
 
 	r, err := c.ChannelsSetEmojiStickers(request)
 	if err != nil {
+		c.Logger.Errorf("channels.setEmojiStickers - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

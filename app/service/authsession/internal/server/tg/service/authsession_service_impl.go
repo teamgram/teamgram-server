@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) AuthsessionGetAuthorizations(ctx context.Context, request *aut
 
 	r, err := c.AuthsessionGetAuthorizations(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getAuthorizations - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) AuthsessionResetAuthorization(ctx context.Context, request *au
 
 	r, err := c.AuthsessionResetAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.resetAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) AuthsessionGetLayer(ctx context.Context, request *authsession.
 
 	r, err := c.AuthsessionGetLayer(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getLayer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) AuthsessionGetLangPack(ctx context.Context, request *authsessi
 
 	r, err := c.AuthsessionGetLangPack(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getLangPack - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) AuthsessionGetClient(ctx context.Context, request *authsession
 
 	r, err := c.AuthsessionGetClient(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getClient - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) AuthsessionGetLangCode(ctx context.Context, request *authsessi
 
 	r, err := c.AuthsessionGetLangCode(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getLangCode - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) AuthsessionGetUserId(ctx context.Context, request *authsession
 
 	r, err := c.AuthsessionGetUserId(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getUserId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) AuthsessionGetPushSessionId(ctx context.Context, request *auth
 
 	r, err := c.AuthsessionGetPushSessionId(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getPushSessionId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) AuthsessionGetFutureSalts(ctx context.Context, request *authse
 
 	r, err := c.AuthsessionGetFutureSalts(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getFutureSalts - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) AuthsessionQueryAuthKey(ctx context.Context, request *authsess
 
 	r, err := c.AuthsessionQueryAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.queryAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,7 +188,7 @@ func (s *Service) AuthsessionSetAuthKey(ctx context.Context, request *authsessio
 
 	r, err := c.AuthsessionSetAuthKey(request)
 	if err != nil {
-		c.Logger.Errorf("authsession.setAuthKey - error: %v", err)
+		c.Logger.Errorf("authsession.setAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -194,6 +204,7 @@ func (s *Service) AuthsessionBindAuthKeyUser(ctx context.Context, request *auths
 
 	r, err := c.AuthsessionBindAuthKeyUser(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.bindAuthKeyUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -209,6 +220,7 @@ func (s *Service) AuthsessionUnbindAuthKeyUser(ctx context.Context, request *aut
 
 	r, err := c.AuthsessionUnbindAuthKeyUser(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.unbindAuthKeyUser - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -224,6 +236,7 @@ func (s *Service) AuthsessionGetPermAuthKeyId(ctx context.Context, request *auth
 
 	r, err := c.AuthsessionGetPermAuthKeyId(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getPermAuthKeyId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -239,6 +252,7 @@ func (s *Service) AuthsessionBindTempAuthKey(ctx context.Context, request *auths
 
 	r, err := c.AuthsessionBindTempAuthKey(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.bindTempAuthKey - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -254,6 +268,7 @@ func (s *Service) AuthsessionSetClientSessionInfo(ctx context.Context, request *
 
 	r, err := c.AuthsessionSetClientSessionInfo(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.setClientSessionInfo - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -269,6 +284,7 @@ func (s *Service) AuthsessionGetAuthorization(ctx context.Context, request *auth
 
 	r, err := c.AuthsessionGetAuthorization(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getAuthorization - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -284,6 +300,7 @@ func (s *Service) AuthsessionGetAuthStateData(ctx context.Context, request *auth
 
 	r, err := c.AuthsessionGetAuthStateData(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.getAuthStateData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -299,6 +316,7 @@ func (s *Service) AuthsessionSetLayer(ctx context.Context, request *authsession.
 
 	r, err := c.AuthsessionSetLayer(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.setLayer - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -314,6 +332,7 @@ func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *aut
 
 	r, err := c.AuthsessionSetInitConnection(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.setInitConnection - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -329,6 +348,7 @@ func (s *Service) AuthsessionSetAndroidPushSessionId(ctx context.Context, reques
 
 	r, err := c.AuthsessionSetAndroidPushSessionId(request)
 	if err != nil {
+		c.Logger.Errorf("authsession.setAndroidPushSessionId - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

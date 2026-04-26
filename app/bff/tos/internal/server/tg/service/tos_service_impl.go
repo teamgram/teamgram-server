@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) HelpGetTermsOfServiceUpdate(ctx context.Context, request *tg.T
 
 	r, err := c.HelpGetTermsOfServiceUpdate(request)
 	if err != nil {
+		c.Logger.Errorf("help.getTermsOfServiceUpdate - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) HelpAcceptTermsOfService(ctx context.Context, request *tg.TLHe
 
 	r, err := c.HelpAcceptTermsOfService(request)
 	if err != nil {
+		c.Logger.Errorf("help.acceptTermsOfService - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

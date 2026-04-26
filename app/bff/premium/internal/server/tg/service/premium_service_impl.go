@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) HelpGetPremiumPromo(ctx context.Context, request *tg.TLHelpGet
 
 	r, err := c.HelpGetPremiumPromo(request)
 	if err != nil {
+		c.Logger.Errorf("help.getPremiumPromo - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) PaymentsAssignAppStoreTransaction(ctx context.Context, request
 
 	r, err := c.PaymentsAssignAppStoreTransaction(request)
 	if err != nil {
+		c.Logger.Errorf("payments.assignAppStoreTransaction - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) PaymentsAssignPlayMarketTransaction(ctx context.Context, reque
 
 	r, err := c.PaymentsAssignPlayMarketTransaction(request)
 	if err != nil {
+		c.Logger.Errorf("payments.assignPlayMarketTransaction - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) PaymentsCanPurchaseStore(ctx context.Context, request *tg.TLPa
 
 	r, err := c.PaymentsCanPurchaseStore(request)
 	if err != nil {
+		c.Logger.Errorf("payments.canPurchaseStore - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

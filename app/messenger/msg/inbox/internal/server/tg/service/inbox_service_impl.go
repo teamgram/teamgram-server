@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) InboxEditUserMessageToInbox(ctx context.Context, request *inbo
 
 	r, err := c.InboxEditUserMessageToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.editUserMessageToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) InboxEditChatMessageToInbox(ctx context.Context, request *inbo
 
 	r, err := c.InboxEditChatMessageToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.editChatMessageToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) InboxDeleteMessagesToInbox(ctx context.Context, request *inbox
 
 	r, err := c.InboxDeleteMessagesToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.deleteMessagesToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) InboxDeleteUserHistoryToInbox(ctx context.Context, request *in
 
 	r, err := c.InboxDeleteUserHistoryToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.deleteUserHistoryToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) InboxDeleteChatHistoryToInbox(ctx context.Context, request *in
 
 	r, err := c.InboxDeleteChatHistoryToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.deleteChatHistoryToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) InboxReadUserMediaUnreadToInbox(ctx context.Context, request *
 
 	r, err := c.InboxReadUserMediaUnreadToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.readUserMediaUnreadToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) InboxReadChatMediaUnreadToInbox(ctx context.Context, request *
 
 	r, err := c.InboxReadChatMediaUnreadToInbox(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.readChatMediaUnreadToInbox - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) InboxUpdateHistoryReaded(ctx context.Context, request *inbox.T
 
 	r, err := c.InboxUpdateHistoryReaded(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.updateHistoryReaded - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) InboxUpdatePinnedMessage(ctx context.Context, request *inbox.T
 
 	r, err := c.InboxUpdatePinnedMessage(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.updatePinnedMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 
 	r, err := c.InboxUnpinAllMessages(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.unpinAllMessages - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *in
 
 	r, err := c.InboxSendUserMessageToInboxV2(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) InboxEditMessageToInboxV2(ctx context.Context, request *inbox.
 
 	r, err := c.InboxEditMessageToInboxV2(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.editMessageToInboxV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -208,6 +220,7 @@ func (s *Service) InboxReadInboxHistory(ctx context.Context, request *inbox.TLIn
 
 	r, err := c.InboxReadInboxHistory(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.readInboxHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -223,6 +236,7 @@ func (s *Service) InboxReadOutboxHistory(ctx context.Context, request *inbox.TLI
 
 	r, err := c.InboxReadOutboxHistory(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.readOutboxHistory - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -238,6 +252,7 @@ func (s *Service) InboxReadMediaUnreadToInboxV2(ctx context.Context, request *in
 
 	r, err := c.InboxReadMediaUnreadToInboxV2(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -253,6 +268,7 @@ func (s *Service) InboxUpdatePinnedMessageV2(ctx context.Context, request *inbox
 
 	r, err := c.InboxUpdatePinnedMessageV2(request)
 	if err != nil {
+		c.Logger.Errorf("inbox.updatePinnedMessageV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

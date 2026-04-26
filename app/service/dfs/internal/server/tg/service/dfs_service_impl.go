@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -28,6 +28,7 @@ func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWr
 
 	r, err := c.DfsWriteFilePartData(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.writeFilePartData - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -43,6 +44,7 @@ func (s *Service) DfsUploadPhotoFileV2(ctx context.Context, request *dfs.TLDfsUp
 
 	r, err := c.DfsUploadPhotoFileV2(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadPhotoFileV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -58,6 +60,7 @@ func (s *Service) DfsUploadProfilePhotoFileV2(ctx context.Context, request *dfs.
 
 	r, err := c.DfsUploadProfilePhotoFileV2(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadProfilePhotoFileV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -73,6 +76,7 @@ func (s *Service) DfsUploadEncryptedFileV2(ctx context.Context, request *dfs.TLD
 
 	r, err := c.DfsUploadEncryptedFileV2(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadEncryptedFileV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -88,6 +92,7 @@ func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloa
 
 	r, err := c.DfsDownloadFile(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.downloadFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -103,6 +108,7 @@ func (s *Service) DfsUploadDocumentFileV2(ctx context.Context, request *dfs.TLDf
 
 	r, err := c.DfsUploadDocumentFileV2(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadDocumentFileV2 - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -118,6 +124,7 @@ func (s *Service) DfsUploadGifDocumentMedia(ctx context.Context, request *dfs.TL
 
 	r, err := c.DfsUploadGifDocumentMedia(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadGifDocumentMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -133,6 +140,7 @@ func (s *Service) DfsUploadMp4DocumentMedia(ctx context.Context, request *dfs.TL
 
 	r, err := c.DfsUploadMp4DocumentMedia(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadMp4DocumentMedia - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -148,6 +156,7 @@ func (s *Service) DfsUploadWallPaperFile(ctx context.Context, request *dfs.TLDfs
 
 	r, err := c.DfsUploadWallPaperFile(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadWallPaperFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -163,6 +172,7 @@ func (s *Service) DfsUploadThemeFile(ctx context.Context, request *dfs.TLDfsUplo
 
 	r, err := c.DfsUploadThemeFile(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadThemeFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -178,6 +188,7 @@ func (s *Service) DfsUploadRingtoneFile(ctx context.Context, request *dfs.TLDfsU
 
 	r, err := c.DfsUploadRingtoneFile(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadRingtoneFile - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -193,6 +204,7 @@ func (s *Service) DfsUploadedProfilePhoto(ctx context.Context, request *dfs.TLDf
 
 	r, err := c.DfsUploadedProfilePhoto(request)
 	if err != nil {
+		c.Logger.Errorf("dfs.uploadedProfilePhoto - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 

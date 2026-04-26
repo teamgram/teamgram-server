@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2026 Teamgram Authors.
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,6 +25,7 @@ func (s *Service) MessagesGetDialogs(ctx context.Context, request *tg.TLMessages
 
 	r, err := c.MessagesGetDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -40,6 +41,7 @@ func (s *Service) MessagesSetTyping(ctx context.Context, request *tg.TLMessagesS
 
 	r, err := c.MessagesSetTyping(request)
 	if err != nil {
+		c.Logger.Errorf("messages.setTyping - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -55,6 +57,7 @@ func (s *Service) MessagesGetPeerSettings(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesGetPeerSettings(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getPeerSettings - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) MessagesGetPeerDialogs(ctx context.Context, request *tg.TLMess
 
 	r, err := c.MessagesGetPeerDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getPeerDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -85,6 +89,7 @@ func (s *Service) MessagesToggleDialogPin(ctx context.Context, request *tg.TLMes
 
 	r, err := c.MessagesToggleDialogPin(request)
 	if err != nil {
+		c.Logger.Errorf("messages.toggleDialogPin - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -100,6 +105,7 @@ func (s *Service) MessagesReorderPinnedDialogs(ctx context.Context, request *tg.
 
 	r, err := c.MessagesReorderPinnedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.reorderPinnedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -115,6 +121,7 @@ func (s *Service) MessagesGetPinnedDialogs(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesGetPinnedDialogs(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getPinnedDialogs - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -130,6 +137,7 @@ func (s *Service) MessagesSendScreenshotNotification(ctx context.Context, reques
 
 	r, err := c.MessagesSendScreenshotNotification(request)
 	if err != nil {
+		c.Logger.Errorf("messages.sendScreenshotNotification - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -145,6 +153,7 @@ func (s *Service) MessagesMarkDialogUnread(ctx context.Context, request *tg.TLMe
 
 	r, err := c.MessagesMarkDialogUnread(request)
 	if err != nil {
+		c.Logger.Errorf("messages.markDialogUnread - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -160,6 +169,7 @@ func (s *Service) MessagesGetDialogUnreadMarks(ctx context.Context, request *tg.
 
 	r, err := c.MessagesGetDialogUnreadMarks(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getDialogUnreadMarks - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (s *Service) MessagesGetOnlines(ctx context.Context, request *tg.TLMessages
 
 	r, err := c.MessagesGetOnlines(request)
 	if err != nil {
+		c.Logger.Errorf("messages.getOnlines - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -190,6 +201,7 @@ func (s *Service) MessagesHidePeerSettingsBar(ctx context.Context, request *tg.T
 
 	r, err := c.MessagesHidePeerSettingsBar(request)
 	if err != nil {
+		c.Logger.Errorf("messages.hidePeerSettingsBar - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -205,6 +217,7 @@ func (s *Service) MessagesSetHistoryTTL(ctx context.Context, request *tg.TLMessa
 
 	r, err := c.MessagesSetHistoryTTL(request)
 	if err != nil {
+		c.Logger.Errorf("messages.setHistoryTTL - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
