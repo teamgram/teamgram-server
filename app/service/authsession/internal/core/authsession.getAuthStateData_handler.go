@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthsessionGetAuthStateData
 // authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 func (c *AuthsessionCore) AuthsessionGetAuthStateData(in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getAuthStateData - error: method AuthsessionGetAuthStateData not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return c.svcCtx.Repo.GetAuthStateData(c.ctx, in.AuthKeyId, keyData.PermAuthKeyId)
 }

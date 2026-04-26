@@ -24,8 +24,13 @@ import (
 // AuthsessionGetLangCode
 // authsession.getLangCode auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetLangCode(in *authsession.TLAuthsessionGetLangCode) (*tg.String, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getLangCode - error: method AuthsessionGetLangCode not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	langCode, err := c.svcCtx.Repo.GetLangCode(c.ctx, keyData.PermAuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLString(&tg.TLString{V: langCode}).ToString(), nil
 }

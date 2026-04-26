@@ -24,8 +24,5 @@ import (
 // AuthsessionQueryAuthKey
 // authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (c *AuthsessionCore) AuthsessionQueryAuthKey(in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.queryAuthKey - error: method AuthsessionQueryAuthKey not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.QueryAuthKey(c.ctx, in.AuthKeyId)
 }

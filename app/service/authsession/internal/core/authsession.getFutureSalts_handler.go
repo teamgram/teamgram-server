@@ -24,8 +24,9 @@ import (
 // AuthsessionGetFutureSalts
 // authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 func (c *AuthsessionCore) AuthsessionGetFutureSalts(in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getFutureSalts - error: method AuthsessionGetFutureSalts not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	num := in.Num
+	if num == 0 {
+		num = 32
+	}
+	return c.svcCtx.Repo.GetFutureSalts(c.ctx, in.AuthKeyId, num)
 }

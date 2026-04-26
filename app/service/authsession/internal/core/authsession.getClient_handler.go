@@ -24,8 +24,13 @@ import (
 // AuthsessionGetClient
 // authsession.getClient auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetClient(in *authsession.TLAuthsessionGetClient) (*tg.String, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getClient - error: method AuthsessionGetClient not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	client, err := c.svcCtx.Repo.GetClientKind(c.ctx, keyData.PermAuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLString(&tg.TLString{V: client}).ToString(), nil
 }

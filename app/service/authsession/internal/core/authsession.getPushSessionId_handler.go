@@ -24,8 +24,13 @@ import (
 // AuthsessionGetPushSessionId
 // authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 func (c *AuthsessionCore) AuthsessionGetPushSessionId(in *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getPushSessionId - error: method AuthsessionGetPushSessionId not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	sessionId, err := c.svcCtx.Repo.GetAndroidPushSessionId(c.ctx, keyData.PermAuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: sessionId}).ToInt64(), nil
 }

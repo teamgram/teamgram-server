@@ -24,8 +24,9 @@ import (
 // AuthsessionGetPermAuthKeyId
 // authsession.getPermAuthKeyId auth_key_id:long= Int64;
 func (c *AuthsessionCore) AuthsessionGetPermAuthKeyId(in *authsession.TLAuthsessionGetPermAuthKeyId) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getPermAuthKeyId - error: method AuthsessionGetPermAuthKeyId not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: keyData.PermAuthKeyId}).ToInt64(), nil
 }

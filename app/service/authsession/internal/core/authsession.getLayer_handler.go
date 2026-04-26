@@ -24,8 +24,13 @@ import (
 // AuthsessionGetLayer
 // authsession.getLayer auth_key_id:long = Int32;
 func (c *AuthsessionCore) AuthsessionGetLayer(in *authsession.TLAuthsessionGetLayer) (*tg.Int32, error) {
-	// TODO: not impl
-	c.Logger.Errorf("authsession.getLayer - error: method AuthsessionGetLayer not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	keyData, err := c.svcCtx.Repo.ResolvePermAuthKey(c.ctx, in.AuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	layer, err := c.svcCtx.Repo.GetApiLayer(c.ctx, keyData.PermAuthKeyId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt32(&tg.TLInt32{V: layer}).ToInt32(), nil
 }
