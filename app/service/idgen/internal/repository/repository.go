@@ -31,6 +31,16 @@ type Repository struct {
 }
 
 // NewRepository creates a new Repository.
+//
+// Configuration drives a two-step degradation:
+//
+//  1. If c.Mysql.DSN is empty, no SeqStore can be built. SeqAlloc is left nil
+//     and any call site that depends on it must guard with a nil check —
+//     callers should fail loudly rather than silently mis-allocate.
+//  2. If KV nodes are missing or have zero total weight, the allocator is
+//     wired without a cache (DB-direct mode). This keeps correctness intact
+//     but caps single-key throughput at MySQL's row-lock QPS (~1k); only
+//     suitable for low-frequency keys or local development.
 func NewRepository(c config.Config) *Repository {
 	r := &Repository{}
 	if c.Mysql.DSN == "" {

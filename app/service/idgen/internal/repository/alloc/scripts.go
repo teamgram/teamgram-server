@@ -1,81 +1,149 @@
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
 package alloc
 
-const setSeqScript = `
+// Lua scripts for the Redis segment cache.
+//
+// Both scripts operate on a single Redis hash key whose fields are:
+//
+//	CURR    - next sequence to be allocated (int64)
+//	LAST    - exclusive end of the cached segment (int64)
+//	TIME    - last successful malloc/setSeq timestamp in millis (int64)
+//	LOCK    - owner string of the in-flight replenish round, "" or absent if free
+//	LOCK_AT - millis when LOCK was taken (used for logical lock expiration)
+//
+// Lock TTL is implemented logically (now - LOCK_AT < lockMillis) so the data
+// key's own EXPIRE never has to be shortened to enforce lock expiration. The
+// data key's TTL is always refreshed to dataSecond on every successful op.
+
+// mallocScript reserves up to `size` ids from the cached segment.
+//
+// KEYS:
+//
+//	[1] data key
+//
+// ARGV:
+//
+//	[1] size        - number of ids to reserve; 0 means "peek current curr/last"
+//	[2] lockMillis  - logical lock TTL in millis
+//	[3] dataSecond  - data key TTL in seconds
+//	[4] nowMillis   - caller-supplied wall clock millis
+//	[5] owner       - caller-generated unique id (string)
+//
+// Return values are arrays whose first element is the state code:
+//
+//	{0, currSeq, lastSeq, time}        - Success: caller may use [currSeq, currSeq+size)
+//	{1, owner, time}                   - Miss:    cache is empty, lock acquired,
+//	                                              caller must replenish from store
+//	                                              and call setSeq with this owner
+//	{2}                                - Locked:  another caller holds the lock
+//	{3, currSeq, lastSeq, owner, time} - Exceed:  segment exhausted, lock acquired;
+//	                                              caller may use [currSeq, lastSeq)
+//	                                              and must replenish for the rest
+//
+// `time` is monotonically non-decreasing within a key: if nowMillis is older
+// than the previously stored TIME, the previously stored TIME is returned and
+// kept as the canonical clock.
+const mallocScript = `
+local size = tonumber(ARGV[1])
+local lockMillis = tonumber(ARGV[2])
+local dataSecond = tonumber(ARGV[3])
+local nowMillis = tonumber(ARGV[4])
+local owner = ARGV[5]
+
 local key = KEYS[1]
-local lockValue = ARGV[1]
-local dataSecond = ARGV[2]
-local curr_seq = tonumber(ARGV[3])
-local last_seq = tonumber(ARGV[4])
-local mallocTime = ARGV[5]
-if redis.call("EXISTS", key) == 0 then
-	redis.call("HSET", key, "CURR", curr_seq, "LAST", last_seq, "TIME", mallocTime)
-	redis.call("EXPIRE", key, dataSecond)
-	return 1
+
+local lockOwner = redis.call("HGET", key, "LOCK")
+if lockOwner and lockOwner ~= "" and lockOwner ~= false then
+    local lockAt = tonumber(redis.call("HGET", key, "LOCK_AT")) or 0
+    if nowMillis - lockAt < lockMillis then
+        return {2}
+    end
+    redis.call("HDEL", key, "LOCK", "LOCK_AT")
 end
-if redis.call("HGET", key, "LOCK") ~= lockValue then
-	return 2
+
+local prev = tonumber(redis.call("HGET", key, "TIME")) or 0
+if nowMillis < prev then
+    nowMillis = prev
 end
-redis.call("HDEL", key, "LOCK")
-redis.call("HSET", key, "CURR", curr_seq, "LAST", last_seq, "TIME", mallocTime)
+
+if redis.call("HEXISTS", key, "CURR") == 0 then
+    redis.call("HSET", key, "LOCK", owner, "LOCK_AT", nowMillis)
+    redis.call("EXPIRE", key, dataSecond)
+    return {1, owner, nowMillis}
+end
+
+local curr = tonumber(redis.call("HGET", key, "CURR"))
+local last = tonumber(redis.call("HGET", key, "LAST"))
+
+if size == 0 then
+    redis.call("EXPIRE", key, dataSecond)
+    return {0, curr, last, nowMillis}
+end
+
+local nextCurr = curr + size
+if nextCurr > last then
+    redis.call("HSET", key, "CURR", last, "TIME", nowMillis, "LOCK", owner, "LOCK_AT", nowMillis)
+    redis.call("EXPIRE", key, dataSecond)
+    return {3, curr, last, owner, nowMillis}
+end
+
+redis.call("HSET", key, "CURR", nextCurr, "TIME", nowMillis)
 redis.call("EXPIRE", key, dataSecond)
-return 0
+return {0, curr, last, nowMillis}
 `
 
-const mallocScript = `
+// setSeqScript commits a freshly fetched segment and releases the lock.
+//
+// It must be called with the same owner that mallocScript returned in the
+// preceding Miss/Exceed result. If LOCK does not match, the script aborts
+// without touching CURR/LAST so a stale caller cannot overwrite a segment
+// that another owner has already committed.
+//
+// KEYS:
+//
+//	[1] data key
+//
+// ARGV:
+//
+//	[1] owner       - must equal the current LOCK field
+//	[2] dataSecond  - data key TTL in seconds
+//	[3] currSeq     - new CURR value
+//	[4] lastSeq     - new LAST value (must be >= currSeq)
+//	[5] nowMillis   - caller-supplied wall clock millis
+//
+// Return values:
+//
+//	0 - Success
+//	1 - LockLost: lock was missing or held by another owner; caller must
+//	    treat the freshly fetched segment as wasted (gap on the producer side)
+const setSeqScript = `
+local owner = ARGV[1]
+local dataSecond = tonumber(ARGV[2])
+local currSeq = tonumber(ARGV[3])
+local lastSeq = tonumber(ARGV[4])
+local nowMillis = tonumber(ARGV[5])
+
 local key = KEYS[1]
-local size = tonumber(ARGV[1])
-local lockSecond = ARGV[2]
-local dataSecond = ARGV[3]
-local mallocTime = ARGV[4]
-local result = {}
-if redis.call("EXISTS", key) == 0 then
-	local lockValue = math.random(0, 999999999)
-	redis.call("HSET", key, "LOCK", lockValue)
-	redis.call("EXPIRE", key, lockSecond)
-	table.insert(result, 1)
-	table.insert(result, lockValue)
-	table.insert(result, mallocTime)
-	return result
+
+local lockOwner = redis.call("HGET", key, "LOCK")
+if (not lockOwner) or lockOwner == false or lockOwner ~= owner then
+    return 1
 end
-if redis.call("HEXISTS", key, "LOCK") == 1 then
-	table.insert(result, 2)
-	return result
+
+local prev = tonumber(redis.call("HGET", key, "TIME")) or 0
+if nowMillis < prev then
+    nowMillis = prev
 end
-local curr_seq = tonumber(redis.call("HGET", key, "CURR"))
-local last_seq = tonumber(redis.call("HGET", key, "LAST"))
-if size == 0 then
-	redis.call("EXPIRE", key, dataSecond)
-	table.insert(result, 0)
-	table.insert(result, curr_seq)
-	table.insert(result, last_seq)
-	local setTime = redis.call("HGET", key, "TIME")
-	if setTime then
-		table.insert(result, setTime)
-	else
-		table.insert(result, 0)
-	end
-	return result
-end
-local max_seq = curr_seq + size
-if max_seq > last_seq then
-	local lockValue = math.random(0, 999999999)
-	redis.call("HSET", key, "LOCK", lockValue)
-	redis.call("HSET", key, "CURR", last_seq)
-	redis.call("HSET", key, "TIME", mallocTime)
-	redis.call("EXPIRE", key, lockSecond)
-	table.insert(result, 3)
-	table.insert(result, curr_seq)
-	table.insert(result, last_seq)
-	table.insert(result, lockValue)
-	table.insert(result, mallocTime)
-	return result
-end
-redis.call("HSET", key, "CURR", max_seq)
-redis.call("HSET", key, "TIME", mallocTime)
+
+redis.call("HDEL", key, "LOCK", "LOCK_AT")
+redis.call("HSET", key, "CURR", currSeq, "LAST", lastSeq, "TIME", nowMillis)
 redis.call("EXPIRE", key, dataSecond)
-table.insert(result, 0)
-table.insert(result, curr_seq)
-table.insert(result, last_seq)
-table.insert(result, mallocTime)
-return result
+return 0
 `
