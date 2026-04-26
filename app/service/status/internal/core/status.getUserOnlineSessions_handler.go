@@ -17,15 +17,23 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // StatusGetUserOnlineSessions
 // status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("status.getUserOnlineSessions - error: method StatusGetUserOnlineSessions not impl")
+	if in.UserId <= 0 {
+		return nil, fmt.Errorf("getUserOnlineSessions: invalid user_id %d", in.UserId)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	r, err := c.svcCtx.Repo.GetUserOnlineSessions(c.ctx, in.UserId)
+	if err != nil {
+		c.Logger.Errorf("status.getUserOnlineSessions - error: %v", err)
+		return nil, err
+	}
+
+	return r, nil
 }
