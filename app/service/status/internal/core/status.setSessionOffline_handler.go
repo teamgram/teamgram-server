@@ -39,5 +39,5 @@ func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOfflin
 		return nil, err
 	}
 
-	return tg.MakeTLBoolTrue(&tg.TLBoolTrue{}).ToBool(), nil
+	return tg.BoolTrue, nil
 }

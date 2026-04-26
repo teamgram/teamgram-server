@@ -45,5 +45,5 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		return nil, err
 	}
 
-	return tg.MakeTLBoolTrue(&tg.TLBoolTrue{}).ToBool(), nil
+	return tg.BoolTrue, nil
 }
