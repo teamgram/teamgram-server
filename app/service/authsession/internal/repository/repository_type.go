@@ -17,6 +17,7 @@
 package repository
 
 import (
+	geoipclient "github.com/teamgram/teamgram-server/v2/app/infra/geoip/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
 )
@@ -27,4 +28,5 @@ type (
 	AuthUsersModelType   = model.AuthUsersModel
 	AuthsModelType       = model.AuthsModel
 	FutureSaltsModelType = xkv.FutureSaltsModel
+	GeoipClientType      = geoipclient.GeoipClient
 )

@@ -17,6 +17,7 @@
 package svc
 
 import (
+	geoipclient "github.com/teamgram/teamgram-server/v2/app/infra/geoip/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository"
 )
@@ -27,8 +28,10 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	geoipCli := geoipclient.NewGeoipClient(geoipclient.MustNewKitexClient(c.Geoip))
+
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repository.NewRepository(c, geoipCli),
 	}
 }

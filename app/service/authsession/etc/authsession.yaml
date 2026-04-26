@@ -1,2 +1,11 @@
 Name: service.authsession
 ListenOn: 0.0.0.0:20450
+
+Geoip:
+  DestService: service.geoip
+  ServiceName: RPCGeoip
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.geoip

@@ -28,4 +28,5 @@ type Config struct {
 	Mysql sqlx.Config
 	Cache cache.CacheConf
 	KV    kv.KvConf
+	Geoip kitex.RpcClientConf
 }

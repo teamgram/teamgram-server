@@ -19,6 +19,7 @@ package repository
 import (
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	geoipclient "github.com/teamgram/teamgram-server/v2/app/infra/geoip/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
@@ -32,16 +33,19 @@ type Repository struct {
 	kv               kv.Store
 	model            *model.Models
 	futureSaltsModel FutureSaltsModelType
+	geoipClient      GeoipClientType
 }
 
 // NewRepository creates a new Repository.
-func NewRepository(c config.Config) *Repository {
+func NewRepository(c config.Config, geoipClient geoipclient.GeoipClient) *Repository {
 	db := sqlx.NewMySQL(&c.Mysql)
 	kv2 := kv.NewStore(c.KV)
 
 	return &Repository{
 		CachedConn:       sqlc.NewConn(db, c.Cache),
+		kv:               kv2,
 		model:            model.NewModels(db, c.Cache),
 		futureSaltsModel: xkv.NewFutureSaltsModel(kv2, "future_salts"),
+		geoipClient:      geoipClient,
 	}
 }
