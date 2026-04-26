@@ -43,15 +43,7 @@ func authDataToAuthorization(data *cacheAuthData, current bool, country string, 
 }
 
 func (r *Repository) GetAuthorizationByAuthKeyId(ctx context.Context, authKeyId int64) (*tg.Authorization, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return nil, err
-	}
-	return r.GetAuthorization(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetAuthorization(ctx context.Context, permAuthKeyId int64) (*tg.Authorization, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil {
 		return nil, err
 	}
@@ -75,6 +67,10 @@ func (r *Repository) GetAuthorizationsByAuthKeyId(ctx context.Context, userId in
 	return r.GetAuthorizations(ctx, userId, excludePermAuthKeyId)
 }
 
+// GetAuthorizations returns the active sessions for a user, identified by
+// the *permanent* auth_key_id. Production handlers reach for
+// GetAuthorizationsByAuthKeyId; the perm-keyed entry point stays exported so
+// repository tests can drive it without mocking the auth_keys table.
 func (r *Repository) GetAuthorizations(ctx context.Context, userId int64, excludePermAuthKeyId int64) ([]*tg.Authorization, error) {
 	rows, err := r.model.AuthUsersModel.SelectListByUserId(ctx, userId)
 	if err != nil {
@@ -124,6 +120,10 @@ func (r *Repository) GetAuthorizations(ctx context.Context, userId int64, exclud
 	return authorizations, nil
 }
 
+// ResetAuthorizationByAuthKeyId revokes the user's sessions, optionally
+// filtered by access hash and excluding the caller's own perm key. The
+// returned slice is the set of auth_key_ids that downstream services should
+// invalidate (each id may be perm or temp depending on the binding).
 func (r *Repository) ResetAuthorizationByAuthKeyId(ctx context.Context, userId int64, authKeyId int64, hash int64) ([]int64, error) {
 	excludePermAuthKeyId := int64(0)
 	if authKeyId != 0 {
@@ -133,14 +133,7 @@ func (r *Repository) ResetAuthorizationByAuthKeyId(ctx context.Context, userId i
 			return nil, err
 		}
 	}
-	keyIds, err := r.ResetAuthorization(ctx, userId, excludePermAuthKeyId, hash)
-	if err != nil {
-		return nil, err
-	}
-	return r.ExpandAuthKeyIds(ctx, keyIds)
-}
 
-func (r *Repository) ResetAuthorization(ctx context.Context, userId int64, excludePermAuthKeyId int64, hash int64) ([]int64, error) {
 	rows, err := r.model.AuthUsersModel.SelectListByUserId(ctx, userId)
 	if err != nil {
 		return nil, wrapStorage(err)
@@ -176,5 +169,5 @@ func (r *Repository) ResetAuthorization(ctx context.Context, userId int64, exclu
 		return nil, wrapStorage(err)
 	}
 
-	return keyIds, nil
+	return r.ExpandAuthKeyIds(ctx, keyIds)
 }

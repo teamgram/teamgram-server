@@ -1,3 +1,19 @@
+// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
+
 package repository
 
 import (
@@ -9,9 +25,14 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 )
 
-func authsFromClientSession(session *authsession.ClientSession) *model.Auths {
+// All write helpers in this file translate ClientSession / init-connection
+// payloads keyed by the *caller* auth_key_id into rows keyed by the
+// permanent auth_key_id. The conversion functions take permAuthKeyId
+// explicitly so input structs are never mutated in place.
+
+func authsFromClientSession(permAuthKeyId int64, session *authsession.ClientSession) *model.Auths {
 	row := &model.Auths{
-		AuthKeyId:      session.AuthKeyId,
+		AuthKeyId:      permAuthKeyId,
 		Layer:          session.Layer,
 		ApiId:          session.ApiId,
 		DeviceModel:    session.DeviceModel,
@@ -29,9 +50,9 @@ func authsFromClientSession(session *authsession.ClientSession) *model.Auths {
 	return row
 }
 
-func authsFromInitConnection(in *authsession.TLAuthsessionSetInitConnection) *model.Auths {
+func authsFromInitConnection(permAuthKeyId int64, in *authsession.TLAuthsessionSetInitConnection) *model.Auths {
 	row := &model.Auths{
-		AuthKeyId:      in.AuthKeyId,
+		AuthKeyId:      permAuthKeyId,
 		ApiId:          in.ApiId,
 		DeviceModel:    in.DeviceModel,
 		SystemVersion:  in.SystemVersion,
@@ -54,57 +75,49 @@ func normalizeAuthsParams(row *model.Auths) {
 	}
 }
 
-func (r *Repository) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
-	row := authsFromClientSession(session)
-	_, _, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-		return r.model.AuthsModel.InsertOrUpdate(ctx, row)
-	}, authDataCacheKey(row.AuthKeyId))
-	return wrapStorage(err)
-}
-
+// SetClientSessionInfoByAuthKeyId persists the client session metadata under
+// the permanent auth_key_id. The provided ClientSession is treated as
+// read-only — its AuthKeyId is not rewritten.
 func (r *Repository) SetClientSessionInfoByAuthKeyId(ctx context.Context, session *authsession.ClientSession) error {
 	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, session.AuthKeyId)
 	if err != nil {
 		return err
 	}
-	session.AuthKeyId = permAuthKeyId
-	return r.SetClientSessionInfo(ctx, session)
-}
-
-func (r *Repository) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
-	row := &model.Auths{
-		AuthKeyId:  authKeyId,
-		Layer:      layer,
-		ClientIp:   ip,
-		DateActive: time.Now().Unix(),
-	}
-	_, _, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-		return r.model.AuthsModel.InsertOrUpdateLayer(ctx, row)
-	}, authDataCacheKey(authKeyId))
+	row := authsFromClientSession(permAuthKeyId, session)
+	_, _, err = r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		return r.model.AuthsModel.InsertOrUpdate(ctx, row)
+	}, authDataCacheKey(permAuthKeyId))
 	return wrapStorage(err)
 }
 
+// SetLayerByAuthKeyId records the protocol layer reported by the caller.
 func (r *Repository) SetLayerByAuthKeyId(ctx context.Context, authKeyId int64, ip string, layer int32) error {
 	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
 	if err != nil {
 		return err
 	}
-	return r.SetLayer(ctx, permAuthKeyId, ip, layer)
-}
-
-func (r *Repository) SetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) error {
-	row := authsFromInitConnection(in)
-	_, _, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-		return r.model.AuthsModel.InsertOrUpdate(ctx, row)
-	}, authDataCacheKey(row.AuthKeyId))
+	row := &model.Auths{
+		AuthKeyId:  permAuthKeyId,
+		Layer:      layer,
+		ClientIp:   ip,
+		DateActive: time.Now().Unix(),
+	}
+	_, _, err = r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		return r.model.AuthsModel.InsertOrUpdateLayer(ctx, row)
+	}, authDataCacheKey(permAuthKeyId))
 	return wrapStorage(err)
 }
 
+// SetInitConnectionByAuthKeyId persists init-connection metadata. The input
+// payload is not mutated; only the resolved permanent key is written.
 func (r *Repository) SetInitConnectionByAuthKeyId(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) error {
 	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, in.AuthKeyId)
 	if err != nil {
 		return err
 	}
-	in.AuthKeyId = permAuthKeyId
-	return r.SetInitConnection(ctx, in)
+	row := authsFromInitConnection(permAuthKeyId, in)
+	_, _, err = r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+		return r.model.AuthsModel.InsertOrUpdate(ctx, row)
+	}, authDataCacheKey(permAuthKeyId))
+	return wrapStorage(err)
 }

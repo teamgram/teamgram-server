@@ -24,6 +24,12 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+// defaultAuthKeyTTL is the lifetime applied to temporary / media-temporary
+// auth keys when the caller does not supply an explicit expires_in. Seven
+// days matches the upper bound used by official Telegram clients for cached
+// temp keys, and it bounds how long an orphaned row can stay reachable.
+const defaultAuthKeyTTL = 7 * 24 * 60 * 60
+
 func toAuthKeyInfo(do *model.AuthKeys) (*tg.AuthKeyInfo, error) {
 	keyData, err := base64.RawStdEncoding.DecodeString(do.Body)
 	if err != nil {
@@ -67,6 +73,16 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 	keyInfo, err := toAuthKeyInfo(key)
 	if err != nil {
 		return nil, authsession.ErrAuthKeyInvalid
+	}
+
+	if isTempAuthKeyType(keyInfo.AuthKeyType) {
+		active, err := r.checkAuthKeyActive(ctx, authKeyId)
+		if err != nil {
+			return nil, wrapStorage(err)
+		}
+		if !active {
+			return nil, authsession.ErrAuthKeyNotFound
+		}
 	}
 	return keyInfo, nil
 }
@@ -113,20 +129,65 @@ func (r *Repository) ExpandAuthKeyIds(ctx context.Context, authKeyIds []int64) (
 	return expandedKeyIds, nil
 }
 
+// SaveAuthKey persists an auth key and, for temp / media-temp keys, registers
+// a TTL entry in the lifecycle store so that QueryAuthKey lazily evicts
+// expired keys without touching the underlying table.
+//
+// expiredIn is interpreted as seconds, matching the MTProto semantics for
+// temp keys. A non-positive value falls back to defaultAuthKeyTTL (7 days)
+// to bound orphaned rows even when the caller forgets to supply one.
+// Permanent keys do not register a TTL — they live until explicit revocation.
 func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
-	// TODO(@benqi): expiredIn
-	_ = expiredIn
-
 	key := fromAuthKeyInfo(authKey)
-	_, _, err := r.model.AuthKeysModel.InsertIgnore(ctx, key)
-	if err != nil {
+	if _, _, err := r.model.AuthKeysModel.InsertIgnore(ctx, key); err != nil {
 		return wrapStorage(err)
 	}
 
+	if !isTempAuthKeyType(authKey.AuthKeyType) {
+		return nil
+	}
+
+	ttl := int(expiredIn)
+	if ttl <= 0 {
+		ttl = defaultAuthKeyTTL
+	}
+	if err := r.activateAuthKey(ctx, authKey.AuthKeyId, ttl); err != nil {
+		return wrapStorage(err)
+	}
 	return nil
 }
 
+func isTempAuthKeyType(authKeyType int32) bool {
+	return authKeyType == tg.AuthKeyTypeTemp || authKeyType == tg.AuthKeyTypeMediaTemp
+}
+
+func (r *Repository) activateAuthKey(ctx context.Context, authKeyId int64, ttlSeconds int) error {
+	if r.authKeyLifecycleModel == nil {
+		return nil
+	}
+	return r.authKeyLifecycleModel.Activate(ctx, authKeyId, ttlSeconds)
+}
+
+func (r *Repository) checkAuthKeyActive(ctx context.Context, authKeyId int64) (bool, error) {
+	if r.authKeyLifecycleModel == nil {
+		return true, nil
+	}
+	return r.authKeyLifecycleModel.IsActive(ctx, authKeyId)
+}
+
+// BindKeyId records a perm <-> temp / perm <-> media-temp pairing on the
+// auth_keys row identified by keyId.
+//
+// Both keyId and bindKeyId must be non-zero — bindKeyId == 0 used to be
+// silently accepted, which would clear the binding column without
+// invalidating the corresponding caches. Callers that genuinely want to
+// drop a binding should add a dedicated unbind path rather than relying on
+// the zero value here.
 func (r *Repository) BindKeyId(ctx context.Context, keyId int64, bindType int32, bindKeyId int64) error {
+	if keyId == 0 || bindKeyId == 0 {
+		return authsession.ErrAuthKeyInvalid
+	}
+
 	var err error
 	switch bindType {
 	case tg.AuthKeyTypePerm:

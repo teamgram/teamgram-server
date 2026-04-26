@@ -30,13 +30,18 @@ import (
 )
 
 // Repository is the dependency container for repository instances.
+//
+// db and kv are kept as struct fields purely so Close can dispose of the
+// underlying clients on shutdown — production paths read storage through the
+// embedded CachedConn or the kv-backed sub-models below.
 type Repository struct {
 	sqlc.CachedConn
-	db               *sqlx.DB
-	kv               kv.Store
-	model            *model.Models
-	futureSaltsModel FutureSaltsModelType
-	geoipClient      GeoipClientType
+	db                    *sqlx.DB
+	kv                    kv.Store
+	model                 *model.Models
+	futureSaltsModel      FutureSaltsModelType
+	authKeyLifecycleModel AuthKeyLifecycleModelType
+	geoipClient           GeoipClientType
 }
 
 // NewRepository creates a new Repository.
@@ -45,12 +50,13 @@ func NewRepository(c config.Config, geoipClient geoipclient.GeoipClient) *Reposi
 	kv2 := kv.NewStore(c.KV)
 
 	return &Repository{
-		CachedConn:       sqlc.NewConn(db, c.Cache),
-		db:               db,
-		kv:               kv2,
-		model:            model.NewModels(db, c.Cache),
-		futureSaltsModel: xkv.NewFutureSaltsModel(kv2, "future_salts"),
-		geoipClient:      geoipClient,
+		CachedConn:            sqlc.NewConn(db, c.Cache),
+		db:                    db,
+		kv:                    kv2,
+		model:                 model.NewModels(db, c.Cache),
+		futureSaltsModel:      xkv.NewFutureSaltsModel(kv2, "future_salts"),
+		authKeyLifecycleModel: xkv.NewAuthKeyLifecycleModel(kv2, "authsession"),
+		geoipClient:           geoipClient,
 	}
 }
 

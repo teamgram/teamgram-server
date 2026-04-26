@@ -22,11 +22,12 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/xkv"
 )
 
-// Type aliases for convenience in the Logic layer.
+// Type aliases keep the dependency types reachable from a single import.
 type (
-	AuthKeysModelType    = model.AuthKeysModel
-	AuthUsersModelType   = model.AuthUsersModel
-	AuthsModelType       = model.AuthsModel
-	FutureSaltsModelType = xkv.FutureSaltsModel
-	GeoipClientType      = geoipclient.GeoipClient
+	AuthKeysModelType         = model.AuthKeysModel
+	AuthUsersModelType        = model.AuthUsersModel
+	AuthsModelType            = model.AuthsModel
+	FutureSaltsModelType      = xkv.FutureSaltsModel
+	AuthKeyLifecycleModelType = xkv.AuthKeyLifecycleModel
+	GeoipClientType           = geoipclient.GeoipClient
 )

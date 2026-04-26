@@ -102,6 +102,10 @@ func authDataFromRows(authKeyId int64, authRow *model.Auths, userRow *model.Auth
 	return cacheData
 }
 
+// GetAuthData loads the cached aggregate (auth row + bound user row) for the
+// given permanent auth_key_id. It is the single read-through path used by the
+// *ByAuthKeyId helpers in this file; downstream code should reach for those
+// methods rather than passing perm ids around.
 func (r *Repository) GetAuthData(ctx context.Context, permAuthKeyId int64) (*cacheAuthData, error) {
 	var data *cacheAuthData
 	err := r.CachedConn.QueryRow(ctx, &data, authDataCacheKey(permAuthKeyId), func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
@@ -128,16 +132,20 @@ func (r *Repository) GetAuthData(ctx context.Context, permAuthKeyId int64) (*cac
 	return data, nil
 }
 
-func (r *Repository) GetAuthStateDataByAuthKeyId(ctx context.Context, authKeyId int64) (*authsession.AuthKeyStateData, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
+// authDataByAuthKeyId resolves the permanent auth_key_id for the caller's
+// auth_key_id and returns the joined cache record. Read helpers below all
+// route through it instead of duplicating the resolve+load boilerplate.
+func (r *Repository) authDataByAuthKeyId(ctx context.Context, authKeyId int64) (permAuthKeyId int64, data *cacheAuthData, err error) {
+	permAuthKeyId, err = r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
-	return r.GetAuthStateData(ctx, authKeyId, permAuthKeyId)
+	data, err = r.GetAuthData(ctx, permAuthKeyId)
+	return permAuthKeyId, data, err
 }
 
-func (r *Repository) GetAuthStateData(ctx context.Context, authKeyId int64, permAuthKeyId int64) (*authsession.AuthKeyStateData, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+func (r *Repository) GetAuthStateDataByAuthKeyId(ctx context.Context, authKeyId int64) (*authsession.AuthKeyStateData, error) {
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil {
 		return nil, err
 	}
@@ -149,47 +157,26 @@ func (r *Repository) GetAuthStateData(ctx context.Context, authKeyId int64, perm
 }
 
 func (r *Repository) GetApiLayerByAuthKeyId(ctx context.Context, authKeyId int64) (int32, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return 0, err
-	}
-	return r.GetApiLayer(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetApiLayer(ctx context.Context, permAuthKeyId int64) (int32, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.Client == nil {
 		return 0, err
 	}
 	return data.Client.Layer, nil
 }
 
+// GetLangCodeByAuthKeyId returns the negotiated lang_code or an empty string
+// when no client metadata is on record. The caller is responsible for
+// applying any defaulting (e.g. "en") so storage failures stay observable.
 func (r *Repository) GetLangCodeByAuthKeyId(ctx context.Context, authKeyId int64) (string, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return "", err
-	}
-	return r.GetLangCode(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetLangCode(ctx context.Context, permAuthKeyId int64) (string, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.Client == nil {
-		return "en", err
+		return "", err
 	}
 	return data.Client.LangCode, nil
 }
 
 func (r *Repository) GetLangPackByAuthKeyId(ctx context.Context, authKeyId int64) (string, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return "", err
-	}
-	return r.GetLangPack(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetLangPack(ctx context.Context, permAuthKeyId int64) (string, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.Client == nil {
 		return "", err
 	}
@@ -197,19 +184,14 @@ func (r *Repository) GetLangPack(ctx context.Context, permAuthKeyId int64) (stri
 }
 
 func (r *Repository) GetClientKindByAuthKeyId(ctx context.Context, authKeyId int64) (string, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return "", err
-	}
-	return r.GetClientKind(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetClientKind(ctx context.Context, permAuthKeyId int64) (string, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.Client == nil {
 		return "", err
 	}
 	clientKind := normalizeLangPack(data.Client.LangPack, data.Client.AppVersion)
+	// "android" + a TDLib build string is how Telegram identifies the
+	// React-based client; preserve that legacy mapping until callers move
+	// to a richer client-kind enum.
 	if clientKind == "android" && strings.Contains(data.Client.AppVersion, "TDLib") {
 		clientKind = "react"
 	}
@@ -217,15 +199,7 @@ func (r *Repository) GetClientKind(ctx context.Context, permAuthKeyId int64) (st
 }
 
 func (r *Repository) GetAuthKeyUserIdByAuthKeyId(ctx context.Context, authKeyId int64) (int64, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return 0, err
-	}
-	return r.GetAuthKeyUserId(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetAuthKeyUserId(ctx context.Context, permAuthKeyId int64) (int64, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.BindUser == nil {
 		return 0, err
 	}
@@ -233,30 +207,21 @@ func (r *Repository) GetAuthKeyUserId(ctx context.Context, permAuthKeyId int64) 
 }
 
 func (r *Repository) GetAndroidPushSessionIdByAuthKeyId(ctx context.Context, authKeyId int64) (int64, error) {
-	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
-	if err != nil {
-		return 0, err
-	}
-	return r.GetAndroidPushSessionId(ctx, permAuthKeyId)
-}
-
-func (r *Repository) GetAndroidPushSessionId(ctx context.Context, permAuthKeyId int64) (int64, error) {
-	data, err := r.GetAuthData(ctx, permAuthKeyId)
+	_, data, err := r.authDataByAuthKeyId(ctx, authKeyId)
 	if err != nil || data == nil || data.BindUser == nil {
 		return 0, err
 	}
 	return data.BindUser.AndroidPushSessionId, nil
 }
 
+// BindAuthKeyUserByAuthKeyId binds the caller's auth_key to a user and
+// returns the freshly minted access hash.
 func (r *Repository) BindAuthKeyUserByAuthKeyId(ctx context.Context, authKeyId int64, userId int64) (int64, error) {
 	permAuthKeyId, err := r.GetPermAuthKeyIdByAuthKeyId(ctx, authKeyId)
 	if err != nil {
 		return 0, err
 	}
-	return r.BindAuthKeyUser(ctx, permAuthKeyId, userId)
-}
 
-func (r *Repository) BindAuthKeyUser(ctx context.Context, permAuthKeyId int64, userId int64) (int64, error) {
 	now := time.Now().Unix()
 	hash, err := secureRandInt63()
 	if err != nil {
@@ -279,6 +244,9 @@ func (r *Repository) BindAuthKeyUser(ctx context.Context, permAuthKeyId int64, u
 	return authUser.Hash, nil
 }
 
+// UnbindAuthKeyUserByAuthKeyId removes the binding for the given user. When
+// authKeyId is 0 every binding owned by the user is deleted; callers use that
+// path during full account-wide logout.
 func (r *Repository) UnbindAuthKeyUserByAuthKeyId(ctx context.Context, authKeyId int64, userId int64) error {
 	permAuthKeyId := int64(0)
 	if authKeyId != 0 {
@@ -288,10 +256,7 @@ func (r *Repository) UnbindAuthKeyUserByAuthKeyId(ctx context.Context, authKeyId
 			return err
 		}
 	}
-	return r.UnbindAuthKeyUser(ctx, permAuthKeyId, userId)
-}
 
-func (r *Repository) UnbindAuthKeyUser(ctx context.Context, permAuthKeyId int64, userId int64) error {
 	cacheKeys := []string{authDataCacheKey(permAuthKeyId)}
 	if permAuthKeyId == 0 {
 		cacheKeys = nil
@@ -320,11 +285,7 @@ func (r *Repository) SetAndroidPushSessionIdByAuthKeyId(ctx context.Context, use
 	if err != nil {
 		return err
 	}
-	return r.SetAndroidPushSessionId(ctx, userId, permAuthKeyId, sessionId)
-}
-
-func (r *Repository) SetAndroidPushSessionId(ctx context.Context, userId int64, permAuthKeyId int64, sessionId int64) error {
-	_, _, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+	_, _, err = r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		rowsAffected, err := r.model.AuthUsersModel.UpdateAndroidPushSessionId(ctx, sessionId, permAuthKeyId, userId)
 		return 0, rowsAffected, err
 	}, authDataCacheKey(permAuthKeyId))
