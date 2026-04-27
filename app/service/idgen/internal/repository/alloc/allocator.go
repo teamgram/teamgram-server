@@ -109,14 +109,14 @@ type Cache interface {
 type SeqStore interface {
 	// Malloc atomically advances the persisted max_seq by `size` and returns
 	// the start of the newly reserved range. size==0 means "read max_seq".
-	Malloc(ctx context.Context, key string, size int64) (int64, error)
+	Malloc(ctx context.Context, table string, id int64, size int64) (int64, error)
 
 	// GetMaxSeq returns the current persisted max_seq.
-	GetMaxSeq(ctx context.Context, key string) (int64, error)
+	GetMaxSeq(ctx context.Context, table string, id int64) (int64, error)
 
 	// SetMaxSeq forces max_seq to a specific value but never lets it go
 	// backwards. Implementations must reject regressions.
-	SetMaxSeq(ctx context.Context, key string, seq int64) error
+	SetMaxSeq(ctx context.Context, table string, id int64, seq int64) error
 }
 
 // Errors returned by Allocator.
@@ -152,7 +152,7 @@ type Allocator struct {
 	store     SeqStore
 	wait      time.Duration
 	retries   int
-	blockSize func(key string, size int64) int64
+	blockSize func(table string, id int64, size int64) int64
 
 	cacheHit       atomic.Int64
 	cacheMiss      atomic.Int64
@@ -206,7 +206,7 @@ func WithRetries(retries int) Option {
 // fetch from the store. The default keeps a 50-id headroom on top of the
 // caller's request size; adaptive strategies (e.g. proportional to recent
 // consumption rate) can be plugged in here.
-func WithBlockSize(fn func(key string, size int64) int64) Option {
+func WithBlockSize(fn func(table string, id int64, size int64) int64) Option {
 	return func(a *Allocator) {
 		if fn != nil {
 			a.blockSize = fn
@@ -214,15 +214,15 @@ func WithBlockSize(fn func(key string, size int64) int64) Option {
 	}
 }
 
-func defaultBlockSize(_ string, size int64) int64 {
+func defaultBlockSize(_ string, _ int64, size int64) int64 {
 	if size == 0 {
 		return 0
 	}
 	return size + 50
 }
 
-func cacheKey(key string) string {
-	return fmt.Sprintf("idgen:malloc_seq:%s", key)
+func cacheKey(table string, id int64) string {
+	return fmt.Sprintf("idgen:malloc_seq:%s:%d", table, id)
 }
 
 // Stats returns a snapshot of Allocator counters. Useful for exposing under
@@ -241,8 +241,8 @@ func (a *Allocator) Stats() Stats {
 }
 
 // Malloc reserves `size` ids and returns the first one allocated.
-func (a *Allocator) Malloc(ctx context.Context, key string, size int64) (int64, error) {
-	seq, _, err := a.MallocTime(ctx, key, size)
+func (a *Allocator) Malloc(ctx context.Context, table string, id int64, size int64) (int64, error) {
+	seq, _, err := a.MallocTime(ctx, table, id, size)
 	return seq, err
 }
 
@@ -251,11 +251,11 @@ func (a *Allocator) Malloc(ctx context.Context, key string, size int64) (int64, 
 // When backed by a Cache, GetMaxSeq does NOT poison the cache state on miss:
 // it falls through to the store directly so a peek stays a true read-only
 // operation.
-func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
+func (a *Allocator) GetMaxSeq(ctx context.Context, table string, id int64) (int64, error) {
 	if a.cache == nil {
-		return a.store.GetMaxSeq(ctx, key)
+		return a.store.GetMaxSeq(ctx, table, id)
 	}
-	res, err := a.cache.Malloc(ctx, cacheKey(key), 0)
+	res, err := a.cache.Malloc(ctx, cacheKey(table, id), 0)
 	if err != nil {
 		return 0, err
 	}
@@ -265,7 +265,7 @@ func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
 		return res.CurrSeq, nil
 	case MallocMiss, MallocLocked, MallocExceed:
 		// Read-through to the store without writing back to the cache.
-		return a.store.GetMaxSeq(ctx, key)
+		return a.store.GetMaxSeq(ctx, table, id)
 	default:
 		return 0, fmt.Errorf("%w: %d", ErrInvalidState, res.State)
 	}
@@ -275,7 +275,7 @@ func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
 // regressions; see SeqStore.SetMaxSeq.
 //
 // SetMaxSeq's contract to its caller is "after this returns nil, the next
-// id allocated from key will be >= seq". Honouring that requires both
+// id allocated from (table, id) will be >= seq". Honouring that requires both
 // halves: persist the new max_seq in the store AND drop any cached segment
 // that could still serve ids below it. Therefore:
 //
@@ -290,19 +290,19 @@ func (a *Allocator) GetMaxSeq(ctx context.Context, key string) (int64, error) {
 // The previously cached segment is unconditionally dropped on success; its
 // remaining ids are wasted, but SetMaxSeq is a low-frequency administrative
 // operation so the gap is acceptable.
-func (a *Allocator) SetMaxSeq(ctx context.Context, key string, seq int64) error {
-	if err := a.store.SetMaxSeq(ctx, key, seq); err != nil {
+func (a *Allocator) SetMaxSeq(ctx context.Context, table string, id int64, seq int64) error {
+	if err := a.store.SetMaxSeq(ctx, table, id, seq); err != nil {
 		return err
 	}
 	if a.cache == nil {
 		return nil
 	}
-	if err := a.cache.Invalidate(ctx, cacheKey(key)); err != nil {
+	if err := a.cache.Invalidate(ctx, cacheKey(table, id)); err != nil {
 		logx.WithContext(ctx).Errorf(
-			"alloc: invalidate cache after SetMaxSeq failed: key=%s seq=%d err=%v",
-			key, seq, err,
+			"alloc: invalidate cache after SetMaxSeq failed: table=%s id=%d seq=%d err=%v",
+			table, id, seq, err,
 		)
-		return fmt.Errorf("alloc: invalidate cache after SetMaxSeq(key=%s, seq=%d): %w", key, seq, err)
+		return fmt.Errorf("alloc: invalidate cache after SetMaxSeq(table=%s, id=%d, seq=%d): %w", table, id, seq, err)
 	}
 	return nil
 }
@@ -314,13 +314,13 @@ func (a *Allocator) SetMaxSeq(ctx context.Context, key string, seq int64) error 
 //
 // When size==0 MallocTime degenerates into a peek (see GetMaxSeq) and returns
 // (currMaxSeq, 0, nil) without consuming any id.
-func (a *Allocator) MallocTime(ctx context.Context, key string, size int64) (int64, int64, error) {
+func (a *Allocator) MallocTime(ctx context.Context, table string, id int64, size int64) (int64, int64, error) {
 	if size < 0 {
 		return 0, 0, ErrInvalidSize
 	}
 	if a.cache == nil {
 		a.storeMalloc.Add(1)
-		seq, err := a.store.Malloc(ctx, key, size)
+		seq, err := a.store.Malloc(ctx, table, id, size)
 		if err != nil {
 			a.storeErr.Add(1)
 			return 0, 0, err
@@ -329,11 +329,11 @@ func (a *Allocator) MallocTime(ctx context.Context, key string, size int64) (int
 	}
 
 	if size == 0 {
-		seq, err := a.GetMaxSeq(ctx, key)
+		seq, err := a.GetMaxSeq(ctx, table, id)
 		return seq, 0, err
 	}
 
-	ck := cacheKey(key)
+	ck := cacheKey(table, id)
 	for i := 0; i < a.retries; i++ {
 		res, err := a.cache.Malloc(ctx, ck, size)
 		if err != nil {
@@ -347,7 +347,7 @@ func (a *Allocator) MallocTime(ctx context.Context, key string, size int64) (int
 
 		case MallocMiss:
 			a.cacheMiss.Add(1)
-			seq, err := a.handleMiss(ctx, ck, key, size, res.Owner, res.Mill)
+			seq, err := a.handleMiss(ctx, ck, table, id, size, res.Owner, res.Mill)
 			return seq, res.Mill, err
 
 		case MallocLocked:
@@ -358,7 +358,7 @@ func (a *Allocator) MallocTime(ctx context.Context, key string, size int64) (int
 
 		case MallocExceed:
 			a.cacheExceed.Add(1)
-			seq, err := a.handleExceed(ctx, ck, key, size, res)
+			seq, err := a.handleExceed(ctx, ck, table, id, size, res)
 			return seq, res.Mill, err
 
 		default:
@@ -372,16 +372,17 @@ func (a *Allocator) MallocTime(ctx context.Context, key string, size int64) (int
 // handleMiss replenishes a cold key. Caller's range is [seq, seq+size).
 func (a *Allocator) handleMiss(
 	ctx context.Context,
-	ck, key string,
+	ck, table string,
+	id int64,
 	size int64,
 	owner string,
 	mill int64,
 ) (int64, error) {
-	mallocSize := a.blockSize(key, size)
+	mallocSize := a.blockSize(table, id, size)
 	if mallocSize < size {
 		mallocSize = size
 	}
-	seq, err := a.storeMalloc1(ctx, key, mallocSize)
+	seq, err := a.storeMalloc1(ctx, table, id, mallocSize)
 	if err != nil {
 		return 0, err
 	}
@@ -399,17 +400,18 @@ func (a *Allocator) handleMiss(
 // store-returned seq.
 func (a *Allocator) handleExceed(
 	ctx context.Context,
-	ck, key string,
+	ck, table string,
+	id int64,
 	size int64,
 	res MallocResult,
 ) (int64, error) {
 	tailUsed := res.LastSeq - res.CurrSeq
 	freshNeeded := size - tailUsed
-	mallocSize := a.blockSize(key, freshNeeded)
+	mallocSize := a.blockSize(table, id, freshNeeded)
 	if mallocSize < freshNeeded {
 		mallocSize = freshNeeded
 	}
-	seq, err := a.storeMalloc1(ctx, key, mallocSize)
+	seq, err := a.storeMalloc1(ctx, table, id, mallocSize)
 	if err != nil {
 		return 0, err
 	}
@@ -425,17 +427,17 @@ func (a *Allocator) handleExceed(
 	// Splice mismatch: drop the in-flight tail, surface the new start.
 	a.wastedSegments.Add(1)
 	logx.WithContext(ctx).Infof(
-		"alloc: cache last seq mismatch (tail wasted): key=%s tail=[%d,%d) got=%d",
-		key, res.CurrSeq, res.LastSeq, seq,
+		"alloc: cache last seq mismatch (tail wasted): table=%s id=%d tail=[%d,%d) got=%d",
+		table, id, res.CurrSeq, res.LastSeq, seq,
 	)
 	a.commitSegment(ctx, ck, res.Owner, seq+size, seq+mallocSize, res.Mill)
 	return seq, nil
 }
 
 // storeMalloc1 wraps store.Malloc with metric counters.
-func (a *Allocator) storeMalloc1(ctx context.Context, key string, mallocSize int64) (int64, error) {
+func (a *Allocator) storeMalloc1(ctx context.Context, table string, id int64, mallocSize int64) (int64, error) {
 	a.storeMalloc.Add(1)
-	seq, err := a.store.Malloc(ctx, key, mallocSize)
+	seq, err := a.store.Malloc(ctx, table, id, mallocSize)
 	if err != nil {
 		a.storeErr.Add(1)
 		return 0, err

@@ -46,8 +46,10 @@ type setSeqStep struct {
 }
 
 type mallocCall struct {
-	key  string
-	size int64
+	key   string
+	table string
+	id    int64
+	size  int64
 }
 
 type setSeqCall struct {
@@ -105,12 +107,13 @@ type fakeSeqStore struct {
 }
 
 type setMaxSeqCall struct {
-	key string
-	seq int64
+	table string
+	id    int64
+	seq   int64
 }
 
-func (f *fakeSeqStore) Malloc(_ context.Context, key string, size int64) (int64, error) {
-	f.mallocCalls = append(f.mallocCalls, mallocCall{key: key, size: size})
+func (f *fakeSeqStore) Malloc(_ context.Context, table string, id int64, size int64) (int64, error) {
+	f.mallocCalls = append(f.mallocCalls, mallocCall{table: table, id: id, size: size})
 	if len(f.mallocErrs) > 0 {
 		err := f.mallocErrs[0]
 		f.mallocErrs = f.mallocErrs[1:]
@@ -126,12 +129,12 @@ func (f *fakeSeqStore) Malloc(_ context.Context, key string, size int64) (int64,
 	return seq, nil
 }
 
-func (f *fakeSeqStore) GetMaxSeq(_ context.Context, _ string) (int64, error) {
+func (f *fakeSeqStore) GetMaxSeq(_ context.Context, _ string, _ int64) (int64, error) {
 	return f.maxSeq, f.maxSeqErr
 }
 
-func (f *fakeSeqStore) SetMaxSeq(_ context.Context, key string, seq int64) error {
-	f.setMaxSeqCalls = append(f.setMaxSeqCalls, setMaxSeqCall{key: key, seq: seq})
+func (f *fakeSeqStore) SetMaxSeq(_ context.Context, table string, id int64, seq int64) error {
+	f.setMaxSeqCalls = append(f.setMaxSeqCalls, setMaxSeqCall{table: table, id: id, seq: seq})
 	return f.setMaxSeqErr
 }
 
@@ -149,7 +152,7 @@ func TestMallocSuccessHitsCacheOnly(t *testing.T) {
 	store := &fakeSeqStore{}
 	a := newAllocator(cache, store)
 
-	seq, mill, err := a.MallocTime(context.Background(), "inbox:1", 5)
+	seq, mill, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 5)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -175,7 +178,7 @@ func TestMallocMissReplenishesAndCommits(t *testing.T) {
 	store := &fakeSeqStore{mallocSeqs: []int64{40}}
 	a := newAllocator(cache, store)
 
-	seq, mill, err := a.MallocTime(context.Background(), "inbox:1", 3)
+	seq, mill, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 3)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -184,6 +187,13 @@ func TestMallocMissReplenishesAndCommits(t *testing.T) {
 	}
 	if got, want := store.mallocCalls[0].size, int64(53); got != want {
 		t.Fatalf("store.Malloc size = %d, want %d (size+50 headroom)", got, want)
+	}
+	if got := store.mallocCalls[0]; got.table != MessageBoxNGen || got.id != 1 {
+		t.Fatalf("store.Malloc target = (%s, %d), want (%s, 1)", got.table, got.id, MessageBoxNGen)
+	}
+	wantKey := cacheKey(MessageBoxNGen, 1)
+	if got := cache.mallocCalls[0].key; got != wantKey {
+		t.Fatalf("cache.Malloc key = %q, want %q", got, wantKey)
 	}
 	if len(cache.setSeqCalls) != 1 {
 		t.Fatalf("cache.SetSeq calls = %d, want 1", len(cache.setSeqCalls))
@@ -210,7 +220,7 @@ func TestMallocLockedRetriesUntilSuccess(t *testing.T) {
 	}
 	a := newAllocator(cache, &fakeSeqStore{})
 
-	seq, _, err := a.MallocTime(context.Background(), "inbox:1", 1)
+	seq, _, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 1)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -234,7 +244,7 @@ func TestMallocLockedExhaustsRetries(t *testing.T) {
 	}
 	a := newAllocator(cache, &fakeSeqStore{})
 
-	_, _, err := a.MallocTime(context.Background(), "inbox:1", 1)
+	_, _, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 1)
 	if !errors.Is(err, ErrLockTimeout) {
 		t.Fatalf("MallocTime() err = %v, want ErrLockTimeout", err)
 	}
@@ -261,7 +271,7 @@ func TestMallocExceedSpliceOK(t *testing.T) {
 	store := &fakeSeqStore{mallocSeqs: []int64{93}}
 	a := newAllocator(cache, store)
 
-	seq, mill, err := a.MallocTime(context.Background(), "inbox:1", 51)
+	seq, mill, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 51)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -300,7 +310,7 @@ func TestMallocExceedSpliceMismatchWastesTail(t *testing.T) {
 	store := &fakeSeqStore{mallocSeqs: []int64{200}} // not == LastSeq
 	a := newAllocator(cache, store)
 
-	seq, _, err := a.MallocTime(context.Background(), "inbox:1", 51)
+	seq, _, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 51)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -328,7 +338,7 @@ func TestMallocStoreErrorPropagates(t *testing.T) {
 	store := &fakeSeqStore{mallocErrs: []error{storeErr}}
 	a := newAllocator(cache, store)
 
-	_, _, err := a.MallocTime(context.Background(), "inbox:1", 1)
+	_, _, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 1)
 	if !errors.Is(err, storeErr) {
 		t.Fatalf("MallocTime() err = %v, want %v", err, storeErr)
 	}
@@ -354,7 +364,7 @@ func TestMallocSetSeqLockLostMarksWaste(t *testing.T) {
 	store := &fakeSeqStore{mallocSeqs: []int64{500}}
 	a := newAllocator(cache, store)
 
-	seq, _, err := a.MallocTime(context.Background(), "inbox:1", 3)
+	seq, _, err := a.MallocTime(context.Background(), MessageBoxNGen, 1, 3)
 	if err != nil {
 		t.Fatalf("MallocTime() err = %v", err)
 	}
@@ -380,7 +390,7 @@ func TestGetMaxSeqDoesNotPoisonCacheOnMiss(t *testing.T) {
 	store := &fakeSeqStore{maxSeq: 12345}
 	a := newAllocator(cache, store)
 
-	got, err := a.GetMaxSeq(context.Background(), "inbox:1")
+	got, err := a.GetMaxSeq(context.Background(), MessageBoxNGen, 1)
 	if err != nil {
 		t.Fatalf("GetMaxSeq() err = %v", err)
 	}
@@ -406,7 +416,7 @@ func TestGetMaxSeqHitsCacheWhenWarm(t *testing.T) {
 	store := &fakeSeqStore{maxSeq: 9_999}
 	a := newAllocator(cache, store)
 
-	got, err := a.GetMaxSeq(context.Background(), "inbox:1")
+	got, err := a.GetMaxSeq(context.Background(), MessageBoxNGen, 1)
 	if err != nil {
 		t.Fatalf("GetMaxSeq() err = %v", err)
 	}
@@ -418,7 +428,7 @@ func TestGetMaxSeqHitsCacheWhenWarm(t *testing.T) {
 // TestRejectsNegativeSize: negative size is a programming error.
 func TestRejectsNegativeSize(t *testing.T) {
 	a := newAllocator(&fakeCache{}, &fakeSeqStore{})
-	if _, err := a.Malloc(context.Background(), "inbox:1", -1); !errors.Is(err, ErrInvalidSize) {
+	if _, err := a.Malloc(context.Background(), MessageBoxNGen, 1, -1); !errors.Is(err, ErrInvalidSize) {
 		t.Fatalf("Malloc(-1) err = %v, want ErrInvalidSize", err)
 	}
 }
@@ -429,7 +439,7 @@ func TestNilCacheGoesDirectToStore(t *testing.T) {
 	store := &fakeSeqStore{mallocSeqs: []int64{42}, maxSeq: 99}
 	a := NewAllocator(nil, store)
 
-	seq, err := a.Malloc(context.Background(), "inbox:1", 5)
+	seq, err := a.Malloc(context.Background(), MessageBoxNGen, 1, 5)
 	if err != nil {
 		t.Fatalf("Malloc() err = %v", err)
 	}
@@ -437,7 +447,7 @@ func TestNilCacheGoesDirectToStore(t *testing.T) {
 		t.Fatalf("Malloc() seq = %d, want 42", seq)
 	}
 
-	got, err := a.GetMaxSeq(context.Background(), "inbox:1")
+	got, err := a.GetMaxSeq(context.Background(), MessageBoxNGen, 1)
 	if err != nil {
 		t.Fatalf("GetMaxSeq() err = %v", err)
 	}
@@ -454,13 +464,13 @@ func TestSetMaxSeqInvalidatesCache(t *testing.T) {
 	store := &fakeSeqStore{}
 	a := newAllocator(cache, store)
 
-	if err := a.SetMaxSeq(context.Background(), "inbox:1", 999); err != nil {
+	if err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 999); err != nil {
 		t.Fatalf("SetMaxSeq() err = %v", err)
 	}
 	if len(store.setMaxSeqCalls) != 1 || store.setMaxSeqCalls[0].seq != 999 {
 		t.Fatalf("store.SetMaxSeq calls = %+v, want one call with seq=999", store.setMaxSeqCalls)
 	}
-	wantKey := cacheKey("inbox:1")
+	wantKey := cacheKey(MessageBoxNGen, 1)
 	if len(cache.invalidatedKeys) != 1 || cache.invalidatedKeys[0] != wantKey {
 		t.Fatalf("cache.Invalidate keys = %+v, want [%s]", cache.invalidatedKeys, wantKey)
 	}
@@ -474,7 +484,7 @@ func TestSetMaxSeqStoreErrorSkipsInvalidate(t *testing.T) {
 	store := &fakeSeqStore{setMaxSeqErr: storeErr}
 	a := newAllocator(cache, store)
 
-	if err := a.SetMaxSeq(context.Background(), "inbox:1", 999); !errors.Is(err, storeErr) {
+	if err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 999); !errors.Is(err, storeErr) {
 		t.Fatalf("SetMaxSeq() err = %v, want %v", err, storeErr)
 	}
 	if len(cache.invalidatedKeys) != 0 {
@@ -494,7 +504,7 @@ func TestSetMaxSeqInvalidateFailureSurfacesError(t *testing.T) {
 	store := &fakeSeqStore{}
 	a := newAllocator(cache, store)
 
-	err := a.SetMaxSeq(context.Background(), "inbox:1", 42)
+	err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 42)
 	if !errors.Is(err, wantErr) {
 		t.Fatalf("SetMaxSeq() err = %v, want wrapped %v", err, wantErr)
 	}
@@ -514,10 +524,10 @@ func TestSetMaxSeqInvalidateRetryIsIdempotent(t *testing.T) {
 	store := &fakeSeqStore{}
 	a := newAllocator(cache, store)
 
-	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err == nil {
+	if err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 42); err == nil {
 		t.Fatal("first SetMaxSeq() err = nil, want error")
 	}
-	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err != nil {
+	if err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 42); err != nil {
 		t.Fatalf("retry SetMaxSeq() err = %v, want nil", err)
 	}
 	if len(store.setMaxSeqCalls) != 2 {
@@ -534,7 +544,7 @@ func TestSetMaxSeqWithoutCacheNoOpInvalidate(t *testing.T) {
 	store := &fakeSeqStore{}
 	a := NewAllocator(nil, store)
 
-	if err := a.SetMaxSeq(context.Background(), "inbox:1", 42); err != nil {
+	if err := a.SetMaxSeq(context.Background(), MessageBoxNGen, 1, 42); err != nil {
 		t.Fatalf("SetMaxSeq() err = %v", err)
 	}
 	if len(store.setMaxSeqCalls) != 1 {
@@ -555,7 +565,7 @@ func TestMallocCancelledContextStopsRetries(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	_, _, err := a.MallocTime(ctx, "inbox:1", 1)
+	_, _, err := a.MallocTime(ctx, MessageBoxNGen, 1, 1)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("MallocTime() err = %v, want context.Canceled", err)
 	}
