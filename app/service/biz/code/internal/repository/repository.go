@@ -17,14 +17,31 @@
 package repository
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/repository/xkv"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	kv             kv.ExtStore
+	phoneCodeModel PhoneCodeModelType
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	kv2 := kv.NewStore(c.KV)
+
+	return &Repository{
+		kv:             kv2,
+		phoneCodeModel: xkv.NewPhoneCodeModel(kv2, "code"),
+	}
+}
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
+	}
+	return nil
 }

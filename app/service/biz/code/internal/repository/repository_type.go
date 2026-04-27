@@ -16,7 +16,11 @@
 
 package repository
 
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/repository/xkv"
+)
+
 // Type aliases for convenience in the Logic layer.
 type (
-// TODO: Add type aliases per business requirements.
+	PhoneCodeModelType = xkv.PhoneCodeModel
 )
