@@ -24,8 +24,8 @@ import (
 // UserUpdateLastSeen
 // user.updateLastSeen id:long last_seen_at:long expires:int = Bool;
 func (c *UserCore) UserUpdateLastSeen(in *user.TLUserUpdateLastSeen) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateLastSeen - error: method UserUpdateLastSeen not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateLastSeen(c.ctx, in.Id, in.LastSeenAt, in.Expires); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -19,6 +19,7 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 )
 
 type ServiceContext struct {
@@ -27,8 +28,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	mediaCli := mediaclient.NewMediaClient(mediaclient.MustNewKitexClient(c.MediaClient))
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repository.NewRepository(c, repository.NewMediaReader(mediaCli)),
 	}
 }

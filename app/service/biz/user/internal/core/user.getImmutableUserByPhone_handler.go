@@ -24,8 +24,5 @@ import (
 // UserGetImmutableUserByPhone
 // user.getImmutableUserByPhone phone:string = ImmutableUser;
 func (c *UserCore) UserGetImmutableUserByPhone(in *user.TLUserGetImmutableUserByPhone) (*tg.ImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getImmutableUserByPhone - error: method UserGetImmutableUserByPhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetImmutableUserByPhone(c.ctx, in.Phone)
 }

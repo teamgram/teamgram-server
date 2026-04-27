@@ -24,8 +24,8 @@ import (
 // UserReorderUsernames
 // user.reorderUsernames peer_type:int peer_id:long username_list:Vector<string> = Bool;
 func (c *UserCore) UserReorderUsernames(in *user.TLUserReorderUsernames) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.reorderUsernames - error: method UserReorderUsernames not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.ReorderUsernames(c.ctx, in.PeerType, in.PeerId, in.UsernameList); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

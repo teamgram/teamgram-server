@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetPrivacy
 // user.getPrivacy user_id:long key_type:int = Vector<PrivacyRule>;
 func (c *UserCore) UserGetPrivacy(in *user.TLUserGetPrivacy) (*user.VectorPrivacyRule, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getPrivacy - error: method UserGetPrivacy not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetPrivacy(c.ctx, in.UserId, in.KeyType)
 }

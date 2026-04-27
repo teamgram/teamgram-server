@@ -24,8 +24,8 @@ import (
 // UserSetPrivacy
 // user.setPrivacy user_id:long key_type:int rules:Vector<PrivacyRule> = Bool;
 func (c *UserCore) UserSetPrivacy(in *user.TLUserSetPrivacy) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setPrivacy - error: method UserSetPrivacy not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetPrivacy(c.ctx, in.UserId, in.KeyType, in.Rules); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

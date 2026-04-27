@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetUserDataListByIdList
 // user.getUserDataListByIdList user_id_list:Vector<long> = Vector<UserData>;
 func (c *UserCore) UserGetUserDataListByIdList(in *user.TLUserGetUserDataListByIdList) (*user.VectorUserData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getUserDataListByIdList - error: method UserGetUserDataListByIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	users, err := c.svcCtx.Repo.GetUserDataList(c.ctx, in.UserIdList)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorUserData{Datas: users}, nil
 }

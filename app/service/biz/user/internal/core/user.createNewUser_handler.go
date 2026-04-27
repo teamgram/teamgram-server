@@ -24,8 +24,5 @@ import (
 // UserCreateNewUser
 // user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
 func (c *UserCore) UserCreateNewUser(in *user.TLUserCreateNewUser) (*tg.ImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.createNewUser - error: method UserCreateNewUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CreateNewUser(c.ctx, in.SecretKeyId, in.Phone, in.CountryCode, in.FirstName, in.LastName)
 }

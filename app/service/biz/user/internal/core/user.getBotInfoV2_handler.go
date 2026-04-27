@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetBotInfoV2
 // user.getBotInfoV2 bot_id:long = BotInfoData;
 func (c *UserCore) UserGetBotInfoV2(in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getBotInfoV2 - error: method UserGetBotInfoV2 not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetBotInfoData(c.ctx, in.BotId)
 }

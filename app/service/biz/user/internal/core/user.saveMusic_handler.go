@@ -24,8 +24,8 @@ import (
 // UserSaveMusic
 // user.saveMusic flags:# unsave:flags.0?true user_id:long id:long after_id:flags.15?long = Bool;
 func (c *UserCore) UserSaveMusic(in *user.TLUserSaveMusic) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.saveMusic - error: method UserSaveMusic not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SaveMusic(c.ctx, in.UserId, in.Id, in.Unsave); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

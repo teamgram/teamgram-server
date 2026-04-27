@@ -24,8 +24,9 @@ import (
 // UserIsBot
 // user.isBot id:long = Bool;
 func (c *UserCore) UserIsBot(in *user.TLUserIsBot) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.isBot - error: method UserIsBot not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	isBot, err := c.svcCtx.Repo.IsBot(c.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(isBot), nil
 }

@@ -24,8 +24,8 @@ import (
 // UserUpdatePersonalChannel
 // user.updatePersonalChannel user_id:long channel_id:long = Bool;
 func (c *UserCore) UserUpdatePersonalChannel(in *user.TLUserUpdatePersonalChannel) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updatePersonalChannel - error: method UserUpdatePersonalChannel not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdatePersonalChannel(c.ctx, in.UserId, in.ChannelId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

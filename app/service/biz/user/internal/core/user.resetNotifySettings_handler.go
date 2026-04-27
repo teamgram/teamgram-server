@@ -24,8 +24,8 @@ import (
 // UserResetNotifySettings
 // user.resetNotifySettings user_id:long = Bool;
 func (c *UserCore) UserResetNotifySettings(in *user.TLUserResetNotifySettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.resetNotifySettings - error: method UserResetNotifySettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.ResetNotifySettings(c.ctx, in.UserId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

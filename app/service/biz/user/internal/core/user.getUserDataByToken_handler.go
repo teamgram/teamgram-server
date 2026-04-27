@@ -24,8 +24,5 @@ import (
 // UserGetUserDataByToken
 // user.getUserDataByToken token:string = UserData;
 func (c *UserCore) UserGetUserDataByToken(in *user.TLUserGetUserDataByToken) (*tg.UserData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getUserDataByToken - error: method UserGetUserDataByToken not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetUserDataByToken(c.ctx, in.Token)
 }

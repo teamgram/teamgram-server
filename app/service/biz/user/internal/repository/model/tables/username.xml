@@ -49,7 +49,7 @@
         </sql>
     </operation>
 
-    <operation name="Delete2">
+    <operation name="DeleteByPeer">
         <sql>
             DELETE FROM username WHERE peer_type = :peer_type AND peer_id = :peer_id AND editable = 1
         </sql>

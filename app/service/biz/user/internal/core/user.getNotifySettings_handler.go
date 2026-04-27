@@ -24,8 +24,5 @@ import (
 // UserGetNotifySettings
 // user.getNotifySettings user_id:long peer_type:int peer_id:long = PeerNotifySettings;
 func (c *UserCore) UserGetNotifySettings(in *user.TLUserGetNotifySettings) (*tg.PeerNotifySettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getNotifySettings - error: method UserGetNotifySettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetNotifySettings(c.ctx, in.UserId, in.PeerType, in.PeerId)
 }

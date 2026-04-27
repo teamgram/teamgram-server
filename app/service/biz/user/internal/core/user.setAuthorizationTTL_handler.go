@@ -24,8 +24,8 @@ import (
 // UserSetAuthorizationTTL
 // user.setAuthorizationTTL user_id:long ttl:int = Bool;
 func (c *UserCore) UserSetAuthorizationTTL(in *user.TLUserSetAuthorizationTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setAuthorizationTTL - error: method UserSetAuthorizationTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetAuthorizationTTL(c.ctx, in.UserId, in.Ttl); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

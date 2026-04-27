@@ -42,8 +42,8 @@ type (
 		Delete(ctx context.Context, username string) (rowsAffected int64, err error)
 		DeleteTx(tx *sqlx.Tx, username string) (rowsAffected int64, err error)
 
-		Delete2(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error)
-		Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int64) (rowsAffected int64, err error)
+		DeleteByPeer(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error)
+		DeleteByPeerTx(tx *sqlx.Tx, peerType int32, peerId int64) (rowsAffected int64, err error)
 
 		DeleteByChannelId(ctx context.Context, peerId int64) (rowsAffected int64, err error)
 		DeleteByChannelIdTx(tx *sqlx.Tx, peerId int64) (rowsAffected int64, err error)
@@ -312,9 +312,9 @@ func (m *defaultUsernameModel) DeleteTx(tx *sqlx.Tx, username string) (rowsAffec
 	return
 }
 
-// Delete2
+// DeleteByPeer
 // delete from username where peer_type = :peer_type and peer_id = :peer_id and editable = 1
-func (m *defaultUsernameModel) Delete2(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUsernameModel) DeleteByPeer(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "delete from username where peer_type = ? and peer_id = ? and editable = 1"
@@ -323,21 +323,21 @@ func (m *defaultUsernameModel) Delete2(ctx context.Context, peerType int32, peer
 	rResult, err = m.db.Exec(ctx, query, peerType, peerId)
 
 	if err != nil {
-		err = fmt.Errorf("username.Delete2 exec: %w", err)
+		err = fmt.Errorf("username.DeleteByPeer exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("username.Delete2 rows affected: %w", err)
+		err = fmt.Errorf("username.DeleteByPeer rows affected: %w", err)
 	}
 
 	return
 }
 
-// Delete2Tx
+// DeleteByPeerTx
 // delete from username where peer_type = :peer_type and peer_id = :peer_id and editable = 1
-func (m *defaultUsernameModel) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUsernameModel) DeleteByPeerTx(tx *sqlx.Tx, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from username where peer_type = ? and peer_id = ? and editable = 1"
 		rResult sql.Result
@@ -345,13 +345,13 @@ func (m *defaultUsernameModel) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int
 	rResult, err = tx.Exec(query, peerType, peerId)
 
 	if err != nil {
-		err = fmt.Errorf("username.Delete2Tx exec: %w", err)
+		err = fmt.Errorf("username.DeleteByPeerTx exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("username.Delete2Tx rows affected: %w", err)
+		err = fmt.Errorf("username.DeleteByPeerTx rows affected: %w", err)
 	}
 
 	return

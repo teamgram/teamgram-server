@@ -24,8 +24,8 @@ import (
 // UserUpdateVerified
 // user.updateVerified user_id:long verified:Bool = Bool;
 func (c *UserCore) UserUpdateVerified(in *user.TLUserUpdateVerified) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateVerified - error: method UserUpdateVerified not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateVerified(c.ctx, in.UserId, tg.FromBoolClazz(in.Verified)); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

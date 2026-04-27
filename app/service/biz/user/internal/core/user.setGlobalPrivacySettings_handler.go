@@ -24,8 +24,8 @@ import (
 // UserSetGlobalPrivacySettings
 // user.setGlobalPrivacySettings user_id:long settings:GlobalPrivacySettings = Bool;
 func (c *UserCore) UserSetGlobalPrivacySettings(in *user.TLUserSetGlobalPrivacySettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setGlobalPrivacySettings - error: method UserSetGlobalPrivacySettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetGlobalPrivacySettings(c.ctx, in.UserId, in.Settings); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

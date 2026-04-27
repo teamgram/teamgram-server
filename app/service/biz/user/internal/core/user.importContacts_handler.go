@@ -18,14 +18,10 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserImportContacts
 // user.importContacts user_id:long contacts:Vector<InputContact> = UserImportedContacts;
 func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.UserImportedContacts, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.importContacts - error: method UserImportContacts not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.ImportContacts(c.ctx, in.UserId, in.Contacts)
 }

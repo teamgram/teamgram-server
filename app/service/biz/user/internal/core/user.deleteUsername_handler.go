@@ -24,8 +24,9 @@ import (
 // UserDeleteUsername
 // user.deleteUsername username:string = Bool;
 func (c *UserCore) UserDeleteUsername(in *user.TLUserDeleteUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deleteUsername - error: method UserDeleteUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	ok, err := c.svcCtx.Repo.DeleteUsername(c.ctx, in.Username)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(ok), nil
 }

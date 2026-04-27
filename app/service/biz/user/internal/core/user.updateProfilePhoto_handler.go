@@ -24,8 +24,9 @@ import (
 // UserUpdateProfilePhoto
 // user.updateProfilePhoto user_id:long id:long = Int64;
 func (c *UserCore) UserUpdateProfilePhoto(in *user.TLUserUpdateProfilePhoto) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateProfilePhoto - error: method UserUpdateProfilePhoto not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	photoID, err := c.svcCtx.Repo.UpdateProfilePhoto(c.ctx, in.UserId, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: photoID}).ToInt64(), nil
 }

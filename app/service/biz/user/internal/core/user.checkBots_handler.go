@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserCheckBots
 // user.checkBots id:Vector<long> = Vector<long>;
 func (c *UserCore) UserCheckBots(in *user.TLUserCheckBots) (*user.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkBots - error: method UserCheckBots not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	bots, err := c.svcCtx.Repo.CheckBots(c.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorLong{Datas: bots}, nil
 }

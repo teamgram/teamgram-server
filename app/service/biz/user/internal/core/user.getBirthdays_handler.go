@@ -24,8 +24,5 @@ import (
 // UserGetBirthdays
 // user.getBirthdays user_id:long = Vector<ContactBirthday>;
 func (c *UserCore) UserGetBirthdays(in *user.TLUserGetBirthdays) (*user.VectorContactBirthday, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getBirthdays - error: method UserGetBirthdays not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return &user.VectorContactBirthday{Datas: []tg.ContactBirthdayClazz{}}, nil
 }

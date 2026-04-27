@@ -18,14 +18,10 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserCheckUsername
 // user.checkUsername username:string = UsernameExist;
 func (c *UserCore) UserCheckUsername(in *user.TLUserCheckUsername) (*user.UsernameExist, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkUsername - error: method UserCheckUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CheckUsername(c.ctx, in.Username)
 }

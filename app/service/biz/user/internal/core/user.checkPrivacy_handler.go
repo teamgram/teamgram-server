@@ -24,8 +24,9 @@ import (
 // UserCheckPrivacy
 // user.checkPrivacy flags:# user_id:long key_type:int peer_id:long = Bool;
 func (c *UserCore) UserCheckPrivacy(in *user.TLUserCheckPrivacy) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkPrivacy - error: method UserCheckPrivacy not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	allowed, err := c.svcCtx.Repo.CheckPrivacy(c.ctx, in.UserId, in.KeyType, in.PeerId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(allowed), nil
 }

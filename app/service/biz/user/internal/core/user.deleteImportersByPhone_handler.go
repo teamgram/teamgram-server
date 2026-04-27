@@ -24,8 +24,8 @@ import (
 // UserDeleteImportersByPhone
 // user.deleteImportersByPhone phone:string = Bool;
 func (c *UserCore) UserDeleteImportersByPhone(in *user.TLUserDeleteImportersByPhone) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deleteImportersByPhone - error: method UserDeleteImportersByPhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.DeleteImportersByPhone(c.ctx, in.Phone); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

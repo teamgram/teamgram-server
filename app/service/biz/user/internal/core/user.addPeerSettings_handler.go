@@ -24,8 +24,8 @@ import (
 // UserAddPeerSettings
 // user.addPeerSettings user_id:long peer_type:int peer_id:long settings:PeerSettings = Bool;
 func (c *UserCore) UserAddPeerSettings(in *user.TLUserAddPeerSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.addPeerSettings - error: method UserAddPeerSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.AddPeerSettings(c.ctx, in.UserId, in.PeerType, in.PeerId, in.Settings); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

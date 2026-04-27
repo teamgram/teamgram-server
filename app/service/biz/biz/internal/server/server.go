@@ -20,12 +20,15 @@ package server
 
 import (
 	"flag"
+
 	"github.com/cloudwego/kitex/server"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat/chatservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates/updatesservice"
+	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/config"
@@ -49,14 +52,14 @@ func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientC
 	return c
 }
 
-//func buildUserConfig(c config.Config) userhelper.Config {
-//	return userhelper.Config{
-//		RpcServerConf: c.RpcServerConf,
-//		Mysql:         c.Mysql,
-//		Cache:         c.Cache,
-//		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
-//	}
-//}
+func buildUserConfig(c config.Config) userhelper.Config {
+	return userhelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		Mysql:         c.Mysql,
+		Cache:         c.Cache,
+		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+	}
+}
 
 func New() *Server {
 	return new(Server)
@@ -122,10 +125,10 @@ func (s *Server) Initialize() error {
 					//IdgenClient:   c.IdgenClient,
 				}))
 
-			//// userhelper
-			//_ = userservice.RegisterService(
-			//	s,
-			//	userhelper.New(buildUserConfig(c)))
+			// userhelper
+			_ = userservice.RegisterService(
+				s,
+				userhelper.New(buildUserConfig(c)))
 
 			return nil
 		})

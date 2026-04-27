@@ -24,8 +24,8 @@ import (
 // UserSetMainProfileTab
 // user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
 func (c *UserCore) UserSetMainProfileTab(in *user.TLUserSetMainProfileTab) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setMainProfileTab - error: method UserSetMainProfileTab not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetMainProfileTab(c.ctx, in.UserId, in.Tab); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

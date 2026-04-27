@@ -24,8 +24,5 @@ import (
 // UserGetContentSettings
 // user.getContentSettings user_id:long = account.ContentSettings;
 func (c *UserCore) UserGetContentSettings(in *user.TLUserGetContentSettings) (*tg.AccountContentSettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getContentSettings - error: method UserGetContentSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetContentSettings(c.ctx, in.UserId)
 }

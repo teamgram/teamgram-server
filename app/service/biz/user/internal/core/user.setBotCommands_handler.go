@@ -24,8 +24,8 @@ import (
 // UserSetBotCommands
 // user.setBotCommands user_id:long bot_id:long commands:Vector<BotCommand> = Bool;
 func (c *UserCore) UserSetBotCommands(in *user.TLUserSetBotCommands) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setBotCommands - error: method UserSetBotCommands not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetBotCommands(c.ctx, in.BotId, in.Commands); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

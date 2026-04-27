@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetProfilePhotos
 // user.getProfilePhotos user_id:long = Vector<long>;
 func (c *UserCore) UserGetProfilePhotos(in *user.TLUserGetProfilePhotos) (*user.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getProfilePhotos - error: method UserGetProfilePhotos not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	photoIDs, err := c.svcCtx.Repo.GetProfilePhotos(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorLong{Datas: photoIDs}, nil
 }

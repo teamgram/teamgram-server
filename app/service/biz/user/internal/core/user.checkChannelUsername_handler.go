@@ -24,8 +24,5 @@ import (
 // UserCheckChannelUsername
 // user.checkChannelUsername channel_id:long username:string = UsernameExist;
 func (c *UserCore) UserCheckChannelUsername(in *user.TLUserCheckChannelUsername) (*user.UsernameExist, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkChannelUsername - error: method UserCheckChannelUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CheckPeerUsername(c.ctx, tg.PEER_CHANNEL, in.ChannelId, in.Username)
 }

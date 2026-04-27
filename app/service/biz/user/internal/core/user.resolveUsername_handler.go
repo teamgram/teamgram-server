@@ -24,8 +24,5 @@ import (
 // UserResolveUsername
 // user.resolveUsername username:string = Peer;
 func (c *UserCore) UserResolveUsername(in *user.TLUserResolveUsername) (*tg.Peer, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.resolveUsername - error: method UserResolveUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.ResolveUsername(c.ctx, in.Username)
 }

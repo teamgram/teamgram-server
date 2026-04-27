@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetContactIdList
 // user.getContactIdList user_id:long = Vector<long>;
 func (c *UserCore) UserGetContactIdList(in *user.TLUserGetContactIdList) (*user.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getContactIdList - error: method UserGetContactIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetContactIDList(c.ctx, in.UserId)
 }

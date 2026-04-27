@@ -24,8 +24,8 @@ import (
 // UserSetStoriesHidden
 // user.setStoriesHidden user_id:long id:long hidden:Bool = Bool;
 func (c *UserCore) UserSetStoriesHidden(in *user.TLUserSetStoriesHidden) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setStoriesHidden - error: method UserSetStoriesHidden not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetStoriesHidden(c.ctx, in.UserId, in.Id, tg.FromBoolClazz(in.Hidden)); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -24,8 +24,8 @@ import (
 // UserUpdateBirthday
 // user.updateBirthday flags:# user_id:long birthday:flags.1?Birthday = Bool;
 func (c *UserCore) UserUpdateBirthday(in *user.TLUserUpdateBirthday) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateBirthday - error: method UserUpdateBirthday not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateBirthday(c.ctx, in.UserId, in.Birthday); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

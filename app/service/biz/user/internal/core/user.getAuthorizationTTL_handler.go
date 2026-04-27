@@ -24,8 +24,5 @@ import (
 // UserGetAuthorizationTTL
 // user.getAuthorizationTTL user_id:long = AccountDaysTTL;
 func (c *UserCore) UserGetAuthorizationTTL(in *user.TLUserGetAuthorizationTTL) (*tg.AccountDaysTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getAuthorizationTTL - error: method UserGetAuthorizationTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetAuthorizationTTL(c.ctx, in.UserId)
 }

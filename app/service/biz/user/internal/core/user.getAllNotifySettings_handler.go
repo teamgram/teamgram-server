@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetAllNotifySettings
 // user.getAllNotifySettings user_id:long = Vector<PeerPeerNotifySettings>;
 func (c *UserCore) UserGetAllNotifySettings(in *user.TLUserGetAllNotifySettings) (*user.VectorPeerPeerNotifySettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getAllNotifySettings - error: method UserGetAllNotifySettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetAllNotifySettings(c.ctx, in.UserId)
 }

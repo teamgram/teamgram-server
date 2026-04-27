@@ -24,8 +24,9 @@ import (
 // UserIsBlockedByUser
 // user.isBlockedByUser user_id:long peer_user_id:long = Bool;
 func (c *UserCore) UserIsBlockedByUser(in *user.TLUserIsBlockedByUser) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.isBlockedByUser - error: method UserIsBlockedByUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	blocked, err := c.svcCtx.Repo.IsPeerBlocked(c.ctx, in.UserId, tg.PEER_USER, in.PeerUserId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(blocked), nil
 }
