@@ -24,8 +24,8 @@ import (
 // UserUnBlockPeer
 // user.unBlockPeer user_id:long peer_type:int peer_id:long = Bool;
 func (c *UserCore) UserUnBlockPeer(in *user.TLUserUnBlockPeer) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.unBlockPeer - error: method UserUnBlockPeer not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UnblockPeer(c.ctx, in.UserId, in.PeerType, in.PeerId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

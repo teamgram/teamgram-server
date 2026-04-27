@@ -24,8 +24,8 @@ import (
 // UserDeletePeerSettings
 // user.deletePeerSettings user_id:long peer_type:int peer_id:long = Bool;
 func (c *UserCore) UserDeletePeerSettings(in *user.TLUserDeletePeerSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deletePeerSettings - error: method UserDeletePeerSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.DeletePeerSettings(c.ctx, in.UserId, in.PeerType, in.PeerId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

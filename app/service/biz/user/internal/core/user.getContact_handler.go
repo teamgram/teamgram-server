@@ -24,8 +24,5 @@ import (
 // UserGetContact
 // user.getContact user_id:long id:long = ContactData;
 func (c *UserCore) UserGetContact(in *user.TLUserGetContact) (*tg.ContactData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getContact - error: method UserGetContact not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetContact(c.ctx, in.UserId, in.Id)
 }

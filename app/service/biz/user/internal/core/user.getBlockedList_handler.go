@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetBlockedList
 // user.getBlockedList user_id:long offset:int limit:int = Vector<PeerBlocked>;
 func (c *UserCore) UserGetBlockedList(in *user.TLUserGetBlockedList) (*user.VectorPeerBlocked, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getBlockedList - error: method UserGetBlockedList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetBlockedList(c.ctx, in.UserId, in.Limit)
 }

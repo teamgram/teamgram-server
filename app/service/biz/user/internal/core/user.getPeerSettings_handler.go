@@ -24,8 +24,5 @@ import (
 // UserGetPeerSettings
 // user.getPeerSettings user_id:long peer_type:int peer_id:long = PeerSettings;
 func (c *UserCore) UserGetPeerSettings(in *user.TLUserGetPeerSettings) (*tg.PeerSettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getPeerSettings - error: method UserGetPeerSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetPeerSettings(c.ctx, in.UserId, in.PeerType, in.PeerId)
 }

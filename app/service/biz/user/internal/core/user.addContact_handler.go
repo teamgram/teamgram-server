@@ -24,8 +24,9 @@ import (
 // UserAddContact
 // user.addContact user_id:long add_phone_privacy_exception:Bool id:long first_name:string last_name:string phone:string = Bool;
 func (c *UserCore) UserAddContact(in *user.TLUserAddContact) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.addContact - error: method UserAddContact not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	mutual, err := c.svcCtx.Repo.AddContact(c.ctx, in.UserId, in.Id, in.FirstName, in.LastName, in.Phone)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(mutual), nil
 }

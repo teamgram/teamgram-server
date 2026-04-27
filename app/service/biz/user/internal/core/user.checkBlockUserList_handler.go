@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserCheckBlockUserList
 // user.checkBlockUserList user_id:long id:Vector<long> = Vector<long>;
 func (c *UserCore) UserCheckBlockUserList(in *user.TLUserCheckBlockUserList) (*user.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkBlockUserList - error: method UserCheckBlockUserList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CheckBlockedUserList(c.ctx, in.UserId, in.Id)
 }

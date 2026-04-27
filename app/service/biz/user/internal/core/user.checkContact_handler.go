@@ -24,8 +24,9 @@ import (
 // UserCheckContact
 // user.checkContact user_id:long id:long = Bool;
 func (c *UserCore) UserCheckContact(in *user.TLUserCheckContact) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkContact - error: method UserCheckContact not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	isContact, err := c.svcCtx.Repo.CheckContact(c.ctx, in.UserId, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(isContact), nil
 }

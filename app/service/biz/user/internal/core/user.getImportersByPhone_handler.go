@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 // UserGetImportersByPhone
 // user.getImportersByPhone phone:string = Vector<InputContact>;
 func (c *UserCore) UserGetImportersByPhone(in *user.TLUserGetImportersByPhone) (*user.VectorInputContact, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getImportersByPhone - error: method UserGetImportersByPhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetImportersByPhone(c.ctx, in.Phone)
 }
