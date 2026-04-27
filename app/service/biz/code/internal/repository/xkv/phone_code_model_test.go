@@ -2,6 +2,7 @@ package xkv
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
@@ -29,7 +30,7 @@ func (f *fakeExtStore) DelCtx(_ context.Context, keys ...string) (int, error) {
 	return len(keys), nil
 }
 
-func TestPhoneCodeModelRoundTripPreservesGeneratedTLFields(t *testing.T) {
+func TestPhoneCodeModelRoundTripUsesCacheDTO(t *testing.T) {
 	ctx := context.Background()
 	store := &fakeExtStore{values: make(map[string]string)}
 	model := NewPhoneCodeModel(store, "test")
@@ -51,6 +52,10 @@ func TestPhoneCodeModelRoundTripPreservesGeneratedTLFields(t *testing.T) {
 
 	if err := model.PutPhoneCode(ctx, want.AuthKeyId, want.Phone, want); err != nil {
 		t.Fatalf("PutPhoneCode() error = %v", err)
+	}
+	stored := store.values["test:phone_code#123:13800138000"]
+	if strings.Contains(stored, `"_object"`) || strings.Contains(stored, `"_name"`) || strings.Contains(stored, `"_id"`) {
+		t.Fatalf("stored phone code uses TL JSON metadata: %s", stored)
 	}
 
 	got, err := model.GetPhoneCode(ctx, want.AuthKeyId, want.Phone)

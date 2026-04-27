@@ -15,7 +15,60 @@ const (
 	phoneCodeDefaultTTL = 180
 )
 
-type phoneCodeTransactionJSON code.TLPhoneCodeTransaction
+type phoneCodeTransactionCacheData struct {
+	AuthKeyId             int64  `json:"auth_key_id"`
+	SessionId             int64  `json:"session_id"`
+	Phone                 string `json:"phone"`
+	PhoneNumberRegistered bool   `json:"phone_number_registered"`
+	PhoneCode             string `json:"phone_code"`
+	PhoneCodeHash         string `json:"phone_code_hash"`
+	PhoneCodeExpired      int32  `json:"phone_code_expired"`
+	PhoneCodeExtraData    string `json:"phone_code_extra_data"`
+	SentCodeType          int32  `json:"sent_code_type"`
+	FlashCallPattern      string `json:"flash_call_pattern"`
+	NextCodeType          int32  `json:"next_code_type"`
+	State                 int32  `json:"state"`
+}
+
+func phoneCodeTransactionCacheDataFromTL(data *code.PhoneCodeTransaction) *phoneCodeTransactionCacheData {
+	if data == nil {
+		return nil
+	}
+	return &phoneCodeTransactionCacheData{
+		AuthKeyId:             data.AuthKeyId,
+		SessionId:             data.SessionId,
+		Phone:                 data.Phone,
+		PhoneNumberRegistered: data.PhoneNumberRegistered,
+		PhoneCode:             data.PhoneCode,
+		PhoneCodeHash:         data.PhoneCodeHash,
+		PhoneCodeExpired:      data.PhoneCodeExpired,
+		PhoneCodeExtraData:    data.PhoneCodeExtraData,
+		SentCodeType:          data.SentCodeType,
+		FlashCallPattern:      data.FlashCallPattern,
+		NextCodeType:          data.NextCodeType,
+		State:                 data.State,
+	}
+}
+
+func (data *phoneCodeTransactionCacheData) toTL() *code.PhoneCodeTransaction {
+	if data == nil {
+		return nil
+	}
+	return code.MakeTLPhoneCodeTransaction(&code.TLPhoneCodeTransaction{
+		AuthKeyId:             data.AuthKeyId,
+		SessionId:             data.SessionId,
+		Phone:                 data.Phone,
+		PhoneNumberRegistered: data.PhoneNumberRegistered,
+		PhoneCode:             data.PhoneCode,
+		PhoneCodeHash:         data.PhoneCodeHash,
+		PhoneCodeExpired:      data.PhoneCodeExpired,
+		PhoneCodeExtraData:    data.PhoneCodeExtraData,
+		SentCodeType:          data.SentCodeType,
+		FlashCallPattern:      data.FlashCallPattern,
+		NextCodeType:          data.NextCodeType,
+		State:                 data.State,
+	})
+}
 
 // PhoneCodeModel abstracts KV operations for phone verification codes.
 type PhoneCodeModel interface {
@@ -85,23 +138,13 @@ func marshalPhoneCodeTransaction(data *code.PhoneCodeTransaction) ([]byte, error
 		return []byte("null"), nil
 	}
 
-	return json.Marshal((*phoneCodeTransactionJSON)(data))
+	return json.Marshal(phoneCodeTransactionCacheDataFromTL(data))
 }
 
 func unmarshalPhoneCodeTransaction(data []byte) (*code.PhoneCodeTransaction, error) {
-	var wrapper struct {
-		Object *phoneCodeTransactionJSON `json:"_object"`
-	}
-	if err := json.Unmarshal(data, &wrapper); err != nil {
-		return nil, err
-	}
-	if wrapper.Object != nil {
-		return code.MakeTLPhoneCodeTransaction((*code.TLPhoneCodeTransaction)(wrapper.Object)), nil
-	}
-
-	var txn phoneCodeTransactionJSON
+	var txn phoneCodeTransactionCacheData
 	if err := json.Unmarshal(data, &txn); err != nil {
 		return nil, err
 	}
-	return code.MakeTLPhoneCodeTransaction((*code.TLPhoneCodeTransaction)(&txn)), nil
+	return txn.toTL(), nil
 }
