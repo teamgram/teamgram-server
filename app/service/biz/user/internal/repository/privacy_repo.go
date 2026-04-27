@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository/model"
@@ -53,14 +54,14 @@ func (r *Repository) SetPrivacy(ctx context.Context, userID int64, keyType int32
 }
 
 func (r *Repository) CheckPrivacy(ctx context.Context, userID int64, keyType int32, peerID int64) (bool, error) {
-	rules, err := r.GetPrivacy(ctx, userID, keyType)
+	_, err := r.GetPrivacy(ctx, userID, keyType)
 	if err != nil {
-		if err == userpb.ErrPrivacyKeyInvalid {
+		if errors.Is(err, userpb.ErrPrivacyKeyInvalid) {
 			return false, nil
 		}
 		return false, err
 	}
-	return len(rules.Datas) == 0 || peerID >= 0, nil
+	return true, nil
 }
 
 type privacyRuleDTO struct {
