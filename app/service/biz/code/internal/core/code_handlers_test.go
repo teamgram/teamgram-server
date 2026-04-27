@@ -32,11 +32,15 @@ func (m *mockRepo) GetCachePhoneCode(_ context.Context, authKeyId int64, phone s
 	if !ok || val == nil {
 		return nil, nil
 	}
-	var txn code.PhoneCodeTransaction
-	if err := json.Unmarshal(val, &txn); err != nil {
+	// TLPhoneCodeTransaction.MarshalJSON uses iface.MarshalWithName which
+	// nests the data under "_object". Unmarshal accordingly.
+	var wrapper struct {
+		Object code.PhoneCodeTransaction `json:"_object"`
+	}
+	if err := json.Unmarshal(val, &wrapper); err != nil {
 		return nil, err
 	}
-	return &txn, nil
+	return &wrapper.Object, nil
 }
 
 func (m *mockRepo) PutCachePhoneCode(_ context.Context, authKeyId int64, phone string, data *code.PhoneCodeTransaction) error {

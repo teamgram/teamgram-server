@@ -18,14 +18,27 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // CodeGetPhoneCode
 // code.getPhoneCode auth_key_id:long phone:string phone_code_hash:string = PhoneCodeTransaction;
 func (c *CodeCore) CodeGetPhoneCode(in *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error) {
-	// TODO: not impl
-	c.Logger.Errorf("code.getPhoneCode - error: method CodeGetPhoneCode not impl")
+	codeData, err := c.repo.GetCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone)
+	if err != nil {
+		c.Logger.Errorf("code.getPhoneCode - get cache failed: auth_key_id: %d, phone: %s, err: %v",
+			in.AuthKeyId, in.Phone, err)
+		return nil, code.ErrPhoneCodeExpired
+	}
+	if codeData == nil {
+		c.Logger.Errorf("code.getPhoneCode - not found: auth_key_id: %d, phone: %s",
+			in.AuthKeyId, in.Phone)
+		return nil, code.ErrPhoneCodeExpired
+	}
+	if codeData.PhoneCodeHash != in.PhoneCodeHash {
+		c.Logger.Errorf("code.getPhoneCode - hash mismatch: auth_key_id: %d, phone: %s",
+			in.AuthKeyId, in.Phone)
+		return nil, code.ErrPhoneCodeInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return codeData, nil
 }
