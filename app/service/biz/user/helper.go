@@ -18,14 +18,12 @@ package userhelper
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/server/tg/service"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/svc"
 )
 
 type (
-	Config     = config.Config
-	Repository = repository.Repository
+	Config = config.Config
 )
 
 func New(c Config) *service.Service {

@@ -47,6 +47,10 @@ func (r *Repository) ImportContacts(ctx context.Context, userID int64, contacts 
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		for _, contact := range contacts {
+			if contact == nil || contact.Phone == "" {
+				continue
+			}
+
 			userDO := userByPhone[contact.Phone]
 			if userDO == nil {
 				if _, _, err := r.model.UnregisteredContactsModel.InsertOrUpdateTx(tx, &model.UnregisteredContacts{
