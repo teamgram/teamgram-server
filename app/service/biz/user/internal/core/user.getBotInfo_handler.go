@@ -24,8 +24,5 @@ import (
 // UserGetBotInfo
 // user.getBotInfo bot_id:long = BotInfo;
 func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*tg.BotInfo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getBotInfo - error: method UserGetBotInfo not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetBotInfo(c.ctx, in.BotId)
 }
