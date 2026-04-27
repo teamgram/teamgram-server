@@ -89,9 +89,7 @@ func (s *Server) Initialize() error {
 				s,
 				codehelper.New(codehelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					//Mysql:         c.Mysql,
-					//Cache:         c.Cache,
-					//KV:            c.KV,
+					KV:            c.KV,
 				}))
 
 			// dialoghelper

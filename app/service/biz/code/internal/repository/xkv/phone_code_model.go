@@ -15,6 +15,8 @@ const (
 	phoneCodeDefaultTTL = 180
 )
 
+type phoneCodeTransactionJSON code.TLPhoneCodeTransaction
+
 // PhoneCodeModel abstracts KV operations for phone verification codes.
 type PhoneCodeModel interface {
 	GetPhoneCode(ctx context.Context, authKeyId int64, phone string) (*code.PhoneCodeTransaction, error)
@@ -51,13 +53,13 @@ func (m *phoneCodeModel) GetPhoneCode(ctx context.Context, authKeyId int64, phon
 		return nil, nil
 	}
 
-	var txn code.PhoneCodeTransaction
-	if err := json.Unmarshal([]byte(val), &txn); err != nil {
-		logx.WithContext(ctx).Errorf("phone_code.GetPhoneCode json.Unmarshal(%s) error(%v)", val, err)
+	txn, err := unmarshalPhoneCodeTransaction([]byte(val))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("phone_code.GetPhoneCode json unmarshal error(%v)", err)
 		return nil, fmt.Errorf("phone_code.GetPhoneCode json unmarshal: %w", err)
 	}
 
-	return &txn, nil
+	return txn, nil
 }
 
 func (m *phoneCodeModel) PutPhoneCode(ctx context.Context, authKeyId int64, phone string, data *code.PhoneCodeTransaction) error {
@@ -65,7 +67,7 @@ func (m *phoneCodeModel) PutPhoneCode(ctx context.Context, authKeyId int64, phon
 		return nil
 	}
 
-	b, err := json.Marshal(data)
+	b, err := marshalPhoneCodeTransaction(data)
 	if err != nil {
 		return fmt.Errorf("phone_code.PutPhoneCode json marshal: %w", err)
 	}
@@ -76,4 +78,30 @@ func (m *phoneCodeModel) PutPhoneCode(ctx context.Context, authKeyId int64, phon
 func (m *phoneCodeModel) DeletePhoneCode(ctx context.Context, authKeyId int64, phone string) error {
 	_, err := m.kv.DelCtx(ctx, m.cacheKey(authKeyId, phone))
 	return err
+}
+
+func marshalPhoneCodeTransaction(data *code.PhoneCodeTransaction) ([]byte, error) {
+	if data == nil {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal((*phoneCodeTransactionJSON)(data))
+}
+
+func unmarshalPhoneCodeTransaction(data []byte) (*code.PhoneCodeTransaction, error) {
+	var wrapper struct {
+		Object *phoneCodeTransactionJSON `json:"_object"`
+	}
+	if err := json.Unmarshal(data, &wrapper); err != nil {
+		return nil, err
+	}
+	if wrapper.Object != nil {
+		return code.MakeTLPhoneCodeTransaction((*code.TLPhoneCodeTransaction)(wrapper.Object)), nil
+	}
+
+	var txn phoneCodeTransactionJSON
+	if err := json.Unmarshal(data, &txn); err != nil {
+		return nil, err
+	}
+	return code.MakeTLPhoneCodeTransaction((*code.TLPhoneCodeTransaction)(&txn)), nil
 }

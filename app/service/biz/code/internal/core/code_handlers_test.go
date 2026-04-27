@@ -11,6 +11,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/svc"
 )
+
 // mockRepo implements the subset of repository methods used by core handlers.
 type mockRepo struct {
 	store  map[string][]byte
