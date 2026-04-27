@@ -24,8 +24,5 @@ import (
 // UserGetFullUser
 // user.getFullUser self_user_id:long id:long = users.UserFull;
 func (c *UserCore) UserGetFullUser(in *user.TLUserGetFullUser) (*tg.UsersUserFull, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getFullUser - error: method UserGetFullUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetFullUser(c.ctx, in.SelfUserId, in.Id)
 }
