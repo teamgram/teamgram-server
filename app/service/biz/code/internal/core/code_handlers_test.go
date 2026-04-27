@@ -11,7 +11,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/svc"
 )
-
 // mockRepo implements the subset of repository methods used by core handlers.
 type mockRepo struct {
 	store  map[string][]byte
@@ -26,7 +25,7 @@ func (m *mockRepo) cacheKey(authKeyId int64, phone string) string {
 
 func (m *mockRepo) GetCachePhoneCode(_ context.Context, authKeyId int64, phone string) (*code.PhoneCodeTransaction, error) {
 	if m.getErr != nil {
-		return nil, m.getErr
+		return nil, fmt.Errorf("%w: get phone code cache: %w", code.ErrCodeStorage, m.getErr)
 	}
 	val, ok := m.store[m.cacheKey(authKeyId, phone)]
 	if !ok || val == nil {
@@ -45,7 +44,7 @@ func (m *mockRepo) GetCachePhoneCode(_ context.Context, authKeyId int64, phone s
 
 func (m *mockRepo) PutCachePhoneCode(_ context.Context, authKeyId int64, phone string, data *code.PhoneCodeTransaction) error {
 	if m.putErr != nil {
-		return m.putErr
+		return fmt.Errorf("%w: put phone code cache: %w", code.ErrCodeStorage, m.putErr)
 	}
 	b, _ := json.Marshal(data)
 	m.store[m.cacheKey(authKeyId, phone)] = b

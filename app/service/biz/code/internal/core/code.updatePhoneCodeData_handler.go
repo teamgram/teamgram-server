@@ -33,9 +33,7 @@ func (c *CodeCore) CodeUpdatePhoneCodeData(in *code.TLCodeUpdatePhoneCodeData) (
 	}
 
 	if err := c.repo.PutCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone, phoneCodeData); err != nil {
-		c.Logger.Errorf("code.updatePhoneCodeData - save failed: auth_key_id: %d, phone: %s, err: %v",
-			in.AuthKeyId, in.Phone, err)
-		return nil, code.ErrCodeStorage
+		return nil, err
 	}
 
 	return tg.BoolTrue, nil
