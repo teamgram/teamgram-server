@@ -36,14 +36,14 @@ func (r *Repository) SetPrivacy(ctx context.Context, userID int64, keyType int32
 	if !isValidPrivacyKey(keyType) {
 		return userpb.ErrPrivacyKeyInvalid
 	}
-	rulesData, err := json.Marshal(rules)
+	rulesData, err := encodePrivacyRules(rules)
 	if err != nil {
 		return fmt.Errorf("%w: encode privacy %d/%d: %w", userpb.ErrUserStorage, userID, keyType, err)
 	}
 	if _, _, err := r.model.UserPrivaciesModel.InsertOrUpdate(ctx, &model.UserPrivacies{
 		UserId:  userID,
 		KeyType: keyType,
-		Rules:   string(rulesData),
+		Rules:   rulesData,
 	}); err != nil {
 		return fmt.Errorf("%w: set privacy %d/%d: %w", userpb.ErrUserStorage, userID, keyType, err)
 	}
@@ -64,18 +64,51 @@ func (r *Repository) CheckPrivacy(ctx context.Context, userID int64, keyType int
 	return true, nil
 }
 
+type privacyRulesStorageDTO struct {
+	SchemaVersion int              `json:"schema_version"`
+	Rules         []privacyRuleDTO `json:"rules"`
+}
+
 type privacyRuleDTO struct {
-	Name  string  `json:"_name"`
-	ID    uint32  `json:"_id"`
-	Users []int64 `json:"users"`
-	Chats []int64 `json:"chats"`
+	Type       string  `json:"type"`
+	LegacyName string  `json:"_name,omitempty"`
+	LegacyID   uint32  `json:"_id,omitempty"`
+	Users      []int64 `json:"users,omitempty"`
+	Chats      []int64 `json:"chats,omitempty"`
+}
+
+func encodePrivacyRules(rules []tg.PrivacyRuleClazz) (string, error) {
+	rawRules := make([]privacyRuleDTO, 0, len(rules))
+	for _, rule := range rules {
+		rawRule, ok := privacyRuleToDTO(rule)
+		if ok {
+			rawRules = append(rawRules, rawRule)
+		}
+	}
+	data, err := json.Marshal(privacyRulesStorageDTO{
+		SchemaVersion: 1,
+		Rules:         rawRules,
+	})
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
 
 func decodePrivacyRules(rulesData string) ([]tg.PrivacyRuleClazz, error) {
-	var rawRules []privacyRuleDTO
-	if err := json.Unmarshal([]byte(rulesData), &rawRules); err != nil {
+	var payload privacyRulesStorageDTO
+	if err := json.Unmarshal([]byte(rulesData), &payload); err == nil && payload.SchemaVersion > 0 {
+		return privacyRulesFromDTO(payload.Rules), nil
+	}
+
+	var legacyRules []privacyRuleDTO
+	if err := json.Unmarshal([]byte(rulesData), &legacyRules); err != nil {
 		return nil, err
 	}
+	return privacyRulesFromDTO(legacyRules), nil
+}
+
+func privacyRulesFromDTO(rawRules []privacyRuleDTO) []tg.PrivacyRuleClazz {
 	rules := make([]tg.PrivacyRuleClazz, 0, len(rawRules))
 	for i := range rawRules {
 		rule, ok := makePrivacyRuleFromDTO(rawRules[i])
@@ -83,37 +116,91 @@ func decodePrivacyRules(rulesData string) ([]tg.PrivacyRuleClazz, error) {
 			rules = append(rules, rule)
 		}
 	}
-	return rules, nil
+	return rules
 }
 
 func makePrivacyRuleFromDTO(rule privacyRuleDTO) (tg.PrivacyRuleClazz, bool) {
-	switch rule.Name {
-	case tg.ClazzName_privacyValueAllowContacts:
+	ruleType := rule.Type
+	if ruleType == "" {
+		ruleType = rule.LegacyName
+	}
+	switch ruleType {
+	case "allow_contacts", tg.ClazzName_privacyValueAllowContacts:
 		return tg.PrivacyValueAllowContactsClazz, true
-	case tg.ClazzName_privacyValueAllowAll:
+	case "allow_all", tg.ClazzName_privacyValueAllowAll:
 		return tg.PrivacyValueAllowAllClazz, true
-	case tg.ClazzName_privacyValueAllowUsers:
+	case "allow_users", tg.ClazzName_privacyValueAllowUsers:
 		return tg.MakeTLPrivacyValueAllowUsers(&tg.TLPrivacyValueAllowUsers{Users: rule.Users}).ToPrivacyRule().Clazz, true
-	case tg.ClazzName_privacyValueDisallowContacts:
+	case "disallow_contacts", tg.ClazzName_privacyValueDisallowContacts:
 		return tg.PrivacyValueDisallowContactsClazz, true
-	case tg.ClazzName_privacyValueDisallowAll:
+	case "disallow_all", tg.ClazzName_privacyValueDisallowAll:
 		return tg.PrivacyValueDisallowAllClazz, true
-	case tg.ClazzName_privacyValueDisallowUsers:
+	case "disallow_users", tg.ClazzName_privacyValueDisallowUsers:
 		return tg.MakeTLPrivacyValueDisallowUsers(&tg.TLPrivacyValueDisallowUsers{Users: rule.Users}).ToPrivacyRule().Clazz, true
-	case tg.ClazzName_privacyValueAllowChatParticipants:
+	case "allow_chat_participants", tg.ClazzName_privacyValueAllowChatParticipants:
 		return tg.MakeTLPrivacyValueAllowChatParticipants(&tg.TLPrivacyValueAllowChatParticipants{Chats: rule.Chats}).ToPrivacyRule().Clazz, true
-	case tg.ClazzName_privacyValueDisallowChatParticipants:
+	case "disallow_chat_participants", tg.ClazzName_privacyValueDisallowChatParticipants:
 		return tg.MakeTLPrivacyValueDisallowChatParticipants(&tg.TLPrivacyValueDisallowChatParticipants{Chats: rule.Chats}).ToPrivacyRule().Clazz, true
-	case tg.ClazzName_privacyValueAllowCloseFriends:
+	case "allow_close_friends", tg.ClazzName_privacyValueAllowCloseFriends:
 		return tg.PrivacyValueAllowCloseFriendsClazz, true
-	case tg.ClazzName_privacyValueAllowPremium:
+	case "allow_premium", tg.ClazzName_privacyValueAllowPremium:
 		return tg.PrivacyValueAllowPremiumClazz, true
-	case tg.ClazzName_privacyValueAllowBots:
+	case "allow_bots", tg.ClazzName_privacyValueAllowBots:
 		return tg.PrivacyValueAllowBotsClazz, true
-	case tg.ClazzName_privacyValueDisallowBots:
+	case "disallow_bots", tg.ClazzName_privacyValueDisallowBots:
 		return tg.PrivacyValueDisallowBotsClazz, true
 	default:
 		return nil, false
+	}
+}
+
+func privacyRuleToDTO(rule tg.PrivacyRuleClazz) (privacyRuleDTO, bool) {
+	if rule == nil {
+		return privacyRuleDTO{}, false
+	}
+	switch rule.PrivacyRuleClazzName() {
+	case tg.ClazzName_privacyValueAllowContacts:
+		return privacyRuleDTO{Type: "allow_contacts"}, true
+	case tg.ClazzName_privacyValueAllowAll:
+		return privacyRuleDTO{Type: "allow_all"}, true
+	case tg.ClazzName_privacyValueAllowUsers:
+		r, ok := rule.(*tg.TLPrivacyValueAllowUsers)
+		if !ok {
+			return privacyRuleDTO{}, false
+		}
+		return privacyRuleDTO{Type: "allow_users", Users: r.Users}, true
+	case tg.ClazzName_privacyValueDisallowContacts:
+		return privacyRuleDTO{Type: "disallow_contacts"}, true
+	case tg.ClazzName_privacyValueDisallowAll:
+		return privacyRuleDTO{Type: "disallow_all"}, true
+	case tg.ClazzName_privacyValueDisallowUsers:
+		r, ok := rule.(*tg.TLPrivacyValueDisallowUsers)
+		if !ok {
+			return privacyRuleDTO{}, false
+		}
+		return privacyRuleDTO{Type: "disallow_users", Users: r.Users}, true
+	case tg.ClazzName_privacyValueAllowChatParticipants:
+		r, ok := rule.(*tg.TLPrivacyValueAllowChatParticipants)
+		if !ok {
+			return privacyRuleDTO{}, false
+		}
+		return privacyRuleDTO{Type: "allow_chat_participants", Chats: r.Chats}, true
+	case tg.ClazzName_privacyValueDisallowChatParticipants:
+		r, ok := rule.(*tg.TLPrivacyValueDisallowChatParticipants)
+		if !ok {
+			return privacyRuleDTO{}, false
+		}
+		return privacyRuleDTO{Type: "disallow_chat_participants", Chats: r.Chats}, true
+	case tg.ClazzName_privacyValueAllowCloseFriends:
+		return privacyRuleDTO{Type: "allow_close_friends"}, true
+	case tg.ClazzName_privacyValueAllowPremium:
+		return privacyRuleDTO{Type: "allow_premium"}, true
+	case tg.ClazzName_privacyValueAllowBots:
+		return privacyRuleDTO{Type: "allow_bots"}, true
+	case tg.ClazzName_privacyValueDisallowBots:
+		return privacyRuleDTO{Type: "disallow_bots"}, true
+	default:
+		return privacyRuleDTO{}, false
 	}
 }
 
