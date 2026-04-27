@@ -17,13 +17,23 @@
 package svc
 
 import (
+	"context"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/internal/repository"
 )
 
+// Repo is the interface CodeCore expects from the repository layer.
+type Repo interface {
+	GetCachePhoneCode(ctx context.Context, authKeyId int64, phone string) (*code.PhoneCodeTransaction, error)
+	PutCachePhoneCode(ctx context.Context, authKeyId int64, phone string, data *code.PhoneCodeTransaction) error
+	DeleteCachePhoneCode(ctx context.Context, authKeyId int64, phone string) error
+}
+
 type ServiceContext struct {
 	Config config.Config
-	Repo   *repository.Repository
+	Repo   Repo
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

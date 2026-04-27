@@ -53,14 +53,7 @@ func (m *mockRepo) DeleteCachePhoneCode(_ context.Context, authKeyId int64, phon
 	return m.delErr
 }
 
-// repoInterface is the interface core expects from the repository layer.
-type repoInterface interface {
-	GetCachePhoneCode(ctx context.Context, authKeyId int64, phone string) (*code.PhoneCodeTransaction, error)
-	PutCachePhoneCode(ctx context.Context, authKeyId int64, phone string, data *code.PhoneCodeTransaction) error
-	DeleteCachePhoneCode(ctx context.Context, authKeyId int64, phone string) error
-}
-
-func newTestCore(t *testing.T, repo repoInterface) *CodeCore {
+func newTestCore(t *testing.T, repo svc.Repo) *CodeCore {
 	t.Helper()
 	return New(context.Background(), &svc.ServiceContext{
 		Repo: repo,

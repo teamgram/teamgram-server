@@ -28,6 +28,7 @@ import (
 type CodeCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	repo   svc.Repo
 	logx.Logger
 	MD *metadata.RpcMetadata
 }
@@ -36,6 +37,7 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *CodeCore {
 	return &CodeCore{
 		ctx:    ctx,
 		svcCtx: svcCtx,
+		repo:   svcCtx.Repo,
 		Logger: logx.WithContext(ctx),
 		MD:     metadata.RpcMetadataFromIncoming(ctx),
 	}
