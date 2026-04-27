@@ -24,6 +24,7 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql sqlx.Config `json:",optional"`
-	KV    kv.KvConf   `json:",optional"`
+	NodeId int64       // snowflake
+	Mysql  sqlx.Config `json:",optional"`
+	KV     kv.KvConf   `json:",optional"`
 }

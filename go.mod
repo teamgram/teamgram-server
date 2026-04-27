@@ -4,9 +4,12 @@ go 1.24.0
 
 require (
 	github.com/apache/thrift v0.16.0
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/gopkg v0.1.3
 	github.com/cloudwego/kitex v0.16.0
+	github.com/go-faster/errors v0.7.1
 	github.com/kitex-contrib/registry-etcd v0.3.0
+	github.com/klauspost/compress v1.18.0
 	github.com/nyaruka/phonenumbers v1.6.12
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/oschwald/geoip2-golang v1.13.0
@@ -16,6 +19,7 @@ require (
 	github.com/teamgram/marmota v0.2.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/zeromicro/go-zero v1.10.0
+	go.uber.org/multierr v1.11.0
 	golang.org/x/crypto v0.47.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
@@ -50,7 +54,6 @@ require (
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
-	github.com/go-faster/errors v0.7.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
@@ -81,7 +84,6 @@ require (
 	github.com/jhump/protoreflect v1.17.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -129,7 +131,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
-	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/arch v0.14.0 // indirect

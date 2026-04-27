@@ -18,16 +18,20 @@
 package repository
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository/alloc"
+	"log"
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository/alloc"
+
+	"github.com/bwmarrin/snowflake"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	*snowflake.Node
 	SeqAlloc *alloc.Allocator
 }
 
@@ -44,6 +48,14 @@ type Repository struct {
 //     suitable for low-frequency keys or local development.
 func NewRepository(c config.Config) *Repository {
 	r := &Repository{}
+
+	// node
+	node, err := snowflake.NewNode(c.NodeId)
+	if err != nil {
+		log.Fatal("new snowflake node error: ", err)
+	}
+	r.Node = node
+
 	if c.Mysql.DSN == "" {
 		return r
 	}
