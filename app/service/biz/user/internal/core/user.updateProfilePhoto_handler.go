@@ -28,5 +28,5 @@ func (c *UserCore) UserUpdateProfilePhoto(in *user.TLUserUpdateProfilePhoto) (*t
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt64(&tg.TLInt64{V: photoID}).ToInt64(), nil
+	return tg.MakeInt64(photoID), nil
 }

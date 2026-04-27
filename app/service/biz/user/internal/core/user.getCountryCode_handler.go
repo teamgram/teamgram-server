@@ -28,5 +28,5 @@ func (c *UserCore) UserGetCountryCode(in *user.TLUserGetCountryCode) (*tg.String
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLString(&tg.TLString{V: countryCode}).ToString(), nil
+	return tg.MakeString(countryCode), nil
 }

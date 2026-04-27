@@ -28,5 +28,5 @@ func (c *UserCore) UserGetUserIdByPhone(in *user.TLUserGetUserIdByPhone) (*tg.In
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLInt64(&tg.TLInt64{V: id}).ToInt64(), nil
+	return tg.MakeInt64(id), nil
 }
