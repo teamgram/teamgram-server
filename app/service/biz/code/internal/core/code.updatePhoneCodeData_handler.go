@@ -24,8 +24,19 @@ import (
 // CodeUpdatePhoneCodeData
 // code.updatePhoneCodeData auth_key_id:long phone:string phone_code_hash:string code_data:PhoneCodeTransaction = Bool;
 func (c *CodeCore) CodeUpdatePhoneCodeData(in *code.TLCodeUpdatePhoneCodeData) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("code.updatePhoneCodeData - error: method CodeUpdatePhoneCodeData not impl")
+	phoneCodeData := in.CodeData
+	if phoneCodeData == nil {
+		phoneCodeData = code.MakeTLPhoneCodeTransaction(&code.TLPhoneCodeTransaction{
+			AuthKeyId: in.AuthKeyId,
+			Phone:     in.Phone,
+		})
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if err := c.repo.PutCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone, phoneCodeData); err != nil {
+		c.Logger.Errorf("code.updatePhoneCodeData - save failed: auth_key_id: %d, phone: %s, err: %v",
+			in.AuthKeyId, in.Phone, err)
+		return nil, code.ErrCodeStorage
+	}
+
+	return tg.BoolTrue, nil
 }
