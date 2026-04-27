@@ -73,8 +73,7 @@ func MakeTLAuthKeyStateData(m *TLAuthKeyStateData) *TLAuthKeyStateData {
 }
 
 func (m *TLAuthKeyStateData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("authKeyStateData", m)
 }
 
 func (m *TLAuthKeyStateData) MarshalJSON() ([]byte, error) {
@@ -280,8 +279,7 @@ func MakeTLClientSession(m *TLClientSession) *TLClientSession {
 }
 
 func (m *TLClientSession) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("clientSession", m)
 }
 
 func (m *TLClientSession) MarshalJSON() ([]byte, error) {

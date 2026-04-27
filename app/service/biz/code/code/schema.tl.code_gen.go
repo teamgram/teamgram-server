@@ -79,8 +79,7 @@ func MakeTLPhoneCodeTransaction(m *TLPhoneCodeTransaction) *TLPhoneCodeTransacti
 }
 
 func (m *TLPhoneCodeTransaction) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("phoneCodeTransaction", m)
 }
 
 func (m *TLPhoneCodeTransaction) MarshalJSON() ([]byte, error) {

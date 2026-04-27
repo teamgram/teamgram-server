@@ -38,8 +38,7 @@ type TLMediaUploadPhotoFile struct {
 }
 
 func (m *TLMediaUploadPhotoFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadPhotoFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadPhotoFile, m)
 }
 
 // Encode <--
@@ -159,8 +158,7 @@ type TLMediaUploadProfilePhotoFile struct {
 }
 
 func (m *TLMediaUploadProfilePhotoFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadProfilePhotoFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadProfilePhotoFile, m)
 }
 
 // Encode <--
@@ -280,8 +278,7 @@ type TLMediaGetPhoto struct {
 }
 
 func (m *TLMediaGetPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getPhoto, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getPhoto, m)
 }
 
 // Encode <--
@@ -326,8 +323,7 @@ type TLMediaGetPhotoSizeList struct {
 }
 
 func (m *TLMediaGetPhotoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getPhotoSizeList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getPhotoSizeList, m)
 }
 
 // Encode <--
@@ -372,8 +368,7 @@ type TLMediaGetPhotoSizeListList struct {
 }
 
 func (m *TLMediaGetPhotoSizeListList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getPhotoSizeListList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getPhotoSizeListList, m)
 }
 
 // Encode <--
@@ -419,8 +414,7 @@ type TLMediaGetVideoSizeList struct {
 }
 
 func (m *TLMediaGetVideoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getVideoSizeList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getVideoSizeList, m)
 }
 
 // Encode <--
@@ -466,8 +460,7 @@ type TLMediaUploadedDocumentMedia struct {
 }
 
 func (m *TLMediaUploadedDocumentMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadedDocumentMedia, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadedDocumentMedia, m)
 }
 
 // Encode <--
@@ -523,8 +516,7 @@ type TLMediaGetDocument struct {
 }
 
 func (m *TLMediaGetDocument) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getDocument, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getDocument, m)
 }
 
 // Encode <--
@@ -569,8 +561,7 @@ type TLMediaGetDocumentList struct {
 }
 
 func (m *TLMediaGetDocumentList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getDocumentList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getDocumentList, m)
 }
 
 // Encode <--
@@ -617,8 +608,7 @@ type TLMediaUploadEncryptedFile struct {
 }
 
 func (m *TLMediaUploadEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadEncryptedFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadEncryptedFile, m)
 }
 
 // Encode <--
@@ -675,8 +665,7 @@ type TLMediaGetEncryptedFile struct {
 }
 
 func (m *TLMediaGetEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_getEncryptedFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_getEncryptedFile, m)
 }
 
 // Encode <--
@@ -729,8 +718,7 @@ type TLMediaUploadWallPaperFile struct {
 }
 
 func (m *TLMediaUploadWallPaperFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadWallPaperFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadWallPaperFile, m)
 }
 
 // Encode <--
@@ -807,8 +795,7 @@ type TLMediaUploadThemeFile struct {
 }
 
 func (m *TLMediaUploadThemeFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadThemeFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadThemeFile, m)
 }
 
 // Encode <--
@@ -911,8 +898,7 @@ type TLMediaUploadStickerFile struct {
 }
 
 func (m *TLMediaUploadStickerFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadStickerFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadStickerFile, m)
 }
 
 // Encode <--
@@ -1024,8 +1010,7 @@ type TLMediaUploadRingtoneFile struct {
 }
 
 func (m *TLMediaUploadRingtoneFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadRingtoneFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadRingtoneFile, m)
 }
 
 // Encode <--
@@ -1108,8 +1093,7 @@ type TLMediaUploadedProfilePhoto struct {
 }
 
 func (m *TLMediaUploadedProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_media_uploadedProfilePhoto, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_media_uploadedProfilePhoto, m)
 }
 
 // Encode <--

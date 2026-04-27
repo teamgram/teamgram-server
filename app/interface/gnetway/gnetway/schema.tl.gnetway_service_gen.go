@@ -37,8 +37,7 @@ type TLGnetwaySendDataToGateway struct {
 }
 
 func (m *TLGnetwaySendDataToGateway) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_gnetway_sendDataToGateway, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_gnetway_sendDataToGateway, m)
 }
 
 // Encode <--

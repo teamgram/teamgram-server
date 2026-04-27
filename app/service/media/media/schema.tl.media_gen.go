@@ -70,8 +70,7 @@ func MakeTLPhotoSizeList(m *TLPhotoSizeList) *TLPhotoSizeList {
 }
 
 func (m *TLPhotoSizeList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("photoSizeList", m)
 }
 
 func (m *TLPhotoSizeList) MarshalJSON() ([]byte, error) {
@@ -234,8 +233,7 @@ func MakeTLVideoSizeList(m *TLVideoSizeList) *TLVideoSizeList {
 }
 
 func (m *TLVideoSizeList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("videoSizeList", m)
 }
 
 func (m *TLVideoSizeList) MarshalJSON() ([]byte, error) {

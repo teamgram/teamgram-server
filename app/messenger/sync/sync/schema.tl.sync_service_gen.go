@@ -40,8 +40,7 @@ type TLSyncUpdatesMe struct {
 }
 
 func (m *TLSyncUpdatesMe) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_updatesMe, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_updatesMe, m)
 }
 
 // Encode <--
@@ -164,8 +163,7 @@ type TLSyncUpdatesNotMe struct {
 }
 
 func (m *TLSyncUpdatesNotMe) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_updatesNotMe, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_updatesNotMe, m)
 }
 
 // Encode <--
@@ -227,8 +225,7 @@ type TLSyncPushUpdates struct {
 }
 
 func (m *TLSyncPushUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_pushUpdates, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_pushUpdates, m)
 }
 
 // Encode <--
@@ -287,8 +284,7 @@ type TLSyncPushUpdatesIfNot struct {
 }
 
 func (m *TLSyncPushUpdatesIfNot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_pushUpdatesIfNot, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_pushUpdatesIfNot, m)
 }
 
 // Encode <--
@@ -385,8 +381,7 @@ type TLSyncPushBotUpdates struct {
 }
 
 func (m *TLSyncPushBotUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_pushBotUpdates, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_pushBotUpdates, m)
 }
 
 // Encode <--
@@ -448,8 +443,7 @@ type TLSyncPushRpcResult struct {
 }
 
 func (m *TLSyncPushRpcResult) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_pushRpcResult, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_pushRpcResult, m)
 }
 
 // Encode <--
@@ -527,8 +521,7 @@ type TLSyncBroadcastUpdates struct {
 }
 
 func (m *TLSyncBroadcastUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_sync_broadcastUpdates, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_sync_broadcastUpdates, m)
 }
 
 // Encode <--

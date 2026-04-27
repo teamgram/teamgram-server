@@ -38,8 +38,7 @@ type TLDialogSaveDraftMessage struct {
 }
 
 func (m *TLDialogSaveDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_saveDraftMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_saveDraftMessage, m)
 }
 
 // Encode <--
@@ -107,8 +106,7 @@ type TLDialogClearDraftMessage struct {
 }
 
 func (m *TLDialogClearDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_clearDraftMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_clearDraftMessage, m)
 }
 
 // Encode <--
@@ -163,8 +161,7 @@ type TLDialogGetAllDrafts struct {
 }
 
 func (m *TLDialogGetAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getAllDrafts, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getAllDrafts, m)
 }
 
 // Encode <--
@@ -209,8 +206,7 @@ type TLDialogClearAllDrafts struct {
 }
 
 func (m *TLDialogClearAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_clearAllDrafts, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_clearAllDrafts, m)
 }
 
 // Encode <--
@@ -258,8 +254,7 @@ type TLDialogMarkDialogUnread struct {
 }
 
 func (m *TLDialogMarkDialogUnread) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_markDialogUnread, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_markDialogUnread, m)
 }
 
 // Encode <--
@@ -328,8 +323,7 @@ type TLDialogToggleDialogPin struct {
 }
 
 func (m *TLDialogToggleDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleDialogPin, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_toggleDialogPin, m)
 }
 
 // Encode <--
@@ -395,8 +389,7 @@ type TLDialogGetDialogUnreadMarkList struct {
 }
 
 func (m *TLDialogGetDialogUnreadMarkList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogUnreadMarkList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogUnreadMarkList, m)
 }
 
 // Encode <--
@@ -444,8 +437,7 @@ type TLDialogGetDialogsByOffsetDate struct {
 }
 
 func (m *TLDialogGetDialogsByOffsetDate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsByOffsetDate, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogsByOffsetDate, m)
 }
 
 // Encode <--
@@ -514,8 +506,7 @@ type TLDialogGetDialogs struct {
 }
 
 func (m *TLDialogGetDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogs, m)
 }
 
 // Encode <--
@@ -578,8 +569,7 @@ type TLDialogGetDialogsByIdList struct {
 }
 
 func (m *TLDialogGetDialogsByIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsByIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogsByIdList, m)
 }
 
 // Encode <--
@@ -633,8 +623,7 @@ type TLDialogGetDialogsCount struct {
 }
 
 func (m *TLDialogGetDialogsCount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogsCount, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogsCount, m)
 }
 
 // Encode <--
@@ -697,8 +686,7 @@ type TLDialogGetPinnedDialogs struct {
 }
 
 func (m *TLDialogGetPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getPinnedDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getPinnedDialogs, m)
 }
 
 // Encode <--
@@ -751,8 +739,7 @@ type TLDialogReorderPinnedDialogs struct {
 }
 
 func (m *TLDialogReorderPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_reorderPinnedDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_reorderPinnedDialogs, m)
 }
 
 // Encode <--
@@ -823,8 +810,7 @@ type TLDialogGetDialogById struct {
 }
 
 func (m *TLDialogGetDialogById) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogById, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogById, m)
 }
 
 // Encode <--
@@ -881,8 +867,7 @@ type TLDialogGetTopMessage struct {
 }
 
 func (m *TLDialogGetTopMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getTopMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getTopMessage, m)
 }
 
 // Encode <--
@@ -946,8 +931,7 @@ type TLDialogInsertOrUpdateDialog struct {
 }
 
 func (m *TLDialogInsertOrUpdateDialog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_insertOrUpdateDialog, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_insertOrUpdateDialog, m)
 }
 
 // Encode <--
@@ -1110,8 +1094,7 @@ type TLDialogDeleteDialog struct {
 }
 
 func (m *TLDialogDeleteDialog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_deleteDialog, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_deleteDialog, m)
 }
 
 // Encode <--
@@ -1168,8 +1151,7 @@ type TLDialogGetUserPinnedMessage struct {
 }
 
 func (m *TLDialogGetUserPinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getUserPinnedMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getUserPinnedMessage, m)
 }
 
 // Encode <--
@@ -1227,8 +1209,7 @@ type TLDialogUpdateUserPinnedMessage struct {
 }
 
 func (m *TLDialogUpdateUserPinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateUserPinnedMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_updateUserPinnedMessage, m)
 }
 
 // Encode <--
@@ -1290,8 +1271,7 @@ type TLDialogInsertOrUpdateDialogFilter struct {
 }
 
 func (m *TLDialogInsertOrUpdateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_insertOrUpdateDialogFilter, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_insertOrUpdateDialogFilter, m)
 }
 
 // Encode <--
@@ -1353,8 +1333,7 @@ type TLDialogDeleteDialogFilter struct {
 }
 
 func (m *TLDialogDeleteDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_deleteDialogFilter, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_deleteDialogFilter, m)
 }
 
 // Encode <--
@@ -1405,8 +1384,7 @@ type TLDialogUpdateDialogFiltersOrder struct {
 }
 
 func (m *TLDialogUpdateDialogFiltersOrder) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateDialogFiltersOrder, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_updateDialogFiltersOrder, m)
 }
 
 // Encode <--
@@ -1458,8 +1436,7 @@ type TLDialogGetDialogFilters struct {
 }
 
 func (m *TLDialogGetDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilters, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogFilters, m)
 }
 
 // Encode <--
@@ -1505,8 +1482,7 @@ type TLDialogGetDialogFolder struct {
 }
 
 func (m *TLDialogGetDialogFolder) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFolder, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogFolder, m)
 }
 
 // Encode <--
@@ -1558,8 +1534,7 @@ type TLDialogEditPeerFolders struct {
 }
 
 func (m *TLDialogEditPeerFolders) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_editPeerFolders, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_editPeerFolders, m)
 }
 
 // Encode <--
@@ -1620,8 +1595,7 @@ type TLDialogGetChannelMessageReadParticipants struct {
 }
 
 func (m *TLDialogGetChannelMessageReadParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getChannelMessageReadParticipants, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getChannelMessageReadParticipants, m)
 }
 
 // Encode <--
@@ -1679,8 +1653,7 @@ type TLDialogSetChatTheme struct {
 }
 
 func (m *TLDialogSetChatTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setChatTheme, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_setChatTheme, m)
 }
 
 // Encode <--
@@ -1743,8 +1716,7 @@ type TLDialogSetHistoryTTL struct {
 }
 
 func (m *TLDialogSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setHistoryTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_setHistoryTTL, m)
 }
 
 // Encode <--
@@ -1807,8 +1779,7 @@ type TLDialogGetMyDialogsData struct {
 }
 
 func (m *TLDialogGetMyDialogsData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getMyDialogsData, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getMyDialogsData, m)
 }
 
 // Encode <--
@@ -1892,8 +1863,7 @@ type TLDialogGetSavedDialogs struct {
 }
 
 func (m *TLDialogGetSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getSavedDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getSavedDialogs, m)
 }
 
 // Encode <--
@@ -1977,8 +1947,7 @@ type TLDialogGetPinnedSavedDialogs struct {
 }
 
 func (m *TLDialogGetPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getPinnedSavedDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getPinnedSavedDialogs, m)
 }
 
 // Encode <--
@@ -2025,8 +1994,7 @@ type TLDialogToggleSavedDialogPin struct {
 }
 
 func (m *TLDialogToggleSavedDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleSavedDialogPin, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_toggleSavedDialogPin, m)
 }
 
 // Encode <--
@@ -2095,8 +2063,7 @@ type TLDialogReorderPinnedSavedDialogs struct {
 }
 
 func (m *TLDialogReorderPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_reorderPinnedSavedDialogs, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_reorderPinnedSavedDialogs, m)
 }
 
 // Encode <--
@@ -2178,8 +2145,7 @@ type TLDialogGetDialogFilter struct {
 }
 
 func (m *TLDialogGetDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilter, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogFilter, m)
 }
 
 // Encode <--
@@ -2230,8 +2196,7 @@ type TLDialogGetDialogFilterBySlug struct {
 }
 
 func (m *TLDialogGetDialogFilterBySlug) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilterBySlug, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogFilterBySlug, m)
 }
 
 // Encode <--
@@ -2282,8 +2247,7 @@ type TLDialogCreateDialogFilter struct {
 }
 
 func (m *TLDialogCreateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_createDialogFilter, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_createDialogFilter, m)
 }
 
 // Encode <--
@@ -2344,8 +2308,7 @@ type TLDialogUpdateUnreadCount struct {
 }
 
 func (m *TLDialogUpdateUnreadCount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_updateUnreadCount, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_updateUnreadCount, m)
 }
 
 // Encode <--
@@ -2458,8 +2421,7 @@ type TLDialogToggleDialogFilterTags struct {
 }
 
 func (m *TLDialogToggleDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_toggleDialogFilterTags, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_toggleDialogFilterTags, m)
 }
 
 // Encode <--
@@ -2515,8 +2477,7 @@ type TLDialogGetDialogFilterTags struct {
 }
 
 func (m *TLDialogGetDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_getDialogFilterTags, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_getDialogFilterTags, m)
 }
 
 // Encode <--
@@ -2565,8 +2526,7 @@ type TLDialogSetChatWallpaper struct {
 }
 
 func (m *TLDialogSetChatWallpaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dialog_setChatWallpaper, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dialog_setChatWallpaper, m)
 }
 
 // Encode <--

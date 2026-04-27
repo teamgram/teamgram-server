@@ -28,8 +28,7 @@ type TLReqPq struct {
 }
 
 func (m *TLReqPq) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_req_pq, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_req_pq, m)
 }
 
 func (m *TLReqPq) Encode(x *bin.Encoder, layer int32) error {
@@ -72,8 +71,7 @@ type TLReqPqMulti struct {
 }
 
 func (m *TLReqPqMulti) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_req_pq_multi, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_req_pq_multi, m)
 }
 
 func (m *TLReqPqMulti) Encode(x *bin.Encoder, layer int32) error {
@@ -121,8 +119,7 @@ type TLReqDHParams struct {
 }
 
 func (m *TLReqDHParams) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_req_DH_params, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_req_DH_params, m)
 }
 
 func (m *TLReqDHParams) Encode(x *bin.Encoder, layer int32) error {
@@ -192,8 +189,7 @@ type TLSetClientDHParams struct {
 }
 
 func (m *TLSetClientDHParams) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_set_client_DH_params, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_set_client_DH_params, m)
 }
 
 func (m *TLSetClientDHParams) Encode(x *bin.Encoder, layer int32) error {
@@ -245,8 +241,7 @@ type TLDestroyAuthKey struct {
 }
 
 func (m *TLDestroyAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_destroy_auth_key, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_destroy_auth_key, m)
 }
 
 func (m *TLDestroyAuthKey) Encode(x *bin.Encoder, layer int32) error {
@@ -282,8 +277,7 @@ type TLHelpTest struct {
 }
 
 func (m *TLHelpTest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_help_test, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_help_test, m)
 }
 
 func (m *TLHelpTest) Encode(x *bin.Encoder, layer int32) error {
@@ -319,8 +313,7 @@ type TLTestUseError struct {
 }
 
 func (m *TLTestUseError) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_test_useError, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_test_useError, m)
 }
 
 func (m *TLTestUseError) Encode(x *bin.Encoder, layer int32) error {
@@ -356,8 +349,7 @@ type TLTestUseConfigSimple struct {
 }
 
 func (m *TLTestUseConfigSimple) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_test_useConfigSimple, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_test_useConfigSimple, m)
 }
 
 func (m *TLTestUseConfigSimple) Encode(x *bin.Encoder, layer int32) error {
@@ -394,8 +386,7 @@ type TLRpcDropAnswer struct {
 }
 
 func (m *TLRpcDropAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_rpc_drop_answer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_rpc_drop_answer, m)
 }
 
 func (m *TLRpcDropAnswer) Encode(x *bin.Encoder, layer int32) error {
@@ -438,8 +429,7 @@ type TLGetFutureSalts struct {
 }
 
 func (m *TLGetFutureSalts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_get_future_salts, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_get_future_salts, m)
 }
 
 func (m *TLGetFutureSalts) Encode(x *bin.Encoder, layer int32) error {
@@ -482,8 +472,7 @@ type TLPing struct {
 }
 
 func (m *TLPing) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_ping, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_ping, m)
 }
 
 func (m *TLPing) Encode(x *bin.Encoder, layer int32) error {
@@ -527,8 +516,7 @@ type TLPingDelayDisconnect struct {
 }
 
 func (m *TLPingDelayDisconnect) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_ping_delay_disconnect, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_ping_delay_disconnect, m)
 }
 
 func (m *TLPingDelayDisconnect) Encode(x *bin.Encoder, layer int32) error {
@@ -576,8 +564,7 @@ type TLDestroySession struct {
 }
 
 func (m *TLDestroySession) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_destroy_session, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_destroy_session, m)
 }
 
 func (m *TLDestroySession) Encode(x *bin.Encoder, layer int32) error {

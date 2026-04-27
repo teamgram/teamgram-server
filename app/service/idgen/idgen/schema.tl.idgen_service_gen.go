@@ -34,8 +34,7 @@ type TLIdgenNextId struct {
 }
 
 func (m *TLIdgenNextId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_nextId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_nextId, m)
 }
 
 // Encode <--
@@ -74,8 +73,7 @@ type TLIdgenNextIds struct {
 }
 
 func (m *TLIdgenNextIds) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_nextIds, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_nextIds, m)
 }
 
 // Encode <--
@@ -120,8 +118,7 @@ type TLIdgenGetCurrentSeqId struct {
 }
 
 func (m *TLIdgenGetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getCurrentSeqId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_getCurrentSeqId, m)
 }
 
 // Encode <--
@@ -167,8 +164,7 @@ type TLIdgenSetCurrentSeqId struct {
 }
 
 func (m *TLIdgenSetCurrentSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_setCurrentSeqId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_setCurrentSeqId, m)
 }
 
 // Encode <--
@@ -218,8 +214,7 @@ type TLIdgenGetNextSeqId struct {
 }
 
 func (m *TLIdgenGetNextSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextSeqId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_getNextSeqId, m)
 }
 
 // Encode <--
@@ -265,8 +260,7 @@ type TLIdgenGetNextNSeqId struct {
 }
 
 func (m *TLIdgenGetNextNSeqId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextNSeqId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_getNextNSeqId, m)
 }
 
 // Encode <--
@@ -316,8 +310,7 @@ type TLIdgenGetNextIdValList struct {
 }
 
 func (m *TLIdgenGetNextIdValList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getNextIdValList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_getNextIdValList, m)
 }
 
 // Encode <--
@@ -380,8 +373,7 @@ type TLIdgenGetCurrentSeqIdList struct {
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_idgen_getCurrentSeqIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_idgen_getCurrentSeqIdList, m)
 }
 
 // Encode <--

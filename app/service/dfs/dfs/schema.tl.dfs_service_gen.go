@@ -40,8 +40,7 @@ type TLDfsWriteFilePartData struct {
 }
 
 func (m *TLDfsWriteFilePartData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_writeFilePartData, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_writeFilePartData, m)
 }
 
 // Encode <--
@@ -137,8 +136,7 @@ type TLDfsUploadPhotoFileV2 struct {
 }
 
 func (m *TLDfsUploadPhotoFileV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadPhotoFileV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadPhotoFileV2, m)
 }
 
 // Encode <--
@@ -198,8 +196,7 @@ type TLDfsUploadProfilePhotoFileV2 struct {
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadProfilePhotoFileV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadProfilePhotoFileV2, m)
 }
 
 // Encode <--
@@ -320,8 +317,7 @@ type TLDfsUploadEncryptedFileV2 struct {
 }
 
 func (m *TLDfsUploadEncryptedFileV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadEncryptedFileV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadEncryptedFileV2, m)
 }
 
 // Encode <--
@@ -379,8 +375,7 @@ type TLDfsDownloadFile struct {
 }
 
 func (m *TLDfsDownloadFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_downloadFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_downloadFile, m)
 }
 
 // Encode <--
@@ -443,8 +438,7 @@ type TLDfsUploadDocumentFileV2 struct {
 }
 
 func (m *TLDfsUploadDocumentFileV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadDocumentFileV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadDocumentFileV2, m)
 }
 
 // Encode <--
@@ -501,8 +495,7 @@ type TLDfsUploadGifDocumentMedia struct {
 }
 
 func (m *TLDfsUploadGifDocumentMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadGifDocumentMedia, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadGifDocumentMedia, m)
 }
 
 // Encode <--
@@ -559,8 +552,7 @@ type TLDfsUploadMp4DocumentMedia struct {
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadMp4DocumentMedia, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadMp4DocumentMedia, m)
 }
 
 // Encode <--
@@ -619,8 +611,7 @@ type TLDfsUploadWallPaperFile struct {
 }
 
 func (m *TLDfsUploadWallPaperFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadWallPaperFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadWallPaperFile, m)
 }
 
 // Encode <--
@@ -697,8 +688,7 @@ type TLDfsUploadThemeFile struct {
 }
 
 func (m *TLDfsUploadThemeFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadThemeFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadThemeFile, m)
 }
 
 // Encode <--
@@ -799,8 +789,7 @@ type TLDfsUploadRingtoneFile struct {
 }
 
 func (m *TLDfsUploadRingtoneFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadRingtoneFile, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadRingtoneFile, m)
 }
 
 // Encode <--
@@ -868,8 +857,7 @@ type TLDfsUploadedProfilePhoto struct {
 }
 
 func (m *TLDfsUploadedProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_dfs_uploadedProfilePhoto, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_dfs_uploadedProfilePhoto, m)
 }
 
 // Encode <--

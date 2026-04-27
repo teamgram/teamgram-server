@@ -75,8 +75,7 @@ func MakeTLDialogExt(m *TLDialogExt) *TLDialogExt {
 }
 
 func (m *TLDialogExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("dialogExt", m)
 }
 
 func (m *TLDialogExt) MarshalJSON() ([]byte, error) {
@@ -278,8 +277,7 @@ func MakeTLDialogFilterExt(m *TLDialogFilterExt) *TLDialogFilterExt {
 }
 
 func (m *TLDialogFilterExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("dialogFilterExt", m)
 }
 
 func (m *TLDialogFilterExt) MarshalJSON() ([]byte, error) {
@@ -461,8 +459,7 @@ func MakeTLDialogPinnedExt(m *TLDialogPinnedExt) *TLDialogPinnedExt {
 }
 
 func (m *TLDialogPinnedExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("dialogPinnedExt", m)
 }
 
 func (m *TLDialogPinnedExt) MarshalJSON() ([]byte, error) {
@@ -601,8 +598,7 @@ func MakeTLSimpleDialogsData(m *TLSimpleDialogsData) *TLSimpleDialogsData {
 }
 
 func (m *TLSimpleDialogsData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("simpleDialogsData", m)
 }
 
 func (m *TLSimpleDialogsData) MarshalJSON() ([]byte, error) {
@@ -756,8 +752,7 @@ func MakeTLUpdateDraftMessage(m *TLUpdateDraftMessage) *TLUpdateDraftMessage {
 }
 
 func (m *TLUpdateDraftMessage) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("updateDraftMessage", m)
 }
 
 func (m *TLUpdateDraftMessage) MarshalJSON() ([]byte, error) {
@@ -908,8 +903,7 @@ func MakeTLSavedDialogList(m *TLSavedDialogList) *TLSavedDialogList {
 }
 
 func (m *TLSavedDialogList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("savedDialogList", m)
 }
 
 func (m *TLSavedDialogList) MarshalJSON() ([]byte, error) {

@@ -35,8 +35,7 @@ type TLChatGetMutableChat struct {
 }
 
 func (m *TLChatGetMutableChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMutableChat, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getMutableChat, m)
 }
 
 // Encode <--
@@ -82,8 +81,7 @@ type TLChatGetChatListByIdList struct {
 }
 
 func (m *TLChatGetChatListByIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatListByIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getChatListByIdList, m)
 }
 
 // Encode <--
@@ -136,8 +134,7 @@ type TLChatGetChatBySelfId struct {
 }
 
 func (m *TLChatGetChatBySelfId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatBySelfId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getChatBySelfId, m)
 }
 
 // Encode <--
@@ -191,8 +188,7 @@ type TLChatCreateChat2 struct {
 }
 
 func (m *TLChatCreateChat2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_createChat2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_createChat2, m)
 }
 
 // Encode <--
@@ -293,8 +289,7 @@ type TLChatDeleteChat struct {
 }
 
 func (m *TLChatDeleteChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteChat, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_deleteChat, m)
 }
 
 // Encode <--
@@ -346,8 +341,7 @@ type TLChatDeleteChatUser struct {
 }
 
 func (m *TLChatDeleteChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteChatUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_deleteChatUser, m)
 }
 
 // Encode <--
@@ -404,8 +398,7 @@ type TLChatEditChatTitle struct {
 }
 
 func (m *TLChatEditChatTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatTitle, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editChatTitle, m)
 }
 
 // Encode <--
@@ -462,8 +455,7 @@ type TLChatEditChatAbout struct {
 }
 
 func (m *TLChatEditChatAbout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatAbout, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editChatAbout, m)
 }
 
 // Encode <--
@@ -520,8 +512,7 @@ type TLChatEditChatPhoto struct {
 }
 
 func (m *TLChatEditChatPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatPhoto, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editChatPhoto, m)
 }
 
 // Encode <--
@@ -585,8 +576,7 @@ type TLChatEditChatAdmin struct {
 }
 
 func (m *TLChatEditChatAdmin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatAdmin, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editChatAdmin, m)
 }
 
 // Encode <--
@@ -654,8 +644,7 @@ type TLChatEditChatDefaultBannedRights struct {
 }
 
 func (m *TLChatEditChatDefaultBannedRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editChatDefaultBannedRights, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editChatDefaultBannedRights, m)
 }
 
 // Encode <--
@@ -719,8 +708,7 @@ type TLChatAddChatUser struct {
 }
 
 func (m *TLChatAddChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_addChatUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_addChatUser, m)
 }
 
 // Encode <--
@@ -797,8 +785,7 @@ type TLChatGetMutableChatByLink struct {
 }
 
 func (m *TLChatGetMutableChatByLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMutableChatByLink, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getMutableChatByLink, m)
 }
 
 // Encode <--
@@ -845,8 +832,7 @@ type TLChatToggleNoForwards struct {
 }
 
 func (m *TLChatToggleNoForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_toggleNoForwards, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_toggleNoForwards, m)
 }
 
 // Encode <--
@@ -909,8 +895,7 @@ type TLChatMigratedToChannel struct {
 }
 
 func (m *TLChatMigratedToChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_migratedToChannel, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_migratedToChannel, m)
 }
 
 // Encode <--
@@ -972,8 +957,7 @@ type TLChatGetChatParticipantIdList struct {
 }
 
 func (m *TLChatGetChatParticipantIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatParticipantIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getChatParticipantIdList, m)
 }
 
 // Encode <--
@@ -1018,8 +1002,7 @@ type TLChatGetUsersChatIdList struct {
 }
 
 func (m *TLChatGetUsersChatIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getUsersChatIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getUsersChatIdList, m)
 }
 
 // Encode <--
@@ -1066,8 +1049,7 @@ type TLChatGetMyChatList struct {
 }
 
 func (m *TLChatGetMyChatList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getMyChatList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getMyChatList, m)
 }
 
 // Encode <--
@@ -1129,8 +1111,7 @@ type TLChatExportChatInvite struct {
 }
 
 func (m *TLChatExportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_exportChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_exportChatInvite, m)
 }
 
 // Encode <--
@@ -1250,8 +1231,7 @@ type TLChatGetAdminsWithInvites struct {
 }
 
 func (m *TLChatGetAdminsWithInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getAdminsWithInvites, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getAdminsWithInvites, m)
 }
 
 // Encode <--
@@ -1302,8 +1282,7 @@ type TLChatGetExportedChatInvite struct {
 }
 
 func (m *TLChatGetExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getExportedChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getExportedChatInvite, m)
 }
 
 // Encode <--
@@ -1358,8 +1337,7 @@ type TLChatGetExportedChatInvites struct {
 }
 
 func (m *TLChatGetExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getExportedChatInvites, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getExportedChatInvites, m)
 }
 
 // Encode <--
@@ -1466,8 +1444,7 @@ type TLChatCheckChatInvite struct {
 }
 
 func (m *TLChatCheckChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_checkChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_checkChatInvite, m)
 }
 
 // Encode <--
@@ -1518,8 +1495,7 @@ type TLChatImportChatInvite struct {
 }
 
 func (m *TLChatImportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_importChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_importChatInvite, m)
 }
 
 // Encode <--
@@ -1576,8 +1552,7 @@ type TLChatGetChatInviteImporters struct {
 }
 
 func (m *TLChatGetChatInviteImporters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getChatInviteImporters, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getChatInviteImporters, m)
 }
 
 // Encode <--
@@ -1696,8 +1671,7 @@ type TLChatDeleteExportedChatInvite struct {
 }
 
 func (m *TLChatDeleteExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteExportedChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_deleteExportedChatInvite, m)
 }
 
 // Encode <--
@@ -1754,8 +1728,7 @@ type TLChatDeleteRevokedExportedChatInvites struct {
 }
 
 func (m *TLChatDeleteRevokedExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_deleteRevokedExportedChatInvites, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_deleteRevokedExportedChatInvites, m)
 }
 
 // Encode <--
@@ -1817,8 +1790,7 @@ type TLChatEditExportedChatInvite struct {
 }
 
 func (m *TLChatEditExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_editExportedChatInvite, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_editExportedChatInvite, m)
 }
 
 // Encode <--
@@ -1955,8 +1927,7 @@ type TLChatSetChatAvailableReactions struct {
 }
 
 func (m *TLChatSetChatAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_setChatAvailableReactions, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_setChatAvailableReactions, m)
 }
 
 // Encode <--
@@ -2020,8 +1991,7 @@ type TLChatSetHistoryTTL struct {
 }
 
 func (m *TLChatSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_setHistoryTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_setHistoryTTL, m)
 }
 
 // Encode <--
@@ -2079,8 +2049,7 @@ type TLChatSearch struct {
 }
 
 func (m *TLChatSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_search, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_search, m)
 }
 
 // Encode <--
@@ -2141,8 +2110,7 @@ type TLChatGetRecentChatInviteRequesters struct {
 }
 
 func (m *TLChatGetRecentChatInviteRequesters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_getRecentChatInviteRequesters, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_getRecentChatInviteRequesters, m)
 }
 
 // Encode <--
@@ -2196,8 +2164,7 @@ type TLChatHideChatJoinRequests struct {
 }
 
 func (m *TLChatHideChatJoinRequests) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_hideChatJoinRequests, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_hideChatJoinRequests, m)
 }
 
 // Encode <--
@@ -2298,8 +2265,7 @@ type TLChatImportChatInvite2 struct {
 }
 
 func (m *TLChatImportChatInvite2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_chat_importChatInvite2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_chat_importChatInvite2, m)
 }
 
 // Encode <--

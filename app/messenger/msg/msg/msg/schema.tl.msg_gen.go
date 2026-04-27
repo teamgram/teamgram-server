@@ -73,8 +73,7 @@ func MakeTLContentMessage(m *TLContentMessage) *TLContentMessage {
 }
 
 func (m *TLContentMessage) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("contentMessage", m)
 }
 
 func (m *TLContentMessage) MarshalJSON() ([]byte, error) {
@@ -250,8 +249,7 @@ func MakeTLOutboxMessage(m *TLOutboxMessage) *TLOutboxMessage {
 }
 
 func (m *TLOutboxMessage) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("outboxMessage", m)
 }
 
 func (m *TLOutboxMessage) MarshalJSON() ([]byte, error) {
@@ -440,8 +438,7 @@ func MakeTLSender(m *TLSender) *TLSender {
 }
 
 func (m *TLSender) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("sender", m)
 }
 
 func (m *TLSender) MarshalJSON() ([]byte, error) {

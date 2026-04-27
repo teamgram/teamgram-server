@@ -36,8 +36,7 @@ type TLMessageGetUserMessage struct {
 }
 
 func (m *TLMessageGetUserMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUserMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUserMessage, m)
 }
 
 // Encode <--
@@ -88,8 +87,7 @@ type TLMessageGetUserMessageList struct {
 }
 
 func (m *TLMessageGetUserMessageList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUserMessageList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUserMessageList, m)
 }
 
 // Encode <--
@@ -142,8 +140,7 @@ type TLMessageGetUserMessageListByDataIdList struct {
 }
 
 func (m *TLMessageGetUserMessageListByDataIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUserMessageListByDataIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUserMessageListByDataIdList, m)
 }
 
 // Encode <--
@@ -196,8 +193,7 @@ type TLMessageGetUserMessageListByDataIdUserIdList struct {
 }
 
 func (m *TLMessageGetUserMessageListByDataIdUserIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUserMessageListByDataIdUserIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUserMessageListByDataIdUserIdList, m)
 }
 
 // Encode <--
@@ -258,8 +254,7 @@ type TLMessageGetHistoryMessages struct {
 }
 
 func (m *TLMessageGetHistoryMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getHistoryMessages, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getHistoryMessages, m)
 }
 
 // Encode <--
@@ -351,8 +346,7 @@ type TLMessageGetHistoryMessagesCount struct {
 }
 
 func (m *TLMessageGetHistoryMessagesCount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getHistoryMessagesCount, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getHistoryMessagesCount, m)
 }
 
 // Encode <--
@@ -409,8 +403,7 @@ type TLMessageGetPeerUserMessageId struct {
 }
 
 func (m *TLMessageGetPeerUserMessageId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getPeerUserMessageId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getPeerUserMessageId, m)
 }
 
 // Encode <--
@@ -467,8 +460,7 @@ type TLMessageGetPeerUserMessage struct {
 }
 
 func (m *TLMessageGetPeerUserMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getPeerUserMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getPeerUserMessage, m)
 }
 
 // Encode <--
@@ -528,8 +520,7 @@ type TLMessageSearchByMediaType struct {
 }
 
 func (m *TLMessageSearchByMediaType) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_searchByMediaType, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_searchByMediaType, m)
 }
 
 // Encode <--
@@ -604,8 +595,7 @@ type TLMessageSearch struct {
 }
 
 func (m *TLMessageSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_search, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_search, m)
 }
 
 // Encode <--
@@ -678,8 +668,7 @@ type TLMessageSearchGlobal struct {
 }
 
 func (m *TLMessageSearchGlobal) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_searchGlobal, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_searchGlobal, m)
 }
 
 // Encode <--
@@ -741,8 +730,7 @@ type TLMessageSearchByPinned struct {
 }
 
 func (m *TLMessageSearchByPinned) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_searchByPinned, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_searchByPinned, m)
 }
 
 // Encode <--
@@ -800,8 +788,7 @@ type TLMessageGetSearchCounter struct {
 }
 
 func (m *TLMessageGetSearchCounter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getSearchCounter, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getSearchCounter, m)
 }
 
 // Encode <--
@@ -873,8 +860,7 @@ type TLMessageSearchV2 struct {
 }
 
 func (m *TLMessageSearchV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_searchV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_searchV2, m)
 }
 
 // Encode <--
@@ -981,8 +967,7 @@ type TLMessageGetLastTwoPinnedMessageId struct {
 }
 
 func (m *TLMessageGetLastTwoPinnedMessageId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getLastTwoPinnedMessageId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getLastTwoPinnedMessageId, m)
 }
 
 // Encode <--
@@ -1041,8 +1026,7 @@ type TLMessageUpdatePinnedMessageId struct {
 }
 
 func (m *TLMessageUpdatePinnedMessageId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_updatePinnedMessageId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_updatePinnedMessageId, m)
 }
 
 // Encode <--
@@ -1115,8 +1099,7 @@ type TLMessageGetPinnedMessageIdList struct {
 }
 
 func (m *TLMessageGetPinnedMessageIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getPinnedMessageIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getPinnedMessageIdList, m)
 }
 
 // Encode <--
@@ -1173,8 +1156,7 @@ type TLMessageUnPinAllMessages struct {
 }
 
 func (m *TLMessageUnPinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_unPinAllMessages, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_unPinAllMessages, m)
 }
 
 // Encode <--
@@ -1236,8 +1218,7 @@ type TLMessageGetUnreadMentions struct {
 }
 
 func (m *TLMessageGetUnreadMentions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUnreadMentions, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUnreadMentions, m)
 }
 
 // Encode <--
@@ -1319,8 +1300,7 @@ type TLMessageGetUnreadMentionsCount struct {
 }
 
 func (m *TLMessageGetUnreadMentionsCount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_message_getUnreadMentionsCount, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_message_getUnreadMentionsCount, m)
 }
 
 // Encode <--

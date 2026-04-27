@@ -85,8 +85,7 @@ func MakeTLIdVal(m *TLIdVal) *TLIdVal {
 }
 
 func (m *TLIdVal) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("idVal", m)
 }
 
 func (m *TLIdVal) MarshalJSON() ([]byte, error) {
@@ -184,8 +183,7 @@ func MakeTLIdVals(m *TLIdVals) *TLIdVals {
 }
 
 func (m *TLIdVals) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("idVals", m)
 }
 
 func (m *TLIdVals) MarshalJSON() ([]byte, error) {
@@ -287,8 +285,7 @@ func MakeTLSeqIdVal(m *TLSeqIdVal) *TLSeqIdVal {
 }
 
 func (m *TLSeqIdVal) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("seqIdVal", m)
 }
 
 func (m *TLSeqIdVal) MarshalJSON() ([]byte, error) {
@@ -377,8 +374,7 @@ type IdVal struct {
 }
 
 func (m *IdVal) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *IdVal) MarshalJSON() ([]byte, error) {
@@ -551,8 +547,7 @@ func MakeTLInputId(m *TLInputId) *TLInputId {
 }
 
 func (m *TLInputId) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inputId", m)
 }
 
 func (m *TLInputId) MarshalJSON() ([]byte, error) {
@@ -643,8 +638,7 @@ func MakeTLInputIds(m *TLInputIds) *TLInputIds {
 }
 
 func (m *TLInputIds) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inputIds", m)
 }
 
 func (m *TLInputIds) MarshalJSON() ([]byte, error) {
@@ -742,8 +736,7 @@ func MakeTLInputSeqId(m *TLInputSeqId) *TLInputSeqId {
 }
 
 func (m *TLInputSeqId) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inputSeqId", m)
 }
 
 func (m *TLInputSeqId) MarshalJSON() ([]byte, error) {
@@ -845,8 +838,7 @@ func MakeTLInputNSeqId(m *TLInputNSeqId) *TLInputNSeqId {
 }
 
 func (m *TLInputNSeqId) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inputNSeqId", m)
 }
 
 func (m *TLInputNSeqId) MarshalJSON() ([]byte, error) {
@@ -944,8 +936,7 @@ type InputId struct {
 }
 
 func (m *InputId) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *InputId) MarshalJSON() ([]byte, error) {

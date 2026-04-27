@@ -71,8 +71,7 @@ func MakeTLChannelDifference(m *TLChannelDifference) *TLChannelDifference {
 }
 
 func (m *TLChannelDifference) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("channelDifference", m)
 }
 
 func (m *TLChannelDifference) MarshalJSON() ([]byte, error) {
@@ -302,8 +301,7 @@ func MakeTLDifferenceEmpty(m *TLDifferenceEmpty) *TLDifferenceEmpty {
 }
 
 func (m *TLDifferenceEmpty) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("differenceEmpty", m)
 }
 
 func (m *TLDifferenceEmpty) MarshalJSON() ([]byte, error) {
@@ -412,8 +410,7 @@ func MakeTLDifference(m *TLDifference) *TLDifference {
 }
 
 func (m *TLDifference) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("difference", m)
 }
 
 func (m *TLDifference) MarshalJSON() ([]byte, error) {
@@ -581,8 +578,7 @@ func MakeTLDifferenceSlice(m *TLDifferenceSlice) *TLDifferenceSlice {
 }
 
 func (m *TLDifferenceSlice) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("differenceSlice", m)
 }
 
 func (m *TLDifferenceSlice) MarshalJSON() ([]byte, error) {
@@ -748,8 +744,7 @@ func MakeTLDifferenceTooLong(m *TLDifferenceTooLong) *TLDifferenceTooLong {
 }
 
 func (m *TLDifferenceTooLong) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("differenceTooLong", m)
 }
 
 func (m *TLDifferenceTooLong) MarshalJSON() ([]byte, error) {
@@ -838,8 +833,7 @@ type Difference struct {
 }
 
 func (m *Difference) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *Difference) MarshalJSON() ([]byte, error) {

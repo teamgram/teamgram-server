@@ -36,8 +36,7 @@ type TLAuthsessionGetAuthorizations struct {
 }
 
 func (m *TLAuthsessionGetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getAuthorizations, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getAuthorizations, m)
 }
 
 // Encode <--
@@ -89,8 +88,7 @@ type TLAuthsessionResetAuthorization struct {
 }
 
 func (m *TLAuthsessionResetAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_resetAuthorization, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_resetAuthorization, m)
 }
 
 // Encode <--
@@ -145,8 +143,7 @@ type TLAuthsessionGetLayer struct {
 }
 
 func (m *TLAuthsessionGetLayer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getLayer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getLayer, m)
 }
 
 // Encode <--
@@ -191,8 +188,7 @@ type TLAuthsessionGetLangPack struct {
 }
 
 func (m *TLAuthsessionGetLangPack) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getLangPack, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getLangPack, m)
 }
 
 // Encode <--
@@ -237,8 +233,7 @@ type TLAuthsessionGetClient struct {
 }
 
 func (m *TLAuthsessionGetClient) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getClient, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getClient, m)
 }
 
 // Encode <--
@@ -283,8 +278,7 @@ type TLAuthsessionGetLangCode struct {
 }
 
 func (m *TLAuthsessionGetLangCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getLangCode, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getLangCode, m)
 }
 
 // Encode <--
@@ -329,8 +323,7 @@ type TLAuthsessionGetUserId struct {
 }
 
 func (m *TLAuthsessionGetUserId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getUserId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getUserId, m)
 }
 
 // Encode <--
@@ -377,8 +370,7 @@ type TLAuthsessionGetPushSessionId struct {
 }
 
 func (m *TLAuthsessionGetPushSessionId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getPushSessionId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getPushSessionId, m)
 }
 
 // Encode <--
@@ -434,8 +426,7 @@ type TLAuthsessionGetFutureSalts struct {
 }
 
 func (m *TLAuthsessionGetFutureSalts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getFutureSalts, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getFutureSalts, m)
 }
 
 // Encode <--
@@ -485,8 +476,7 @@ type TLAuthsessionQueryAuthKey struct {
 }
 
 func (m *TLAuthsessionQueryAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_queryAuthKey, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_queryAuthKey, m)
 }
 
 // Encode <--
@@ -533,8 +523,7 @@ type TLAuthsessionSetAuthKey struct {
 }
 
 func (m *TLAuthsessionSetAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_setAuthKey, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_setAuthKey, m)
 }
 
 // Encode <--
@@ -603,8 +592,7 @@ type TLAuthsessionBindAuthKeyUser struct {
 }
 
 func (m *TLAuthsessionBindAuthKeyUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_bindAuthKeyUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_bindAuthKeyUser, m)
 }
 
 // Encode <--
@@ -655,8 +643,7 @@ type TLAuthsessionUnbindAuthKeyUser struct {
 }
 
 func (m *TLAuthsessionUnbindAuthKeyUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_unbindAuthKeyUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_unbindAuthKeyUser, m)
 }
 
 // Encode <--
@@ -706,8 +693,7 @@ type TLAuthsessionGetPermAuthKeyId struct {
 }
 
 func (m *TLAuthsessionGetPermAuthKeyId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getPermAuthKeyId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getPermAuthKeyId, m)
 }
 
 // Encode <--
@@ -755,8 +741,7 @@ type TLAuthsessionBindTempAuthKey struct {
 }
 
 func (m *TLAuthsessionBindTempAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_bindTempAuthKey, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_bindTempAuthKey, m)
 }
 
 // Encode <--
@@ -816,8 +801,7 @@ type TLAuthsessionSetClientSessionInfo struct {
 }
 
 func (m *TLAuthsessionSetClientSessionInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_setClientSessionInfo, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_setClientSessionInfo, m)
 }
 
 // Encode <--
@@ -868,8 +852,7 @@ type TLAuthsessionGetAuthorization struct {
 }
 
 func (m *TLAuthsessionGetAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getAuthorization, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getAuthorization, m)
 }
 
 // Encode <--
@@ -914,8 +897,7 @@ type TLAuthsessionGetAuthStateData struct {
 }
 
 func (m *TLAuthsessionGetAuthStateData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_getAuthStateData, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_getAuthStateData, m)
 }
 
 // Encode <--
@@ -962,8 +944,7 @@ type TLAuthsessionSetLayer struct {
 }
 
 func (m *TLAuthsessionSetLayer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_setLayer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_setLayer, m)
 }
 
 // Encode <--
@@ -1028,8 +1009,7 @@ type TLAuthsessionSetInitConnection struct {
 }
 
 func (m *TLAuthsessionSetInitConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_setInitConnection, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_setInitConnection, m)
 }
 
 // Encode <--
@@ -1126,8 +1106,7 @@ type TLAuthsessionSetAndroidPushSessionId struct {
 }
 
 func (m *TLAuthsessionSetAndroidPushSessionId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_authsession_setAndroidPushSessionId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_authsession_setAndroidPushSessionId, m)
 }
 
 // Encode <--

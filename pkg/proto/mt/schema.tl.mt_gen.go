@@ -66,8 +66,7 @@ func MakeTLBindAuthKeyInner(m *TLBindAuthKeyInner) *TLBindAuthKeyInner {
 }
 
 func (m *TLBindAuthKeyInner) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bind_auth_key_inner", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bind_auth_key_inner", m)
 }
 
 func (m *TLBindAuthKeyInner) MarshalJSON() ([]byte, error) {
@@ -219,8 +218,7 @@ func MakeTLClientDHInnerData(m *TLClientDHInnerData) *TLClientDHInnerData {
 }
 
 func (m *TLClientDHInnerData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "client_DH_inner_data", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("client_DH_inner_data", m)
 }
 
 func (m *TLClientDHInnerData) MarshalJSON() ([]byte, error) {
@@ -382,8 +380,7 @@ func MakeTLDestroyAuthKeyOk(m *TLDestroyAuthKeyOk) *TLDestroyAuthKeyOk {
 }
 
 func (m *TLDestroyAuthKeyOk) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "destroy_auth_key_ok", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("destroy_auth_key_ok", m)
 }
 
 func (m *TLDestroyAuthKeyOk) MarshalJSON() ([]byte, error) {
@@ -473,8 +470,7 @@ func MakeTLDestroyAuthKeyNone(m *TLDestroyAuthKeyNone) *TLDestroyAuthKeyNone {
 }
 
 func (m *TLDestroyAuthKeyNone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "destroy_auth_key_none", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("destroy_auth_key_none", m)
 }
 
 func (m *TLDestroyAuthKeyNone) MarshalJSON() ([]byte, error) {
@@ -564,8 +560,7 @@ func MakeTLDestroyAuthKeyFail(m *TLDestroyAuthKeyFail) *TLDestroyAuthKeyFail {
 }
 
 func (m *TLDestroyAuthKeyFail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "destroy_auth_key_fail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("destroy_auth_key_fail", m)
 }
 
 func (m *TLDestroyAuthKeyFail) MarshalJSON() ([]byte, error) {
@@ -655,8 +650,7 @@ func (m *DestroyAuthKeyRes) ClazzName() string {
 }
 
 func (m *DestroyAuthKeyRes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *DestroyAuthKeyRes) MarshalJSON() ([]byte, error) {
@@ -827,8 +821,7 @@ func MakeTLPQInnerData(m *TLPQInnerData) *TLPQInnerData {
 }
 
 func (m *TLPQInnerData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "p_q_inner_data", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("p_q_inner_data", m)
 }
 
 func (m *TLPQInnerData) MarshalJSON() ([]byte, error) {
@@ -973,8 +966,7 @@ func MakeTLPQInnerDataDc(m *TLPQInnerDataDc) *TLPQInnerDataDc {
 }
 
 func (m *TLPQInnerDataDc) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "p_q_inner_data_dc", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("p_q_inner_data_dc", m)
 }
 
 func (m *TLPQInnerDataDc) MarshalJSON() ([]byte, error) {
@@ -1125,8 +1117,7 @@ func MakeTLPQInnerDataTemp(m *TLPQInnerDataTemp) *TLPQInnerDataTemp {
 }
 
 func (m *TLPQInnerDataTemp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "p_q_inner_data_temp", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("p_q_inner_data_temp", m)
 }
 
 func (m *TLPQInnerDataTemp) MarshalJSON() ([]byte, error) {
@@ -1278,8 +1269,7 @@ func MakeTLPQInnerDataTempDc(m *TLPQInnerDataTempDc) *TLPQInnerDataTempDc {
 }
 
 func (m *TLPQInnerDataTempDc) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "p_q_inner_data_temp_dc", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("p_q_inner_data_temp_dc", m)
 }
 
 func (m *TLPQInnerDataTempDc) MarshalJSON() ([]byte, error) {
@@ -1429,8 +1419,7 @@ func (m *PQInnerData) ClazzName() string {
 }
 
 func (m *PQInnerData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *PQInnerData) MarshalJSON() ([]byte, error) {
@@ -1592,8 +1581,7 @@ func MakeTLResPQ(m *TLResPQ) *TLResPQ {
 }
 
 func (m *TLResPQ) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "resPQ", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("resPQ", m)
 }
 
 func (m *TLResPQ) MarshalJSON() ([]byte, error) {
@@ -1750,8 +1738,7 @@ func MakeTLServerDHInnerData(m *TLServerDHInnerData) *TLServerDHInnerData {
 }
 
 func (m *TLServerDHInnerData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "server_DH_inner_data", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("server_DH_inner_data", m)
 }
 
 func (m *TLServerDHInnerData) MarshalJSON() ([]byte, error) {
@@ -1925,8 +1912,7 @@ func MakeTLServerDHParamsFail(m *TLServerDHParamsFail) *TLServerDHParamsFail {
 }
 
 func (m *TLServerDHParamsFail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "server_DH_params_fail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("server_DH_params_fail", m)
 }
 
 func (m *TLServerDHParamsFail) MarshalJSON() ([]byte, error) {
@@ -2038,8 +2024,7 @@ func MakeTLServerDHParamsOk(m *TLServerDHParamsOk) *TLServerDHParamsOk {
 }
 
 func (m *TLServerDHParamsOk) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "server_DH_params_ok", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("server_DH_params_ok", m)
 }
 
 func (m *TLServerDHParamsOk) MarshalJSON() ([]byte, error) {
@@ -2151,8 +2136,7 @@ func (m *ServerDHParams) ClazzName() string {
 }
 
 func (m *ServerDHParams) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *ServerDHParams) MarshalJSON() ([]byte, error) {
@@ -2296,8 +2280,7 @@ func MakeTLDhGenOk(m *TLDhGenOk) *TLDhGenOk {
 }
 
 func (m *TLDhGenOk) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "dh_gen_ok", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("dh_gen_ok", m)
 }
 
 func (m *TLDhGenOk) MarshalJSON() ([]byte, error) {
@@ -2409,8 +2392,7 @@ func MakeTLDhGenRetry(m *TLDhGenRetry) *TLDhGenRetry {
 }
 
 func (m *TLDhGenRetry) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "dh_gen_retry", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("dh_gen_retry", m)
 }
 
 func (m *TLDhGenRetry) MarshalJSON() ([]byte, error) {
@@ -2522,8 +2504,7 @@ func MakeTLDhGenFail(m *TLDhGenFail) *TLDhGenFail {
 }
 
 func (m *TLDhGenFail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "dh_gen_fail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("dh_gen_fail", m)
 }
 
 func (m *TLDhGenFail) MarshalJSON() ([]byte, error) {
@@ -2632,8 +2613,7 @@ func (m *SetClientDHParamsAnswer) ClazzName() string {
 }
 
 func (m *SetClientDHParamsAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *SetClientDHParamsAnswer) MarshalJSON() ([]byte, error) {
@@ -2777,8 +2757,7 @@ func MakeTLAccessPointRule(m *TLAccessPointRule) *TLAccessPointRule {
 }
 
 func (m *TLAccessPointRule) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "accessPointRule", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("accessPointRule", m)
 }
 
 func (m *TLAccessPointRule) MarshalJSON() ([]byte, error) {
@@ -2959,8 +2938,7 @@ func MakeTLBadMsgNotification(m *TLBadMsgNotification) *TLBadMsgNotification {
 }
 
 func (m *TLBadMsgNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bad_msg_notification", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bad_msg_notification", m)
 }
 
 func (m *TLBadMsgNotification) MarshalJSON() ([]byte, error) {
@@ -3073,8 +3051,7 @@ func MakeTLBadServerSalt(m *TLBadServerSalt) *TLBadServerSalt {
 }
 
 func (m *TLBadServerSalt) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bad_server_salt", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bad_server_salt", m)
 }
 
 func (m *TLBadServerSalt) MarshalJSON() ([]byte, error) {
@@ -3189,8 +3166,7 @@ func (m *BadMsgNotification) ClazzName() string {
 }
 
 func (m *BadMsgNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *BadMsgNotification) MarshalJSON() ([]byte, error) {
@@ -3325,8 +3301,7 @@ func MakeTLDestroySessionOk(m *TLDestroySessionOk) *TLDestroySessionOk {
 }
 
 func (m *TLDestroySessionOk) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "destroy_session_ok", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("destroy_session_ok", m)
 }
 
 func (m *TLDestroySessionOk) MarshalJSON() ([]byte, error) {
@@ -3424,8 +3399,7 @@ func MakeTLDestroySessionNone(m *TLDestroySessionNone) *TLDestroySessionNone {
 }
 
 func (m *TLDestroySessionNone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "destroy_session_none", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("destroy_session_none", m)
 }
 
 func (m *TLDestroySessionNone) MarshalJSON() ([]byte, error) {
@@ -3522,8 +3496,7 @@ func (m *DestroySessionRes) ClazzName() string {
 }
 
 func (m *DestroySessionRes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *DestroySessionRes) MarshalJSON() ([]byte, error) {
@@ -3650,8 +3623,7 @@ func MakeTLFutureSalt(m *TLFutureSalt) *TLFutureSalt {
 }
 
 func (m *TLFutureSalt) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "future_salt", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("future_salt", m)
 }
 
 func (m *TLFutureSalt) MarshalJSON() ([]byte, error) {
@@ -3790,8 +3762,7 @@ func MakeTLFutureSalts(m *TLFutureSalts) *TLFutureSalts {
 }
 
 func (m *TLFutureSalts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "future_salts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("future_salts", m)
 }
 
 func (m *TLFutureSalts) MarshalJSON() ([]byte, error) {
@@ -3959,8 +3930,7 @@ func MakeTLHelpConfigSimple(m *TLHelpConfigSimple) *TLHelpConfigSimple {
 }
 
 func (m *TLHelpConfigSimple) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_configSimple", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_configSimple", m)
 }
 
 func (m *TLHelpConfigSimple) MarshalJSON() ([]byte, error) {
@@ -4127,8 +4097,7 @@ func MakeTLHttpWait(m *TLHttpWait) *TLHttpWait {
 }
 
 func (m *TLHttpWait) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "http_wait", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("http_wait", m)
 }
 
 func (m *TLHttpWait) MarshalJSON() ([]byte, error) {
@@ -4276,8 +4245,7 @@ func MakeTLIpPort(m *TLIpPort) *TLIpPort {
 }
 
 func (m *TLIpPort) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "ipPort", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("ipPort", m)
 }
 
 func (m *TLIpPort) MarshalJSON() ([]byte, error) {
@@ -4383,8 +4351,7 @@ func MakeTLIpPortSecret(m *TLIpPortSecret) *TLIpPortSecret {
 }
 
 func (m *TLIpPortSecret) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "ipPortSecret", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("ipPortSecret", m)
 }
 
 func (m *TLIpPortSecret) MarshalJSON() ([]byte, error) {
@@ -4496,8 +4463,7 @@ func (m *IpPort) ClazzName() string {
 }
 
 func (m *IpPort) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *IpPort) MarshalJSON() ([]byte, error) {
@@ -4635,8 +4601,7 @@ func MakeTLMsgDetailedInfo(m *TLMsgDetailedInfo) *TLMsgDetailedInfo {
 }
 
 func (m *TLMsgDetailedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msg_detailed_info", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msg_detailed_info", m)
 }
 
 func (m *TLMsgDetailedInfo) MarshalJSON() ([]byte, error) {
@@ -4754,8 +4719,7 @@ func MakeTLMsgNewDetailedInfo(m *TLMsgNewDetailedInfo) *TLMsgNewDetailedInfo {
 }
 
 func (m *TLMsgNewDetailedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msg_new_detailed_info", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msg_new_detailed_info", m)
 }
 
 func (m *TLMsgNewDetailedInfo) MarshalJSON() ([]byte, error) {
@@ -4864,8 +4828,7 @@ func (m *MsgDetailedInfo) ClazzName() string {
 }
 
 func (m *MsgDetailedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *MsgDetailedInfo) MarshalJSON() ([]byte, error) {
@@ -4990,8 +4953,7 @@ func MakeTLMsgResendReq(m *TLMsgResendReq) *TLMsgResendReq {
 }
 
 func (m *TLMsgResendReq) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msg_resend_req", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msg_resend_req", m)
 }
 
 func (m *TLMsgResendReq) MarshalJSON() ([]byte, error) {
@@ -5120,8 +5082,7 @@ func MakeTLMsgsAck(m *TLMsgsAck) *TLMsgsAck {
 }
 
 func (m *TLMsgsAck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msgs_ack", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msgs_ack", m)
 }
 
 func (m *TLMsgsAck) MarshalJSON() ([]byte, error) {
@@ -5251,8 +5212,7 @@ func MakeTLMsgsAllInfo(m *TLMsgsAllInfo) *TLMsgsAllInfo {
 }
 
 func (m *TLMsgsAllInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msgs_all_info", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msgs_all_info", m)
 }
 
 func (m *TLMsgsAllInfo) MarshalJSON() ([]byte, error) {
@@ -5394,8 +5354,7 @@ func MakeTLMsgsStateInfo(m *TLMsgsStateInfo) *TLMsgsStateInfo {
 }
 
 func (m *TLMsgsStateInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msgs_state_info", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msgs_state_info", m)
 }
 
 func (m *TLMsgsStateInfo) MarshalJSON() ([]byte, error) {
@@ -5529,8 +5488,7 @@ func MakeTLMsgsStateReq(m *TLMsgsStateReq) *TLMsgsStateReq {
 }
 
 func (m *TLMsgsStateReq) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "msgs_state_req", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("msgs_state_req", m)
 }
 
 func (m *TLMsgsStateReq) MarshalJSON() ([]byte, error) {
@@ -5661,8 +5619,7 @@ func MakeTLNewSessionCreated(m *TLNewSessionCreated) *TLNewSessionCreated {
 }
 
 func (m *TLNewSessionCreated) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "new_session_created", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("new_session_created", m)
 }
 
 func (m *TLNewSessionCreated) MarshalJSON() ([]byte, error) {
@@ -5800,8 +5757,7 @@ func MakeTLPong(m *TLPong) *TLPong {
 }
 
 func (m *TLPong) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "pong", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("pong", m)
 }
 
 func (m *TLPong) MarshalJSON() ([]byte, error) {
@@ -5948,8 +5904,7 @@ func MakeTLRpcAnswerUnknown(m *TLRpcAnswerUnknown) *TLRpcAnswerUnknown {
 }
 
 func (m *TLRpcAnswerUnknown) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "rpc_answer_unknown", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("rpc_answer_unknown", m)
 }
 
 func (m *TLRpcAnswerUnknown) MarshalJSON() ([]byte, error) {
@@ -6039,8 +5994,7 @@ func MakeTLRpcAnswerDroppedRunning(m *TLRpcAnswerDroppedRunning) *TLRpcAnswerDro
 }
 
 func (m *TLRpcAnswerDroppedRunning) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "rpc_answer_dropped_running", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("rpc_answer_dropped_running", m)
 }
 
 func (m *TLRpcAnswerDroppedRunning) MarshalJSON() ([]byte, error) {
@@ -6133,8 +6087,7 @@ func MakeTLRpcAnswerDropped(m *TLRpcAnswerDropped) *TLRpcAnswerDropped {
 }
 
 func (m *TLRpcAnswerDropped) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "rpc_answer_dropped", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("rpc_answer_dropped", m)
 }
 
 func (m *TLRpcAnswerDropped) MarshalJSON() ([]byte, error) {
@@ -6243,8 +6196,7 @@ func (m *RpcDropAnswer) ClazzName() string {
 }
 
 func (m *RpcDropAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *RpcDropAnswer) MarshalJSON() ([]byte, error) {
@@ -6387,8 +6339,7 @@ func MakeTLRpcError(m *TLRpcError) *TLRpcError {
 }
 
 func (m *TLRpcError) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "rpc_error", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("rpc_error", m)
 }
 
 func (m *TLRpcError) MarshalJSON() ([]byte, error) {
@@ -6567,8 +6518,7 @@ func MakeTLTlsBlockString(m *TLTlsBlockString) *TLTlsBlockString {
 }
 
 func (m *TLTlsBlockString) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockString", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockString", m)
 }
 
 func (m *TLTlsBlockString) MarshalJSON() ([]byte, error) {
@@ -6669,8 +6619,7 @@ func MakeTLTlsBlockRandom(m *TLTlsBlockRandom) *TLTlsBlockRandom {
 }
 
 func (m *TLTlsBlockRandom) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockRandom", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockRandom", m)
 }
 
 func (m *TLTlsBlockRandom) MarshalJSON() ([]byte, error) {
@@ -6768,8 +6717,7 @@ func MakeTLTlsBlockZero(m *TLTlsBlockZero) *TLTlsBlockZero {
 }
 
 func (m *TLTlsBlockZero) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockZero", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockZero", m)
 }
 
 func (m *TLTlsBlockZero) MarshalJSON() ([]byte, error) {
@@ -6866,8 +6814,7 @@ func MakeTLTlsBlockDomain(m *TLTlsBlockDomain) *TLTlsBlockDomain {
 }
 
 func (m *TLTlsBlockDomain) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockDomain", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockDomain", m)
 }
 
 func (m *TLTlsBlockDomain) MarshalJSON() ([]byte, error) {
@@ -6958,8 +6905,7 @@ func MakeTLTlsBlockGrease(m *TLTlsBlockGrease) *TLTlsBlockGrease {
 }
 
 func (m *TLTlsBlockGrease) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockGrease", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockGrease", m)
 }
 
 func (m *TLTlsBlockGrease) MarshalJSON() ([]byte, error) {
@@ -7056,8 +7002,7 @@ func MakeTLTlsBlockPublicKey(m *TLTlsBlockPublicKey) *TLTlsBlockPublicKey {
 }
 
 func (m *TLTlsBlockPublicKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockPublicKey", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockPublicKey", m)
 }
 
 func (m *TLTlsBlockPublicKey) MarshalJSON() ([]byte, error) {
@@ -7148,8 +7093,7 @@ func MakeTLTlsBlockScope(m *TLTlsBlockScope) *TLTlsBlockScope {
 }
 
 func (m *TLTlsBlockScope) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsBlockScope", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsBlockScope", m)
 }
 
 func (m *TLTlsBlockScope) MarshalJSON() ([]byte, error) {
@@ -7267,8 +7211,7 @@ func (m *TlsBlock) ClazzName() string {
 }
 
 func (m *TlsBlock) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: m.ClazzName(), TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *TlsBlock) MarshalJSON() ([]byte, error) {
@@ -7478,8 +7421,7 @@ func MakeTLTlsClientHello(m *TLTlsClientHello) *TLTlsClientHello {
 }
 
 func (m *TLTlsClientHello) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "tlsClientHello", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("tlsClientHello", m)
 }
 
 func (m *TLTlsClientHello) MarshalJSON() ([]byte, error) {

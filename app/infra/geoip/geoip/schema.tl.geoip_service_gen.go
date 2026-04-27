@@ -35,8 +35,7 @@ type TLGeoipGetCountryAndRegionByIp struct {
 }
 
 func (m *TLGeoipGetCountryAndRegionByIp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_geoip_getCountryAndRegionByIp, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_geoip_getCountryAndRegionByIp, m)
 }
 
 // Encode <--

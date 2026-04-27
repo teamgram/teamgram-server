@@ -37,8 +37,7 @@ type TLInboxEditUserMessageToInbox struct {
 }
 
 func (m *TLInboxEditUserMessageToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_editUserMessageToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_editUserMessageToInbox, m)
 }
 
 // Encode <--
@@ -101,8 +100,7 @@ type TLInboxEditChatMessageToInbox struct {
 }
 
 func (m *TLInboxEditChatMessageToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_editChatMessageToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_editChatMessageToInbox, m)
 }
 
 // Encode <--
@@ -166,8 +164,7 @@ type TLInboxDeleteMessagesToInbox struct {
 }
 
 func (m *TLInboxDeleteMessagesToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_deleteMessagesToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_deleteMessagesToInbox, m)
 }
 
 // Encode <--
@@ -232,8 +229,7 @@ type TLInboxDeleteUserHistoryToInbox struct {
 }
 
 func (m *TLInboxDeleteUserHistoryToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_deleteUserHistoryToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_deleteUserHistoryToInbox, m)
 }
 
 // Encode <--
@@ -312,8 +308,7 @@ type TLInboxDeleteChatHistoryToInbox struct {
 }
 
 func (m *TLInboxDeleteChatHistoryToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_deleteChatHistoryToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_deleteChatHistoryToInbox, m)
 }
 
 // Encode <--
@@ -370,8 +365,7 @@ type TLInboxReadUserMediaUnreadToInbox struct {
 }
 
 func (m *TLInboxReadUserMediaUnreadToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_readUserMediaUnreadToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_readUserMediaUnreadToInbox, m)
 }
 
 // Encode <--
@@ -447,8 +441,7 @@ type TLInboxReadChatMediaUnreadToInbox struct {
 }
 
 func (m *TLInboxReadChatMediaUnreadToInbox) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_readChatMediaUnreadToInbox, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_readChatMediaUnreadToInbox, m)
 }
 
 // Encode <--
@@ -526,8 +519,7 @@ type TLInboxUpdateHistoryReaded struct {
 }
 
 func (m *TLInboxUpdateHistoryReaded) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_updateHistoryReaded, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_updateHistoryReaded, m)
 }
 
 // Encode <--
@@ -597,8 +589,7 @@ type TLInboxUpdatePinnedMessage struct {
 }
 
 func (m *TLInboxUpdatePinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_updatePinnedMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_updatePinnedMessage, m)
 }
 
 // Encode <--
@@ -688,8 +679,7 @@ type TLInboxUnpinAllMessages struct {
 }
 
 func (m *TLInboxUnpinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_unpinAllMessages, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_unpinAllMessages, m)
 }
 
 // Encode <--
@@ -762,8 +752,7 @@ type TLInboxSendUserMessageToInboxV2 struct {
 }
 
 func (m *TLInboxSendUserMessageToInboxV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_sendUserMessageToInboxV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_sendUserMessageToInboxV2, m)
 }
 
 // Encode <--
@@ -1018,8 +1007,7 @@ type TLInboxEditMessageToInboxV2 struct {
 }
 
 func (m *TLInboxEditMessageToInboxV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_editMessageToInboxV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_editMessageToInboxV2, m)
 }
 
 // Encode <--
@@ -1206,8 +1194,7 @@ type TLInboxReadInboxHistory struct {
 }
 
 func (m *TLInboxReadInboxHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_readInboxHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_readInboxHistory, m)
 }
 
 // Encode <--
@@ -1368,8 +1355,7 @@ type TLInboxReadOutboxHistory struct {
 }
 
 func (m *TLInboxReadOutboxHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_readOutboxHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_readOutboxHistory, m)
 }
 
 // Encode <--
@@ -1432,8 +1418,7 @@ type TLInboxReadMediaUnreadToInboxV2 struct {
 }
 
 func (m *TLInboxReadMediaUnreadToInboxV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_readMediaUnreadToInboxV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_readMediaUnreadToInboxV2, m)
 }
 
 // Encode <--
@@ -1502,8 +1487,7 @@ type TLInboxUpdatePinnedMessageV2 struct {
 }
 
 func (m *TLInboxUpdatePinnedMessageV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_inbox_updatePinnedMessageV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_inbox_updatePinnedMessageV2, m)
 }
 
 // Encode <--

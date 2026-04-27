@@ -32,8 +32,7 @@ type TLInvokeAfterMsg struct {
 }
 
 func (m *TLInvokeAfterMsg) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeAfterMsg", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeAfterMsg", m)
 }
 
 func (m *TLInvokeAfterMsg) MarshalJSON() ([]byte, error) {
@@ -114,8 +113,7 @@ type TLInvokeAfterMsgs struct {
 }
 
 func (m *TLInvokeAfterMsgs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeAfterMsgs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeAfterMsgs", m)
 }
 
 func (m *TLInvokeAfterMsgs) MarshalJSON() ([]byte, error) {
@@ -208,8 +206,7 @@ type TLInitConnection struct {
 }
 
 func (m *TLInitConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "initConnection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("initConnection", m)
 }
 
 func (m *TLInitConnection) MarshalJSON() ([]byte, error) {
@@ -559,8 +556,7 @@ type TLInvokeWithLayer struct {
 }
 
 func (m *TLInvokeWithLayer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithLayer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithLayer", m)
 }
 
 func (m *TLInvokeWithLayer) MarshalJSON() ([]byte, error) {
@@ -640,8 +636,7 @@ type TLInvokeWithoutUpdates struct {
 }
 
 func (m *TLInvokeWithoutUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithoutUpdates", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithoutUpdates", m)
 }
 
 func (m *TLInvokeWithoutUpdates) MarshalJSON() ([]byte, error) {
@@ -716,8 +711,7 @@ type TLInvokeWithMessagesRange struct {
 }
 
 func (m *TLInvokeWithMessagesRange) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithMessagesRange", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithMessagesRange", m)
 }
 
 func (m *TLInvokeWithMessagesRange) MarshalJSON() ([]byte, error) {
@@ -812,8 +806,7 @@ type TLInvokeWithTakeout struct {
 }
 
 func (m *TLInvokeWithTakeout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithTakeout", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithTakeout", m)
 }
 
 func (m *TLInvokeWithTakeout) MarshalJSON() ([]byte, error) {
@@ -894,8 +887,7 @@ type TLInvokeWithBusinessConnection struct {
 }
 
 func (m *TLInvokeWithBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithBusinessConnection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithBusinessConnection", m)
 }
 
 func (m *TLInvokeWithBusinessConnection) MarshalJSON() ([]byte, error) {
@@ -981,8 +973,7 @@ type TLInvokeWithGooglePlayIntegrity struct {
 }
 
 func (m *TLInvokeWithGooglePlayIntegrity) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithGooglePlayIntegrity", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithGooglePlayIntegrity", m)
 }
 
 func (m *TLInvokeWithGooglePlayIntegrity) MarshalJSON() ([]byte, error) {
@@ -1078,8 +1069,7 @@ type TLInvokeWithApnsSecret struct {
 }
 
 func (m *TLInvokeWithApnsSecret) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithApnsSecret", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithApnsSecret", m)
 }
 
 func (m *TLInvokeWithApnsSecret) MarshalJSON() ([]byte, error) {
@@ -1174,8 +1164,7 @@ type TLInvokeWithReCaptcha struct {
 }
 
 func (m *TLInvokeWithReCaptcha) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "invokeWithReCaptcha", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("invokeWithReCaptcha", m)
 }
 
 func (m *TLInvokeWithReCaptcha) MarshalJSON() ([]byte, error) {
@@ -1262,8 +1251,7 @@ type TLAuthSendCode struct {
 }
 
 func (m *TLAuthSendCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_sendCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_sendCode", m)
 }
 
 func (m *TLAuthSendCode) MarshalJSON() ([]byte, error) {
@@ -1379,8 +1367,7 @@ type TLAuthSignUp struct {
 }
 
 func (m *TLAuthSignUp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_signUp", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_signUp", m)
 }
 
 func (m *TLAuthSignUp) MarshalJSON() ([]byte, error) {
@@ -1513,8 +1500,7 @@ type TLAuthSignIn struct {
 }
 
 func (m *TLAuthSignIn) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_signIn", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_signIn", m)
 }
 
 func (m *TLAuthSignIn) MarshalJSON() ([]byte, error) {
@@ -1656,8 +1642,7 @@ type TLAuthLogOut struct {
 }
 
 func (m *TLAuthLogOut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_logOut", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_logOut", m)
 }
 
 func (m *TLAuthLogOut) MarshalJSON() ([]byte, error) {
@@ -1723,8 +1708,7 @@ type TLAuthResetAuthorizations struct {
 }
 
 func (m *TLAuthResetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_resetAuthorizations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_resetAuthorizations", m)
 }
 
 func (m *TLAuthResetAuthorizations) MarshalJSON() ([]byte, error) {
@@ -1791,8 +1775,7 @@ type TLAuthExportAuthorization struct {
 }
 
 func (m *TLAuthExportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_exportAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_exportAuthorization", m)
 }
 
 func (m *TLAuthExportAuthorization) MarshalJSON() ([]byte, error) {
@@ -1867,8 +1850,7 @@ type TLAuthImportAuthorization struct {
 }
 
 func (m *TLAuthImportAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_importAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_importAuthorization", m)
 }
 
 func (m *TLAuthImportAuthorization) MarshalJSON() ([]byte, error) {
@@ -1954,8 +1936,7 @@ type TLAuthBindTempAuthKey struct {
 }
 
 func (m *TLAuthBindTempAuthKey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_bindTempAuthKey", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_bindTempAuthKey", m)
 }
 
 func (m *TLAuthBindTempAuthKey) MarshalJSON() ([]byte, error) {
@@ -2053,8 +2034,7 @@ type TLAuthImportBotAuthorization struct {
 }
 
 func (m *TLAuthImportBotAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_importBotAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_importBotAuthorization", m)
 }
 
 func (m *TLAuthImportBotAuthorization) MarshalJSON() ([]byte, error) {
@@ -2153,8 +2133,7 @@ type TLAuthCheckPassword struct {
 }
 
 func (m *TLAuthCheckPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_checkPassword", m)
 }
 
 func (m *TLAuthCheckPassword) MarshalJSON() ([]byte, error) {
@@ -2239,8 +2218,7 @@ type TLAuthRequestPasswordRecovery struct {
 }
 
 func (m *TLAuthRequestPasswordRecovery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_requestPasswordRecovery", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_requestPasswordRecovery", m)
 }
 
 func (m *TLAuthRequestPasswordRecovery) MarshalJSON() ([]byte, error) {
@@ -2308,8 +2286,7 @@ type TLAuthRecoverPassword struct {
 }
 
 func (m *TLAuthRecoverPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_recoverPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_recoverPassword", m)
 }
 
 func (m *TLAuthRecoverPassword) MarshalJSON() ([]byte, error) {
@@ -2425,8 +2402,7 @@ type TLAuthResendCode struct {
 }
 
 func (m *TLAuthResendCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_resendCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_resendCode", m)
 }
 
 func (m *TLAuthResendCode) MarshalJSON() ([]byte, error) {
@@ -2547,8 +2523,7 @@ type TLAuthCancelCode struct {
 }
 
 func (m *TLAuthCancelCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_cancelCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_cancelCode", m)
 }
 
 func (m *TLAuthCancelCode) MarshalJSON() ([]byte, error) {
@@ -2635,8 +2610,7 @@ type TLAuthDropTempAuthKeys struct {
 }
 
 func (m *TLAuthDropTempAuthKeys) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_dropTempAuthKeys", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_dropTempAuthKeys", m)
 }
 
 func (m *TLAuthDropTempAuthKeys) MarshalJSON() ([]byte, error) {
@@ -2713,8 +2687,7 @@ type TLAuthExportLoginToken struct {
 }
 
 func (m *TLAuthExportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_exportLoginToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_exportLoginToken", m)
 }
 
 func (m *TLAuthExportLoginToken) MarshalJSON() ([]byte, error) {
@@ -2806,8 +2779,7 @@ type TLAuthImportLoginToken struct {
 }
 
 func (m *TLAuthImportLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_importLoginToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_importLoginToken", m)
 }
 
 func (m *TLAuthImportLoginToken) MarshalJSON() ([]byte, error) {
@@ -2884,8 +2856,7 @@ type TLAuthAcceptLoginToken struct {
 }
 
 func (m *TLAuthAcceptLoginToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_acceptLoginToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_acceptLoginToken", m)
 }
 
 func (m *TLAuthAcceptLoginToken) MarshalJSON() ([]byte, error) {
@@ -2962,8 +2933,7 @@ type TLAuthCheckRecoveryPassword struct {
 }
 
 func (m *TLAuthCheckRecoveryPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkRecoveryPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_checkRecoveryPassword", m)
 }
 
 func (m *TLAuthCheckRecoveryPassword) MarshalJSON() ([]byte, error) {
@@ -3042,8 +3012,7 @@ type TLAuthImportWebTokenAuthorization struct {
 }
 
 func (m *TLAuthImportWebTokenAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_importWebTokenAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_importWebTokenAuthorization", m)
 }
 
 func (m *TLAuthImportWebTokenAuthorization) MarshalJSON() ([]byte, error) {
@@ -3140,8 +3109,7 @@ type TLAuthRequestFirebaseSms struct {
 }
 
 func (m *TLAuthRequestFirebaseSms) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_requestFirebaseSms", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_requestFirebaseSms", m)
 }
 
 func (m *TLAuthRequestFirebaseSms) MarshalJSON() ([]byte, error) {
@@ -3300,8 +3268,7 @@ type TLAuthResetLoginEmail struct {
 }
 
 func (m *TLAuthResetLoginEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_resetLoginEmail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_resetLoginEmail", m)
 }
 
 func (m *TLAuthResetLoginEmail) MarshalJSON() ([]byte, error) {
@@ -3390,8 +3357,7 @@ type TLAuthReportMissingCode struct {
 }
 
 func (m *TLAuthReportMissingCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_reportMissingCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_reportMissingCode", m)
 }
 
 func (m *TLAuthReportMissingCode) MarshalJSON() ([]byte, error) {
@@ -3490,8 +3456,7 @@ type TLAuthCheckPaidAuth struct {
 }
 
 func (m *TLAuthCheckPaidAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_checkPaidAuth", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_checkPaidAuth", m)
 }
 
 func (m *TLAuthCheckPaidAuth) MarshalJSON() ([]byte, error) {
@@ -3585,8 +3550,7 @@ type TLAuthInitPasskeyLogin struct {
 }
 
 func (m *TLAuthInitPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_initPasskeyLogin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_initPasskeyLogin", m)
 }
 
 func (m *TLAuthInitPasskeyLogin) MarshalJSON() ([]byte, error) {
@@ -3671,8 +3635,7 @@ type TLAuthFinishPasskeyLogin struct {
 }
 
 func (m *TLAuthFinishPasskeyLogin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_finishPasskeyLogin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_finishPasskeyLogin", m)
 }
 
 func (m *TLAuthFinishPasskeyLogin) MarshalJSON() ([]byte, error) {
@@ -3815,8 +3778,7 @@ type TLAccountRegisterDevice struct {
 }
 
 func (m *TLAccountRegisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_registerDevice", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_registerDevice", m)
 }
 
 func (m *TLAccountRegisterDevice) MarshalJSON() ([]byte, error) {
@@ -3993,8 +3955,7 @@ type TLAccountUnregisterDevice struct {
 }
 
 func (m *TLAccountUnregisterDevice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_unregisterDevice", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_unregisterDevice", m)
 }
 
 func (m *TLAccountUnregisterDevice) MarshalJSON() ([]byte, error) {
@@ -4117,8 +4078,7 @@ type TLAccountUpdateNotifySettings struct {
 }
 
 func (m *TLAccountUpdateNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateNotifySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateNotifySettings", m)
 }
 
 func (m *TLAccountUpdateNotifySettings) MarshalJSON() ([]byte, error) {
@@ -4223,8 +4183,7 @@ type TLAccountGetNotifySettings struct {
 }
 
 func (m *TLAccountGetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getNotifySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getNotifySettings", m)
 }
 
 func (m *TLAccountGetNotifySettings) MarshalJSON() ([]byte, error) {
@@ -4309,8 +4268,7 @@ type TLAccountResetNotifySettings struct {
 }
 
 func (m *TLAccountResetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetNotifySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetNotifySettings", m)
 }
 
 func (m *TLAccountResetNotifySettings) MarshalJSON() ([]byte, error) {
@@ -4379,8 +4337,7 @@ type TLAccountUpdateProfile struct {
 }
 
 func (m *TLAccountUpdateProfile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateProfile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateProfile", m)
 }
 
 func (m *TLAccountUpdateProfile) MarshalJSON() ([]byte, error) {
@@ -4519,8 +4476,7 @@ type TLAccountUpdateStatus struct {
 }
 
 func (m *TLAccountUpdateStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateStatus", m)
 }
 
 func (m *TLAccountUpdateStatus) MarshalJSON() ([]byte, error) {
@@ -4606,8 +4562,7 @@ type TLAccountGetWallPapers struct {
 }
 
 func (m *TLAccountGetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getWallPapers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getWallPapers", m)
 }
 
 func (m *TLAccountGetWallPapers) MarshalJSON() ([]byte, error) {
@@ -4683,8 +4638,7 @@ type TLAccountReportPeer struct {
 }
 
 func (m *TLAccountReportPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_reportPeer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_reportPeer", m)
 }
 
 func (m *TLAccountReportPeer) MarshalJSON() ([]byte, error) {
@@ -4800,8 +4754,7 @@ type TLAccountCheckUsername struct {
 }
 
 func (m *TLAccountCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_checkUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_checkUsername", m)
 }
 
 func (m *TLAccountCheckUsername) MarshalJSON() ([]byte, error) {
@@ -4878,8 +4831,7 @@ type TLAccountUpdateUsername struct {
 }
 
 func (m *TLAccountUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateUsername", m)
 }
 
 func (m *TLAccountUpdateUsername) MarshalJSON() ([]byte, error) {
@@ -4956,8 +4908,7 @@ type TLAccountGetPrivacy struct {
 }
 
 func (m *TLAccountGetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getPrivacy", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getPrivacy", m)
 }
 
 func (m *TLAccountGetPrivacy) MarshalJSON() ([]byte, error) {
@@ -5044,8 +4995,7 @@ type TLAccountSetPrivacy struct {
 }
 
 func (m *TLAccountSetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setPrivacy", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setPrivacy", m)
 }
 
 func (m *TLAccountSetPrivacy) MarshalJSON() ([]byte, error) {
@@ -5166,8 +5116,7 @@ type TLAccountDeleteAccount struct {
 }
 
 func (m *TLAccountDeleteAccount) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteAccount", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_deleteAccount", m)
 }
 
 func (m *TLAccountDeleteAccount) MarshalJSON() ([]byte, error) {
@@ -5280,8 +5229,7 @@ type TLAccountGetAccountTTL struct {
 }
 
 func (m *TLAccountGetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAccountTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAccountTTL", m)
 }
 
 func (m *TLAccountGetAccountTTL) MarshalJSON() ([]byte, error) {
@@ -5348,8 +5296,7 @@ type TLAccountSetAccountTTL struct {
 }
 
 func (m *TLAccountSetAccountTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setAccountTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setAccountTTL", m)
 }
 
 func (m *TLAccountSetAccountTTL) MarshalJSON() ([]byte, error) {
@@ -5436,8 +5383,7 @@ type TLAccountSendChangePhoneCode struct {
 }
 
 func (m *TLAccountSendChangePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_sendChangePhoneCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_sendChangePhoneCode", m)
 }
 
 func (m *TLAccountSendChangePhoneCode) MarshalJSON() ([]byte, error) {
@@ -5535,8 +5481,7 @@ type TLAccountChangePhone struct {
 }
 
 func (m *TLAccountChangePhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_changePhone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_changePhone", m)
 }
 
 func (m *TLAccountChangePhone) MarshalJSON() ([]byte, error) {
@@ -5633,8 +5578,7 @@ type TLAccountUpdateDeviceLocked struct {
 }
 
 func (m *TLAccountUpdateDeviceLocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateDeviceLocked", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateDeviceLocked", m)
 }
 
 func (m *TLAccountUpdateDeviceLocked) MarshalJSON() ([]byte, error) {
@@ -5707,8 +5651,7 @@ type TLAccountGetAuthorizations struct {
 }
 
 func (m *TLAccountGetAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAuthorizations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAuthorizations", m)
 }
 
 func (m *TLAccountGetAuthorizations) MarshalJSON() ([]byte, error) {
@@ -5775,8 +5718,7 @@ type TLAccountResetAuthorization struct {
 }
 
 func (m *TLAccountResetAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetAuthorization", m)
 }
 
 func (m *TLAccountResetAuthorization) MarshalJSON() ([]byte, error) {
@@ -5849,8 +5791,7 @@ type TLAccountGetPassword struct {
 }
 
 func (m *TLAccountGetPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getPassword", m)
 }
 
 func (m *TLAccountGetPassword) MarshalJSON() ([]byte, error) {
@@ -5917,8 +5858,7 @@ type TLAccountGetPasswordSettings struct {
 }
 
 func (m *TLAccountGetPasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getPasswordSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getPasswordSettings", m)
 }
 
 func (m *TLAccountGetPasswordSettings) MarshalJSON() ([]byte, error) {
@@ -6005,8 +5945,7 @@ type TLAccountUpdatePasswordSettings struct {
 }
 
 func (m *TLAccountUpdatePasswordSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updatePasswordSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updatePasswordSettings", m)
 }
 
 func (m *TLAccountUpdatePasswordSettings) MarshalJSON() ([]byte, error) {
@@ -6112,8 +6051,7 @@ type TLAccountSendConfirmPhoneCode struct {
 }
 
 func (m *TLAccountSendConfirmPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_sendConfirmPhoneCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_sendConfirmPhoneCode", m)
 }
 
 func (m *TLAccountSendConfirmPhoneCode) MarshalJSON() ([]byte, error) {
@@ -6210,8 +6148,7 @@ type TLAccountConfirmPhone struct {
 }
 
 func (m *TLAccountConfirmPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_confirmPhone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_confirmPhone", m)
 }
 
 func (m *TLAccountConfirmPhone) MarshalJSON() ([]byte, error) {
@@ -6299,8 +6236,7 @@ type TLAccountGetTmpPassword struct {
 }
 
 func (m *TLAccountGetTmpPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getTmpPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getTmpPassword", m)
 }
 
 func (m *TLAccountGetTmpPassword) MarshalJSON() ([]byte, error) {
@@ -6392,8 +6328,7 @@ type TLAccountGetWebAuthorizations struct {
 }
 
 func (m *TLAccountGetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getWebAuthorizations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getWebAuthorizations", m)
 }
 
 func (m *TLAccountGetWebAuthorizations) MarshalJSON() ([]byte, error) {
@@ -6460,8 +6395,7 @@ type TLAccountResetWebAuthorization struct {
 }
 
 func (m *TLAccountResetWebAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWebAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetWebAuthorization", m)
 }
 
 func (m *TLAccountResetWebAuthorization) MarshalJSON() ([]byte, error) {
@@ -6534,8 +6468,7 @@ type TLAccountResetWebAuthorizations struct {
 }
 
 func (m *TLAccountResetWebAuthorizations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWebAuthorizations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetWebAuthorizations", m)
 }
 
 func (m *TLAccountResetWebAuthorizations) MarshalJSON() ([]byte, error) {
@@ -6601,8 +6534,7 @@ type TLAccountGetAllSecureValues struct {
 }
 
 func (m *TLAccountGetAllSecureValues) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAllSecureValues", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAllSecureValues", m)
 }
 
 func (m *TLAccountGetAllSecureValues) MarshalJSON() ([]byte, error) {
@@ -6669,8 +6601,7 @@ type TLAccountGetSecureValue struct {
 }
 
 func (m *TLAccountGetSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getSecureValue", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getSecureValue", m)
 }
 
 func (m *TLAccountGetSecureValue) MarshalJSON() ([]byte, error) {
@@ -6770,8 +6701,7 @@ type TLAccountSaveSecureValue struct {
 }
 
 func (m *TLAccountSaveSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveSecureValue", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveSecureValue", m)
 }
 
 func (m *TLAccountSaveSecureValue) MarshalJSON() ([]byte, error) {
@@ -6864,8 +6794,7 @@ type TLAccountDeleteSecureValue struct {
 }
 
 func (m *TLAccountDeleteSecureValue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteSecureValue", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_deleteSecureValue", m)
 }
 
 func (m *TLAccountDeleteSecureValue) MarshalJSON() ([]byte, error) {
@@ -6966,8 +6895,7 @@ type TLAccountGetAuthorizationForm struct {
 }
 
 func (m *TLAccountGetAuthorizationForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAuthorizationForm", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAuthorizationForm", m)
 }
 
 func (m *TLAccountGetAuthorizationForm) MarshalJSON() ([]byte, error) {
@@ -7064,8 +6992,7 @@ type TLAccountAcceptAuthorization struct {
 }
 
 func (m *TLAccountAcceptAuthorization) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_acceptAuthorization", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_acceptAuthorization", m)
 }
 
 func (m *TLAccountAcceptAuthorization) MarshalJSON() ([]byte, error) {
@@ -7212,8 +7139,7 @@ type TLAccountSendVerifyPhoneCode struct {
 }
 
 func (m *TLAccountSendVerifyPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_sendVerifyPhoneCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_sendVerifyPhoneCode", m)
 }
 
 func (m *TLAccountSendVerifyPhoneCode) MarshalJSON() ([]byte, error) {
@@ -7311,8 +7237,7 @@ type TLAccountVerifyPhone struct {
 }
 
 func (m *TLAccountVerifyPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_verifyPhone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_verifyPhone", m)
 }
 
 func (m *TLAccountVerifyPhone) MarshalJSON() ([]byte, error) {
@@ -7410,8 +7335,7 @@ type TLAccountSendVerifyEmailCode struct {
 }
 
 func (m *TLAccountSendVerifyEmailCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_sendVerifyEmailCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_sendVerifyEmailCode", m)
 }
 
 func (m *TLAccountSendVerifyEmailCode) MarshalJSON() ([]byte, error) {
@@ -7509,8 +7433,7 @@ type TLAccountVerifyEmail struct {
 }
 
 func (m *TLAccountVerifyEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_verifyEmail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_verifyEmail", m)
 }
 
 func (m *TLAccountVerifyEmail) MarshalJSON() ([]byte, error) {
@@ -7621,8 +7544,7 @@ type TLAccountInitTakeoutSession struct {
 }
 
 func (m *TLAccountInitTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_initTakeoutSession", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_initTakeoutSession", m)
 }
 
 func (m *TLAccountInitTakeoutSession) MarshalJSON() ([]byte, error) {
@@ -7759,8 +7681,7 @@ type TLAccountFinishTakeoutSession struct {
 }
 
 func (m *TLAccountFinishTakeoutSession) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_finishTakeoutSession", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_finishTakeoutSession", m)
 }
 
 func (m *TLAccountFinishTakeoutSession) MarshalJSON() ([]byte, error) {
@@ -7851,8 +7772,7 @@ type TLAccountConfirmPasswordEmail struct {
 }
 
 func (m *TLAccountConfirmPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_confirmPasswordEmail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_confirmPasswordEmail", m)
 }
 
 func (m *TLAccountConfirmPasswordEmail) MarshalJSON() ([]byte, error) {
@@ -7928,8 +7848,7 @@ type TLAccountResendPasswordEmail struct {
 }
 
 func (m *TLAccountResendPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resendPasswordEmail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resendPasswordEmail", m)
 }
 
 func (m *TLAccountResendPasswordEmail) MarshalJSON() ([]byte, error) {
@@ -7995,8 +7914,7 @@ type TLAccountCancelPasswordEmail struct {
 }
 
 func (m *TLAccountCancelPasswordEmail) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_cancelPasswordEmail", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_cancelPasswordEmail", m)
 }
 
 func (m *TLAccountCancelPasswordEmail) MarshalJSON() ([]byte, error) {
@@ -8062,8 +7980,7 @@ type TLAccountGetContactSignUpNotification struct {
 }
 
 func (m *TLAccountGetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getContactSignUpNotification", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getContactSignUpNotification", m)
 }
 
 func (m *TLAccountGetContactSignUpNotification) MarshalJSON() ([]byte, error) {
@@ -8130,8 +8047,7 @@ type TLAccountSetContactSignUpNotification struct {
 }
 
 func (m *TLAccountSetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setContactSignUpNotification", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setContactSignUpNotification", m)
 }
 
 func (m *TLAccountSetContactSignUpNotification) MarshalJSON() ([]byte, error) {
@@ -8219,8 +8135,7 @@ type TLAccountGetNotifyExceptions struct {
 }
 
 func (m *TLAccountGetNotifyExceptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getNotifyExceptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getNotifyExceptions", m)
 }
 
 func (m *TLAccountGetNotifyExceptions) MarshalJSON() ([]byte, error) {
@@ -8337,8 +8252,7 @@ type TLAccountGetWallPaper struct {
 }
 
 func (m *TLAccountGetWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getWallPaper", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getWallPaper", m)
 }
 
 func (m *TLAccountGetWallPaper) MarshalJSON() ([]byte, error) {
@@ -8427,8 +8341,7 @@ type TLAccountUploadWallPaper struct {
 }
 
 func (m *TLAccountUploadWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadWallPaper", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_uploadWallPaper", m)
 }
 
 func (m *TLAccountUploadWallPaper) MarshalJSON() ([]byte, error) {
@@ -8569,8 +8482,7 @@ type TLAccountSaveWallPaper struct {
 }
 
 func (m *TLAccountSaveWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveWallPaper", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveWallPaper", m)
 }
 
 func (m *TLAccountSaveWallPaper) MarshalJSON() ([]byte, error) {
@@ -8695,8 +8607,7 @@ type TLAccountInstallWallPaper struct {
 }
 
 func (m *TLAccountInstallWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_installWallPaper", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_installWallPaper", m)
 }
 
 func (m *TLAccountInstallWallPaper) MarshalJSON() ([]byte, error) {
@@ -8800,8 +8711,7 @@ type TLAccountResetWallPapers struct {
 }
 
 func (m *TLAccountResetWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetWallPapers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetWallPapers", m)
 }
 
 func (m *TLAccountResetWallPapers) MarshalJSON() ([]byte, error) {
@@ -8867,8 +8777,7 @@ type TLAccountGetAutoDownloadSettings struct {
 }
 
 func (m *TLAccountGetAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAutoDownloadSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAutoDownloadSettings", m)
 }
 
 func (m *TLAccountGetAutoDownloadSettings) MarshalJSON() ([]byte, error) {
@@ -8937,8 +8846,7 @@ type TLAccountSaveAutoDownloadSettings struct {
 }
 
 func (m *TLAccountSaveAutoDownloadSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveAutoDownloadSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveAutoDownloadSettings", m)
 }
 
 func (m *TLAccountSaveAutoDownloadSettings) MarshalJSON() ([]byte, error) {
@@ -9056,8 +8964,7 @@ type TLAccountUploadTheme struct {
 }
 
 func (m *TLAccountUploadTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_uploadTheme", m)
 }
 
 func (m *TLAccountUploadTheme) MarshalJSON() ([]byte, error) {
@@ -9206,8 +9113,7 @@ type TLAccountCreateTheme struct {
 }
 
 func (m *TLAccountCreateTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_createTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_createTheme", m)
 }
 
 func (m *TLAccountCreateTheme) MarshalJSON() ([]byte, error) {
@@ -9375,8 +9281,7 @@ type TLAccountUpdateTheme struct {
 }
 
 func (m *TLAccountUpdateTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateTheme", m)
 }
 
 func (m *TLAccountUpdateTheme) MarshalJSON() ([]byte, error) {
@@ -9588,8 +9493,7 @@ type TLAccountSaveTheme struct {
 }
 
 func (m *TLAccountSaveTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveTheme", m)
 }
 
 func (m *TLAccountSaveTheme) MarshalJSON() ([]byte, error) {
@@ -9697,8 +9601,7 @@ type TLAccountInstallTheme struct {
 }
 
 func (m *TLAccountInstallTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_installTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_installTheme", m)
 }
 
 func (m *TLAccountInstallTheme) MarshalJSON() ([]byte, error) {
@@ -9928,8 +9831,7 @@ type TLAccountGetTheme struct {
 }
 
 func (m *TLAccountGetTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getTheme", m)
 }
 
 func (m *TLAccountGetTheme) MarshalJSON() ([]byte, error) {
@@ -10026,8 +9928,7 @@ type TLAccountGetThemes struct {
 }
 
 func (m *TLAccountGetThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getThemes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getThemes", m)
 }
 
 func (m *TLAccountGetThemes) MarshalJSON() ([]byte, error) {
@@ -10110,8 +10011,7 @@ type TLAccountSetContentSettings struct {
 }
 
 func (m *TLAccountSetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setContentSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setContentSettings", m)
 }
 
 func (m *TLAccountSetContentSettings) MarshalJSON() ([]byte, error) {
@@ -10201,8 +10101,7 @@ type TLAccountGetContentSettings struct {
 }
 
 func (m *TLAccountGetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getContentSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getContentSettings", m)
 }
 
 func (m *TLAccountGetContentSettings) MarshalJSON() ([]byte, error) {
@@ -10269,8 +10168,7 @@ type TLAccountGetMultiWallPapers struct {
 }
 
 func (m *TLAccountGetMultiWallPapers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getMultiWallPapers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getMultiWallPapers", m)
 }
 
 func (m *TLAccountGetMultiWallPapers) MarshalJSON() ([]byte, error) {
@@ -10368,8 +10266,7 @@ type TLAccountGetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountGetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getGlobalPrivacySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getGlobalPrivacySettings", m)
 }
 
 func (m *TLAccountGetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
@@ -10436,8 +10333,7 @@ type TLAccountSetGlobalPrivacySettings struct {
 }
 
 func (m *TLAccountSetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setGlobalPrivacySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setGlobalPrivacySettings", m)
 }
 
 func (m *TLAccountSetGlobalPrivacySettings) MarshalJSON() ([]byte, error) {
@@ -10526,8 +10422,7 @@ type TLAccountReportProfilePhoto struct {
 }
 
 func (m *TLAccountReportProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_reportProfilePhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_reportProfilePhoto", m)
 }
 
 func (m *TLAccountReportProfilePhoto) MarshalJSON() ([]byte, error) {
@@ -10661,8 +10556,7 @@ type TLAccountResetPassword struct {
 }
 
 func (m *TLAccountResetPassword) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resetPassword", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resetPassword", m)
 }
 
 func (m *TLAccountResetPassword) MarshalJSON() ([]byte, error) {
@@ -10728,8 +10622,7 @@ type TLAccountDeclinePasswordReset struct {
 }
 
 func (m *TLAccountDeclinePasswordReset) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_declinePasswordReset", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_declinePasswordReset", m)
 }
 
 func (m *TLAccountDeclinePasswordReset) MarshalJSON() ([]byte, error) {
@@ -10796,8 +10689,7 @@ type TLAccountGetChatThemes struct {
 }
 
 func (m *TLAccountGetChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getChatThemes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getChatThemes", m)
 }
 
 func (m *TLAccountGetChatThemes) MarshalJSON() ([]byte, error) {
@@ -10871,8 +10763,7 @@ type TLAccountSetAuthorizationTTL struct {
 }
 
 func (m *TLAccountSetAuthorizationTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setAuthorizationTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setAuthorizationTTL", m)
 }
 
 func (m *TLAccountSetAuthorizationTTL) MarshalJSON() ([]byte, error) {
@@ -10949,8 +10840,7 @@ type TLAccountChangeAuthorizationSettings struct {
 }
 
 func (m *TLAccountChangeAuthorizationSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_changeAuthorizationSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_changeAuthorizationSettings", m)
 }
 
 func (m *TLAccountChangeAuthorizationSettings) MarshalJSON() ([]byte, error) {
@@ -11090,8 +10980,7 @@ type TLAccountGetSavedRingtones struct {
 }
 
 func (m *TLAccountGetSavedRingtones) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getSavedRingtones", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getSavedRingtones", m)
 }
 
 func (m *TLAccountGetSavedRingtones) MarshalJSON() ([]byte, error) {
@@ -11166,8 +11055,7 @@ type TLAccountSaveRingtone struct {
 }
 
 func (m *TLAccountSaveRingtone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveRingtone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveRingtone", m)
 }
 
 func (m *TLAccountSaveRingtone) MarshalJSON() ([]byte, error) {
@@ -11274,8 +11162,7 @@ type TLAccountUploadRingtone struct {
 }
 
 func (m *TLAccountUploadRingtone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_uploadRingtone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_uploadRingtone", m)
 }
 
 func (m *TLAccountUploadRingtone) MarshalJSON() ([]byte, error) {
@@ -11382,8 +11269,7 @@ type TLAccountUpdateEmojiStatus struct {
 }
 
 func (m *TLAccountUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateEmojiStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateEmojiStatus", m)
 }
 
 func (m *TLAccountUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
@@ -11469,8 +11355,7 @@ type TLAccountGetDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultEmojiStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getDefaultEmojiStatuses", m)
 }
 
 func (m *TLAccountGetDefaultEmojiStatuses) MarshalJSON() ([]byte, error) {
@@ -11544,8 +11429,7 @@ type TLAccountGetRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountGetRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getRecentEmojiStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getRecentEmojiStatuses", m)
 }
 
 func (m *TLAccountGetRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
@@ -11618,8 +11502,7 @@ type TLAccountClearRecentEmojiStatuses struct {
 }
 
 func (m *TLAccountClearRecentEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_clearRecentEmojiStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_clearRecentEmojiStatuses", m)
 }
 
 func (m *TLAccountClearRecentEmojiStatuses) MarshalJSON() ([]byte, error) {
@@ -11686,8 +11569,7 @@ type TLAccountReorderUsernames struct {
 }
 
 func (m *TLAccountReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_reorderUsernames", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_reorderUsernames", m)
 }
 
 func (m *TLAccountReorderUsernames) MarshalJSON() ([]byte, error) {
@@ -11763,8 +11645,7 @@ type TLAccountToggleUsername struct {
 }
 
 func (m *TLAccountToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_toggleUsername", m)
 }
 
 func (m *TLAccountToggleUsername) MarshalJSON() ([]byte, error) {
@@ -11860,8 +11741,7 @@ type TLAccountGetDefaultProfilePhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultProfilePhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultProfilePhotoEmojis", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getDefaultProfilePhotoEmojis", m)
 }
 
 func (m *TLAccountGetDefaultProfilePhotoEmojis) MarshalJSON() ([]byte, error) {
@@ -11935,8 +11815,7 @@ type TLAccountGetDefaultGroupPhotoEmojis struct {
 }
 
 func (m *TLAccountGetDefaultGroupPhotoEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultGroupPhotoEmojis", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getDefaultGroupPhotoEmojis", m)
 }
 
 func (m *TLAccountGetDefaultGroupPhotoEmojis) MarshalJSON() ([]byte, error) {
@@ -12009,8 +11888,7 @@ type TLAccountGetAutoSaveSettings struct {
 }
 
 func (m *TLAccountGetAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getAutoSaveSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getAutoSaveSettings", m)
 }
 
 func (m *TLAccountGetAutoSaveSettings) MarshalJSON() ([]byte, error) {
@@ -12081,8 +11959,7 @@ type TLAccountSaveAutoSaveSettings struct {
 }
 
 func (m *TLAccountSaveAutoSaveSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveAutoSaveSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveAutoSaveSettings", m)
 }
 
 func (m *TLAccountSaveAutoSaveSettings) MarshalJSON() ([]byte, error) {
@@ -12225,8 +12102,7 @@ type TLAccountDeleteAutoSaveExceptions struct {
 }
 
 func (m *TLAccountDeleteAutoSaveExceptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteAutoSaveExceptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_deleteAutoSaveExceptions", m)
 }
 
 func (m *TLAccountDeleteAutoSaveExceptions) MarshalJSON() ([]byte, error) {
@@ -12293,8 +12169,7 @@ type TLAccountInvalidateSignInCodes struct {
 }
 
 func (m *TLAccountInvalidateSignInCodes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_invalidateSignInCodes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_invalidateSignInCodes", m)
 }
 
 func (m *TLAccountInvalidateSignInCodes) MarshalJSON() ([]byte, error) {
@@ -12370,8 +12245,7 @@ type TLAccountUpdateColor struct {
 }
 
 func (m *TLAccountUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateColor", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateColor", m)
 }
 
 func (m *TLAccountUpdateColor) MarshalJSON() ([]byte, error) {
@@ -12482,8 +12356,7 @@ type TLAccountGetDefaultBackgroundEmojis struct {
 }
 
 func (m *TLAccountGetDefaultBackgroundEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getDefaultBackgroundEmojis", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getDefaultBackgroundEmojis", m)
 }
 
 func (m *TLAccountGetDefaultBackgroundEmojis) MarshalJSON() ([]byte, error) {
@@ -12557,8 +12430,7 @@ type TLAccountGetChannelDefaultEmojiStatuses struct {
 }
 
 func (m *TLAccountGetChannelDefaultEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getChannelDefaultEmojiStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getChannelDefaultEmojiStatuses", m)
 }
 
 func (m *TLAccountGetChannelDefaultEmojiStatuses) MarshalJSON() ([]byte, error) {
@@ -12632,8 +12504,7 @@ type TLAccountGetChannelRestrictedStatusEmojis struct {
 }
 
 func (m *TLAccountGetChannelRestrictedStatusEmojis) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getChannelRestrictedStatusEmojis", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getChannelRestrictedStatusEmojis", m)
 }
 
 func (m *TLAccountGetChannelRestrictedStatusEmojis) MarshalJSON() ([]byte, error) {
@@ -12707,8 +12578,7 @@ type TLAccountUpdateBusinessWorkHours struct {
 }
 
 func (m *TLAccountUpdateBusinessWorkHours) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessWorkHours", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBusinessWorkHours", m)
 }
 
 func (m *TLAccountUpdateBusinessWorkHours) MarshalJSON() ([]byte, error) {
@@ -12814,8 +12684,7 @@ type TLAccountUpdateBusinessLocation struct {
 }
 
 func (m *TLAccountUpdateBusinessLocation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessLocation", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBusinessLocation", m)
 }
 
 func (m *TLAccountUpdateBusinessLocation) MarshalJSON() ([]byte, error) {
@@ -12938,8 +12807,7 @@ type TLAccountUpdateBusinessGreetingMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessGreetingMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessGreetingMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBusinessGreetingMessage", m)
 }
 
 func (m *TLAccountUpdateBusinessGreetingMessage) MarshalJSON() ([]byte, error) {
@@ -13044,8 +12912,7 @@ type TLAccountUpdateBusinessAwayMessage struct {
 }
 
 func (m *TLAccountUpdateBusinessAwayMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessAwayMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBusinessAwayMessage", m)
 }
 
 func (m *TLAccountUpdateBusinessAwayMessage) MarshalJSON() ([]byte, error) {
@@ -13153,8 +13020,7 @@ type TLAccountUpdateConnectedBot struct {
 }
 
 func (m *TLAccountUpdateConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateConnectedBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateConnectedBot", m)
 }
 
 func (m *TLAccountUpdateConnectedBot) MarshalJSON() ([]byte, error) {
@@ -13304,8 +13170,7 @@ type TLAccountGetConnectedBots struct {
 }
 
 func (m *TLAccountGetConnectedBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getConnectedBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getConnectedBots", m)
 }
 
 func (m *TLAccountGetConnectedBots) MarshalJSON() ([]byte, error) {
@@ -13372,8 +13237,7 @@ type TLAccountGetBotBusinessConnection struct {
 }
 
 func (m *TLAccountGetBotBusinessConnection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getBotBusinessConnection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getBotBusinessConnection", m)
 }
 
 func (m *TLAccountGetBotBusinessConnection) MarshalJSON() ([]byte, error) {
@@ -13450,8 +13314,7 @@ type TLAccountUpdateBusinessIntro struct {
 }
 
 func (m *TLAccountUpdateBusinessIntro) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBusinessIntro", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBusinessIntro", m)
 }
 
 func (m *TLAccountUpdateBusinessIntro) MarshalJSON() ([]byte, error) {
@@ -13557,8 +13420,7 @@ type TLAccountToggleConnectedBotPaused struct {
 }
 
 func (m *TLAccountToggleConnectedBotPaused) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleConnectedBotPaused", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_toggleConnectedBotPaused", m)
 }
 
 func (m *TLAccountToggleConnectedBotPaused) MarshalJSON() ([]byte, error) {
@@ -13663,8 +13525,7 @@ type TLAccountDisablePeerConnectedBot struct {
 }
 
 func (m *TLAccountDisablePeerConnectedBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_disablePeerConnectedBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_disablePeerConnectedBot", m)
 }
 
 func (m *TLAccountDisablePeerConnectedBot) MarshalJSON() ([]byte, error) {
@@ -13750,8 +13611,7 @@ type TLAccountUpdateBirthday struct {
 }
 
 func (m *TLAccountUpdateBirthday) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateBirthday", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateBirthday", m)
 }
 
 func (m *TLAccountUpdateBirthday) MarshalJSON() ([]byte, error) {
@@ -13856,8 +13716,7 @@ type TLAccountCreateBusinessChatLink struct {
 }
 
 func (m *TLAccountCreateBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_createBusinessChatLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_createBusinessChatLink", m)
 }
 
 func (m *TLAccountCreateBusinessChatLink) MarshalJSON() ([]byte, error) {
@@ -13944,8 +13803,7 @@ type TLAccountEditBusinessChatLink struct {
 }
 
 func (m *TLAccountEditBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_editBusinessChatLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_editBusinessChatLink", m)
 }
 
 func (m *TLAccountEditBusinessChatLink) MarshalJSON() ([]byte, error) {
@@ -14041,8 +13899,7 @@ type TLAccountDeleteBusinessChatLink struct {
 }
 
 func (m *TLAccountDeleteBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_deleteBusinessChatLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_deleteBusinessChatLink", m)
 }
 
 func (m *TLAccountDeleteBusinessChatLink) MarshalJSON() ([]byte, error) {
@@ -14118,8 +13975,7 @@ type TLAccountGetBusinessChatLinks struct {
 }
 
 func (m *TLAccountGetBusinessChatLinks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getBusinessChatLinks", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getBusinessChatLinks", m)
 }
 
 func (m *TLAccountGetBusinessChatLinks) MarshalJSON() ([]byte, error) {
@@ -14186,8 +14042,7 @@ type TLAccountResolveBusinessChatLink struct {
 }
 
 func (m *TLAccountResolveBusinessChatLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_resolveBusinessChatLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_resolveBusinessChatLink", m)
 }
 
 func (m *TLAccountResolveBusinessChatLink) MarshalJSON() ([]byte, error) {
@@ -14264,8 +14119,7 @@ type TLAccountUpdatePersonalChannel struct {
 }
 
 func (m *TLAccountUpdatePersonalChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updatePersonalChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updatePersonalChannel", m)
 }
 
 func (m *TLAccountUpdatePersonalChannel) MarshalJSON() ([]byte, error) {
@@ -14351,8 +14205,7 @@ type TLAccountToggleSponsoredMessages struct {
 }
 
 func (m *TLAccountToggleSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleSponsoredMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_toggleSponsoredMessages", m)
 }
 
 func (m *TLAccountToggleSponsoredMessages) MarshalJSON() ([]byte, error) {
@@ -14437,8 +14290,7 @@ type TLAccountGetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountGetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getReactionsNotifySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getReactionsNotifySettings", m)
 }
 
 func (m *TLAccountGetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
@@ -14505,8 +14357,7 @@ type TLAccountSetReactionsNotifySettings struct {
 }
 
 func (m *TLAccountSetReactionsNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setReactionsNotifySettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setReactionsNotifySettings", m)
 }
 
 func (m *TLAccountSetReactionsNotifySettings) MarshalJSON() ([]byte, error) {
@@ -14592,8 +14443,7 @@ type TLAccountGetCollectibleEmojiStatuses struct {
 }
 
 func (m *TLAccountGetCollectibleEmojiStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getCollectibleEmojiStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getCollectibleEmojiStatuses", m)
 }
 
 func (m *TLAccountGetCollectibleEmojiStatuses) MarshalJSON() ([]byte, error) {
@@ -14668,8 +14518,7 @@ type TLAccountGetPaidMessagesRevenue struct {
 }
 
 func (m *TLAccountGetPaidMessagesRevenue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getPaidMessagesRevenue", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getPaidMessagesRevenue", m)
 }
 
 func (m *TLAccountGetPaidMessagesRevenue) MarshalJSON() ([]byte, error) {
@@ -14798,8 +14647,7 @@ type TLAccountToggleNoPaidMessagesException struct {
 }
 
 func (m *TLAccountToggleNoPaidMessagesException) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_toggleNoPaidMessagesException", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_toggleNoPaidMessagesException", m)
 }
 
 func (m *TLAccountToggleNoPaidMessagesException) MarshalJSON() ([]byte, error) {
@@ -14937,8 +14785,7 @@ type TLAccountSetMainProfileTab struct {
 }
 
 func (m *TLAccountSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_setMainProfileTab", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_setMainProfileTab", m)
 }
 
 func (m *TLAccountSetMainProfileTab) MarshalJSON() ([]byte, error) {
@@ -15026,8 +14873,7 @@ type TLAccountSaveMusic struct {
 }
 
 func (m *TLAccountSaveMusic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_saveMusic", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_saveMusic", m)
 }
 
 func (m *TLAccountSaveMusic) MarshalJSON() ([]byte, error) {
@@ -15158,8 +15004,7 @@ type TLAccountGetSavedMusicIds struct {
 }
 
 func (m *TLAccountGetSavedMusicIds) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getSavedMusicIds", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getSavedMusicIds", m)
 }
 
 func (m *TLAccountGetSavedMusicIds) MarshalJSON() ([]byte, error) {
@@ -15235,8 +15080,7 @@ type TLAccountGetUniqueGiftChatThemes struct {
 }
 
 func (m *TLAccountGetUniqueGiftChatThemes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getUniqueGiftChatThemes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getUniqueGiftChatThemes", m)
 }
 
 func (m *TLAccountGetUniqueGiftChatThemes) MarshalJSON() ([]byte, error) {
@@ -15324,8 +15168,7 @@ type TLAccountInitPasskeyRegistration struct {
 }
 
 func (m *TLAccountInitPasskeyRegistration) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_initPasskeyRegistration", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_initPasskeyRegistration", m)
 }
 
 func (m *TLAccountInitPasskeyRegistration) MarshalJSON() ([]byte, error) {
@@ -15392,8 +15235,7 @@ type TLAccountRegisterPasskey struct {
 }
 
 func (m *TLAccountRegisterPasskey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_registerPasskey", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_registerPasskey", m)
 }
 
 func (m *TLAccountRegisterPasskey) MarshalJSON() ([]byte, error) {
@@ -15478,8 +15320,7 @@ type TLAccountGetPasskeys struct {
 }
 
 func (m *TLAccountGetPasskeys) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_getPasskeys", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_getPasskeys", m)
 }
 
 func (m *TLAccountGetPasskeys) MarshalJSON() ([]byte, error) {
@@ -15546,8 +15387,7 @@ type TLAccountDeletePasskey struct {
 }
 
 func (m *TLAccountDeletePasskey) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_deletePasskey", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_deletePasskey", m)
 }
 
 func (m *TLAccountDeletePasskey) MarshalJSON() ([]byte, error) {
@@ -15624,8 +15464,7 @@ type TLUsersGetUsers struct {
 }
 
 func (m *TLUsersGetUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getUsers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getUsers", m)
 }
 
 func (m *TLUsersGetUsers) MarshalJSON() ([]byte, error) {
@@ -15724,8 +15563,7 @@ type TLUsersGetFullUser struct {
 }
 
 func (m *TLUsersGetFullUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getFullUser", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getFullUser", m)
 }
 
 func (m *TLUsersGetFullUser) MarshalJSON() ([]byte, error) {
@@ -15812,8 +15650,7 @@ type TLUsersSetSecureValueErrors struct {
 }
 
 func (m *TLUsersSetSecureValueErrors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_setSecureValueErrors", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_setSecureValueErrors", m)
 }
 
 func (m *TLUsersSetSecureValueErrors) MarshalJSON() ([]byte, error) {
@@ -15933,8 +15770,7 @@ type TLUsersGetRequirementsToContact struct {
 }
 
 func (m *TLUsersGetRequirementsToContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getRequirementsToContact", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getRequirementsToContact", m)
 }
 
 func (m *TLUsersGetRequirementsToContact) MarshalJSON() ([]byte, error) {
@@ -16036,8 +15872,7 @@ type TLUsersGetSavedMusic struct {
 }
 
 func (m *TLUsersGetSavedMusic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getSavedMusic", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getSavedMusic", m)
 }
 
 func (m *TLUsersGetSavedMusic) MarshalJSON() ([]byte, error) {
@@ -16143,8 +15978,7 @@ type TLUsersGetSavedMusicByID struct {
 }
 
 func (m *TLUsersGetSavedMusicByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getSavedMusicByID", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getSavedMusicByID", m)
 }
 
 func (m *TLUsersGetSavedMusicByID) MarshalJSON() ([]byte, error) {
@@ -16265,8 +16099,7 @@ type TLUsersSuggestBirthday struct {
 }
 
 func (m *TLUsersSuggestBirthday) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_suggestBirthday", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_suggestBirthday", m)
 }
 
 func (m *TLUsersSuggestBirthday) MarshalJSON() ([]byte, error) {
@@ -16371,8 +16204,7 @@ type TLContactsGetContactIDs struct {
 }
 
 func (m *TLContactsGetContactIDs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getContactIDs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getContactIDs", m)
 }
 
 func (m *TLContactsGetContactIDs) MarshalJSON() ([]byte, error) {
@@ -16445,8 +16277,7 @@ type TLContactsGetStatuses struct {
 }
 
 func (m *TLContactsGetStatuses) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getStatuses", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getStatuses", m)
 }
 
 func (m *TLContactsGetStatuses) MarshalJSON() ([]byte, error) {
@@ -16513,8 +16344,7 @@ type TLContactsGetContacts struct {
 }
 
 func (m *TLContactsGetContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getContacts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getContacts", m)
 }
 
 func (m *TLContactsGetContacts) MarshalJSON() ([]byte, error) {
@@ -16588,8 +16418,7 @@ type TLContactsImportContacts struct {
 }
 
 func (m *TLContactsImportContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_importContacts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_importContacts", m)
 }
 
 func (m *TLContactsImportContacts) MarshalJSON() ([]byte, error) {
@@ -16688,8 +16517,7 @@ type TLContactsDeleteContacts struct {
 }
 
 func (m *TLContactsDeleteContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_deleteContacts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_deleteContacts", m)
 }
 
 func (m *TLContactsDeleteContacts) MarshalJSON() ([]byte, error) {
@@ -16788,8 +16616,7 @@ type TLContactsDeleteByPhones struct {
 }
 
 func (m *TLContactsDeleteByPhones) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_deleteByPhones", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_deleteByPhones", m)
 }
 
 func (m *TLContactsDeleteByPhones) MarshalJSON() ([]byte, error) {
@@ -16865,8 +16692,7 @@ type TLContactsBlock struct {
 }
 
 func (m *TLContactsBlock) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_block", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_block", m)
 }
 
 func (m *TLContactsBlock) MarshalJSON() ([]byte, error) {
@@ -16976,8 +16802,7 @@ type TLContactsUnblock struct {
 }
 
 func (m *TLContactsUnblock) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_unblock", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_unblock", m)
 }
 
 func (m *TLContactsUnblock) MarshalJSON() ([]byte, error) {
@@ -17088,8 +16913,7 @@ type TLContactsGetBlocked struct {
 }
 
 func (m *TLContactsGetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getBlocked", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getBlocked", m)
 }
 
 func (m *TLContactsGetBlocked) MarshalJSON() ([]byte, error) {
@@ -17193,8 +17017,7 @@ type TLContactsSearch struct {
 }
 
 func (m *TLContactsSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_search", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_search", m)
 }
 
 func (m *TLContactsSearch) MarshalJSON() ([]byte, error) {
@@ -17278,8 +17101,7 @@ type TLContactsResolveUsername struct {
 }
 
 func (m *TLContactsResolveUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resolveUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_resolveUsername", m)
 }
 
 func (m *TLContactsResolveUsername) MarshalJSON() ([]byte, error) {
@@ -17400,8 +17222,7 @@ type TLContactsGetTopPeers struct {
 }
 
 func (m *TLContactsGetTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getTopPeers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getTopPeers", m)
 }
 
 func (m *TLContactsGetTopPeers) MarshalJSON() ([]byte, error) {
@@ -17559,8 +17380,7 @@ type TLContactsResetTopPeerRating struct {
 }
 
 func (m *TLContactsResetTopPeerRating) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resetTopPeerRating", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_resetTopPeerRating", m)
 }
 
 func (m *TLContactsResetTopPeerRating) MarshalJSON() ([]byte, error) {
@@ -17664,8 +17484,7 @@ type TLContactsResetSaved struct {
 }
 
 func (m *TLContactsResetSaved) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resetSaved", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_resetSaved", m)
 }
 
 func (m *TLContactsResetSaved) MarshalJSON() ([]byte, error) {
@@ -17731,8 +17550,7 @@ type TLContactsGetSaved struct {
 }
 
 func (m *TLContactsGetSaved) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getSaved", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getSaved", m)
 }
 
 func (m *TLContactsGetSaved) MarshalJSON() ([]byte, error) {
@@ -17799,8 +17617,7 @@ type TLContactsToggleTopPeers struct {
 }
 
 func (m *TLContactsToggleTopPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_toggleTopPeers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_toggleTopPeers", m)
 }
 
 func (m *TLContactsToggleTopPeers) MarshalJSON() ([]byte, error) {
@@ -17891,8 +17708,7 @@ type TLContactsAddContact struct {
 }
 
 func (m *TLContactsAddContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_addContact", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_addContact", m)
 }
 
 func (m *TLContactsAddContact) MarshalJSON() ([]byte, error) {
@@ -18053,8 +17869,7 @@ type TLContactsAcceptContact struct {
 }
 
 func (m *TLContactsAcceptContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_acceptContact", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_acceptContact", m)
 }
 
 func (m *TLContactsAcceptContact) MarshalJSON() ([]byte, error) {
@@ -18142,8 +17957,7 @@ type TLContactsGetLocated struct {
 }
 
 func (m *TLContactsGetLocated) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getLocated", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getLocated", m)
 }
 
 func (m *TLContactsGetLocated) MarshalJSON() ([]byte, error) {
@@ -18273,8 +18087,7 @@ type TLContactsBlockFromReplies struct {
 }
 
 func (m *TLContactsBlockFromReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_blockFromReplies", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_blockFromReplies", m)
 }
 
 func (m *TLContactsBlockFromReplies) MarshalJSON() ([]byte, error) {
@@ -18383,8 +18196,7 @@ type TLContactsResolvePhone struct {
 }
 
 func (m *TLContactsResolvePhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_resolvePhone", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_resolvePhone", m)
 }
 
 func (m *TLContactsResolvePhone) MarshalJSON() ([]byte, error) {
@@ -18460,8 +18272,7 @@ type TLContactsExportContactToken struct {
 }
 
 func (m *TLContactsExportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_exportContactToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_exportContactToken", m)
 }
 
 func (m *TLContactsExportContactToken) MarshalJSON() ([]byte, error) {
@@ -18528,8 +18339,7 @@ type TLContactsImportContactToken struct {
 }
 
 func (m *TLContactsImportContactToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_importContactToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_importContactToken", m)
 }
 
 func (m *TLContactsImportContactToken) MarshalJSON() ([]byte, error) {
@@ -18606,8 +18416,7 @@ type TLContactsEditCloseFriends struct {
 }
 
 func (m *TLContactsEditCloseFriends) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_editCloseFriends", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_editCloseFriends", m)
 }
 
 func (m *TLContactsEditCloseFriends) MarshalJSON() ([]byte, error) {
@@ -18684,8 +18493,7 @@ type TLContactsSetBlocked struct {
 }
 
 func (m *TLContactsSetBlocked) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_setBlocked", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_setBlocked", m)
 }
 
 func (m *TLContactsSetBlocked) MarshalJSON() ([]byte, error) {
@@ -18815,8 +18623,7 @@ type TLContactsGetBirthdays struct {
 }
 
 func (m *TLContactsGetBirthdays) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getBirthdays", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getBirthdays", m)
 }
 
 func (m *TLContactsGetBirthdays) MarshalJSON() ([]byte, error) {
@@ -18883,8 +18690,7 @@ type TLContactsGetSponsoredPeers struct {
 }
 
 func (m *TLContactsGetSponsoredPeers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_getSponsoredPeers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_getSponsoredPeers", m)
 }
 
 func (m *TLContactsGetSponsoredPeers) MarshalJSON() ([]byte, error) {
@@ -18962,8 +18768,7 @@ type TLContactsUpdateContactNote struct {
 }
 
 func (m *TLContactsUpdateContactNote) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "contacts_updateContactNote", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("contacts_updateContactNote", m)
 }
 
 func (m *TLContactsUpdateContactNote) MarshalJSON() ([]byte, error) {
@@ -19069,8 +18874,7 @@ type TLMessagesGetMessages struct {
 }
 
 func (m *TLMessagesGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessages", m)
 }
 
 func (m *TLMessagesGetMessages) MarshalJSON() ([]byte, error) {
@@ -19197,8 +19001,7 @@ type TLMessagesGetDialogs struct {
 }
 
 func (m *TLMessagesGetDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDialogs", m)
 }
 
 func (m *TLMessagesGetDialogs) MarshalJSON() ([]byte, error) {
@@ -19357,8 +19160,7 @@ type TLMessagesGetHistory struct {
 }
 
 func (m *TLMessagesGetHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getHistory", m)
 }
 
 func (m *TLMessagesGetHistory) MarshalJSON() ([]byte, error) {
@@ -19501,8 +19303,7 @@ type TLMessagesSearch struct {
 }
 
 func (m *TLMessagesSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_search", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_search", m)
 }
 
 func (m *TLMessagesSearch) MarshalJSON() ([]byte, error) {
@@ -19785,8 +19586,7 @@ type TLMessagesReadHistory struct {
 }
 
 func (m *TLMessagesReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readHistory", m)
 }
 
 func (m *TLMessagesReadHistory) MarshalJSON() ([]byte, error) {
@@ -19884,8 +19684,7 @@ type TLMessagesDeleteHistory struct {
 }
 
 func (m *TLMessagesDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteHistory", m)
 }
 
 func (m *TLMessagesDeleteHistory) MarshalJSON() ([]byte, error) {
@@ -20043,8 +19842,7 @@ type TLMessagesDeleteMessages struct {
 }
 
 func (m *TLMessagesDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteMessages", m)
 }
 
 func (m *TLMessagesDeleteMessages) MarshalJSON() ([]byte, error) {
@@ -20143,8 +19941,7 @@ type TLMessagesReceivedMessages struct {
 }
 
 func (m *TLMessagesReceivedMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_receivedMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_receivedMessages", m)
 }
 
 func (m *TLMessagesReceivedMessages) MarshalJSON() ([]byte, error) {
@@ -20220,8 +20017,7 @@ type TLMessagesSetTyping struct {
 }
 
 func (m *TLMessagesSetTyping) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setTyping", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setTyping", m)
 }
 
 func (m *TLMessagesSetTyping) MarshalJSON() ([]byte, error) {
@@ -20382,8 +20178,7 @@ type TLMessagesSendMessage struct {
 }
 
 func (m *TLMessagesSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendMessage", m)
 }
 
 func (m *TLMessagesSendMessage) MarshalJSON() ([]byte, error) {
@@ -20793,8 +20588,7 @@ type TLMessagesSendMedia struct {
 }
 
 func (m *TLMessagesSendMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendMedia", m)
 }
 
 func (m *TLMessagesSendMedia) MarshalJSON() ([]byte, error) {
@@ -21218,8 +21012,7 @@ type TLMessagesForwardMessages struct {
 }
 
 func (m *TLMessagesForwardMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_forwardMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_forwardMessages", m)
 }
 
 func (m *TLMessagesForwardMessages) MarshalJSON() ([]byte, error) {
@@ -21600,8 +21393,7 @@ type TLMessagesReportSpam struct {
 }
 
 func (m *TLMessagesReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportSpam", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportSpam", m)
 }
 
 func (m *TLMessagesReportSpam) MarshalJSON() ([]byte, error) {
@@ -21687,8 +21479,7 @@ type TLMessagesGetPeerSettings struct {
 }
 
 func (m *TLMessagesGetPeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPeerSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPeerSettings", m)
 }
 
 func (m *TLMessagesGetPeerSettings) MarshalJSON() ([]byte, error) {
@@ -21777,8 +21568,7 @@ type TLMessagesReport struct {
 }
 
 func (m *TLMessagesReport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_report", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_report", m)
 }
 
 func (m *TLMessagesReport) MarshalJSON() ([]byte, error) {
@@ -21895,8 +21685,7 @@ type TLMessagesGetChats struct {
 }
 
 func (m *TLMessagesGetChats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getChats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getChats", m)
 }
 
 func (m *TLMessagesGetChats) MarshalJSON() ([]byte, error) {
@@ -21971,8 +21760,7 @@ type TLMessagesGetFullChat struct {
 }
 
 func (m *TLMessagesGetFullChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFullChat", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFullChat", m)
 }
 
 func (m *TLMessagesGetFullChat) MarshalJSON() ([]byte, error) {
@@ -22047,8 +21835,7 @@ type TLMessagesEditChatTitle struct {
 }
 
 func (m *TLMessagesEditChatTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatTitle", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatTitle", m)
 }
 
 func (m *TLMessagesEditChatTitle) MarshalJSON() ([]byte, error) {
@@ -22132,8 +21919,7 @@ type TLMessagesEditChatPhoto struct {
 }
 
 func (m *TLMessagesEditChatPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatPhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatPhoto", m)
 }
 
 func (m *TLMessagesEditChatPhoto) MarshalJSON() ([]byte, error) {
@@ -22227,8 +22013,7 @@ type TLMessagesAddChatUser struct {
 }
 
 func (m *TLMessagesAddChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_addChatUser", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_addChatUser", m)
 }
 
 func (m *TLMessagesAddChatUser) MarshalJSON() ([]byte, error) {
@@ -22329,8 +22114,7 @@ type TLMessagesDeleteChatUser struct {
 }
 
 func (m *TLMessagesDeleteChatUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteChatUser", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteChatUser", m)
 }
 
 func (m *TLMessagesDeleteChatUser) MarshalJSON() ([]byte, error) {
@@ -22447,8 +22231,7 @@ type TLMessagesCreateChat struct {
 }
 
 func (m *TLMessagesCreateChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_createChat", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_createChat", m)
 }
 
 func (m *TLMessagesCreateChat) MarshalJSON() ([]byte, error) {
@@ -22594,8 +22377,7 @@ type TLMessagesGetDhConfig struct {
 }
 
 func (m *TLMessagesGetDhConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDhConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDhConfig", m)
 }
 
 func (m *TLMessagesGetDhConfig) MarshalJSON() ([]byte, error) {
@@ -22677,8 +22459,7 @@ type TLMessagesRequestEncryption struct {
 }
 
 func (m *TLMessagesRequestEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestEncryption", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestEncryption", m)
 }
 
 func (m *TLMessagesRequestEncryption) MarshalJSON() ([]byte, error) {
@@ -22783,8 +22564,7 @@ type TLMessagesAcceptEncryption struct {
 }
 
 func (m *TLMessagesAcceptEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_acceptEncryption", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_acceptEncryption", m)
 }
 
 func (m *TLMessagesAcceptEncryption) MarshalJSON() ([]byte, error) {
@@ -22888,8 +22668,7 @@ type TLMessagesDiscardEncryption struct {
 }
 
 func (m *TLMessagesDiscardEncryption) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_discardEncryption", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_discardEncryption", m)
 }
 
 func (m *TLMessagesDiscardEncryption) MarshalJSON() ([]byte, error) {
@@ -22987,8 +22766,7 @@ type TLMessagesSetEncryptedTyping struct {
 }
 
 func (m *TLMessagesSetEncryptedTyping) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setEncryptedTyping", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setEncryptedTyping", m)
 }
 
 func (m *TLMessagesSetEncryptedTyping) MarshalJSON() ([]byte, error) {
@@ -23094,8 +22872,7 @@ type TLMessagesReadEncryptedHistory struct {
 }
 
 func (m *TLMessagesReadEncryptedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readEncryptedHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readEncryptedHistory", m)
 }
 
 func (m *TLMessagesReadEncryptedHistory) MarshalJSON() ([]byte, error) {
@@ -23191,8 +22968,7 @@ type TLMessagesSendEncrypted struct {
 }
 
 func (m *TLMessagesSendEncrypted) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncrypted", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendEncrypted", m)
 }
 
 func (m *TLMessagesSendEncrypted) MarshalJSON() ([]byte, error) {
@@ -23322,8 +23098,7 @@ type TLMessagesSendEncryptedFile struct {
 }
 
 func (m *TLMessagesSendEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncryptedFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendEncryptedFile", m)
 }
 
 func (m *TLMessagesSendEncryptedFile) MarshalJSON() ([]byte, error) {
@@ -23470,8 +23245,7 @@ type TLMessagesSendEncryptedService struct {
 }
 
 func (m *TLMessagesSendEncryptedService) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendEncryptedService", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendEncryptedService", m)
 }
 
 func (m *TLMessagesSendEncryptedService) MarshalJSON() ([]byte, error) {
@@ -23574,8 +23348,7 @@ type TLMessagesReceivedQueue struct {
 }
 
 func (m *TLMessagesReceivedQueue) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_receivedQueue", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_receivedQueue", m)
 }
 
 func (m *TLMessagesReceivedQueue) MarshalJSON() ([]byte, error) {
@@ -23649,8 +23422,7 @@ type TLMessagesReportEncryptedSpam struct {
 }
 
 func (m *TLMessagesReportEncryptedSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportEncryptedSpam", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportEncryptedSpam", m)
 }
 
 func (m *TLMessagesReportEncryptedSpam) MarshalJSON() ([]byte, error) {
@@ -23736,8 +23508,7 @@ type TLMessagesReadMessageContents struct {
 }
 
 func (m *TLMessagesReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readMessageContents", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readMessageContents", m)
 }
 
 func (m *TLMessagesReadMessageContents) MarshalJSON() ([]byte, error) {
@@ -23813,8 +23584,7 @@ type TLMessagesGetStickers struct {
 }
 
 func (m *TLMessagesGetStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getStickers", m)
 }
 
 func (m *TLMessagesGetStickers) MarshalJSON() ([]byte, error) {
@@ -23897,8 +23667,7 @@ type TLMessagesGetAllStickers struct {
 }
 
 func (m *TLMessagesGetAllStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAllStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAllStickers", m)
 }
 
 func (m *TLMessagesGetAllStickers) MarshalJSON() ([]byte, error) {
@@ -23973,8 +23742,7 @@ type TLMessagesGetWebPagePreview struct {
 }
 
 func (m *TLMessagesGetWebPagePreview) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getWebPagePreview", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getWebPagePreview", m)
 }
 
 func (m *TLMessagesGetWebPagePreview) MarshalJSON() ([]byte, error) {
@@ -24111,8 +23879,7 @@ type TLMessagesExportChatInvite struct {
 }
 
 func (m *TLMessagesExportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_exportChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_exportChatInvite", m)
 }
 
 func (m *TLMessagesExportChatInvite) MarshalJSON() ([]byte, error) {
@@ -24304,8 +24071,7 @@ type TLMessagesCheckChatInvite struct {
 }
 
 func (m *TLMessagesCheckChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_checkChatInvite", m)
 }
 
 func (m *TLMessagesCheckChatInvite) MarshalJSON() ([]byte, error) {
@@ -24382,8 +24148,7 @@ type TLMessagesImportChatInvite struct {
 }
 
 func (m *TLMessagesImportChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_importChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_importChatInvite", m)
 }
 
 func (m *TLMessagesImportChatInvite) MarshalJSON() ([]byte, error) {
@@ -24461,8 +24226,7 @@ type TLMessagesGetStickerSet struct {
 }
 
 func (m *TLMessagesGetStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getStickerSet", m)
 }
 
 func (m *TLMessagesGetStickerSet) MarshalJSON() ([]byte, error) {
@@ -24589,8 +24353,7 @@ type TLMessagesInstallStickerSet struct {
 }
 
 func (m *TLMessagesInstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_installStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_installStickerSet", m)
 }
 
 func (m *TLMessagesInstallStickerSet) MarshalJSON() ([]byte, error) {
@@ -24695,8 +24458,7 @@ type TLMessagesUninstallStickerSet struct {
 }
 
 func (m *TLMessagesUninstallStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_uninstallStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_uninstallStickerSet", m)
 }
 
 func (m *TLMessagesUninstallStickerSet) MarshalJSON() ([]byte, error) {
@@ -24785,8 +24547,7 @@ type TLMessagesStartBot struct {
 }
 
 func (m *TLMessagesStartBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_startBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_startBot", m)
 }
 
 func (m *TLMessagesStartBot) MarshalJSON() ([]byte, error) {
@@ -24910,8 +24671,7 @@ type TLMessagesGetMessagesViews struct {
 }
 
 func (m *TLMessagesGetMessagesViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessagesViews", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessagesViews", m)
 }
 
 func (m *TLMessagesGetMessagesViews) MarshalJSON() ([]byte, error) {
@@ -25028,8 +24788,7 @@ type TLMessagesEditChatAdmin struct {
 }
 
 func (m *TLMessagesEditChatAdmin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatAdmin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatAdmin", m)
 }
 
 func (m *TLMessagesEditChatAdmin) MarshalJSON() ([]byte, error) {
@@ -25140,8 +24899,7 @@ type TLMessagesMigrateChat struct {
 }
 
 func (m *TLMessagesMigrateChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_migrateChat", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_migrateChat", m)
 }
 
 func (m *TLMessagesMigrateChat) MarshalJSON() ([]byte, error) {
@@ -25226,8 +24984,7 @@ type TLMessagesSearchGlobal struct {
 }
 
 func (m *TLMessagesSearchGlobal) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchGlobal", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchGlobal", m)
 }
 
 func (m *TLMessagesSearchGlobal) MarshalJSON() ([]byte, error) {
@@ -25429,8 +25186,7 @@ type TLMessagesReorderStickerSets struct {
 }
 
 func (m *TLMessagesReorderStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderStickerSets", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reorderStickerSets", m)
 }
 
 func (m *TLMessagesReorderStickerSets) MarshalJSON() ([]byte, error) {
@@ -25537,8 +25293,7 @@ type TLMessagesGetDocumentByHash struct {
 }
 
 func (m *TLMessagesGetDocumentByHash) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDocumentByHash", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDocumentByHash", m)
 }
 
 func (m *TLMessagesGetDocumentByHash) MarshalJSON() ([]byte, error) {
@@ -25631,8 +25386,7 @@ type TLMessagesGetSavedGifs struct {
 }
 
 func (m *TLMessagesGetSavedGifs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedGifs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSavedGifs", m)
 }
 
 func (m *TLMessagesGetSavedGifs) MarshalJSON() ([]byte, error) {
@@ -25707,8 +25461,7 @@ type TLMessagesSaveGif struct {
 }
 
 func (m *TLMessagesSaveGif) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveGif", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_saveGif", m)
 }
 
 func (m *TLMessagesSaveGif) MarshalJSON() ([]byte, error) {
@@ -25817,8 +25570,7 @@ type TLMessagesGetInlineBotResults struct {
 }
 
 func (m *TLMessagesGetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getInlineBotResults", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getInlineBotResults", m)
 }
 
 func (m *TLMessagesGetInlineBotResults) MarshalJSON() ([]byte, error) {
@@ -25990,8 +25742,7 @@ type TLMessagesSetInlineBotResults struct {
 }
 
 func (m *TLMessagesSetInlineBotResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setInlineBotResults", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setInlineBotResults", m)
 }
 
 func (m *TLMessagesSetInlineBotResults) MarshalJSON() ([]byte, error) {
@@ -26208,8 +25959,7 @@ type TLMessagesSendInlineBotResult struct {
 }
 
 func (m *TLMessagesSendInlineBotResult) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendInlineBotResult", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendInlineBotResult", m)
 }
 
 func (m *TLMessagesSendInlineBotResult) MarshalJSON() ([]byte, error) {
@@ -26462,8 +26212,7 @@ type TLMessagesGetMessageEditData struct {
 }
 
 func (m *TLMessagesGetMessageEditData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageEditData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessageEditData", m)
 }
 
 func (m *TLMessagesGetMessageEditData) MarshalJSON() ([]byte, error) {
@@ -26566,8 +26315,7 @@ type TLMessagesEditMessage struct {
 }
 
 func (m *TLMessagesEditMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editMessage", m)
 }
 
 func (m *TLMessagesEditMessage) MarshalJSON() ([]byte, error) {
@@ -26849,8 +26597,7 @@ type TLMessagesEditInlineBotMessage struct {
 }
 
 func (m *TLMessagesEditInlineBotMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editInlineBotMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editInlineBotMessage", m)
 }
 
 func (m *TLMessagesEditInlineBotMessage) MarshalJSON() ([]byte, error) {
@@ -27071,8 +26818,7 @@ type TLMessagesGetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesGetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getBotCallbackAnswer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getBotCallbackAnswer", m)
 }
 
 func (m *TLMessagesGetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
@@ -27231,8 +26977,7 @@ type TLMessagesSetBotCallbackAnswer struct {
 }
 
 func (m *TLMessagesSetBotCallbackAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotCallbackAnswer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setBotCallbackAnswer", m)
 }
 
 func (m *TLMessagesSetBotCallbackAnswer) MarshalJSON() ([]byte, error) {
@@ -27374,8 +27119,7 @@ type TLMessagesGetPeerDialogs struct {
 }
 
 func (m *TLMessagesGetPeerDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPeerDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPeerDialogs", m)
 }
 
 func (m *TLMessagesGetPeerDialogs) MarshalJSON() ([]byte, error) {
@@ -27482,8 +27226,7 @@ type TLMessagesSaveDraft struct {
 }
 
 func (m *TLMessagesSaveDraft) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveDraft", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_saveDraft", m)
 }
 
 func (m *TLMessagesSaveDraft) MarshalJSON() ([]byte, error) {
@@ -27731,8 +27474,7 @@ type TLMessagesGetAllDrafts struct {
 }
 
 func (m *TLMessagesGetAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAllDrafts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAllDrafts", m)
 }
 
 func (m *TLMessagesGetAllDrafts) MarshalJSON() ([]byte, error) {
@@ -27799,8 +27541,7 @@ type TLMessagesGetFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFeaturedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFeaturedStickers", m)
 }
 
 func (m *TLMessagesGetFeaturedStickers) MarshalJSON() ([]byte, error) {
@@ -27874,8 +27615,7 @@ type TLMessagesReadFeaturedStickers struct {
 }
 
 func (m *TLMessagesReadFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readFeaturedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readFeaturedStickers", m)
 }
 
 func (m *TLMessagesReadFeaturedStickers) MarshalJSON() ([]byte, error) {
@@ -27951,8 +27691,7 @@ type TLMessagesGetRecentStickers struct {
 }
 
 func (m *TLMessagesGetRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getRecentStickers", m)
 }
 
 func (m *TLMessagesGetRecentStickers) MarshalJSON() ([]byte, error) {
@@ -28051,8 +27790,7 @@ type TLMessagesSaveRecentSticker struct {
 }
 
 func (m *TLMessagesSaveRecentSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveRecentSticker", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_saveRecentSticker", m)
 }
 
 func (m *TLMessagesSaveRecentSticker) MarshalJSON() ([]byte, error) {
@@ -28180,8 +27918,7 @@ type TLMessagesClearRecentStickers struct {
 }
 
 func (m *TLMessagesClearRecentStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearRecentStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_clearRecentStickers", m)
 }
 
 func (m *TLMessagesClearRecentStickers) MarshalJSON() ([]byte, error) {
@@ -28275,8 +28012,7 @@ type TLMessagesGetArchivedStickers struct {
 }
 
 func (m *TLMessagesGetArchivedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getArchivedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getArchivedStickers", m)
 }
 
 func (m *TLMessagesGetArchivedStickers) MarshalJSON() ([]byte, error) {
@@ -28385,8 +28121,7 @@ type TLMessagesGetMaskStickers struct {
 }
 
 func (m *TLMessagesGetMaskStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMaskStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMaskStickers", m)
 }
 
 func (m *TLMessagesGetMaskStickers) MarshalJSON() ([]byte, error) {
@@ -28460,8 +28195,7 @@ type TLMessagesGetAttachedStickers struct {
 }
 
 func (m *TLMessagesGetAttachedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAttachedStickers", m)
 }
 
 func (m *TLMessagesGetAttachedStickers) MarshalJSON() ([]byte, error) {
@@ -28552,8 +28286,7 @@ type TLMessagesSetGameScore struct {
 }
 
 func (m *TLMessagesSetGameScore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setGameScore", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setGameScore", m)
 }
 
 func (m *TLMessagesSetGameScore) MarshalJSON() ([]byte, error) {
@@ -28705,8 +28438,7 @@ type TLMessagesSetInlineGameScore struct {
 }
 
 func (m *TLMessagesSetInlineGameScore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setInlineGameScore", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setInlineGameScore", m)
 }
 
 func (m *TLMessagesSetInlineGameScore) MarshalJSON() ([]byte, error) {
@@ -28849,8 +28581,7 @@ type TLMessagesGetGameHighScores struct {
 }
 
 func (m *TLMessagesGetGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getGameHighScores", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getGameHighScores", m)
 }
 
 func (m *TLMessagesGetGameHighScores) MarshalJSON() ([]byte, error) {
@@ -28963,8 +28694,7 @@ type TLMessagesGetInlineGameHighScores struct {
 }
 
 func (m *TLMessagesGetInlineGameHighScores) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getInlineGameHighScores", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getInlineGameHighScores", m)
 }
 
 func (m *TLMessagesGetInlineGameHighScores) MarshalJSON() ([]byte, error) {
@@ -29071,8 +28801,7 @@ type TLMessagesGetCommonChats struct {
 }
 
 func (m *TLMessagesGetCommonChats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getCommonChats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getCommonChats", m)
 }
 
 func (m *TLMessagesGetCommonChats) MarshalJSON() ([]byte, error) {
@@ -29172,8 +28901,7 @@ type TLMessagesGetWebPage struct {
 }
 
 func (m *TLMessagesGetWebPage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getWebPage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getWebPage", m)
 }
 
 func (m *TLMessagesGetWebPage) MarshalJSON() ([]byte, error) {
@@ -29257,8 +28985,7 @@ type TLMessagesToggleDialogPin struct {
 }
 
 func (m *TLMessagesToggleDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleDialogPin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleDialogPin", m)
 }
 
 func (m *TLMessagesToggleDialogPin) MarshalJSON() ([]byte, error) {
@@ -29369,8 +29096,7 @@ type TLMessagesReorderPinnedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reorderPinnedDialogs", m)
 }
 
 func (m *TLMessagesReorderPinnedDialogs) MarshalJSON() ([]byte, error) {
@@ -29499,8 +29225,7 @@ type TLMessagesGetPinnedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPinnedDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPinnedDialogs", m)
 }
 
 func (m *TLMessagesGetPinnedDialogs) MarshalJSON() ([]byte, error) {
@@ -29576,8 +29301,7 @@ type TLMessagesSetBotShippingResults struct {
 }
 
 func (m *TLMessagesSetBotShippingResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotShippingResults", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setBotShippingResults", m)
 }
 
 func (m *TLMessagesSetBotShippingResults) MarshalJSON() ([]byte, error) {
@@ -29726,8 +29450,7 @@ type TLMessagesSetBotPrecheckoutResults struct {
 }
 
 func (m *TLMessagesSetBotPrecheckoutResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setBotPrecheckoutResults", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setBotPrecheckoutResults", m)
 }
 
 func (m *TLMessagesSetBotPrecheckoutResults) MarshalJSON() ([]byte, error) {
@@ -29843,8 +29566,7 @@ type TLMessagesUploadMedia struct {
 }
 
 func (m *TLMessagesUploadMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_uploadMedia", m)
 }
 
 func (m *TLMessagesUploadMedia) MarshalJSON() ([]byte, error) {
@@ -29987,8 +29709,7 @@ type TLMessagesSendScreenshotNotification struct {
 }
 
 func (m *TLMessagesSendScreenshotNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendScreenshotNotification", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendScreenshotNotification", m)
 }
 
 func (m *TLMessagesSendScreenshotNotification) MarshalJSON() ([]byte, error) {
@@ -30100,8 +29821,7 @@ type TLMessagesGetFavedStickers struct {
 }
 
 func (m *TLMessagesGetFavedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFavedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFavedStickers", m)
 }
 
 func (m *TLMessagesGetFavedStickers) MarshalJSON() ([]byte, error) {
@@ -30176,8 +29896,7 @@ type TLMessagesFaveSticker struct {
 }
 
 func (m *TLMessagesFaveSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_faveSticker", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_faveSticker", m)
 }
 
 func (m *TLMessagesFaveSticker) MarshalJSON() ([]byte, error) {
@@ -30288,8 +30007,7 @@ type TLMessagesGetUnreadMentions struct {
 }
 
 func (m *TLMessagesGetUnreadMentions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadMentions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getUnreadMentions", m)
 }
 
 func (m *TLMessagesGetUnreadMentions) MarshalJSON() ([]byte, error) {
@@ -30442,8 +30160,7 @@ type TLMessagesReadMentions struct {
 }
 
 func (m *TLMessagesReadMentions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readMentions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readMentions", m)
 }
 
 func (m *TLMessagesReadMentions) MarshalJSON() ([]byte, error) {
@@ -30565,8 +30282,7 @@ type TLMessagesGetRecentLocations struct {
 }
 
 func (m *TLMessagesGetRecentLocations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentLocations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getRecentLocations", m)
 }
 
 func (m *TLMessagesGetRecentLocations) MarshalJSON() ([]byte, error) {
@@ -30679,8 +30395,7 @@ type TLMessagesSendMultiMedia struct {
 }
 
 func (m *TLMessagesSendMultiMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendMultiMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendMultiMedia", m)
 }
 
 func (m *TLMessagesSendMultiMedia) MarshalJSON() ([]byte, error) {
@@ -30982,8 +30697,7 @@ type TLMessagesUploadEncryptedFile struct {
 }
 
 func (m *TLMessagesUploadEncryptedFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadEncryptedFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_uploadEncryptedFile", m)
 }
 
 func (m *TLMessagesUploadEncryptedFile) MarshalJSON() ([]byte, error) {
@@ -31090,8 +30804,7 @@ type TLMessagesSearchStickerSets struct {
 }
 
 func (m *TLMessagesSearchStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchStickerSets", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchStickerSets", m)
 }
 
 func (m *TLMessagesSearchStickerSets) MarshalJSON() ([]byte, error) {
@@ -31196,8 +30909,7 @@ type TLMessagesGetSplitRanges struct {
 }
 
 func (m *TLMessagesGetSplitRanges) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSplitRanges", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSplitRanges", m)
 }
 
 func (m *TLMessagesGetSplitRanges) MarshalJSON() ([]byte, error) {
@@ -31266,8 +30978,7 @@ type TLMessagesMarkDialogUnread struct {
 }
 
 func (m *TLMessagesMarkDialogUnread) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_markDialogUnread", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_markDialogUnread", m)
 }
 
 func (m *TLMessagesMarkDialogUnread) MarshalJSON() ([]byte, error) {
@@ -31399,8 +31110,7 @@ type TLMessagesGetDialogUnreadMarks struct {
 }
 
 func (m *TLMessagesGetDialogUnreadMarks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogUnreadMarks", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDialogUnreadMarks", m)
 }
 
 func (m *TLMessagesGetDialogUnreadMarks) MarshalJSON() ([]byte, error) {
@@ -31504,8 +31214,7 @@ type TLMessagesClearAllDrafts struct {
 }
 
 func (m *TLMessagesClearAllDrafts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearAllDrafts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_clearAllDrafts", m)
 }
 
 func (m *TLMessagesClearAllDrafts) MarshalJSON() ([]byte, error) {
@@ -31576,8 +31285,7 @@ type TLMessagesUpdatePinnedMessage struct {
 }
 
 func (m *TLMessagesUpdatePinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_updatePinnedMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_updatePinnedMessage", m)
 }
 
 func (m *TLMessagesUpdatePinnedMessage) MarshalJSON() ([]byte, error) {
@@ -31707,8 +31415,7 @@ type TLMessagesSendVote struct {
 }
 
 func (m *TLMessagesSendVote) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendVote", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendVote", m)
 }
 
 func (m *TLMessagesSendVote) MarshalJSON() ([]byte, error) {
@@ -31812,8 +31519,7 @@ type TLMessagesGetPollResults struct {
 }
 
 func (m *TLMessagesGetPollResults) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPollResults", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPollResults", m)
 }
 
 func (m *TLMessagesGetPollResults) MarshalJSON() ([]byte, error) {
@@ -31952,8 +31658,7 @@ type TLMessagesGetOnlines struct {
 }
 
 func (m *TLMessagesGetOnlines) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOnlines", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getOnlines", m)
 }
 
 func (m *TLMessagesGetOnlines) MarshalJSON() ([]byte, error) {
@@ -32040,8 +31745,7 @@ type TLMessagesEditChatAbout struct {
 }
 
 func (m *TLMessagesEditChatAbout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatAbout", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatAbout", m)
 }
 
 func (m *TLMessagesEditChatAbout) MarshalJSON() ([]byte, error) {
@@ -32139,8 +31843,7 @@ type TLMessagesEditChatDefaultBannedRights struct {
 }
 
 func (m *TLMessagesEditChatDefaultBannedRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatDefaultBannedRights", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatDefaultBannedRights", m)
 }
 
 func (m *TLMessagesEditChatDefaultBannedRights) MarshalJSON() ([]byte, error) {
@@ -32245,8 +31948,7 @@ type TLMessagesGetEmojiKeywords struct {
 }
 
 func (m *TLMessagesGetEmojiKeywords) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywords", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiKeywords", m)
 }
 
 func (m *TLMessagesGetEmojiKeywords) MarshalJSON() ([]byte, error) {
@@ -32324,8 +32026,7 @@ type TLMessagesGetEmojiKeywordsDifference struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywordsDifference", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiKeywordsDifference", m)
 }
 
 func (m *TLMessagesGetEmojiKeywordsDifference) MarshalJSON() ([]byte, error) {
@@ -32408,8 +32109,7 @@ type TLMessagesGetEmojiKeywordsLanguages struct {
 }
 
 func (m *TLMessagesGetEmojiKeywordsLanguages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiKeywordsLanguages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiKeywordsLanguages", m)
 }
 
 func (m *TLMessagesGetEmojiKeywordsLanguages) MarshalJSON() ([]byte, error) {
@@ -32484,8 +32184,7 @@ type TLMessagesGetEmojiURL struct {
 }
 
 func (m *TLMessagesGetEmojiURL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiURL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiURL", m)
 }
 
 func (m *TLMessagesGetEmojiURL) MarshalJSON() ([]byte, error) {
@@ -32565,8 +32264,7 @@ type TLMessagesGetSearchCounters struct {
 }
 
 func (m *TLMessagesGetSearchCounters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchCounters", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSearchCounters", m)
 }
 
 func (m *TLMessagesGetSearchCounters) MarshalJSON() ([]byte, error) {
@@ -32746,8 +32444,7 @@ type TLMessagesRequestUrlAuth struct {
 }
 
 func (m *TLMessagesRequestUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestUrlAuth", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestUrlAuth", m)
 }
 
 func (m *TLMessagesRequestUrlAuth) MarshalJSON() ([]byte, error) {
@@ -33037,8 +32734,7 @@ type TLMessagesAcceptUrlAuth struct {
 }
 
 func (m *TLMessagesAcceptUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_acceptUrlAuth", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_acceptUrlAuth", m)
 }
 
 func (m *TLMessagesAcceptUrlAuth) MarshalJSON() ([]byte, error) {
@@ -33346,8 +33042,7 @@ type TLMessagesHidePeerSettingsBar struct {
 }
 
 func (m *TLMessagesHidePeerSettingsBar) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_hidePeerSettingsBar", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_hidePeerSettingsBar", m)
 }
 
 func (m *TLMessagesHidePeerSettingsBar) MarshalJSON() ([]byte, error) {
@@ -33434,8 +33129,7 @@ type TLMessagesGetScheduledHistory struct {
 }
 
 func (m *TLMessagesGetScheduledHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getScheduledHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getScheduledHistory", m)
 }
 
 func (m *TLMessagesGetScheduledHistory) MarshalJSON() ([]byte, error) {
@@ -33529,8 +33223,7 @@ type TLMessagesGetScheduledMessages struct {
 }
 
 func (m *TLMessagesGetScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getScheduledMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getScheduledMessages", m)
 }
 
 func (m *TLMessagesGetScheduledMessages) MarshalJSON() ([]byte, error) {
@@ -33626,8 +33319,7 @@ type TLMessagesSendScheduledMessages struct {
 }
 
 func (m *TLMessagesSendScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendScheduledMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendScheduledMessages", m)
 }
 
 func (m *TLMessagesSendScheduledMessages) MarshalJSON() ([]byte, error) {
@@ -33723,8 +33415,7 @@ type TLMessagesDeleteScheduledMessages struct {
 }
 
 func (m *TLMessagesDeleteScheduledMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteScheduledMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteScheduledMessages", m)
 }
 
 func (m *TLMessagesDeleteScheduledMessages) MarshalJSON() ([]byte, error) {
@@ -33823,8 +33514,7 @@ type TLMessagesGetPollVotes struct {
 }
 
 func (m *TLMessagesGetPollVotes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPollVotes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPollVotes", m)
 }
 
 func (m *TLMessagesGetPollVotes) MarshalJSON() ([]byte, error) {
@@ -33980,8 +33670,7 @@ type TLMessagesToggleStickerSets struct {
 }
 
 func (m *TLMessagesToggleStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleStickerSets", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleStickerSets", m)
 }
 
 func (m *TLMessagesToggleStickerSets) MarshalJSON() ([]byte, error) {
@@ -34115,8 +33804,7 @@ type TLMessagesGetDialogFilters struct {
 }
 
 func (m *TLMessagesGetDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDialogFilters", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDialogFilters", m)
 }
 
 func (m *TLMessagesGetDialogFilters) MarshalJSON() ([]byte, error) {
@@ -34182,8 +33870,7 @@ type TLMessagesGetSuggestedDialogFilters struct {
 }
 
 func (m *TLMessagesGetSuggestedDialogFilters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSuggestedDialogFilters", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSuggestedDialogFilters", m)
 }
 
 func (m *TLMessagesGetSuggestedDialogFilters) MarshalJSON() ([]byte, error) {
@@ -34251,8 +33938,7 @@ type TLMessagesUpdateDialogFilter struct {
 }
 
 func (m *TLMessagesUpdateDialogFilter) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateDialogFilter", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_updateDialogFilter", m)
 }
 
 func (m *TLMessagesUpdateDialogFilter) MarshalJSON() ([]byte, error) {
@@ -34363,8 +34049,7 @@ type TLMessagesUpdateDialogFiltersOrder struct {
 }
 
 func (m *TLMessagesUpdateDialogFiltersOrder) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateDialogFiltersOrder", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_updateDialogFiltersOrder", m)
 }
 
 func (m *TLMessagesUpdateDialogFiltersOrder) MarshalJSON() ([]byte, error) {
@@ -34441,8 +34126,7 @@ type TLMessagesGetOldFeaturedStickers struct {
 }
 
 func (m *TLMessagesGetOldFeaturedStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOldFeaturedStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getOldFeaturedStickers", m)
 }
 
 func (m *TLMessagesGetOldFeaturedStickers) MarshalJSON() ([]byte, error) {
@@ -34536,8 +34220,7 @@ type TLMessagesGetReplies struct {
 }
 
 func (m *TLMessagesGetReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getReplies", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getReplies", m)
 }
 
 func (m *TLMessagesGetReplies) MarshalJSON() ([]byte, error) {
@@ -34673,8 +34356,7 @@ type TLMessagesGetDiscussionMessage struct {
 }
 
 func (m *TLMessagesGetDiscussionMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDiscussionMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDiscussionMessage", m)
 }
 
 func (m *TLMessagesGetDiscussionMessage) MarshalJSON() ([]byte, error) {
@@ -34769,8 +34451,7 @@ type TLMessagesReadDiscussion struct {
 }
 
 func (m *TLMessagesReadDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readDiscussion", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readDiscussion", m)
 }
 
 func (m *TLMessagesReadDiscussion) MarshalJSON() ([]byte, error) {
@@ -34871,8 +34552,7 @@ type TLMessagesUnpinAllMessages struct {
 }
 
 func (m *TLMessagesUnpinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_unpinAllMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_unpinAllMessages", m)
 }
 
 func (m *TLMessagesUnpinAllMessages) MarshalJSON() ([]byte, error) {
@@ -35014,8 +34694,7 @@ type TLMessagesDeleteChat struct {
 }
 
 func (m *TLMessagesDeleteChat) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteChat", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteChat", m)
 }
 
 func (m *TLMessagesDeleteChat) MarshalJSON() ([]byte, error) {
@@ -35089,8 +34768,7 @@ type TLMessagesDeletePhoneCallHistory struct {
 }
 
 func (m *TLMessagesDeletePhoneCallHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deletePhoneCallHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deletePhoneCallHistory", m)
 }
 
 func (m *TLMessagesDeletePhoneCallHistory) MarshalJSON() ([]byte, error) {
@@ -35181,8 +34859,7 @@ type TLMessagesCheckHistoryImport struct {
 }
 
 func (m *TLMessagesCheckHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkHistoryImport", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_checkHistoryImport", m)
 }
 
 func (m *TLMessagesCheckHistoryImport) MarshalJSON() ([]byte, error) {
@@ -35261,8 +34938,7 @@ type TLMessagesInitHistoryImport struct {
 }
 
 func (m *TLMessagesInitHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_initHistoryImport", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_initHistoryImport", m)
 }
 
 func (m *TLMessagesInitHistoryImport) MarshalJSON() ([]byte, error) {
@@ -35377,8 +35053,7 @@ type TLMessagesUploadImportedMedia struct {
 }
 
 func (m *TLMessagesUploadImportedMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_uploadImportedMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_uploadImportedMedia", m)
 }
 
 func (m *TLMessagesUploadImportedMedia) MarshalJSON() ([]byte, error) {
@@ -35501,8 +35176,7 @@ type TLMessagesStartHistoryImport struct {
 }
 
 func (m *TLMessagesStartHistoryImport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_startHistoryImport", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_startHistoryImport", m)
 }
 
 func (m *TLMessagesStartHistoryImport) MarshalJSON() ([]byte, error) {
@@ -35600,8 +35274,7 @@ type TLMessagesGetExportedChatInvites struct {
 }
 
 func (m *TLMessagesGetExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExportedChatInvites", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getExportedChatInvites", m)
 }
 
 func (m *TLMessagesGetExportedChatInvites) MarshalJSON() ([]byte, error) {
@@ -35775,8 +35448,7 @@ type TLMessagesGetExportedChatInvite struct {
 }
 
 func (m *TLMessagesGetExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExportedChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getExportedChatInvite", m)
 }
 
 func (m *TLMessagesGetExportedChatInvite) MarshalJSON() ([]byte, error) {
@@ -35879,8 +35551,7 @@ type TLMessagesEditExportedChatInvite struct {
 }
 
 func (m *TLMessagesEditExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editExportedChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editExportedChatInvite", m)
 }
 
 func (m *TLMessagesEditExportedChatInvite) MarshalJSON() ([]byte, error) {
@@ -36076,8 +35747,7 @@ type TLMessagesDeleteRevokedExportedChatInvites struct {
 }
 
 func (m *TLMessagesDeleteRevokedExportedChatInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteRevokedExportedChatInvites", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteRevokedExportedChatInvites", m)
 }
 
 func (m *TLMessagesDeleteRevokedExportedChatInvites) MarshalJSON() ([]byte, error) {
@@ -36183,8 +35853,7 @@ type TLMessagesDeleteExportedChatInvite struct {
 }
 
 func (m *TLMessagesDeleteExportedChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteExportedChatInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteExportedChatInvite", m)
 }
 
 func (m *TLMessagesDeleteExportedChatInvite) MarshalJSON() ([]byte, error) {
@@ -36281,8 +35950,7 @@ type TLMessagesGetAdminsWithInvites struct {
 }
 
 func (m *TLMessagesGetAdminsWithInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAdminsWithInvites", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAdminsWithInvites", m)
 }
 
 func (m *TLMessagesGetAdminsWithInvites) MarshalJSON() ([]byte, error) {
@@ -36375,8 +36043,7 @@ type TLMessagesGetChatInviteImporters struct {
 }
 
 func (m *TLMessagesGetChatInviteImporters) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getChatInviteImporters", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getChatInviteImporters", m)
 }
 
 func (m *TLMessagesGetChatInviteImporters) MarshalJSON() ([]byte, error) {
@@ -36564,8 +36231,7 @@ type TLMessagesSetHistoryTTL struct {
 }
 
 func (m *TLMessagesSetHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setHistoryTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setHistoryTTL", m)
 }
 
 func (m *TLMessagesSetHistoryTTL) MarshalJSON() ([]byte, error) {
@@ -36658,8 +36324,7 @@ type TLMessagesCheckHistoryImportPeer struct {
 }
 
 func (m *TLMessagesCheckHistoryImportPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkHistoryImportPeer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_checkHistoryImportPeer", m)
 }
 
 func (m *TLMessagesCheckHistoryImportPeer) MarshalJSON() ([]byte, error) {
@@ -36746,8 +36411,7 @@ type TLMessagesSetChatTheme struct {
 }
 
 func (m *TLMessagesSetChatTheme) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatTheme", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setChatTheme", m)
 }
 
 func (m *TLMessagesSetChatTheme) MarshalJSON() ([]byte, error) {
@@ -36853,8 +36517,7 @@ type TLMessagesGetMessageReadParticipants struct {
 }
 
 func (m *TLMessagesGetMessageReadParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageReadParticipants", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessageReadParticipants", m)
 }
 
 func (m *TLMessagesGetMessageReadParticipants) MarshalJSON() ([]byte, error) {
@@ -36951,8 +36614,7 @@ type TLMessagesGetSearchResultsCalendar struct {
 }
 
 func (m *TLMessagesGetSearchResultsCalendar) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchResultsCalendar", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSearchResultsCalendar", m)
 }
 
 func (m *TLMessagesGetSearchResultsCalendar) MarshalJSON() ([]byte, error) {
@@ -37114,8 +36776,7 @@ type TLMessagesGetSearchResultsPositions struct {
 }
 
 func (m *TLMessagesGetSearchResultsPositions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSearchResultsPositions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSearchResultsPositions", m)
 }
 
 func (m *TLMessagesGetSearchResultsPositions) MarshalJSON() ([]byte, error) {
@@ -37275,8 +36936,7 @@ type TLMessagesHideChatJoinRequest struct {
 }
 
 func (m *TLMessagesHideChatJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_hideChatJoinRequest", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_hideChatJoinRequest", m)
 }
 
 func (m *TLMessagesHideChatJoinRequest) MarshalJSON() ([]byte, error) {
@@ -37406,8 +37066,7 @@ type TLMessagesHideAllChatJoinRequests struct {
 }
 
 func (m *TLMessagesHideAllChatJoinRequests) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_hideAllChatJoinRequests", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_hideAllChatJoinRequests", m)
 }
 
 func (m *TLMessagesHideAllChatJoinRequests) MarshalJSON() ([]byte, error) {
@@ -37536,8 +37195,7 @@ type TLMessagesToggleNoForwards struct {
 }
 
 func (m *TLMessagesToggleNoForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleNoForwards", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleNoForwards", m)
 }
 
 func (m *TLMessagesToggleNoForwards) MarshalJSON() ([]byte, error) {
@@ -37729,8 +37387,7 @@ type TLMessagesSaveDefaultSendAs struct {
 }
 
 func (m *TLMessagesSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_saveDefaultSendAs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_saveDefaultSendAs", m)
 }
 
 func (m *TLMessagesSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
@@ -37839,8 +37496,7 @@ type TLMessagesSendReaction struct {
 }
 
 func (m *TLMessagesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendReaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendReaction", m)
 }
 
 func (m *TLMessagesSendReaction) MarshalJSON() ([]byte, error) {
@@ -38001,8 +37657,7 @@ type TLMessagesGetMessagesReactions struct {
 }
 
 func (m *TLMessagesGetMessagesReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessagesReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessagesReactions", m)
 }
 
 func (m *TLMessagesGetMessagesReactions) MarshalJSON() ([]byte, error) {
@@ -38101,8 +37756,7 @@ type TLMessagesGetMessageReactionsList struct {
 }
 
 func (m *TLMessagesGetMessageReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMessageReactionsList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMessageReactionsList", m)
 }
 
 func (m *TLMessagesGetMessageReactionsList) MarshalJSON() ([]byte, error) {
@@ -38262,8 +37916,7 @@ type TLMessagesSetChatAvailableReactions struct {
 }
 
 func (m *TLMessagesSetChatAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatAvailableReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setChatAvailableReactions", m)
 }
 
 func (m *TLMessagesSetChatAvailableReactions) MarshalJSON() ([]byte, error) {
@@ -38424,8 +38077,7 @@ type TLMessagesGetAvailableReactions struct {
 }
 
 func (m *TLMessagesGetAvailableReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAvailableReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAvailableReactions", m)
 }
 
 func (m *TLMessagesGetAvailableReactions) MarshalJSON() ([]byte, error) {
@@ -38499,8 +38151,7 @@ type TLMessagesSetDefaultReaction struct {
 }
 
 func (m *TLMessagesSetDefaultReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setDefaultReaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setDefaultReaction", m)
 }
 
 func (m *TLMessagesSetDefaultReaction) MarshalJSON() ([]byte, error) {
@@ -38590,8 +38241,7 @@ type TLMessagesTranslateText struct {
 }
 
 func (m *TLMessagesTranslateText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_translateText", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_translateText", m)
 }
 
 func (m *TLMessagesTranslateText) MarshalJSON() ([]byte, error) {
@@ -38898,8 +38548,7 @@ type TLMessagesGetUnreadReactions struct {
 }
 
 func (m *TLMessagesGetUnreadReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getUnreadReactions", m)
 }
 
 func (m *TLMessagesGetUnreadReactions) MarshalJSON() ([]byte, error) {
@@ -39075,8 +38724,7 @@ type TLMessagesReadReactions struct {
 }
 
 func (m *TLMessagesReadReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readReactions", m)
 }
 
 func (m *TLMessagesReadReactions) MarshalJSON() ([]byte, error) {
@@ -39220,8 +38868,7 @@ type TLMessagesSearchSentMedia struct {
 }
 
 func (m *TLMessagesSearchSentMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchSentMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchSentMedia", m)
 }
 
 func (m *TLMessagesSearchSentMedia) MarshalJSON() ([]byte, error) {
@@ -39324,8 +38971,7 @@ type TLMessagesGetAttachMenuBots struct {
 }
 
 func (m *TLMessagesGetAttachMenuBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachMenuBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAttachMenuBots", m)
 }
 
 func (m *TLMessagesGetAttachMenuBots) MarshalJSON() ([]byte, error) {
@@ -39399,8 +39045,7 @@ type TLMessagesGetAttachMenuBot struct {
 }
 
 func (m *TLMessagesGetAttachMenuBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAttachMenuBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAttachMenuBot", m)
 }
 
 func (m *TLMessagesGetAttachMenuBot) MarshalJSON() ([]byte, error) {
@@ -39488,8 +39133,7 @@ type TLMessagesToggleBotInAttachMenu struct {
 }
 
 func (m *TLMessagesToggleBotInAttachMenu) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleBotInAttachMenu", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleBotInAttachMenu", m)
 }
 
 func (m *TLMessagesToggleBotInAttachMenu) MarshalJSON() ([]byte, error) {
@@ -39628,8 +39272,7 @@ type TLMessagesRequestWebView struct {
 }
 
 func (m *TLMessagesRequestWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestWebView", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestWebView", m)
 }
 
 func (m *TLMessagesRequestWebView) MarshalJSON() ([]byte, error) {
@@ -39895,8 +39538,7 @@ type TLMessagesProlongWebView struct {
 }
 
 func (m *TLMessagesProlongWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_prolongWebView", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_prolongWebView", m)
 }
 
 func (m *TLMessagesProlongWebView) MarshalJSON() ([]byte, error) {
@@ -40082,8 +39724,7 @@ type TLMessagesRequestSimpleWebView struct {
 }
 
 func (m *TLMessagesRequestSimpleWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestSimpleWebView", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestSimpleWebView", m)
 }
 
 func (m *TLMessagesRequestSimpleWebView) MarshalJSON() ([]byte, error) {
@@ -40283,8 +39924,7 @@ type TLMessagesSendWebViewResultMessage struct {
 }
 
 func (m *TLMessagesSendWebViewResultMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendWebViewResultMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendWebViewResultMessage", m)
 }
 
 func (m *TLMessagesSendWebViewResultMessage) MarshalJSON() ([]byte, error) {
@@ -40383,8 +40023,7 @@ type TLMessagesSendWebViewData struct {
 }
 
 func (m *TLMessagesSendWebViewData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendWebViewData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendWebViewData", m)
 }
 
 func (m *TLMessagesSendWebViewData) MarshalJSON() ([]byte, error) {
@@ -40498,8 +40137,7 @@ type TLMessagesTranscribeAudio struct {
 }
 
 func (m *TLMessagesTranscribeAudio) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_transcribeAudio", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_transcribeAudio", m)
 }
 
 func (m *TLMessagesTranscribeAudio) MarshalJSON() ([]byte, error) {
@@ -40595,8 +40233,7 @@ type TLMessagesRateTranscribedAudio struct {
 }
 
 func (m *TLMessagesRateTranscribedAudio) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_rateTranscribedAudio", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_rateTranscribedAudio", m)
 }
 
 func (m *TLMessagesRateTranscribedAudio) MarshalJSON() ([]byte, error) {
@@ -40714,8 +40351,7 @@ type TLMessagesGetCustomEmojiDocuments struct {
 }
 
 func (m *TLMessagesGetCustomEmojiDocuments) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getCustomEmojiDocuments", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getCustomEmojiDocuments", m)
 }
 
 func (m *TLMessagesGetCustomEmojiDocuments) MarshalJSON() ([]byte, error) {
@@ -40790,8 +40426,7 @@ type TLMessagesGetEmojiStickers struct {
 }
 
 func (m *TLMessagesGetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiStickers", m)
 }
 
 func (m *TLMessagesGetEmojiStickers) MarshalJSON() ([]byte, error) {
@@ -40865,8 +40500,7 @@ type TLMessagesGetFeaturedEmojiStickers struct {
 }
 
 func (m *TLMessagesGetFeaturedEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFeaturedEmojiStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFeaturedEmojiStickers", m)
 }
 
 func (m *TLMessagesGetFeaturedEmojiStickers) MarshalJSON() ([]byte, error) {
@@ -40942,8 +40576,7 @@ type TLMessagesReportReaction struct {
 }
 
 func (m *TLMessagesReportReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportReaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportReaction", m)
 }
 
 func (m *TLMessagesReportReaction) MarshalJSON() ([]byte, error) {
@@ -41056,8 +40689,7 @@ type TLMessagesGetTopReactions struct {
 }
 
 func (m *TLMessagesGetTopReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getTopReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getTopReactions", m)
 }
 
 func (m *TLMessagesGetTopReactions) MarshalJSON() ([]byte, error) {
@@ -41138,8 +40770,7 @@ type TLMessagesGetRecentReactions struct {
 }
 
 func (m *TLMessagesGetRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getRecentReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getRecentReactions", m)
 }
 
 func (m *TLMessagesGetRecentReactions) MarshalJSON() ([]byte, error) {
@@ -41218,8 +40849,7 @@ type TLMessagesClearRecentReactions struct {
 }
 
 func (m *TLMessagesClearRecentReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_clearRecentReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_clearRecentReactions", m)
 }
 
 func (m *TLMessagesClearRecentReactions) MarshalJSON() ([]byte, error) {
@@ -41287,8 +40917,7 @@ type TLMessagesGetExtendedMedia struct {
 }
 
 func (m *TLMessagesGetExtendedMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getExtendedMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getExtendedMedia", m)
 }
 
 func (m *TLMessagesGetExtendedMedia) MarshalJSON() ([]byte, error) {
@@ -41383,8 +41012,7 @@ type TLMessagesSetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesSetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setDefaultHistoryTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setDefaultHistoryTTL", m)
 }
 
 func (m *TLMessagesSetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
@@ -41457,8 +41085,7 @@ type TLMessagesGetDefaultHistoryTTL struct {
 }
 
 func (m *TLMessagesGetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDefaultHistoryTTL", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDefaultHistoryTTL", m)
 }
 
 func (m *TLMessagesGetDefaultHistoryTTL) MarshalJSON() ([]byte, error) {
@@ -41530,8 +41157,7 @@ type TLMessagesSendBotRequestedPeer struct {
 }
 
 func (m *TLMessagesSendBotRequestedPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendBotRequestedPeer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendBotRequestedPeer", m)
 }
 
 func (m *TLMessagesSendBotRequestedPeer) MarshalJSON() ([]byte, error) {
@@ -41790,8 +41416,7 @@ type TLMessagesGetEmojiGroups struct {
 }
 
 func (m *TLMessagesGetEmojiGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiGroups", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiGroups", m)
 }
 
 func (m *TLMessagesGetEmojiGroups) MarshalJSON() ([]byte, error) {
@@ -41865,8 +41490,7 @@ type TLMessagesGetEmojiStatusGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStatusGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStatusGroups", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiStatusGroups", m)
 }
 
 func (m *TLMessagesGetEmojiStatusGroups) MarshalJSON() ([]byte, error) {
@@ -41940,8 +41564,7 @@ type TLMessagesGetEmojiProfilePhotoGroups struct {
 }
 
 func (m *TLMessagesGetEmojiProfilePhotoGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiProfilePhotoGroups", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiProfilePhotoGroups", m)
 }
 
 func (m *TLMessagesGetEmojiProfilePhotoGroups) MarshalJSON() ([]byte, error) {
@@ -42016,8 +41639,7 @@ type TLMessagesSearchCustomEmoji struct {
 }
 
 func (m *TLMessagesSearchCustomEmoji) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchCustomEmoji", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchCustomEmoji", m)
 }
 
 func (m *TLMessagesSearchCustomEmoji) MarshalJSON() ([]byte, error) {
@@ -42101,8 +41723,7 @@ type TLMessagesTogglePeerTranslations struct {
 }
 
 func (m *TLMessagesTogglePeerTranslations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_togglePeerTranslations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_togglePeerTranslations", m)
 }
 
 func (m *TLMessagesTogglePeerTranslations) MarshalJSON() ([]byte, error) {
@@ -42212,8 +41833,7 @@ type TLMessagesGetBotApp struct {
 }
 
 func (m *TLMessagesGetBotApp) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getBotApp", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getBotApp", m)
 }
 
 func (m *TLMessagesGetBotApp) MarshalJSON() ([]byte, error) {
@@ -42313,8 +41933,7 @@ type TLMessagesRequestAppWebView struct {
 }
 
 func (m *TLMessagesRequestAppWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestAppWebView", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestAppWebView", m)
 }
 
 func (m *TLMessagesRequestAppWebView) MarshalJSON() ([]byte, error) {
@@ -42512,8 +42131,7 @@ type TLMessagesSetChatWallPaper struct {
 }
 
 func (m *TLMessagesSetChatWallPaper) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_setChatWallPaper", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_setChatWallPaper", m)
 }
 
 func (m *TLMessagesSetChatWallPaper) MarshalJSON() ([]byte, error) {
@@ -42692,8 +42310,7 @@ type TLMessagesSearchEmojiStickerSets struct {
 }
 
 func (m *TLMessagesSearchEmojiStickerSets) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchEmojiStickerSets", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchEmojiStickerSets", m)
 }
 
 func (m *TLMessagesSearchEmojiStickerSets) MarshalJSON() ([]byte, error) {
@@ -42805,8 +42422,7 @@ type TLMessagesGetSavedDialogs struct {
 }
 
 func (m *TLMessagesGetSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSavedDialogs", m)
 }
 
 func (m *TLMessagesGetSavedDialogs) MarshalJSON() ([]byte, error) {
@@ -42971,8 +42587,7 @@ type TLMessagesGetSavedHistory struct {
 }
 
 func (m *TLMessagesGetSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSavedHistory", m)
 }
 
 func (m *TLMessagesGetSavedHistory) MarshalJSON() ([]byte, error) {
@@ -43145,8 +42760,7 @@ type TLMessagesDeleteSavedHistory struct {
 }
 
 func (m *TLMessagesDeleteSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteSavedHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteSavedHistory", m)
 }
 
 func (m *TLMessagesDeleteSavedHistory) MarshalJSON() ([]byte, error) {
@@ -43313,8 +42927,7 @@ type TLMessagesGetPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesGetPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPinnedSavedDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPinnedSavedDialogs", m)
 }
 
 func (m *TLMessagesGetPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
@@ -43382,8 +42995,7 @@ type TLMessagesToggleSavedDialogPin struct {
 }
 
 func (m *TLMessagesToggleSavedDialogPin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleSavedDialogPin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleSavedDialogPin", m)
 }
 
 func (m *TLMessagesToggleSavedDialogPin) MarshalJSON() ([]byte, error) {
@@ -43493,8 +43105,7 @@ type TLMessagesReorderPinnedSavedDialogs struct {
 }
 
 func (m *TLMessagesReorderPinnedSavedDialogs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedSavedDialogs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reorderPinnedSavedDialogs", m)
 }
 
 func (m *TLMessagesReorderPinnedSavedDialogs) MarshalJSON() ([]byte, error) {
@@ -43618,8 +43229,7 @@ type TLMessagesGetSavedReactionTags struct {
 }
 
 func (m *TLMessagesGetSavedReactionTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedReactionTags", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSavedReactionTags", m)
 }
 
 func (m *TLMessagesGetSavedReactionTags) MarshalJSON() ([]byte, error) {
@@ -43733,8 +43343,7 @@ type TLMessagesUpdateSavedReactionTag struct {
 }
 
 func (m *TLMessagesUpdateSavedReactionTag) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_updateSavedReactionTag", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_updateSavedReactionTag", m)
 }
 
 func (m *TLMessagesUpdateSavedReactionTag) MarshalJSON() ([]byte, error) {
@@ -43854,8 +43463,7 @@ type TLMessagesGetDefaultTagReactions struct {
 }
 
 func (m *TLMessagesGetDefaultTagReactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getDefaultTagReactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getDefaultTagReactions", m)
 }
 
 func (m *TLMessagesGetDefaultTagReactions) MarshalJSON() ([]byte, error) {
@@ -43930,8 +43538,7 @@ type TLMessagesGetOutboxReadDate struct {
 }
 
 func (m *TLMessagesGetOutboxReadDate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getOutboxReadDate", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getOutboxReadDate", m)
 }
 
 func (m *TLMessagesGetOutboxReadDate) MarshalJSON() ([]byte, error) {
@@ -44024,8 +43631,7 @@ type TLMessagesGetQuickReplies struct {
 }
 
 func (m *TLMessagesGetQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getQuickReplies", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getQuickReplies", m)
 }
 
 func (m *TLMessagesGetQuickReplies) MarshalJSON() ([]byte, error) {
@@ -44099,8 +43705,7 @@ type TLMessagesReorderQuickReplies struct {
 }
 
 func (m *TLMessagesReorderQuickReplies) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderQuickReplies", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reorderQuickReplies", m)
 }
 
 func (m *TLMessagesReorderQuickReplies) MarshalJSON() ([]byte, error) {
@@ -44175,8 +43780,7 @@ type TLMessagesCheckQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesCheckQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkQuickReplyShortcut", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_checkQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesCheckQuickReplyShortcut) MarshalJSON() ([]byte, error) {
@@ -44254,8 +43858,7 @@ type TLMessagesEditQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesEditQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editQuickReplyShortcut", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesEditQuickReplyShortcut) MarshalJSON() ([]byte, error) {
@@ -44338,8 +43941,7 @@ type TLMessagesDeleteQuickReplyShortcut struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyShortcut) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteQuickReplyShortcut", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteQuickReplyShortcut", m)
 }
 
 func (m *TLMessagesDeleteQuickReplyShortcut) MarshalJSON() ([]byte, error) {
@@ -44415,8 +44017,7 @@ type TLMessagesGetQuickReplyMessages struct {
 }
 
 func (m *TLMessagesGetQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getQuickReplyMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getQuickReplyMessages", m)
 }
 
 func (m *TLMessagesGetQuickReplyMessages) MarshalJSON() ([]byte, error) {
@@ -44529,8 +44130,7 @@ type TLMessagesSendQuickReplyMessages struct {
 }
 
 func (m *TLMessagesSendQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendQuickReplyMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendQuickReplyMessages", m)
 }
 
 func (m *TLMessagesSendQuickReplyMessages) MarshalJSON() ([]byte, error) {
@@ -44642,8 +44242,7 @@ type TLMessagesDeleteQuickReplyMessages struct {
 }
 
 func (m *TLMessagesDeleteQuickReplyMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteQuickReplyMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteQuickReplyMessages", m)
 }
 
 func (m *TLMessagesDeleteQuickReplyMessages) MarshalJSON() ([]byte, error) {
@@ -44725,8 +44324,7 @@ type TLMessagesToggleDialogFilterTags struct {
 }
 
 func (m *TLMessagesToggleDialogFilterTags) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleDialogFilterTags", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleDialogFilterTags", m)
 }
 
 func (m *TLMessagesToggleDialogFilterTags) MarshalJSON() ([]byte, error) {
@@ -44813,8 +44411,7 @@ type TLMessagesGetMyStickers struct {
 }
 
 func (m *TLMessagesGetMyStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getMyStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getMyStickers", m)
 }
 
 func (m *TLMessagesGetMyStickers) MarshalJSON() ([]byte, error) {
@@ -44894,8 +44491,7 @@ type TLMessagesGetEmojiStickerGroups struct {
 }
 
 func (m *TLMessagesGetEmojiStickerGroups) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiStickerGroups", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiStickerGroups", m)
 }
 
 func (m *TLMessagesGetEmojiStickerGroups) MarshalJSON() ([]byte, error) {
@@ -44969,8 +44565,7 @@ type TLMessagesGetAvailableEffects struct {
 }
 
 func (m *TLMessagesGetAvailableEffects) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getAvailableEffects", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getAvailableEffects", m)
 }
 
 func (m *TLMessagesGetAvailableEffects) MarshalJSON() ([]byte, error) {
@@ -45046,8 +44641,7 @@ type TLMessagesEditFactCheck struct {
 }
 
 func (m *TLMessagesEditFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editFactCheck", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editFactCheck", m)
 }
 
 func (m *TLMessagesEditFactCheck) MarshalJSON() ([]byte, error) {
@@ -45160,8 +44754,7 @@ type TLMessagesDeleteFactCheck struct {
 }
 
 func (m *TLMessagesDeleteFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteFactCheck", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteFactCheck", m)
 }
 
 func (m *TLMessagesDeleteFactCheck) MarshalJSON() ([]byte, error) {
@@ -45255,8 +44848,7 @@ type TLMessagesGetFactCheck struct {
 }
 
 func (m *TLMessagesGetFactCheck) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFactCheck", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFactCheck", m)
 }
 
 func (m *TLMessagesGetFactCheck) MarshalJSON() ([]byte, error) {
@@ -45357,8 +44949,7 @@ type TLMessagesRequestMainWebView struct {
 }
 
 func (m *TLMessagesRequestMainWebView) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_requestMainWebView", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_requestMainWebView", m)
 }
 
 func (m *TLMessagesRequestMainWebView) MarshalJSON() ([]byte, error) {
@@ -45549,8 +45140,7 @@ type TLMessagesSendPaidReaction struct {
 }
 
 func (m *TLMessagesSendPaidReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_sendPaidReaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_sendPaidReaction", m)
 }
 
 func (m *TLMessagesSendPaidReaction) MarshalJSON() ([]byte, error) {
@@ -45694,8 +45284,7 @@ type TLMessagesTogglePaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesTogglePaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_togglePaidReactionPrivacy", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_togglePaidReactionPrivacy", m)
 }
 
 func (m *TLMessagesTogglePaidReactionPrivacy) MarshalJSON() ([]byte, error) {
@@ -45806,8 +45395,7 @@ type TLMessagesGetPaidReactionPrivacy struct {
 }
 
 func (m *TLMessagesGetPaidReactionPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPaidReactionPrivacy", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPaidReactionPrivacy", m)
 }
 
 func (m *TLMessagesGetPaidReactionPrivacy) MarshalJSON() ([]byte, error) {
@@ -45874,8 +45462,7 @@ type TLMessagesViewSponsoredMessage struct {
 }
 
 func (m *TLMessagesViewSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_viewSponsoredMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_viewSponsoredMessage", m)
 }
 
 func (m *TLMessagesViewSponsoredMessage) MarshalJSON() ([]byte, error) {
@@ -45954,8 +45541,7 @@ type TLMessagesClickSponsoredMessage struct {
 }
 
 func (m *TLMessagesClickSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_clickSponsoredMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_clickSponsoredMessage", m)
 }
 
 func (m *TLMessagesClickSponsoredMessage) MarshalJSON() ([]byte, error) {
@@ -46062,8 +45648,7 @@ type TLMessagesReportSponsoredMessage struct {
 }
 
 func (m *TLMessagesReportSponsoredMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportSponsoredMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportSponsoredMessage", m)
 }
 
 func (m *TLMessagesReportSponsoredMessage) MarshalJSON() ([]byte, error) {
@@ -46151,8 +45736,7 @@ type TLMessagesGetSponsoredMessages struct {
 }
 
 func (m *TLMessagesGetSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSponsoredMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSponsoredMessages", m)
 }
 
 func (m *TLMessagesGetSponsoredMessages) MarshalJSON() ([]byte, error) {
@@ -46274,8 +45858,7 @@ type TLMessagesSavePreparedInlineMessage struct {
 }
 
 func (m *TLMessagesSavePreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_savePreparedInlineMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_savePreparedInlineMessage", m)
 }
 
 func (m *TLMessagesSavePreparedInlineMessage) MarshalJSON() ([]byte, error) {
@@ -46436,8 +46019,7 @@ type TLMessagesGetPreparedInlineMessage struct {
 }
 
 func (m *TLMessagesGetPreparedInlineMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getPreparedInlineMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getPreparedInlineMessage", m)
 }
 
 func (m *TLMessagesGetPreparedInlineMessage) MarshalJSON() ([]byte, error) {
@@ -46540,8 +46122,7 @@ type TLMessagesSearchStickers struct {
 }
 
 func (m *TLMessagesSearchStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_searchStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_searchStickers", m)
 }
 
 func (m *TLMessagesSearchStickers) MarshalJSON() ([]byte, error) {
@@ -46682,8 +46263,7 @@ type TLMessagesReportMessagesDelivery struct {
 }
 
 func (m *TLMessagesReportMessagesDelivery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportMessagesDelivery", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportMessagesDelivery", m)
 }
 
 func (m *TLMessagesReportMessagesDelivery) MarshalJSON() ([]byte, error) {
@@ -46802,8 +46382,7 @@ type TLMessagesGetSavedDialogsByID struct {
 }
 
 func (m *TLMessagesGetSavedDialogsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getSavedDialogsByID", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getSavedDialogsByID", m)
 }
 
 func (m *TLMessagesGetSavedDialogsByID) MarshalJSON() ([]byte, error) {
@@ -46944,8 +46523,7 @@ type TLMessagesReadSavedHistory struct {
 }
 
 func (m *TLMessagesReadSavedHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readSavedHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readSavedHistory", m)
 }
 
 func (m *TLMessagesReadSavedHistory) MarshalJSON() ([]byte, error) {
@@ -47060,8 +46638,7 @@ type TLMessagesToggleTodoCompleted struct {
 }
 
 func (m *TLMessagesToggleTodoCompleted) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleTodoCompleted", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleTodoCompleted", m)
 }
 
 func (m *TLMessagesToggleTodoCompleted) MarshalJSON() ([]byte, error) {
@@ -47174,8 +46751,7 @@ type TLMessagesAppendTodoList struct {
 }
 
 func (m *TLMessagesAppendTodoList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_appendTodoList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_appendTodoList", m)
 }
 
 func (m *TLMessagesAppendTodoList) MarshalJSON() ([]byte, error) {
@@ -47305,8 +46881,7 @@ type TLMessagesToggleSuggestedPostApproval struct {
 }
 
 func (m *TLMessagesToggleSuggestedPostApproval) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_toggleSuggestedPostApproval", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_toggleSuggestedPostApproval", m)
 }
 
 func (m *TLMessagesToggleSuggestedPostApproval) MarshalJSON() ([]byte, error) {
@@ -47462,8 +47037,7 @@ type TLMessagesGetForumTopics struct {
 }
 
 func (m *TLMessagesGetForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getForumTopics", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getForumTopics", m)
 }
 
 func (m *TLMessagesGetForumTopics) MarshalJSON() ([]byte, error) {
@@ -47611,8 +47185,7 @@ type TLMessagesGetForumTopicsByID struct {
 }
 
 func (m *TLMessagesGetForumTopicsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getForumTopicsByID", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getForumTopicsByID", m)
 }
 
 func (m *TLMessagesGetForumTopicsByID) MarshalJSON() ([]byte, error) {
@@ -47712,8 +47285,7 @@ type TLMessagesEditForumTopic struct {
 }
 
 func (m *TLMessagesEditForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editForumTopic", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editForumTopic", m)
 }
 
 func (m *TLMessagesEditForumTopic) MarshalJSON() ([]byte, error) {
@@ -47905,8 +47477,7 @@ type TLMessagesUpdatePinnedForumTopic struct {
 }
 
 func (m *TLMessagesUpdatePinnedForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_updatePinnedForumTopic", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_updatePinnedForumTopic", m)
 }
 
 func (m *TLMessagesUpdatePinnedForumTopic) MarshalJSON() ([]byte, error) {
@@ -48020,8 +47591,7 @@ type TLMessagesReorderPinnedForumTopics struct {
 }
 
 func (m *TLMessagesReorderPinnedForumTopics) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reorderPinnedForumTopics", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reorderPinnedForumTopics", m)
 }
 
 func (m *TLMessagesReorderPinnedForumTopics) MarshalJSON() ([]byte, error) {
@@ -48145,8 +47715,7 @@ type TLMessagesCreateForumTopic struct {
 }
 
 func (m *TLMessagesCreateForumTopic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_createForumTopic", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_createForumTopic", m)
 }
 
 func (m *TLMessagesCreateForumTopic) MarshalJSON() ([]byte, error) {
@@ -48332,8 +47901,7 @@ type TLMessagesDeleteTopicHistory struct {
 }
 
 func (m *TLMessagesDeleteTopicHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deleteTopicHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deleteTopicHistory", m)
 }
 
 func (m *TLMessagesDeleteTopicHistory) MarshalJSON() ([]byte, error) {
@@ -48425,8 +47993,7 @@ type TLMessagesGetEmojiGameInfo struct {
 }
 
 func (m *TLMessagesGetEmojiGameInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getEmojiGameInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getEmojiGameInfo", m)
 }
 
 func (m *TLMessagesGetEmojiGameInfo) MarshalJSON() ([]byte, error) {
@@ -48496,8 +48063,7 @@ type TLMessagesSummarizeText struct {
 }
 
 func (m *TLMessagesSummarizeText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_summarizeText", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_summarizeText", m)
 }
 
 func (m *TLMessagesSummarizeText) MarshalJSON() ([]byte, error) {
@@ -48717,8 +48283,7 @@ type TLMessagesEditChatCreator struct {
 }
 
 func (m *TLMessagesEditChatCreator) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatCreator", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatCreator", m)
 }
 
 func (m *TLMessagesEditChatCreator) MarshalJSON() ([]byte, error) {
@@ -48842,8 +48407,7 @@ type TLMessagesGetFutureChatCreatorAfterLeave struct {
 }
 
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getFutureChatCreatorAfterLeave", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getFutureChatCreatorAfterLeave", m)
 }
 
 func (m *TLMessagesGetFutureChatCreatorAfterLeave) MarshalJSON() ([]byte, error) {
@@ -48931,8 +48495,7 @@ type TLMessagesEditChatParticipantRank struct {
 }
 
 func (m *TLMessagesEditChatParticipantRank) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_editChatParticipantRank", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_editChatParticipantRank", m)
 }
 
 func (m *TLMessagesEditChatParticipantRank) MarshalJSON() ([]byte, error) {
@@ -49048,8 +48611,7 @@ type TLMessagesDeclineUrlAuth struct {
 }
 
 func (m *TLMessagesDeclineUrlAuth) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_declineUrlAuth", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_declineUrlAuth", m)
 }
 
 func (m *TLMessagesDeclineUrlAuth) MarshalJSON() ([]byte, error) {
@@ -49127,8 +48689,7 @@ type TLMessagesCheckUrlAuthMatchCode struct {
 }
 
 func (m *TLMessagesCheckUrlAuthMatchCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_checkUrlAuthMatchCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_checkUrlAuthMatchCode", m)
 }
 
 func (m *TLMessagesCheckUrlAuthMatchCode) MarshalJSON() ([]byte, error) {
@@ -49219,8 +48780,7 @@ type TLMessagesComposeMessageWithAI struct {
 }
 
 func (m *TLMessagesComposeMessageWithAI) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_composeMessageWithAI", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_composeMessageWithAI", m)
 }
 
 func (m *TLMessagesComposeMessageWithAI) MarshalJSON() ([]byte, error) {
@@ -49373,8 +48933,7 @@ type TLMessagesReportReadMetrics struct {
 }
 
 func (m *TLMessagesReportReadMetrics) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportReadMetrics", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportReadMetrics", m)
 }
 
 func (m *TLMessagesReportReadMetrics) MarshalJSON() ([]byte, error) {
@@ -49495,8 +49054,7 @@ type TLMessagesReportMusicListen struct {
 }
 
 func (m *TLMessagesReportMusicListen) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_reportMusicListen", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_reportMusicListen", m)
 }
 
 func (m *TLMessagesReportMusicListen) MarshalJSON() ([]byte, error) {
@@ -49591,8 +49149,7 @@ type TLMessagesAddPollAnswer struct {
 }
 
 func (m *TLMessagesAddPollAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_addPollAnswer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_addPollAnswer", m)
 }
 
 func (m *TLMessagesAddPollAnswer) MarshalJSON() ([]byte, error) {
@@ -49706,8 +49263,7 @@ type TLMessagesDeletePollAnswer struct {
 }
 
 func (m *TLMessagesDeletePollAnswer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_deletePollAnswer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_deletePollAnswer", m)
 }
 
 func (m *TLMessagesDeletePollAnswer) MarshalJSON() ([]byte, error) {
@@ -49816,8 +49372,7 @@ type TLMessagesGetUnreadPollVotes struct {
 }
 
 func (m *TLMessagesGetUnreadPollVotes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_getUnreadPollVotes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_getUnreadPollVotes", m)
 }
 
 func (m *TLMessagesGetUnreadPollVotes) MarshalJSON() ([]byte, error) {
@@ -49970,8 +49525,7 @@ type TLMessagesReadPollVotes struct {
 }
 
 func (m *TLMessagesReadPollVotes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "messages_readPollVotes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("messages_readPollVotes", m)
 }
 
 func (m *TLMessagesReadPollVotes) MarshalJSON() ([]byte, error) {
@@ -50090,8 +49644,7 @@ type TLUpdatesGetState struct {
 }
 
 func (m *TLUpdatesGetState) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "updates_getState", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("updates_getState", m)
 }
 
 func (m *TLUpdatesGetState) MarshalJSON() ([]byte, error) {
@@ -50163,8 +49716,7 @@ type TLUpdatesGetDifference struct {
 }
 
 func (m *TLUpdatesGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "updates_getDifference", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("updates_getDifference", m)
 }
 
 func (m *TLUpdatesGetDifference) MarshalJSON() ([]byte, error) {
@@ -50324,8 +49876,7 @@ type TLUpdatesGetChannelDifference struct {
 }
 
 func (m *TLUpdatesGetChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "updates_getChannelDifference", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("updates_getChannelDifference", m)
 }
 
 func (m *TLUpdatesGetChannelDifference) MarshalJSON() ([]byte, error) {
@@ -50468,8 +50019,7 @@ type TLPhotosUpdateProfilePhoto struct {
 }
 
 func (m *TLPhotosUpdateProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "photos_updateProfilePhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("photos_updateProfilePhoto", m)
 }
 
 func (m *TLPhotosUpdateProfilePhoto) MarshalJSON() ([]byte, error) {
@@ -50606,8 +50156,7 @@ type TLPhotosUploadProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "photos_uploadProfilePhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("photos_uploadProfilePhoto", m)
 }
 
 func (m *TLPhotosUploadProfilePhoto) MarshalJSON() ([]byte, error) {
@@ -50803,8 +50352,7 @@ type TLPhotosDeletePhotos struct {
 }
 
 func (m *TLPhotosDeletePhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "photos_deletePhotos", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("photos_deletePhotos", m)
 }
 
 func (m *TLPhotosDeletePhotos) MarshalJSON() ([]byte, error) {
@@ -50906,8 +50454,7 @@ type TLPhotosGetUserPhotos struct {
 }
 
 func (m *TLPhotosGetUserPhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "photos_getUserPhotos", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("photos_getUserPhotos", m)
 }
 
 func (m *TLPhotosGetUserPhotos) MarshalJSON() ([]byte, error) {
@@ -51018,8 +50565,7 @@ type TLPhotosUploadContactProfilePhoto struct {
 }
 
 func (m *TLPhotosUploadContactProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "photos_uploadContactProfilePhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("photos_uploadContactProfilePhoto", m)
 }
 
 func (m *TLPhotosUploadContactProfilePhoto) MarshalJSON() ([]byte, error) {
@@ -51221,8 +50767,7 @@ type TLUploadSaveFilePart struct {
 }
 
 func (m *TLUploadSaveFilePart) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_saveFilePart", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_saveFilePart", m)
 }
 
 func (m *TLUploadSaveFilePart) MarshalJSON() ([]byte, error) {
@@ -51315,8 +50860,7 @@ type TLUploadGetFile struct {
 }
 
 func (m *TLUploadGetFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_getFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_getFile", m)
 }
 
 func (m *TLUploadGetFile) MarshalJSON() ([]byte, error) {
@@ -51447,8 +50991,7 @@ type TLUploadSaveBigFilePart struct {
 }
 
 func (m *TLUploadSaveBigFilePart) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_saveBigFilePart", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_saveBigFilePart", m)
 }
 
 func (m *TLUploadSaveBigFilePart) MarshalJSON() ([]byte, error) {
@@ -51545,8 +51088,7 @@ type TLUploadGetWebFile struct {
 }
 
 func (m *TLUploadGetWebFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_getWebFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_getWebFile", m)
 }
 
 func (m *TLUploadGetWebFile) MarshalJSON() ([]byte, error) {
@@ -51647,8 +51189,7 @@ type TLUploadGetCdnFile struct {
 }
 
 func (m *TLUploadGetCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_getCdnFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_getCdnFile", m)
 }
 
 func (m *TLUploadGetCdnFile) MarshalJSON() ([]byte, error) {
@@ -51738,8 +51279,7 @@ type TLUploadReuploadCdnFile struct {
 }
 
 func (m *TLUploadReuploadCdnFile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_reuploadCdnFile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_reuploadCdnFile", m)
 }
 
 func (m *TLUploadReuploadCdnFile) MarshalJSON() ([]byte, error) {
@@ -51827,8 +51367,7 @@ type TLUploadGetCdnFileHashes struct {
 }
 
 func (m *TLUploadGetCdnFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_getCdnFileHashes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_getCdnFileHashes", m)
 }
 
 func (m *TLUploadGetCdnFileHashes) MarshalJSON() ([]byte, error) {
@@ -51912,8 +51451,7 @@ type TLUploadGetFileHashes struct {
 }
 
 func (m *TLUploadGetFileHashes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "upload_getFileHashes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("upload_getFileHashes", m)
 }
 
 func (m *TLUploadGetFileHashes) MarshalJSON() ([]byte, error) {
@@ -52005,8 +51543,7 @@ type TLHelpGetConfig struct {
 }
 
 func (m *TLHelpGetConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getConfig", m)
 }
 
 func (m *TLHelpGetConfig) MarshalJSON() ([]byte, error) {
@@ -52072,8 +51609,7 @@ type TLHelpGetNearestDc struct {
 }
 
 func (m *TLHelpGetNearestDc) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getNearestDc", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getNearestDc", m)
 }
 
 func (m *TLHelpGetNearestDc) MarshalJSON() ([]byte, error) {
@@ -52140,8 +51676,7 @@ type TLHelpGetAppUpdate struct {
 }
 
 func (m *TLHelpGetAppUpdate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getAppUpdate", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getAppUpdate", m)
 }
 
 func (m *TLHelpGetAppUpdate) MarshalJSON() ([]byte, error) {
@@ -52217,8 +51752,7 @@ type TLHelpGetInviteText struct {
 }
 
 func (m *TLHelpGetInviteText) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getInviteText", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getInviteText", m)
 }
 
 func (m *TLHelpGetInviteText) MarshalJSON() ([]byte, error) {
@@ -52284,8 +51818,7 @@ type TLHelpGetSupport struct {
 }
 
 func (m *TLHelpGetSupport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getSupport", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getSupport", m)
 }
 
 func (m *TLHelpGetSupport) MarshalJSON() ([]byte, error) {
@@ -52353,8 +51886,7 @@ type TLHelpSetBotUpdatesStatus struct {
 }
 
 func (m *TLHelpSetBotUpdatesStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_setBotUpdatesStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_setBotUpdatesStatus", m)
 }
 
 func (m *TLHelpSetBotUpdatesStatus) MarshalJSON() ([]byte, error) {
@@ -52436,8 +51968,7 @@ type TLHelpGetCdnConfig struct {
 }
 
 func (m *TLHelpGetCdnConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getCdnConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getCdnConfig", m)
 }
 
 func (m *TLHelpGetCdnConfig) MarshalJSON() ([]byte, error) {
@@ -52504,8 +52035,7 @@ type TLHelpGetRecentMeUrls struct {
 }
 
 func (m *TLHelpGetRecentMeUrls) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getRecentMeUrls", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getRecentMeUrls", m)
 }
 
 func (m *TLHelpGetRecentMeUrls) MarshalJSON() ([]byte, error) {
@@ -52581,8 +52111,7 @@ type TLHelpGetTermsOfServiceUpdate struct {
 }
 
 func (m *TLHelpGetTermsOfServiceUpdate) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getTermsOfServiceUpdate", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getTermsOfServiceUpdate", m)
 }
 
 func (m *TLHelpGetTermsOfServiceUpdate) MarshalJSON() ([]byte, error) {
@@ -52649,8 +52178,7 @@ type TLHelpAcceptTermsOfService struct {
 }
 
 func (m *TLHelpAcceptTermsOfService) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_acceptTermsOfService", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_acceptTermsOfService", m)
 }
 
 func (m *TLHelpAcceptTermsOfService) MarshalJSON() ([]byte, error) {
@@ -52736,8 +52264,7 @@ type TLHelpGetDeepLinkInfo struct {
 }
 
 func (m *TLHelpGetDeepLinkInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getDeepLinkInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getDeepLinkInfo", m)
 }
 
 func (m *TLHelpGetDeepLinkInfo) MarshalJSON() ([]byte, error) {
@@ -52814,8 +52341,7 @@ type TLHelpGetAppConfig struct {
 }
 
 func (m *TLHelpGetAppConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getAppConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getAppConfig", m)
 }
 
 func (m *TLHelpGetAppConfig) MarshalJSON() ([]byte, error) {
@@ -52889,8 +52415,7 @@ type TLHelpSaveAppLog struct {
 }
 
 func (m *TLHelpSaveAppLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_saveAppLog", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_saveAppLog", m)
 }
 
 func (m *TLHelpSaveAppLog) MarshalJSON() ([]byte, error) {
@@ -52989,8 +52514,7 @@ type TLHelpGetPassportConfig struct {
 }
 
 func (m *TLHelpGetPassportConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getPassportConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getPassportConfig", m)
 }
 
 func (m *TLHelpGetPassportConfig) MarshalJSON() ([]byte, error) {
@@ -53063,8 +52587,7 @@ type TLHelpGetSupportName struct {
 }
 
 func (m *TLHelpGetSupportName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getSupportName", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getSupportName", m)
 }
 
 func (m *TLHelpGetSupportName) MarshalJSON() ([]byte, error) {
@@ -53131,8 +52654,7 @@ type TLHelpGetUserInfo struct {
 }
 
 func (m *TLHelpGetUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getUserInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getUserInfo", m)
 }
 
 func (m *TLHelpGetUserInfo) MarshalJSON() ([]byte, error) {
@@ -53220,8 +52742,7 @@ type TLHelpEditUserInfo struct {
 }
 
 func (m *TLHelpEditUserInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_editUserInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_editUserInfo", m)
 }
 
 func (m *TLHelpEditUserInfo) MarshalJSON() ([]byte, error) {
@@ -53350,8 +52871,7 @@ type TLHelpGetPromoData struct {
 }
 
 func (m *TLHelpGetPromoData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getPromoData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getPromoData", m)
 }
 
 func (m *TLHelpGetPromoData) MarshalJSON() ([]byte, error) {
@@ -53418,8 +52938,7 @@ type TLHelpHidePromoData struct {
 }
 
 func (m *TLHelpHidePromoData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_hidePromoData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_hidePromoData", m)
 }
 
 func (m *TLHelpHidePromoData) MarshalJSON() ([]byte, error) {
@@ -53506,8 +53025,7 @@ type TLHelpDismissSuggestion struct {
 }
 
 func (m *TLHelpDismissSuggestion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_dismissSuggestion", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_dismissSuggestion", m)
 }
 
 func (m *TLHelpDismissSuggestion) MarshalJSON() ([]byte, error) {
@@ -53605,8 +53123,7 @@ type TLHelpGetCountriesList struct {
 }
 
 func (m *TLHelpGetCountriesList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getCountriesList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getCountriesList", m)
 }
 
 func (m *TLHelpGetCountriesList) MarshalJSON() ([]byte, error) {
@@ -53688,8 +53205,7 @@ type TLHelpGetPremiumPromo struct {
 }
 
 func (m *TLHelpGetPremiumPromo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getPremiumPromo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getPremiumPromo", m)
 }
 
 func (m *TLHelpGetPremiumPromo) MarshalJSON() ([]byte, error) {
@@ -53756,8 +53272,7 @@ type TLHelpGetPeerColors struct {
 }
 
 func (m *TLHelpGetPeerColors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getPeerColors", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getPeerColors", m)
 }
 
 func (m *TLHelpGetPeerColors) MarshalJSON() ([]byte, error) {
@@ -53831,8 +53346,7 @@ type TLHelpGetPeerProfileColors struct {
 }
 
 func (m *TLHelpGetPeerProfileColors) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getPeerProfileColors", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getPeerProfileColors", m)
 }
 
 func (m *TLHelpGetPeerProfileColors) MarshalJSON() ([]byte, error) {
@@ -53906,8 +53420,7 @@ type TLHelpGetTimezonesList struct {
 }
 
 func (m *TLHelpGetTimezonesList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_getTimezonesList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_getTimezonesList", m)
 }
 
 func (m *TLHelpGetTimezonesList) MarshalJSON() ([]byte, error) {
@@ -53982,8 +53495,7 @@ type TLChannelsReadHistory struct {
 }
 
 func (m *TLChannelsReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_readHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_readHistory", m)
 }
 
 func (m *TLChannelsReadHistory) MarshalJSON() ([]byte, error) {
@@ -54077,8 +53589,7 @@ type TLChannelsDeleteMessages struct {
 }
 
 func (m *TLChannelsDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_deleteMessages", m)
 }
 
 func (m *TLChannelsDeleteMessages) MarshalJSON() ([]byte, error) {
@@ -54175,8 +53686,7 @@ type TLChannelsReportSpam struct {
 }
 
 func (m *TLChannelsReportSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_reportSpam", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_reportSpam", m)
 }
 
 func (m *TLChannelsReportSpam) MarshalJSON() ([]byte, error) {
@@ -54292,8 +53802,7 @@ type TLChannelsGetMessages struct {
 }
 
 func (m *TLChannelsGetMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getMessages", m)
 }
 
 func (m *TLChannelsGetMessages) MarshalJSON() ([]byte, error) {
@@ -54459,8 +53968,7 @@ type TLChannelsGetParticipants struct {
 }
 
 func (m *TLChannelsGetParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getParticipants", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getParticipants", m)
 }
 
 func (m *TLChannelsGetParticipants) MarshalJSON() ([]byte, error) {
@@ -54585,8 +54093,7 @@ type TLChannelsGetParticipant struct {
 }
 
 func (m *TLChannelsGetParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getParticipant", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getParticipant", m)
 }
 
 func (m *TLChannelsGetParticipant) MarshalJSON() ([]byte, error) {
@@ -54691,8 +54198,7 @@ type TLChannelsGetChannels struct {
 }
 
 func (m *TLChannelsGetChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getChannels", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getChannels", m)
 }
 
 func (m *TLChannelsGetChannels) MarshalJSON() ([]byte, error) {
@@ -54791,8 +54297,7 @@ type TLChannelsGetFullChannel struct {
 }
 
 func (m *TLChannelsGetFullChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getFullChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getFullChannel", m)
 }
 
 func (m *TLChannelsGetFullChannel) MarshalJSON() ([]byte, error) {
@@ -54886,8 +54391,7 @@ type TLChannelsCreateChannel struct {
 }
 
 func (m *TLChannelsCreateChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_createChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_createChannel", m)
 }
 
 func (m *TLChannelsCreateChannel) MarshalJSON() ([]byte, error) {
@@ -55077,8 +54581,7 @@ type TLChannelsEditAdmin struct {
 }
 
 func (m *TLChannelsEditAdmin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editAdmin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editAdmin", m)
 }
 
 func (m *TLChannelsEditAdmin) MarshalJSON() ([]byte, error) {
@@ -55319,8 +54822,7 @@ type TLChannelsEditTitle struct {
 }
 
 func (m *TLChannelsEditTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editTitle", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editTitle", m)
 }
 
 func (m *TLChannelsEditTitle) MarshalJSON() ([]byte, error) {
@@ -55418,8 +54920,7 @@ type TLChannelsEditPhoto struct {
 }
 
 func (m *TLChannelsEditPhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editPhoto", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editPhoto", m)
 }
 
 func (m *TLChannelsEditPhoto) MarshalJSON() ([]byte, error) {
@@ -55525,8 +55026,7 @@ type TLChannelsCheckUsername struct {
 }
 
 func (m *TLChannelsCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_checkUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_checkUsername", m)
 }
 
 func (m *TLChannelsCheckUsername) MarshalJSON() ([]byte, error) {
@@ -55624,8 +55124,7 @@ type TLChannelsUpdateUsername struct {
 }
 
 func (m *TLChannelsUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_updateUsername", m)
 }
 
 func (m *TLChannelsUpdateUsername) MarshalJSON() ([]byte, error) {
@@ -55722,8 +55221,7 @@ type TLChannelsJoinChannel struct {
 }
 
 func (m *TLChannelsJoinChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_joinChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_joinChannel", m)
 }
 
 func (m *TLChannelsJoinChannel) MarshalJSON() ([]byte, error) {
@@ -55809,8 +55307,7 @@ type TLChannelsLeaveChannel struct {
 }
 
 func (m *TLChannelsLeaveChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_leaveChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_leaveChannel", m)
 }
 
 func (m *TLChannelsLeaveChannel) MarshalJSON() ([]byte, error) {
@@ -55897,8 +55394,7 @@ type TLChannelsInviteToChannel struct {
 }
 
 func (m *TLChannelsInviteToChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_inviteToChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_inviteToChannel", m)
 }
 
 func (m *TLChannelsInviteToChannel) MarshalJSON() ([]byte, error) {
@@ -56018,8 +55514,7 @@ type TLChannelsDeleteChannel struct {
 }
 
 func (m *TLChannelsDeleteChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteChannel", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_deleteChannel", m)
 }
 
 func (m *TLChannelsDeleteChannel) MarshalJSON() ([]byte, error) {
@@ -56108,8 +55603,7 @@ type TLChannelsExportMessageLink struct {
 }
 
 func (m *TLChannelsExportMessageLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_exportMessageLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_exportMessageLink", m)
 }
 
 func (m *TLChannelsExportMessageLink) MarshalJSON() ([]byte, error) {
@@ -56233,8 +55727,7 @@ type TLChannelsToggleSignatures struct {
 }
 
 func (m *TLChannelsToggleSignatures) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleSignatures", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleSignatures", m)
 }
 
 func (m *TLChannelsToggleSignatures) MarshalJSON() ([]byte, error) {
@@ -56351,8 +55844,7 @@ type TLChannelsGetAdminedPublicChannels struct {
 }
 
 func (m *TLChannelsGetAdminedPublicChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getAdminedPublicChannels", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getAdminedPublicChannels", m)
 }
 
 func (m *TLChannelsGetAdminedPublicChannels) MarshalJSON() ([]byte, error) {
@@ -56457,8 +55949,7 @@ type TLChannelsEditBanned struct {
 }
 
 func (m *TLChannelsEditBanned) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editBanned", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editBanned", m)
 }
 
 func (m *TLChannelsEditBanned) MarshalJSON() ([]byte, error) {
@@ -56588,8 +56079,7 @@ type TLChannelsGetAdminLog struct {
 }
 
 func (m *TLChannelsGetAdminLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getAdminLog", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getAdminLog", m)
 }
 
 func (m *TLChannelsGetAdminLog) MarshalJSON() ([]byte, error) {
@@ -56782,8 +56272,7 @@ type TLChannelsSetStickers struct {
 }
 
 func (m *TLChannelsSetStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_setStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_setStickers", m)
 }
 
 func (m *TLChannelsSetStickers) MarshalJSON() ([]byte, error) {
@@ -56889,8 +56378,7 @@ type TLChannelsReadMessageContents struct {
 }
 
 func (m *TLChannelsReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_readMessageContents", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_readMessageContents", m)
 }
 
 func (m *TLChannelsReadMessageContents) MarshalJSON() ([]byte, error) {
@@ -56987,8 +56475,7 @@ type TLChannelsDeleteHistory struct {
 }
 
 func (m *TLChannelsDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_deleteHistory", m)
 }
 
 func (m *TLChannelsDeleteHistory) MarshalJSON() ([]byte, error) {
@@ -57105,8 +56592,7 @@ type TLChannelsTogglePreHistoryHidden struct {
 }
 
 func (m *TLChannelsTogglePreHistoryHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_togglePreHistoryHidden", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_togglePreHistoryHidden", m)
 }
 
 func (m *TLChannelsTogglePreHistoryHidden) MarshalJSON() ([]byte, error) {
@@ -57211,8 +56697,7 @@ type TLChannelsGetLeftChannels struct {
 }
 
 func (m *TLChannelsGetLeftChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getLeftChannels", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getLeftChannels", m)
 }
 
 func (m *TLChannelsGetLeftChannels) MarshalJSON() ([]byte, error) {
@@ -57285,8 +56770,7 @@ type TLChannelsGetGroupsForDiscussion struct {
 }
 
 func (m *TLChannelsGetGroupsForDiscussion) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getGroupsForDiscussion", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getGroupsForDiscussion", m)
 }
 
 func (m *TLChannelsGetGroupsForDiscussion) MarshalJSON() ([]byte, error) {
@@ -57354,8 +56838,7 @@ type TLChannelsSetDiscussionGroup struct {
 }
 
 func (m *TLChannelsSetDiscussionGroup) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_setDiscussionGroup", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_setDiscussionGroup", m)
 }
 
 func (m *TLChannelsSetDiscussionGroup) MarshalJSON() ([]byte, error) {
@@ -57462,8 +56945,7 @@ type TLChannelsEditLocation struct {
 }
 
 func (m *TLChannelsEditLocation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editLocation", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editLocation", m)
 }
 
 func (m *TLChannelsEditLocation) MarshalJSON() ([]byte, error) {
@@ -57580,8 +57062,7 @@ type TLChannelsToggleSlowMode struct {
 }
 
 func (m *TLChannelsToggleSlowMode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleSlowMode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleSlowMode", m)
 }
 
 func (m *TLChannelsToggleSlowMode) MarshalJSON() ([]byte, error) {
@@ -57673,8 +57154,7 @@ type TLChannelsGetInactiveChannels struct {
 }
 
 func (m *TLChannelsGetInactiveChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getInactiveChannels", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getInactiveChannels", m)
 }
 
 func (m *TLChannelsGetInactiveChannels) MarshalJSON() ([]byte, error) {
@@ -57741,8 +57221,7 @@ type TLChannelsConvertToGigagroup struct {
 }
 
 func (m *TLChannelsConvertToGigagroup) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_convertToGigagroup", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_convertToGigagroup", m)
 }
 
 func (m *TLChannelsConvertToGigagroup) MarshalJSON() ([]byte, error) {
@@ -57830,8 +57309,7 @@ type TLChannelsGetSendAs struct {
 }
 
 func (m *TLChannelsGetSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getSendAs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getSendAs", m)
 }
 
 func (m *TLChannelsGetSendAs) MarshalJSON() ([]byte, error) {
@@ -57947,8 +57425,7 @@ type TLChannelsDeleteParticipantHistory struct {
 }
 
 func (m *TLChannelsDeleteParticipantHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_deleteParticipantHistory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_deleteParticipantHistory", m)
 }
 
 func (m *TLChannelsDeleteParticipantHistory) MarshalJSON() ([]byte, error) {
@@ -58054,8 +57531,7 @@ type TLChannelsToggleJoinToSend struct {
 }
 
 func (m *TLChannelsToggleJoinToSend) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleJoinToSend", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleJoinToSend", m)
 }
 
 func (m *TLChannelsToggleJoinToSend) MarshalJSON() ([]byte, error) {
@@ -58161,8 +57637,7 @@ type TLChannelsToggleJoinRequest struct {
 }
 
 func (m *TLChannelsToggleJoinRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleJoinRequest", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleJoinRequest", m)
 }
 
 func (m *TLChannelsToggleJoinRequest) MarshalJSON() ([]byte, error) {
@@ -58268,8 +57743,7 @@ type TLChannelsReorderUsernames struct {
 }
 
 func (m *TLChannelsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_reorderUsernames", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_reorderUsernames", m)
 }
 
 func (m *TLChannelsReorderUsernames) MarshalJSON() ([]byte, error) {
@@ -58366,8 +57840,7 @@ type TLChannelsToggleUsername struct {
 }
 
 func (m *TLChannelsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleUsername", m)
 }
 
 func (m *TLChannelsToggleUsername) MarshalJSON() ([]byte, error) {
@@ -58483,8 +57956,7 @@ type TLChannelsDeactivateAllUsernames struct {
 }
 
 func (m *TLChannelsDeactivateAllUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_deactivateAllUsernames", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_deactivateAllUsernames", m)
 }
 
 func (m *TLChannelsDeactivateAllUsernames) MarshalJSON() ([]byte, error) {
@@ -58572,8 +58044,7 @@ type TLChannelsToggleForum struct {
 }
 
 func (m *TLChannelsToggleForum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleForum", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleForum", m)
 }
 
 func (m *TLChannelsToggleForum) MarshalJSON() ([]byte, error) {
@@ -58698,8 +58169,7 @@ type TLChannelsToggleAntiSpam struct {
 }
 
 func (m *TLChannelsToggleAntiSpam) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleAntiSpam", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleAntiSpam", m)
 }
 
 func (m *TLChannelsToggleAntiSpam) MarshalJSON() ([]byte, error) {
@@ -58805,8 +58275,7 @@ type TLChannelsReportAntiSpamFalsePositive struct {
 }
 
 func (m *TLChannelsReportAntiSpamFalsePositive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_reportAntiSpamFalsePositive", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_reportAntiSpamFalsePositive", m)
 }
 
 func (m *TLChannelsReportAntiSpamFalsePositive) MarshalJSON() ([]byte, error) {
@@ -58900,8 +58369,7 @@ type TLChannelsToggleParticipantsHidden struct {
 }
 
 func (m *TLChannelsToggleParticipantsHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleParticipantsHidden", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleParticipantsHidden", m)
 }
 
 func (m *TLChannelsToggleParticipantsHidden) MarshalJSON() ([]byte, error) {
@@ -59009,8 +58477,7 @@ type TLChannelsUpdateColor struct {
 }
 
 func (m *TLChannelsUpdateColor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateColor", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_updateColor", m)
 }
 
 func (m *TLChannelsUpdateColor) MarshalJSON() ([]byte, error) {
@@ -59156,8 +58623,7 @@ type TLChannelsToggleViewForumAsMessages struct {
 }
 
 func (m *TLChannelsToggleViewForumAsMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleViewForumAsMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleViewForumAsMessages", m)
 }
 
 func (m *TLChannelsToggleViewForumAsMessages) MarshalJSON() ([]byte, error) {
@@ -59262,8 +58728,7 @@ type TLChannelsGetChannelRecommendations struct {
 }
 
 func (m *TLChannelsGetChannelRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getChannelRecommendations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getChannelRecommendations", m)
 }
 
 func (m *TLChannelsGetChannelRecommendations) MarshalJSON() ([]byte, error) {
@@ -59369,8 +58834,7 @@ type TLChannelsUpdateEmojiStatus struct {
 }
 
 func (m *TLChannelsUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_updateEmojiStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_updateEmojiStatus", m)
 }
 
 func (m *TLChannelsUpdateEmojiStatus) MarshalJSON() ([]byte, error) {
@@ -59476,8 +58940,7 @@ type TLChannelsSetBoostsToUnblockRestrictions struct {
 }
 
 func (m *TLChannelsSetBoostsToUnblockRestrictions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_setBoostsToUnblockRestrictions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_setBoostsToUnblockRestrictions", m)
 }
 
 func (m *TLChannelsSetBoostsToUnblockRestrictions) MarshalJSON() ([]byte, error) {
@@ -59571,8 +59034,7 @@ type TLChannelsSetEmojiStickers struct {
 }
 
 func (m *TLChannelsSetEmojiStickers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_setEmojiStickers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_setEmojiStickers", m)
 }
 
 func (m *TLChannelsSetEmojiStickers) MarshalJSON() ([]byte, error) {
@@ -59678,8 +59140,7 @@ type TLChannelsRestrictSponsoredMessages struct {
 }
 
 func (m *TLChannelsRestrictSponsoredMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_restrictSponsoredMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_restrictSponsoredMessages", m)
 }
 
 func (m *TLChannelsRestrictSponsoredMessages) MarshalJSON() ([]byte, error) {
@@ -59790,8 +59251,7 @@ type TLChannelsSearchPosts struct {
 }
 
 func (m *TLChannelsSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_searchPosts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_searchPosts", m)
 }
 
 func (m *TLChannelsSearchPosts) MarshalJSON() ([]byte, error) {
@@ -59971,8 +59431,7 @@ type TLChannelsUpdatePaidMessagesPrice struct {
 }
 
 func (m *TLChannelsUpdatePaidMessagesPrice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_updatePaidMessagesPrice", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_updatePaidMessagesPrice", m)
 }
 
 func (m *TLChannelsUpdatePaidMessagesPrice) MarshalJSON() ([]byte, error) {
@@ -60089,8 +59548,7 @@ type TLChannelsToggleAutotranslation struct {
 }
 
 func (m *TLChannelsToggleAutotranslation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_toggleAutotranslation", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_toggleAutotranslation", m)
 }
 
 func (m *TLChannelsToggleAutotranslation) MarshalJSON() ([]byte, error) {
@@ -60196,8 +59654,7 @@ type TLChannelsGetMessageAuthor struct {
 }
 
 func (m *TLChannelsGetMessageAuthor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getMessageAuthor", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getMessageAuthor", m)
 }
 
 func (m *TLChannelsGetMessageAuthor) MarshalJSON() ([]byte, error) {
@@ -60290,8 +59747,7 @@ type TLChannelsCheckSearchPostsFlood struct {
 }
 
 func (m *TLChannelsCheckSearchPostsFlood) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_checkSearchPostsFlood", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_checkSearchPostsFlood", m)
 }
 
 func (m *TLChannelsCheckSearchPostsFlood) MarshalJSON() ([]byte, error) {
@@ -60393,8 +59849,7 @@ type TLChannelsSetMainProfileTab struct {
 }
 
 func (m *TLChannelsSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_setMainProfileTab", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_setMainProfileTab", m)
 }
 
 func (m *TLChannelsSetMainProfileTab) MarshalJSON() ([]byte, error) {
@@ -60500,8 +59955,7 @@ type TLBotsSendCustomRequest struct {
 }
 
 func (m *TLBotsSendCustomRequest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_sendCustomRequest", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_sendCustomRequest", m)
 }
 
 func (m *TLBotsSendCustomRequest) MarshalJSON() ([]byte, error) {
@@ -60598,8 +60052,7 @@ type TLBotsAnswerWebhookJSONQuery struct {
 }
 
 func (m *TLBotsAnswerWebhookJSONQuery) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_answerWebhookJSONQuery", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_answerWebhookJSONQuery", m)
 }
 
 func (m *TLBotsAnswerWebhookJSONQuery) MarshalJSON() ([]byte, error) {
@@ -60693,8 +60146,7 @@ type TLBotsSetBotCommands struct {
 }
 
 func (m *TLBotsSetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotCommands", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setBotCommands", m)
 }
 
 func (m *TLBotsSetBotCommands) MarshalJSON() ([]byte, error) {
@@ -60825,8 +60277,7 @@ type TLBotsResetBotCommands struct {
 }
 
 func (m *TLBotsResetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_resetBotCommands", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_resetBotCommands", m)
 }
 
 func (m *TLBotsResetBotCommands) MarshalJSON() ([]byte, error) {
@@ -60924,8 +60375,7 @@ type TLBotsGetBotCommands struct {
 }
 
 func (m *TLBotsGetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotCommands", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getBotCommands", m)
 }
 
 func (m *TLBotsGetBotCommands) MarshalJSON() ([]byte, error) {
@@ -61023,8 +60473,7 @@ type TLBotsSetBotMenuButton struct {
 }
 
 func (m *TLBotsSetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotMenuButton", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setBotMenuButton", m)
 }
 
 func (m *TLBotsSetBotMenuButton) MarshalJSON() ([]byte, error) {
@@ -61129,8 +60578,7 @@ type TLBotsGetBotMenuButton struct {
 }
 
 func (m *TLBotsGetBotMenuButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotMenuButton", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getBotMenuButton", m)
 }
 
 func (m *TLBotsGetBotMenuButton) MarshalJSON() ([]byte, error) {
@@ -61216,8 +60664,7 @@ type TLBotsSetBotBroadcastDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotBroadcastDefaultAdminRights", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setBotBroadcastDefaultAdminRights", m)
 }
 
 func (m *TLBotsSetBotBroadcastDefaultAdminRights) MarshalJSON() ([]byte, error) {
@@ -61303,8 +60750,7 @@ type TLBotsSetBotGroupDefaultAdminRights struct {
 }
 
 func (m *TLBotsSetBotGroupDefaultAdminRights) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotGroupDefaultAdminRights", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setBotGroupDefaultAdminRights", m)
 }
 
 func (m *TLBotsSetBotGroupDefaultAdminRights) MarshalJSON() ([]byte, error) {
@@ -61394,8 +60840,7 @@ type TLBotsSetBotInfo struct {
 }
 
 func (m *TLBotsSetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setBotInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setBotInfo", m)
 }
 
 func (m *TLBotsSetBotInfo) MarshalJSON() ([]byte, error) {
@@ -61568,8 +61013,7 @@ type TLBotsGetBotInfo struct {
 }
 
 func (m *TLBotsGetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getBotInfo", m)
 }
 
 func (m *TLBotsGetBotInfo) MarshalJSON() ([]byte, error) {
@@ -61687,8 +61131,7 @@ type TLBotsReorderUsernames struct {
 }
 
 func (m *TLBotsReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_reorderUsernames", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_reorderUsernames", m)
 }
 
 func (m *TLBotsReorderUsernames) MarshalJSON() ([]byte, error) {
@@ -61785,8 +61228,7 @@ type TLBotsToggleUsername struct {
 }
 
 func (m *TLBotsToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_toggleUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_toggleUsername", m)
 }
 
 func (m *TLBotsToggleUsername) MarshalJSON() ([]byte, error) {
@@ -61902,8 +61344,7 @@ type TLBotsCanSendMessage struct {
 }
 
 func (m *TLBotsCanSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_canSendMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_canSendMessage", m)
 }
 
 func (m *TLBotsCanSendMessage) MarshalJSON() ([]byte, error) {
@@ -61989,8 +61430,7 @@ type TLBotsAllowSendMessage struct {
 }
 
 func (m *TLBotsAllowSendMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_allowSendMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_allowSendMessage", m)
 }
 
 func (m *TLBotsAllowSendMessage) MarshalJSON() ([]byte, error) {
@@ -62078,8 +61518,7 @@ type TLBotsInvokeWebViewCustomMethod struct {
 }
 
 func (m *TLBotsInvokeWebViewCustomMethod) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_invokeWebViewCustomMethod", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_invokeWebViewCustomMethod", m)
 }
 
 func (m *TLBotsInvokeWebViewCustomMethod) MarshalJSON() ([]byte, error) {
@@ -62196,8 +61635,7 @@ type TLBotsGetPopularAppBots struct {
 }
 
 func (m *TLBotsGetPopularAppBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPopularAppBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getPopularAppBots", m)
 }
 
 func (m *TLBotsGetPopularAppBots) MarshalJSON() ([]byte, error) {
@@ -62282,8 +61720,7 @@ type TLBotsAddPreviewMedia struct {
 }
 
 func (m *TLBotsAddPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_addPreviewMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_addPreviewMedia", m)
 }
 
 func (m *TLBotsAddPreviewMedia) MarshalJSON() ([]byte, error) {
@@ -62402,8 +61839,7 @@ type TLBotsEditPreviewMedia struct {
 }
 
 func (m *TLBotsEditPreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_editPreviewMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_editPreviewMedia", m)
 }
 
 func (m *TLBotsEditPreviewMedia) MarshalJSON() ([]byte, error) {
@@ -62540,8 +61976,7 @@ type TLBotsDeletePreviewMedia struct {
 }
 
 func (m *TLBotsDeletePreviewMedia) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_deletePreviewMedia", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_deletePreviewMedia", m)
 }
 
 func (m *TLBotsDeletePreviewMedia) MarshalJSON() ([]byte, error) {
@@ -62673,8 +62108,7 @@ type TLBotsReorderPreviewMedias struct {
 }
 
 func (m *TLBotsReorderPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_reorderPreviewMedias", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_reorderPreviewMedias", m)
 }
 
 func (m *TLBotsReorderPreviewMedias) MarshalJSON() ([]byte, error) {
@@ -62805,8 +62239,7 @@ type TLBotsGetPreviewInfo struct {
 }
 
 func (m *TLBotsGetPreviewInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPreviewInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getPreviewInfo", m)
 }
 
 func (m *TLBotsGetPreviewInfo) MarshalJSON() ([]byte, error) {
@@ -62903,8 +62336,7 @@ type TLBotsGetPreviewMedias struct {
 }
 
 func (m *TLBotsGetPreviewMedias) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getPreviewMedias", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getPreviewMedias", m)
 }
 
 func (m *TLBotsGetPreviewMedias) MarshalJSON() ([]byte, error) {
@@ -62991,8 +62423,7 @@ type TLBotsUpdateUserEmojiStatus struct {
 }
 
 func (m *TLBotsUpdateUserEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_updateUserEmojiStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_updateUserEmojiStatus", m)
 }
 
 func (m *TLBotsUpdateUserEmojiStatus) MarshalJSON() ([]byte, error) {
@@ -63098,8 +62529,7 @@ type TLBotsToggleUserEmojiStatusPermission struct {
 }
 
 func (m *TLBotsToggleUserEmojiStatusPermission) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_toggleUserEmojiStatusPermission", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_toggleUserEmojiStatusPermission", m)
 }
 
 func (m *TLBotsToggleUserEmojiStatusPermission) MarshalJSON() ([]byte, error) {
@@ -63206,8 +62636,7 @@ type TLBotsCheckDownloadFileParams struct {
 }
 
 func (m *TLBotsCheckDownloadFileParams) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_checkDownloadFileParams", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_checkDownloadFileParams", m)
 }
 
 func (m *TLBotsCheckDownloadFileParams) MarshalJSON() ([]byte, error) {
@@ -63313,8 +62742,7 @@ type TLBotsGetAdminedBots struct {
 }
 
 func (m *TLBotsGetAdminedBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getAdminedBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getAdminedBots", m)
 }
 
 func (m *TLBotsGetAdminedBots) MarshalJSON() ([]byte, error) {
@@ -63383,8 +62811,7 @@ type TLBotsUpdateStarRefProgram struct {
 }
 
 func (m *TLBotsUpdateStarRefProgram) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_updateStarRefProgram", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_updateStarRefProgram", m)
 }
 
 func (m *TLBotsUpdateStarRefProgram) MarshalJSON() ([]byte, error) {
@@ -63513,8 +62940,7 @@ type TLBotsSetCustomVerification struct {
 }
 
 func (m *TLBotsSetCustomVerification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_setCustomVerification", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_setCustomVerification", m)
 }
 
 func (m *TLBotsSetCustomVerification) MarshalJSON() ([]byte, error) {
@@ -63664,8 +63090,7 @@ type TLBotsGetBotRecommendations struct {
 }
 
 func (m *TLBotsGetBotRecommendations) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getBotRecommendations", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getBotRecommendations", m)
 }
 
 func (m *TLBotsGetBotRecommendations) MarshalJSON() ([]byte, error) {
@@ -63751,8 +63176,7 @@ type TLBotsCheckUsername struct {
 }
 
 func (m *TLBotsCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_checkUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_checkUsername", m)
 }
 
 func (m *TLBotsCheckUsername) MarshalJSON() ([]byte, error) {
@@ -63832,8 +63256,7 @@ type TLBotsCreateBot struct {
 }
 
 func (m *TLBotsCreateBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_createBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_createBot", m)
 }
 
 func (m *TLBotsCreateBot) MarshalJSON() ([]byte, error) {
@@ -63963,8 +63386,7 @@ type TLBotsExportBotToken struct {
 }
 
 func (m *TLBotsExportBotToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_exportBotToken", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_exportBotToken", m)
 }
 
 func (m *TLBotsExportBotToken) MarshalJSON() ([]byte, error) {
@@ -64070,8 +63492,7 @@ type TLBotsRequestWebViewButton struct {
 }
 
 func (m *TLBotsRequestWebViewButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_requestWebViewButton", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_requestWebViewButton", m)
 }
 
 func (m *TLBotsRequestWebViewButton) MarshalJSON() ([]byte, error) {
@@ -64177,8 +63598,7 @@ type TLBotsGetRequestedWebViewButton struct {
 }
 
 func (m *TLBotsGetRequestedWebViewButton) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "bots_getRequestedWebViewButton", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("bots_getRequestedWebViewButton", m)
 }
 
 func (m *TLBotsGetRequestedWebViewButton) MarshalJSON() ([]byte, error) {
@@ -64276,8 +63696,7 @@ type TLPaymentsGetPaymentForm struct {
 }
 
 func (m *TLPaymentsGetPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPaymentForm", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getPaymentForm", m)
 }
 
 func (m *TLPaymentsGetPaymentForm) MarshalJSON() ([]byte, error) {
@@ -64402,8 +63821,7 @@ type TLPaymentsGetPaymentReceipt struct {
 }
 
 func (m *TLPaymentsGetPaymentReceipt) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPaymentReceipt", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getPaymentReceipt", m)
 }
 
 func (m *TLPaymentsGetPaymentReceipt) MarshalJSON() ([]byte, error) {
@@ -64498,8 +63916,7 @@ type TLPaymentsValidateRequestedInfo struct {
 }
 
 func (m *TLPaymentsValidateRequestedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_validateRequestedInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_validateRequestedInfo", m)
 }
 
 func (m *TLPaymentsValidateRequestedInfo) MarshalJSON() ([]byte, error) {
@@ -64632,8 +64049,7 @@ type TLPaymentsSendPaymentForm struct {
 }
 
 func (m *TLPaymentsSendPaymentForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendPaymentForm", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_sendPaymentForm", m)
 }
 
 func (m *TLPaymentsSendPaymentForm) MarshalJSON() ([]byte, error) {
@@ -64816,8 +64232,7 @@ type TLPaymentsGetSavedInfo struct {
 }
 
 func (m *TLPaymentsGetSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getSavedInfo", m)
 }
 
 func (m *TLPaymentsGetSavedInfo) MarshalJSON() ([]byte, error) {
@@ -64885,8 +64300,7 @@ type TLPaymentsClearSavedInfo struct {
 }
 
 func (m *TLPaymentsClearSavedInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_clearSavedInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_clearSavedInfo", m)
 }
 
 func (m *TLPaymentsClearSavedInfo) MarshalJSON() ([]byte, error) {
@@ -64983,8 +64397,7 @@ type TLPaymentsGetBankCardData struct {
 }
 
 func (m *TLPaymentsGetBankCardData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getBankCardData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getBankCardData", m)
 }
 
 func (m *TLPaymentsGetBankCardData) MarshalJSON() ([]byte, error) {
@@ -65061,8 +64474,7 @@ type TLPaymentsExportInvoice struct {
 }
 
 func (m *TLPaymentsExportInvoice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_exportInvoice", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_exportInvoice", m)
 }
 
 func (m *TLPaymentsExportInvoice) MarshalJSON() ([]byte, error) {
@@ -65149,8 +64561,7 @@ type TLPaymentsAssignAppStoreTransaction struct {
 }
 
 func (m *TLPaymentsAssignAppStoreTransaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_assignAppStoreTransaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_assignAppStoreTransaction", m)
 }
 
 func (m *TLPaymentsAssignAppStoreTransaction) MarshalJSON() ([]byte, error) {
@@ -65247,8 +64658,7 @@ type TLPaymentsAssignPlayMarketTransaction struct {
 }
 
 func (m *TLPaymentsAssignPlayMarketTransaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_assignPlayMarketTransaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_assignPlayMarketTransaction", m)
 }
 
 func (m *TLPaymentsAssignPlayMarketTransaction) MarshalJSON() ([]byte, error) {
@@ -65353,8 +64763,7 @@ type TLPaymentsGetPremiumGiftCodeOptions struct {
 }
 
 func (m *TLPaymentsGetPremiumGiftCodeOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getPremiumGiftCodeOptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getPremiumGiftCodeOptions", m)
 }
 
 func (m *TLPaymentsGetPremiumGiftCodeOptions) MarshalJSON() ([]byte, error) {
@@ -65459,8 +64868,7 @@ type TLPaymentsCheckGiftCode struct {
 }
 
 func (m *TLPaymentsCheckGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_checkGiftCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_checkGiftCode", m)
 }
 
 func (m *TLPaymentsCheckGiftCode) MarshalJSON() ([]byte, error) {
@@ -65537,8 +64945,7 @@ type TLPaymentsApplyGiftCode struct {
 }
 
 func (m *TLPaymentsApplyGiftCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_applyGiftCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_applyGiftCode", m)
 }
 
 func (m *TLPaymentsApplyGiftCode) MarshalJSON() ([]byte, error) {
@@ -65616,8 +65023,7 @@ type TLPaymentsGetGiveawayInfo struct {
 }
 
 func (m *TLPaymentsGetGiveawayInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getGiveawayInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getGiveawayInfo", m)
 }
 
 func (m *TLPaymentsGetGiveawayInfo) MarshalJSON() ([]byte, error) {
@@ -65712,8 +65118,7 @@ type TLPaymentsLaunchPrepaidGiveaway struct {
 }
 
 func (m *TLPaymentsLaunchPrepaidGiveaway) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_launchPrepaidGiveaway", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_launchPrepaidGiveaway", m)
 }
 
 func (m *TLPaymentsLaunchPrepaidGiveaway) MarshalJSON() ([]byte, error) {
@@ -65824,8 +65229,7 @@ type TLPaymentsGetStarsTopupOptions struct {
 }
 
 func (m *TLPaymentsGetStarsTopupOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTopupOptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsTopupOptions", m)
 }
 
 func (m *TLPaymentsGetStarsTopupOptions) MarshalJSON() ([]byte, error) {
@@ -65893,8 +65297,7 @@ type TLPaymentsGetStarsStatus struct {
 }
 
 func (m *TLPaymentsGetStarsStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsStatus", m)
 }
 
 func (m *TLPaymentsGetStarsStatus) MarshalJSON() ([]byte, error) {
@@ -66010,8 +65413,7 @@ type TLPaymentsGetStarsTransactions struct {
 }
 
 func (m *TLPaymentsGetStarsTransactions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTransactions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsTransactions", m)
 }
 
 func (m *TLPaymentsGetStarsTransactions) MarshalJSON() ([]byte, error) {
@@ -66175,8 +65577,7 @@ type TLPaymentsSendStarsForm struct {
 }
 
 func (m *TLPaymentsSendStarsForm) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendStarsForm", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_sendStarsForm", m)
 }
 
 func (m *TLPaymentsSendStarsForm) MarshalJSON() ([]byte, error) {
@@ -66269,8 +65670,7 @@ type TLPaymentsRefundStarsCharge struct {
 }
 
 func (m *TLPaymentsRefundStarsCharge) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_refundStarsCharge", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_refundStarsCharge", m)
 }
 
 func (m *TLPaymentsRefundStarsCharge) MarshalJSON() ([]byte, error) {
@@ -66369,8 +65769,7 @@ type TLPaymentsGetStarsRevenueStats struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueStats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsRevenueStats", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueStats) MarshalJSON() ([]byte, error) {
@@ -66488,8 +65887,7 @@ type TLPaymentsGetStarsRevenueWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueWithdrawalUrl", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsRevenueWithdrawalUrl", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueWithdrawalUrl) MarshalJSON() ([]byte, error) {
@@ -66637,8 +66035,7 @@ type TLPaymentsGetStarsRevenueAdsAccountUrl struct {
 }
 
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsRevenueAdsAccountUrl", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsRevenueAdsAccountUrl", m)
 }
 
 func (m *TLPaymentsGetStarsRevenueAdsAccountUrl) MarshalJSON() ([]byte, error) {
@@ -66726,8 +66123,7 @@ type TLPaymentsGetStarsTransactionsByID struct {
 }
 
 func (m *TLPaymentsGetStarsTransactionsByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsTransactionsByID", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsTransactionsByID", m)
 }
 
 func (m *TLPaymentsGetStarsTransactionsByID) MarshalJSON() ([]byte, error) {
@@ -66870,8 +66266,7 @@ type TLPaymentsGetStarsGiftOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiftOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsGiftOptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsGiftOptions", m)
 }
 
 func (m *TLPaymentsGetStarsGiftOptions) MarshalJSON() ([]byte, error) {
@@ -66978,8 +66373,7 @@ type TLPaymentsGetStarsSubscriptions struct {
 }
 
 func (m *TLPaymentsGetStarsSubscriptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsSubscriptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsSubscriptions", m)
 }
 
 func (m *TLPaymentsGetStarsSubscriptions) MarshalJSON() ([]byte, error) {
@@ -67101,8 +66495,7 @@ type TLPaymentsChangeStarsSubscription struct {
 }
 
 func (m *TLPaymentsChangeStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_changeStarsSubscription", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_changeStarsSubscription", m)
 }
 
 func (m *TLPaymentsChangeStarsSubscription) MarshalJSON() ([]byte, error) {
@@ -67237,8 +66630,7 @@ type TLPaymentsFulfillStarsSubscription struct {
 }
 
 func (m *TLPaymentsFulfillStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_fulfillStarsSubscription", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_fulfillStarsSubscription", m)
 }
 
 func (m *TLPaymentsFulfillStarsSubscription) MarshalJSON() ([]byte, error) {
@@ -67334,8 +66726,7 @@ type TLPaymentsGetStarsGiveawayOptions struct {
 }
 
 func (m *TLPaymentsGetStarsGiveawayOptions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarsGiveawayOptions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarsGiveawayOptions", m)
 }
 
 func (m *TLPaymentsGetStarsGiveawayOptions) MarshalJSON() ([]byte, error) {
@@ -67402,8 +66793,7 @@ type TLPaymentsGetStarGifts struct {
 }
 
 func (m *TLPaymentsGetStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGifts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGifts", m)
 }
 
 func (m *TLPaymentsGetStarGifts) MarshalJSON() ([]byte, error) {
@@ -67478,8 +66868,7 @@ type TLPaymentsSaveStarGift struct {
 }
 
 func (m *TLPaymentsSaveStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_saveStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_saveStarGift", m)
 }
 
 func (m *TLPaymentsSaveStarGift) MarshalJSON() ([]byte, error) {
@@ -67588,8 +66977,7 @@ type TLPaymentsConvertStarGift struct {
 }
 
 func (m *TLPaymentsConvertStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_convertStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_convertStarGift", m)
 }
 
 func (m *TLPaymentsConvertStarGift) MarshalJSON() ([]byte, error) {
@@ -67677,8 +67065,7 @@ type TLPaymentsBotCancelStarsSubscription struct {
 }
 
 func (m *TLPaymentsBotCancelStarsSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_botCancelStarsSubscription", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_botCancelStarsSubscription", m)
 }
 
 func (m *TLPaymentsBotCancelStarsSubscription) MarshalJSON() ([]byte, error) {
@@ -67801,8 +67188,7 @@ type TLPaymentsGetConnectedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getConnectedStarRefBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getConnectedStarRefBots", m)
 }
 
 func (m *TLPaymentsGetConnectedStarRefBots) MarshalJSON() ([]byte, error) {
@@ -67950,8 +67336,7 @@ type TLPaymentsGetConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsGetConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getConnectedStarRefBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getConnectedStarRefBot", m)
 }
 
 func (m *TLPaymentsGetConnectedStarRefBot) MarshalJSON() ([]byte, error) {
@@ -68060,8 +67445,7 @@ type TLPaymentsGetSuggestedStarRefBots struct {
 }
 
 func (m *TLPaymentsGetSuggestedStarRefBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSuggestedStarRefBots", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getSuggestedStarRefBots", m)
 }
 
 func (m *TLPaymentsGetSuggestedStarRefBots) MarshalJSON() ([]byte, error) {
@@ -68194,8 +67578,7 @@ type TLPaymentsConnectStarRefBot struct {
 }
 
 func (m *TLPaymentsConnectStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_connectStarRefBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_connectStarRefBot", m)
 }
 
 func (m *TLPaymentsConnectStarRefBot) MarshalJSON() ([]byte, error) {
@@ -68302,8 +67685,7 @@ type TLPaymentsEditConnectedStarRefBot struct {
 }
 
 func (m *TLPaymentsEditConnectedStarRefBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_editConnectedStarRefBot", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_editConnectedStarRefBot", m)
 }
 
 func (m *TLPaymentsEditConnectedStarRefBot) MarshalJSON() ([]byte, error) {
@@ -68423,8 +67805,7 @@ type TLPaymentsGetStarGiftUpgradePreview struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradePreview) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftUpgradePreview", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftUpgradePreview", m)
 }
 
 func (m *TLPaymentsGetStarGiftUpgradePreview) MarshalJSON() ([]byte, error) {
@@ -68499,8 +67880,7 @@ type TLPaymentsUpgradeStarGift struct {
 }
 
 func (m *TLPaymentsUpgradeStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_upgradeStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_upgradeStarGift", m)
 }
 
 func (m *TLPaymentsUpgradeStarGift) MarshalJSON() ([]byte, error) {
@@ -68610,8 +67990,7 @@ type TLPaymentsTransferStarGift struct {
 }
 
 func (m *TLPaymentsTransferStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_transferStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_transferStarGift", m)
 }
 
 func (m *TLPaymentsTransferStarGift) MarshalJSON() ([]byte, error) {
@@ -68716,8 +68095,7 @@ type TLPaymentsGetUniqueStarGift struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getUniqueStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getUniqueStarGift", m)
 }
 
 func (m *TLPaymentsGetUniqueStarGift) MarshalJSON() ([]byte, error) {
@@ -68806,8 +68184,7 @@ type TLPaymentsGetSavedStarGifts struct {
 }
 
 func (m *TLPaymentsGetSavedStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedStarGifts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getSavedStarGifts", m)
 }
 
 func (m *TLPaymentsGetSavedStarGifts) MarshalJSON() ([]byte, error) {
@@ -69000,8 +68377,7 @@ type TLPaymentsGetSavedStarGift struct {
 }
 
 func (m *TLPaymentsGetSavedStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getSavedStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getSavedStarGift", m)
 }
 
 func (m *TLPaymentsGetSavedStarGift) MarshalJSON() ([]byte, error) {
@@ -69101,8 +68477,7 @@ type TLPaymentsGetStarGiftWithdrawalUrl struct {
 }
 
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftWithdrawalUrl", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftWithdrawalUrl", m)
 }
 
 func (m *TLPaymentsGetStarGiftWithdrawalUrl) MarshalJSON() ([]byte, error) {
@@ -69208,8 +68583,7 @@ type TLPaymentsToggleChatStarGiftNotifications struct {
 }
 
 func (m *TLPaymentsToggleChatStarGiftNotifications) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_toggleChatStarGiftNotifications", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_toggleChatStarGiftNotifications", m)
 }
 
 func (m *TLPaymentsToggleChatStarGiftNotifications) MarshalJSON() ([]byte, error) {
@@ -69319,8 +68693,7 @@ type TLPaymentsToggleStarGiftsPinnedToTop struct {
 }
 
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_toggleStarGiftsPinnedToTop", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_toggleStarGiftsPinnedToTop", m)
 }
 
 func (m *TLPaymentsToggleStarGiftsPinnedToTop) MarshalJSON() ([]byte, error) {
@@ -69440,8 +68813,7 @@ type TLPaymentsCanPurchaseStore struct {
 }
 
 func (m *TLPaymentsCanPurchaseStore) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_canPurchaseStore", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_canPurchaseStore", m)
 }
 
 func (m *TLPaymentsCanPurchaseStore) MarshalJSON() ([]byte, error) {
@@ -69535,8 +68907,7 @@ type TLPaymentsGetResaleStarGifts struct {
 }
 
 func (m *TLPaymentsGetResaleStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getResaleStarGifts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getResaleStarGifts", m)
 }
 
 func (m *TLPaymentsGetResaleStarGifts) MarshalJSON() ([]byte, error) {
@@ -69726,8 +69097,7 @@ type TLPaymentsUpdateStarGiftPrice struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftPrice) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_updateStarGiftPrice", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_updateStarGiftPrice", m)
 }
 
 func (m *TLPaymentsUpdateStarGiftPrice) MarshalJSON() ([]byte, error) {
@@ -69834,8 +69204,7 @@ type TLPaymentsCreateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsCreateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_createStarGiftCollection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_createStarGiftCollection", m)
 }
 
 func (m *TLPaymentsCreateStarGiftCollection) MarshalJSON() ([]byte, error) {
@@ -69970,8 +69339,7 @@ type TLPaymentsUpdateStarGiftCollection struct {
 }
 
 func (m *TLPaymentsUpdateStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_updateStarGiftCollection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_updateStarGiftCollection", m)
 }
 
 func (m *TLPaymentsUpdateStarGiftCollection) MarshalJSON() ([]byte, error) {
@@ -70214,8 +69582,7 @@ type TLPaymentsReorderStarGiftCollections struct {
 }
 
 func (m *TLPaymentsReorderStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_reorderStarGiftCollections", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_reorderStarGiftCollections", m)
 }
 
 func (m *TLPaymentsReorderStarGiftCollections) MarshalJSON() ([]byte, error) {
@@ -70311,8 +69678,7 @@ type TLPaymentsDeleteStarGiftCollection struct {
 }
 
 func (m *TLPaymentsDeleteStarGiftCollection) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_deleteStarGiftCollection", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_deleteStarGiftCollection", m)
 }
 
 func (m *TLPaymentsDeleteStarGiftCollection) MarshalJSON() ([]byte, error) {
@@ -70406,8 +69772,7 @@ type TLPaymentsGetStarGiftCollections struct {
 }
 
 func (m *TLPaymentsGetStarGiftCollections) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftCollections", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftCollections", m)
 }
 
 func (m *TLPaymentsGetStarGiftCollections) MarshalJSON() ([]byte, error) {
@@ -70500,8 +69865,7 @@ type TLPaymentsGetUniqueStarGiftValueInfo struct {
 }
 
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getUniqueStarGiftValueInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getUniqueStarGiftValueInfo", m)
 }
 
 func (m *TLPaymentsGetUniqueStarGiftValueInfo) MarshalJSON() ([]byte, error) {
@@ -70578,8 +69942,7 @@ type TLPaymentsCheckCanSendGift struct {
 }
 
 func (m *TLPaymentsCheckCanSendGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_checkCanSendGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_checkCanSendGift", m)
 }
 
 func (m *TLPaymentsCheckCanSendGift) MarshalJSON() ([]byte, error) {
@@ -70654,8 +70017,7 @@ type TLPaymentsGetStarGiftAuctionState struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionState) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftAuctionState", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftAuctionState", m)
 }
 
 func (m *TLPaymentsGetStarGiftAuctionState) MarshalJSON() ([]byte, error) {
@@ -70748,8 +70110,7 @@ type TLPaymentsGetStarGiftAuctionAcquiredGifts struct {
 }
 
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftAuctionAcquiredGifts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftAuctionAcquiredGifts", m)
 }
 
 func (m *TLPaymentsGetStarGiftAuctionAcquiredGifts) MarshalJSON() ([]byte, error) {
@@ -70823,8 +70184,7 @@ type TLPaymentsGetStarGiftActiveAuctions struct {
 }
 
 func (m *TLPaymentsGetStarGiftActiveAuctions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftActiveAuctions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftActiveAuctions", m)
 }
 
 func (m *TLPaymentsGetStarGiftActiveAuctions) MarshalJSON() ([]byte, error) {
@@ -70899,8 +70259,7 @@ type TLPaymentsResolveStarGiftOffer struct {
 }
 
 func (m *TLPaymentsResolveStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_resolveStarGiftOffer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_resolveStarGiftOffer", m)
 }
 
 func (m *TLPaymentsResolveStarGiftOffer) MarshalJSON() ([]byte, error) {
@@ -71002,8 +70361,7 @@ type TLPaymentsSendStarGiftOffer struct {
 }
 
 func (m *TLPaymentsSendStarGiftOffer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_sendStarGiftOffer", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_sendStarGiftOffer", m)
 }
 
 func (m *TLPaymentsSendStarGiftOffer) MarshalJSON() ([]byte, error) {
@@ -71165,8 +70523,7 @@ type TLPaymentsGetStarGiftUpgradeAttributes struct {
 }
 
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getStarGiftUpgradeAttributes", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getStarGiftUpgradeAttributes", m)
 }
 
 func (m *TLPaymentsGetStarGiftUpgradeAttributes) MarshalJSON() ([]byte, error) {
@@ -71242,8 +70599,7 @@ type TLPaymentsGetCraftStarGifts struct {
 }
 
 func (m *TLPaymentsGetCraftStarGifts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_getCraftStarGifts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_getCraftStarGifts", m)
 }
 
 func (m *TLPaymentsGetCraftStarGifts) MarshalJSON() ([]byte, error) {
@@ -71332,8 +70688,7 @@ type TLPaymentsCraftStarGift struct {
 }
 
 func (m *TLPaymentsCraftStarGift) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "payments_craftStarGift", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("payments_craftStarGift", m)
 }
 
 func (m *TLPaymentsCraftStarGift) MarshalJSON() ([]byte, error) {
@@ -71440,8 +70795,7 @@ type TLStickersCreateStickerSet struct {
 }
 
 func (m *TLStickersCreateStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_createStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_createStickerSet", m)
 }
 
 func (m *TLStickersCreateStickerSet) MarshalJSON() ([]byte, error) {
@@ -71657,8 +71011,7 @@ type TLStickersRemoveStickerFromSet struct {
 }
 
 func (m *TLStickersRemoveStickerFromSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_removeStickerFromSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_removeStickerFromSet", m)
 }
 
 func (m *TLStickersRemoveStickerFromSet) MarshalJSON() ([]byte, error) {
@@ -71745,8 +71098,7 @@ type TLStickersChangeStickerPosition struct {
 }
 
 func (m *TLStickersChangeStickerPosition) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_changeStickerPosition", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_changeStickerPosition", m)
 }
 
 func (m *TLStickersChangeStickerPosition) MarshalJSON() ([]byte, error) {
@@ -71840,8 +71192,7 @@ type TLStickersAddStickerToSet struct {
 }
 
 func (m *TLStickersAddStickerToSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_addStickerToSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_addStickerToSet", m)
 }
 
 func (m *TLStickersAddStickerToSet) MarshalJSON() ([]byte, error) {
@@ -71948,8 +71299,7 @@ type TLStickersSetStickerSetThumb struct {
 }
 
 func (m *TLStickersSetStickerSetThumb) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_setStickerSetThumb", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_setStickerSetThumb", m)
 }
 
 func (m *TLStickersSetStickerSetThumb) MarshalJSON() ([]byte, error) {
@@ -72091,8 +71441,7 @@ type TLStickersCheckShortName struct {
 }
 
 func (m *TLStickersCheckShortName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_checkShortName", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_checkShortName", m)
 }
 
 func (m *TLStickersCheckShortName) MarshalJSON() ([]byte, error) {
@@ -72169,8 +71518,7 @@ type TLStickersSuggestShortName struct {
 }
 
 func (m *TLStickersSuggestShortName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_suggestShortName", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_suggestShortName", m)
 }
 
 func (m *TLStickersSuggestShortName) MarshalJSON() ([]byte, error) {
@@ -72250,8 +71598,7 @@ type TLStickersChangeSticker struct {
 }
 
 func (m *TLStickersChangeSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_changeSticker", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_changeSticker", m)
 }
 
 func (m *TLStickersChangeSticker) MarshalJSON() ([]byte, error) {
@@ -72413,8 +71760,7 @@ type TLStickersRenameStickerSet struct {
 }
 
 func (m *TLStickersRenameStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_renameStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_renameStickerSet", m)
 }
 
 func (m *TLStickersRenameStickerSet) MarshalJSON() ([]byte, error) {
@@ -72511,8 +71857,7 @@ type TLStickersDeleteStickerSet struct {
 }
 
 func (m *TLStickersDeleteStickerSet) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_deleteStickerSet", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_deleteStickerSet", m)
 }
 
 func (m *TLStickersDeleteStickerSet) MarshalJSON() ([]byte, error) {
@@ -72599,8 +71944,7 @@ type TLStickersReplaceSticker struct {
 }
 
 func (m *TLStickersReplaceSticker) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stickers_replaceSticker", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stickers_replaceSticker", m)
 }
 
 func (m *TLStickersReplaceSticker) MarshalJSON() ([]byte, error) {
@@ -72704,8 +72048,7 @@ type TLPhoneGetCallConfig struct {
 }
 
 func (m *TLPhoneGetCallConfig) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getCallConfig", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getCallConfig", m)
 }
 
 func (m *TLPhoneGetCallConfig) MarshalJSON() ([]byte, error) {
@@ -72776,8 +72119,7 @@ type TLPhoneRequestCall struct {
 }
 
 func (m *TLPhoneRequestCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_requestCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_requestCall", m)
 }
 
 func (m *TLPhoneRequestCall) MarshalJSON() ([]byte, error) {
@@ -72924,8 +72266,7 @@ type TLPhoneAcceptCall struct {
 }
 
 func (m *TLPhoneAcceptCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_acceptCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_acceptCall", m)
 }
 
 func (m *TLPhoneAcceptCall) MarshalJSON() ([]byte, error) {
@@ -73044,8 +72385,7 @@ type TLPhoneConfirmCall struct {
 }
 
 func (m *TLPhoneConfirmCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_confirmCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_confirmCall", m)
 }
 
 func (m *TLPhoneConfirmCall) MarshalJSON() ([]byte, error) {
@@ -73167,8 +72507,7 @@ type TLPhoneReceivedCall struct {
 }
 
 func (m *TLPhoneReceivedCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_receivedCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_receivedCall", m)
 }
 
 func (m *TLPhoneReceivedCall) MarshalJSON() ([]byte, error) {
@@ -73258,8 +72597,7 @@ type TLPhoneDiscardCall struct {
 }
 
 func (m *TLPhoneDiscardCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_discardCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_discardCall", m)
 }
 
 func (m *TLPhoneDiscardCall) MarshalJSON() ([]byte, error) {
@@ -73404,8 +72742,7 @@ type TLPhoneSetCallRating struct {
 }
 
 func (m *TLPhoneSetCallRating) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_setCallRating", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_setCallRating", m)
 }
 
 func (m *TLPhoneSetCallRating) MarshalJSON() ([]byte, error) {
@@ -73532,8 +72869,7 @@ type TLPhoneSaveCallDebug struct {
 }
 
 func (m *TLPhoneSaveCallDebug) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveCallDebug", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_saveCallDebug", m)
 }
 
 func (m *TLPhoneSaveCallDebug) MarshalJSON() ([]byte, error) {
@@ -73639,8 +72975,7 @@ type TLPhoneSendSignalingData struct {
 }
 
 func (m *TLPhoneSendSignalingData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendSignalingData", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_sendSignalingData", m)
 }
 
 func (m *TLPhoneSendSignalingData) MarshalJSON() ([]byte, error) {
@@ -73741,8 +73076,7 @@ type TLPhoneCreateGroupCall struct {
 }
 
 func (m *TLPhoneCreateGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_createGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_createGroupCall", m)
 }
 
 func (m *TLPhoneCreateGroupCall) MarshalJSON() ([]byte, error) {
@@ -73901,8 +73235,7 @@ type TLPhoneJoinGroupCall struct {
 }
 
 func (m *TLPhoneJoinGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_joinGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_joinGroupCall", m)
 }
 
 func (m *TLPhoneJoinGroupCall) MarshalJSON() ([]byte, error) {
@@ -74113,8 +73446,7 @@ type TLPhoneLeaveGroupCall struct {
 }
 
 func (m *TLPhoneLeaveGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_leaveGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_leaveGroupCall", m)
 }
 
 func (m *TLPhoneLeaveGroupCall) MarshalJSON() ([]byte, error) {
@@ -74208,8 +73540,7 @@ type TLPhoneInviteToGroupCall struct {
 }
 
 func (m *TLPhoneInviteToGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_inviteToGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_inviteToGroupCall", m)
 }
 
 func (m *TLPhoneInviteToGroupCall) MarshalJSON() ([]byte, error) {
@@ -74329,8 +73660,7 @@ type TLPhoneDiscardGroupCall struct {
 }
 
 func (m *TLPhoneDiscardGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_discardGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_discardGroupCall", m)
 }
 
 func (m *TLPhoneDiscardGroupCall) MarshalJSON() ([]byte, error) {
@@ -74420,8 +73750,7 @@ type TLPhoneToggleGroupCallSettings struct {
 }
 
 func (m *TLPhoneToggleGroupCallSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_toggleGroupCallSettings", m)
 }
 
 func (m *TLPhoneToggleGroupCallSettings) MarshalJSON() ([]byte, error) {
@@ -74593,8 +73922,7 @@ type TLPhoneGetGroupCall struct {
 }
 
 func (m *TLPhoneGetGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCall", m)
 }
 
 func (m *TLPhoneGetGroupCall) MarshalJSON() ([]byte, error) {
@@ -74691,8 +74019,7 @@ type TLPhoneGetGroupParticipants struct {
 }
 
 func (m *TLPhoneGetGroupParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupParticipants", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupParticipants", m)
 }
 
 func (m *TLPhoneGetGroupParticipants) MarshalJSON() ([]byte, error) {
@@ -74840,8 +74167,7 @@ type TLPhoneCheckGroupCall struct {
 }
 
 func (m *TLPhoneCheckGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_checkGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_checkGroupCall", m)
 }
 
 func (m *TLPhoneCheckGroupCall) MarshalJSON() ([]byte, error) {
@@ -74940,8 +74266,7 @@ type TLPhoneToggleGroupCallRecord struct {
 }
 
 func (m *TLPhoneToggleGroupCallRecord) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallRecord", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_toggleGroupCallRecord", m)
 }
 
 func (m *TLPhoneToggleGroupCallRecord) MarshalJSON() ([]byte, error) {
@@ -75104,8 +74429,7 @@ type TLPhoneEditGroupCallParticipant struct {
 }
 
 func (m *TLPhoneEditGroupCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_editGroupCallParticipant", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_editGroupCallParticipant", m)
 }
 
 func (m *TLPhoneEditGroupCallParticipant) MarshalJSON() ([]byte, error) {
@@ -75355,8 +74679,7 @@ type TLPhoneEditGroupCallTitle struct {
 }
 
 func (m *TLPhoneEditGroupCallTitle) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_editGroupCallTitle", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_editGroupCallTitle", m)
 }
 
 func (m *TLPhoneEditGroupCallTitle) MarshalJSON() ([]byte, error) {
@@ -75453,8 +74776,7 @@ type TLPhoneGetGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneGetGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallJoinAs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCallJoinAs", m)
 }
 
 func (m *TLPhoneGetGroupCallJoinAs) MarshalJSON() ([]byte, error) {
@@ -75541,8 +74863,7 @@ type TLPhoneExportGroupCallInvite struct {
 }
 
 func (m *TLPhoneExportGroupCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_exportGroupCallInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_exportGroupCallInvite", m)
 }
 
 func (m *TLPhoneExportGroupCallInvite) MarshalJSON() ([]byte, error) {
@@ -75652,8 +74973,7 @@ type TLPhoneToggleGroupCallStartSubscription struct {
 }
 
 func (m *TLPhoneToggleGroupCallStartSubscription) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_toggleGroupCallStartSubscription", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_toggleGroupCallStartSubscription", m)
 }
 
 func (m *TLPhoneToggleGroupCallStartSubscription) MarshalJSON() ([]byte, error) {
@@ -75758,8 +75078,7 @@ type TLPhoneStartScheduledGroupCall struct {
 }
 
 func (m *TLPhoneStartScheduledGroupCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_startScheduledGroupCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_startScheduledGroupCall", m)
 }
 
 func (m *TLPhoneStartScheduledGroupCall) MarshalJSON() ([]byte, error) {
@@ -75846,8 +75165,7 @@ type TLPhoneSaveDefaultGroupCallJoinAs struct {
 }
 
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveDefaultGroupCallJoinAs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_saveDefaultGroupCallJoinAs", m)
 }
 
 func (m *TLPhoneSaveDefaultGroupCallJoinAs) MarshalJSON() ([]byte, error) {
@@ -75953,8 +75271,7 @@ type TLPhoneJoinGroupCallPresentation struct {
 }
 
 func (m *TLPhoneJoinGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_joinGroupCallPresentation", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_joinGroupCallPresentation", m)
 }
 
 func (m *TLPhoneJoinGroupCallPresentation) MarshalJSON() ([]byte, error) {
@@ -76059,8 +75376,7 @@ type TLPhoneLeaveGroupCallPresentation struct {
 }
 
 func (m *TLPhoneLeaveGroupCallPresentation) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_leaveGroupCallPresentation", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_leaveGroupCallPresentation", m)
 }
 
 func (m *TLPhoneLeaveGroupCallPresentation) MarshalJSON() ([]byte, error) {
@@ -76146,8 +75462,7 @@ type TLPhoneGetGroupCallStreamChannels struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamChannels) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStreamChannels", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCallStreamChannels", m)
 }
 
 func (m *TLPhoneGetGroupCallStreamChannels) MarshalJSON() ([]byte, error) {
@@ -76235,8 +75550,7 @@ type TLPhoneGetGroupCallStreamRtmpUrl struct {
 }
 
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStreamRtmpUrl", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCallStreamRtmpUrl", m)
 }
 
 func (m *TLPhoneGetGroupCallStreamRtmpUrl) MarshalJSON() ([]byte, error) {
@@ -76365,8 +75679,7 @@ type TLPhoneSaveCallLog struct {
 }
 
 func (m *TLPhoneSaveCallLog) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveCallLog", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_saveCallLog", m)
 }
 
 func (m *TLPhoneSaveCallLog) MarshalJSON() ([]byte, error) {
@@ -76477,8 +75790,7 @@ type TLPhoneCreateConferenceCall struct {
 }
 
 func (m *TLPhoneCreateConferenceCall) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_createConferenceCall", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_createConferenceCall", m)
 }
 
 func (m *TLPhoneCreateConferenceCall) MarshalJSON() ([]byte, error) {
@@ -76649,8 +75961,7 @@ type TLPhoneDeleteConferenceCallParticipants struct {
 }
 
 func (m *TLPhoneDeleteConferenceCallParticipants) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteConferenceCallParticipants", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_deleteConferenceCallParticipants", m)
 }
 
 func (m *TLPhoneDeleteConferenceCallParticipants) MarshalJSON() ([]byte, error) {
@@ -76787,8 +76098,7 @@ type TLPhoneSendConferenceCallBroadcast struct {
 }
 
 func (m *TLPhoneSendConferenceCallBroadcast) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendConferenceCallBroadcast", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_sendConferenceCallBroadcast", m)
 }
 
 func (m *TLPhoneSendConferenceCallBroadcast) MarshalJSON() ([]byte, error) {
@@ -76887,8 +76197,7 @@ type TLPhoneInviteConferenceCallParticipant struct {
 }
 
 func (m *TLPhoneInviteConferenceCallParticipant) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_inviteConferenceCallParticipant", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_inviteConferenceCallParticipant", m)
 }
 
 func (m *TLPhoneInviteConferenceCallParticipant) MarshalJSON() ([]byte, error) {
@@ -77016,8 +76325,7 @@ type TLPhoneDeclineConferenceCallInvite struct {
 }
 
 func (m *TLPhoneDeclineConferenceCallInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_declineConferenceCallInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_declineConferenceCallInvite", m)
 }
 
 func (m *TLPhoneDeclineConferenceCallInvite) MarshalJSON() ([]byte, error) {
@@ -77094,8 +76402,7 @@ type TLPhoneGetGroupCallChainBlocks struct {
 }
 
 func (m *TLPhoneGetGroupCallChainBlocks) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallChainBlocks", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCallChainBlocks", m)
 }
 
 func (m *TLPhoneGetGroupCallChainBlocks) MarshalJSON() ([]byte, error) {
@@ -77204,8 +76511,7 @@ type TLPhoneSendGroupCallMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendGroupCallMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_sendGroupCallMessage", m)
 }
 
 func (m *TLPhoneSendGroupCallMessage) MarshalJSON() ([]byte, error) {
@@ -77375,8 +76681,7 @@ type TLPhoneSendGroupCallEncryptedMessage struct {
 }
 
 func (m *TLPhoneSendGroupCallEncryptedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_sendGroupCallEncryptedMessage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_sendGroupCallEncryptedMessage", m)
 }
 
 func (m *TLPhoneSendGroupCallEncryptedMessage) MarshalJSON() ([]byte, error) {
@@ -77475,8 +76780,7 @@ type TLPhoneDeleteGroupCallMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteGroupCallMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_deleteGroupCallMessages", m)
 }
 
 func (m *TLPhoneDeleteGroupCallMessages) MarshalJSON() ([]byte, error) {
@@ -77596,8 +76900,7 @@ type TLPhoneDeleteGroupCallParticipantMessages struct {
 }
 
 func (m *TLPhoneDeleteGroupCallParticipantMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_deleteGroupCallParticipantMessages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_deleteGroupCallParticipantMessages", m)
 }
 
 func (m *TLPhoneDeleteGroupCallParticipantMessages) MarshalJSON() ([]byte, error) {
@@ -77725,8 +77028,7 @@ type TLPhoneGetGroupCallStars struct {
 }
 
 func (m *TLPhoneGetGroupCallStars) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_getGroupCallStars", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_getGroupCallStars", m)
 }
 
 func (m *TLPhoneGetGroupCallStars) MarshalJSON() ([]byte, error) {
@@ -77813,8 +77115,7 @@ type TLPhoneSaveDefaultSendAs struct {
 }
 
 func (m *TLPhoneSaveDefaultSendAs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "phone_saveDefaultSendAs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("phone_saveDefaultSendAs", m)
 }
 
 func (m *TLPhoneSaveDefaultSendAs) MarshalJSON() ([]byte, error) {
@@ -77920,8 +77221,7 @@ type TLLangpackGetLangPack struct {
 }
 
 func (m *TLLangpackGetLangPack) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLangPack", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("langpack_getLangPack", m)
 }
 
 func (m *TLLangpackGetLangPack) MarshalJSON() ([]byte, error) {
@@ -78034,8 +77334,7 @@ type TLLangpackGetStrings struct {
 }
 
 func (m *TLLangpackGetStrings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getStrings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("langpack_getStrings", m)
 }
 
 func (m *TLLangpackGetStrings) MarshalJSON() ([]byte, error) {
@@ -78166,8 +77465,7 @@ type TLLangpackGetDifference struct {
 }
 
 func (m *TLLangpackGetDifference) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getDifference", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("langpack_getDifference", m)
 }
 
 func (m *TLLangpackGetDifference) MarshalJSON() ([]byte, error) {
@@ -78260,8 +77558,7 @@ type TLLangpackGetLanguages struct {
 }
 
 func (m *TLLangpackGetLanguages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLanguages", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("langpack_getLanguages", m)
 }
 
 func (m *TLLangpackGetLanguages) MarshalJSON() ([]byte, error) {
@@ -78353,8 +77650,7 @@ type TLLangpackGetLanguage struct {
 }
 
 func (m *TLLangpackGetLanguage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "langpack_getLanguage", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("langpack_getLanguage", m)
 }
 
 func (m *TLLangpackGetLanguage) MarshalJSON() ([]byte, error) {
@@ -78441,8 +77737,7 @@ type TLFoldersEditPeerFolders struct {
 }
 
 func (m *TLFoldersEditPeerFolders) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "folders_editPeerFolders", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("folders_editPeerFolders", m)
 }
 
 func (m *TLFoldersEditPeerFolders) MarshalJSON() ([]byte, error) {
@@ -78542,8 +77837,7 @@ type TLStatsGetBroadcastStats struct {
 }
 
 func (m *TLStatsGetBroadcastStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getBroadcastStats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getBroadcastStats", m)
 }
 
 func (m *TLStatsGetBroadcastStats) MarshalJSON() ([]byte, error) {
@@ -78653,8 +77947,7 @@ type TLStatsLoadAsyncGraph struct {
 }
 
 func (m *TLStatsLoadAsyncGraph) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_loadAsyncGraph", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_loadAsyncGraph", m)
 }
 
 func (m *TLStatsLoadAsyncGraph) MarshalJSON() ([]byte, error) {
@@ -78765,8 +78058,7 @@ type TLStatsGetMegagroupStats struct {
 }
 
 func (m *TLStatsGetMegagroupStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMegagroupStats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getMegagroupStats", m)
 }
 
 func (m *TLStatsGetMegagroupStats) MarshalJSON() ([]byte, error) {
@@ -78878,8 +78170,7 @@ type TLStatsGetMessagePublicForwards struct {
 }
 
 func (m *TLStatsGetMessagePublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMessagePublicForwards", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getMessagePublicForwards", m)
 }
 
 func (m *TLStatsGetMessagePublicForwards) MarshalJSON() ([]byte, error) {
@@ -78990,8 +78281,7 @@ type TLStatsGetMessageStats struct {
 }
 
 func (m *TLStatsGetMessageStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getMessageStats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getMessageStats", m)
 }
 
 func (m *TLStatsGetMessageStats) MarshalJSON() ([]byte, error) {
@@ -79109,8 +78399,7 @@ type TLStatsGetStoryStats struct {
 }
 
 func (m *TLStatsGetStoryStats) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getStoryStats", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getStoryStats", m)
 }
 
 func (m *TLStatsGetStoryStats) MarshalJSON() ([]byte, error) {
@@ -79229,8 +78518,7 @@ type TLStatsGetStoryPublicForwards struct {
 }
 
 func (m *TLStatsGetStoryPublicForwards) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stats_getStoryPublicForwards", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stats_getStoryPublicForwards", m)
 }
 
 func (m *TLStatsGetStoryPublicForwards) MarshalJSON() ([]byte, error) {
@@ -79341,8 +78629,7 @@ type TLChatlistsExportChatlistInvite struct {
 }
 
 func (m *TLChatlistsExportChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_exportChatlistInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_exportChatlistInvite", m)
 }
 
 func (m *TLChatlistsExportChatlistInvite) MarshalJSON() ([]byte, error) {
@@ -79473,8 +78760,7 @@ type TLChatlistsDeleteExportedInvite struct {
 }
 
 func (m *TLChatlistsDeleteExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_deleteExportedInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_deleteExportedInvite", m)
 }
 
 func (m *TLChatlistsDeleteExportedInvite) MarshalJSON() ([]byte, error) {
@@ -79574,8 +78860,7 @@ type TLChatlistsEditExportedInvite struct {
 }
 
 func (m *TLChatlistsEditExportedInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_editExportedInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_editExportedInvite", m)
 }
 
 func (m *TLChatlistsEditExportedInvite) MarshalJSON() ([]byte, error) {
@@ -79745,8 +79030,7 @@ type TLChatlistsGetExportedInvites struct {
 }
 
 func (m *TLChatlistsGetExportedInvites) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getExportedInvites", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_getExportedInvites", m)
 }
 
 func (m *TLChatlistsGetExportedInvites) MarshalJSON() ([]byte, error) {
@@ -79832,8 +79116,7 @@ type TLChatlistsCheckChatlistInvite struct {
 }
 
 func (m *TLChatlistsCheckChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_checkChatlistInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_checkChatlistInvite", m)
 }
 
 func (m *TLChatlistsCheckChatlistInvite) MarshalJSON() ([]byte, error) {
@@ -79911,8 +79194,7 @@ type TLChatlistsJoinChatlistInvite struct {
 }
 
 func (m *TLChatlistsJoinChatlistInvite) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_joinChatlistInvite", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_joinChatlistInvite", m)
 }
 
 func (m *TLChatlistsJoinChatlistInvite) MarshalJSON() ([]byte, error) {
@@ -80022,8 +79304,7 @@ type TLChatlistsGetChatlistUpdates struct {
 }
 
 func (m *TLChatlistsGetChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getChatlistUpdates", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_getChatlistUpdates", m)
 }
 
 func (m *TLChatlistsGetChatlistUpdates) MarshalJSON() ([]byte, error) {
@@ -80110,8 +79391,7 @@ type TLChatlistsJoinChatlistUpdates struct {
 }
 
 func (m *TLChatlistsJoinChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_joinChatlistUpdates", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_joinChatlistUpdates", m)
 }
 
 func (m *TLChatlistsJoinChatlistUpdates) MarshalJSON() ([]byte, error) {
@@ -80231,8 +79511,7 @@ type TLChatlistsHideChatlistUpdates struct {
 }
 
 func (m *TLChatlistsHideChatlistUpdates) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_hideChatlistUpdates", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_hideChatlistUpdates", m)
 }
 
 func (m *TLChatlistsHideChatlistUpdates) MarshalJSON() ([]byte, error) {
@@ -80318,8 +79597,7 @@ type TLChatlistsGetLeaveChatlistSuggestions struct {
 }
 
 func (m *TLChatlistsGetLeaveChatlistSuggestions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_getLeaveChatlistSuggestions", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_getLeaveChatlistSuggestions", m)
 }
 
 func (m *TLChatlistsGetLeaveChatlistSuggestions) MarshalJSON() ([]byte, error) {
@@ -80406,8 +79684,7 @@ type TLChatlistsLeaveChatlist struct {
 }
 
 func (m *TLChatlistsLeaveChatlist) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "chatlists_leaveChatlist", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("chatlists_leaveChatlist", m)
 }
 
 func (m *TLChatlistsLeaveChatlist) MarshalJSON() ([]byte, error) {
@@ -80527,8 +79804,7 @@ type TLStoriesCanSendStory struct {
 }
 
 func (m *TLStoriesCanSendStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_canSendStory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_canSendStory", m)
 }
 
 func (m *TLStoriesCanSendStory) MarshalJSON() ([]byte, error) {
@@ -80628,8 +79904,7 @@ type TLStoriesSendStory struct {
 }
 
 func (m *TLStoriesSendStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_sendStory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_sendStory", m)
 }
 
 func (m *TLStoriesSendStory) MarshalJSON() ([]byte, error) {
@@ -81302,8 +80577,7 @@ type TLStoriesEditStory struct {
 }
 
 func (m *TLStoriesEditStory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_editStory", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_editStory", m)
 }
 
 func (m *TLStoriesEditStory) MarshalJSON() ([]byte, error) {
@@ -81800,8 +81074,7 @@ type TLStoriesDeleteStories struct {
 }
 
 func (m *TLStoriesDeleteStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_deleteStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_deleteStories", m)
 }
 
 func (m *TLStoriesDeleteStories) MarshalJSON() ([]byte, error) {
@@ -81898,8 +81171,7 @@ type TLStoriesTogglePinned struct {
 }
 
 func (m *TLStoriesTogglePinned) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePinned", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_togglePinned", m)
 }
 
 func (m *TLStoriesTogglePinned) MarshalJSON() ([]byte, error) {
@@ -82016,8 +81288,7 @@ type TLStoriesGetAllStories struct {
 }
 
 func (m *TLStoriesGetAllStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAllStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getAllStories", m)
 }
 
 func (m *TLStoriesGetAllStories) MarshalJSON() ([]byte, error) {
@@ -82132,8 +81403,7 @@ type TLStoriesGetPinnedStories struct {
 }
 
 func (m *TLStoriesGetPinnedStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPinnedStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getPinnedStories", m)
 }
 
 func (m *TLStoriesGetPinnedStories) MarshalJSON() ([]byte, error) {
@@ -82234,8 +81504,7 @@ type TLStoriesGetStoriesArchive struct {
 }
 
 func (m *TLStoriesGetStoriesArchive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesArchive", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getStoriesArchive", m)
 }
 
 func (m *TLStoriesGetStoriesArchive) MarshalJSON() ([]byte, error) {
@@ -82335,8 +81604,7 @@ type TLStoriesGetStoriesByID struct {
 }
 
 func (m *TLStoriesGetStoriesByID) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesByID", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getStoriesByID", m)
 }
 
 func (m *TLStoriesGetStoriesByID) MarshalJSON() ([]byte, error) {
@@ -82431,8 +81699,7 @@ type TLStoriesToggleAllStoriesHidden struct {
 }
 
 func (m *TLStoriesToggleAllStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_toggleAllStoriesHidden", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_toggleAllStoriesHidden", m)
 }
 
 func (m *TLStoriesToggleAllStoriesHidden) MarshalJSON() ([]byte, error) {
@@ -82519,8 +81786,7 @@ type TLStoriesReadStories struct {
 }
 
 func (m *TLStoriesReadStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_readStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_readStories", m)
 }
 
 func (m *TLStoriesReadStories) MarshalJSON() ([]byte, error) {
@@ -82614,8 +81880,7 @@ type TLStoriesIncrementStoryViews struct {
 }
 
 func (m *TLStoriesIncrementStoryViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_incrementStoryViews", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_incrementStoryViews", m)
 }
 
 func (m *TLStoriesIncrementStoryViews) MarshalJSON() ([]byte, error) {
@@ -82717,8 +81982,7 @@ type TLStoriesGetStoryViewsList struct {
 }
 
 func (m *TLStoriesGetStoryViewsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoryViewsList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getStoryViewsList", m)
 }
 
 func (m *TLStoriesGetStoryViewsList) MarshalJSON() ([]byte, error) {
@@ -82883,8 +82147,7 @@ type TLStoriesGetStoriesViews struct {
 }
 
 func (m *TLStoriesGetStoriesViews) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoriesViews", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getStoriesViews", m)
 }
 
 func (m *TLStoriesGetStoriesViews) MarshalJSON() ([]byte, error) {
@@ -82980,8 +82243,7 @@ type TLStoriesExportStoryLink struct {
 }
 
 func (m *TLStoriesExportStoryLink) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_exportStoryLink", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_exportStoryLink", m)
 }
 
 func (m *TLStoriesExportStoryLink) MarshalJSON() ([]byte, error) {
@@ -83077,8 +82339,7 @@ type TLStoriesReport struct {
 }
 
 func (m *TLStoriesReport) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_report", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_report", m)
 }
 
 func (m *TLStoriesReport) MarshalJSON() ([]byte, error) {
@@ -83196,8 +82457,7 @@ type TLStoriesActivateStealthMode struct {
 }
 
 func (m *TLStoriesActivateStealthMode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_activateStealthMode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_activateStealthMode", m)
 }
 
 func (m *TLStoriesActivateStealthMode) MarshalJSON() ([]byte, error) {
@@ -83297,8 +82557,7 @@ type TLStoriesSendReaction struct {
 }
 
 func (m *TLStoriesSendReaction) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_sendReaction", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_sendReaction", m)
 }
 
 func (m *TLStoriesSendReaction) MarshalJSON() ([]byte, error) {
@@ -83433,8 +82692,7 @@ type TLStoriesGetPeerStories struct {
 }
 
 func (m *TLStoriesGetPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPeerStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getPeerStories", m)
 }
 
 func (m *TLStoriesGetPeerStories) MarshalJSON() ([]byte, error) {
@@ -83519,8 +82777,7 @@ type TLStoriesGetAllReadPeerStories struct {
 }
 
 func (m *TLStoriesGetAllReadPeerStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAllReadPeerStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getAllReadPeerStories", m)
 }
 
 func (m *TLStoriesGetAllReadPeerStories) MarshalJSON() ([]byte, error) {
@@ -83587,8 +82844,7 @@ type TLStoriesGetPeerMaxIDs struct {
 }
 
 func (m *TLStoriesGetPeerMaxIDs) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getPeerMaxIDs", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getPeerMaxIDs", m)
 }
 
 func (m *TLStoriesGetPeerMaxIDs) MarshalJSON() ([]byte, error) {
@@ -83686,8 +82942,7 @@ type TLStoriesGetChatsToSend struct {
 }
 
 func (m *TLStoriesGetChatsToSend) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getChatsToSend", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getChatsToSend", m)
 }
 
 func (m *TLStoriesGetChatsToSend) MarshalJSON() ([]byte, error) {
@@ -83755,8 +83010,7 @@ type TLStoriesTogglePeerStoriesHidden struct {
 }
 
 func (m *TLStoriesTogglePeerStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePeerStoriesHidden", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_togglePeerStoriesHidden", m)
 }
 
 func (m *TLStoriesTogglePeerStoriesHidden) MarshalJSON() ([]byte, error) {
@@ -83866,8 +83120,7 @@ type TLStoriesGetStoryReactionsList struct {
 }
 
 func (m *TLStoriesGetStoryReactionsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getStoryReactionsList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getStoryReactionsList", m)
 }
 
 func (m *TLStoriesGetStoryReactionsList) MarshalJSON() ([]byte, error) {
@@ -84032,8 +83285,7 @@ type TLStoriesTogglePinnedToTop struct {
 }
 
 func (m *TLStoriesTogglePinnedToTop) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_togglePinnedToTop", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_togglePinnedToTop", m)
 }
 
 func (m *TLStoriesTogglePinnedToTop) MarshalJSON() ([]byte, error) {
@@ -84132,8 +83384,7 @@ type TLStoriesSearchPosts struct {
 }
 
 func (m *TLStoriesSearchPosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_searchPosts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_searchPosts", m)
 }
 
 func (m *TLStoriesSearchPosts) MarshalJSON() ([]byte, error) {
@@ -84299,8 +83550,7 @@ type TLStoriesCreateAlbum struct {
 }
 
 func (m *TLStoriesCreateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_createAlbum", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_createAlbum", m)
 }
 
 func (m *TLStoriesCreateAlbum) MarshalJSON() ([]byte, error) {
@@ -84411,8 +83661,7 @@ type TLStoriesUpdateAlbum struct {
 }
 
 func (m *TLStoriesUpdateAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_updateAlbum", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_updateAlbum", m)
 }
 
 func (m *TLStoriesUpdateAlbum) MarshalJSON() ([]byte, error) {
@@ -84580,8 +83829,7 @@ type TLStoriesReorderAlbums struct {
 }
 
 func (m *TLStoriesReorderAlbums) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_reorderAlbums", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_reorderAlbums", m)
 }
 
 func (m *TLStoriesReorderAlbums) MarshalJSON() ([]byte, error) {
@@ -84677,8 +83925,7 @@ type TLStoriesDeleteAlbum struct {
 }
 
 func (m *TLStoriesDeleteAlbum) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_deleteAlbum", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_deleteAlbum", m)
 }
 
 func (m *TLStoriesDeleteAlbum) MarshalJSON() ([]byte, error) {
@@ -84772,8 +84019,7 @@ type TLStoriesGetAlbums struct {
 }
 
 func (m *TLStoriesGetAlbums) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAlbums", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getAlbums", m)
 }
 
 func (m *TLStoriesGetAlbums) MarshalJSON() ([]byte, error) {
@@ -84869,8 +84115,7 @@ type TLStoriesGetAlbumStories struct {
 }
 
 func (m *TLStoriesGetAlbumStories) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_getAlbumStories", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_getAlbumStories", m)
 }
 
 func (m *TLStoriesGetAlbumStories) MarshalJSON() ([]byte, error) {
@@ -84984,8 +84229,7 @@ type TLStoriesStartLive struct {
 }
 
 func (m *TLStoriesStartLive) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "stories_startLive", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("stories_startLive", m)
 }
 
 func (m *TLStoriesStartLive) MarshalJSON() ([]byte, error) {
@@ -85248,8 +84492,7 @@ type TLPremiumGetBoostsList struct {
 }
 
 func (m *TLPremiumGetBoostsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "premium_getBoostsList", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("premium_getBoostsList", m)
 }
 
 func (m *TLPremiumGetBoostsList) MarshalJSON() ([]byte, error) {
@@ -85374,8 +84617,7 @@ type TLPremiumGetMyBoosts struct {
 }
 
 func (m *TLPremiumGetMyBoosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "premium_getMyBoosts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("premium_getMyBoosts", m)
 }
 
 func (m *TLPremiumGetMyBoosts) MarshalJSON() ([]byte, error) {
@@ -85443,8 +84685,7 @@ type TLPremiumApplyBoost struct {
 }
 
 func (m *TLPremiumApplyBoost) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "premium_applyBoost", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("premium_applyBoost", m)
 }
 
 func (m *TLPremiumApplyBoost) MarshalJSON() ([]byte, error) {
@@ -85561,8 +84802,7 @@ type TLPremiumGetBoostsStatus struct {
 }
 
 func (m *TLPremiumGetBoostsStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "premium_getBoostsStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("premium_getBoostsStatus", m)
 }
 
 func (m *TLPremiumGetBoostsStatus) MarshalJSON() ([]byte, error) {
@@ -85649,8 +84889,7 @@ type TLPremiumGetUserBoosts struct {
 }
 
 func (m *TLPremiumGetUserBoosts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "premium_getUserBoosts", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("premium_getUserBoosts", m)
 }
 
 func (m *TLPremiumGetUserBoosts) MarshalJSON() ([]byte, error) {
@@ -85754,8 +84993,7 @@ type TLSmsjobsIsEligibleToJoin struct {
 }
 
 func (m *TLSmsjobsIsEligibleToJoin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_isEligibleToJoin", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_isEligibleToJoin", m)
 }
 
 func (m *TLSmsjobsIsEligibleToJoin) MarshalJSON() ([]byte, error) {
@@ -85821,8 +85059,7 @@ type TLSmsjobsJoin struct {
 }
 
 func (m *TLSmsjobsJoin) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_join", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_join", m)
 }
 
 func (m *TLSmsjobsJoin) MarshalJSON() ([]byte, error) {
@@ -85888,8 +85125,7 @@ type TLSmsjobsLeave struct {
 }
 
 func (m *TLSmsjobsLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_leave", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_leave", m)
 }
 
 func (m *TLSmsjobsLeave) MarshalJSON() ([]byte, error) {
@@ -85956,8 +85192,7 @@ type TLSmsjobsUpdateSettings struct {
 }
 
 func (m *TLSmsjobsUpdateSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_updateSettings", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_updateSettings", m)
 }
 
 func (m *TLSmsjobsUpdateSettings) MarshalJSON() ([]byte, error) {
@@ -86047,8 +85282,7 @@ type TLSmsjobsGetStatus struct {
 }
 
 func (m *TLSmsjobsGetStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_getStatus", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_getStatus", m)
 }
 
 func (m *TLSmsjobsGetStatus) MarshalJSON() ([]byte, error) {
@@ -86115,8 +85349,7 @@ type TLSmsjobsGetSmsJob struct {
 }
 
 func (m *TLSmsjobsGetSmsJob) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_getSmsJob", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_getSmsJob", m)
 }
 
 func (m *TLSmsjobsGetSmsJob) MarshalJSON() ([]byte, error) {
@@ -86194,8 +85427,7 @@ type TLSmsjobsFinishJob struct {
 }
 
 func (m *TLSmsjobsFinishJob) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "smsjobs_finishJob", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("smsjobs_finishJob", m)
 }
 
 func (m *TLSmsjobsFinishJob) MarshalJSON() ([]byte, error) {
@@ -86305,8 +85537,7 @@ type TLFragmentGetCollectibleInfo struct {
 }
 
 func (m *TLFragmentGetCollectibleInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "fragment_getCollectibleInfo", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("fragment_getCollectibleInfo", m)
 }
 
 func (m *TLFragmentGetCollectibleInfo) MarshalJSON() ([]byte, error) {
@@ -86394,8 +85625,7 @@ type TLChannelsEditCreator struct {
 }
 
 func (m *TLChannelsEditCreator) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_editCreator", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_editCreator", m)
 }
 
 func (m *TLChannelsEditCreator) MarshalJSON() ([]byte, error) {
@@ -86519,8 +85749,7 @@ type TLChannelsGetFutureCreatorAfterLeave struct {
 }
 
 func (m *TLChannelsGetFutureCreatorAfterLeave) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "channels_getFutureCreatorAfterLeave", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("channels_getFutureCreatorAfterLeave", m)
 }
 
 func (m *TLChannelsGetFutureCreatorAfterLeave) MarshalJSON() ([]byte, error) {
@@ -86605,8 +85834,7 @@ type TLTestParseInputAppEvent struct {
 }
 
 func (m *TLTestParseInputAppEvent) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "test_parseInputAppEvent", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("test_parseInputAppEvent", m)
 }
 
 func (m *TLTestParseInputAppEvent) MarshalJSON() ([]byte, error) {
@@ -86672,8 +85900,7 @@ type TLHelpTest struct {
 }
 
 func (m *TLHelpTest) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "help_test", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("help_test", m)
 }
 
 func (m *TLHelpTest) MarshalJSON() ([]byte, error) {
@@ -86745,8 +85972,7 @@ type TLPredefinedCreatePredefinedUser struct {
 }
 
 func (m *TLPredefinedCreatePredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_createPredefinedUser", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_createPredefinedUser", m)
 }
 
 func (m *TLPredefinedCreatePredefinedUser) MarshalJSON() ([]byte, error) {
@@ -86915,8 +86141,7 @@ type TLPredefinedUpdatePredefinedUsername struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedUsername", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_updatePredefinedUsername", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedUsername) MarshalJSON() ([]byte, error) {
@@ -87006,8 +86231,7 @@ type TLPredefinedUpdatePredefinedProfile struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedProfile) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedProfile", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_updatePredefinedProfile", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedProfile) MarshalJSON() ([]byte, error) {
@@ -87156,8 +86380,7 @@ type TLPredefinedUpdatePredefinedVerified struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedVerified) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedVerified", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_updatePredefinedVerified", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedVerified) MarshalJSON() ([]byte, error) {
@@ -87258,8 +86481,7 @@ type TLPredefinedUpdatePredefinedCode struct {
 }
 
 func (m *TLPredefinedUpdatePredefinedCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_updatePredefinedCode", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_updatePredefinedCode", m)
 }
 
 func (m *TLPredefinedUpdatePredefinedCode) MarshalJSON() ([]byte, error) {
@@ -87346,8 +86568,7 @@ type TLPredefinedGetPredefinedUser struct {
 }
 
 func (m *TLPredefinedGetPredefinedUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_getPredefinedUser", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_getPredefinedUser", m)
 }
 
 func (m *TLPredefinedGetPredefinedUser) MarshalJSON() ([]byte, error) {
@@ -87423,8 +86644,7 @@ type TLPredefinedGetPredefinedUsers struct {
 }
 
 func (m *TLPredefinedGetPredefinedUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "predefined_getPredefinedUsers", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("predefined_getPredefinedUsers", m)
 }
 
 func (m *TLPredefinedGetPredefinedUsers) MarshalJSON() ([]byte, error) {
@@ -87492,8 +86712,7 @@ type TLUsersGetMe struct {
 }
 
 func (m *TLUsersGetMe) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "users_getMe", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("users_getMe", m)
 }
 
 func (m *TLUsersGetMe) MarshalJSON() ([]byte, error) {
@@ -87577,8 +86796,7 @@ type TLAccountUpdateVerified struct {
 }
 
 func (m *TLAccountUpdateVerified) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "account_updateVerified", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("account_updateVerified", m)
 }
 
 func (m *TLAccountUpdateVerified) MarshalJSON() ([]byte, error) {
@@ -87678,8 +86896,7 @@ type TLAuthToggleBan struct {
 }
 
 func (m *TLAuthToggleBan) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "auth_toggleBan", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("auth_toggleBan", m)
 }
 
 func (m *TLAuthToggleBan) MarshalJSON() ([]byte, error) {
@@ -87813,8 +87030,7 @@ type TLBizInvokeBizDataRaw struct {
 }
 
 func (m *TLBizInvokeBizDataRaw) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: "biz_invokeBizDataRaw", TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName("biz_invokeBizDataRaw", m)
 }
 
 func (m *TLBizInvokeBizDataRaw) MarshalJSON() ([]byte, error) {

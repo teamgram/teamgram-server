@@ -72,8 +72,7 @@ func MakeTLBotInfoData(m *TLBotInfoData) *TLBotInfoData {
 }
 
 func (m *TLBotInfoData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("botInfoData", m)
 }
 
 func (m *TLBotInfoData) MarshalJSON() ([]byte, error) {
@@ -268,8 +267,7 @@ func MakeTLLastSeenData(m *TLLastSeenData) *TLLastSeenData {
 }
 
 func (m *TLLastSeenData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("lastSeenData", m)
 }
 
 func (m *TLLastSeenData) MarshalJSON() ([]byte, error) {
@@ -408,8 +406,7 @@ func MakeTLPeerPeerNotifySettings(m *TLPeerPeerNotifySettings) *TLPeerPeerNotify
 }
 
 func (m *TLPeerPeerNotifySettings) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("peerPeerNotifySettings", m)
 }
 
 func (m *TLPeerPeerNotifySettings) MarshalJSON() ([]byte, error) {
@@ -559,8 +556,7 @@ func MakeTLUserImportedContacts(m *TLUserImportedContacts) *TLUserImportedContac
 }
 
 func (m *TLUserImportedContacts) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("userImportedContacts", m)
 }
 
 func (m *TLUserImportedContacts) MarshalJSON() ([]byte, error) {
@@ -793,8 +789,7 @@ func MakeTLUsernameData(m *TLUsernameData) *TLUsernameData {
 }
 
 func (m *TLUsernameData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usernameData", m)
 }
 
 func (m *TLUsernameData) MarshalJSON() ([]byte, error) {
@@ -991,8 +986,7 @@ func MakeTLUsernameNotExisted(m *TLUsernameNotExisted) *TLUsernameNotExisted {
 }
 
 func (m *TLUsernameNotExisted) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usernameNotExisted", m)
 }
 
 func (m *TLUsernameNotExisted) MarshalJSON() ([]byte, error) {
@@ -1082,8 +1076,7 @@ func MakeTLUsernameExisted(m *TLUsernameExisted) *TLUsernameExisted {
 }
 
 func (m *TLUsernameExisted) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usernameExisted", m)
 }
 
 func (m *TLUsernameExisted) MarshalJSON() ([]byte, error) {
@@ -1173,8 +1166,7 @@ func MakeTLUsernameExistedNotMe(m *TLUsernameExistedNotMe) *TLUsernameExistedNot
 }
 
 func (m *TLUsernameExistedNotMe) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usernameExistedNotMe", m)
 }
 
 func (m *TLUsernameExistedNotMe) MarshalJSON() ([]byte, error) {
@@ -1264,8 +1256,7 @@ func MakeTLUsernameExistedIsMe(m *TLUsernameExistedIsMe) *TLUsernameExistedIsMe 
 }
 
 func (m *TLUsernameExistedIsMe) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usernameExistedIsMe", m)
 }
 
 func (m *TLUsernameExistedIsMe) MarshalJSON() ([]byte, error) {
@@ -1347,8 +1338,7 @@ type UsernameExist struct {
 }
 
 func (m *UsernameExist) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *UsernameExist) MarshalJSON() ([]byte, error) {
@@ -1527,8 +1517,7 @@ func MakeTLUsersDataFound(m *TLUsersDataFound) *TLUsersDataFound {
 }
 
 func (m *TLUsersDataFound) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usersDataFound", m)
 }
 
 func (m *TLUsersDataFound) MarshalJSON() ([]byte, error) {
@@ -1666,8 +1655,7 @@ func MakeTLUsersIdFound(m *TLUsersIdFound) *TLUsersIdFound {
 }
 
 func (m *TLUsersIdFound) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("usersIdFound", m)
 }
 
 func (m *TLUsersIdFound) MarshalJSON() ([]byte, error) {
@@ -1760,8 +1748,7 @@ type UsersFound struct {
 }
 
 func (m *UsersFound) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *UsersFound) MarshalJSON() ([]byte, error) {

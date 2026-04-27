@@ -69,8 +69,7 @@ func MakeTLRegion(m *TLRegion) *TLRegion {
 }
 
 func (m *TLRegion) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("region", m)
 }
 
 func (m *TLRegion) MarshalJSON() ([]byte, error) {

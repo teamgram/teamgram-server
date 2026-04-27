@@ -41,8 +41,7 @@ type TLCodeCreatePhoneCode struct {
 }
 
 func (m *TLCodeCreatePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_createPhoneCode, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_code_createPhoneCode, m)
 }
 
 // Encode <--
@@ -136,8 +135,7 @@ type TLCodeGetPhoneCode struct {
 }
 
 func (m *TLCodeGetPhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_getPhoneCode, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_code_getPhoneCode, m)
 }
 
 // Encode <--
@@ -194,8 +192,7 @@ type TLCodeDeletePhoneCode struct {
 }
 
 func (m *TLCodeDeletePhoneCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_deletePhoneCode, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_code_deletePhoneCode, m)
 }
 
 // Encode <--
@@ -253,8 +250,7 @@ type TLCodeUpdatePhoneCodeData struct {
 }
 
 func (m *TLCodeUpdatePhoneCodeData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_code_updatePhoneCodeData, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_code_updatePhoneCodeData, m)
 }
 
 // Encode <--

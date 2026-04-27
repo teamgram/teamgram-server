@@ -40,8 +40,7 @@ type TLMsgPushUserMessage struct {
 }
 
 func (m *TLMsgPushUserMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_pushUserMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_pushUserMessage, m)
 }
 
 // Encode <--
@@ -121,8 +120,7 @@ type TLMsgReadMessageContents struct {
 }
 
 func (m *TLMsgReadMessageContents) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_readMessageContents, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_readMessageContents, m)
 }
 
 // Encode <--
@@ -210,8 +208,7 @@ type TLMsgSendMessageV2 struct {
 }
 
 func (m *TLMsgSendMessageV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_sendMessageV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_sendMessageV2, m)
 }
 
 // Encode <--
@@ -301,8 +298,7 @@ type TLMsgEditMessageV2 struct {
 }
 
 func (m *TLMsgEditMessageV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_editMessageV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_editMessageV2, m)
 }
 
 // Encode <--
@@ -394,8 +390,7 @@ type TLMsgDeleteMessages struct {
 }
 
 func (m *TLMsgDeleteMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_deleteMessages, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_deleteMessages, m)
 }
 
 // Encode <--
@@ -490,8 +485,7 @@ type TLMsgDeleteHistory struct {
 }
 
 func (m *TLMsgDeleteHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_deleteHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_deleteHistory, m)
 }
 
 // Encode <--
@@ -586,8 +580,7 @@ type TLMsgDeletePhoneCallHistory struct {
 }
 
 func (m *TLMsgDeletePhoneCallHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_deletePhoneCallHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_deletePhoneCallHistory, m)
 }
 
 // Encode <--
@@ -660,8 +653,7 @@ type TLMsgDeleteChatHistory struct {
 }
 
 func (m *TLMsgDeleteChatHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_deleteChatHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_deleteChatHistory, m)
 }
 
 // Encode <--
@@ -715,8 +707,7 @@ type TLMsgReadHistory struct {
 }
 
 func (m *TLMsgReadHistory) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_readHistory, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_readHistory, m)
 }
 
 // Encode <--
@@ -785,8 +776,7 @@ type TLMsgReadHistoryV2 struct {
 }
 
 func (m *TLMsgReadHistoryV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_readHistoryV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_readHistoryV2, m)
 }
 
 // Encode <--
@@ -858,8 +848,7 @@ type TLMsgUpdatePinnedMessage struct {
 }
 
 func (m *TLMsgUpdatePinnedMessage) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_updatePinnedMessage, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_updatePinnedMessage, m)
 }
 
 // Encode <--
@@ -961,8 +950,7 @@ type TLMsgUnpinAllMessages struct {
 }
 
 func (m *TLMsgUnpinAllMessages) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_msg_unpinAllMessages, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_msg_unpinAllMessages, m)
 }
 
 // Encode <--

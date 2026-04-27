@@ -35,8 +35,7 @@ type TLUserGetLastSeens struct {
 }
 
 func (m *TLUserGetLastSeens) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getLastSeens, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getLastSeens, m)
 }
 
 // Encode <--
@@ -84,8 +83,7 @@ type TLUserUpdateLastSeen struct {
 }
 
 func (m *TLUserUpdateLastSeen) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateLastSeen, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateLastSeen, m)
 }
 
 // Encode <--
@@ -140,8 +138,7 @@ type TLUserGetLastSeen struct {
 }
 
 func (m *TLUserGetLastSeen) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getLastSeen, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getLastSeen, m)
 }
 
 // Encode <--
@@ -188,8 +185,7 @@ type TLUserGetImmutableUser struct {
 }
 
 func (m *TLUserGetImmutableUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getImmutableUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getImmutableUser, m)
 }
 
 // Encode <--
@@ -264,8 +260,7 @@ type TLUserGetMutableUsers struct {
 }
 
 func (m *TLUserGetMutableUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getMutableUsers, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getMutableUsers, m)
 }
 
 // Encode <--
@@ -318,8 +313,7 @@ type TLUserGetImmutableUserByPhone struct {
 }
 
 func (m *TLUserGetImmutableUserByPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getImmutableUserByPhone, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getImmutableUserByPhone, m)
 }
 
 // Encode <--
@@ -364,8 +358,7 @@ type TLUserGetImmutableUserByToken struct {
 }
 
 func (m *TLUserGetImmutableUserByToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getImmutableUserByToken, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getImmutableUserByToken, m)
 }
 
 // Encode <--
@@ -411,8 +404,7 @@ type TLUserSetAccountDaysTTL struct {
 }
 
 func (m *TLUserSetAccountDaysTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setAccountDaysTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setAccountDaysTTL, m)
 }
 
 // Encode <--
@@ -462,8 +454,7 @@ type TLUserGetAccountDaysTTL struct {
 }
 
 func (m *TLUserGetAccountDaysTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getAccountDaysTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getAccountDaysTTL, m)
 }
 
 // Encode <--
@@ -510,8 +501,7 @@ type TLUserGetNotifySettings struct {
 }
 
 func (m *TLUserGetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getNotifySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getNotifySettings, m)
 }
 
 // Encode <--
@@ -567,8 +557,7 @@ type TLUserGetNotifySettingsList struct {
 }
 
 func (m *TLUserGetNotifySettingsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getNotifySettingsList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getNotifySettingsList, m)
 }
 
 // Encode <--
@@ -640,8 +629,7 @@ type TLUserSetNotifySettings struct {
 }
 
 func (m *TLUserSetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setNotifySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setNotifySettings, m)
 }
 
 // Encode <--
@@ -707,8 +695,7 @@ type TLUserResetNotifySettings struct {
 }
 
 func (m *TLUserResetNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_resetNotifySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_resetNotifySettings, m)
 }
 
 // Encode <--
@@ -753,8 +740,7 @@ type TLUserGetAllNotifySettings struct {
 }
 
 func (m *TLUserGetAllNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getAllNotifySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getAllNotifySettings, m)
 }
 
 // Encode <--
@@ -799,8 +785,7 @@ type TLUserGetGlobalPrivacySettings struct {
 }
 
 func (m *TLUserGetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getGlobalPrivacySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getGlobalPrivacySettings, m)
 }
 
 // Encode <--
@@ -846,8 +831,7 @@ type TLUserSetGlobalPrivacySettings struct {
 }
 
 func (m *TLUserSetGlobalPrivacySettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setGlobalPrivacySettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setGlobalPrivacySettings, m)
 }
 
 // Encode <--
@@ -904,8 +888,7 @@ type TLUserGetPrivacy struct {
 }
 
 func (m *TLUserGetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getPrivacy, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getPrivacy, m)
 }
 
 // Encode <--
@@ -957,8 +940,7 @@ type TLUserSetPrivacy struct {
 }
 
 func (m *TLUserSetPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setPrivacy, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setPrivacy, m)
 }
 
 // Encode <--
@@ -1034,8 +1016,7 @@ type TLUserCheckPrivacy struct {
 }
 
 func (m *TLUserCheckPrivacy) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkPrivacy, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkPrivacy, m)
 }
 
 // Encode <--
@@ -1108,8 +1089,7 @@ type TLUserAddPeerSettings struct {
 }
 
 func (m *TLUserAddPeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_addPeerSettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_addPeerSettings, m)
 }
 
 // Encode <--
@@ -1177,8 +1157,7 @@ type TLUserGetPeerSettings struct {
 }
 
 func (m *TLUserGetPeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getPeerSettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getPeerSettings, m)
 }
 
 // Encode <--
@@ -1235,8 +1214,7 @@ type TLUserDeletePeerSettings struct {
 }
 
 func (m *TLUserDeletePeerSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deletePeerSettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deletePeerSettings, m)
 }
 
 // Encode <--
@@ -1292,8 +1270,7 @@ type TLUserChangePhone struct {
 }
 
 func (m *TLUserChangePhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_changePhone, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_changePhone, m)
 }
 
 // Encode <--
@@ -1347,8 +1324,7 @@ type TLUserCreateNewUser struct {
 }
 
 func (m *TLUserCreateNewUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_createNewUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_createNewUser, m)
 }
 
 // Encode <--
@@ -1415,8 +1391,7 @@ type TLUserDeleteUser struct {
 }
 
 func (m *TLUserDeleteUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteUser, m)
 }
 
 // Encode <--
@@ -1473,8 +1448,7 @@ type TLUserBlockPeer struct {
 }
 
 func (m *TLUserBlockPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_blockPeer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_blockPeer, m)
 }
 
 // Encode <--
@@ -1531,8 +1505,7 @@ type TLUserUnBlockPeer struct {
 }
 
 func (m *TLUserUnBlockPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_unBlockPeer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_unBlockPeer, m)
 }
 
 // Encode <--
@@ -1588,8 +1561,7 @@ type TLUserBlockedByUser struct {
 }
 
 func (m *TLUserBlockedByUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_blockedByUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_blockedByUser, m)
 }
 
 // Encode <--
@@ -1640,8 +1612,7 @@ type TLUserIsBlockedByUser struct {
 }
 
 func (m *TLUserIsBlockedByUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_isBlockedByUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_isBlockedByUser, m)
 }
 
 // Encode <--
@@ -1692,8 +1663,7 @@ type TLUserCheckBlockUserList struct {
 }
 
 func (m *TLUserCheckBlockUserList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkBlockUserList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkBlockUserList, m)
 }
 
 // Encode <--
@@ -1747,8 +1717,7 @@ type TLUserGetBlockedList struct {
 }
 
 func (m *TLUserGetBlockedList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getBlockedList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getBlockedList, m)
 }
 
 // Encode <--
@@ -1803,8 +1772,7 @@ type TLUserGetContactSignUpNotification struct {
 }
 
 func (m *TLUserGetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getContactSignUpNotification, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getContactSignUpNotification, m)
 }
 
 // Encode <--
@@ -1850,8 +1818,7 @@ type TLUserSetContactSignUpNotification struct {
 }
 
 func (m *TLUserSetContactSignUpNotification) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setContactSignUpNotification, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setContactSignUpNotification, m)
 }
 
 // Encode <--
@@ -1907,8 +1874,7 @@ type TLUserGetContentSettings struct {
 }
 
 func (m *TLUserGetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getContentSettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getContentSettings, m)
 }
 
 // Encode <--
@@ -1954,8 +1920,7 @@ type TLUserSetContentSettings struct {
 }
 
 func (m *TLUserSetContentSettings) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setContentSettings, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setContentSettings, m)
 }
 
 // Encode <--
@@ -2023,8 +1988,7 @@ type TLUserDeleteContact struct {
 }
 
 func (m *TLUserDeleteContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteContact, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteContact, m)
 }
 
 // Encode <--
@@ -2074,8 +2038,7 @@ type TLUserGetContactList struct {
 }
 
 func (m *TLUserGetContactList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getContactList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getContactList, m)
 }
 
 // Encode <--
@@ -2120,8 +2083,7 @@ type TLUserGetContactIdList struct {
 }
 
 func (m *TLUserGetContactIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getContactIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getContactIdList, m)
 }
 
 // Encode <--
@@ -2167,8 +2129,7 @@ type TLUserGetContact struct {
 }
 
 func (m *TLUserGetContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getContact, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getContact, m)
 }
 
 // Encode <--
@@ -2223,8 +2184,7 @@ type TLUserAddContact struct {
 }
 
 func (m *TLUserAddContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_addContact, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_addContact, m)
 }
 
 // Encode <--
@@ -2302,8 +2262,7 @@ type TLUserCheckContact struct {
 }
 
 func (m *TLUserCheckContact) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkContact, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkContact, m)
 }
 
 // Encode <--
@@ -2353,8 +2312,7 @@ type TLUserGetImportersByPhone struct {
 }
 
 func (m *TLUserGetImportersByPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getImportersByPhone, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getImportersByPhone, m)
 }
 
 // Encode <--
@@ -2399,8 +2357,7 @@ type TLUserDeleteImportersByPhone struct {
 }
 
 func (m *TLUserDeleteImportersByPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteImportersByPhone, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteImportersByPhone, m)
 }
 
 // Encode <--
@@ -2446,8 +2403,7 @@ type TLUserImportContacts struct {
 }
 
 func (m *TLUserImportContacts) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_importContacts, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_importContacts, m)
 }
 
 // Encode <--
@@ -2516,8 +2472,7 @@ type TLUserGetCountryCode struct {
 }
 
 func (m *TLUserGetCountryCode) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getCountryCode, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getCountryCode, m)
 }
 
 // Encode <--
@@ -2563,8 +2518,7 @@ type TLUserUpdateAbout struct {
 }
 
 func (m *TLUserUpdateAbout) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateAbout, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateAbout, m)
 }
 
 // Encode <--
@@ -2616,8 +2570,7 @@ type TLUserUpdateFirstAndLastName struct {
 }
 
 func (m *TLUserUpdateFirstAndLastName) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateFirstAndLastName, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateFirstAndLastName, m)
 }
 
 // Encode <--
@@ -2673,8 +2626,7 @@ type TLUserUpdateVerified struct {
 }
 
 func (m *TLUserUpdateVerified) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateVerified, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateVerified, m)
 }
 
 // Encode <--
@@ -2731,8 +2683,7 @@ type TLUserUpdateUsername struct {
 }
 
 func (m *TLUserUpdateUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateUsername, m)
 }
 
 // Encode <--
@@ -2783,8 +2734,7 @@ type TLUserUpdateProfilePhoto struct {
 }
 
 func (m *TLUserUpdateProfilePhoto) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateProfilePhoto, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateProfilePhoto, m)
 }
 
 // Encode <--
@@ -2835,8 +2785,7 @@ type TLUserDeleteProfilePhotos struct {
 }
 
 func (m *TLUserDeleteProfilePhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteProfilePhotos, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteProfilePhotos, m)
 }
 
 // Encode <--
@@ -2888,8 +2837,7 @@ type TLUserGetProfilePhotos struct {
 }
 
 func (m *TLUserGetProfilePhotos) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getProfilePhotos, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getProfilePhotos, m)
 }
 
 // Encode <--
@@ -2936,8 +2884,7 @@ type TLUserSetBotCommands struct {
 }
 
 func (m *TLUserSetBotCommands) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setBotCommands, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setBotCommands, m)
 }
 
 // Encode <--
@@ -3011,8 +2958,7 @@ type TLUserIsBot struct {
 }
 
 func (m *TLUserIsBot) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_isBot, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_isBot, m)
 }
 
 // Encode <--
@@ -3057,8 +3003,7 @@ type TLUserGetBotInfo struct {
 }
 
 func (m *TLUserGetBotInfo) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getBotInfo, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getBotInfo, m)
 }
 
 // Encode <--
@@ -3103,8 +3048,7 @@ type TLUserCheckBots struct {
 }
 
 func (m *TLUserCheckBots) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkBots, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkBots, m)
 }
 
 // Encode <--
@@ -3151,8 +3095,7 @@ type TLUserGetFullUser struct {
 }
 
 func (m *TLUserGetFullUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getFullUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getFullUser, m)
 }
 
 // Encode <--
@@ -3204,8 +3147,7 @@ type TLUserUpdateEmojiStatus struct {
 }
 
 func (m *TLUserUpdateEmojiStatus) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateEmojiStatus, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateEmojiStatus, m)
 }
 
 // Encode <--
@@ -3260,8 +3202,7 @@ type TLUserGetUserDataById struct {
 }
 
 func (m *TLUserGetUserDataById) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getUserDataById, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getUserDataById, m)
 }
 
 // Encode <--
@@ -3306,8 +3247,7 @@ type TLUserGetUserDataListByIdList struct {
 }
 
 func (m *TLUserGetUserDataListByIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getUserDataListByIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getUserDataListByIdList, m)
 }
 
 // Encode <--
@@ -3353,8 +3293,7 @@ type TLUserGetUserDataByToken struct {
 }
 
 func (m *TLUserGetUserDataByToken) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getUserDataByToken, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getUserDataByToken, m)
 }
 
 // Encode <--
@@ -3402,8 +3341,7 @@ type TLUserSearch struct {
 }
 
 func (m *TLUserSearch) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_search, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_search, m)
 }
 
 // Encode <--
@@ -3473,8 +3411,7 @@ type TLUserUpdateBotData struct {
 }
 
 func (m *TLUserUpdateBotData) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateBotData, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateBotData, m)
 }
 
 // Encode <--
@@ -3627,8 +3564,7 @@ type TLUserGetImmutableUserV2 struct {
 }
 
 func (m *TLUserGetImmutableUserV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getImmutableUserV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getImmutableUserV2, m)
 }
 
 // Encode <--
@@ -3716,8 +3652,7 @@ type TLUserGetMutableUsersV2 struct {
 }
 
 func (m *TLUserGetMutableUsersV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getMutableUsersV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getMutableUsersV2, m)
 }
 
 // Encode <--
@@ -3808,8 +3743,7 @@ type TLUserCreateNewTestUser struct {
 }
 
 func (m *TLUserCreateNewTestUser) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_createNewTestUser, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_createNewTestUser, m)
 }
 
 // Encode <--
@@ -3865,8 +3799,7 @@ type TLUserEditCloseFriends struct {
 }
 
 func (m *TLUserEditCloseFriends) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_editCloseFriends, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_editCloseFriends, m)
 }
 
 // Encode <--
@@ -3919,8 +3852,7 @@ type TLUserSetStoriesMaxId struct {
 }
 
 func (m *TLUserSetStoriesMaxId) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setStoriesMaxId, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setStoriesMaxId, m)
 }
 
 // Encode <--
@@ -3973,8 +3905,7 @@ type TLUserSetColor struct {
 }
 
 func (m *TLUserSetColor) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setColor, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setColor, m)
 }
 
 // Encode <--
@@ -4052,8 +3983,7 @@ type TLUserUpdateBirthday struct {
 }
 
 func (m *TLUserUpdateBirthday) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateBirthday, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateBirthday, m)
 }
 
 // Encode <--
@@ -4128,8 +4058,7 @@ type TLUserGetBirthdays struct {
 }
 
 func (m *TLUserGetBirthdays) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getBirthdays, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getBirthdays, m)
 }
 
 // Encode <--
@@ -4176,8 +4105,7 @@ type TLUserSetStoriesHidden struct {
 }
 
 func (m *TLUserSetStoriesHidden) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setStoriesHidden, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setStoriesHidden, m)
 }
 
 // Encode <--
@@ -4239,8 +4167,7 @@ type TLUserUpdatePersonalChannel struct {
 }
 
 func (m *TLUserUpdatePersonalChannel) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updatePersonalChannel, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updatePersonalChannel, m)
 }
 
 // Encode <--
@@ -4290,8 +4217,7 @@ type TLUserGetUserIdByPhone struct {
 }
 
 func (m *TLUserGetUserIdByPhone) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getUserIdByPhone, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getUserIdByPhone, m)
 }
 
 // Encode <--
@@ -4337,8 +4263,7 @@ type TLUserSetAuthorizationTTL struct {
 }
 
 func (m *TLUserSetAuthorizationTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setAuthorizationTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setAuthorizationTTL, m)
 }
 
 // Encode <--
@@ -4388,8 +4313,7 @@ type TLUserGetAuthorizationTTL struct {
 }
 
 func (m *TLUserGetAuthorizationTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getAuthorizationTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getAuthorizationTTL, m)
 }
 
 // Encode <--
@@ -4436,8 +4360,7 @@ type TLUserUpdatePremium struct {
 }
 
 func (m *TLUserUpdatePremium) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updatePremium, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updatePremium, m)
 }
 
 // Encode <--
@@ -4523,8 +4446,7 @@ type TLUserGetBotInfoV2 struct {
 }
 
 func (m *TLUserGetBotInfoV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getBotInfoV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getBotInfoV2, m)
 }
 
 // Encode <--
@@ -4572,8 +4494,7 @@ type TLUserSaveMusic struct {
 }
 
 func (m *TLUserSaveMusic) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_saveMusic, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_saveMusic, m)
 }
 
 // Encode <--
@@ -4659,8 +4580,7 @@ type TLUserGetSavedMusicIdList struct {
 }
 
 func (m *TLUserGetSavedMusicIdList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getSavedMusicIdList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getSavedMusicIdList, m)
 }
 
 // Encode <--
@@ -4706,8 +4626,7 @@ type TLUserSetMainProfileTab struct {
 }
 
 func (m *TLUserSetMainProfileTab) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setMainProfileTab, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setMainProfileTab, m)
 }
 
 // Encode <--
@@ -4764,8 +4683,7 @@ type TLUserSetDefaultHistoryTTL struct {
 }
 
 func (m *TLUserSetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_setDefaultHistoryTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_setDefaultHistoryTTL, m)
 }
 
 // Encode <--
@@ -4815,8 +4733,7 @@ type TLUserGetDefaultHistoryTTL struct {
 }
 
 func (m *TLUserGetDefaultHistoryTTL) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getDefaultHistoryTTL, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getDefaultHistoryTTL, m)
 }
 
 // Encode <--
@@ -4861,8 +4778,7 @@ type TLUserGetAccountUsername struct {
 }
 
 func (m *TLUserGetAccountUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getAccountUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getAccountUsername, m)
 }
 
 // Encode <--
@@ -4908,8 +4824,7 @@ type TLUserCheckAccountUsername struct {
 }
 
 func (m *TLUserCheckAccountUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkAccountUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkAccountUsername, m)
 }
 
 // Encode <--
@@ -4959,8 +4874,7 @@ type TLUserGetChannelUsername struct {
 }
 
 func (m *TLUserGetChannelUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getChannelUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getChannelUsername, m)
 }
 
 // Encode <--
@@ -5006,8 +4920,7 @@ type TLUserCheckChannelUsername struct {
 }
 
 func (m *TLUserCheckChannelUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkChannelUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkChannelUsername, m)
 }
 
 // Encode <--
@@ -5059,8 +4972,7 @@ type TLUserUpdateUsernameByPeer struct {
 }
 
 func (m *TLUserUpdateUsernameByPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateUsernameByPeer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateUsernameByPeer, m)
 }
 
 // Encode <--
@@ -5115,8 +5027,7 @@ type TLUserCheckUsername struct {
 }
 
 func (m *TLUserCheckUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_checkUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_checkUsername, m)
 }
 
 // Encode <--
@@ -5163,8 +5074,7 @@ type TLUserUpdateUsernameByUsername struct {
 }
 
 func (m *TLUserUpdateUsernameByUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_updateUsernameByUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_updateUsernameByUsername, m)
 }
 
 // Encode <--
@@ -5219,8 +5129,7 @@ type TLUserDeleteUsername struct {
 }
 
 func (m *TLUserDeleteUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteUsername, m)
 }
 
 // Encode <--
@@ -5265,8 +5174,7 @@ type TLUserResolveUsername struct {
 }
 
 func (m *TLUserResolveUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_resolveUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_resolveUsername, m)
 }
 
 // Encode <--
@@ -5311,8 +5219,7 @@ type TLUserGetListByUsernameList struct {
 }
 
 func (m *TLUserGetListByUsernameList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_getListByUsernameList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_getListByUsernameList, m)
 }
 
 // Encode <--
@@ -5359,8 +5266,7 @@ type TLUserDeleteUsernameByPeer struct {
 }
 
 func (m *TLUserDeleteUsernameByPeer) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deleteUsernameByPeer, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deleteUsernameByPeer, m)
 }
 
 // Encode <--
@@ -5412,8 +5318,7 @@ type TLUserSearchUsername struct {
 }
 
 func (m *TLUserSearchUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_searchUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_searchUsername, m)
 }
 
 // Encode <--
@@ -5475,8 +5380,7 @@ type TLUserToggleUsername struct {
 }
 
 func (m *TLUserToggleUsername) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_toggleUsername, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_toggleUsername, m)
 }
 
 // Encode <--
@@ -5544,8 +5448,7 @@ type TLUserReorderUsernames struct {
 }
 
 func (m *TLUserReorderUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_reorderUsernames, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_reorderUsernames, m)
 }
 
 // Encode <--
@@ -5602,8 +5505,7 @@ type TLUserDeactivateAllChannelUsernames struct {
 }
 
 func (m *TLUserDeactivateAllChannelUsernames) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_user_deactivateAllChannelUsernames, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_user_deactivateAllChannelUsernames, m)
 }
 
 // Encode <--

@@ -85,8 +85,7 @@ func MakeTLChatInviteAlready(m *TLChatInviteAlready) *TLChatInviteAlready {
 }
 
 func (m *TLChatInviteAlready) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("chatInviteAlready", m)
 }
 
 func (m *TLChatInviteAlready) MarshalJSON() ([]byte, error) {
@@ -198,8 +197,7 @@ func MakeTLChatInvite(m *TLChatInvite) *TLChatInvite {
 }
 
 func (m *TLChatInvite) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("chatInvite", m)
 }
 
 func (m *TLChatInvite) MarshalJSON() ([]byte, error) {
@@ -382,8 +380,7 @@ func MakeTLChatInvitePeek(m *TLChatInvitePeek) *TLChatInvitePeek {
 }
 
 func (m *TLChatInvitePeek) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("chatInvitePeek", m)
 }
 
 func (m *TLChatInvitePeek) MarshalJSON() ([]byte, error) {
@@ -488,8 +485,7 @@ type ChatInviteExt struct {
 }
 
 func (m *ChatInviteExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName(m.ClazzName(), m)
 }
 
 func (m *ChatInviteExt) MarshalJSON() ([]byte, error) {
@@ -640,8 +636,7 @@ func MakeTLChatInviteImported(m *TLChatInviteImported) *TLChatInviteImported {
 }
 
 func (m *TLChatInviteImported) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("chatInviteImported", m)
 }
 
 func (m *TLChatInviteImported) MarshalJSON() ([]byte, error) {
@@ -811,8 +806,7 @@ func MakeTLRecentChatInviteRequesters(m *TLRecentChatInviteRequesters) *TLRecent
 }
 
 func (m *TLRecentChatInviteRequesters) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("recentChatInviteRequesters", m)
 }
 
 func (m *TLRecentChatInviteRequesters) MarshalJSON() ([]byte, error) {
@@ -949,8 +943,7 @@ func MakeTLUserChatIdList(m *TLUserChatIdList) *TLUserChatIdList {
 }
 
 func (m *TLUserChatIdList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("userChatIdList", m)
 }
 
 func (m *TLUserChatIdList) MarshalJSON() ([]byte, error) {

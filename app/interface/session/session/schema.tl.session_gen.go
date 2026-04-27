@@ -68,8 +68,7 @@ func MakeTLHttpSessionData(m *TLHttpSessionData) *TLHttpSessionData {
 }
 
 func (m *TLHttpSessionData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("httpSessionData", m)
 }
 
 func (m *TLHttpSessionData) MarshalJSON() ([]byte, error) {
@@ -206,8 +205,7 @@ func MakeTLSessionClientData(m *TLSessionClientData) *TLSessionClientData {
 }
 
 func (m *TLSessionClientData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("sessionClientData", m)
 }
 
 func (m *TLSessionClientData) MarshalJSON() ([]byte, error) {
@@ -403,8 +401,7 @@ func MakeTLSessionClientEvent(m *TLSessionClientEvent) *TLSessionClientEvent {
 }
 
 func (m *TLSessionClientEvent) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("sessionClientEvent", m)
 }
 
 func (m *TLSessionClientEvent) MarshalJSON() ([]byte, error) {

@@ -70,8 +70,7 @@ func MakeTLInboxMessageData(m *TLInboxMessageData) *TLInboxMessageData {
 }
 
 func (m *TLInboxMessageData) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inboxMessageData", m)
 }
 
 func (m *TLInboxMessageData) MarshalJSON() ([]byte, error) {
@@ -218,8 +217,7 @@ func MakeTLInboxMessageId(m *TLInboxMessageId) *TLInboxMessageId {
 }
 
 func (m *TLInboxMessageId) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("inboxMessageId", m)
 }
 
 func (m *TLInboxMessageId) MarshalJSON() ([]byte, error) {

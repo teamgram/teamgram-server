@@ -36,8 +36,7 @@ type TLUpdatesGetStateV2 struct {
 }
 
 func (m *TLUpdatesGetStateV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getStateV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_updates_getStateV2, m)
 }
 
 // Encode <--
@@ -91,8 +90,7 @@ type TLUpdatesGetDifferenceV2 struct {
 }
 
 func (m *TLUpdatesGetDifferenceV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getDifferenceV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_updates_getDifferenceV2, m)
 }
 
 // Encode <--
@@ -186,8 +184,7 @@ type TLUpdatesGetChannelDifferenceV2 struct {
 }
 
 func (m *TLUpdatesGetChannelDifferenceV2) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_updates_getChannelDifferenceV2, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_updates_getChannelDifferenceV2, m)
 }
 
 // Encode <--
