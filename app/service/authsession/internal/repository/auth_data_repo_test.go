@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"encoding/json"
+	"strings"
 	"testing"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -16,8 +17,8 @@ func TestAuthDataStateMapping(t *testing.T) {
 	}{
 		{name: "nil aggregate", data: nil, want: tg.AuthStateNew},
 		{name: "nil client", data: &cacheAuthData{}, want: tg.AuthStateWaitInit},
-		{name: "client without user", data: &cacheAuthData{Client: &authsession.ClientSession{}}, want: tg.AuthStateUnauthorized},
-		{name: "client and user", data: &cacheAuthData{Client: &authsession.ClientSession{}, BindUser: &bindUser{UserId: 42}}, want: tg.AuthStateNormal},
+		{name: "client without user", data: &cacheAuthData{Client: &clientSessionCacheData{}}, want: tg.AuthStateUnauthorized},
+		{name: "client and user", data: &cacheAuthData{Client: &clientSessionCacheData{}, BindUser: &bindUser{UserId: 42}}, want: tg.AuthStateNormal},
 	}
 
 	for _, tt := range tests {
@@ -27,6 +28,28 @@ func TestAuthDataStateMapping(t *testing.T) {
 				t.Fatalf("KeyState = %d, want %d", got.KeyState, tt.want)
 			}
 		})
+	}
+}
+
+func TestAuthDataCachePayloadDoesNotUseTLDebugJSON(t *testing.T) {
+	data := &cacheAuthData{
+		Client: &clientSessionCacheData{
+			AuthKeyId: 1001,
+			Ip:        "127.0.0.1",
+			Layer:     158,
+			Params:    "{}",
+		},
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		t.Fatalf("Marshal cacheAuthData error: %v", err)
+	}
+	payload := string(b)
+	if strings.Contains(payload, `"_name"`) || strings.Contains(payload, `"_id"`) {
+		t.Fatalf("cache payload contains TL debug JSON metadata: %s", payload)
+	}
+	if !strings.Contains(payload, `"auth_key_id":1001`) || !strings.Contains(payload, `"params":"{}"`) {
+		t.Fatalf("cache payload missing service-owned client fields: %s", payload)
 	}
 }
 

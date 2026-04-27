@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/geoip"
-	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 )
 
@@ -29,7 +28,7 @@ func (f fakeGeoipClient) Close() error {
 
 func TestAuthorizationCurrentHashIsZero(t *testing.T) {
 	auth := authDataToAuthorization(&cacheAuthData{
-		Client:   &authsession.ClientSession{Ip: "127.0.0.1"},
+		Client:   &clientSessionCacheData{Ip: "127.0.0.1"},
 		BindUser: &bindUser{Hash: 12345},
 	}, true, "US", "California")
 	if auth.Hash != 0 {
@@ -42,7 +41,7 @@ func TestAuthorizationCurrentHashIsZero(t *testing.T) {
 
 func TestAuthorizationNonCurrentPreservesHash(t *testing.T) {
 	auth := authDataToAuthorization(&cacheAuthData{
-		Client:   &authsession.ClientSession{Ip: "127.0.0.1"},
+		Client:   &clientSessionCacheData{Ip: "127.0.0.1"},
 		BindUser: &bindUser{Hash: 12345},
 	}, false, "US", "California")
 	if auth.Hash != 12345 {

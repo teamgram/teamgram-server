@@ -22,9 +22,24 @@ type bindUser struct {
 	AndroidPushSessionId int64 `json:"android_push_session_id"`
 }
 
+type clientSessionCacheData struct {
+	AuthKeyId      int64  `json:"auth_key_id"`
+	Ip             string `json:"ip"`
+	Layer          int32  `json:"layer"`
+	ApiId          int32  `json:"api_id"`
+	DeviceModel    string `json:"device_model"`
+	SystemVersion  string `json:"system_version"`
+	AppVersion     string `json:"app_version"`
+	SystemLangCode string `json:"system_lang_code"`
+	LangPack       string `json:"lang_pack"`
+	LangCode       string `json:"lang_code"`
+	Proxy          string `json:"proxy"`
+	Params         string `json:"params"`
+}
+
 type cacheAuthData struct {
-	Client   *authsession.ClientSession `json:"client"`
-	BindUser *bindUser                  `json:"bind_user,omitempty"`
+	Client   *clientSessionCacheData `json:"client"`
+	BindUser *bindUser               `json:"bind_user,omitempty"`
 }
 
 func authDataCacheKey(authKeyId int64) string {
@@ -44,11 +59,11 @@ func (c *cacheAuthData) toAuthState() int32 {
 	}
 }
 
-func toClientSession(authKeyId int64, row *model.Auths) *authsession.ClientSession {
+func toClientSessionCacheData(authKeyId int64, row *model.Auths) *clientSessionCacheData {
 	if row == nil {
 		return nil
 	}
-	return authsession.MakeTLClientSession(&authsession.TLClientSession{
+	return &clientSessionCacheData{
 		AuthKeyId:      authKeyId,
 		Ip:             row.ClientIp,
 		Layer:          row.Layer,
@@ -61,6 +76,30 @@ func toClientSession(authKeyId int64, row *model.Auths) *authsession.ClientSessi
 		LangCode:       row.LangCode,
 		Proxy:          row.Proxy,
 		Params:         row.Params,
+	}
+}
+
+func toClientSession(authKeyId int64, row *model.Auths) *authsession.ClientSession {
+	return toClientSessionCacheData(authKeyId, row).toClientSession()
+}
+
+func (c *clientSessionCacheData) toClientSession() *authsession.ClientSession {
+	if c == nil {
+		return nil
+	}
+	return authsession.MakeTLClientSession(&authsession.TLClientSession{
+		AuthKeyId:      c.AuthKeyId,
+		Ip:             c.Ip,
+		Layer:          c.Layer,
+		ApiId:          c.ApiId,
+		DeviceModel:    c.DeviceModel,
+		SystemVersion:  c.SystemVersion,
+		AppVersion:     c.AppVersion,
+		SystemLangCode: c.SystemLangCode,
+		LangPack:       c.LangPack,
+		LangCode:       c.LangCode,
+		Proxy:          c.Proxy,
+		Params:         c.Params,
 	}).ToClientSession()
 }
 
@@ -74,7 +113,7 @@ func toAuthKeyStateData(authKeyId int64, data *cacheAuthData) *authsession.AuthK
 	}
 
 	stateData.KeyState = data.toAuthState()
-	stateData.Client = data.Client
+	stateData.Client = data.Client.toClientSession()
 	if data.BindUser != nil {
 		stateData.UserId = data.BindUser.UserId
 		stateData.AccessHash = data.BindUser.Hash
@@ -88,7 +127,7 @@ func toAuthKeyStateData(authKeyId int64, data *cacheAuthData) *authsession.AuthK
 func authDataFromRows(authKeyId int64, authRow *model.Auths, userRow *model.AuthUsers) *cacheAuthData {
 	cacheData := &cacheAuthData{}
 	if authRow != nil {
-		cacheData.Client = toClientSession(authKeyId, authRow)
+		cacheData.Client = toClientSessionCacheData(authKeyId, authRow)
 	}
 	if userRow != nil {
 		cacheData.BindUser = &bindUser{
