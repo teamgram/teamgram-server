@@ -24,8 +24,16 @@ import (
 // UserUpdateBotData
 // user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string bot_has_main_app:flags.13?Bool = Bool;
 func (c *UserCore) UserUpdateBotData(in *user.TLUserUpdateBotData) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateBotData - error: method UserUpdateBotData not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateBotData(
+		c.ctx,
+		in.BotId,
+		in.BotChatHistory,
+		in.BotNochats,
+		in.BotInlineGeo,
+		in.BotAttachMenu,
+		in.BotHasMainApp,
+		in.BotInlinePlaceholder); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -70,6 +70,39 @@ func (r *Repository) SetBotCommands(ctx context.Context, botID int64, commands [
 	return nil
 }
 
+func (r *Repository) UpdateBotData(ctx context.Context, botID int64, botChatHistory, botNoChats, botInlineGeo, botAttachMenu, botHasMainApp tg.BoolClazz, botInlinePlaceholder *string) error {
+	botDO, err := r.model.BotsModel.FindOneByBotId(ctx, botID)
+	if err != nil {
+		if isNotFound(err) {
+			return userpb.ErrBotNotFound
+		}
+		return fmt.Errorf("%w: update bot data %d: %w", userpb.ErrUserStorage, botID, err)
+	}
+	if botChatHistory != nil {
+		botDO.BotChatHistory = tg.FromBoolClazz(botChatHistory)
+	}
+	if botNoChats != nil {
+		botDO.BotNochats = tg.FromBoolClazz(botNoChats)
+	}
+	if botInlineGeo != nil {
+		botDO.BotInlineGeo = tg.FromBoolClazz(botInlineGeo)
+	}
+	if botAttachMenu != nil {
+		botDO.BotAttachMenu = tg.FromBoolClazz(botAttachMenu)
+	}
+	if botHasMainApp != nil {
+		botDO.BotHasMainApp = tg.FromBoolClazz(botHasMainApp)
+	}
+	if botInlinePlaceholder != nil {
+		botDO.BotInlinePlaceholder = *botInlinePlaceholder
+	}
+	botDO.BotInfoVersion++
+	if err := r.model.BotsModel.Update2(ctx, botDO); err != nil {
+		return fmt.Errorf("%w: update bot data row %d: %w", userpb.ErrUserStorage, botID, err)
+	}
+	return nil
+}
+
 func (r *Repository) makeBotInfo(ctx context.Context, botDO *model.Bots) (*tg.BotInfo, error) {
 	description := tg.MakeFlagsString(botDO.Description)
 	botInfo := tg.MakeTLBotInfo(&tg.TLBotInfo{
