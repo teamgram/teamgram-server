@@ -18,15 +18,26 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // IdgenGetCurrentSeqIdList
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.getCurrentSeqIdList - error: method IdgenGetCurrentSeqIdList not impl")
+	idList := make([]idgen.IdValClazz, len(in.Id))
+	for i, input := range in.Id {
+		id, ok := input.(*idgen.TLInputSeqId)
+		if !ok {
+			return nil, fmt.Errorf("%w: invalid current seq input id at index %d", idgen.ErrInvalidArgument, i)
+		}
+		seq, err := c.getCurrentSeqID(id.Key)
+		if err != nil {
+			return nil, err
+		}
+		idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{Id: seq})
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return &idgen.VectorIdVal{Datas: idList}, nil
 }

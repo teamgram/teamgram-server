@@ -25,8 +25,10 @@ import (
 // IdgenGetNextNSeqId
 // idgen.getNextNSeqId key:string n:int = Int64;
 func (c *IdgenCore) IdgenGetNextNSeqId(in *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.getNextNSeqId - error: method IdgenGetNextNSeqId not impl")
+	seq, err := c.getNextSeqID(in.Key, in.N)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeInt64(seq), nil
 }

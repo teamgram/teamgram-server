@@ -25,8 +25,10 @@ import (
 // IdgenGetCurrentSeqId
 // idgen.getCurrentSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetCurrentSeqId(in *idgen.TLIdgenGetCurrentSeqId) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.getCurrentSeqId - error: method IdgenGetCurrentSeqId not impl")
+	seq, err := c.getCurrentSeqID(in.Key)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeInt64(seq), nil
 }

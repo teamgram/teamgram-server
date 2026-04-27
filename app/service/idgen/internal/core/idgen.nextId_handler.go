@@ -25,8 +25,7 @@ import (
 // IdgenNextId
 // idgen.nextId = Int64;
 func (c *IdgenCore) IdgenNextId(in *idgen.TLIdgenNextId) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.nextId - error: method IdgenNextId not impl")
+	_ = in
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeInt64(c.nextID()), nil
 }

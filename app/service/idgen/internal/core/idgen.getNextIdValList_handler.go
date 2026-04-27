@@ -18,15 +18,45 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // IdgenGetNextIdValList
 // idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.getNextIdValList - error: method IdgenGetNextIdValList not impl")
+	idList := make([]idgen.IdValClazz, len(in.Id))
+	for i, input := range in.Id {
+		switch id := input.(type) {
+		case *idgen.TLInputId:
+			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{Id: c.nextID()})
 
-	return nil, tg.ErrMethodNotImpl
+		case *idgen.TLInputIds:
+			ids, err := c.nextIDs(id.Num)
+			if err != nil {
+				return nil, err
+			}
+			idList[i] = idgen.MakeTLIdVals(&idgen.TLIdVals{Id: ids})
+
+		case *idgen.TLInputSeqId:
+			seq, err := c.getNextSeqID(id.Key, 1)
+			if err != nil {
+				return nil, err
+			}
+			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{Id: seq})
+
+		case *idgen.TLInputNSeqId:
+			seq, err := c.getNextSeqID(id.Key, id.N)
+			if err != nil {
+				return nil, err
+			}
+			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{Id: seq})
+
+		default:
+			return nil, fmt.Errorf("%w: invalid input id at index %d", idgen.ErrInvalidArgument, i)
+		}
+	}
+
+	return &idgen.VectorIdVal{Datas: idList}, nil
 }

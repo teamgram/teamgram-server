@@ -25,8 +25,9 @@ import (
 // IdgenSetCurrentSeqId
 // idgen.setCurrentSeqId key:string id:long = Bool;
 func (c *IdgenCore) IdgenSetCurrentSeqId(in *idgen.TLIdgenSetCurrentSeqId) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.setCurrentSeqId - error: method IdgenSetCurrentSeqId not impl")
+	if err := c.setCurrentSeqID(in.Key, in.Id); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

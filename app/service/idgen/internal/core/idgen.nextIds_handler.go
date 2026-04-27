@@ -19,14 +19,15 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // IdgenNextIds
 // idgen.nextIds num:int = Vector<long>;
 func (c *IdgenCore) IdgenNextIds(in *idgen.TLIdgenNextIds) (*idgen.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("idgen.nextIds - error: method IdgenNextIds not impl")
+	ids, err := c.nextIDs(in.Num)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return &idgen.VectorLong{Datas: ids}, nil
 }
