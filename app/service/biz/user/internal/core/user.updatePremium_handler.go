@@ -24,8 +24,12 @@ import (
 // UserUpdatePremium
 // user.updatePremium flags:# user_id:long premium:Bool months:flags.1?int = Bool;
 func (c *UserCore) UserUpdatePremium(in *user.TLUserUpdatePremium) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updatePremium - error: method UserUpdatePremium not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	var months int32
+	if in.Months != nil {
+		months = *in.Months
+	}
+	if err := c.svcCtx.Repo.UpdatePremium(c.ctx, in.UserId, tg.FromBoolClazz(in.Premium), months); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -24,8 +24,5 @@ import (
 // UserGetUserDataById
 // user.getUserDataById user_id:long = UserData;
 func (c *UserCore) UserGetUserDataById(in *user.TLUserGetUserDataById) (*tg.UserData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getUserDataById - error: method UserGetUserDataById not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetUserData(c.ctx, in.UserId)
 }

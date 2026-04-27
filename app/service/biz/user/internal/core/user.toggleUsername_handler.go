@@ -24,8 +24,8 @@ import (
 // UserToggleUsername
 // user.toggleUsername peer_type:int peer_id:long username:string active:Bool = Bool;
 func (c *UserCore) UserToggleUsername(in *user.TLUserToggleUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.toggleUsername - error: method UserToggleUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.ToggleUsername(c.ctx, in.PeerType, in.PeerId, in.Username, tg.FromBoolClazz(in.Active)); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

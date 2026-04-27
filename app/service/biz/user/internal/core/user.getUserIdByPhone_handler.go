@@ -24,8 +24,9 @@ import (
 // UserGetUserIdByPhone
 // user.getUserIdByPhone phone:string = Int64;
 func (c *UserCore) UserGetUserIdByPhone(in *user.TLUserGetUserIdByPhone) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getUserIdByPhone - error: method UserGetUserIdByPhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	id, err := c.svcCtx.Repo.GetUserIDByPhone(c.ctx, in.Phone)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: id}).ToInt64(), nil
 }

@@ -24,8 +24,8 @@ import (
 // UserDeleteUser
 // user.deleteUser user_id:long reason:string phone:string = Bool;
 func (c *UserCore) UserDeleteUser(in *user.TLUserDeleteUser) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deleteUser - error: method UserDeleteUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.DeleteUser(c.ctx, in.UserId, in.Phone, in.Reason); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

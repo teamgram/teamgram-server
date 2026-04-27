@@ -24,8 +24,8 @@ import (
 // UserSetStoriesMaxId
 // user.setStoriesMaxId user_id:long id:int = Bool;
 func (c *UserCore) UserSetStoriesMaxId(in *user.TLUserSetStoriesMaxId) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setStoriesMaxId - error: method UserSetStoriesMaxId not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetStoriesMaxID(c.ctx, in.UserId, in.Id); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

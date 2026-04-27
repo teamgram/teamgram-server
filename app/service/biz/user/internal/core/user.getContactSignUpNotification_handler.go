@@ -24,8 +24,9 @@ import (
 // UserGetContactSignUpNotification
 // user.getContactSignUpNotification user_id:long = Bool;
 func (c *UserCore) UserGetContactSignUpNotification(in *user.TLUserGetContactSignUpNotification) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getContactSignUpNotification - error: method UserGetContactSignUpNotification not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	enabled, err := c.svcCtx.Repo.GetContactSignUpNotification(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(enabled), nil
 }

@@ -24,8 +24,9 @@ import (
 // UserGetCountryCode
 // user.getCountryCode user_id:long = String;
 func (c *UserCore) UserGetCountryCode(in *user.TLUserGetCountryCode) (*tg.String, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getCountryCode - error: method UserGetCountryCode not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	countryCode, err := c.svcCtx.Repo.GetCountryCode(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLString(&tg.TLString{V: countryCode}).ToString(), nil
 }

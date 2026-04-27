@@ -24,8 +24,8 @@ import (
 // UserUpdateUsername
 // user.updateUsername user_id:long username:string = Bool;
 func (c *UserCore) UserUpdateUsername(in *user.TLUserUpdateUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateUsername - error: method UserUpdateUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateUsername(c.ctx, in.UserId, in.Username); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

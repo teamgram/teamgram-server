@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserSearchUsername
 // user.searchUsername q:string excluded_contacts:Vector<long> limit:int = Vector<UsernameData>;
 func (c *UserCore) UserSearchUsername(in *user.TLUserSearchUsername) (*user.VectorUsernameData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.searchUsername - error: method UserSearchUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	datas, err := c.svcCtx.Repo.SearchUsername(c.ctx, in.Q, in.ExcludedContacts, in.Limit)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorUsernameData{Datas: datas}, nil
 }

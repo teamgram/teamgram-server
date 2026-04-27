@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
 func (c *UserCore) UserGetLastSeens(in *user.TLUserGetLastSeens) (*user.VectorLastSeenData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getLastSeens - error: method UserGetLastSeens not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	datas, err := c.svcCtx.Repo.GetLastSeens(c.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorLastSeenData{Datas: datas}, nil
 }

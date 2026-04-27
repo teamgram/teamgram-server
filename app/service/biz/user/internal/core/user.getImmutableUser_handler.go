@@ -24,8 +24,5 @@ import (
 // UserGetImmutableUser
 // user.getImmutableUser flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
 func (c *UserCore) UserGetImmutableUser(in *user.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getImmutableUser - error: method UserGetImmutableUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetImmutableUser(c.ctx, in.Id, in.Privacy, in.Contacts...)
 }

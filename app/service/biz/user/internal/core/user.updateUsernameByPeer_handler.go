@@ -24,8 +24,9 @@ import (
 // UserUpdateUsernameByPeer
 // user.updateUsernameByPeer peer_type:int peer_id:long username:string = Bool;
 func (c *UserCore) UserUpdateUsernameByPeer(in *user.TLUserUpdateUsernameByPeer) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateUsernameByPeer - error: method UserUpdateUsernameByPeer not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	ok, err := c.svcCtx.Repo.UpdateUsernameByPeer(c.ctx, in.PeerType, in.PeerId, in.Username)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(ok), nil
 }

@@ -24,8 +24,5 @@ import (
 // UserGetDefaultHistoryTTL
 // user.getDefaultHistoryTTL user_id:long = DefaultHistoryTTL;
 func (c *UserCore) UserGetDefaultHistoryTTL(in *user.TLUserGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getDefaultHistoryTTL - error: method UserGetDefaultHistoryTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetDefaultHistoryTTL(c.ctx, in.UserId)
 }

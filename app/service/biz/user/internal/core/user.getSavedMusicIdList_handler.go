@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetSavedMusicIdList
 // user.getSavedMusicIdList user_id:long = Vector<long>;
 func (c *UserCore) UserGetSavedMusicIdList(in *user.TLUserGetSavedMusicIdList) (*user.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getSavedMusicIdList - error: method UserGetSavedMusicIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	ids, err := c.svcCtx.Repo.GetSavedMusicIDList(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorLong{Datas: ids}, nil
 }

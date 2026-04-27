@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetMutableUsers
 // user.getMutableUsers id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
 func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.VectorImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getMutableUsers - error: method UserGetMutableUsers not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	users, err := c.svcCtx.Repo.GetMutableUsers(c.ctx, in.Id, false, in.To)
+	if err != nil {
+		return nil, err
+	}
+	return &user.VectorImmutableUser{Datas: users}, nil
 }

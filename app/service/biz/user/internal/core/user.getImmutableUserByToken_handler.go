@@ -24,8 +24,5 @@ import (
 // UserGetImmutableUserByToken
 // user.getImmutableUserByToken token:string = ImmutableUser;
 func (c *UserCore) UserGetImmutableUserByToken(in *user.TLUserGetImmutableUserByToken) (*tg.ImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getImmutableUserByToken - error: method UserGetImmutableUserByToken not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetImmutableUserByToken(c.ctx, in.Token)
 }

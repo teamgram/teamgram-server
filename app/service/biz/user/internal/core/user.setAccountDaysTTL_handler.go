@@ -24,8 +24,8 @@ import (
 // UserSetAccountDaysTTL
 // user.setAccountDaysTTL user_id:long ttl:int = Bool;
 func (c *UserCore) UserSetAccountDaysTTL(in *user.TLUserSetAccountDaysTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setAccountDaysTTL - error: method UserSetAccountDaysTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetAccountDaysTTL(c.ctx, in.UserId, in.Ttl); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

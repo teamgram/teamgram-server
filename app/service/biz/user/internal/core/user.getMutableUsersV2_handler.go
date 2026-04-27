@@ -24,8 +24,9 @@ import (
 // UserGetMutableUsersV2
 // user.getMutableUsersV2 flags:# id:Vector<long> privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = MutableUsers;
 func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getMutableUsersV2 - error: method UserGetMutableUsersV2 not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	users, err := c.svcCtx.Repo.GetMutableUsers(c.ctx, in.Id, in.Privacy, in.To)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: users}).ToMutableUsers(), nil
 }

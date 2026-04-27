@@ -24,8 +24,8 @@ import (
 // UserChangePhone
 // user.changePhone user_id:long phone:string = Bool;
 func (c *UserCore) UserChangePhone(in *user.TLUserChangePhone) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.changePhone - error: method UserChangePhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.ChangePhone(c.ctx, in.UserId, in.Phone); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

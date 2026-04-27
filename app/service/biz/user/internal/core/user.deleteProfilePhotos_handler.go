@@ -24,8 +24,9 @@ import (
 // UserDeleteProfilePhotos
 // user.deleteProfilePhotos user_id:long id:Vector<long> = Int64;
 func (c *UserCore) UserDeleteProfilePhotos(in *user.TLUserDeleteProfilePhotos) (*tg.Int64, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deleteProfilePhotos - error: method UserDeleteProfilePhotos not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	photoID, err := c.svcCtx.Repo.DeleteProfilePhotos(c.ctx, in.UserId, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLInt64(&tg.TLInt64{V: photoID}).ToInt64(), nil
 }

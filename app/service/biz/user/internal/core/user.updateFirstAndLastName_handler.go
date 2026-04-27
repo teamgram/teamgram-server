@@ -24,8 +24,8 @@ import (
 // UserUpdateFirstAndLastName
 // user.updateFirstAndLastName user_id:long first_name:string last_name:string = Bool;
 func (c *UserCore) UserUpdateFirstAndLastName(in *user.TLUserUpdateFirstAndLastName) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateFirstAndLastName - error: method UserUpdateFirstAndLastName not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateFirstAndLastName(c.ctx, in.UserId, in.FirstName, in.LastName); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

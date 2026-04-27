@@ -18,14 +18,10 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetAccountUsername
 // user.getAccountUsername user_id:long = UsernameData;
 func (c *UserCore) UserGetAccountUsername(in *user.TLUserGetAccountUsername) (*user.UsernameData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getAccountUsername - error: method UserGetAccountUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetAccountUsername(c.ctx, in.UserId)
 }

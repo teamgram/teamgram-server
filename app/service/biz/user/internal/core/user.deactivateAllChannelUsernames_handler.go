@@ -24,8 +24,8 @@ import (
 // UserDeactivateAllChannelUsernames
 // user.deactivateAllChannelUsernames channel_id:long = Bool;
 func (c *UserCore) UserDeactivateAllChannelUsernames(in *user.TLUserDeactivateAllChannelUsernames) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.deactivateAllChannelUsernames - error: method UserDeactivateAllChannelUsernames not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.DeactivateAllChannelUsernames(c.ctx, in.ChannelId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

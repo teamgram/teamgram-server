@@ -24,8 +24,5 @@ import (
 // UserCheckAccountUsername
 // user.checkAccountUsername user_id:long username:string = UsernameExist;
 func (c *UserCore) UserCheckAccountUsername(in *user.TLUserCheckAccountUsername) (*user.UsernameExist, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.checkAccountUsername - error: method UserCheckAccountUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CheckPeerUsername(c.ctx, tg.PEER_USER, in.UserId, in.Username)
 }

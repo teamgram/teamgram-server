@@ -18,14 +18,10 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserGetChannelUsername
 // user.getChannelUsername channel_id:long = UsernameData;
 func (c *UserCore) UserGetChannelUsername(in *user.TLUserGetChannelUsername) (*user.UsernameData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getChannelUsername - error: method UserGetChannelUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetChannelUsername(c.ctx, in.ChannelId)
 }

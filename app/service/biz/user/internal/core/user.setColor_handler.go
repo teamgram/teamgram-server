@@ -24,8 +24,8 @@ import (
 // UserSetColor
 // user.setColor flags:# user_id:long for_profile:flags.1?true color:int background_emoji_id:long = Bool;
 func (c *UserCore) UserSetColor(in *user.TLUserSetColor) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setColor - error: method UserSetColor not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetColor(c.ctx, in.UserId, in.ForProfile, in.Color, in.BackgroundEmojiId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

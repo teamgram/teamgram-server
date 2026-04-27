@@ -24,8 +24,8 @@ import (
 // UserSetContentSettings
 // user.setContentSettings flags:# user_id:long sensitive_enabled:flags.0?true = Bool;
 func (c *UserCore) UserSetContentSettings(in *user.TLUserSetContentSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.setContentSettings - error: method UserSetContentSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetContentSettings(c.ctx, in.UserId, in.SensitiveEnabled); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

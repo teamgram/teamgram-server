@@ -24,8 +24,8 @@ import (
 // UserUpdateEmojiStatus
 // user.updateEmojiStatus user_id:long emoji_status_document_id:long emoji_status_until:int = Bool;
 func (c *UserCore) UserUpdateEmojiStatus(in *user.TLUserUpdateEmojiStatus) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updateEmojiStatus - error: method UserUpdateEmojiStatus not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.UpdateEmojiStatus(c.ctx, in.UserId, in.EmojiStatusDocumentId, in.EmojiStatusUntil); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

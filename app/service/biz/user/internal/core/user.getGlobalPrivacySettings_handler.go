@@ -24,8 +24,5 @@ import (
 // UserGetGlobalPrivacySettings
 // user.getGlobalPrivacySettings user_id:long = GlobalPrivacySettings;
 func (c *UserCore) UserGetGlobalPrivacySettings(in *user.TLUserGetGlobalPrivacySettings) (*tg.GlobalPrivacySettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getGlobalPrivacySettings - error: method UserGetGlobalPrivacySettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetGlobalPrivacySettings(c.ctx, in.UserId)
 }
