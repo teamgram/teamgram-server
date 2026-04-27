@@ -1,2 +1,7 @@
 Name: service.biz_service.code
 ListenOn: 0.0.0.0:29500
+
+KV:
+  - Host: 127.0.0.1:6379
+    Pass: ""
+    Type: node
