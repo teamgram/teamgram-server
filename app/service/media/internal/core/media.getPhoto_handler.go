@@ -24,8 +24,5 @@ import (
 // MediaGetPhoto
 // media.getPhoto photo_id:long = Photo;
 func (c *MediaCore) MediaGetPhoto(in *media.TLMediaGetPhoto) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.getPhoto - error: method MediaGetPhoto not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetPhotoByRequest(c.ctx, in)
 }

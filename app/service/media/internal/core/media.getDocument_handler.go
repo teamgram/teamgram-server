@@ -24,8 +24,5 @@ import (
 // MediaGetDocument
 // media.getDocument id:long = Document;
 func (c *MediaCore) MediaGetDocument(in *media.TLMediaGetDocument) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.getDocument - error: method MediaGetDocument not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetDocumentByRequest(c.ctx, in)
 }
