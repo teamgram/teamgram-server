@@ -24,8 +24,6 @@ import (
 // CodeDeletePhoneCode
 // code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 func (c *CodeCore) CodeDeletePhoneCode(in *code.TLCodeDeletePhoneCode) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("code.deletePhoneCode - error: method CodeDeletePhoneCode not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	_ = c.repo.DeleteCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone)
+	return tg.BoolTrue, nil
 }
