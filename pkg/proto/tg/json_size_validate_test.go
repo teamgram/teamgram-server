@@ -63,6 +63,83 @@ func TestAuthSentCodeWrapperMarshalJSONIncludesConcreteClazzName(t *testing.T) {
 	}
 }
 
+func TestMessageStringUsesFlatDebugJSON(t *testing.T) {
+	msg := &TLMessage{
+		ClazzID:    ClazzID_message_3ae56482,
+		ClazzName2: ClazzName_message,
+		Out:        true,
+		Id:         100,
+		PeerId: &TLPeerUser{
+			ClazzID:    ClazzID_peerUser,
+			ClazzName2: ClazzName_peerUser,
+			UserId:     123456789,
+		},
+		Date:    1710000000,
+		Message: "hello",
+	}
+
+	got := msg.String()
+	if strings.Contains(got, "_object") || strings.Contains(got, "_clazz") || strings.Contains(got, "_name") {
+		t.Fatalf("expected flat debug json, got %s", got)
+	}
+
+	var decoded map[string]any
+	if err := json.Unmarshal([]byte(got), &decoded); err != nil {
+		t.Fatalf("unmarshal debug json: %v: %s", err, got)
+	}
+	if decoded["@type"] != "message" {
+		t.Fatalf("expected @type message, got %#v in %s", decoded["@type"], got)
+	}
+	if decoded["@id"] != "0x3ae56482" {
+		t.Fatalf("expected @id 0x3ae56482, got %#v in %s", decoded["@id"], got)
+	}
+	if decoded["out"] != true {
+		t.Fatalf("expected true bool field to be included, got %s", got)
+	}
+	if _, ok := decoded["mentioned"]; ok {
+		t.Fatalf("expected false bool field to be omitted, got %s", got)
+	}
+
+	peer, ok := decoded["peer_id"].(map[string]any)
+	if !ok {
+		t.Fatalf("expected nested peer object, got %#v in %s", decoded["peer_id"], got)
+	}
+	if peer["@type"] != "peerUser" || peer["@id"] != "0x59511722" {
+		t.Fatalf("expected typed peer object, got %#v in %s", peer, got)
+	}
+}
+
+func TestMessageWrapperStringUnwrapsClazzForDebugJSON(t *testing.T) {
+	msg := (&TLMessage{
+		ClazzID:    ClazzID_message_3ae56482,
+		ClazzName2: ClazzName_message,
+		Id:         100,
+		PeerId: &TLPeerUser{
+			ClazzID:    ClazzID_peerUser,
+			ClazzName2: ClazzName_peerUser,
+			UserId:     123456789,
+		},
+		Date:    1710000000,
+		Message: "hello",
+	}).ToMessage()
+
+	got := msg.String()
+	if strings.Contains(got, "_object") || strings.Contains(got, "_clazz") || strings.Contains(got, "_name") {
+		t.Fatalf("expected wrapper to unwrap to flat debug json, got %s", got)
+	}
+
+	var decoded map[string]any
+	if err := json.Unmarshal([]byte(got), &decoded); err != nil {
+		t.Fatalf("unmarshal debug json: %v: %s", err, got)
+	}
+	if decoded["@type"] != "message" || decoded["@id"] != "0x3ae56482" {
+		t.Fatalf("expected wrapped message identity, got %#v in %s", decoded, got)
+	}
+	if _, ok := decoded["_clazz"]; ok {
+		t.Fatalf("expected no _clazz field, got %s", got)
+	}
+}
+
 func TestValidateRejectsMissingRequiredFields(t *testing.T) {
 	if err := (&TLAuthSendCode{
 		PhoneNumber: "",

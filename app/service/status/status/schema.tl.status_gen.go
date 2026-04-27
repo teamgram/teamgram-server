@@ -74,8 +74,7 @@ func MakeTLSessionEntry(m *TLSessionEntry) *TLSessionEntry {
 }
 
 func (m *TLSessionEntry) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("sessionEntry", m)
 }
 
 func (m *TLSessionEntry) MarshalJSON() ([]byte, error) {
@@ -244,8 +243,7 @@ func MakeTLUserSessionEntryList(m *TLUserSessionEntryList) *TLUserSessionEntryLi
 }
 
 func (m *TLUserSessionEntryList) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return iface.DebugStringWithName("userSessionEntryList", m)
 }
 
 func (m *TLUserSessionEntryList) MarshalJSON() ([]byte, error) {

@@ -16,7 +16,6 @@
 package iface
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -60,8 +59,7 @@ type WithNameWrapper struct {
 }
 
 func (m WithNameWrapper) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
+	return DebugStringWithName(m.ClazzName, m.TLObject)
 }
 
 func DecodeObject(d *bin.Decoder) (TLObject, error) {

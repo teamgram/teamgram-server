@@ -36,8 +36,7 @@ type TLStatusSetSessionOnline struct {
 }
 
 func (m *TLStatusSetSessionOnline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setSessionOnline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setSessionOnline, m)
 }
 
 // Encode <--
@@ -94,8 +93,7 @@ type TLStatusSetSessionOffline struct {
 }
 
 func (m *TLStatusSetSessionOffline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setSessionOffline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setSessionOffline, m)
 }
 
 // Encode <--
@@ -145,8 +143,7 @@ type TLStatusGetUserOnlineSessions struct {
 }
 
 func (m *TLStatusGetUserOnlineSessions) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_getUserOnlineSessions, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_getUserOnlineSessions, m)
 }
 
 // Encode <--
@@ -191,8 +188,7 @@ type TLStatusGetUsersOnlineSessionsList struct {
 }
 
 func (m *TLStatusGetUsersOnlineSessionsList) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_getUsersOnlineSessionsList, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_getUsersOnlineSessionsList, m)
 }
 
 // Encode <--
@@ -238,8 +234,7 @@ type TLStatusGetChannelOnlineUsers struct {
 }
 
 func (m *TLStatusGetChannelOnlineUsers) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_getChannelOnlineUsers, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_getChannelOnlineUsers, m)
 }
 
 // Encode <--
@@ -285,8 +280,7 @@ type TLStatusSetUserChannelsOnline struct {
 }
 
 func (m *TLStatusSetUserChannelsOnline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setUserChannelsOnline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setUserChannelsOnline, m)
 }
 
 // Encode <--
@@ -339,8 +333,7 @@ type TLStatusSetUserChannelsOffline struct {
 }
 
 func (m *TLStatusSetUserChannelsOffline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setUserChannelsOffline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setUserChannelsOffline, m)
 }
 
 // Encode <--
@@ -393,8 +386,7 @@ type TLStatusSetChannelUserOffline struct {
 }
 
 func (m *TLStatusSetChannelUserOffline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setChannelUserOffline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setChannelUserOffline, m)
 }
 
 // Encode <--
@@ -445,8 +437,7 @@ type TLStatusSetChannelUsersOnline struct {
 }
 
 func (m *TLStatusSetChannelUsersOnline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setChannelUsersOnline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setChannelUsersOnline, m)
 }
 
 // Encode <--
@@ -498,8 +489,7 @@ type TLStatusSetChannelOffline struct {
 }
 
 func (m *TLStatusSetChannelOffline) String() string {
-	wrapper := iface.WithNameWrapper{ClazzName: ClazzName_status_setChannelOffline, TLObject: m}
-	return wrapper.String()
+	return iface.DebugStringWithName(ClazzName_status_setChannelOffline, m)
 }
 
 // Encode <--
