@@ -24,8 +24,5 @@ import (
 // UserCreateNewTestUser
 // user.createNewTestUser secret_key_id:long min_id:long max_id:long = ImmutableUser;
 func (c *UserCore) UserCreateNewTestUser(in *user.TLUserCreateNewTestUser) (*tg.ImmutableUser, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.createNewTestUser - error: method UserCreateNewTestUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.CreateNewTestUser(c.ctx, in.SecretKeyId, in.MinId, in.MaxId)
 }
