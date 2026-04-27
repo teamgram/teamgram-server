@@ -60,16 +60,53 @@ type userSessionBatchEntry struct {
 	userID int64
 }
 
+type sessionEntryCacheData struct {
+	UserId        int64  `json:"user_id"`
+	AuthKeyId     int64  `json:"auth_key_id"`
+	Gateway       string `json:"gateway"`
+	Expired       int64  `json:"expired"`
+	Layer         int32  `json:"layer"`
+	PermAuthKeyId int64  `json:"perm_auth_key_id"`
+	Client        string `json:"client"`
+}
+
+func sessionEntryCacheDataFromTL(session *status.SessionEntry) *sessionEntryCacheData {
+	if session == nil {
+		return nil
+	}
+	return &sessionEntryCacheData{
+		UserId:        session.UserId,
+		AuthKeyId:     session.AuthKeyId,
+		Gateway:       session.Gateway,
+		Expired:       session.Expired,
+		Layer:         session.Layer,
+		PermAuthKeyId: session.PermAuthKeyId,
+		Client:        session.Client,
+	}
+}
+
+func (s *sessionEntryCacheData) toTL() *status.TLSessionEntry {
+	if s == nil {
+		return nil
+	}
+	return status.MakeTLSessionEntry(&status.TLSessionEntry{
+		UserId:        s.UserId,
+		AuthKeyId:     s.AuthKeyId,
+		Gateway:       s.Gateway,
+		Expired:       s.Expired,
+		Layer:         s.Layer,
+		PermAuthKeyId: s.PermAuthKeyId,
+		Client:        s.Client,
+	})
+}
+
 // SetSessionOnline atomically sets the session entry in the user's online hash
 // and refreshes the key-level TTL.
 func (r *Repository) SetSessionOnline(ctx context.Context, userID int64, session *status.SessionEntry, expireSeconds int) error {
 	userKey := getUserKey(userID)
 	field := strconv.FormatInt(session.AuthKeyId, 10)
 
-	// Bypass the custom MarshalJSON on TLSessionEntry (which wraps output
-	// in {"_name":"...","_object":...}) so we store plain JSON.
-	type plainSessionEntry status.TLSessionEntry
-	sessData, err := json.Marshal((*plainSessionEntry)(session))
+	sessData, err := json.Marshal(sessionEntryCacheDataFromTL(session))
 	if err != nil {
 		return wrapStorageError("marshal session entry", err)
 	}
@@ -113,7 +150,7 @@ func buildUserSessionEntryList(ctx context.Context, userID int64, rMap map[strin
 		UserSessions: make([]*status.TLSessionEntry, 0, len(rMap)),
 	}
 	for field, rawValue := range rMap {
-		sess := new(status.TLSessionEntry)
+		sess := new(sessionEntryCacheData)
 		if err := json.Unmarshal([]byte(rawValue), sess); err != nil {
 			authKeyID, _ := strconv.ParseInt(field, 10, 64)
 			preview := rawValue
@@ -126,7 +163,7 @@ func buildUserSessionEntryList(ctx context.Context, userID int64, rMap map[strin
 			)
 			continue
 		}
-		rValues.UserSessions = append(rValues.UserSessions, sess)
+		rValues.UserSessions = append(rValues.UserSessions, sess.toTL())
 	}
 
 	return rValues

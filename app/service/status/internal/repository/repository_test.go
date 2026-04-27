@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
@@ -23,7 +24,7 @@ func TestGetUserKey_Negative(t *testing.T) {
 	}
 }
 
-func TestSessionEntryJSONRoundtrip(t *testing.T) {
+func TestSessionEntryCachePayloadDoesNotUseTLJSON(t *testing.T) {
 	sess := &status.TLSessionEntry{
 		UserId:        100,
 		AuthKeyId:     12345,
@@ -34,19 +35,24 @@ func TestSessionEntryJSONRoundtrip(t *testing.T) {
 		Client:        "Android",
 	}
 
-	// Match the repository write path: plain JSON without MarshalWithName wrapper.
-	type plainSessionEntry status.TLSessionEntry
-	data, err := json.Marshal((*plainSessionEntry)(sess))
+	cacheData := sessionEntryCacheDataFromTL(sess)
+	data, err := json.Marshal(cacheData)
 	if err != nil {
 		t.Fatalf("marshal: %v", err)
 	}
 
-	var decoded status.TLSessionEntry
+	payload := string(data)
+	if strings.Contains(payload, `"_name"`) || strings.Contains(payload, `"_id"`) {
+		t.Fatalf("cache payload contains TL JSON metadata: %s", payload)
+	}
+
+	var decoded sessionEntryCacheData
 	if err := json.Unmarshal(data, &decoded); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 
-	if decoded.AuthKeyId != sess.AuthKeyId || decoded.UserId != sess.UserId {
-		t.Errorf("roundtrip mismatch: got %+v, want %+v", decoded, *sess)
+	got := decoded.toTL()
+	if got.AuthKeyId != sess.AuthKeyId || got.UserId != sess.UserId || got.Gateway != sess.Gateway {
+		t.Errorf("roundtrip mismatch: got %+v, want %+v", got, *sess)
 	}
 }
