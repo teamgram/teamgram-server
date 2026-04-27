@@ -25,7 +25,7 @@ import (
 // IdgenSetCurrentSeqId
 // idgen.setCurrentSeqId key:string id:long = Bool;
 func (c *IdgenCore) IdgenSetCurrentSeqId(in *idgen.TLIdgenSetCurrentSeqId) (*tg.Bool, error) {
-	if err := c.setCurrentSeqID(in.Key, in.Id); err != nil {
+	if err := c.svcCtx.Repo.ResetSeqID(c.ctx, in.Key, in.Id); err != nil {
 		return nil, err
 	}
 

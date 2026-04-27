@@ -32,7 +32,7 @@ func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdLis
 		if !ok {
 			return nil, fmt.Errorf("%w: invalid current seq input id at index %d", idgen.ErrInvalidArgument, i)
 		}
-		seq, err := c.getCurrentSeqID(id.Key)
+		seq, err := c.svcCtx.Repo.QueryCurrentSeqID(c.ctx, id.Key)
 		if err != nil {
 			return nil, err
 		}

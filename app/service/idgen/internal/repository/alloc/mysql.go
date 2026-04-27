@@ -44,20 +44,42 @@ const (
 var (
 	ErrInvalidTable = errors.New("alloc: invalid seq table")
 	seqTableRE      = regexp.MustCompile(`^[a-z0-9_]+$`)
-	seqTables       = map[string]struct{}{
-		MessageDataNGen:       {},
-		MessageBoxNGen:        {},
-		ChannelMessageBoxNGen: {},
-		SeqUpdatesNGen:        {},
-		PtsUpdatesNGen:        {},
-		QtsUpdatesNGen:        {},
-		ChannelPtsUpdatesNGen: {},
-		ScheduledNGen:         {},
-		BotUpdatesNGen:        {},
-		StoryNGen:             {},
-		ChannelStoryNGen:      {},
+
+	// allSeqTables is the single source of truth for tables managed by the
+	// allocator. quoteSeqTable's whitelist and the public SeqTables() helper
+	// both derive from this slice so code that needs to enumerate or parse
+	// allocator keys cannot drift out of sync with the safe-table whitelist.
+	allSeqTables = []string{
+		MessageDataNGen,
+		MessageBoxNGen,
+		ChannelMessageBoxNGen,
+		SeqUpdatesNGen,
+		PtsUpdatesNGen,
+		QtsUpdatesNGen,
+		ChannelPtsUpdatesNGen,
+		ScheduledNGen,
+		BotUpdatesNGen,
+		StoryNGen,
+		ChannelStoryNGen,
 	}
+
+	seqTables = func() map[string]struct{} {
+		m := make(map[string]struct{}, len(allSeqTables))
+		for _, t := range allSeqTables {
+			m[t] = struct{}{}
+		}
+		return m
+	}()
 )
+
+// SeqTables returns a copy of the canonical list of allocator-managed seq
+// tables. The returned slice is safe for callers to mutate; the underlying
+// list cannot be changed at runtime.
+func SeqTables() []string {
+	out := make([]string, len(allSeqTables))
+	copy(out, allSeqTables)
+	return out
+}
 
 // mysqlStore implements SeqStore on top of a MySQL row that holds
 // (id, min_seq, max_seq). max_seq is the next id to be allocated.

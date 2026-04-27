@@ -30,7 +30,7 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 	for i, input := range in.Id {
 		switch id := input.(type) {
 		case *idgen.TLInputId:
-			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{Id: c.nextID()})
+			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{Id: c.svcCtx.Repo.NextID()})
 
 		case *idgen.TLInputIds:
 			ids, err := c.nextIDs(id.Num)
@@ -40,14 +40,14 @@ func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*i
 			idList[i] = idgen.MakeTLIdVals(&idgen.TLIdVals{Id: ids})
 
 		case *idgen.TLInputSeqId:
-			seq, err := c.getNextSeqID(id.Key, 1)
+			seq, err := c.svcCtx.Repo.ReserveNextSeqID(c.ctx, id.Key, 1)
 			if err != nil {
 				return nil, err
 			}
 			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{Id: seq})
 
 		case *idgen.TLInputNSeqId:
-			seq, err := c.getNextSeqID(id.Key, id.N)
+			seq, err := c.svcCtx.Repo.ReserveNextSeqID(c.ctx, id.Key, id.N)
 			if err != nil {
 				return nil, err
 			}

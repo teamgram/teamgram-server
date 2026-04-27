@@ -19,6 +19,7 @@ package server
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen/idgenservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
@@ -47,8 +48,10 @@ func (s *Server) Initialize() error {
 
 	logx.Infov(c)
 
-	ctx := svc.NewServiceContext(c)
-	_ = ctx
+	ctx, err := svc.NewServiceContext(c)
+	if err != nil {
+		return fmt.Errorf("idgen server: build service context: %w", err)
+	}
 
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
@@ -61,16 +64,12 @@ func (s *Server) Initialize() error {
 
 func (s *Server) RunLoop() {
 	if err := s.kitexSrv.Run(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("idgen kitex server stopped with error: %v", err)
 	}
 }
 
 func (s *Server) Destroy() {
 	if err := s.kitexSrv.Stop(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("idgen kitex server stop error: %v", err)
 	}
 }

@@ -20,6 +20,7 @@ package alloc
 import (
 	"context"
 	"fmt"
+	"math/rand/v2"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -111,9 +112,10 @@ func newXKVCacheWithStore(store evalStore, opts ...XKVOption) *xkvCache {
 		dataTTL:  defaultDataTTL,
 		nowMilli: func() int64 { return time.Now().UnixMilli() },
 	}
-	// Seed ownerSeq from wall clock so concurrent processes do not produce
-	// the same owner ids.
-	c.ownerSeq.Store(time.Now().UnixNano())
+	// Seed ownerSeq from wall clock XOR a random int64 so concurrent
+	// processes that start within the same nanosecond still produce
+	// disjoint owner-id streams.
+	c.ownerSeq.Store(time.Now().UnixNano() ^ rand.Int64())
 	for _, opt := range opts {
 		opt(c)
 	}

@@ -25,7 +25,7 @@ import (
 // IdgenGetNextSeqId
 // idgen.getNextSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetNextSeqId(in *idgen.TLIdgenGetNextSeqId) (*tg.Int64, error) {
-	seq, err := c.getNextSeqID(in.Key, 1)
+	seq, err := c.svcCtx.Repo.ReserveNextSeqID(c.ctx, in.Key, 1)
 	if err != nil {
 		return nil, err
 	}

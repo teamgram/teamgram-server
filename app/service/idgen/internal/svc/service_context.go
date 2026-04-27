@@ -18,6 +18,8 @@
 package svc
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository"
 )
@@ -27,9 +29,16 @@ type ServiceContext struct {
 	Repo   *repository.Repository
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+// NewServiceContext builds a ServiceContext from configuration. It surfaces
+// any Repository construction failure so the server can fail loudly at
+// startup instead of running in a half-initialized state.
+func NewServiceContext(c config.Config) (*ServiceContext, error) {
+	repo, err := repository.NewRepository(c)
+	if err != nil {
+		return nil, fmt.Errorf("idgen svc: build repository: %w", err)
+	}
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
-	}
+		Repo:   repo,
+	}, nil
 }

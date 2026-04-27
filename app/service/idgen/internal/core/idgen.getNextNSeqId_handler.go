@@ -24,8 +24,12 @@ import (
 
 // IdgenGetNextNSeqId
 // idgen.getNextNSeqId key:string n:int = Int64;
+//
+// n must be > 0; n <= 0 is rejected with idgenpb.ErrInvalidArgument by
+// Repository.ReserveNextSeqID. Callers that want to read the current
+// cursor without consuming any id should use idgen.getCurrentSeqId.
 func (c *IdgenCore) IdgenGetNextNSeqId(in *idgen.TLIdgenGetNextNSeqId) (*tg.Int64, error) {
-	seq, err := c.getNextSeqID(in.Key, in.N)
+	seq, err := c.svcCtx.Repo.ReserveNextSeqID(c.ctx, in.Key, in.N)
 	if err != nil {
 		return nil, err
 	}

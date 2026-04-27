@@ -1,3 +1,20 @@
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
+
 package core
 
 import (
@@ -57,11 +74,13 @@ func newTestCore(t *testing.T, store *coreSeqStore) *IdgenCore {
 		t.Fatalf("snowflake.NewNode() err = %v", err)
 	}
 
+	var seqAlloc *alloc.Allocator
+	if store != nil {
+		seqAlloc = alloc.NewAllocator(nil, store)
+	}
+
 	return New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{
-			Node:     node,
-			SeqAlloc: alloc.NewAllocator(nil, store),
-		},
+		Repo: repository.New(node, seqAlloc),
 	})
 }
 
@@ -159,9 +178,14 @@ func TestIdgenGetCurrentSeqIdListRejectsNonSeqInput(t *testing.T) {
 	}
 }
 
+// TestIdgenSeqHandlersReturnExportedErrors covers the two service-contract
+// branches BFF callers are expected to handle: a nil seq allocator (idgen
+// is wired in DB-direct mode without a backing store) surfaces as
+// ErrSeqAllocatorUnavailable, and a malformed key surfaces as
+// ErrInvalidArgument. Both are produced by Repository now, so the test
+// just verifies the wiring all the way to the handler.
 func TestIdgenSeqHandlersReturnExportedErrors(t *testing.T) {
-	c := newTestCore(t, &coreSeqStore{})
-	c.svcCtx.Repo.SeqAlloc = nil
+	c := newTestCore(t, nil)
 
 	_, err := c.IdgenGetNextSeqId(&idgen.TLIdgenGetNextSeqId{Key: "message_box_ngen_42"})
 	if !errors.Is(err, idgen.ErrSeqAllocatorUnavailable) {
@@ -172,5 +196,23 @@ func TestIdgenSeqHandlersReturnExportedErrors(t *testing.T) {
 	_, err = c.IdgenGetNextSeqId(&idgen.TLIdgenGetNextSeqId{Key: "unknown_42"})
 	if !errors.Is(err, idgen.ErrInvalidArgument) {
 		t.Fatalf("IdgenGetNextSeqId() err = %v, want ErrInvalidArgument", err)
+	}
+}
+
+// TestIdgenGetNextNSeqIdRejectsNonPositiveN: the per-call seq batch size
+// must be > 0 — n == 0 has no meaningful semantics ("read current" is
+// idgen.getCurrentSeqId), and n < 0 has never been valid. Both surface
+// idgenpb.ErrInvalidArgument so BFF callers can branch consistently.
+func TestIdgenGetNextNSeqIdRejectsNonPositiveN(t *testing.T) {
+	c := newTestCore(t, &coreSeqStore{})
+
+	_, err := c.IdgenGetNextNSeqId(&idgen.TLIdgenGetNextNSeqId{Key: "message_box_ngen_42", N: 0})
+	if !errors.Is(err, idgen.ErrInvalidArgument) {
+		t.Fatalf("IdgenGetNextNSeqId(n=0) err = %v, want ErrInvalidArgument", err)
+	}
+
+	_, err = c.IdgenGetNextNSeqId(&idgen.TLIdgenGetNextNSeqId{Key: "message_box_ngen_42", N: -1})
+	if !errors.Is(err, idgen.ErrInvalidArgument) {
+		t.Fatalf("IdgenGetNextNSeqId(n=-1) err = %v, want ErrInvalidArgument", err)
 	}
 }

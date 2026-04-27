@@ -1,2 +1,25 @@
 Name: service.idgen
 ListenOn: 0.0.0.0:20660
+
+# NodeId is the snowflake node id (range [0, 1023]). Each idgen instance
+# in the cluster MUST have a unique value to keep generated ids globally
+# unique. Default is 0; override per replica.
+NodeId: 0
+
+# Mysql is the authoritative seq store. Mysql.DSN is required — idgen
+# refuses to start with an empty DSN because no useful operating mode
+# exists without a backing store. The schema lives in
+# app/service/idgen/sql/seq_conversations.sql and must be applied to
+# every database referenced here before enabling the service.
+Mysql:
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Local"
+
+# KV is the optional segment cache placed in front of the Mysql store.
+# When omitted (or with zero total weight) the allocator runs in
+# DB-direct mode: correctness is preserved but single-key throughput is
+# capped by MySQL's row-lock QPS (~1k). Suitable for low-frequency keys
+# and local development; production deployments should configure Redis.
+KV:
+  - Host: "127.0.0.1:6379"
+    Type: "node"
+    Pass: ""

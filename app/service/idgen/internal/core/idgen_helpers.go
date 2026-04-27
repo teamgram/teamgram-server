@@ -1,33 +1,36 @@
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
+
 package core
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 
 	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/repository/alloc"
 )
 
+// maxNextIdsNum bounds idgen.nextIds batch size to keep RPC payloads
+// predictable. Repository.NextIDs itself does not enforce this; the cap
+// belongs to the service-level use-case policy enforced by core.
 const maxNextIdsNum = 100
 
-var (
-	// TODO: 将表名白名单可配置化.
-	seqTables = []string{
-		alloc.MessageDataNGen,
-		alloc.MessageBoxNGen,
-		alloc.ChannelMessageBoxNGen,
-		alloc.SeqUpdatesNGen,
-		alloc.PtsUpdatesNGen,
-		alloc.QtsUpdatesNGen,
-		alloc.ChannelPtsUpdatesNGen,
-		alloc.ScheduledNGen,
-		alloc.BotUpdatesNGen,
-		alloc.StoryNGen,
-		alloc.ChannelStoryNGen,
-	}
-)
-
+// validateNextIdsNum rejects num values that are negative or exceed the
+// per-call cap. The check is mirrored for both idgen.nextIds and the
+// inputIds branch of idgen.getNextIdValList.
 func validateNextIdsNum(num int32) error {
 	if num < 0 || num > maxNextIdsNum {
 		return fmt.Errorf("%w: next ids num %d out of range [0,%d]", idgenpb.ErrInvalidArgument, num, maxNextIdsNum)
@@ -35,79 +38,11 @@ func validateNextIdsNum(num int32) error {
 	return nil
 }
 
-func parseSeqKey(key string) (string, int64, error) {
-	for _, table := range seqTables {
-		prefix := table + "_"
-		if !strings.HasPrefix(key, prefix) {
-			continue
-		}
-		id, err := strconv.ParseInt(strings.TrimPrefix(key, prefix), 10, 64)
-		if err != nil {
-			return "", 0, fmt.Errorf("%w: parse seq key %q: %v", idgenpb.ErrInvalidArgument, key, err)
-		}
-		return table, id, nil
-	}
-	return "", 0, fmt.Errorf("%w: invalid seq key %q", idgenpb.ErrInvalidArgument, key)
-}
-
-func (c *IdgenCore) getCurrentSeqID(key string) (int64, error) {
-	if c.svcCtx.Repo.SeqAlloc == nil {
-		return 0, idgenpb.ErrSeqAllocatorUnavailable
-	}
-	table, id, err := parseSeqKey(key)
-	if err != nil {
-		return 0, err
-	}
-	seq, err := c.svcCtx.Repo.SeqAlloc.GetMaxSeq(c.ctx, table, id)
-	if err != nil {
-		return 0, fmt.Errorf("%w: get max seq: %w", idgenpb.ErrSeqStorage, err)
-	}
-	return seq, nil
-}
-
-func (c *IdgenCore) setCurrentSeqID(key string, seq int64) error {
-	if c.svcCtx.Repo.SeqAlloc == nil {
-		return idgenpb.ErrSeqAllocatorUnavailable
-	}
-	table, id, err := parseSeqKey(key)
-	if err != nil {
-		return err
-	}
-	if err := c.svcCtx.Repo.SeqAlloc.SetMaxSeq(c.ctx, table, id, seq); err != nil {
-		return fmt.Errorf("%w: set max seq: %w", idgenpb.ErrSeqStorage, err)
-	}
-	return nil
-}
-
-func (c *IdgenCore) getNextSeqID(key string, n int32) (int64, error) {
-	if c.svcCtx.Repo.SeqAlloc == nil {
-		return 0, idgenpb.ErrSeqAllocatorUnavailable
-	}
-	if n < 0 {
-		return 0, fmt.Errorf("%w: seq n %d must be >= 0", idgenpb.ErrInvalidArgument, n)
-	}
-	table, id, err := parseSeqKey(key)
-	if err != nil {
-		return 0, err
-	}
-	start, err := c.svcCtx.Repo.SeqAlloc.Malloc(c.ctx, table, id, int64(n))
-	if err != nil {
-		return 0, fmt.Errorf("%w: malloc seq: %w", idgenpb.ErrSeqStorage, err)
-	}
-	return start + int64(n), nil
-}
-
-func (c *IdgenCore) nextID() int64 {
-	return c.svcCtx.Repo.Node.Generate().Int64()
-}
-
+// nextIDs validates num against the service-level cap and delegates to
+// Repository for id generation.
 func (c *IdgenCore) nextIDs(num int32) ([]int64, error) {
 	if err := validateNextIdsNum(num); err != nil {
 		return nil, err
 	}
-	ids := make([]int64, num)
-	for i := int32(0); i < num; i++ {
-		ids[i] = c.nextID()
-	}
-	return ids, nil
+	return c.svcCtx.Repo.NextIDs(num), nil
 }

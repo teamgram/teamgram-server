@@ -27,5 +27,5 @@ import (
 func (c *IdgenCore) IdgenNextId(in *idgen.TLIdgenNextId) (*tg.Int64, error) {
 	_ = in
 
-	return tg.MakeInt64(c.nextID()), nil
+	return tg.MakeInt64(c.svcCtx.Repo.NextID()), nil
 }

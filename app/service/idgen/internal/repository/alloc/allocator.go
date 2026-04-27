@@ -298,10 +298,9 @@ func (a *Allocator) SetMaxSeq(ctx context.Context, table string, id int64, seq i
 		return nil
 	}
 	if err := a.cache.Invalidate(ctx, cacheKey(table, id)); err != nil {
-		logx.WithContext(ctx).Errorf(
-			"alloc: invalidate cache after SetMaxSeq failed: table=%s id=%d seq=%d err=%v",
-			table, id, seq, err,
-		)
+		// Do not log here: the error is returned to the caller and will be
+		// observed at the RPC boundary. Both store.SetMaxSeq (GREATEST) and
+		// cache.Invalidate (DEL) are idempotent so the caller can retry.
 		return fmt.Errorf("alloc: invalidate cache after SetMaxSeq(table=%s, id=%d, seq=%d): %w", table, id, seq, err)
 	}
 	return nil
