@@ -24,6 +24,9 @@ import (
 // CodeDeletePhoneCode
 // code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 func (c *CodeCore) CodeDeletePhoneCode(in *code.TLCodeDeletePhoneCode) (*tg.Bool, error) {
-	_ = c.repo.DeleteCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone)
+	if err := c.repo.DeleteCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone); err != nil {
+		c.Logger.Errorf("code.deletePhoneCode - delete cache failed: auth_key_id: %d, phone: %s, err: %v",
+			in.AuthKeyId, in.Phone, err)
+	}
 	return tg.BoolTrue, nil
 }

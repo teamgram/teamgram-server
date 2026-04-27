@@ -54,7 +54,7 @@ func (m *phoneCodeModel) GetPhoneCode(ctx context.Context, authKeyId int64, phon
 	var txn code.PhoneCodeTransaction
 	if err := json.Unmarshal([]byte(val), &txn); err != nil {
 		logx.WithContext(ctx).Errorf("phone_code.GetPhoneCode json.Unmarshal(%s) error(%v)", val, err)
-		return nil, nil
+		return nil, fmt.Errorf("phone_code.GetPhoneCode json unmarshal: %w", err)
 	}
 
 	return &txn, nil
