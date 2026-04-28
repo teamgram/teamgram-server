@@ -50,8 +50,8 @@ func (r *Repository) CheckBlockedUserList(ctx context.Context, userID int64, idL
 	return &userpb.VectorLong{Datas: blockedIDs}, nil
 }
 
-func (r *Repository) GetBlockedList(ctx context.Context, userID int64, limit int32) (*userpb.VectorPeerBlocked, error) {
-	blockedList, err := r.model.UserPeerBlocksModel.SelectList(ctx, userID, limit)
+func (r *Repository) GetBlockedList(ctx context.Context, userID int64, offset, limit int32) (*userpb.VectorPeerBlocked, error) {
+	blockedList, err := r.model.UserPeerBlocksModel.SelectListOffset(ctx, userID, offset, limit)
 	if err != nil {
 		return nil, fmt.Errorf("%w: get blocked list %d: %w", userpb.ErrUserStorage, userID, err)
 	}

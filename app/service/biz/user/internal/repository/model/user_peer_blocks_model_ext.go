@@ -16,7 +16,31 @@
 
 package model
 
+import (
+	"context"
+	"fmt"
+)
+
 type (
 	extendUserPeerBlocksModel interface {
+		SelectListOffset(ctx context.Context, userID int64, offset, limit int32) ([]UserPeerBlocks, error)
 	}
 )
+
+func (m *defaultUserPeerBlocksModel) SelectListOffset(ctx context.Context, userID int64, offset, limit int32) ([]UserPeerBlocks, error) {
+	if limit <= 0 {
+		return []UserPeerBlocks{}, nil
+	}
+	if offset < 0 {
+		offset = 0
+	}
+
+	var values []UserPeerBlocks
+	err := m.db.QueryRowsPartial(ctx, &values,
+		"select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ? offset ?",
+		userID, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("user_peer_blocks.SelectListOffset: %w", err)
+	}
+	return values, nil
+}

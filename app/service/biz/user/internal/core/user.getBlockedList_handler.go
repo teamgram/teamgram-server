@@ -21,5 +21,5 @@ import "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 // UserGetBlockedList
 // user.getBlockedList user_id:long offset:int limit:int = Vector<PeerBlocked>;
 func (c *UserCore) UserGetBlockedList(in *user.TLUserGetBlockedList) (*user.VectorPeerBlocked, error) {
-	return c.svcCtx.Repo.GetBlockedList(c.ctx, in.UserId, in.Limit)
+	return c.svcCtx.Repo.GetBlockedList(c.ctx, in.UserId, in.Offset, in.Limit)
 }
