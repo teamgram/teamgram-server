@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"encoding/hex"
 	"strings"
 	"testing"
 
@@ -13,11 +14,19 @@ func TestGenChatInviteHashReturnsUsableHash(t *testing.T) {
 	if hash == "" {
 		t.Fatal("GenChatInviteHash returned empty string")
 	}
+	if len(hash) != 32 {
+		t.Fatalf("GenChatInviteHash length = %d, want 32", len(hash))
+	}
+	if _, err := hex.DecodeString(hash); err != nil {
+		t.Fatalf("GenChatInviteHash returned non-hex hash %q: %v", hash, err)
+	}
 	if strings.ContainsAny(hash, "/+ \t\r\n") {
 		t.Fatalf("GenChatInviteHash returned non-hash characters: %q", hash)
 	}
-	if hash == GenChatInviteHash() {
-		t.Fatalf("GenChatInviteHash returned duplicate hash %q", hash)
+
+	link := BuildInviteLink(hash)
+	if got := NormalizeInviteHash(link); got != hash {
+		t.Fatalf("NormalizeInviteHash(BuildInviteLink(hash)) = %q, want %q", got, hash)
 	}
 }
 

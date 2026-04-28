@@ -101,11 +101,11 @@ func IsChatMemberStateNormal(p *tg.ImmutableChatParticipant) bool {
 }
 
 func IsChatMemberCreator(p *tg.ImmutableChatParticipant) bool {
-	return p != nil && p.ParticipantType == ChatMemberCreator
+	return IsChatMemberStateNormal(p) && p.ParticipantType == ChatMemberCreator
 }
 
 func IsChatMemberAdmin(p *tg.ImmutableChatParticipant) bool {
-	return p != nil && p.ParticipantType == ChatMemberAdmin
+	return IsChatMemberStateNormal(p) && p.ParticipantType == ChatMemberAdmin
 }
 
 func CanInviteUsers(p *tg.ImmutableChatParticipant) bool {
@@ -136,7 +136,7 @@ func isCreatorOrHasRight(p *tg.ImmutableChatParticipant, hasRight func(tg.ChatAd
 	if IsChatMemberCreator(p) {
 		return true
 	}
-	if p == nil || p.AdminRights == nil {
+	if !IsChatMemberAdmin(p) || p.AdminRights == nil {
 		return false
 	}
 	return hasRight(p.AdminRights)

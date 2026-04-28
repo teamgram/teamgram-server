@@ -113,15 +113,41 @@ func TestParticipantStateRoleAndPermissions(t *testing.T) {
 		BanUsers:    true,
 		AddAdmins:   true,
 	})
-	normal := participantWithRights(3, ChatMemberNormal, ChatMemberStateLeft, &tg.TLChatAdminRights{
+	normalWithRights := participantWithRights(3, ChatMemberNormal, ChatMemberStateNormal, &tg.TLChatAdminRights{
 		InviteUsers: true,
 		ChangeInfo:  true,
 		BanUsers:    true,
 		AddAdmins:   true,
 	})
 	adminWithoutRights := participantWithRights(4, ChatMemberAdmin, ChatMemberStateNormal, nil)
+	leftCreator := participantWithRights(5, ChatMemberCreator, ChatMemberStateLeft, nil)
+	kickedCreator := participantWithRights(6, ChatMemberCreator, ChatMemberStateKicked, nil)
+	leftAdmin := participantWithRights(7, ChatMemberAdmin, ChatMemberStateLeft, &tg.TLChatAdminRights{
+		InviteUsers: true,
+		ChangeInfo:  true,
+		BanUsers:    true,
+		AddAdmins:   true,
+	})
+	kickedAdmin := participantWithRights(8, ChatMemberAdmin, ChatMemberStateKicked, &tg.TLChatAdminRights{
+		InviteUsers: true,
+		ChangeInfo:  true,
+		BanUsers:    true,
+		AddAdmins:   true,
+	})
+	leftNormalWithRights := participantWithRights(9, ChatMemberNormal, ChatMemberStateLeft, &tg.TLChatAdminRights{
+		InviteUsers: true,
+		ChangeInfo:  true,
+		BanUsers:    true,
+		AddAdmins:   true,
+	})
+	kickedNormalWithRights := participantWithRights(10, ChatMemberNormal, ChatMemberStateKicked, &tg.TLChatAdminRights{
+		InviteUsers: true,
+		ChangeInfo:  true,
+		BanUsers:    true,
+		AddAdmins:   true,
+	})
 
-	if !IsChatMemberStateNormal(creator) || IsChatMemberStateNormal(normal) {
+	if !IsChatMemberStateNormal(creator) || IsChatMemberStateNormal(leftNormalWithRights) {
 		t.Fatal("IsChatMemberStateNormal returned unexpected result")
 	}
 	if !IsChatMemberCreator(creator) || IsChatMemberAdmin(creator) {
@@ -129,6 +155,12 @@ func TestParticipantStateRoleAndPermissions(t *testing.T) {
 	}
 	if !IsChatMemberAdmin(admin) || IsChatMemberCreator(admin) {
 		t.Fatal("admin role helpers returned unexpected result")
+	}
+	if IsChatMemberCreator(leftCreator) || IsChatMemberCreator(kickedCreator) {
+		t.Fatal("left/kicked creator was recognized as creator")
+	}
+	if IsChatMemberAdmin(leftAdmin) || IsChatMemberAdmin(kickedAdmin) {
+		t.Fatal("left/kicked admin was recognized as admin")
 	}
 	for name, fn := range map[string]func(*tg.ImmutableChatParticipant) bool{
 		"CanInviteUsers":    CanInviteUsers,
@@ -142,11 +174,23 @@ func TestParticipantStateRoleAndPermissions(t *testing.T) {
 		if !fn(admin) {
 			t.Fatalf("%s(admin) = false, want true", name)
 		}
-		if !fn(normal) {
-			t.Fatalf("%s(normal with rights) = false, want true", name)
-		}
 		if fn(adminWithoutRights) {
 			t.Fatalf("%s(admin without rights) = true, want false", name)
+		}
+		if fn(normalWithRights) {
+			t.Fatalf("%s(normal member with rights) = true, want false", name)
+		}
+		if fn(leftNormalWithRights) {
+			t.Fatalf("%s(left normal member with rights) = true, want false", name)
+		}
+		if fn(kickedNormalWithRights) {
+			t.Fatalf("%s(kicked normal member with rights) = true, want false", name)
+		}
+		if fn(leftAdmin) {
+			t.Fatalf("%s(left admin with rights) = true, want false", name)
+		}
+		if fn(kickedAdmin) {
+			t.Fatalf("%s(kicked admin with rights) = true, want false", name)
 		}
 	}
 }
