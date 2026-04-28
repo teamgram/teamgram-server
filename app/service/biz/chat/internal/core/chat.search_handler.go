@@ -24,8 +24,23 @@ import (
 // ChatSearch
 // chat.search self_id:long q:string offset:long limit:int = Vector<MutableChat>;
 func (c *ChatCore) ChatSearch(in *chat.TLChatSearch) (*chat.VectorMutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.search - error: method ChatSearch not impl")
+	r := &chat.VectorMutableChat{Datas: []tg.MutableChatClazz{}}
+	if len(in.Q) < 3 || in.Limit <= 0 {
+		return r, nil
+	}
+	limit := in.Limit
+	if limit > 50 {
+		limit = 50
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	chats, err := c.repo().Search(c.ctx, in.SelfId, "%"+in.Q+"%", in.Offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range chats {
+		if item != nil {
+			r.Datas = append(r.Datas, item)
+		}
+	}
+	return r, nil
 }

@@ -24,8 +24,15 @@ import (
 // ChatGetChatListByIdList
 // chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (c *ChatCore) ChatGetChatListByIdList(in *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getChatListByIdList - error: method ChatGetChatListByIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	chats, err := c.repo().GetChatListByIDList(c.ctx, in.IdList)
+	if err != nil {
+		return nil, err
+	}
+	r := &chat.VectorMutableChat{Datas: make([]tg.MutableChatClazz, 0, len(chats))}
+	for _, item := range chats {
+		if item != nil {
+			r.Datas = append(r.Datas, item)
+		}
+	}
+	return r, nil
 }

@@ -24,8 +24,15 @@ import (
 // ChatGetMyChatList
 // chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 func (c *ChatCore) ChatGetMyChatList(in *chat.TLChatGetMyChatList) (*chat.VectorMutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getMyChatList - error: method ChatGetMyChatList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	chats, err := c.repo().GetMyChatList(c.ctx, in.UserId, tg.FromBoolClazz(in.IsCreator))
+	if err != nil {
+		return nil, err
+	}
+	r := &chat.VectorMutableChat{Datas: make([]tg.MutableChatClazz, 0, len(chats))}
+	for _, item := range chats {
+		if item != nil {
+			r.Datas = append(r.Datas, item)
+		}
+	}
+	return r, nil
 }

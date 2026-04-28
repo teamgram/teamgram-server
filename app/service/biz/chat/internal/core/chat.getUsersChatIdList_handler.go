@@ -16,16 +16,35 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatGetUsersChatIdList
 // chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 func (c *ChatCore) ChatGetUsersChatIdList(in *chat.TLChatGetUsersChatIdList) (*chat.VectorUserChatIdList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getUsersChatIdList - error: method ChatGetUsersChatIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	rows, err := c.repo().GetUsersChatIDList(c.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	items := make([]chat.UserChatIdListClazz, 0, len(rows))
+	for _, row := range rows {
+		if row == nil {
+			continue
+		}
+		var found *chat.TLUserChatIdList
+		for _, item := range items {
+			if item.UserId == row.UserId {
+				found = item
+				break
+			}
+		}
+		if found == nil {
+			items = append(items, chat.MakeTLUserChatIdList(&chat.TLUserChatIdList{
+				UserId:     row.UserId,
+				ChatIdList: []int64{row.ChatId},
+			}).ToUserChatIdList())
+			continue
+		}
+		found.ChatIdList = append(found.ChatIdList, row.ChatId)
+	}
+	return &chat.VectorUserChatIdList{Datas: items}, nil
 }

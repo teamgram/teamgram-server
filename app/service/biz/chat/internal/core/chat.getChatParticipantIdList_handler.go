@@ -16,16 +16,14 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatGetChatParticipantIdList
 // chat.getChatParticipantIdList chat_id:long = Vector<long>;
 func (c *ChatCore) ChatGetChatParticipantIdList(in *chat.TLChatGetChatParticipantIdList) (*chat.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getChatParticipantIdList - error: method ChatGetChatParticipantIdList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	ids, err := c.repo().GetChatParticipantIDList(c.ctx, in.ChatId)
+	if err != nil {
+		return nil, err
+	}
+	return &chat.VectorLong{Datas: ids}, nil
 }

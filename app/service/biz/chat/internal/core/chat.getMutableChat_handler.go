@@ -24,8 +24,5 @@ import (
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
 func (c *ChatCore) ChatGetMutableChat(in *chat.TLChatGetMutableChat) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getMutableChat - error: method ChatGetMutableChat not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.repo().GetMutableChat(c.ctx, in.ChatId)
 }

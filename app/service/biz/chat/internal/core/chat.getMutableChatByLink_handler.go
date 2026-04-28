@@ -24,8 +24,5 @@ import (
 // ChatGetMutableChatByLink
 // chat.getMutableChatByLink link:string = MutableChat;
 func (c *ChatCore) ChatGetMutableChatByLink(in *chat.TLChatGetMutableChatByLink) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getMutableChatByLink - error: method ChatGetMutableChatByLink not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.repo().GetMutableChatByLink(c.ctx, in.Link)
 }
