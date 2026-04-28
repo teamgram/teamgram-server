@@ -1,13 +1,80 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/cache"
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type noOpBatchCache struct{}
+
+func (noOpBatchCache) Del(keys ...string) error { return nil }
+func (noOpBatchCache) DelCtx(ctx context.Context, keys ...string) error {
+	return nil
+}
+func (noOpBatchCache) Get(key string, val any) error { return model.ErrNotFound }
+func (noOpBatchCache) GetCtx(ctx context.Context, key string, val any) error {
+	return model.ErrNotFound
+}
+func (noOpBatchCache) IsNotFound(err error) bool     { return errors.Is(err, model.ErrNotFound) }
+func (noOpBatchCache) Set(key string, val any) error { return nil }
+func (noOpBatchCache) SetCtx(ctx context.Context, key string, val any) error {
+	return nil
+}
+func (noOpBatchCache) SetWithExpire(key string, val any, expire time.Duration) error {
+	return nil
+}
+func (noOpBatchCache) SetWithExpireCtx(ctx context.Context, key string, val any, expire time.Duration) error {
+	return nil
+}
+func (noOpBatchCache) Take(val any, key string, query func(val any) error) error {
+	return query(val)
+}
+func (noOpBatchCache) TakeCtx(ctx context.Context, val any, key string, query func(val any) error) error {
+	return query(val)
+}
+func (noOpBatchCache) TakeWithExpire(val any, key string, query func(val any, expire time.Duration) error) error {
+	return query(val, 0)
+}
+func (noOpBatchCache) TakeWithExpireCtx(ctx context.Context, val any, key string, query func(val any, expire time.Duration) error) error {
+	return query(val, 0)
+}
+func (noOpBatchCache) Takes(query func(keys ...string) (map[string]any, error), cacheF func(k, v string) (any, error), keys ...string) error {
+	_, err := query(keys...)
+	return err
+}
+func (noOpBatchCache) TakesCtx(ctx context.Context, query func(keys ...string) (map[string]any, error), cacheF func(k, v string) (any, error), keys ...string) error {
+	_, err := query(keys...)
+	return err
+}
+func (noOpBatchCache) TakesWithExpire(query func(expire time.Duration, keys ...string) (map[string]any, error), cacheF func(k, v string) (any, error), keys ...string) error {
+	_, err := query(0, keys...)
+	return err
+}
+func (noOpBatchCache) TakesWithExpireCtx(ctx context.Context, query func(expire time.Duration, keys ...string) (map[string]any, error), cacheF func(k, v string) (any, error), keys ...string) error {
+	_, err := query(0, keys...)
+	return err
+}
+
+var _ cache.BatchCache = noOpBatchCache{}
+
+type fakeAuthUsersPushModel struct {
+	model.AuthUsersModel
+	updateAndroidPushSessionId func(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error)
+}
+
+func (m fakeAuthUsersPushModel) UpdateAndroidPushSessionId(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error) {
+	return m.updateAndroidPushSessionId(ctx, androidPushSessionId, authKeyId, userId)
+}
 
 func TestAuthDataStateMapping(t *testing.T) {
 	tests := []struct {
@@ -79,5 +146,65 @@ func TestClientKindAndLangPackMapping(t *testing.T) {
 	}
 	if got := normalizeLangPack("android", "Telegram TDLib"); got != "android" {
 		t.Fatalf("normalizeLangPack() = %q, want android", got)
+	}
+}
+
+func TestSetAndroidPushSessionIdReturnsAuthorizationNotFoundOnModelNotFound(t *testing.T) {
+	repo := &Repository{
+		CachedConn: sqlc.NewConnWithCache(nil, noOpBatchCache{}),
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findOneByAuthKeyId: func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
+					return &model.AuthKeys{
+						AuthKeyId:     authKeyId,
+						Body:          "YWJj",
+						AuthKeyType:   tg.AuthKeyTypePerm,
+						PermAuthKeyId: authKeyId,
+					}, nil
+				},
+			},
+			AuthUsersModel: fakeAuthUsersPushModel{
+				updateAndroidPushSessionId: func(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error) {
+					return 0, &model.NotFoundError{
+						Resource: "auth_users",
+						Key:      "auth_key_id=1001,user_id=42",
+						Cause:    model.ErrNotFound,
+					}
+				},
+			},
+		},
+	}
+
+	err := repo.SetAndroidPushSessionIdByAuthKeyId(context.Background(), 42, 1001, 3003)
+	if !errors.Is(err, authsession.ErrAuthorizationNotFound) {
+		t.Fatalf("SetAndroidPushSessionIdByAuthKeyId() error = %v, want ErrAuthorizationNotFound", err)
+	}
+}
+
+func TestSetAndroidPushSessionIdReturnsAuthorizationNotFoundOnZeroRows(t *testing.T) {
+	repo := &Repository{
+		CachedConn: sqlc.NewConnWithCache(nil, noOpBatchCache{}),
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findOneByAuthKeyId: func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
+					return &model.AuthKeys{
+						AuthKeyId:     authKeyId,
+						Body:          "YWJj",
+						AuthKeyType:   tg.AuthKeyTypePerm,
+						PermAuthKeyId: authKeyId,
+					}, nil
+				},
+			},
+			AuthUsersModel: fakeAuthUsersPushModel{
+				updateAndroidPushSessionId: func(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error) {
+					return 0, nil
+				},
+			},
+		},
+	}
+
+	err := repo.SetAndroidPushSessionIdByAuthKeyId(context.Background(), 42, 1001, 3003)
+	if !errors.Is(err, authsession.ErrAuthorizationNotFound) {
+		t.Fatalf("SetAndroidPushSessionIdByAuthKeyId() error = %v, want ErrAuthorizationNotFound", err)
 	}
 }

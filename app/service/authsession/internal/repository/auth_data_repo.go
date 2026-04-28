@@ -324,11 +324,20 @@ func (r *Repository) SetAndroidPushSessionIdByAuthKeyId(ctx context.Context, use
 	if err != nil {
 		return err
 	}
-	_, _, err = r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+	_, rowsAffected, err := r.CachedConn.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 		rowsAffected, err := r.model.AuthUsersModel.UpdateAndroidPushSessionId(ctx, sessionId, permAuthKeyId, userId)
 		return 0, rowsAffected, err
 	}, authDataCacheKey(permAuthKeyId))
-	return wrapStorage(err)
+	if err != nil {
+		if isNotFound(err) {
+			return authsession.ErrAuthorizationNotFound
+		}
+		return wrapStorage(err)
+	}
+	if rowsAffected == 0 {
+		return authsession.ErrAuthorizationNotFound
+	}
+	return nil
 }
 
 func normalizeLangPack(langPack, appVersion string) string {

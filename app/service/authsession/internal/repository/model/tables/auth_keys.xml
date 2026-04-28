@@ -20,7 +20,7 @@
         </sql>
     </operation>
 
-    <operation name="UpdatePermBinding" cache="invalidate">
+    <operation name="UpdatePermBinding" cache="invalidate" not_found="true">
         <sql>
             UPDATE
                 auth_keys
@@ -31,7 +31,7 @@
         </sql>
     </operation>
 
-    <operation name="UpdateTempBinding" cache="invalidate">
+    <operation name="UpdateTempBinding" cache="invalidate" not_found="true">
         <sql>
             UPDATE
                 auth_keys
@@ -42,7 +42,7 @@
         </sql>
     </operation>
 
-    <operation name="UpdateMediaTempBinding" cache="invalidate">
+    <operation name="UpdateMediaTempBinding" cache="invalidate" not_found="true">
         <sql>
             UPDATE
                 auth_keys

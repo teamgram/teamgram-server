@@ -114,8 +114,11 @@ func (m *defaultAuthKeysModel) UpdatePermBinding(ctx context.Context, permAuthKe
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-
-			err = nil
+			err = &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 
 			return
 		}
@@ -137,6 +140,14 @@ func (m *defaultAuthKeysModel) UpdatePermBinding(ctx context.Context, permAuthKe
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
+
+	if err == nil && rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
+	}
 
 	return
 }
@@ -161,6 +172,14 @@ func (m *defaultAuthKeysModel) UpdatePermBindingTx(tx *sqlx.Tx, permAuthKeyId in
 		return
 	}
 
+	if rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
+	}
+
 	return
 }
 
@@ -172,8 +191,11 @@ func (m *defaultAuthKeysModel) UpdateTempBinding(ctx context.Context, tempAuthKe
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-
-			err = nil
+			err = &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 
 			return
 		}
@@ -195,6 +217,14 @@ func (m *defaultAuthKeysModel) UpdateTempBinding(ctx context.Context, tempAuthKe
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
+
+	if err == nil && rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
+	}
 
 	return
 }
@@ -219,6 +249,14 @@ func (m *defaultAuthKeysModel) UpdateTempBindingTx(tx *sqlx.Tx, tempAuthKeyId in
 		return
 	}
 
+	if rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
+	}
+
 	return
 }
 
@@ -230,8 +268,11 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBinding(ctx context.Context, media
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-
-			err = nil
+			err = &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 
 			return
 		}
@@ -254,6 +295,14 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBinding(ctx context.Context, media
 		return 0, rowsAffected, nil
 	}, keys...)
 
+	if err == nil && rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
+	}
+
 	return
 }
 
@@ -275,6 +324,14 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBindingTx(tx *sqlx.Tx, mediaTempAu
 	if err != nil {
 		err = fmt.Errorf("auth_keys.UpdateMediaTempBindingTx rows affected: %w", err)
 		return
+	}
+
+	if rowsAffected == 0 {
+		err = &NotFoundError{
+			Resource: "auth_keys",
+			Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+			Cause:    ErrNotFound,
+		}
 	}
 
 	return

@@ -325,6 +325,44 @@ func TestBindKeyIdRejectsZeroBindKey(t *testing.T) {
 	}
 }
 
+func TestBindKeyIdReturnsDomainNotFoundOnModelNotFound(t *testing.T) {
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				updateTempBinding: func(ctx context.Context, tempAuthKeyId int64, authKeyId int64) (int64, error) {
+					return 0, &model.NotFoundError{
+						Resource: "auth_keys",
+						Key:      "auth_key_id=1001",
+						Cause:    model.ErrNotFound,
+					}
+				},
+			},
+		},
+	}
+
+	err := repo.BindKeyId(context.Background(), 1001, tg.AuthKeyTypeTemp, 2002)
+	if !errors.Is(err, authsession.ErrAuthKeyNotFound) {
+		t.Fatalf("BindKeyId() error = %v, want ErrAuthKeyNotFound", err)
+	}
+}
+
+func TestBindKeyIdReturnsDomainNotFoundOnZeroRows(t *testing.T) {
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				updateTempBinding: func(ctx context.Context, tempAuthKeyId int64, authKeyId int64) (int64, error) {
+					return 0, nil
+				},
+			},
+		},
+	}
+
+	err := repo.BindKeyId(context.Background(), 1001, tg.AuthKeyTypeTemp, 2002)
+	if !errors.Is(err, authsession.ErrAuthKeyNotFound) {
+		t.Fatalf("BindKeyId() error = %v, want ErrAuthKeyNotFound", err)
+	}
+}
+
 func TestExpandAuthKeyIdsUsesBatchRows(t *testing.T) {
 	repo := &Repository{
 		model: &model.Models{

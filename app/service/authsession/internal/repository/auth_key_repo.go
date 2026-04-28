@@ -188,19 +188,28 @@ func (r *Repository) BindKeyId(ctx context.Context, keyId int64, bindType int32,
 		return authsession.ErrAuthKeyInvalid
 	}
 
-	var err error
+	var (
+		rowsAffected int64
+		err          error
+	)
 	switch bindType {
 	case tg.AuthKeyTypePerm:
-		_, err = r.model.AuthKeysModel.UpdatePermBinding(ctx, bindKeyId, keyId)
+		rowsAffected, err = r.model.AuthKeysModel.UpdatePermBinding(ctx, bindKeyId, keyId)
 	case tg.AuthKeyTypeTemp:
-		_, err = r.model.AuthKeysModel.UpdateTempBinding(ctx, bindKeyId, keyId)
+		rowsAffected, err = r.model.AuthKeysModel.UpdateTempBinding(ctx, bindKeyId, keyId)
 	case tg.AuthKeyTypeMediaTemp:
-		_, err = r.model.AuthKeysModel.UpdateMediaTempBinding(ctx, bindKeyId, keyId)
+		rowsAffected, err = r.model.AuthKeysModel.UpdateMediaTempBinding(ctx, bindKeyId, keyId)
 	default:
 		return authsession.ErrAuthKeyInvalid
 	}
 	if err != nil {
+		if isNotFound(err) {
+			return authsession.ErrAuthKeyNotFound
+		}
 		return wrapStorage(err)
+	}
+	if rowsAffected == 0 {
+		return authsession.ErrAuthKeyNotFound
 	}
 	return nil
 }
