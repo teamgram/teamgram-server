@@ -88,3 +88,31 @@ func TestInviteImporterRequestedWithoutLinkUsesRecentQuery(t *testing.T) {
 		t.Fatalf("requested flag = %d, want 1", requested)
 	}
 }
+
+func TestRequireRowsAffectedMapsMissingJoinRequest(t *testing.T) {
+	if err := requireRowsAffected(1); err != nil {
+		t.Fatalf("requireRowsAffected(1) error = %v", err)
+	}
+	err := requireRowsAffected(0)
+	if !errors.Is(err, chatpb.ErrUserNotParticipant) {
+		t.Fatalf("requireRowsAffected(0) error = %v, want ErrUserNotParticipant", err)
+	}
+}
+
+func TestExportedInviteOffsetSkipsCursorAndNormalizesLink(t *testing.T) {
+	invites := []tg.ExportedChatInviteClazz{
+		tg.MakeTLChatInviteExported(&tg.TLChatInviteExported{Link: "https://t.me/+first", Date: 10}).ToExportedChatInvite().Clazz,
+		tg.MakeTLChatInviteExported(&tg.TLChatInviteExported{Link: "https://t.me/+second", Date: 20}).ToExportedChatInvite().Clazz,
+		tg.MakeTLChatInviteExported(&tg.TLChatInviteExported{Link: "https://t.me/+third", Date: 30}).ToExportedChatInvite().Clazz,
+	}
+	offset := exportedInviteOffset(invites, 20, "second")
+	if offset != 2 {
+		t.Fatalf("offset = %d, want 2 to skip cursor", offset)
+	}
+	if got := exportedInviteOffset(invites, 20, "https://t.me/+second"); got != 2 {
+		t.Fatalf("full-link offset = %d, want 2", got)
+	}
+	if got := exportedInviteOffset(invites, 99, "missing"); got != -1 {
+		t.Fatalf("missing offset = %d, want -1", got)
+	}
+}

@@ -196,7 +196,7 @@ func TestChatInviteRequestNeededImportReturnsImportedResult(t *testing.T) {
 	}
 }
 
-func TestChatHideJoinRequestApproveUsesAddHelper(t *testing.T) {
+func TestChatHideJoinRequestApproveUsesAtomicAddMutation(t *testing.T) {
 	write := &fakeWriteRepo{participant: participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil)}
 	inviteRepo := &fakeInviteRepo{requesters: chat.MakeTLRecentChatInviteRequesters(&chat.TLRecentChatInviteRequesters{RecentRequesters: []int64{}}).ToRecentChatInviteRequesters()}
 	core := newInviteTestCore(&fakeReadRepo{mutableChat: inviteMutableChat(false)}, write, inviteRepo)
@@ -207,15 +207,15 @@ func TestChatHideJoinRequestApproveUsesAddHelper(t *testing.T) {
 	if write.addCalls != 1 {
 		t.Fatalf("AddChatUser calls = %d, want 1", write.addCalls)
 	}
-	if !write.addArg.PreserveJoinRequest {
-		t.Fatal("AddChatUser should preserve join request before approval update")
+	if !write.addArg.ApproveJoinRequest || write.addArg.ApprovedBy != 1 {
+		t.Fatalf("AddChatUser arg = %#v, want atomic join request approval", write.addArg)
 	}
-	if inviteRepo.hideCalls != 1 || !inviteRepo.hideArg.Approve {
-		t.Fatalf("hide arg = %#v, want approve", inviteRepo.hideArg)
+	if inviteRepo.hideCalls != 0 {
+		t.Fatalf("HideChatJoinRequest calls = %d, want 0 on approve path", inviteRepo.hideCalls)
 	}
 }
 
-func TestChatHideJoinRequestsAllApproveUsesAddHelper(t *testing.T) {
+func TestChatHideJoinRequestsAllApproveUsesAtomicAddMutation(t *testing.T) {
 	write := &fakeWriteRepo{participant: participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil)}
 	inviteRepo := &fakeInviteRepo{
 		pendingRequests: []repository.JoinRequest{
@@ -232,11 +232,11 @@ func TestChatHideJoinRequestsAllApproveUsesAddHelper(t *testing.T) {
 	if write.addCalls != 2 {
 		t.Fatalf("AddChatUser calls = %d, want 2", write.addCalls)
 	}
-	if !write.addArg.PreserveJoinRequest {
-		t.Fatal("AddChatUser should preserve join request before approval update")
+	if !write.addArg.ApproveJoinRequest || write.addArg.ApprovedBy != 1 {
+		t.Fatalf("AddChatUser arg = %#v, want atomic join request approval", write.addArg)
 	}
-	if inviteRepo.hideCalls != 2 || !inviteRepo.hideArg.Approve {
-		t.Fatalf("hide calls=%d arg=%#v, want two approvals", inviteRepo.hideCalls, inviteRepo.hideArg)
+	if inviteRepo.hideCalls != 0 {
+		t.Fatalf("HideChatJoinRequest calls = %d, want 0 on all approve path", inviteRepo.hideCalls)
 	}
 }
 
@@ -256,6 +256,25 @@ func TestChatHideJoinRequestsAllDeleteSkipsAddHelper(t *testing.T) {
 	}
 	if inviteRepo.hideCalls != 1 || inviteRepo.hideArg.Approve {
 		t.Fatalf("hide calls=%d arg=%#v, want one delete", inviteRepo.hideCalls, inviteRepo.hideArg)
+	}
+}
+
+func TestChatImportInviteRecordsParticipantAtomically(t *testing.T) {
+	write := &fakeWriteRepo{participant: participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil)}
+	inviteRepo := &fakeInviteRepo{invite: baseInviteRow(false)}
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: inviteMutableChat(false)}, write, inviteRepo)
+	_, err := core.ChatImportChatInvite(&chat.TLChatImportChatInvite{SelfId: 2, Hash: "hash"})
+	if err != nil {
+		t.Fatalf("ChatImportChatInvite error = %v", err)
+	}
+	if write.addCalls != 1 {
+		t.Fatalf("AddChatUser calls = %d, want 1", write.addCalls)
+	}
+	if !write.addArg.RecordInviteParticipant || write.addArg.InviteLink != "hash" {
+		t.Fatalf("AddChatUser arg = %#v, want invite participant record in transaction", write.addArg)
+	}
+	if inviteRepo.recordCalls != 0 {
+		t.Fatalf("RecordInviteParticipant calls = %d, want 0 after add", inviteRepo.recordCalls)
 	}
 }
 

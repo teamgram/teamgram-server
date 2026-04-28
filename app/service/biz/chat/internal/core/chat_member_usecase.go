@@ -11,11 +11,15 @@ import (
 const maxChatParticipants = 200
 
 type addChatUserArg struct {
-	chatID              int64
-	inviterID           int64
-	userID              int64
-	isBot               bool
-	preserveJoinRequest bool
+	chatID                  int64
+	inviterID               int64
+	userID                  int64
+	isBot                   bool
+	recordInviteParticipant bool
+	inviteLink              string
+	inviteRequested         bool
+	approveJoinRequest      bool
+	approvedBy              int64
 }
 
 type deleteChatUserArg struct {
@@ -64,14 +68,18 @@ func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.Mut
 		participantType = chat.ChatMemberCreator
 	}
 	added, err := c.writeRepository().AddChatUser(ctx, repository.AddChatUserArg{
-		ChatID:              arg.chatID,
-		InviterID:           inviterID,
-		UserID:              arg.userID,
-		ParticipantID:       chatParticipantID(willAdd),
-		ParticipantType:     participantType,
-		IsBot:               arg.isBot,
-		Count:               chat.ChatParticipantsCount(mChat) + 1,
-		PreserveJoinRequest: arg.preserveJoinRequest,
+		ChatID:                  arg.chatID,
+		InviterID:               inviterID,
+		UserID:                  arg.userID,
+		ParticipantID:           chatParticipantID(willAdd),
+		ParticipantType:         participantType,
+		IsBot:                   arg.isBot,
+		Count:                   chat.ChatParticipantsCount(mChat) + 1,
+		RecordInviteParticipant: arg.recordInviteParticipant,
+		InviteLink:              arg.inviteLink,
+		InviteRequested:         arg.inviteRequested,
+		ApproveJoinRequest:      arg.approveJoinRequest,
+		ApprovedBy:              arg.approvedBy,
 	})
 	if err != nil {
 		return nil, err

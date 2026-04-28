@@ -23,14 +23,18 @@ type CreateChatArg struct {
 }
 
 type AddChatUserArg struct {
-	ChatID              int64
-	InviterID           int64
-	UserID              int64
-	ParticipantID       int64
-	ParticipantType     int32
-	IsBot               bool
-	Count               int32
-	PreserveJoinRequest bool
+	ChatID                  int64
+	InviterID               int64
+	UserID                  int64
+	ParticipantID           int64
+	ParticipantType         int32
+	IsBot                   bool
+	Count                   int32
+	RecordInviteParticipant bool
+	InviteLink              string
+	InviteRequested         bool
+	ApproveJoinRequest      bool
+	ApprovedBy              int64
 }
 
 type DeleteChatUserArg struct {
@@ -224,13 +228,28 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 		if _, err := r.model.ChatsModel.UpdateParticipantCountTx(tx, arg.Count, arg.ChatID); err != nil {
 			return err
 		}
-		if arg.PreserveJoinRequest {
-			return nil
+		switch {
+		case arg.ApproveJoinRequest:
+			rowsAffected, err := r.model.ChatInviteParticipantsModel.UpdateApprovedByTx(tx, arg.ApprovedBy, arg.ChatID, arg.UserID)
+			if err != nil {
+				return err
+			}
+			return requireRowsAffected(rowsAffected)
+		case arg.RecordInviteParticipant:
+			_, _, err = r.model.ChatInviteParticipantsModel.InsertTx(tx, &model.ChatInviteParticipants{
+				ChatId:    arg.ChatID,
+				Link:      chatpb.NormalizeInviteHash(arg.InviteLink),
+				UserId:    arg.UserID,
+				Requested: arg.InviteRequested,
+				Date2:     now,
+			})
+			return err
+		default:
+			_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
+			return err
 		}
-		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
-		return err
 	}); err != nil {
-		return nil, wrapStorage("chat.AddChatUser transaction", err)
+		return nil, wrapMutationError("chat.AddChatUser transaction", err)
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{arg.UserID})...)
 	return makeImmutableChatParticipant(row), nil

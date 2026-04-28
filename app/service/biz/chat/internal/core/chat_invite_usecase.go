@@ -36,19 +36,13 @@ func (c *ChatCore) importChatInvite(selfID int64, hash string) (*tg.MutableChat,
 		return nil, err
 	}
 	mChat, err := c.addChatUser(c.ctx, addChatUserArg{
-		chatID:    invite.ChatId,
-		inviterID: invite.AdminId,
-		userID:    selfID,
+		chatID:                  invite.ChatId,
+		inviterID:               invite.AdminId,
+		userID:                  selfID,
+		recordInviteParticipant: true,
+		inviteLink:              invite.Link,
 	})
 	if err != nil {
-		return nil, err
-	}
-	if err := c.inviteRepository().RecordInviteParticipant(c.ctx, repository.InviteParticipantArg{
-		ChatID:    invite.ChatId,
-		Link:      invite.Link,
-		UserID:    selfID,
-		Requested: false,
-	}); err != nil {
 		return nil, err
 	}
 	return mChat, nil
@@ -86,19 +80,13 @@ func (c *ChatCore) importChatInvite2(selfID int64, hash string) (*chatpb.ChatInv
 	}
 
 	mChat, err = c.addChatUser(c.ctx, addChatUserArg{
-		chatID:    invite.ChatId,
-		inviterID: invite.AdminId,
-		userID:    selfID,
+		chatID:                  invite.ChatId,
+		inviterID:               invite.AdminId,
+		userID:                  selfID,
+		recordInviteParticipant: true,
+		inviteLink:              invite.Link,
 	})
 	if err != nil {
-		return nil, err
-	}
-	if err := c.inviteRepository().RecordInviteParticipant(c.ctx, repository.InviteParticipantArg{
-		ChatID:    invite.ChatId,
-		Link:      invite.Link,
-		UserID:    selfID,
-		Requested: false,
-	}); err != nil {
 		return nil, err
 	}
 	return chatpb.MakeTLChatInviteImported(&chatpb.TLChatInviteImported{
@@ -154,15 +142,15 @@ func (c *ChatCore) hideSingleJoinRequest(selfID, chatID, userID int64, approved 
 	}
 	if approved {
 		if _, err := c.addChatUser(c.ctx, addChatUserArg{
-			chatID:              chatID,
-			inviterID:           selfID,
-			userID:              userID,
-			preserveJoinRequest: true,
+			chatID:             chatID,
+			inviterID:          selfID,
+			userID:             userID,
+			approveJoinRequest: true,
+			approvedBy:         selfID,
 		}); err != nil {
 			return nil, err
 		}
-	}
-	if err := c.inviteRepository().HideChatJoinRequest(c.ctx, repository.HideJoinRequestsArg{
+	} else if err := c.inviteRepository().HideChatJoinRequest(c.ctx, repository.HideJoinRequestsArg{
 		ChatID:   chatID,
 		UserID:   userID,
 		Approver: selfID,
@@ -184,13 +172,15 @@ func (c *ChatCore) hideAllJoinRequests(selfID, chatID int64, link *string, appro
 	for _, request := range requests {
 		if approved {
 			if _, err := c.addChatUser(c.ctx, addChatUserArg{
-				chatID:              request.ChatID,
-				inviterID:           selfID,
-				userID:              request.UserID,
-				preserveJoinRequest: true,
+				chatID:             request.ChatID,
+				inviterID:          selfID,
+				userID:             request.UserID,
+				approveJoinRequest: true,
+				approvedBy:         selfID,
 			}); err != nil {
 				return nil, err
 			}
+			continue
 		}
 		if err := c.inviteRepository().HideChatJoinRequest(c.ctx, repository.HideJoinRequestsArg{
 			ChatID:   request.ChatID,

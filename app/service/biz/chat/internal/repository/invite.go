@@ -120,13 +120,7 @@ func (r *Repository) GetExportedChatInvites(ctx context.Context, chatID, adminID
 
 	offset := 0
 	if offsetDate != nil && offsetLink != nil && *offsetDate != 0 && *offsetLink != "" {
-		offset = -1
-		for i, invite := range all {
-			if exportedInviteLink(invite) == *offsetLink && exportedInviteDate(invite) == *offsetDate {
-				offset = i
-				break
-			}
-		}
+		offset = exportedInviteOffset(all, *offsetDate, *offsetLink)
 	}
 	if offset == -1 {
 		return []tg.ExportedChatInviteClazz{}, nil
@@ -153,8 +147,15 @@ func (r *Repository) EditExportedChatInvite(ctx context.Context, arg EditExporte
 
 	out := make([]tg.ExportedChatInviteClazz, 0, 2)
 	if arg.Revoked {
+		usage, requested, err := r.chatInviteCounts(ctx, row.Link)
+		if err != nil {
+			return nil, err
+		}
 		oldRow := *row
 		oldRow.Revoked = true
+		if row.Revoked {
+			return append(out, makeChatInviteExported(&oldRow, usage, requested).Clazz), nil
+		}
 		var newRow *model.ChatInvites
 		if row.Permanent {
 			newRow = &model.ChatInvites{
@@ -180,17 +181,9 @@ func (r *Repository) EditExportedChatInvite(ctx context.Context, arg EditExporte
 		}); err != nil {
 			return nil, wrapStorage("chat_invites.Edit revoked transaction", err)
 		}
-		invite, err := r.MakeChatInviteExported(ctx, &oldRow)
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, invite.Clazz)
+		out = append(out, makeChatInviteExported(&oldRow, usage, requested).Clazz)
 		if newRow != nil {
-			newInvite, err := r.MakeChatInviteExported(ctx, newRow)
-			if err != nil {
-				return nil, err
-			}
-			out = append(out, newInvite.Clazz)
+			out = append(out, makeChatInviteExported(newRow, 0, 0).Clazz)
 		}
 		return out, nil
 	}
@@ -293,15 +286,23 @@ func (r *Repository) MakeChatInviteExported(ctx context.Context, row *model.Chat
 	if row == nil {
 		return nil, chatpb.ErrInviteHashInvalid
 	}
-	usage, err := r.model.ChatInviteParticipantsModel.SelectCountByLink(ctx, row.Link, 0)
+	usage, requested, err := r.chatInviteCounts(ctx, row.Link)
 	if err != nil {
-		return nil, wrapStorage("chat_invite_participants.SelectCountByLink usage", err)
-	}
-	requested, err := r.model.ChatInviteParticipantsModel.SelectCountByLink(ctx, row.Link, 1)
-	if err != nil {
-		return nil, wrapStorage("chat_invite_participants.SelectCountByLink requested", err)
+		return nil, err
 	}
 	return makeChatInviteExported(row, usage, requested), nil
+}
+
+func (r *Repository) chatInviteCounts(ctx context.Context, link string) (int32, int32, error) {
+	usage, err := r.model.ChatInviteParticipantsModel.SelectCountByLink(ctx, link, 0)
+	if err != nil {
+		return 0, 0, wrapStorage("chat_invite_participants.SelectCountByLink usage", err)
+	}
+	requested, err := r.model.ChatInviteParticipantsModel.SelectCountByLink(ctx, link, 1)
+	if err != nil {
+		return 0, 0, wrapStorage("chat_invite_participants.SelectCountByLink requested", err)
+	}
+	return usage, requested, nil
 }
 
 func (r *Repository) RecordInviteParticipant(ctx context.Context, arg InviteParticipantArg) error {
@@ -408,15 +409,40 @@ func (r *Repository) GetRecentChatInviteRequesters(ctx context.Context, chatID i
 
 func (r *Repository) HideChatJoinRequest(ctx context.Context, arg HideJoinRequestsArg) error {
 	if arg.Approve {
-		if _, err := r.model.ChatInviteParticipantsModel.UpdateApprovedBy(ctx, arg.Approver, arg.ChatID, arg.UserID); err != nil {
+		rowsAffected, err := r.model.ChatInviteParticipantsModel.UpdateApprovedBy(ctx, arg.Approver, arg.ChatID, arg.UserID)
+		if err != nil {
 			return wrapStorage("chat_invite_participants.UpdateApprovedBy", err)
+		}
+		if err := requireRowsAffected(rowsAffected); err != nil {
+			return err
 		}
 		return nil
 	}
-	if _, err := r.model.ChatInviteParticipantsModel.Delete(ctx, arg.ChatID, arg.UserID); err != nil {
+	rowsAffected, err := r.model.ChatInviteParticipantsModel.Delete(ctx, arg.ChatID, arg.UserID)
+	if err != nil {
 		return wrapStorage("chat_invite_participants.Delete", err)
 	}
+	if err := requireRowsAffected(rowsAffected); err != nil {
+		return err
+	}
 	return nil
+}
+
+func requireRowsAffected(rowsAffected int64) error {
+	if rowsAffected == 0 {
+		return chatpb.ErrUserNotParticipant
+	}
+	return nil
+}
+
+func wrapMutationError(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, chatpb.ErrUserNotParticipant) {
+		return err
+	}
+	return wrapStorage(op, err)
 }
 
 func (r *Repository) validateInviteLinkForChat(ctx context.Context, chatID int64, link string) (string, error) {
@@ -597,6 +623,19 @@ func exportedInviteDate(invite tg.ExportedChatInviteClazz) int32 {
 		return v.Date
 	}
 	return 0
+}
+
+func exportedInviteOffset(invites []tg.ExportedChatInviteClazz, offsetDate int32, offsetLink string) int {
+	hash := chatpb.NormalizeInviteHash(offsetLink)
+	for i, invite := range invites {
+		if exportedInviteDate(invite) != offsetDate {
+			continue
+		}
+		if chatpb.NormalizeInviteHash(exportedInviteLink(invite)) == hash {
+			return i + 1
+		}
+	}
+	return -1
 }
 
 func boolPtr(v bool) *bool {
