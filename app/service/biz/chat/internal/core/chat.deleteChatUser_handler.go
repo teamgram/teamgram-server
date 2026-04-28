@@ -24,8 +24,9 @@ import (
 // ChatDeleteChatUser
 // chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.deleteChatUser - error: method ChatDeleteChatUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.deleteChatUser(c.ctx, deleteChatUserArg{
+		chatID:       in.ChatId,
+		operatorID:   in.OperatorId,
+		deleteUserID: in.DeleteUserId,
+	})
 }

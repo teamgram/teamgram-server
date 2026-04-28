@@ -18,14 +18,22 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChatCreateChat2
 // chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
 func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.createChat2 - error: method ChatCreateChat2 not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	ttlPeriod := int32(0)
+	if in.TtlPeriod != nil {
+		ttlPeriod = *in.TtlPeriod
+	}
+	return c.writeRepository().CreateChat(c.ctx, repository.CreateChatArg{
+		CreatorID: in.CreatorId,
+		UserIDs:   in.UserIdList,
+		Title:     in.Title,
+		BotIDs:    in.Bots,
+		TTLPeriod: ttlPeriod,
+	})
 }

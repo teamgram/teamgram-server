@@ -24,8 +24,10 @@ import (
 // ChatAddChatUser
 // chat.addChatUser flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
 func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.addChatUser - error: method ChatAddChatUser not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.addChatUser(c.ctx, addChatUserArg{
+		chatID:    in.ChatId,
+		inviterID: in.InviterId,
+		userID:    in.UserId,
+		isBot:     in.IsBot,
+	})
 }

@@ -24,8 +24,19 @@ import (
 // ChatDeleteChat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
 func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.deleteChat - error: method ChatDeleteChat not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	mChat, err := c.repo().GetMutableChat(c.ctx, in.ChatId)
+	if err != nil {
+		return nil, err
+	}
+	operatorID := in.OperatorId
+	if operatorID == 0 {
+		operatorID = chat.ChatCreator(mChat)
+	}
+	if chat.ChatCreator(mChat) != operatorID {
+		return nil, chat.ErrChatAdminRequired
+	}
+	if err := c.writeRepository().DeleteChat(c.ctx, in.ChatId); err != nil {
+		return nil, err
+	}
+	return mChat, nil
 }

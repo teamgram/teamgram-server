@@ -18,14 +18,22 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChatMigratedToChannel
 // chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 func (c *ChatCore) ChatMigratedToChannel(in *chat.TLChatMigratedToChannel) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.migratedToChannel - error: method ChatMigratedToChannel not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in.Chat == nil || in.Chat.Chat == nil {
+		return nil, chat.ErrChatNotFound
+	}
+	if _, err := c.writeRepository().MigratedToChannel(c.ctx, repository.MigratedToChannelArg{
+		ChatID:     in.Chat.Chat.Id,
+		ChannelID:  in.Id,
+		AccessHash: in.AccessHash,
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -38,10 +38,19 @@ type chatReadRepository interface {
 	Search(ctx context.Context, selfID int64, q string, offset int64, limit int32) ([]*tg.MutableChat, error)
 }
 
+type chatWriteRepository interface {
+	CreateChat(ctx context.Context, arg repository.CreateChatArg) (*tg.MutableChat, error)
+	DeleteChat(ctx context.Context, chatID int64) error
+	AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.MutableChat, error)
+	DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) (*tg.MutableChat, error)
+	MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) (*tg.MutableChat, error)
+}
+
 type ChatCore struct {
-	ctx      context.Context
-	svcCtx   *svc.ServiceContext
-	readRepo chatReadRepository
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	readRepo  chatReadRepository
+	writeRepo chatWriteRepository
 	logx.Logger
 	MD *metadata.RpcMetadata
 }
@@ -58,6 +67,13 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *ChatCore {
 func (c *ChatCore) repo() chatReadRepository {
 	if c.readRepo != nil {
 		return c.readRepo
+	}
+	return c.svcCtx.Repo
+}
+
+func (c *ChatCore) writeRepository() chatWriteRepository {
+	if c.writeRepo != nil {
+		return c.writeRepo
 	}
 	return c.svcCtx.Repo
 }
