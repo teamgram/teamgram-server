@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -251,9 +252,20 @@ func (r *Repository) ChangePhone(ctx context.Context, id int64, phone string) er
 	if userDO != nil && userDO.Id != id {
 		return userpb.ErrPhoneNumberInUse
 	}
-	return r.execUserUpdate(ctx, id, "change phone", func() (int64, error) {
-		return r.model.UsersModel.UpdatePhone(ctx, phone, id)
-	})
+	rowsAffected, err := r.model.UsersModel.UpdatePhone(ctx, phone, id)
+	if err != nil {
+		if errors.Is(err, model.ErrDuplicatePhone) {
+			return userpb.ErrPhoneNumberInUse
+		}
+		return fmt.Errorf("%w: change phone %d: %w", userpb.ErrUserStorage, id, err)
+	}
+	if rowsAffected == 0 {
+		return userpb.ErrUserNotFound
+	}
+	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
+		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)
+	}
+	return nil
 }
 
 func (r *Repository) GetUserIDByPhone(ctx context.Context, phone string) (int64, error) {

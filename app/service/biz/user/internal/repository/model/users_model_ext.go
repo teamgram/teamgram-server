@@ -33,6 +33,8 @@ type (
 	}
 )
 
+var ErrDuplicatePhone = errors.New("users: duplicate phone")
+
 func (m *defaultUsersModel) SelectProfilePhotoTx(tx *sqlx.Tx, id int64) (int64, error) {
 	var photoID int64
 	err := tx.QueryRowPartial(&photoID, "select photo_id from users where id = ? limit 1", id)
@@ -48,6 +50,9 @@ func (m *defaultUsersModel) SelectProfilePhotoTx(tx *sqlx.Tx, id int64) (int64, 
 func (m *defaultUsersModel) UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error) {
 	result, err := m.db.Exec(ctx, "update users set phone = ? where id = ?", phone, id)
 	if err != nil {
+		if sqlx.IsDuplicate(err) {
+			return 0, ErrDuplicatePhone
+		}
 		return 0, fmt.Errorf("users.UpdatePhone exec: %w", err)
 	}
 	rowsAffected, err = result.RowsAffected()
