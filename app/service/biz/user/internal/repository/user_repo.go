@@ -190,19 +190,20 @@ func (r *Repository) UpdateBirthday(ctx context.Context, id int64, birthday tg.B
 }
 
 func (r *Repository) UpdatePremium(ctx context.Context, id int64, premium bool, months int32) error {
-	return r.updateUserRow(ctx, id, "update premium", func(do *model.Users) {
-		do.Premium = premium
-		if premium && months > 0 {
-			do.PremiumExpireDate = time.Now().AddDate(0, int(months), 0).Unix()
-		} else if !premium {
-			do.PremiumExpireDate = 0
-		}
+	premiumExpireDate := int64(0)
+	updateExpireDate := !premium
+	if premium && months > 0 {
+		premiumExpireDate = time.Now().AddDate(0, int(months), 0).Unix()
+		updateExpireDate = true
+	}
+	return r.execUserUpdate(ctx, id, "update premium", func() (int64, error) {
+		return r.model.UsersModel.UpdatePremium(ctx, premium, premiumExpireDate, updateExpireDate, id)
 	})
 }
 
 func (r *Repository) UpdateVerified(ctx context.Context, id int64, verified bool) error {
-	return r.updateUserRow(ctx, id, "update verified", func(do *model.Users) {
-		do.Verified = verified
+	return r.execUserUpdate(ctx, id, "update verified", func() (int64, error) {
+		return r.model.UsersModel.UpdateVerified(ctx, verified, id)
 	})
 }
 
@@ -474,27 +475,6 @@ func (r *Repository) execUserUpdate(ctx context.Context, id int64, op string, fn
 	}
 	if rowsAffected == 0 {
 		return userpb.ErrUserNotFound
-	}
-	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
-		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)
-	}
-	return nil
-}
-
-func (r *Repository) updateUserRow(ctx context.Context, id int64, op string, mutate func(*model.Users)) error {
-	if id == 0 {
-		return userpb.ErrUserNotFound
-	}
-	userDO, err := r.model.UsersModel.FindOne(ctx, id)
-	if err != nil {
-		if isNotFound(err) {
-			return userpb.ErrUserNotFound
-		}
-		return fmt.Errorf("%w: %s %d load: %w", userpb.ErrUserStorage, op, id, err)
-	}
-	mutate(userDO)
-	if err := r.model.UsersModel.Update2(ctx, userDO); err != nil {
-		return fmt.Errorf("%w: %s %d update: %w", userpb.ErrUserStorage, op, id, err)
 	}
 	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
 		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)

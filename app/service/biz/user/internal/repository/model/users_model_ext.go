@@ -24,6 +24,8 @@ import (
 type (
 	extendUsersModel interface {
 		UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error)
+		UpdatePremium(ctx context.Context, premium bool, premiumExpireDate int64, updateExpireDate bool, id int64) (rowsAffected int64, err error)
+		UpdateVerified(ctx context.Context, verified bool, id int64) (rowsAffected int64, err error)
 	}
 )
 
@@ -35,6 +37,36 @@ func (m *defaultUsersModel) UpdatePhone(ctx context.Context, phone string, id in
 	rowsAffected, err = result.RowsAffected()
 	if err != nil {
 		return 0, fmt.Errorf("users.UpdatePhone rows affected: %w", err)
+	}
+	return rowsAffected, nil
+}
+
+func (m *defaultUsersModel) UpdatePremium(ctx context.Context, premium bool, premiumExpireDate int64, updateExpireDate bool, id int64) (rowsAffected int64, err error) {
+	query := "update users set premium = ? where id = ?"
+	args := []interface{}{premium, id}
+	if updateExpireDate {
+		query = "update users set premium = ?, premium_expire_date = ? where id = ?"
+		args = []interface{}{premium, premiumExpireDate, id}
+	}
+	result, err := m.db.Exec(ctx, query, args...)
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdatePremium exec: %w", err)
+	}
+	rowsAffected, err = result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdatePremium rows affected: %w", err)
+	}
+	return rowsAffected, nil
+}
+
+func (m *defaultUsersModel) UpdateVerified(ctx context.Context, verified bool, id int64) (rowsAffected int64, err error) {
+	result, err := m.db.Exec(ctx, "update users set verified = ? where id = ?", verified, id)
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdateVerified exec: %w", err)
+	}
+	rowsAffected, err = result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdateVerified rows affected: %w", err)
 	}
 	return rowsAffected, nil
 }
