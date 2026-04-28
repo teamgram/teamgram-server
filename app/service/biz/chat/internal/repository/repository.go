@@ -17,14 +17,35 @@
 package repository
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
+	repositoryrpc "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/rpc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/plugin"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	sqlc.CachedConn
+	db          *sqlx.DB
+	model       *model.Models
+	mediaReader repositoryrpc.MediaReader
+	plugin      plugin.ChatPlugin
 }
 
 // NewRepository creates a new Repository.
-func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+func NewRepository(c config.Config, mediaReader repositoryrpc.MediaReader, p plugin.ChatPlugin) *Repository {
+	db := sqlx.NewMySQL(&c.Mysql)
+	return &Repository{
+		CachedConn:  sqlc.NewConn(db, c.Cache),
+		db:          db,
+		model:       model.NewModels(db),
+		mediaReader: mediaReader,
+		plugin:      p,
+	}
+}
+
+func (r *Repository) Close() error {
+	return nil
 }

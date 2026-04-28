@@ -19,6 +19,9 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
+	repositoryrpc "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/rpc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/plugin"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 )
 
 type ServiceContext struct {
@@ -27,8 +30,13 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	return NewServiceContextWithPlugin(c, nil)
+}
+
+func NewServiceContextWithPlugin(c config.Config, p plugin.ChatPlugin) *ServiceContext {
+	mediaCli := mediaclient.NewMediaClient(mediaclient.MustNewKitexClient(c.MediaClient))
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repository.NewRepository(c, repositoryrpc.NewMediaReader(mediaCli), p),
 	}
 }

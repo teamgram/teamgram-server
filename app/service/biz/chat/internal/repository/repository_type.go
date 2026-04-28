@@ -16,7 +16,30 @@
 
 package repository
 
+import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
+const (
+	chatAggregateCacheKeyPrefix   = "chat:aggregate"
+	chatParticipantCacheKeyPrefix = "chat:participant"
+	createChatFloodKeyPrefix      = "chat:create:flood"
+
+	createChatFloodInterval = time.Hour
+)
+
 // Type aliases for convenience in the Logic layer.
 type (
-// TODO: Add type aliases per business requirements.
+	ChatsModelType                  = model.ChatsModel
+	ChatParticipantsModelType       = model.ChatParticipantsModel
+	ChatInvitesModelType            = model.ChatInvitesModel
+	ChatInviteParticipantsModelType = model.ChatInviteParticipantsModel
+
+	ChatCacheData struct {
+		Chat         *tg.ImmutableChat
+		Participants []*tg.ImmutableChatParticipant
+	}
 )

@@ -20,6 +20,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/server/tg/service"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/plugin"
 )
 
 type (
@@ -28,4 +29,8 @@ type (
 
 func New(c Config) *service.Service {
 	return service.New(svc.NewServiceContext(c))
+}
+
+func NewWithPlugin(c Config, p plugin.ChatPlugin) *service.Service {
+	return service.New(svc.NewServiceContextWithPlugin(c, p))
 }
