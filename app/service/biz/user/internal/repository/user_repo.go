@@ -22,20 +22,14 @@ func (r *Repository) GetImmutableUser(ctx context.Context, id int64, privacy boo
 		}
 		return nil, fmt.Errorf("%w: get immutable user %d: %w", userpb.ErrUserStorage, id, err)
 	}
-
-	return tg.MakeTLImmutableUser(&tg.TLImmutableUser{
-		User:             userDataFromModel(userDO),
-		LastSeenAt:       0,
-		Contacts:         []tg.ContactDataClazz{},
-		ReverseContacts:  []tg.ContactDataClazz{},
-		KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
-	}).ToImmutableUser(), nil
+	return r.immutableUserFor(ctx, userDO, privacy, contacts)
 }
 
 func (r *Repository) GetImmutableUserV2(ctx context.Context, id int64, privacy bool, contacts []int64) (*tg.ImmutableUser, error) {
 	return r.GetImmutableUser(ctx, id, privacy, contacts...)
 }
 
+// GetMutableUsers returns existing users only; missing ids are omitted.
 func (r *Repository) GetMutableUsers(ctx context.Context, ids []int64, privacy bool, contacts []int64) ([]tg.ImmutableUserClazz, error) {
 	if len(ids) == 0 {
 		return []tg.ImmutableUserClazz{}, nil
@@ -47,7 +41,11 @@ func (r *Repository) GetMutableUsers(ctx context.Context, ids []int64, privacy b
 
 	users := make([]tg.ImmutableUserClazz, 0, len(userDOList))
 	for i := range userDOList {
-		users = append(users, immutableUserFromModel(&userDOList[i]))
+		userData, err := r.immutableUserFor(ctx, &userDOList[i], privacy, contacts)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, userData)
 	}
 	return users, nil
 }
@@ -416,6 +414,89 @@ func immutableUserFromModel(do *model.Users) tg.ImmutableUserClazz {
 		ReverseContacts:  []tg.ContactDataClazz{},
 		KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
 	}).ToImmutableUser()
+}
+
+func (r *Repository) immutableUserFor(ctx context.Context, do *model.Users, privacy bool, contactIDs []int64) (*tg.ImmutableUser, error) {
+	lastSeenAt, err := r.immutableLastSeen(ctx, do.Id)
+	if err != nil {
+		return nil, err
+	}
+	contacts, reverseContacts, err := r.immutableContacts(ctx, do.Id, contactIDs)
+	if err != nil {
+		return nil, err
+	}
+	privacyRules, err := r.immutablePrivacyRules(ctx, do.Id, privacy)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+		User:             userDataFromModel(do),
+		LastSeenAt:       lastSeenAt,
+		Contacts:         contacts,
+		ReverseContacts:  reverseContacts,
+		KeysPrivacyRules: privacyRules,
+	}).ToImmutableUser(), nil
+}
+
+func (r *Repository) immutableLastSeen(ctx context.Context, id int64) (int64, error) {
+	presenceDO, err := r.model.UserPresencesModel.Select(ctx, id)
+	if err != nil {
+		return 0, fmt.Errorf("%w: get immutable last seen %d: %w", userpb.ErrUserStorage, id, err)
+	}
+	if presenceDO == nil {
+		return 0, nil
+	}
+	return presenceDO.LastSeenAt, nil
+}
+
+func (r *Repository) immutableContacts(ctx context.Context, id int64, contactIDs []int64) ([]tg.ContactDataClazz, []tg.ContactDataClazz, error) {
+	if len(contactIDs) == 0 {
+		return []tg.ContactDataClazz{}, []tg.ContactDataClazz{}, nil
+	}
+	contacts := make([]tg.ContactDataClazz, 0, len(contactIDs))
+	reverseContacts := make([]tg.ContactDataClazz, 0, len(contactIDs))
+	for _, contactID := range contactIDs {
+		if contactID == 0 {
+			continue
+		}
+		contactDO, err := r.model.UserContactsModel.SelectContact(ctx, id, contactID)
+		if err != nil {
+			return nil, nil, fmt.Errorf("%w: get immutable contact %d/%d: %w", userpb.ErrUserStorage, id, contactID, err)
+		}
+		if contactDO != nil {
+			contacts = append(contacts, makeContactData(contactDO))
+		}
+		reverseContactDO, err := r.model.UserContactsModel.SelectContact(ctx, contactID, id)
+		if err != nil {
+			return nil, nil, fmt.Errorf("%w: get immutable reverse contact %d/%d: %w", userpb.ErrUserStorage, contactID, id, err)
+		}
+		if reverseContactDO != nil {
+			reverseContacts = append(reverseContacts, makeContactData(reverseContactDO))
+		}
+	}
+	return contacts, reverseContacts, nil
+}
+
+func (r *Repository) immutablePrivacyRules(ctx context.Context, id int64, privacy bool) ([]tg.PrivacyKeyRulesClazz, error) {
+	if !privacy {
+		return []tg.PrivacyKeyRulesClazz{}, nil
+	}
+	privacyDOList, err := r.model.UserPrivaciesModel.SelectPrivacyAll(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("%w: get immutable privacy %d: %w", userpb.ErrUserStorage, id, err)
+	}
+	rules := make([]tg.PrivacyKeyRulesClazz, 0, len(privacyDOList))
+	for i := range privacyDOList {
+		decodedRules, err := decodePrivacyRules(privacyDOList[i].Rules)
+		if err != nil {
+			return nil, fmt.Errorf("%w: decode immutable privacy %d/%d: %w", userpb.ErrUserStorage, id, privacyDOList[i].KeyType, err)
+		}
+		rules = append(rules, tg.MakeTLPrivacyKeyRules(&tg.TLPrivacyKeyRules{
+			Key:   privacyDOList[i].KeyType,
+			Rules: decodedRules,
+		}).ToPrivacyKeyRules())
+	}
+	return rules, nil
 }
 
 func userDataFromModel(do *model.Users) tg.UserDataClazz {
