@@ -57,56 +57,101 @@ func TestDecodePrivacyRulesAcceptsLegacyTLJSONShape(t *testing.T) {
 	}
 }
 
-func TestCheckPrivacyRules(t *testing.T) {
+func TestEvaluatePrivacyRulesWithContext(t *testing.T) {
 	tests := []struct {
-		name   string
-		rules  []tg.PrivacyRuleClazz
-		peerID int64
-		want   bool
+		name  string
+		ctx   privacyEvaluationContext
+		rules []tg.PrivacyRuleClazz
+		want  bool
 	}{
 		{
-			name:   "allow all permits peer",
-			rules:  []tg.PrivacyRuleClazz{tg.PrivacyValueAllowAllClazz},
-			peerID: 42,
-			want:   true,
+			name:  "allow all permits peer",
+			ctx:   privacyEvaluationContext{PeerID: 42},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueAllowAllClazz},
+			want:  true,
 		},
 		{
-			name:   "disallow all rejects peer",
-			rules:  []tg.PrivacyRuleClazz{tg.PrivacyValueDisallowAllClazz},
-			peerID: 42,
-			want:   false,
+			name:  "disallow all rejects peer",
+			ctx:   privacyEvaluationContext{PeerID: 42},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueDisallowAllClazz},
+			want:  false,
+		},
+		{
+			name:  "allow contacts permits contact",
+			ctx:   privacyEvaluationContext{PeerID: 42, IsContact: true},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueAllowContactsClazz},
+			want:  true,
+		},
+		{
+			name:  "allow contacts rejects non contact",
+			ctx:   privacyEvaluationContext{PeerID: 42},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueAllowContactsClazz},
+			want:  false,
+		},
+		{
+			name:  "disallow contacts rejects contact under allow all",
+			ctx:   privacyEvaluationContext{PeerID: 42, IsContact: true},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueAllowAllClazz, tg.PrivacyValueDisallowContactsClazz},
+			want:  false,
 		},
 		{
 			name: "allow users permits listed peer",
+			ctx:  privacyEvaluationContext{PeerID: 42},
 			rules: []tg.PrivacyRuleClazz{
 				tg.PrivacyValueDisallowAllClazz,
 				tg.MakeTLPrivacyValueAllowUsers(&tg.TLPrivacyValueAllowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
 			},
-			peerID: 42,
-			want:   true,
+			want: true,
 		},
 		{
 			name: "disallow users rejects listed peer",
+			ctx:  privacyEvaluationContext{PeerID: 42},
 			rules: []tg.PrivacyRuleClazz{
 				tg.PrivacyValueAllowAllClazz,
 				tg.MakeTLPrivacyValueDisallowUsers(&tg.TLPrivacyValueDisallowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
 			},
-			peerID: 42,
-			want:   false,
+			want: false,
 		},
 		{
 			name: "unlisted peer keeps default decision",
+			ctx:  privacyEvaluationContext{PeerID: 43},
 			rules: []tg.PrivacyRuleClazz{
 				tg.PrivacyValueAllowAllClazz,
 				tg.MakeTLPrivacyValueDisallowUsers(&tg.TLPrivacyValueDisallowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
 			},
-			peerID: 43,
-			want:   true,
+			want: true,
+		},
+		{
+			name:  "close friends permits close friend",
+			ctx:   privacyEvaluationContext{PeerID: 42, IsCloseFriend: true},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueDisallowAllClazz, tg.PrivacyValueAllowCloseFriendsClazz},
+			want:  true,
+		},
+		{
+			name:  "premium permits premium peer",
+			ctx:   privacyEvaluationContext{PeerID: 42, IsPremium: true},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueDisallowAllClazz, tg.PrivacyValueAllowPremiumClazz},
+			want:  true,
+		},
+		{
+			name:  "disallow bots rejects bot under allow all",
+			ctx:   privacyEvaluationContext{PeerID: 42, IsBot: true},
+			rules: []tg.PrivacyRuleClazz{tg.PrivacyValueAllowAllClazz, tg.PrivacyValueDisallowBotsClazz},
+			want:  false,
+		},
+		{
+			name: "unsupported chat participant rule is conservative",
+			ctx:  privacyEvaluationContext{PeerID: 42},
+			rules: []tg.PrivacyRuleClazz{
+				tg.PrivacyValueDisallowAllClazz,
+				tg.MakeTLPrivacyValueAllowChatParticipants(&tg.TLPrivacyValueAllowChatParticipants{Chats: []int64{10}}).ToPrivacyRule().Clazz,
+			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := evaluatePrivacyRules(tt.rules, tt.peerID); got != tt.want {
+			if got := evaluatePrivacyRules(tt.rules, tt.ctx); got != tt.want {
 				t.Fatalf("evaluatePrivacyRules() = %v, want %v", got, tt.want)
 			}
 		})

@@ -61,25 +61,105 @@ func (r *Repository) CheckPrivacy(ctx context.Context, userID int64, keyType int
 		}
 		return false, err
 	}
-	return evaluatePrivacyRules(rules.Datas, peerID), nil
+	eval, err := r.buildPrivacyEvaluationContext(ctx, userID, peerID)
+	if err != nil {
+		return false, fmt.Errorf("%w: check privacy context %d/%d: %w", userpb.ErrUserStorage, userID, peerID, err)
+	}
+	return evaluatePrivacyRules(rules.Datas, eval), nil
 }
 
-func evaluatePrivacyRules(rules []tg.PrivacyRuleClazz, peerID int64) bool {
+type privacyEvaluationContext struct {
+	PeerID        int64
+	IsContact     bool
+	IsCloseFriend bool
+	IsPremium     bool
+	IsBot         bool
+}
+
+func (r *Repository) buildPrivacyEvaluationContext(ctx context.Context, userID, peerID int64) (privacyEvaluationContext, error) {
+	eval := privacyEvaluationContext{PeerID: peerID}
+	if userID == 0 || peerID == 0 {
+		return eval, nil
+	}
+	contactDO, err := r.model.UserContactsModel.SelectContact(ctx, userID, peerID)
+	if err != nil {
+		return eval, fmt.Errorf("select privacy contact %d/%d: %w", userID, peerID, err)
+	}
+	if contactDO != nil {
+		eval.IsContact = true
+		eval.IsCloseFriend = contactDO.CloseFriend
+	}
+	peerDO, err := r.model.UsersModel.FindOne(ctx, peerID)
+	if err != nil {
+		if isNotFound(err) {
+			return eval, nil
+		}
+		return eval, fmt.Errorf("select privacy peer %d: %w", peerID, err)
+	}
+	eval.IsPremium = peerDO.Premium
+	eval.IsBot = peerDO.IsBot
+	return eval, nil
+}
+
+func evaluatePrivacyRules(rules []tg.PrivacyRuleClazz, eval privacyEvaluationContext) bool {
+	base := tg.ALLOW_CONTACTS
+	for _, rule := range rules {
+		switch rule.(type) {
+		case *tg.TLPrivacyValueAllowAll:
+			base = tg.ALLOW_ALL
+		case *tg.TLPrivacyValueAllowContacts:
+			base = tg.ALLOW_CONTACTS
+		case *tg.TLPrivacyValueDisallowAll:
+			base = tg.DISALLOW_ALL
+		}
+	}
+
 	allowed := false
+	switch base {
+	case tg.ALLOW_ALL:
+		allowed = true
+	case tg.ALLOW_CONTACTS:
+		allowed = eval.IsContact
+	case tg.DISALLOW_ALL:
+		allowed = false
+	}
+
 	for _, rule := range rules {
 		switch r := rule.(type) {
-		case *tg.TLPrivacyValueAllowAll:
-			allowed = true
-		case *tg.TLPrivacyValueDisallowAll:
-			allowed = false
 		case *tg.TLPrivacyValueAllowUsers:
-			if containsInt64(r.Users, peerID) {
+			if containsInt64(r.Users, eval.PeerID) {
 				allowed = true
 			}
 		case *tg.TLPrivacyValueDisallowUsers:
-			if containsInt64(r.Users, peerID) {
+			if containsInt64(r.Users, eval.PeerID) {
 				allowed = false
 			}
+		case *tg.TLPrivacyValueAllowContacts:
+			if eval.IsContact {
+				allowed = true
+			}
+		case *tg.TLPrivacyValueDisallowContacts:
+			if eval.IsContact {
+				allowed = false
+			}
+		case *tg.TLPrivacyValueAllowCloseFriends:
+			if eval.IsCloseFriend {
+				allowed = true
+			}
+		case *tg.TLPrivacyValueAllowPremium:
+			if eval.IsPremium {
+				allowed = true
+			}
+		case *tg.TLPrivacyValueAllowBots:
+			if eval.IsBot {
+				allowed = true
+			}
+		case *tg.TLPrivacyValueDisallowBots:
+			if eval.IsBot {
+				allowed = false
+			}
+		case *tg.TLPrivacyValueAllowChatParticipants, *tg.TLPrivacyValueDisallowChatParticipants:
+			// User repository currently has no local chat participant reader.
 		}
 	}
 	return allowed
