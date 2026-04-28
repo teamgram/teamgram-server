@@ -91,6 +91,48 @@ func TestChatEditChatAdminRejectsCreatorDemotion(t *testing.T) {
 	}
 }
 
+func TestChatEditChatAdminRejectsMissingTargetAsUserNotParticipant(t *testing.T) {
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil))
+	write := &fakeWriteRepo{}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.ChatEditChatAdmin(&chat.TLChatEditChatAdmin{
+		ChatId:          10,
+		OperatorId:      1,
+		EditChatAdminId: 2,
+		IsAdmin:         tg.BoolTrueClazz,
+	})
+	if !errors.Is(err, chat.ErrUserNotParticipant) {
+		t.Fatalf("ChatEditChatAdmin error = %v, want ErrUserNotParticipant", err)
+	}
+	if write.adminCalls != 0 {
+		t.Fatalf("UpdateChatAdmin calls = %d, want 0", write.adminCalls)
+	}
+}
+
+func TestChatEditChatDefaultBannedRightsRejectsAdminWithoutBanUsers(t *testing.T) {
+	adminRights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{AddAdmins: true}).ToChatAdminRights()
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 2, chat.ChatMemberAdmin, chat.ChatMemberStateNormal, adminRights))
+	write := &fakeWriteRepo{}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.ChatEditChatDefaultBannedRights(&chat.TLChatEditChatDefaultBannedRights{
+		ChatId:     10,
+		OperatorId: 2,
+		BannedRights: tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{
+			SendMessages: true,
+		}).ToChatBannedRights(),
+	})
+	if !errors.Is(err, chat.ErrChatAdminRequired) {
+		t.Fatalf("ChatEditChatDefaultBannedRights error = %v, want ErrChatAdminRequired", err)
+	}
+	if write.bannedCalls != 0 {
+		t.Fatalf("UpdateChatDefaultBannedRights calls = %d, want 0", write.bannedCalls)
+	}
+}
+
 func TestChatSetChatAvailableReactionsPersistsThroughRepository(t *testing.T) {
 	adminRights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{AddAdmins: true}).ToChatAdminRights()
 	m := mutableChatForMemberTests(10, 1,
@@ -132,6 +174,39 @@ func TestChatToggleNoForwardsRejectsNonCreator(t *testing.T) {
 	}
 	if write.noForwardsCalls != 0 {
 		t.Fatalf("UpdateChatNoForwards calls = %d, want 0", write.noForwardsCalls)
+	}
+}
+
+func TestChatSetHistoryTTLRejectsInactiveCreatorParticipant(t *testing.T) {
+	for _, state := range []int32{chat.ChatMemberStateLeft, chat.ChatMemberStateKicked} {
+		t.Run("state", func(t *testing.T) {
+			m := mutableChatForMemberTests(10, 1,
+				participantForMemberTests(10, 1, chat.ChatMemberCreator, state, nil))
+			write := &fakeWriteRepo{}
+			core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+			_, err := core.ChatSetHistoryTTL(&chat.TLChatSetHistoryTTL{SelfId: 1, ChatId: 10, TtlPeriod: 86400})
+			if !errors.Is(err, chat.ErrInputUserDeactivated) {
+				t.Fatalf("ChatSetHistoryTTL error = %v, want ErrInputUserDeactivated", err)
+			}
+			if write.ttlCalls != 0 {
+				t.Fatalf("UpdateChatTTLPeriod calls = %d, want 0", write.ttlCalls)
+			}
+		})
+	}
+}
+
+func TestChatSetHistoryTTLRejectsMissingCreatorParticipant(t *testing.T) {
+	m := mutableChatForMemberTests(10, 1)
+	write := &fakeWriteRepo{}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.ChatSetHistoryTTL(&chat.TLChatSetHistoryTTL{SelfId: 1, ChatId: 10, TtlPeriod: 86400})
+	if !errors.Is(err, chat.ErrInputUserDeactivated) {
+		t.Fatalf("ChatSetHistoryTTL error = %v, want ErrInputUserDeactivated", err)
+	}
+	if write.ttlCalls != 0 {
+		t.Fatalf("UpdateChatTTLPeriod calls = %d, want 0", write.ttlCalls)
 	}
 }
 

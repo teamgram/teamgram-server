@@ -68,7 +68,6 @@ const (
 func (op chatAttributeMutation) needsExplicitVersionBump() bool {
 	switch op {
 	case chatAttributeMutationAbout,
-		chatAttributeMutationNoForwards,
 		chatAttributeMutationTTLPeriod,
 		chatAttributeMutationAvailableReactions,
 		chatAttributeMutationAdmin:
@@ -394,10 +393,6 @@ func (r *Repository) UpdateChatNoForwards(ctx context.Context, chatID int64, nof
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		if _, err := r.model.ChatsModel.UpdateNoforwardsTx(tx, noforwards, chatID); err != nil {
-			return err
-		}
-		if chatAttributeMutationNoForwards.needsExplicitVersionBump() {
-			_, err := r.model.ChatsModel.UpdateVersionTx(tx, chatID)
 			return err
 		}
 		return nil

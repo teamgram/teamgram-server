@@ -78,7 +78,10 @@ func (c *ChatCore) editChatAdmin(chatID, operatorID, targetID int64, isAdmin boo
 		return nil, chatpb.ErrUserNotParticipant
 	}
 	target, ok := chatpb.GetImmutableChatParticipant(mChat, targetID)
-	if !ok || !chatpb.IsChatMemberStateNormal(target) {
+	if !ok {
+		return nil, chatpb.ErrUserNotParticipant
+	}
+	if !chatpb.IsChatMemberStateNormal(target) {
 		return nil, chatpb.ErrParticipantInvalid
 	}
 	if !chatpb.CanAdminAddAdmins(me) {
@@ -105,7 +108,7 @@ func (c *ChatCore) editChatDefaultBannedRights(chatID, operatorID int64, rights 
 	if err != nil {
 		return nil, err
 	}
-	if me.ParticipantType == chatpb.ChatMemberNormal {
+	if !chatpb.CanAdminBanUsers(me) {
 		return nil, chatpb.ErrChatAdminRequired
 	}
 	if rights != nil && rights.UntilDate == 0 {
@@ -138,11 +141,11 @@ func (c *ChatCore) toggleNoForwards(chatID, operatorID int64, enabled bool) (*tg
 }
 
 func (c *ChatCore) setHistoryTTL(selfID, chatID int64, ttlPeriod int32) (*tg.MutableChat, error) {
-	mChat, err := c.repo().GetMutableChat(c.ctx, chatID)
+	mChat, me, err := c.chatWithNormalParticipant(chatID, selfID, chatpb.ErrInputUserDeactivated)
 	if err != nil {
 		return nil, err
 	}
-	if chatpb.ChatCreator(mChat) != selfID {
+	if !chatpb.IsChatMemberCreator(me) {
 		return nil, chatpb.ErrChatAdminRequired
 	}
 	date, err := c.writeRepository().UpdateChatTTLPeriod(c.ctx, chatID, ttlPeriod)

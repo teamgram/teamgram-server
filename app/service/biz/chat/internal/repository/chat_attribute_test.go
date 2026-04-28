@@ -20,7 +20,6 @@ func TestAvailableReactionsToStorageUsesJSONX(t *testing.T) {
 func TestChatAttributeMutationsNeedingExplicitVersionBump(t *testing.T) {
 	for _, op := range []chatAttributeMutation{
 		chatAttributeMutationAbout,
-		chatAttributeMutationNoForwards,
 		chatAttributeMutationTTLPeriod,
 		chatAttributeMutationAvailableReactions,
 		chatAttributeMutationAdmin,
@@ -33,6 +32,7 @@ func TestChatAttributeMutationsNeedingExplicitVersionBump(t *testing.T) {
 		chatAttributeMutationTitle,
 		chatAttributeMutationPhoto,
 		chatAttributeMutationDefaultBannedRights,
+		chatAttributeMutationNoForwards,
 	} {
 		if op.needsExplicitVersionBump() {
 			t.Fatalf("%s should rely on generated version bump", op)
