@@ -182,6 +182,22 @@ func TestAddChatUserPreservesCreatorParticipantType(t *testing.T) {
 	}
 }
 
+func TestAddChatUserLimitReturnsUsersTooFew(t *testing.T) {
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil))
+	m.Chat.ParticipantsCount = 200
+	write := &fakeWriteRepo{mutableChat: m}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.addChatUser(context.Background(), addChatUserArg{chatID: 10, userID: 2})
+	if !errors.Is(err, chat.ErrUsersTooFew) {
+		t.Fatalf("addChatUser error = %v, want ErrUsersTooFew", err)
+	}
+	if write.addCalls != 0 {
+		t.Fatalf("AddChatUser calls = %d, want 0 for limit branch", write.addCalls)
+	}
+}
+
 func TestDeleteChatUserProtectsCreator(t *testing.T) {
 	m := mutableChatForMemberTests(10, 1,
 		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil),

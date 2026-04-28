@@ -51,7 +51,7 @@ func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.Mut
 		return nil, chat.ErrUserAlreadyParticipant
 	}
 	if chat.ChatParticipantsCount(mChat) >= maxChatParticipants {
-		return nil, chat.ErrUsersTooMuch
+		return nil, chat.ErrUsersTooFew
 	}
 	if inviter != nil && !chat.CanInviteUsers(inviter) && !chatDefaultAllowsInvite(mChat) {
 		return nil, chat.ErrChatAdminRequired
