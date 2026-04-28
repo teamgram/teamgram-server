@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -24,6 +25,7 @@ type AddChatUserArg struct {
 	ChatID          int64
 	InviterID       int64
 	UserID          int64
+	ParticipantID   int64
 	ParticipantType int32
 	IsBot           bool
 	Count           int32
@@ -102,7 +104,7 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 	}
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		id, _, err := r.model.ChatsModel.InsertTx(tx, chatRow)
+		id, _, err := r.model.ChatsModel.InsertFullTx(tx, chatRow)
 		if err != nil {
 			return err
 		}
@@ -110,7 +112,11 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 		for _, p := range participantRows {
 			p.ChatId = id
 		}
-		if _, _, err = r.model.ChatParticipantsModel.InsertBulkTx(tx, participantRows); err != nil {
+		lastInsertID, rowsAffected, err := r.model.ChatParticipantsModel.InsertBulkTx(tx, participantRows)
+		if err != nil {
+			return err
+		}
+		if err = backfillBulkInsertIDs(participantRows, lastInsertID, rowsAffected); err != nil {
 			return err
 		}
 		_, _, err = r.model.ChatInvitesModel.InsertTx(tx, &model.ChatInvites{
@@ -136,7 +142,10 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 }
 
 func (r *Repository) DeleteChat(ctx context.Context, chatID int64) error {
-	userIDs, _ := r.GetChatParticipantIDList(ctx, chatID)
+	userIDs, err := r.GetChatParticipantIDList(ctx, chatID)
+	if err != nil {
+		return err
+	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		if _, err := r.model.ChatParticipantsModel.UpdateStateByChatIdTx(tx, chatpb.ChatMemberStateKicked, chatID); err != nil {
 			return err
@@ -153,13 +162,14 @@ func (r *Repository) DeleteChat(ctx context.Context, chatID int64) error {
 	return nil
 }
 
-func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.MutableChat, error) {
+func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.ImmutableChatParticipant, error) {
 	now := time.Now().Unix()
 	participantType := arg.ParticipantType
 	if participantType == 0 {
 		participantType = chatpb.ChatMemberNormal
 	}
 	row := &model.ChatParticipants{
+		Id:              arg.ParticipantID,
 		ChatId:          arg.ChatID,
 		UserId:          arg.UserID,
 		ParticipantType: participantType,
@@ -171,22 +181,26 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.M
 	}
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, _, err := r.model.ChatParticipantsModel.InsertOrUpdateTx(tx, row); err != nil {
+		lastInsertID, _, err := r.model.ChatParticipantsModel.InsertOrUpdateTx(tx, row)
+		if err != nil {
 			return err
+		}
+		if row.Id == 0 && lastInsertID != 0 {
+			row.Id = lastInsertID
 		}
 		if _, err := r.model.ChatsModel.UpdateParticipantCountTx(tx, arg.Count, arg.ChatID); err != nil {
 			return err
 		}
-		_, err := r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
+		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
 		return err
 	}); err != nil {
 		return nil, wrapStorage("chat.AddChatUser transaction", err)
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{arg.UserID})...)
-	return r.GetMutableChat(ctx, arg.ChatID, arg.InviterID, arg.UserID)
+	return makeImmutableChatParticipant(row), nil
 }
 
-func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) (*tg.MutableChat, error) {
+func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) error {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		var err error
@@ -204,14 +218,17 @@ func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) 
 		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.DeleteUserID)
 		return err
 	}); err != nil {
-		return nil, wrapStorage("chat.DeleteChatUser transaction", err)
+		return wrapStorage("chat.DeleteChatUser transaction", err)
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{arg.DeleteUserID})...)
-	return r.GetMutableChat(ctx, arg.ChatID, arg.DeleteUserID)
+	return nil
 }
 
-func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChannelArg) (*tg.MutableChat, error) {
-	userIDs, _ := r.GetChatParticipantIDList(ctx, arg.ChatID)
+func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChannelArg) error {
+	userIDs, err := r.GetChatParticipantIDList(ctx, arg.ChatID)
+	if err != nil {
+		return err
+	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		if _, err := r.model.ChatsModel.UpdateMigratedToTx(tx, arg.ChannelID, arg.AccessHash, arg.ChatID); err != nil {
 			return err
@@ -219,8 +236,26 @@ func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChanne
 		_, err := r.model.ChatParticipantsModel.UpdateStateByChatIdTx(tx, chatpb.ChatMemberStateMigrated, arg.ChatID)
 		return err
 	}); err != nil {
-		return nil, wrapStorage("chat.MigratedToChannel transaction", err)
+		return wrapStorage("chat.MigratedToChannel transaction", err)
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, userIDs)...)
-	return r.GetMutableChat(ctx, arg.ChatID)
+	return nil
+}
+
+func backfillBulkInsertIDs(rows []*model.ChatParticipants, lastInsertID, rowsAffected int64) error {
+	if len(rows) == 0 {
+		return nil
+	}
+	if lastInsertID <= 0 {
+		return fmt.Errorf("chat_participants.InsertBulkTx last insert id %d", lastInsertID)
+	}
+	if rowsAffected != int64(len(rows)) {
+		return fmt.Errorf("chat_participants.InsertBulkTx rows affected %d, want %d", rowsAffected, len(rows))
+	}
+	for i, row := range rows {
+		if row != nil {
+			row.Id = lastInsertID + int64(i)
+		}
+	}
+	return nil
 }

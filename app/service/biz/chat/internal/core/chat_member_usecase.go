@@ -47,7 +47,8 @@ func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.Mut
 		}
 	}
 
-	if willAdd, _ := chat.GetImmutableChatParticipant(mChat, arg.userID); chat.IsChatMemberStateNormal(willAdd) {
+	willAdd, _ := chat.GetImmutableChatParticipant(mChat, arg.userID)
+	if chat.IsChatMemberStateNormal(willAdd) {
 		return nil, chat.ErrUserAlreadyParticipant
 	}
 	if chat.ChatParticipantsCount(mChat) >= maxChatParticipants {
@@ -61,14 +62,26 @@ func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.Mut
 	if arg.userID == chat.ChatCreator(mChat) {
 		participantType = chat.ChatMemberCreator
 	}
-	return c.writeRepository().AddChatUser(ctx, repository.AddChatUserArg{
+	added, err := c.writeRepository().AddChatUser(ctx, repository.AddChatUserArg{
 		ChatID:          arg.chatID,
 		InviterID:       inviterID,
 		UserID:          arg.userID,
+		ParticipantID:   chatParticipantID(willAdd),
 		ParticipantType: participantType,
 		IsBot:           arg.isBot,
 		Count:           chat.ChatParticipantsCount(mChat) + 1,
 	})
+	if err != nil {
+		return nil, err
+	}
+	if added != nil {
+		upsertMutableChatParticipant(mChat, added)
+	}
+	if mChat.Chat != nil {
+		mChat.Chat.ParticipantsCount++
+		mChat.Chat.Version++
+	}
+	return mChat, nil
 }
 
 func (c *ChatCore) deleteChatUser(ctx context.Context, arg deleteChatUserArg) (*tg.MutableChat, error) {
@@ -119,16 +132,48 @@ func (c *ChatCore) deleteChatUser(ctx context.Context, arg deleteChatUserArg) (*
 	if count < 0 {
 		count = 0
 	}
-	return c.writeRepository().DeleteChatUser(ctx, repository.DeleteChatUserArg{
+	if err := c.writeRepository().DeleteChatUser(ctx, repository.DeleteChatUserArg{
 		ChatID:        arg.chatID,
 		DeleteUserID:  arg.deleteUserID,
 		ParticipantID: deletedUser.Id,
 		Kicked:        kicked,
 		Count:         count,
-	})
+	}); err != nil {
+		return nil, err
+	}
+	if kicked {
+		deletedUser.State = chat.ChatMemberStateKicked
+	} else {
+		deletedUser.State = chat.ChatMemberStateLeft
+	}
+	if mChat.Chat != nil {
+		mChat.Chat.ParticipantsCount = count
+		mChat.Chat.Version++
+	}
+	return mChat, nil
 }
 
 func chatDefaultAllowsInvite(mChat *tg.MutableChat) bool {
 	rights := chat.ChatDefaultBannedRights(mChat)
 	return rights == nil || !rights.InviteUsers
+}
+
+func chatParticipantID(p *tg.ImmutableChatParticipant) int64 {
+	if p == nil {
+		return 0
+	}
+	return p.Id
+}
+
+func upsertMutableChatParticipant(mChat *tg.MutableChat, participant *tg.ImmutableChatParticipant) {
+	if mChat == nil || participant == nil {
+		return
+	}
+	for i, existing := range mChat.ChatParticipants {
+		if existing != nil && existing.UserId == participant.UserId {
+			mChat.ChatParticipants[i] = participant
+			return
+		}
+	}
+	mChat.ChatParticipants = append(mChat.ChatParticipants, participant)
 }

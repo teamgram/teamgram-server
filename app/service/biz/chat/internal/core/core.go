@@ -41,9 +41,9 @@ type chatReadRepository interface {
 type chatWriteRepository interface {
 	CreateChat(ctx context.Context, arg repository.CreateChatArg) (*tg.MutableChat, error)
 	DeleteChat(ctx context.Context, chatID int64) error
-	AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.MutableChat, error)
-	DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) (*tg.MutableChat, error)
-	MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) (*tg.MutableChat, error)
+	AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.ImmutableChatParticipant, error)
+	DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) error
+	MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) error
 }
 
 type ChatCore struct {

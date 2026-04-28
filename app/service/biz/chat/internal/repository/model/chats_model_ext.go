@@ -16,7 +16,58 @@
 
 package model
 
+import (
+	"database/sql"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+)
+
 type (
 	extendChatsModel interface {
+		InsertFullTx(tx *sqlx.Tx, data *Chats) (lastInsertId, rowsAffected int64, err error)
 	}
 )
+
+func (m *defaultChatsModel) InsertFullTx(tx *sqlx.Tx, data *Chats) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions_type, available_reactions, deactivated, noforwards, ttl_period, version, `date`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		r     sql.Result
+	)
+
+	r, err = tx.Exec(
+		query,
+		data.CreatorUserId,
+		data.AccessHash,
+		data.RandomId,
+		data.ParticipantCount,
+		data.Title,
+		data.About,
+		data.PhotoId,
+		data.DefaultBannedRights,
+		data.MigratedToId,
+		data.MigratedToAccessHash,
+		data.AvailableReactionsType,
+		data.AvailableReactions,
+		data.Deactivated,
+		data.Noforwards,
+		data.TtlPeriod,
+		data.Version,
+		data.Date,
+	)
+	if err != nil {
+		err = fmt.Errorf("chats.InsertFullTx exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("chats.InsertFullTx last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("chats.InsertFullTx rows affected: %w", err)
+	}
+	return
+}

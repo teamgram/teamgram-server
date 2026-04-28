@@ -28,7 +28,7 @@ func (c *ChatCore) ChatMigratedToChannel(in *chat.TLChatMigratedToChannel) (*tg.
 	if in.Chat == nil || in.Chat.Chat == nil {
 		return nil, chat.ErrChatNotFound
 	}
-	if _, err := c.writeRepository().MigratedToChannel(c.ctx, repository.MigratedToChannelArg{
+	if err := c.writeRepository().MigratedToChannel(c.ctx, repository.MigratedToChannelArg{
 		ChatID:     in.Chat.Chat.Id,
 		ChannelID:  in.Id,
 		AccessHash: in.AccessHash,

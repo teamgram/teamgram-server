@@ -12,6 +12,7 @@ import (
 
 type fakeWriteRepo struct {
 	mutableChat       *tg.MutableChat
+	participant       *tg.ImmutableChatParticipant
 	err               error
 	createArg         repository.CreateChatArg
 	addArg            repository.AddChatUserArg
@@ -37,22 +38,22 @@ func (f *fakeWriteRepo) DeleteChat(ctx context.Context, chatID int64) error {
 	return f.err
 }
 
-func (f *fakeWriteRepo) AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.MutableChat, error) {
+func (f *fakeWriteRepo) AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.ImmutableChatParticipant, error) {
 	f.addCalls++
 	f.addArg = arg
-	return f.mutableChat, f.err
+	return f.participant, f.err
 }
 
-func (f *fakeWriteRepo) DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) (*tg.MutableChat, error) {
+func (f *fakeWriteRepo) DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) error {
 	f.deleteUserCalls++
 	f.deleteChatUserArg = arg
-	return f.mutableChat, f.err
+	return f.err
 }
 
-func (f *fakeWriteRepo) MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) (*tg.MutableChat, error) {
+func (f *fakeWriteRepo) MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) error {
 	f.migratedCalls++
 	f.migratedArg = arg
-	return f.mutableChat, f.err
+	return f.err
 }
 
 func newWriteTestCore(read *fakeReadRepo, write *fakeWriteRepo) *ChatCore {
@@ -167,10 +168,10 @@ func TestAddChatUserBranches(t *testing.T) {
 func TestAddChatUserPreservesCreatorParticipantType(t *testing.T) {
 	m := mutableChatForMemberTests(10, 1,
 		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateLeft, nil))
-	write := &fakeWriteRepo{mutableChat: m}
+	write := &fakeWriteRepo{participant: participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil)}
 	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
 
-	_, err := core.addChatUser(context.Background(), addChatUserArg{chatID: 10, userID: 1})
+	got, err := core.addChatUser(context.Background(), addChatUserArg{chatID: 10, userID: 1})
 	if err != nil {
 		t.Fatalf("addChatUser error: %v", err)
 	}
@@ -179,6 +180,13 @@ func TestAddChatUserPreservesCreatorParticipantType(t *testing.T) {
 	}
 	if write.addArg.ParticipantType != chat.ChatMemberCreator {
 		t.Fatalf("ParticipantType = %d, want creator", write.addArg.ParticipantType)
+	}
+	if got != m || got.Chat.ParticipantsCount != 2 || got.Chat.Version != 1 {
+		t.Fatalf("updated mutable chat = count:%d version:%d ptr:%p", got.Chat.ParticipantsCount, got.Chat.Version, got)
+	}
+	p, ok := chat.GetImmutableChatParticipant(got, 1)
+	if !ok || !chat.IsChatMemberCreator(p) {
+		t.Fatalf("creator participant after add = %#v", p)
 	}
 }
 
