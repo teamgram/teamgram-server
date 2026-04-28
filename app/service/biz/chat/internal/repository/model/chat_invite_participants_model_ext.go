@@ -16,7 +16,22 @@
 
 package model
 
+import (
+	"context"
+	"fmt"
+)
+
 type (
 	extendChatInviteParticipantsModel interface {
+		SelectCountByLink(ctx context.Context, link string, requested int32) (int32, error)
 	}
 )
+
+func (m *defaultChatInviteParticipantsModel) SelectCountByLink(ctx context.Context, link string, requested int32) (int32, error) {
+	query := "select count(*) from chat_invite_participants where link = ? and requested = ? and deleted = 0"
+	var count int32
+	if err := m.db.QueryRow(ctx, &count, query, link, requested); err != nil {
+		return 0, fmt.Errorf("chat_invite_participants.SelectCountByLink: %w", err)
+	}
+	return count, nil
+}
