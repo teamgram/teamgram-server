@@ -24,8 +24,5 @@ import (
 // ChatToggleNoForwards
 // chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 func (c *ChatCore) ChatToggleNoForwards(in *chat.TLChatToggleNoForwards) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.toggleNoForwards - error: method ChatToggleNoForwards not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.toggleNoForwards(in.ChatId, in.OperatorId, tg.FromBoolClazz(in.Enabled))
 }

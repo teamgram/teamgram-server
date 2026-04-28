@@ -24,8 +24,5 @@ import (
 // ChatSetChatAvailableReactions
 // chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
 func (c *ChatCore) ChatSetChatAvailableReactions(in *chat.TLChatSetChatAvailableReactions) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.setChatAvailableReactions - error: method ChatSetChatAvailableReactions not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.setChatAvailableReactions(in.SelfId, in.ChatId, in.AvailableReactionsType, in.AvailableReactions)
 }

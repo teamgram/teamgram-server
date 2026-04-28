@@ -16,7 +16,31 @@
 
 package model
 
+import (
+	"database/sql"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+)
+
 type (
 	extendChatParticipantsModel interface {
+		UpdateAdminRightsTx(tx *sqlx.Tx, participantType int32, adminRights int32, id int64) (rowsAffected int64, err error)
 	}
 )
+
+func (m *customChatParticipantsModel) UpdateAdminRightsTx(tx *sqlx.Tx, participantType int32, adminRights int32, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chat_participants set participant_type = ?, admin_rights = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, participantType, adminRights, id)
+	if err != nil {
+		return 0, fmt.Errorf("chat_participants.UpdateAdminRightsTx exec: %w", err)
+	}
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("chat_participants.UpdateAdminRightsTx rows affected: %w", err)
+	}
+	return rowsAffected, nil
+}

@@ -24,8 +24,5 @@ import (
 // ChatEditChatPhoto
 // chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 func (c *ChatCore) ChatEditChatPhoto(in *chat.TLChatEditChatPhoto) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.editChatPhoto - error: method ChatEditChatPhoto not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.editChatPhoto(in.ChatId, in.EditUserId, in.ChatPhoto)
 }

@@ -24,8 +24,5 @@ import (
 // ChatSetHistoryTTL
 // chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
 func (c *ChatCore) ChatSetHistoryTTL(in *chat.TLChatSetHistoryTTL) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.setHistoryTTL - error: method ChatSetHistoryTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.setHistoryTTL(in.SelfId, in.ChatId, in.TtlPeriod)
 }

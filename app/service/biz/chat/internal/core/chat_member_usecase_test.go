@@ -20,11 +20,30 @@ type fakeWriteRepo struct {
 	deleteChatUserArg repository.DeleteChatUserArg
 	deleteUserAt      int64
 	migratedArg       repository.MigratedToChannelArg
+	adminArg          repository.UpdateChatAdminArg
+	updateChatID      int64
+	updateDate        int64
+	title             string
+	about             string
+	photoID           int64
+	noForwards        bool
+	ttlPeriod         int32
+	reactionsType     int32
+	reactions         []string
+	bannedRights      tg.ChatBannedRightsClazz
 	createCalls       int
 	addCalls          int
 	deleteChatCalls   int
 	deleteUserCalls   int
 	migratedCalls     int
+	titleCalls        int
+	aboutCalls        int
+	photoCalls        int
+	adminCalls        int
+	bannedCalls       int
+	noForwardsCalls   int
+	ttlCalls          int
+	reactionsCalls    int
 }
 
 func (f *fakeWriteRepo) CreateChat(ctx context.Context, arg repository.CreateChatArg) (*tg.MutableChat, error) {
@@ -55,6 +74,62 @@ func (f *fakeWriteRepo) MigratedToChannel(ctx context.Context, arg repository.Mi
 	f.migratedCalls++
 	f.migratedArg = arg
 	return f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatTitle(ctx context.Context, chatID int64, title string) (int64, error) {
+	f.titleCalls++
+	f.updateChatID = chatID
+	f.title = title
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatAbout(ctx context.Context, chatID int64, about string) (int64, error) {
+	f.aboutCalls++
+	f.updateChatID = chatID
+	f.about = about
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatPhoto(ctx context.Context, chatID int64, photoID int64) (int64, error) {
+	f.photoCalls++
+	f.updateChatID = chatID
+	f.photoID = photoID
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatAdmin(ctx context.Context, arg repository.UpdateChatAdminArg) (*tg.ImmutableChatParticipant, int64, error) {
+	f.adminCalls++
+	f.adminArg = arg
+	return f.participant, f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatDefaultBannedRights(ctx context.Context, chatID int64, rights tg.ChatBannedRightsClazz) (int64, error) {
+	f.bannedCalls++
+	f.updateChatID = chatID
+	f.bannedRights = rights
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatNoForwards(ctx context.Context, chatID int64, noforwards bool) (int64, error) {
+	f.noForwardsCalls++
+	f.updateChatID = chatID
+	f.noForwards = noforwards
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatTTLPeriod(ctx context.Context, chatID int64, ttlPeriod int32) (int64, error) {
+	f.ttlCalls++
+	f.updateChatID = chatID
+	f.ttlPeriod = ttlPeriod
+	return f.updateDate, f.err
+}
+
+func (f *fakeWriteRepo) UpdateChatAvailableReactions(ctx context.Context, chatID int64, kind int32, reactions []string) (int64, error) {
+	f.reactionsCalls++
+	f.updateChatID = chatID
+	f.reactionsType = kind
+	f.reactions = reactions
+	return f.updateDate, f.err
 }
 
 func newWriteTestCore(read *fakeReadRepo, write *fakeWriteRepo) *ChatCore {

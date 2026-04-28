@@ -24,8 +24,5 @@ import (
 // ChatEditChatTitle
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.editChatTitle - error: method ChatEditChatTitle not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.editChatTitle(in.ChatId, in.EditUserId, in.Title)
 }

@@ -24,8 +24,5 @@ import (
 // ChatEditChatDefaultBannedRights
 // chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 func (c *ChatCore) ChatEditChatDefaultBannedRights(in *chat.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.editChatDefaultBannedRights - error: method ChatEditChatDefaultBannedRights not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.editChatDefaultBannedRights(in.ChatId, in.OperatorId, in.BannedRights)
 }

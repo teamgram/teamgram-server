@@ -24,8 +24,5 @@ import (
 // ChatEditChatAdmin
 // chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 func (c *ChatCore) ChatEditChatAdmin(in *chat.TLChatEditChatAdmin) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.editChatAdmin - error: method ChatEditChatAdmin not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.editChatAdmin(in.ChatId, in.OperatorId, in.EditChatAdminId, tg.FromBoolClazz(in.IsAdmin))
 }

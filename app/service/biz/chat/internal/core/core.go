@@ -44,6 +44,14 @@ type chatWriteRepository interface {
 	AddChatUser(ctx context.Context, arg repository.AddChatUserArg) (*tg.ImmutableChatParticipant, error)
 	DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) (int64, error)
 	MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) error
+	UpdateChatTitle(ctx context.Context, chatID int64, title string) (int64, error)
+	UpdateChatAbout(ctx context.Context, chatID int64, about string) (int64, error)
+	UpdateChatPhoto(ctx context.Context, chatID int64, photoID int64) (int64, error)
+	UpdateChatAdmin(ctx context.Context, arg repository.UpdateChatAdminArg) (*tg.ImmutableChatParticipant, int64, error)
+	UpdateChatDefaultBannedRights(ctx context.Context, chatID int64, rights tg.ChatBannedRightsClazz) (int64, error)
+	UpdateChatNoForwards(ctx context.Context, chatID int64, noforwards bool) (int64, error)
+	UpdateChatTTLPeriod(ctx context.Context, chatID int64, ttlPeriod int32) (int64, error)
+	UpdateChatAvailableReactions(ctx context.Context, chatID int64, kind int32, reactions []string) (int64, error)
 }
 
 type ChatCore struct {
