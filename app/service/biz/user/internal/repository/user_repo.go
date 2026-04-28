@@ -242,8 +242,18 @@ func (r *Repository) SetStoriesMaxID(ctx context.Context, id int64, storiesMaxID
 }
 
 func (r *Repository) ChangePhone(ctx context.Context, id int64, phone string) error {
-	return r.updateUserRow(ctx, id, "change phone", func(do *model.Users) {
-		do.Phone = phone
+	if id == 0 {
+		return userpb.ErrUserNotFound
+	}
+	userDO, err := r.model.UsersModel.SelectByPhoneNumber(ctx, phone)
+	if err != nil {
+		return fmt.Errorf("%w: change phone lookup %s: %w", userpb.ErrUserStorage, phone, err)
+	}
+	if userDO != nil && userDO.Id != id {
+		return userpb.ErrPhoneNumberInUse
+	}
+	return r.execUserUpdate(ctx, id, "change phone", func() (int64, error) {
+		return r.model.UsersModel.UpdatePhone(ctx, phone, id)
 	})
 }
 

@@ -16,7 +16,25 @@
 
 package model
 
+import (
+	"context"
+	"fmt"
+)
+
 type (
 	extendUsersModel interface {
+		UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error)
 	}
 )
+
+func (m *defaultUsersModel) UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error) {
+	result, err := m.db.Exec(ctx, "update users set phone = ? where id = ?", phone, id)
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdatePhone exec: %w", err)
+	}
+	rowsAffected, err = result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("users.UpdatePhone rows affected: %w", err)
+	}
+	return rowsAffected, nil
+}

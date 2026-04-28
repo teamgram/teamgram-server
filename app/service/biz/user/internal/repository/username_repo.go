@@ -12,6 +12,9 @@ import (
 )
 
 func (r *Repository) CheckUsername(ctx context.Context, username string) (*userpb.UsernameExist, error) {
+	if !isValidUsername(username) {
+		return nil, userpb.ErrUsernameInvalid
+	}
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("%w: check username %s: %w", userpb.ErrUserStorage, username, err)
@@ -23,6 +26,9 @@ func (r *Repository) CheckUsername(ctx context.Context, username string) (*userp
 }
 
 func (r *Repository) CheckPeerUsername(ctx context.Context, peerType int32, peerID int64, username string) (*userpb.UsernameExist, error) {
+	if !isValidUsername(username) {
+		return nil, userpb.ErrUsernameInvalid
+	}
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("%w: check peer username %s: %w", userpb.ErrUserStorage, username, err)
@@ -37,9 +43,7 @@ func (r *Repository) CheckPeerUsername(ctx context.Context, peerType int32, peer
 }
 
 func (r *Repository) UpdateUsername(ctx context.Context, id int64, username string) error {
-	return r.execUserUpdate(ctx, id, "update username", func() (int64, error) {
-		return r.model.UsersModel.UpdateUsername(ctx, username, id)
-	})
+	return r.updateUsernameByPeer(ctx, tg.PEER_USER, id, username, true)
 }
 
 func (r *Repository) DeleteUsername(ctx context.Context, username string) (bool, error) {
@@ -111,6 +115,9 @@ func (r *Repository) SearchUsername(ctx context.Context, q string, excludedConta
 }
 
 func (r *Repository) UpdateUsernameByPeer(ctx context.Context, peerType int32, peerID int64, username string) (bool, error) {
+	if !isValidUsername(username) {
+		return false, userpb.ErrUsernameInvalid
+	}
 	_, _, err := r.model.UsernameModel.Insert(ctx, &model.Username{
 		Username: username,
 		PeerType: peerType,
@@ -126,6 +133,72 @@ func (r *Repository) UpdateUsernameByPeer(ctx context.Context, peerType int32, p
 		return false, fmt.Errorf("%w: update username by peer %d/%d: %w", userpb.ErrUserStorage, peerType, peerID, err)
 	}
 	return true, nil
+}
+
+func (r *Repository) updateUsernameByPeer(ctx context.Context, peerType int32, peerID int64, username string, syncUserRow bool) error {
+	if peerID == 0 {
+		return userpb.ErrUserNotFound
+	}
+	if !isValidUsername(username) {
+		return userpb.ErrUsernameInvalid
+	}
+
+	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
+	if err != nil {
+		return fmt.Errorf("%w: update username lookup %s: %w", userpb.ErrUserStorage, username, err)
+	}
+	if usernameDO != nil {
+		if usernameDO.PeerType != peerType || usernameDO.PeerId != peerID || !usernameDO.Editable {
+			return userpb.ErrUsernameInUse
+		}
+		if syncUserRow {
+			return r.execUserUpdate(ctx, peerID, "update username", func() (int64, error) {
+				return r.model.UsersModel.UpdateUsername(ctx, username, peerID)
+			})
+		}
+		return nil
+	}
+
+	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		if _, err := r.model.UsernameModel.DeleteByPeerTx(tx, peerType, peerID); err != nil {
+			return fmt.Errorf("delete old username by peer %d/%d: %w", peerType, peerID, err)
+		}
+		if _, _, err := r.model.UsernameModel.InsertTx(tx, &model.Username{
+			Username: username,
+			PeerType: peerType,
+			PeerId:   peerID,
+			Editable: true,
+			Active:   true,
+			Order2:   time.Now().Unix() << 32,
+		}); err != nil {
+			if sqlx.IsDuplicate(err) {
+				return userpb.ErrUsernameInUse
+			}
+			return fmt.Errorf("insert username %s: %w", username, err)
+		}
+		if syncUserRow {
+			rows, err := r.model.UsersModel.UpdateUsernameTx(tx, username, peerID)
+			if err != nil {
+				return fmt.Errorf("update user username %d: %w", peerID, err)
+			}
+			if rows == 0 {
+				return userpb.ErrUserNotFound
+			}
+		}
+		return nil
+	}); err != nil {
+		if err == userpb.ErrUserNotFound || err == userpb.ErrUsernameInUse {
+			return err
+		}
+		return fmt.Errorf("%w: update username by peer %d/%d: %w", userpb.ErrUserStorage, peerType, peerID, err)
+	}
+
+	if syncUserRow {
+		if err := r.DelCache(ctx, userDataCacheKey(peerID)); err != nil {
+			return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, peerID, err)
+		}
+	}
+	return nil
 }
 
 func (r *Repository) ToggleUsername(ctx context.Context, peerType int32, peerID int64, username string, active bool) error {
@@ -175,6 +248,36 @@ func (r *Repository) requireUsernameOwner(ctx context.Context, peerType int32, p
 		return userpb.ErrUsernameNotFound
 	}
 	return nil
+}
+
+func isValidUsername(username string) bool {
+	if len(username) < 5 || len(username) > 32 {
+		return false
+	}
+	if username[0] == '_' || username[len(username)-1] == '_' {
+		return false
+	}
+	allDigits := true
+	prevUnderscore := false
+	for _, ch := range username {
+		isDigit := ch >= '0' && ch <= '9'
+		isLetter := ch >= 'a' && ch <= 'z'
+		if !isDigit {
+			allDigits = false
+		}
+		if ch == '_' {
+			if prevUnderscore {
+				return false
+			}
+			prevUnderscore = true
+			continue
+		}
+		prevUnderscore = false
+		if !isDigit && !isLetter {
+			return false
+		}
+	}
+	return !allDigits
 }
 
 func (r *Repository) getUsernameByPeer(ctx context.Context, peerType int32, peerID int64) (*userpb.UsernameData, error) {
