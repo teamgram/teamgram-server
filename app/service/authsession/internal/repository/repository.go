@@ -62,8 +62,5 @@ func (r *Repository) Close() error {
 	if r == nil {
 		return nil
 	}
-	if closer, ok := r.geoipClient.(interface{ Close() error }); ok {
-		return closer.Close()
-	}
 	return nil
 }
