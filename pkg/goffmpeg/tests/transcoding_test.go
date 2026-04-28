@@ -2,11 +2,13 @@ package test
 
 import (
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/goffmpeg/transcoder"
 )
@@ -27,10 +29,13 @@ func TestTranscoding3GP(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/3gp"
 	var outputPath = "/tmp/ffmpeg/out/3gp.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -42,10 +47,13 @@ func TestTranscodingAVI(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/avi"
 	var outputPath = "/tmp/ffmpeg/out/avi.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -57,10 +65,13 @@ func TestTranscodingFLV(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/flv"
 	var outputPath = "/tmp/ffmpeg/out/flv.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -72,10 +83,13 @@ func TestTranscodingMKV(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/mkv"
 	var outputPath = "/tmp/ffmpeg/out/mkv.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -87,10 +101,13 @@ func TestTranscodingMOV(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/mov"
 	var outputPath = "/tmp/ffmpeg/out/mov.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -102,10 +119,13 @@ func TestTranscodingMPEG(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/mpeg"
 	var outputPath = "/tmp/ffmpeg/out/mpeg.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -117,10 +137,13 @@ func TestTranscodingOGG(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/ogg"
 	var outputPath = "/tmp/ffmpeg/out/ogg.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -132,10 +155,13 @@ func TestTranscodingWAV(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/wav"
 	var outputPath = "/tmp/ffmpeg/out/wav.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -147,10 +173,13 @@ func TestTranscodingWEBM(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/webm"
 	var outputPath = "/tmp/ffmpeg/out/webm.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -162,10 +191,13 @@ func TestTranscodingWMV(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/wmv"
 	var outputPath = "/tmp/ffmpeg/out/wmv.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(false)
 	err = <-done
@@ -177,10 +209,13 @@ func TestTranscodingProgress(t *testing.T) {
 	var inputPath = "/tmp/ffmpeg/avi"
 	var outputPath = "/tmp/ffmpeg/out/avi.mp4"
 
+	requireInputFile(t, inputPath)
+	require.NoError(t, os.MkdirAll("/tmp/ffmpeg/out", 0755))
+
 	trans := new(transcoder.Transcoder)
 
 	err := trans.Initialize(inputPath, outputPath)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	done := trans.Run(true)
 	for val := range trans.Output() {
@@ -194,19 +229,20 @@ func TestTranscodingProgress(t *testing.T) {
 }
 
 func TestTranscodePipes(t *testing.T) {
+	requireInputFile(t, "/tmp/ffmpeg/mkv")
 	c1 := exec.Command("cat", "/tmp/ffmpeg/mkv")
 
 	trans := new(transcoder.Transcoder)
 
 	err := trans.InitializeEmptyTranscoder()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	w, err := trans.CreateInputPipe()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	c1.Stdout = w
 
 	r, err := trans.CreateOutputPipe("mp4")
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -228,4 +264,14 @@ func TestTranscodePipes(t *testing.T) {
 	assert.Nil(t, err)
 
 	wg.Wait()
+}
+
+func requireInputFile(t *testing.T, path string) {
+	t.Helper()
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			t.Skipf("skipping ffmpeg fixture-dependent test: %s does not exist", path)
+		}
+		require.NoError(t, err)
+	}
 }
