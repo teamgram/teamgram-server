@@ -57,12 +57,17 @@ func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.Mut
 		return nil, chat.ErrChatAdminRequired
 	}
 
+	participantType := chat.ChatMemberNormal
+	if arg.userID == chat.ChatCreator(mChat) {
+		participantType = chat.ChatMemberCreator
+	}
 	return c.writeRepository().AddChatUser(ctx, repository.AddChatUserArg{
-		ChatID:    arg.chatID,
-		InviterID: inviterID,
-		UserID:    arg.userID,
-		IsBot:     arg.isBot,
-		Count:     chat.ChatParticipantsCount(mChat) + 1,
+		ChatID:          arg.chatID,
+		InviterID:       inviterID,
+		UserID:          arg.userID,
+		ParticipantType: participantType,
+		IsBot:           arg.isBot,
+		Count:           chat.ChatParticipantsCount(mChat) + 1,
 	})
 }
 
@@ -96,6 +101,9 @@ func (c *ChatCore) deleteChatUser(ctx context.Context, arg deleteChatUserArg) (*
 		}
 		if !chat.IsChatMemberStateNormal(deletedUser) {
 			return nil, chat.ErrParticipantInvalid
+		}
+		if chat.IsChatMemberAdmin(deletedUser) {
+			return nil, chat.ErrChatAdminRequired
 		}
 	} else {
 		deletedUser = me

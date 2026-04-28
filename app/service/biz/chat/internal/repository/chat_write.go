@@ -21,11 +21,12 @@ type CreateChatArg struct {
 }
 
 type AddChatUserArg struct {
-	ChatID    int64
-	InviterID int64
-	UserID    int64
-	IsBot     bool
-	Count     int32
+	ChatID          int64
+	InviterID       int64
+	UserID          int64
+	ParticipantType int32
+	IsBot           bool
+	Count           int32
 }
 
 type DeleteChatUserArg struct {
@@ -154,10 +155,14 @@ func (r *Repository) DeleteChat(ctx context.Context, chatID int64) error {
 
 func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.MutableChat, error) {
 	now := time.Now().Unix()
+	participantType := arg.ParticipantType
+	if participantType == 0 {
+		participantType = chatpb.ChatMemberNormal
+	}
 	row := &model.ChatParticipants{
 		ChatId:          arg.ChatID,
 		UserId:          arg.UserID,
-		ParticipantType: chatpb.ChatMemberNormal,
+		ParticipantType: participantType,
 		InviterUserId:   arg.InviterID,
 		InvitedAt:       now,
 		Date2:           now,

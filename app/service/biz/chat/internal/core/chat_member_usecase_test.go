@@ -164,6 +164,24 @@ func TestAddChatUserBranches(t *testing.T) {
 	}
 }
 
+func TestAddChatUserPreservesCreatorParticipantType(t *testing.T) {
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateLeft, nil))
+	write := &fakeWriteRepo{mutableChat: m}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.addChatUser(context.Background(), addChatUserArg{chatID: 10, userID: 1})
+	if err != nil {
+		t.Fatalf("addChatUser error: %v", err)
+	}
+	if write.addCalls != 1 {
+		t.Fatalf("AddChatUser calls = %d, want 1", write.addCalls)
+	}
+	if write.addArg.ParticipantType != chat.ChatMemberCreator {
+		t.Fatalf("ParticipantType = %d, want creator", write.addArg.ParticipantType)
+	}
+}
+
 func TestDeleteChatUserProtectsCreator(t *testing.T) {
 	m := mutableChatForMemberTests(10, 1,
 		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil),
@@ -178,6 +196,24 @@ func TestDeleteChatUserProtectsCreator(t *testing.T) {
 	}
 	if write.deleteUserCalls != 0 {
 		t.Fatalf("DeleteChatUser calls = %d, want 0 for creator protection", write.deleteUserCalls)
+	}
+}
+
+func TestDeleteChatUserProtectsAdminTarget(t *testing.T) {
+	adminRights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{BanUsers: true}).ToChatAdminRights()
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil),
+		participantForMemberTests(10, 3, chat.ChatMemberAdmin, chat.ChatMemberStateNormal, adminRights),
+		participantForMemberTests(10, 4, chat.ChatMemberAdmin, chat.ChatMemberStateNormal, nil))
+	write := &fakeWriteRepo{mutableChat: m}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	_, err := core.deleteChatUser(context.Background(), deleteChatUserArg{chatID: 10, operatorID: 3, deleteUserID: 4})
+	if !errors.Is(err, chat.ErrChatAdminRequired) {
+		t.Fatalf("deleteChatUser error = %v, want ErrChatAdminRequired", err)
+	}
+	if write.deleteUserCalls != 0 {
+		t.Fatalf("DeleteChatUser calls = %d, want 0 for admin protection", write.deleteUserCalls)
 	}
 }
 
