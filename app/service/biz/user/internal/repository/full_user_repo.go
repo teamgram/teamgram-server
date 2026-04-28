@@ -29,14 +29,20 @@ func (r *Repository) GetFullUser(ctx context.Context, selfUserID int64, id int64
 	if !self {
 		contactDO, err := r.model.UserContactsModel.SelectContact(ctx, selfUserID, id)
 		if err != nil {
-			return nil, fmt.Errorf("%w: get full user contact %d/%d: %w", userpb.ErrUserStorage, selfUserID, id, err)
+			if !isNotFound(err) {
+				return nil, fmt.Errorf("%w: get full user contact %d/%d: %w", userpb.ErrUserStorage, selfUserID, id, err)
+			}
+			contactDO = nil
 		}
 		contactDOForUser = contactDO
 		contact = contactDO != nil
 
 		reverseDO, err := r.model.UserContactsModel.SelectContact(ctx, id, selfUserID)
 		if err != nil {
-			return nil, fmt.Errorf("%w: get full user reverse contact %d/%d: %w", userpb.ErrUserStorage, id, selfUserID, err)
+			if !isNotFound(err) {
+				return nil, fmt.Errorf("%w: get full user reverse contact %d/%d: %w", userpb.ErrUserStorage, id, selfUserID, err)
+			}
+			reverseDO = nil
 		}
 		mutual = reverseDO != nil && contact
 

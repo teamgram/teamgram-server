@@ -6,10 +6,19 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 const testLayer = 223
+
+type photoModelNotFound struct {
+	model.PhotosModel
+}
+
+func (photoModelNotFound) FindOneByPhotoId(context.Context, int64) (*model.Photos, error) {
+	return nil, &model.NotFoundError{Resource: "photos", Key: "photo_id=10"}
+}
 
 func TestGetPhotoReturnsStorageError(t *testing.T) {
 	r := &Repository{}
@@ -17,6 +26,17 @@ func TestGetPhotoReturnsStorageError(t *testing.T) {
 	_, err := r.mapPhotoResult(context.Background(), nil, errBoom)
 	if err == nil {
 		t.Fatal("expected error")
+	}
+}
+
+func TestGetPhotoMapsModelNotFound(t *testing.T) {
+	r := &Repository{model: &model.Models{PhotosModel: photoModelNotFound{}}}
+	_, err := r.GetPhoto(context.Background(), 10)
+	if !errors.Is(err, media.ErrPhotoNotFound) {
+		t.Fatalf("expected ErrPhotoNotFound, got %v", err)
+	}
+	if errors.Is(err, media.ErrMediaStorage) {
+		t.Fatalf("expected semantic not found, got storage error: %v", err)
 	}
 }
 

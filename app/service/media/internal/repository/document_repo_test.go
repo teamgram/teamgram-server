@@ -6,8 +6,17 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type documentModelNotFound struct {
+	model.DocumentsModel
+}
+
+func (documentModelNotFound) FindOneByDocumentId(context.Context, int64) (*model.Documents, error) {
+	return nil, &model.NotFoundError{Resource: "documents", Key: "document_id=20"}
+}
 
 func TestGetDocumentReturnsStorageError(t *testing.T) {
 	r := &Repository{}
@@ -15,6 +24,17 @@ func TestGetDocumentReturnsStorageError(t *testing.T) {
 	_, err := r.mapDocumentResult(context.Background(), nil, errBoom)
 	if err == nil {
 		t.Fatal("expected error")
+	}
+}
+
+func TestGetDocumentMapsModelNotFound(t *testing.T) {
+	r := &Repository{model: &model.Models{DocumentsModel: documentModelNotFound{}}}
+	_, err := r.GetDocument(context.Background(), 20)
+	if !errors.Is(err, media.ErrDocumentNotFound) {
+		t.Fatalf("expected ErrDocumentNotFound, got %v", err)
+	}
+	if errors.Is(err, media.ErrMediaStorage) {
+		t.Fatalf("expected semantic not found, got storage error: %v", err)
 	}
 }
 

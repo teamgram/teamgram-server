@@ -247,7 +247,10 @@ func (r *Repository) ChangePhone(ctx context.Context, id int64, phone string) er
 	}
 	userDO, err := r.model.UsersModel.SelectByPhoneNumber(ctx, phone)
 	if err != nil {
-		return fmt.Errorf("%w: change phone lookup %s: %w", userpb.ErrUserStorage, phone, err)
+		if !isNotFound(err) {
+			return fmt.Errorf("%w: change phone lookup %s: %w", userpb.ErrUserStorage, phone, err)
+		}
+		userDO = nil
 	}
 	if userDO != nil && userDO.Id != id {
 		return userpb.ErrPhoneNumberInUse
@@ -365,7 +368,10 @@ func (r *Repository) GetDefaultHistoryTTL(ctx context.Context, id int64) (*tg.De
 	}
 	ttlDO, err := r.model.DefaultHistoryTtlModel.Select(ctx, id)
 	if err != nil {
-		return nil, fmt.Errorf("%w: get default history ttl %d: %w", userpb.ErrUserStorage, id, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: get default history ttl %d: %w", userpb.ErrUserStorage, id, err)
+		}
+		ttlDO = nil
 	}
 	period := int32(0)
 	if ttlDO != nil {
@@ -395,6 +401,9 @@ func (r *Repository) GetLastSeen(ctx context.Context, id int64) (userpb.LastSeen
 	}
 	presenceDO, err := r.model.UserPresencesModel.Select(ctx, id)
 	if err != nil {
+		if isNotFound(err) {
+			return nil, userpb.ErrUserNotFound
+		}
 		return nil, fmt.Errorf("%w: get last seen %d: %w", userpb.ErrUserStorage, id, err)
 	}
 	if presenceDO == nil {
@@ -453,7 +462,10 @@ func (r *Repository) immutableUserFor(ctx context.Context, do *model.Users, priv
 func (r *Repository) immutableLastSeen(ctx context.Context, id int64) (int64, error) {
 	presenceDO, err := r.model.UserPresencesModel.Select(ctx, id)
 	if err != nil {
-		return 0, fmt.Errorf("%w: get immutable last seen %d: %w", userpb.ErrUserStorage, id, err)
+		if !isNotFound(err) {
+			return 0, fmt.Errorf("%w: get immutable last seen %d: %w", userpb.ErrUserStorage, id, err)
+		}
+		presenceDO = nil
 	}
 	if presenceDO == nil {
 		return 0, nil
@@ -473,14 +485,20 @@ func (r *Repository) immutableContacts(ctx context.Context, id int64, contactIDs
 		}
 		contactDO, err := r.model.UserContactsModel.SelectContact(ctx, id, contactID)
 		if err != nil {
-			return nil, nil, fmt.Errorf("%w: get immutable contact %d/%d: %w", userpb.ErrUserStorage, id, contactID, err)
+			if !isNotFound(err) {
+				return nil, nil, fmt.Errorf("%w: get immutable contact %d/%d: %w", userpb.ErrUserStorage, id, contactID, err)
+			}
+			contactDO = nil
 		}
 		if contactDO != nil {
 			contacts = append(contacts, makeContactData(contactDO))
 		}
 		reverseContactDO, err := r.model.UserContactsModel.SelectContact(ctx, contactID, id)
 		if err != nil {
-			return nil, nil, fmt.Errorf("%w: get immutable reverse contact %d/%d: %w", userpb.ErrUserStorage, contactID, id, err)
+			if !isNotFound(err) {
+				return nil, nil, fmt.Errorf("%w: get immutable reverse contact %d/%d: %w", userpb.ErrUserStorage, contactID, id, err)
+			}
+			reverseContactDO = nil
 		}
 		if reverseContactDO != nil {
 			reverseContacts = append(reverseContacts, makeContactData(reverseContactDO))

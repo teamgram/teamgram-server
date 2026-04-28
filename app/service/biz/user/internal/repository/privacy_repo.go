@@ -17,7 +17,10 @@ func (r *Repository) GetPrivacy(ctx context.Context, userID int64, keyType int32
 	}
 	privacyDO, err := r.model.UserPrivaciesModel.SelectPrivacy(ctx, userID, keyType)
 	if err != nil {
-		return nil, fmt.Errorf("%w: get privacy %d/%d: %w", userpb.ErrUserStorage, userID, keyType, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: get privacy %d/%d: %w", userpb.ErrUserStorage, userID, keyType, err)
+		}
+		privacyDO = nil
 	}
 	if privacyDO == nil || privacyDO.Rules == "" {
 		return &userpb.VectorPrivacyRule{Datas: defaultPrivacyRules(keyType)}, nil
@@ -83,7 +86,10 @@ func (r *Repository) buildPrivacyEvaluationContext(ctx context.Context, userID, 
 	}
 	contactDO, err := r.model.UserContactsModel.SelectContact(ctx, userID, peerID)
 	if err != nil {
-		return eval, fmt.Errorf("select privacy contact %d/%d: %w", userID, peerID, err)
+		if !isNotFound(err) {
+			return eval, fmt.Errorf("select privacy contact %d/%d: %w", userID, peerID, err)
+		}
+		contactDO = nil
 	}
 	if contactDO != nil {
 		eval.IsContact = true

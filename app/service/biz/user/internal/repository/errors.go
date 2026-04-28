@@ -9,8 +9,7 @@ import (
 )
 
 func isNotFound(err error) bool {
-	var nf *model.NotFoundError
-	return errors.As(err, &nf)
+	return errors.Is(err, model.ErrNotFound)
 }
 
 func wrapStorage(op string, err error) error {

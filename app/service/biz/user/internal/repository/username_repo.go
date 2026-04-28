@@ -17,7 +17,10 @@ func (r *Repository) CheckUsername(ctx context.Context, username string) (*userp
 	}
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
-		return nil, fmt.Errorf("%w: check username %s: %w", userpb.ErrUserStorage, username, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: check username %s: %w", userpb.ErrUserStorage, username, err)
+		}
+		usernameDO = nil
 	}
 	if usernameDO == nil {
 		return usernameNotExisted(), nil
@@ -31,7 +34,10 @@ func (r *Repository) CheckPeerUsername(ctx context.Context, peerType int32, peer
 	}
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
-		return nil, fmt.Errorf("%w: check peer username %s: %w", userpb.ErrUserStorage, username, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: check peer username %s: %w", userpb.ErrUserStorage, username, err)
+		}
+		usernameDO = nil
 	}
 	if usernameDO == nil {
 		return usernameNotExisted(), nil
@@ -76,6 +82,9 @@ func (r *Repository) GetChannelUsername(ctx context.Context, channelID int64) (*
 func (r *Repository) ResolveUsername(ctx context.Context, username string) (*tg.Peer, error) {
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
+		if isNotFound(err) {
+			return nil, userpb.ErrUsernameNotFound
+		}
 		return nil, fmt.Errorf("%w: resolve username %s: %w", userpb.ErrUserStorage, username, err)
 	}
 	if usernameDO == nil {
@@ -145,7 +154,10 @@ func (r *Repository) updateUsernameByPeer(ctx context.Context, peerType int32, p
 
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
-		return fmt.Errorf("%w: update username lookup %s: %w", userpb.ErrUserStorage, username, err)
+		if !isNotFound(err) {
+			return fmt.Errorf("%w: update username lookup %s: %w", userpb.ErrUserStorage, username, err)
+		}
+		usernameDO = nil
 	}
 	if usernameDO != nil {
 		if usernameDO.PeerType != peerType || usernameDO.PeerId != peerID || !usernameDO.Editable {
@@ -242,6 +254,9 @@ func (r *Repository) DeactivateAllChannelUsernames(ctx context.Context, channelI
 func (r *Repository) requireUsernameOwner(ctx context.Context, peerType int32, peerID int64, username string) error {
 	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
 	if err != nil {
+		if isNotFound(err) {
+			return userpb.ErrUsernameNotFound
+		}
 		return fmt.Errorf("%w: get username owner %s: %w", userpb.ErrUserStorage, username, err)
 	}
 	if usernameDO == nil || usernameDO.PeerType != peerType || usernameDO.PeerId != peerID {
@@ -283,6 +298,9 @@ func isValidUsername(username string) bool {
 func (r *Repository) getUsernameByPeer(ctx context.Context, peerType int32, peerID int64) (*userpb.UsernameData, error) {
 	usernameDO, err := r.model.UsernameModel.SelectByPeer(ctx, peerType, peerID)
 	if err != nil {
+		if isNotFound(err) {
+			return nil, userpb.ErrUsernameNotFound
+		}
 		return nil, fmt.Errorf("%w: get username by peer %d/%d: %w", userpb.ErrUserStorage, peerType, peerID, err)
 	}
 	if usernameDO == nil {

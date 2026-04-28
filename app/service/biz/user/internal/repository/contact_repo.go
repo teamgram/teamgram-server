@@ -16,7 +16,10 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		currentDO, err := r.model.UserContactsModel.SelectContactTx(tx, userID, contactUserID)
 		if err != nil {
-			return fmt.Errorf("select contact: %w", err)
+			if !isNotFound(err) {
+				return fmt.Errorf("select contact: %w", err)
+			}
+			currentDO = nil
 		}
 		if currentDO != nil {
 			mutual = currentDO.Mutual
@@ -24,7 +27,10 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 
 		reverseDO, err := r.model.UserContactsModel.SelectContactTx(tx, contactUserID, userID)
 		if err != nil {
-			return fmt.Errorf("select reverse contact: %w", err)
+			if !isNotFound(err) {
+				return fmt.Errorf("select reverse contact: %w", err)
+			}
+			reverseDO = nil
 		}
 		if reverseDO != nil {
 			mutual = true
@@ -76,6 +82,9 @@ func (r *Repository) DeleteContact(ctx context.Context, userID int64, contactUse
 func (r *Repository) CheckContact(ctx context.Context, userID int64, contactUserID int64) (bool, error) {
 	contactDO, err := r.model.UserContactsModel.SelectContact(ctx, userID, contactUserID)
 	if err != nil {
+		if isNotFound(err) {
+			return false, nil
+		}
 		return false, fmt.Errorf("%w: check contact %d/%d: %w", userpb.ErrUserStorage, userID, contactUserID, err)
 	}
 	return contactDO != nil, nil
@@ -84,6 +93,9 @@ func (r *Repository) CheckContact(ctx context.Context, userID int64, contactUser
 func (r *Repository) GetContact(ctx context.Context, userID int64, contactUserID int64) (tg.ContactDataClazz, error) {
 	contactDO, err := r.model.UserContactsModel.SelectContact(ctx, userID, contactUserID)
 	if err != nil {
+		if isNotFound(err) {
+			return nil, userpb.ErrContactNotFound
+		}
 		return nil, fmt.Errorf("%w: get contact %d/%d: %w", userpb.ErrUserStorage, userID, contactUserID, err)
 	}
 	if contactDO == nil {

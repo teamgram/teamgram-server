@@ -40,7 +40,10 @@ func (r *Repository) SetContactSignUpNotification(ctx context.Context, userID in
 func (r *Repository) GetGlobalPrivacySettings(ctx context.Context, userID int64) (*tg.GlobalPrivacySettings, error) {
 	settingsDO, err := r.model.UserGlobalPrivacySettingsModel.Select(ctx, userID)
 	if err != nil {
-		return nil, fmt.Errorf("%w: get global privacy settings %d: %w", userpb.ErrUserStorage, userID, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: get global privacy settings %d: %w", userpb.ErrUserStorage, userID, err)
+		}
+		settingsDO = nil
 	}
 	if settingsDO == nil {
 		return tg.MakeTLGlobalPrivacySettings(&tg.TLGlobalPrivacySettings{}).ToGlobalPrivacySettings(), nil
@@ -75,7 +78,10 @@ func (r *Repository) SetGlobalPrivacySettings(ctx context.Context, userID int64,
 func (r *Repository) GetNotifySettings(ctx context.Context, userID int64, peerType int32, peerID int64) (*tg.PeerNotifySettings, error) {
 	settingsDO, err := r.model.UserNotifySettingsModel.Select(ctx, userID, peerType, peerID)
 	if err != nil {
-		return nil, fmt.Errorf("%w: get notify settings %d/%d/%d: %w", userpb.ErrUserStorage, userID, peerType, peerID, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: get notify settings %d/%d/%d: %w", userpb.ErrUserStorage, userID, peerType, peerID, err)
+		}
+		settingsDO = nil
 	}
 	return makePeerNotifySettings(settingsDO), nil
 }
@@ -136,7 +142,10 @@ func (r *Repository) ResetNotifySettings(ctx context.Context, userID int64) erro
 func (r *Repository) GetPeerSettings(ctx context.Context, userID int64, peerType int32, peerID int64) (*tg.PeerSettings, error) {
 	settingsDO, err := r.model.UserPeerSettingsModel.Select(ctx, userID, peerType, peerID)
 	if err != nil {
-		return nil, fmt.Errorf("%w: get peer settings %d/%d/%d: %w", userpb.ErrUserStorage, userID, peerType, peerID, err)
+		if !isNotFound(err) {
+			return nil, fmt.Errorf("%w: get peer settings %d/%d/%d: %w", userpb.ErrUserStorage, userID, peerType, peerID, err)
+		}
+		settingsDO = nil
 	}
 	return makePeerSettings(settingsDO), nil
 }
@@ -161,7 +170,10 @@ func (r *Repository) DeletePeerSettings(ctx context.Context, userID int64, peerT
 func (r *Repository) getBoolUserSetting(ctx context.Context, userID int64, key string, defaultValue bool) (bool, error) {
 	settingsDO, err := r.model.UserSettingsModel.SelectByKey(ctx, userID, key)
 	if err != nil {
-		return false, fmt.Errorf("%w: get user setting %d/%s: %w", userpb.ErrUserStorage, userID, key, err)
+		if !isNotFound(err) {
+			return false, fmt.Errorf("%w: get user setting %d/%s: %w", userpb.ErrUserStorage, userID, key, err)
+		}
+		settingsDO = nil
 	}
 	if settingsDO == nil {
 		return defaultValue, nil

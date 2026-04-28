@@ -34,6 +34,9 @@ func (r *Repository) UnblockPeer(ctx context.Context, userID int64, peerType int
 func (r *Repository) IsPeerBlocked(ctx context.Context, userID int64, peerType int32, peerID int64) (bool, error) {
 	blockedDO, err := r.model.UserPeerBlocksModel.Select(ctx, userID, peerType, peerID)
 	if err != nil {
+		if isNotFound(err) {
+			return false, nil
+		}
 		return false, fmt.Errorf("%w: check blocked peer %d/%d/%d: %w", userpb.ErrUserStorage, userID, peerType, peerID, err)
 	}
 	return blockedDO != nil, nil
