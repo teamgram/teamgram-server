@@ -50,6 +50,94 @@ func TestChatBannedRightsStorageRoundTrip(t *testing.T) {
 	}
 }
 
+func TestChatBannedRightsGoldenBits(t *testing.T) {
+	tests := []struct {
+		name  string
+		mask  int64
+		make  func() tg.ChatBannedRightsClazz
+		check func(*tg.TLChatBannedRights) bool
+	}{
+		{"ViewMessages", 1 << 0, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{ViewMessages: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.ViewMessages }},
+		{"SendMessages", 1 << 1, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendMessages: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendMessages }},
+		{"SendMedia", 1 << 2, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendMedia: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendMedia }},
+		{"SendStickers", 1 << 3, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendStickers: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendStickers }},
+		{"SendGifs", 1 << 4, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendGifs: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendGifs }},
+		{"SendGames", 1 << 5, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendGames: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendGames }},
+		{"SendInline", 1 << 6, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendInline: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendInline }},
+		{"EmbedLinks", 1 << 7, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{EmbedLinks: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.EmbedLinks }},
+		{"SendPolls", 1 << 8, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendPolls: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendPolls }},
+		{"ChangeInfo", 1 << 10, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{ChangeInfo: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.ChangeInfo }},
+		{"InviteUsers", 1 << 15, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{InviteUsers: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.InviteUsers }},
+		{"PinMessages", 1 << 17, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{PinMessages: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.PinMessages }},
+		{"ManageTopics", 1 << 18, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{ManageTopics: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.ManageTopics }},
+		{"SendPhotos", 1 << 19, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendPhotos: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendPhotos }},
+		{"SendVideos", 1 << 20, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendVideos: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendVideos }},
+		{"SendRoundvideos", 1 << 21, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendRoundvideos: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendRoundvideos }},
+		{"SendAudios", 1 << 22, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendAudios: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendAudios }},
+		{"SendVoices", 1 << 23, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendVoices: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendVoices }},
+		{"SendDocs", 1 << 24, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendDocs: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendDocs }},
+		{"SendPlain", 1 << 25, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{SendPlain: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.SendPlain }},
+		{"EditRank", 1 << 26, func() tg.ChatBannedRightsClazz {
+			return tg.MakeTLChatBannedRights(&tg.TLChatBannedRights{EditRank: true}).ToChatBannedRights()
+		}, func(r *tg.TLChatBannedRights) bool { return r.EditRank }},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := chatBannedRightsToStorage(tt.make()); got != tt.mask {
+				t.Fatalf("chatBannedRightsToStorage = %d, want %d", got, tt.mask)
+			}
+			got := chatBannedRightsFromStorage(tt.mask)
+			if !tt.check(got) {
+				t.Fatalf("chatBannedRightsFromStorage(%d) did not set %s: %#v", tt.mask, tt.name, got)
+			}
+			if roundTrip := chatBannedRightsToStorage(got); roundTrip != tt.mask {
+				t.Fatalf("single-bit round trip = %d, want %d", roundTrip, tt.mask)
+			}
+		})
+	}
+}
+
 func TestChatAdminRightsStorageRoundTrip(t *testing.T) {
 	rights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{
 		ChangeInfo:           true,
@@ -76,6 +164,82 @@ func TestChatAdminRightsStorageRoundTrip(t *testing.T) {
 
 	if !reflect.DeepEqual(got, rights) {
 		t.Fatalf("round trip admin rights mismatch: got %#v want %#v", got, rights)
+	}
+}
+
+func TestChatAdminRightsGoldenBits(t *testing.T) {
+	tests := []struct {
+		name  string
+		mask  int32
+		make  func() tg.ChatAdminRightsClazz
+		check func(*tg.TLChatAdminRights) bool
+	}{
+		{"ChangeInfo", 1 << 0, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{ChangeInfo: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.ChangeInfo }},
+		{"PostMessages", 1 << 1, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{PostMessages: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.PostMessages }},
+		{"EditMessages", 1 << 2, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{EditMessages: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.EditMessages }},
+		{"DeleteMessages", 1 << 3, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{DeleteMessages: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.DeleteMessages }},
+		{"BanUsers", 1 << 4, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{BanUsers: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.BanUsers }},
+		{"InviteUsers", 1 << 5, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{InviteUsers: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.InviteUsers }},
+		{"PinMessages", 1 << 7, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{PinMessages: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.PinMessages }},
+		{"AddAdmins", 1 << 9, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{AddAdmins: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.AddAdmins }},
+		{"Anonymous", 1 << 10, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{Anonymous: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.Anonymous }},
+		{"ManageCall", 1 << 11, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{ManageCall: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.ManageCall }},
+		{"Other", 1 << 12, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{Other: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.Other }},
+		{"ManageTopics", 1 << 13, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{ManageTopics: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.ManageTopics }},
+		{"PostStories", 1 << 14, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{PostStories: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.PostStories }},
+		{"EditStories", 1 << 15, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{EditStories: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.EditStories }},
+		{"DeleteStories", 1 << 16, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{DeleteStories: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.DeleteStories }},
+		{"ManageDirectMessages", 1 << 17, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{ManageDirectMessages: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.ManageDirectMessages }},
+		{"ManageRanks", 1 << 18, func() tg.ChatAdminRightsClazz {
+			return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{ManageRanks: true}).ToChatAdminRights()
+		}, func(r *tg.TLChatAdminRights) bool { return r.ManageRanks }},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := chatAdminRightsToStorage(tt.make()); got != tt.mask {
+				t.Fatalf("chatAdminRightsToStorage = %d, want %d", got, tt.mask)
+			}
+			got := chatAdminRightsFromStorage(tt.mask)
+			if !tt.check(got) {
+				t.Fatalf("chatAdminRightsFromStorage(%d) did not set %s: %#v", tt.mask, tt.name, got)
+			}
+			if roundTrip := chatAdminRightsToStorage(got); roundTrip != tt.mask {
+				t.Fatalf("single-bit round trip = %d, want %d", roundTrip, tt.mask)
+			}
+		})
 	}
 }
 
