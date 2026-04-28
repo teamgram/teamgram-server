@@ -54,14 +54,35 @@ func (r *Repository) SetPrivacy(ctx context.Context, userID int64, keyType int32
 }
 
 func (r *Repository) CheckPrivacy(ctx context.Context, userID int64, keyType int32, peerID int64) (bool, error) {
-	_, err := r.GetPrivacy(ctx, userID, keyType)
+	rules, err := r.GetPrivacy(ctx, userID, keyType)
 	if err != nil {
 		if errors.Is(err, userpb.ErrPrivacyKeyInvalid) {
 			return false, nil
 		}
 		return false, err
 	}
-	return true, nil
+	return evaluatePrivacyRules(rules.Datas, peerID), nil
+}
+
+func evaluatePrivacyRules(rules []tg.PrivacyRuleClazz, peerID int64) bool {
+	allowed := false
+	for _, rule := range rules {
+		switch r := rule.(type) {
+		case *tg.TLPrivacyValueAllowAll:
+			allowed = true
+		case *tg.TLPrivacyValueDisallowAll:
+			allowed = false
+		case *tg.TLPrivacyValueAllowUsers:
+			if containsInt64(r.Users, peerID) {
+				allowed = true
+			}
+		case *tg.TLPrivacyValueDisallowUsers:
+			if containsInt64(r.Users, peerID) {
+				allowed = false
+			}
+		}
+	}
+	return allowed
 }
 
 type privacyRulesStorageDTO struct {

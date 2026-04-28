@@ -56,3 +56,59 @@ func TestDecodePrivacyRulesAcceptsLegacyTLJSONShape(t *testing.T) {
 		t.Fatalf("rule[1] = %s, want %s", rules[1].PrivacyRuleClazzName(), tg.ClazzName_privacyValueAllowAll)
 	}
 }
+
+func TestCheckPrivacyRules(t *testing.T) {
+	tests := []struct {
+		name   string
+		rules  []tg.PrivacyRuleClazz
+		peerID int64
+		want   bool
+	}{
+		{
+			name:   "allow all permits peer",
+			rules:  []tg.PrivacyRuleClazz{tg.PrivacyValueAllowAllClazz},
+			peerID: 42,
+			want:   true,
+		},
+		{
+			name:   "disallow all rejects peer",
+			rules:  []tg.PrivacyRuleClazz{tg.PrivacyValueDisallowAllClazz},
+			peerID: 42,
+			want:   false,
+		},
+		{
+			name: "allow users permits listed peer",
+			rules: []tg.PrivacyRuleClazz{
+				tg.PrivacyValueDisallowAllClazz,
+				tg.MakeTLPrivacyValueAllowUsers(&tg.TLPrivacyValueAllowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
+			},
+			peerID: 42,
+			want:   true,
+		},
+		{
+			name: "disallow users rejects listed peer",
+			rules: []tg.PrivacyRuleClazz{
+				tg.PrivacyValueAllowAllClazz,
+				tg.MakeTLPrivacyValueDisallowUsers(&tg.TLPrivacyValueDisallowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
+			},
+			peerID: 42,
+			want:   false,
+		},
+		{
+			name: "unlisted peer keeps default decision",
+			rules: []tg.PrivacyRuleClazz{
+				tg.PrivacyValueAllowAllClazz,
+				tg.MakeTLPrivacyValueDisallowUsers(&tg.TLPrivacyValueDisallowUsers{Users: []int64{42}}).ToPrivacyRule().Clazz,
+			},
+			peerID: 43,
+			want:   true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := evaluatePrivacyRules(tt.rules, tt.peerID); got != tt.want {
+				t.Fatalf("evaluatePrivacyRules() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
