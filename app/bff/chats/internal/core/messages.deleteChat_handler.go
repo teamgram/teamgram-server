@@ -17,14 +17,19 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteChat
 // messages.deleteChat#5bd0ee50 chat_id:long = Bool;
 func (c *ChatsCore) MessagesDeleteChat(in *tg.TLMessagesDeleteChat) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.deleteChat - error: method MessagesDeleteChat not impl")
+	if _, err := c.svcCtx.Repo.ChatClient.ChatDeleteChat(c.ctx, &chatpb.TLChatDeleteChat{
+		ChatId:     in.ChatId,
+		OperatorId: selfID(c.MD),
+	}); err != nil {
+		return nil, mapChatError(err)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

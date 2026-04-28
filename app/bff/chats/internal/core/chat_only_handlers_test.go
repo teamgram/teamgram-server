@@ -16,8 +16,15 @@ import (
 type chatsFakeChatClient struct {
 	chatclient.ChatClient
 
-	getMutable func(context.Context, *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error)
-	editAbout  func(context.Context, *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error)
+	getMutable     func(context.Context, *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error)
+	editAbout      func(context.Context, *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error)
+	editTitle      func(context.Context, *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error)
+	editDefault    func(context.Context, *chatpb.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error)
+	deleteChat     func(context.Context, *chatpb.TLChatDeleteChat) (*tg.MutableChat, error)
+	editAdmin      func(context.Context, *chatpb.TLChatEditChatAdmin) (*tg.MutableChat, error)
+	addChatUser    func(context.Context, *chatpb.TLChatAddChatUser) (*tg.MutableChat, error)
+	deleteChatUser func(context.Context, *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error)
+	createChat     func(context.Context, *chatpb.TLChatCreateChat2) (*tg.MutableChat, error)
 }
 
 func (f *chatsFakeChatClient) ChatGetMutableChat(ctx context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
@@ -26,6 +33,34 @@ func (f *chatsFakeChatClient) ChatGetMutableChat(ctx context.Context, in *chatpb
 
 func (f *chatsFakeChatClient) ChatEditChatAbout(ctx context.Context, in *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error) {
 	return f.editAbout(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatEditChatTitle(ctx context.Context, in *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error) {
+	return f.editTitle(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatEditChatDefaultBannedRights(ctx context.Context, in *chatpb.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
+	return f.editDefault(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatDeleteChat(ctx context.Context, in *chatpb.TLChatDeleteChat) (*tg.MutableChat, error) {
+	return f.deleteChat(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatEditChatAdmin(ctx context.Context, in *chatpb.TLChatEditChatAdmin) (*tg.MutableChat, error) {
+	return f.editAdmin(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatAddChatUser(ctx context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
+	return f.addChatUser(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatDeleteChatUser(ctx context.Context, in *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error) {
+	return f.deleteChatUser(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatCreateChat2(ctx context.Context, in *chatpb.TLChatCreateChat2) (*tg.MutableChat, error) {
+	return f.createChat(ctx, in)
 }
 
 func newChatsCore(client chatclient.ChatClient, selfID int64) *ChatsCore {
@@ -132,5 +167,144 @@ func TestMessagesGetChatsSkipsMissingAndErrors(t *testing.T) {
 	}
 	if len(calls) != 3 || calls[0] != 1 || calls[1] != 2 || calls[2] != 3 {
 		t.Fatalf("calls = %v, want [1 2 3]", calls)
+	}
+}
+
+func TestMessagesEditChatTitleMapsRequestAndUpdates(t *testing.T) {
+	var got *chatpb.TLChatEditChatTitle
+	c := newChatsCore(&chatsFakeChatClient{
+		editTitle: func(_ context.Context, in *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error) {
+			got = in
+			return testMutableChat(in.ChatId, in.Title), nil
+		},
+	}, 100)
+
+	r, err := c.MessagesEditChatTitle(&tg.TLMessagesEditChatTitle{ChatId: 42, Title: "new"})
+	if err != nil {
+		t.Fatalf("MessagesEditChatTitle error = %v", err)
+	}
+	if got == nil || got.ChatId != 42 || got.EditUserId != 100 || got.Title != "new" {
+		t.Fatalf("request = %+v, want chat_id=42 edit_user_id=100 title=new", got)
+	}
+	assertUpdateChat(t, r, 42)
+}
+
+func TestMessagesEditChatDefaultBannedRightsRejectsNonChatPeer(t *testing.T) {
+	c := newChatsCore(&chatsFakeChatClient{}, 100)
+
+	_, err := c.MessagesEditChatDefaultBannedRights(&tg.TLMessagesEditChatDefaultBannedRights{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 200}),
+	})
+	if err != tg.Err400PeerIdInvalid {
+		t.Fatalf("MessagesEditChatDefaultBannedRights error = %v, want %v", err, tg.Err400PeerIdInvalid)
+	}
+}
+
+func TestMessagesDeleteChatMapsRequestAndErrors(t *testing.T) {
+	var got *chatpb.TLChatDeleteChat
+	c := newChatsCore(&chatsFakeChatClient{
+		deleteChat: func(_ context.Context, in *chatpb.TLChatDeleteChat) (*tg.MutableChat, error) {
+			got = in
+			return nil, chatpb.ErrChatAdminRequired
+		},
+	}, 100)
+
+	_, err := c.MessagesDeleteChat(&tg.TLMessagesDeleteChat{ChatId: 42})
+	if err != tg.Err400ChatAdminRequired {
+		t.Fatalf("MessagesDeleteChat error = %v, want %v", err, tg.Err400ChatAdminRequired)
+	}
+	if got == nil || got.ChatId != 42 || got.OperatorId != 100 {
+		t.Fatalf("request = %+v, want chat_id=42 operator_id=100", got)
+	}
+}
+
+func TestMessagesEditChatAdminRejectsInvalidUser(t *testing.T) {
+	c := newChatsCore(&chatsFakeChatClient{}, 100)
+
+	_, err := c.MessagesEditChatAdmin(&tg.TLMessagesEditChatAdmin{
+		ChatId:  42,
+		UserId:  tg.MakeTLInputUserSelf(&tg.TLInputUserSelf{}),
+		IsAdmin: tg.BoolTrueClazz,
+	})
+	if err != tg.ErrUserIdInvalid {
+		t.Fatalf("MessagesEditChatAdmin error = %v, want %v", err, tg.ErrUserIdInvalid)
+	}
+}
+
+func TestMessagesAddAndDeleteChatUserMapInputUser(t *testing.T) {
+	var addReq *chatpb.TLChatAddChatUser
+	var deleteReq *chatpb.TLChatDeleteChatUser
+	c := newChatsCore(&chatsFakeChatClient{
+		addChatUser: func(_ context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
+			addReq = in
+			return testMutableChat(in.ChatId, "chat"), nil
+		},
+		deleteChatUser: func(_ context.Context, in *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error) {
+			deleteReq = in
+			return testMutableChat(in.ChatId, "chat"), nil
+		},
+	}, 100)
+
+	inUser := tg.MakeTLInputUser(&tg.TLInputUser{UserId: 200})
+	added, err := c.MessagesAddChatUser(&tg.TLMessagesAddChatUser{ChatId: 42, UserId: inUser})
+	if err != nil {
+		t.Fatalf("MessagesAddChatUser error = %v", err)
+	}
+	if added == nil || added.Updates == nil {
+		t.Fatalf("MessagesAddChatUser = %+v, want updates", added)
+	}
+	if addReq == nil || addReq.ChatId != 42 || addReq.InviterId != 100 || addReq.UserId != 200 {
+		t.Fatalf("add request = %+v, want chat_id=42 inviter_id=100 user_id=200", addReq)
+	}
+
+	updates, err := c.MessagesDeleteChatUser(&tg.TLMessagesDeleteChatUser{ChatId: 42, UserId: inUser})
+	if err != nil {
+		t.Fatalf("MessagesDeleteChatUser error = %v", err)
+	}
+	assertUpdateChat(t, updates, 42)
+	if deleteReq == nil || deleteReq.ChatId != 42 || deleteReq.OperatorId != 100 || deleteReq.DeleteUserId != 200 {
+		t.Fatalf("delete request = %+v, want chat_id=42 operator_id=100 delete_user_id=200", deleteReq)
+	}
+}
+
+func TestMessagesCreateChatMapsUsersAndTitle(t *testing.T) {
+	var got *chatpb.TLChatCreateChat2
+	c := newChatsCore(&chatsFakeChatClient{
+		createChat: func(_ context.Context, in *chatpb.TLChatCreateChat2) (*tg.MutableChat, error) {
+			got = in
+			return testMutableChat(42, in.Title), nil
+		},
+	}, 100)
+
+	r, err := c.MessagesCreateChat(&tg.TLMessagesCreateChat{
+		Users: []tg.InputUserClazz{
+			tg.MakeTLInputUser(&tg.TLInputUser{UserId: 200}),
+			tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+		},
+		Title: "team",
+	})
+	if err != nil {
+		t.Fatalf("MessagesCreateChat error = %v", err)
+	}
+	if r == nil || r.Updates == nil {
+		t.Fatalf("MessagesCreateChat = %+v, want updates", r)
+	}
+	if got == nil || got.CreatorId != 100 || got.Title != "team" || len(got.UserIdList) != 2 || got.UserIdList[0] != 200 || got.UserIdList[1] != 300 {
+		t.Fatalf("request = %+v, want creator/title/users", got)
+	}
+}
+
+func assertUpdateChat(t *testing.T, updates *tg.Updates, chatID int64) {
+	t.Helper()
+	if updates == nil {
+		t.Fatalf("updates is nil")
+	}
+	data, ok := updates.ToUpdates()
+	if !ok || len(data.Updates) != 1 {
+		t.Fatalf("updates = %#v, want one update", updates)
+	}
+	update, ok := (&tg.Update{Clazz: data.Updates[0]}).ToUpdateChat()
+	if !ok || update.ChatId != chatID {
+		t.Fatalf("update = %#v, ok=%v, want updateChat %d", data.Updates[0], ok, chatID)
 	}
 }

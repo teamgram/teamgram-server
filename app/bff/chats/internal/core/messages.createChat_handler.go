@@ -17,14 +17,32 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesCreateChat
 // messages.createChat#92ceddd4 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = messages.InvitedUsers;
 func (c *ChatsCore) MessagesCreateChat(in *tg.TLMessagesCreateChat) (*tg.MessagesInvitedUsers, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.createChat - error: method MessagesCreateChat not impl")
+	selfID := selfID(c.MD)
+	userIDs := make([]int64, 0, len(in.Users))
+	for _, inputUser := range in.Users {
+		user := tg.FromInputUser(selfID, inputUser)
+		if user.PeerType != tg.PEER_USER {
+			return nil, tg.ErrUserIdInvalid
+		}
+		userIDs = append(userIDs, user.PeerId)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	mutableChat, err := c.svcCtx.Repo.ChatClient.ChatCreateChat2(c.ctx, &chatpb.TLChatCreateChat2{
+		CreatorId:  selfID,
+		UserIdList: userIDs,
+		Title:      in.Title,
+		TtlPeriod:  in.TtlPeriod,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return invitedUsersWithChat(mutableChat, selfID), nil
 }

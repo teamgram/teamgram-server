@@ -44,3 +44,27 @@ func projectChatPhoto(photo tg.PhotoClazz) tg.ChatPhotoClazz {
 
 	return tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{})
 }
+
+func updatesWithChat(chat *tg.MutableChat, selfID int64) *tg.Updates {
+	chatID := int64(0)
+	if chat != nil && chat.Chat != nil {
+		chatID = chat.Chat.Id
+	}
+
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateChat(&tg.TLUpdateChat{ChatId: chatID}),
+		},
+		Users: []tg.UserClazz{},
+		Chats: []tg.ChatClazz{
+			projectMutableChat(chat, selfID),
+		},
+	}).ToUpdates()
+}
+
+func invitedUsersWithChat(chat *tg.MutableChat, selfID int64) *tg.MessagesInvitedUsers {
+	return tg.MakeTLMessagesInvitedUsers(&tg.TLMessagesInvitedUsers{
+		Updates:         updatesWithChat(chat, selfID).Clazz,
+		MissingInvitees: []tg.MissingInviteeClazz{},
+	}).ToMessagesInvitedUsers()
+}

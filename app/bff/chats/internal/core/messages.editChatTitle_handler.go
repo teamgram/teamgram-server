@@ -17,14 +17,22 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesEditChatTitle
 // messages.editChatTitle#73783ffd chat_id:long title:string = Updates;
 func (c *ChatsCore) MessagesEditChatTitle(in *tg.TLMessagesEditChatTitle) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.editChatTitle - error: method MessagesEditChatTitle not impl")
+	selfID := selfID(c.MD)
+	mutableChat, err := c.svcCtx.Repo.ChatClient.ChatEditChatTitle(c.ctx, &chatpb.TLChatEditChatTitle{
+		ChatId:     in.ChatId,
+		EditUserId: selfID,
+		Title:      in.Title,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return updatesWithChat(mutableChat, selfID), nil
 }

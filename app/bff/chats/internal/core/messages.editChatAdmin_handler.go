@@ -17,14 +17,27 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesEditChatAdmin
 // messages.editChatAdmin#a85bd1c2 chat_id:long user_id:InputUser is_admin:Bool = Bool;
 func (c *ChatsCore) MessagesEditChatAdmin(in *tg.TLMessagesEditChatAdmin) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.editChatAdmin - error: method MessagesEditChatAdmin not impl")
+	selfID := selfID(c.MD)
+	adminUser := tg.FromInputUser(selfID, in.UserId)
+	if adminUser.PeerType != tg.PEER_USER || adminUser.PeerId == selfID {
+		return nil, tg.ErrUserIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if _, err := c.svcCtx.Repo.ChatClient.ChatEditChatAdmin(c.ctx, &chatpb.TLChatEditChatAdmin{
+		ChatId:          in.ChatId,
+		OperatorId:      selfID,
+		EditChatAdminId: adminUser.PeerId,
+		IsAdmin:         in.IsAdmin,
+	}); err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return tg.BoolTrue, nil
 }

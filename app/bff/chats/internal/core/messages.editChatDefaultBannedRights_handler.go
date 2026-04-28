@@ -17,14 +17,27 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesEditChatDefaultBannedRights
 // messages.editChatDefaultBannedRights#a5866b41 peer:InputPeer banned_rights:ChatBannedRights = Updates;
 func (c *ChatsCore) MessagesEditChatDefaultBannedRights(in *tg.TLMessagesEditChatDefaultBannedRights) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.editChatDefaultBannedRights - error: method MessagesEditChatDefaultBannedRights not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	mutableChat, err := c.svcCtx.Repo.ChatClient.ChatEditChatDefaultBannedRights(c.ctx, &chatpb.TLChatEditChatDefaultBannedRights{
+		ChatId:       peer.PeerId,
+		OperatorId:   selfID,
+		BannedRights: in.BannedRights,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return updatesWithChat(mutableChat, selfID), nil
 }

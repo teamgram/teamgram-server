@@ -17,14 +17,27 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteChatUser
 // messages.deleteChatUser#a2185cab flags:# revoke_history:flags.0?true chat_id:long user_id:InputUser = Updates;
 func (c *ChatsCore) MessagesDeleteChatUser(in *tg.TLMessagesDeleteChatUser) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.deleteChatUser - error: method MessagesDeleteChatUser not impl")
+	selfID := selfID(c.MD)
+	user := tg.FromInputUser(selfID, in.UserId)
+	if user.PeerType != tg.PEER_USER {
+		return nil, tg.ErrUserIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	mutableChat, err := c.svcCtx.Repo.ChatClient.ChatDeleteChatUser(c.ctx, &chatpb.TLChatDeleteChatUser{
+		ChatId:       in.ChatId,
+		OperatorId:   selfID,
+		DeleteUserId: user.PeerId,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return updatesWithChat(mutableChat, selfID), nil
 }
