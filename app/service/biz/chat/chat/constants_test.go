@@ -14,6 +14,7 @@ func TestChatMemberConstantsMatchLegacyStorageValues(t *testing.T) {
 		{"ChatMemberStateNormal", ChatMemberStateNormal, 0},
 		{"ChatMemberStateLeft", ChatMemberStateLeft, 1},
 		{"ChatMemberStateKicked", ChatMemberStateKicked, 2},
+		{"ChatMemberStateMigrated", ChatMemberStateMigrated, 3},
 	}
 
 	for _, tt := range tests {

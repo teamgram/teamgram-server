@@ -9,6 +9,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+type UserChatIDList struct {
+	UserID     int64
+	ChatIDList []int64
+}
+
 func (r *Repository) GetMutableChat(ctx context.Context, chatID int64, participantIDs ...int64) (*tg.MutableChat, error) {
 	row, err := r.model.ChatsModel.FindOne(ctx, chatID)
 	if err != nil {
@@ -80,13 +85,20 @@ func (r *Repository) GetChatListByIDList(ctx context.Context, ids []int64) ([]*t
 		return []*tg.MutableChat{}, nil
 	}
 
-	out := make([]*tg.MutableChat, 0, len(rows))
-	for i := range rows {
-		participantRows, err := r.model.ChatParticipantsModel.SelectList(ctx, rows[i].Id)
-		if err != nil {
+	orderedRows := orderChatRowsByIDs(ids, rows)
+	out := make([]*tg.MutableChat, 0, len(orderedRows))
+	for _, row := range orderedRows {
+		if row == nil {
 			continue
 		}
-		out = append(out, r.makeMutableChatFromRows(ctx, &rows[i], participantRows))
+		participantRows, err := r.model.ChatParticipantsModel.SelectList(ctx, row.Id)
+		if err != nil {
+			if isNotFound(err) {
+				continue
+			}
+			return nil, wrapStorage("chat_participants.SelectList", err)
+		}
+		out = append(out, r.makeMutableChatFromRows(ctx, row, participantRows))
 	}
 	return out, nil
 }
@@ -98,23 +110,19 @@ func (r *Repository) GetChatParticipantIDList(ctx context.Context, chatID int64)
 	}
 	ids := make([]int64, 0, len(rows))
 	for i := range rows {
-		if rows[i].State == chatpb.ChatMemberStateNormal {
+		if isListableChatParticipantState(rows[i].State) {
 			ids = append(ids, rows[i].UserId)
 		}
 	}
 	return ids, nil
 }
 
-func (r *Repository) GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]*model.ChatParticipants, error) {
+func (r *Repository) GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]UserChatIDList, error) {
 	rows, err := r.model.ChatParticipantsModel.SelectUsersChatIdList(ctx, userIDs)
 	if err != nil {
 		return nil, wrapStorage("chat_participants.SelectUsersChatIdList", err)
 	}
-	out := make([]*model.ChatParticipants, 0, len(rows))
-	for i := range rows {
-		out = append(out, &rows[i])
-	}
-	return out, nil
+	return groupUserChatIDRows(rows), nil
 }
 
 func (r *Repository) GetMyChatList(ctx context.Context, userID int64, isCreator bool) ([]*tg.MutableChat, error) {
@@ -135,7 +143,10 @@ func (r *Repository) GetMyChatList(ctx context.Context, userID int64, isCreator 
 	for _, id := range ids {
 		mChat, err := r.GetMutableChat(ctx, id, userID)
 		if err != nil {
-			continue
+			if errors.Is(err, chatpb.ErrChatNotFound) {
+				continue
+			}
+			return nil, err
 		}
 		if mChat != nil {
 			out = append(out, mChat)
@@ -154,7 +165,10 @@ func (r *Repository) Search(ctx context.Context, selfID int64, q string, offset 
 	for _, id := range ids {
 		mChat, err := r.GetExcludeParticipantsMutableChat(ctx, id)
 		if err != nil {
-			continue
+			if errors.Is(err, chatpb.ErrChatNotFound) {
+				continue
+			}
+			return nil, err
 		}
 		if mChat != nil {
 			out = append(out, mChat)
@@ -164,8 +178,13 @@ func (r *Repository) Search(ctx context.Context, selfID int64, q string, offset 
 }
 
 func (r *Repository) makeMutableChatFromRows(ctx context.Context, row *model.Chats, participantRows []model.ChatParticipants) *tg.MutableChat {
+	if row == nil {
+		return makeMutableChat(nil, nil)
+	}
+
 	var photo tg.PhotoClazz = tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: row.PhotoId})
 	if row.PhotoId != 0 && r.mediaReader != nil {
+		// Photo projection is best-effort; media lookup failure falls back to photoEmpty.
 		if mediaPhoto, err := r.mediaReader.GetChatPhoto(ctx, row.PhotoId); err == nil && mediaPhoto != nil && mediaPhoto.Clazz != nil {
 			photo = mediaPhoto.Clazz
 		}
@@ -182,4 +201,45 @@ func (r *Repository) makeMutableChatFromRows(ctx context.Context, row *model.Cha
 		participants = append(participants, makeImmutableChatParticipant(&participantRows[i]))
 	}
 	return makeMutableChat(immutable, participants)
+}
+
+func orderChatRowsByIDs(ids []int64, rows []model.Chats) []*model.Chats {
+	byID := make(map[int64]*model.Chats, len(rows))
+	for i := range rows {
+		byID[rows[i].Id] = &rows[i]
+	}
+
+	out := make([]*model.Chats, 0, len(rows))
+	for _, id := range ids {
+		if row := byID[id]; row != nil {
+			out = append(out, row)
+		}
+	}
+	return out
+}
+
+func groupUserChatIDRows(rows []model.ChatParticipants) []UserChatIDList {
+	out := make([]UserChatIDList, 0, len(rows))
+	for i := range rows {
+		found := -1
+		for j := range out {
+			if out[j].UserID == rows[i].UserId {
+				found = j
+				break
+			}
+		}
+		if found < 0 {
+			out = append(out, UserChatIDList{
+				UserID:     rows[i].UserId,
+				ChatIDList: []int64{rows[i].ChatId},
+			})
+			continue
+		}
+		out[found].ChatIDList = append(out[found].ChatIDList, rows[i].ChatId)
+	}
+	return out
+}
+
+func isListableChatParticipantState(state int32) bool {
+	return state == chatpb.ChatMemberStateNormal || state == chatpb.ChatMemberStateMigrated
 }

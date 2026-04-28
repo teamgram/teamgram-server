@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -18,7 +18,7 @@ type fakeReadRepo struct {
 	mutableChat       *tg.MutableChat
 	mutableChats      []*tg.MutableChat
 	participantIDs    []int64
-	userChatRows      []*model.ChatParticipants
+	userChatRows      []repository.UserChatIDList
 	err               error
 	searchCalls       int
 	lastSearchSelfID  int64
@@ -48,7 +48,7 @@ func (f *fakeReadRepo) GetChatParticipantIDList(ctx context.Context, chatID int6
 	return f.participantIDs, f.err
 }
 
-func (f *fakeReadRepo) GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]*model.ChatParticipants, error) {
+func (f *fakeReadRepo) GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]repository.UserChatIDList, error) {
 	return f.userChatRows, f.err
 }
 
@@ -108,6 +108,14 @@ func TestChatGetChatListByIdListWrapsVectorInRepositoryOrder(t *testing.T) {
 	}
 }
 
+func TestChatGetChatListByIdListPropagatesRepositoryError(t *testing.T) {
+	repo := &fakeReadRepo{err: chat.ErrChatStorage}
+	_, err := newTestCore(repo).ChatGetChatListByIdList(&chat.TLChatGetChatListByIdList{IdList: []int64{10}})
+	if !errors.Is(err, chat.ErrChatStorage) {
+		t.Fatalf("ChatGetChatListByIdList error = %v, want ErrChatStorage", err)
+	}
+}
+
 func TestChatSearchNormalizesQueryAndLimit(t *testing.T) {
 	repo := &fakeReadRepo{mutableChats: []*tg.MutableChat{testMutableChat(10)}}
 	core := newTestCore(repo)
@@ -132,11 +140,18 @@ func TestChatSearchNormalizesQueryAndLimit(t *testing.T) {
 	}
 }
 
+func TestChatSearchPropagatesRepositoryError(t *testing.T) {
+	repo := &fakeReadRepo{err: chat.ErrChatStorage}
+	_, err := newTestCore(repo).ChatSearch(&chat.TLChatSearch{SelfId: 1, Q: "team", Limit: 10})
+	if !errors.Is(err, chat.ErrChatStorage) {
+		t.Fatalf("ChatSearch error = %v, want ErrChatStorage", err)
+	}
+}
+
 func TestChatGetUsersChatIdListGroupsRowsByUser(t *testing.T) {
-	rows := []*model.ChatParticipants{
-		{UserId: 1, ChatId: 10},
-		{UserId: 2, ChatId: 20},
-		{UserId: 1, ChatId: 11},
+	rows := []repository.UserChatIDList{
+		{UserID: 1, ChatIDList: []int64{10, 11}},
+		{UserID: 2, ChatIDList: []int64{20}},
 	}
 	got, err := newTestCore(&fakeReadRepo{userChatRows: rows}).ChatGetUsersChatIdList(&chat.TLChatGetUsersChatIdList{Id: []int64{1, 2}})
 	if err != nil {

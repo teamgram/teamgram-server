@@ -26,25 +26,11 @@ func (c *ChatCore) ChatGetUsersChatIdList(in *chat.TLChatGetUsersChatIdList) (*c
 		return nil, err
 	}
 	items := make([]chat.UserChatIdListClazz, 0, len(rows))
-	for _, row := range rows {
-		if row == nil {
-			continue
-		}
-		var found *chat.TLUserChatIdList
-		for _, item := range items {
-			if item.UserId == row.UserId {
-				found = item
-				break
-			}
-		}
-		if found == nil {
-			items = append(items, chat.MakeTLUserChatIdList(&chat.TLUserChatIdList{
-				UserId:     row.UserId,
-				ChatIdList: []int64{row.ChatId},
-			}).ToUserChatIdList())
-			continue
-		}
-		found.ChatIdList = append(found.ChatIdList, row.ChatId)
+	for _, item := range rows {
+		items = append(items, chat.MakeTLUserChatIdList(&chat.TLUserChatIdList{
+			UserId:     item.UserID,
+			ChatIdList: item.ChatIDList,
+		}).ToUserChatIdList())
 	}
 	return &chat.VectorUserChatIdList{Datas: items}, nil
 }

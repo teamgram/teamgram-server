@@ -19,7 +19,7 @@ package core
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -33,7 +33,7 @@ type chatReadRepository interface {
 	GetChatBySelfID(ctx context.Context, chatID, selfID int64) (*tg.MutableChat, error)
 	GetChatListByIDList(ctx context.Context, ids []int64) ([]*tg.MutableChat, error)
 	GetChatParticipantIDList(ctx context.Context, chatID int64) ([]int64, error)
-	GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]*model.ChatParticipants, error)
+	GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]repository.UserChatIDList, error)
 	GetMyChatList(ctx context.Context, userID int64, isCreator bool) ([]*tg.MutableChat, error)
 	Search(ctx context.Context, selfID int64, q string, offset int64, limit int32) ([]*tg.MutableChat, error)
 }
