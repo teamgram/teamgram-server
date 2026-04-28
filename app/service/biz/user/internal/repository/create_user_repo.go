@@ -33,17 +33,25 @@ func (r *Repository) CreateNewUser(ctx context.Context, secretKeyID int64, phone
 		CountryCode:    countryCode,
 		AccountDaysTtl: 548,
 	}
-	id, _, err := r.model.UsersModel.Insert(ctx, userDO)
-	if err != nil {
+	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		id, _, err := r.model.UsersModel.InsertTx(tx, userDO)
+		if err != nil {
+			return fmt.Errorf("insert user: %w", err)
+		}
+		userDO.Id = id
+		if _, _, err := r.model.UserPresencesModel.InsertOrUpdateTx(tx, &model.UserPresences{
+			UserId:     userDO.Id,
+			LastSeenAt: now,
+			Expires:    300,
+		}); err != nil {
+			return fmt.Errorf("insert presence: %w", err)
+		}
+		return nil
+	}); err != nil {
 		if sqlx.IsDuplicate(err) {
 			return nil, userpb.ErrPhoneNumberInUse
 		}
 		return nil, fmt.Errorf("%w: create user: %w", userpb.ErrUserStorage, err)
-	}
-	userDO.Id = id
-
-	if err := r.UpdateLastSeen(ctx, userDO.Id, now, 300); err != nil {
-		return nil, err
 	}
 	return immutableUserFromModelWithLastSeen(userDO, now), nil
 }

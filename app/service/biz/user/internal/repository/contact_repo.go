@@ -14,7 +14,7 @@ import (
 func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID int64, firstName, lastName, phone string) (bool, error) {
 	var mutual bool
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		currentDO, err := r.model.UserContactsModel.SelectContact(ctx, userID, contactUserID)
+		currentDO, err := r.model.UserContactsModel.SelectContactTx(tx, userID, contactUserID)
 		if err != nil {
 			return fmt.Errorf("select contact: %w", err)
 		}
@@ -22,7 +22,7 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 			mutual = currentDO.Mutual
 		}
 
-		reverseDO, err := r.model.UserContactsModel.SelectContact(ctx, contactUserID, userID)
+		reverseDO, err := r.model.UserContactsModel.SelectContactTx(tx, contactUserID, userID)
 		if err != nil {
 			return fmt.Errorf("select reverse contact: %w", err)
 		}

@@ -16,7 +16,29 @@
 
 package model
 
+import (
+	"errors"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+)
+
 type (
 	extendUserContactsModel interface {
+		SelectContactTx(tx *sqlx.Tx, ownerUserID, contactUserID int64) (*UserContacts, error)
 	}
 )
+
+func (m *defaultUserContactsModel) SelectContactTx(tx *sqlx.Tx, ownerUserID, contactUserID int64) (*UserContacts, error) {
+	do := &UserContacts{}
+	err := tx.QueryRowPartial(do,
+		"select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted, date2 from user_contacts where owner_user_id = ? and contact_user_id = ? and is_deleted = 0 limit 1",
+		ownerUserID, contactUserID)
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("user_contacts.SelectContactTx: %w", err)
+	}
+	return do, nil
+}
