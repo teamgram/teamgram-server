@@ -16,7 +16,32 @@
 
 package model
 
+import (
+	"errors"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+)
+
 type (
 	extendUserProfilePhotosModel interface {
+		SelectNextTx(tx *sqlx.Tx, userID int64, idList []int64) (int64, error)
 	}
 )
+
+func (m *defaultUserProfilePhotosModel) SelectNextTx(tx *sqlx.Tx, userID int64, idList []int64) (int64, error) {
+	if len(idList) == 0 {
+		return 0, nil
+	}
+
+	var photoID int64
+	query := fmt.Sprintf("select photo_id from user_profile_photos where user_id = ? and photo_id not in (%s) and deleted = 0 order by date2 desc limit 1", sqlx.InInt64List(idList))
+	err := tx.QueryRowPartial(&photoID, query, userID)
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return 0, nil
+		}
+		return 0, fmt.Errorf("user_profile_photos.SelectNextTx: %w", err)
+	}
+	return photoID, nil
+}

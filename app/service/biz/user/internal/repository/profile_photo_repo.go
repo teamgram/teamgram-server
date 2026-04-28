@@ -18,12 +18,12 @@ func (r *Repository) UpdateProfilePhoto(ctx context.Context, userID, photoID int
 	mainPhotoID := photoID
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		if photoID == 0 {
-			currentPhotoID, err := r.model.UsersModel.SelectProfilePhoto(ctx, userID)
+			currentPhotoID, err := r.model.UsersModel.SelectProfilePhotoTx(tx, userID)
 			if err != nil {
 				return fmt.Errorf("select current profile photo: %w", err)
 			}
 			if currentPhotoID > 0 {
-				nextPhotoID, err := r.model.UserProfilePhotosModel.SelectNext(ctx, userID, []int64{currentPhotoID})
+				nextPhotoID, err := r.model.UserProfilePhotosModel.SelectNextTx(tx, userID, []int64{currentPhotoID})
 				if err != nil {
 					return fmt.Errorf("select next profile photo: %w", err)
 				}
@@ -82,20 +82,22 @@ func (r *Repository) DeleteProfilePhotos(ctx context.Context, userID int64, phot
 		return 0, nil
 	}
 
-	mainPhotoID, err := r.model.UsersModel.SelectProfilePhoto(ctx, userID)
-	if err != nil {
-		return 0, fmt.Errorf("%w: select profile photo %d: %w", userpb.ErrUserStorage, userID, err)
-	}
-
-	nextMainPhotoID := mainPhotoID
-	if containsInt64(photoIDs, mainPhotoID) {
-		nextMainPhotoID, err = r.model.UserProfilePhotosModel.SelectNext(ctx, userID, photoIDs)
-		if err != nil {
-			return 0, fmt.Errorf("%w: select next profile photo %d: %w", userpb.ErrUserStorage, userID, err)
-		}
-	}
-
+	nextMainPhotoID := int64(0)
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		mainPhotoID, err := r.model.UsersModel.SelectProfilePhotoTx(tx, userID)
+		if err != nil {
+			return fmt.Errorf("select profile photo: %w", err)
+		}
+
+		nextMainPhotoID = mainPhotoID
+		if containsInt64(photoIDs, mainPhotoID) {
+			nextPhotoID, err := r.model.UserProfilePhotosModel.SelectNextTx(tx, userID, photoIDs)
+			if err != nil {
+				return fmt.Errorf("select next profile photo: %w", err)
+			}
+			nextMainPhotoID = nextPhotoID
+		}
+
 		if _, err := r.model.UserProfilePhotosModel.DeleteTx(tx, userID, photoIDs); err != nil {
 			return fmt.Errorf("delete profile photos: %w", err)
 		}

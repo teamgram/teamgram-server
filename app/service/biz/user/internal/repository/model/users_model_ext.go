@@ -18,16 +18,32 @@ package model
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
 type (
 	extendUsersModel interface {
+		SelectProfilePhotoTx(tx *sqlx.Tx, id int64) (int64, error)
 		UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error)
 		UpdatePremium(ctx context.Context, premium bool, premiumExpireDate int64, updateExpireDate bool, id int64) (rowsAffected int64, err error)
 		UpdateVerified(ctx context.Context, verified bool, id int64) (rowsAffected int64, err error)
 	}
 )
+
+func (m *defaultUsersModel) SelectProfilePhotoTx(tx *sqlx.Tx, id int64) (int64, error) {
+	var photoID int64
+	err := tx.QueryRowPartial(&photoID, "select photo_id from users where id = ? limit 1", id)
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return 0, nil
+		}
+		return 0, fmt.Errorf("users.SelectProfilePhotoTx: %w", err)
+	}
+	return photoID, nil
+}
 
 func (m *defaultUsersModel) UpdatePhone(ctx context.Context, phone string, id int64) (rowsAffected int64, err error) {
 	result, err := m.db.Exec(ctx, "update users set phone = ? where id = ?", phone, id)
