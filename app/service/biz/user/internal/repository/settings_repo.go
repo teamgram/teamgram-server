@@ -56,7 +56,7 @@ func (r *Repository) GetGlobalPrivacySettings(ctx context.Context, userID int64)
 
 func (r *Repository) SetGlobalPrivacySettings(ctx context.Context, userID int64, settings tg.GlobalPrivacySettingsClazz) error {
 	if settings == nil {
-		return userpb.ErrUserStorage
+		return userpb.ErrInvalidGlobalPrivacySettings
 	}
 	_, _, err := r.model.UserGlobalPrivacySettingsModel.InsertOrUpdate(ctx, &model.UserGlobalPrivacySettings{
 		UserId:                           userID,
