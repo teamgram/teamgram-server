@@ -22,7 +22,7 @@ import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 // chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
 func (c *ChatCore) ChatHideChatJoinRequests(in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
 	if in.UserId == nil {
-		return c.inviteRepository().GetRecentChatInviteRequesters(c.ctx, in.ChatId)
+		return c.hideAllJoinRequests(in.SelfId, in.ChatId, in.Link, in.Approved)
 	}
 	return c.hideSingleJoinRequest(in.SelfId, in.ChatId, *in.UserId, in.Approved)
 }

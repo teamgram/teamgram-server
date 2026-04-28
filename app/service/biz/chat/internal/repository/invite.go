@@ -55,6 +55,13 @@ type HideJoinRequestsArg struct {
 	Approve  bool
 }
 
+type JoinRequest struct {
+	ChatID int64
+	Link   string
+	UserID int64
+	Date   int64
+}
+
 func (r *Repository) CreateExportedChatInvite(ctx context.Context, arg ExportChatInviteArg) (*tg.ExportedChatInvite, error) {
 	now := time.Now().Unix()
 	row := &model.ChatInvites{
@@ -84,8 +91,8 @@ func (r *Repository) GetExportedChatInvite(ctx context.Context, chatID int64, li
 	if err != nil {
 		return nil, err
 	}
-	if row.ChatId != chatID {
-		return nil, chatpb.ErrChatLinkExists
+	if err := requireInviteRowForChat(row, chatID); err != nil {
+		return nil, err
 	}
 	return r.MakeChatInviteExported(ctx, row)
 }
@@ -140,8 +147,8 @@ func (r *Repository) EditExportedChatInvite(ctx context.Context, arg EditExporte
 	if err != nil {
 		return nil, err
 	}
-	if row.ChatId != arg.ChatID {
-		return nil, chatpb.ErrChatLinkExists
+	if err := requireInviteRowForChat(row, arg.ChatID); err != nil {
+		return nil, err
 	}
 
 	out := make([]tg.ExportedChatInviteClazz, 0, 2)
@@ -209,6 +216,13 @@ func (r *Repository) DeleteExportedChatInvite(ctx context.Context, chatID int64,
 	hash := chatpb.NormalizeInviteHash(link)
 	if hash == "" {
 		return chatpb.ErrInviteHashInvalid
+	}
+	row, err := r.GetChatInviteByLink(ctx, hash)
+	if err != nil {
+		return err
+	}
+	if err := requireInviteRowForChat(row, chatID); err != nil {
+		return err
 	}
 	if _, err := r.model.ChatInvitesModel.DeleteByLink(ctx, chatID, hash); err != nil {
 		return wrapStorage("chat_invites.DeleteByLink", err)
@@ -313,10 +327,15 @@ func (r *Repository) GetChatInviteImporters(ctx context.Context, q ChatInviteImp
 		rows []model.ChatInviteParticipants
 		err  error
 	)
-	if q.Requested {
+	linkRequested, useRecent := inviteImporterLinkQuery(q)
+	if useRecent {
 		rows, err = r.model.ChatInviteParticipantsModel.SelectRecentRequestedList(ctx, q.ChatID)
 	} else {
-		rows, err = r.model.ChatInviteParticipantsModel.SelectListByLink(ctx, chatpb.NormalizeInviteHash(q.Link), 0)
+		hash, err := r.validateInviteLinkForChat(ctx, q.ChatID, q.Link)
+		if err != nil {
+			return nil, err
+		}
+		rows, err = r.model.ChatInviteParticipantsModel.SelectListByLink(ctx, hash, linkRequested)
 	}
 	if err != nil {
 		return nil, wrapStorage("chat_invite_participants.SelectList", err)
@@ -338,6 +357,38 @@ func (r *Repository) GetChatInviteImporters(ctx context.Context, q ChatInviteImp
 		end = len(all)
 	}
 	return all[offset:end], nil
+}
+
+func (r *Repository) GetPendingJoinRequests(ctx context.Context, chatID int64, link *string) ([]JoinRequest, error) {
+	var (
+		rows []model.ChatInviteParticipants
+		err  error
+	)
+	if link != nil {
+		hash, err := r.validateInviteLinkForChat(ctx, chatID, *link)
+		if err != nil {
+			return nil, err
+		}
+		rows, err = r.model.ChatInviteParticipantsModel.SelectListByLink(ctx, hash, 1)
+	} else {
+		rows, err = r.model.ChatInviteParticipantsModel.SelectRecentRequestedList(ctx, chatID)
+	}
+	if err != nil {
+		return nil, wrapStorage("chat_invite_participants.SelectPendingJoinRequests", err)
+	}
+	out := make([]JoinRequest, 0, len(rows))
+	for i := range rows {
+		if rows[i].ChatId != chatID {
+			continue
+		}
+		out = append(out, JoinRequest{
+			ChatID: rows[i].ChatId,
+			Link:   rows[i].Link,
+			UserID: rows[i].UserId,
+			Date:   rows[i].Date2,
+		})
+	}
+	return out, nil
 }
 
 func (r *Repository) GetRecentChatInviteRequesters(ctx context.Context, chatID int64) (*chatpb.RecentChatInviteRequesters, error) {
@@ -366,6 +417,41 @@ func (r *Repository) HideChatJoinRequest(ctx context.Context, arg HideJoinReques
 		return wrapStorage("chat_invite_participants.Delete", err)
 	}
 	return nil
+}
+
+func (r *Repository) validateInviteLinkForChat(ctx context.Context, chatID int64, link string) (string, error) {
+	hash := chatpb.NormalizeInviteHash(link)
+	if hash == "" {
+		return "", chatpb.ErrInviteHashInvalid
+	}
+	row, err := r.GetChatInviteByLink(ctx, hash)
+	if err != nil {
+		return "", err
+	}
+	if err := requireInviteRowForChat(row, chatID); err != nil {
+		return "", err
+	}
+	return hash, nil
+}
+
+func requireInviteRowForChat(row *model.ChatInvites, chatID int64) error {
+	if row == nil {
+		return chatpb.ErrInviteHashInvalid
+	}
+	if row.ChatId != chatID {
+		return chatpb.ErrChatLinkExists
+	}
+	return nil
+}
+
+func inviteImporterLinkQuery(q ChatInviteImporterQuery) (requested int32, useRecent bool) {
+	if q.Requested {
+		if q.Link == "" {
+			return 1, true
+		}
+		return 1, false
+	}
+	return 0, false
 }
 
 func (r *Repository) CountChatInviteParticipants(ctx context.Context, link string, requested bool) (int32, error) {

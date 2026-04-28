@@ -23,13 +23,14 @@ type CreateChatArg struct {
 }
 
 type AddChatUserArg struct {
-	ChatID          int64
-	InviterID       int64
-	UserID          int64
-	ParticipantID   int64
-	ParticipantType int32
-	IsBot           bool
-	Count           int32
+	ChatID              int64
+	InviterID           int64
+	UserID              int64
+	ParticipantID       int64
+	ParticipantType     int32
+	IsBot               bool
+	Count               int32
+	PreserveJoinRequest bool
 }
 
 type DeleteChatUserArg struct {
@@ -222,6 +223,9 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 		}
 		if _, err := r.model.ChatsModel.UpdateParticipantCountTx(tx, arg.Count, arg.ChatID); err != nil {
 			return err
+		}
+		if arg.PreserveJoinRequest {
+			return nil
 		}
 		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
 		return err

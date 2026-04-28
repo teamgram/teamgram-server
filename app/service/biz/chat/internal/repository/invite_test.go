@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"errors"
 	"testing"
 
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -53,5 +55,36 @@ func TestExportedInviteProjectionBuildsFullLinkAndCounts(t *testing.T) {
 	}
 	if invite.Title == nil || *invite.Title != title {
 		t.Fatalf("title = %v, want %q", invite.Title, title)
+	}
+}
+
+func TestInviteRowForWrongChatReturnsLinkExists(t *testing.T) {
+	err := requireInviteRowForChat(&model.ChatInvites{ChatId: 20, Link: "hash"}, 10)
+	if !errors.Is(err, chatpb.ErrChatLinkExists) {
+		t.Fatalf("requireInviteRowForChat error = %v, want ErrChatLinkExists", err)
+	}
+}
+
+func TestInviteImporterRequestedLinkUsesLinkSpecificQuery(t *testing.T) {
+	requested, recent := inviteImporterLinkQuery(ChatInviteImporterQuery{
+		ChatID:    10,
+		Requested: true,
+		Link:      "hash",
+	})
+	if recent {
+		t.Fatal("requested query with link should not use chat-wide recent requested list")
+	}
+	if requested != 1 {
+		t.Fatalf("requested flag = %d, want 1", requested)
+	}
+}
+
+func TestInviteImporterRequestedWithoutLinkUsesRecentQuery(t *testing.T) {
+	requested, recent := inviteImporterLinkQuery(ChatInviteImporterQuery{ChatID: 10, Requested: true})
+	if !recent {
+		t.Fatal("requested query without link should use chat-wide recent requested list")
+	}
+	if requested != 1 {
+		t.Fatalf("requested flag = %d, want 1", requested)
 	}
 }

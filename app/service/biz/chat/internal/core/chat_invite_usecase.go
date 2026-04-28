@@ -154,9 +154,10 @@ func (c *ChatCore) hideSingleJoinRequest(selfID, chatID, userID int64, approved 
 	}
 	if approved {
 		if _, err := c.addChatUser(c.ctx, addChatUserArg{
-			chatID:    chatID,
-			inviterID: selfID,
-			userID:    userID,
+			chatID:              chatID,
+			inviterID:           selfID,
+			userID:              userID,
+			preserveJoinRequest: true,
 		}); err != nil {
 			return nil, err
 		}
@@ -168,6 +169,37 @@ func (c *ChatCore) hideSingleJoinRequest(selfID, chatID, userID int64, approved 
 		Approve:  approved,
 	}); err != nil {
 		return nil, err
+	}
+	return c.inviteRepository().GetRecentChatInviteRequesters(c.ctx, chatID)
+}
+
+func (c *ChatCore) hideAllJoinRequests(selfID, chatID int64, link *string, approved bool) (*chatpb.RecentChatInviteRequesters, error) {
+	if _, err := c.requireCanInvite(chatID, selfID); err != nil {
+		return nil, err
+	}
+	requests, err := c.inviteRepository().GetPendingJoinRequests(c.ctx, chatID, link)
+	if err != nil {
+		return nil, err
+	}
+	for _, request := range requests {
+		if approved {
+			if _, err := c.addChatUser(c.ctx, addChatUserArg{
+				chatID:              request.ChatID,
+				inviterID:           selfID,
+				userID:              request.UserID,
+				preserveJoinRequest: true,
+			}); err != nil {
+				return nil, err
+			}
+		}
+		if err := c.inviteRepository().HideChatJoinRequest(c.ctx, repository.HideJoinRequestsArg{
+			ChatID:   request.ChatID,
+			UserID:   request.UserID,
+			Approver: selfID,
+			Approve:  approved,
+		}); err != nil {
+			return nil, err
+		}
 	}
 	return c.inviteRepository().GetRecentChatInviteRequesters(c.ctx, chatID)
 }

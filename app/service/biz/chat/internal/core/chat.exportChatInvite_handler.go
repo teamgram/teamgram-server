@@ -25,6 +25,9 @@ import (
 // ChatExportChatInvite
 // chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (c *ChatCore) ChatExportChatInvite(in *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
+	if _, err := c.requireCanInvite(in.ChatId, in.AdminId); err != nil {
+		return nil, err
+	}
 	return c.inviteRepository().CreateExportedChatInvite(c.ctx, repository.ExportChatInviteArg{
 		ChatID:        in.ChatId,
 		AdminID:       in.AdminId,

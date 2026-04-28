@@ -15,26 +15,30 @@ import (
 )
 
 type fakeInviteRepo struct {
-	invite          *model.ChatInvites
-	inviteErr       error
-	usage           int32
-	usageErr        error
-	requesters      *chat.RecentChatInviteRequesters
-	requestersErr   error
-	recordCalls     int
-	recordArg       repository.InviteParticipantArg
-	hideCalls       int
-	hideArg         repository.HideJoinRequestsArg
-	editInvites     []tg.ExportedChatInviteClazz
-	editArg         repository.EditExportedChatInviteArg
-	createInvite    *tg.ExportedChatInvite
-	exportedInvite  *tg.ExportedChatInvite
-	exportedInvites []tg.ExportedChatInviteClazz
-	importers       []tg.ChatInviteImporterClazz
-	err             error
+	invite             *model.ChatInvites
+	inviteErr          error
+	usage              int32
+	usageErr           error
+	requesters         *chat.RecentChatInviteRequesters
+	requestersErr      error
+	pendingRequests    []repository.JoinRequest
+	recordCalls        int
+	recordArg          repository.InviteParticipantArg
+	hideCalls          int
+	hideArg            repository.HideJoinRequestsArg
+	createCalls        int
+	deleteRevokedCalls int
+	editInvites        []tg.ExportedChatInviteClazz
+	editArg            repository.EditExportedChatInviteArg
+	createInvite       *tg.ExportedChatInvite
+	exportedInvite     *tg.ExportedChatInvite
+	exportedInvites    []tg.ExportedChatInviteClazz
+	importers          []tg.ChatInviteImporterClazz
+	err                error
 }
 
 func (f *fakeInviteRepo) CreateExportedChatInvite(ctx context.Context, arg repository.ExportChatInviteArg) (*tg.ExportedChatInvite, error) {
+	f.createCalls++
 	return f.createInvite, f.err
 }
 
@@ -56,6 +60,7 @@ func (f *fakeInviteRepo) DeleteExportedChatInvite(ctx context.Context, chatID in
 }
 
 func (f *fakeInviteRepo) DeleteRevokedExportedChatInvites(ctx context.Context, chatID, adminID int64) error {
+	f.deleteRevokedCalls++
 	return f.err
 }
 
@@ -79,6 +84,10 @@ func (f *fakeInviteRepo) RecordInviteParticipant(ctx context.Context, arg reposi
 
 func (f *fakeInviteRepo) GetChatInviteImporters(ctx context.Context, q repository.ChatInviteImporterQuery) ([]tg.ChatInviteImporterClazz, error) {
 	return f.importers, f.err
+}
+
+func (f *fakeInviteRepo) GetPendingJoinRequests(ctx context.Context, chatID int64, link *string) ([]repository.JoinRequest, error) {
+	return f.pendingRequests, f.err
 }
 
 func (f *fakeInviteRepo) GetRecentChatInviteRequesters(ctx context.Context, chatID int64) (*chat.RecentChatInviteRequesters, error) {
@@ -198,8 +207,83 @@ func TestChatHideJoinRequestApproveUsesAddHelper(t *testing.T) {
 	if write.addCalls != 1 {
 		t.Fatalf("AddChatUser calls = %d, want 1", write.addCalls)
 	}
+	if !write.addArg.PreserveJoinRequest {
+		t.Fatal("AddChatUser should preserve join request before approval update")
+	}
 	if inviteRepo.hideCalls != 1 || !inviteRepo.hideArg.Approve {
 		t.Fatalf("hide arg = %#v, want approve", inviteRepo.hideArg)
+	}
+}
+
+func TestChatHideJoinRequestsAllApproveUsesAddHelper(t *testing.T) {
+	write := &fakeWriteRepo{participant: participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil)}
+	inviteRepo := &fakeInviteRepo{
+		pendingRequests: []repository.JoinRequest{
+			{ChatID: 10, Link: "hash", UserID: 2},
+			{ChatID: 10, Link: "hash", UserID: 3},
+		},
+		requesters: chat.MakeTLRecentChatInviteRequesters(&chat.TLRecentChatInviteRequesters{RecentRequesters: []int64{}}).ToRecentChatInviteRequesters(),
+	}
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: inviteMutableChat(false)}, write, inviteRepo)
+	_, err := core.ChatHideChatJoinRequests(&chat.TLChatHideChatJoinRequests{SelfId: 1, ChatId: 10, Approved: true})
+	if err != nil {
+		t.Fatalf("ChatHideChatJoinRequests all approve error = %v", err)
+	}
+	if write.addCalls != 2 {
+		t.Fatalf("AddChatUser calls = %d, want 2", write.addCalls)
+	}
+	if !write.addArg.PreserveJoinRequest {
+		t.Fatal("AddChatUser should preserve join request before approval update")
+	}
+	if inviteRepo.hideCalls != 2 || !inviteRepo.hideArg.Approve {
+		t.Fatalf("hide calls=%d arg=%#v, want two approvals", inviteRepo.hideCalls, inviteRepo.hideArg)
+	}
+}
+
+func TestChatHideJoinRequestsAllDeleteSkipsAddHelper(t *testing.T) {
+	write := &fakeWriteRepo{}
+	inviteRepo := &fakeInviteRepo{
+		pendingRequests: []repository.JoinRequest{{ChatID: 10, Link: "hash", UserID: 2}},
+		requesters:      chat.MakeTLRecentChatInviteRequesters(&chat.TLRecentChatInviteRequesters{RecentRequesters: []int64{}}).ToRecentChatInviteRequesters(),
+	}
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: inviteMutableChat(false)}, write, inviteRepo)
+	_, err := core.ChatHideChatJoinRequests(&chat.TLChatHideChatJoinRequests{SelfId: 1, ChatId: 10})
+	if err != nil {
+		t.Fatalf("ChatHideChatJoinRequests all delete error = %v", err)
+	}
+	if write.addCalls != 0 {
+		t.Fatalf("AddChatUser calls = %d, want 0", write.addCalls)
+	}
+	if inviteRepo.hideCalls != 1 || inviteRepo.hideArg.Approve {
+		t.Fatalf("hide calls=%d arg=%#v, want one delete", inviteRepo.hideCalls, inviteRepo.hideArg)
+	}
+}
+
+func TestChatExportInviteRequiresInvitePermission(t *testing.T) {
+	inviteRepo := &fakeInviteRepo{}
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil),
+	)}, &fakeWriteRepo{}, inviteRepo)
+	_, err := core.ChatExportChatInvite(&chat.TLChatExportChatInvite{ChatId: 10, AdminId: 2})
+	if !errors.Is(err, chat.ErrChatAdminRequired) {
+		t.Fatalf("ChatExportChatInvite error = %v, want ErrChatAdminRequired", err)
+	}
+	if inviteRepo.createCalls != 0 {
+		t.Fatalf("CreateExportedChatInvite calls = %d, want 0", inviteRepo.createCalls)
+	}
+}
+
+func TestChatDeleteRevokedInvitesRequiresInvitePermission(t *testing.T) {
+	inviteRepo := &fakeInviteRepo{}
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 2, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil),
+	)}, &fakeWriteRepo{}, inviteRepo)
+	_, err := core.ChatDeleteRevokedExportedChatInvites(&chat.TLChatDeleteRevokedExportedChatInvites{SelfId: 2, ChatId: 10, AdminId: 2})
+	if !errors.Is(err, chat.ErrChatAdminRequired) {
+		t.Fatalf("ChatDeleteRevokedExportedChatInvites error = %v, want ErrChatAdminRequired", err)
+	}
+	if inviteRepo.deleteRevokedCalls != 0 {
+		t.Fatalf("DeleteRevokedExportedChatInvites calls = %d, want 0", inviteRepo.deleteRevokedCalls)
 	}
 }
 
@@ -207,7 +291,9 @@ func TestChatEditExportedInviteReturnsOldAndNew(t *testing.T) {
 	oldInvite := tg.MakeTLChatInviteExported(&tg.TLChatInviteExported{Link: "old", AdminId: 1, Date: 1}).ToExportedChatInvite().Clazz
 	newInvite := tg.MakeTLChatInviteExported(&tg.TLChatInviteExported{Link: "new", AdminId: 1, Date: 2}).ToExportedChatInvite().Clazz
 	inviteRepo := &fakeInviteRepo{editInvites: []tg.ExportedChatInviteClazz{oldInvite, newInvite}}
-	core := newInviteTestCore(&fakeReadRepo{}, &fakeWriteRepo{}, inviteRepo)
+	core := newInviteTestCore(&fakeReadRepo{mutableChat: mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil),
+	)}, &fakeWriteRepo{}, inviteRepo)
 	got, err := core.ChatEditExportedChatInvite(&chat.TLChatEditExportedChatInvite{SelfId: 1, ChatId: 10, Link: "old", Revoked: true})
 	if err != nil {
 		t.Fatalf("ChatEditExportedChatInvite error = %v", err)

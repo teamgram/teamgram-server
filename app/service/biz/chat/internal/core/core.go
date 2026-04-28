@@ -68,6 +68,7 @@ type chatInviteRepository interface {
 	CountChatInviteParticipants(ctx context.Context, link string, requested bool) (int32, error)
 	RecordInviteParticipant(ctx context.Context, arg repository.InviteParticipantArg) error
 	GetChatInviteImporters(ctx context.Context, q repository.ChatInviteImporterQuery) ([]tg.ChatInviteImporterClazz, error)
+	GetPendingJoinRequests(ctx context.Context, chatID int64, link *string) ([]repository.JoinRequest, error)
 	GetRecentChatInviteRequesters(ctx context.Context, chatID int64) (*chat.RecentChatInviteRequesters, error)
 	HideChatJoinRequest(ctx context.Context, arg repository.HideJoinRequestsArg) error
 }

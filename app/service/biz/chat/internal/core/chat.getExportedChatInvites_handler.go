@@ -23,6 +23,9 @@ import (
 // ChatGetExportedChatInvites
 // chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvites) (*chat.VectorExportedChatInvite, error) {
+	if _, err := c.requireCanInvite(in.ChatId, in.AdminId); err != nil {
+		return nil, err
+	}
 	invites, err := c.inviteRepository().GetExportedChatInvites(c.ctx, in.ChatId, in.AdminId, in.Revoked, in.OffsetDate, in.OffsetLink, in.Limit)
 	if err != nil {
 		return nil, err

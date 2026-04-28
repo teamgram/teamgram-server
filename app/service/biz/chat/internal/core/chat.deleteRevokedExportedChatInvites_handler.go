@@ -24,6 +24,9 @@ import (
 // ChatDeleteRevokedExportedChatInvites
 // chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 func (c *ChatCore) ChatDeleteRevokedExportedChatInvites(in *chat.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error) {
+	if _, err := c.requireCanInvite(in.ChatId, in.SelfId); err != nil {
+		return nil, err
+	}
 	if err := c.inviteRepository().DeleteRevokedExportedChatInvites(c.ctx, in.ChatId, in.AdminId); err != nil {
 		return nil, err
 	}
