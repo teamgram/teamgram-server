@@ -17,14 +17,31 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesExportChatInvite
 // messages.exportChatInvite#a455de90 flags:# legacy_revoke_permanent:flags.2?true request_needed:flags.3?true peer:InputPeer expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string subscription_pricing:flags.5?StarsSubscriptionPricing = ExportedChatInvite;
 func (c *ChatInvitesCore) MessagesExportChatInvite(in *tg.TLMessagesExportChatInvite) (*tg.ExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.exportChatInvite - error: method MessagesExportChatInvite not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	invite, err := c.svcCtx.Repo.ChatClient.ChatExportChatInvite(c.ctx, &chatpb.TLChatExportChatInvite{
+		ChatId:                peer.PeerId,
+		AdminId:               selfID,
+		LegacyRevokePermanent: in.LegacyRevokePermanent,
+		RequestNeeded:         in.RequestNeeded,
+		ExpireDate:            in.ExpireDate,
+		UsageLimit:            in.UsageLimit,
+		Title:                 in.Title,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return invite, nil
 }

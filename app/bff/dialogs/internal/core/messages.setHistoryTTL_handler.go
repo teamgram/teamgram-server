@@ -17,14 +17,27 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSetHistoryTTL
 // messages.setHistoryTTL#b80e5fe4 peer:InputPeer period:int = Updates;
 func (c *DialogsCore) MessagesSetHistoryTTL(in *tg.TLMessagesSetHistoryTTL) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.setHistoryTTL - error: method MessagesSetHistoryTTL not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	mutableChat, err := c.svcCtx.Repo.ChatClient.ChatSetHistoryTTL(c.ctx, &chatpb.TLChatSetHistoryTTL{
+		SelfId:    selfID,
+		ChatId:    peer.PeerId,
+		TtlPeriod: in.Period,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return updatesWithChat(mutableChat, selfID), nil
 }

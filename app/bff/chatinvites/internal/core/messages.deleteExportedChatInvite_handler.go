@@ -17,14 +17,26 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteExportedChatInvite
 // messages.deleteExportedChatInvite#d464a42b peer:InputPeer link:string = Bool;
 func (c *ChatInvitesCore) MessagesDeleteExportedChatInvite(in *tg.TLMessagesDeleteExportedChatInvite) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.deleteExportedChatInvite - error: method MessagesDeleteExportedChatInvite not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if _, err := c.svcCtx.Repo.ChatClient.ChatDeleteExportedChatInvite(c.ctx, &chatpb.TLChatDeleteExportedChatInvite{
+		SelfId: selfID,
+		ChatId: peer.PeerId,
+		Link:   in.Link,
+	}); err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return tg.BoolTrue, nil
 }

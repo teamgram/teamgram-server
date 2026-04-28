@@ -17,14 +17,26 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesEditChatAbout
 // messages.editChatAbout#def60797 peer:InputPeer about:string = Bool;
 func (c *ChatsCore) MessagesEditChatAbout(in *tg.TLMessagesEditChatAbout) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.editChatAbout - error: method MessagesEditChatAbout not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if _, err := c.svcCtx.Repo.ChatClient.ChatEditChatAbout(c.ctx, &chatpb.TLChatEditChatAbout{
+		ChatId:     peer.PeerId,
+		EditUserId: selfID,
+		About:      in.About,
+	}); err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return tg.BoolTrue, nil
 }
