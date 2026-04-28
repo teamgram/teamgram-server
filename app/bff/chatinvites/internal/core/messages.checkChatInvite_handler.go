@@ -17,14 +17,28 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesCheckChatInvite
 // messages.checkChatInvite#3eadb1bb hash:string = ChatInvite;
 func (c *ChatInvitesCore) MessagesCheckChatInvite(in *tg.TLMessagesCheckChatInvite) (*tg.ChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.checkChatInvite - error: method MessagesCheckChatInvite not impl")
+	if in.Hash == "" {
+		return nil, tg.ErrInviteHashEmpty
+	}
+	if !validChatInviteHash(in.Hash) {
+		return nil, tg.ErrInviteHashInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	selfID := selfID(c.MD)
+	invite, err := c.svcCtx.Repo.ChatClient.ChatCheckChatInvite(c.ctx, &chatpb.TLChatCheckChatInvite{
+		SelfId: selfID,
+		Hash:   in.Hash,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	return c.projectChatInviteExt(invite, selfID)
 }

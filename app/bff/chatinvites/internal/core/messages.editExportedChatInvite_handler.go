@@ -17,14 +17,54 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesEditExportedChatInvite
 // messages.editExportedChatInvite#bdca2f75 flags:# revoked:flags.2?true peer:InputPeer link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = messages.ExportedChatInvite;
 func (c *ChatInvitesCore) MessagesEditExportedChatInvite(in *tg.TLMessagesEditExportedChatInvite) (*tg.MessagesExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.editExportedChatInvite - error: method MessagesEditExportedChatInvite not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	invites, err := c.svcCtx.Repo.ChatClient.ChatEditExportedChatInvite(c.ctx, &chatpb.TLChatEditExportedChatInvite{
+		SelfId:        selfID,
+		ChatId:        peer.PeerId,
+		Revoked:       in.Revoked,
+		Link:          in.Link,
+		ExpireDate:    in.ExpireDate,
+		UsageLimit:    in.UsageLimit,
+		RequestNeeded: in.RequestNeeded,
+		Title:         in.Title,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	var data []tg.ExportedChatInviteClazz
+	if invites != nil {
+		data = invites.Datas
+	}
+	if len(data) != 1 && len(data) != 2 {
+		return nil, tg.ErrInternalServerError
+	}
+
+	users, err := c.fetchUserClazzes(append([]int64{selfID}, adminIDsFromInvites(data)...), selfID)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 2 {
+		return tg.MakeTLMessagesExportedChatInviteReplaced(&tg.TLMessagesExportedChatInviteReplaced{
+			Invite:    data[0],
+			NewInvite: data[1],
+			Users:     users,
+		}).ToMessagesExportedChatInvite(), nil
+	}
+	return tg.MakeTLMessagesExportedChatInvite(&tg.TLMessagesExportedChatInvite{
+		Invite: data[0],
+		Users:  users,
+	}).ToMessagesExportedChatInvite(), nil
 }

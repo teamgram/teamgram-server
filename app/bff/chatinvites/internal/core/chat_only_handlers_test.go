@@ -8,6 +8,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/internal/svc"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -18,6 +19,13 @@ type chatInvitesFakeChatClient struct {
 	exportInvite  func(context.Context, *chatpb.TLChatExportChatInvite) (*tg.ExportedChatInvite, error)
 	deleteInvite  func(context.Context, *chatpb.TLChatDeleteExportedChatInvite) (*tg.Bool, error)
 	deleteRevoked func(context.Context, *chatpb.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error)
+
+	getAdminsWithInvites   func(context.Context, *chatpb.TLChatGetAdminsWithInvites) (*chatpb.VectorChatAdminWithInvites, error)
+	getExportedChatInvite  func(context.Context, *chatpb.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error)
+	getExportedChatInvites func(context.Context, *chatpb.TLChatGetExportedChatInvites) (*chatpb.VectorExportedChatInvite, error)
+	checkChatInvite        func(context.Context, *chatpb.TLChatCheckChatInvite) (*chatpb.ChatInviteExt, error)
+	getChatInviteImporters func(context.Context, *chatpb.TLChatGetChatInviteImporters) (*chatpb.VectorChatInviteImporter, error)
+	editExportedChatInvite func(context.Context, *chatpb.TLChatEditExportedChatInvite) (*chatpb.VectorExportedChatInvite, error)
 }
 
 func (f *chatInvitesFakeChatClient) ChatExportChatInvite(ctx context.Context, in *chatpb.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
@@ -32,9 +40,37 @@ func (f *chatInvitesFakeChatClient) ChatDeleteRevokedExportedChatInvites(ctx con
 	return f.deleteRevoked(ctx, in)
 }
 
+func (f *chatInvitesFakeChatClient) ChatGetAdminsWithInvites(ctx context.Context, in *chatpb.TLChatGetAdminsWithInvites) (*chatpb.VectorChatAdminWithInvites, error) {
+	return f.getAdminsWithInvites(ctx, in)
+}
+
+func (f *chatInvitesFakeChatClient) ChatGetExportedChatInvite(ctx context.Context, in *chatpb.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error) {
+	return f.getExportedChatInvite(ctx, in)
+}
+
+func (f *chatInvitesFakeChatClient) ChatGetExportedChatInvites(ctx context.Context, in *chatpb.TLChatGetExportedChatInvites) (*chatpb.VectorExportedChatInvite, error) {
+	return f.getExportedChatInvites(ctx, in)
+}
+
+func (f *chatInvitesFakeChatClient) ChatCheckChatInvite(ctx context.Context, in *chatpb.TLChatCheckChatInvite) (*chatpb.ChatInviteExt, error) {
+	return f.checkChatInvite(ctx, in)
+}
+
+func (f *chatInvitesFakeChatClient) ChatGetChatInviteImporters(ctx context.Context, in *chatpb.TLChatGetChatInviteImporters) (*chatpb.VectorChatInviteImporter, error) {
+	return f.getChatInviteImporters(ctx, in)
+}
+
+func (f *chatInvitesFakeChatClient) ChatEditExportedChatInvite(ctx context.Context, in *chatpb.TLChatEditExportedChatInvite) (*chatpb.VectorExportedChatInvite, error) {
+	return f.editExportedChatInvite(ctx, in)
+}
+
 func newChatInvitesCore(client chatclient.ChatClient, selfID int64) *ChatInvitesCore {
+	return newChatInvitesCoreWithClients(client, nil, selfID)
+}
+
+func newChatInvitesCoreWithClients(client chatclient.ChatClient, userClient userclient.UserClient, selfID int64) *ChatInvitesCore {
 	c := New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{ChatClient: client},
+		Repo: &repository.Repository{ChatClient: client, UserClient: userClient},
 	})
 	c.MD = &metadata.RpcMetadata{UserId: selfID}
 	return c

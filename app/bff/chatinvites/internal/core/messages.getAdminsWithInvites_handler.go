@@ -17,14 +17,37 @@
 package core
 
 import (
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetAdminsWithInvites
 // messages.getAdminsWithInvites#3920e6ef peer:InputPeer = messages.ChatAdminsWithInvites;
 func (c *ChatInvitesCore) MessagesGetAdminsWithInvites(in *tg.TLMessagesGetAdminsWithInvites) (*tg.MessagesChatAdminsWithInvites, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getAdminsWithInvites - error: method MessagesGetAdminsWithInvites not impl")
+	selfID := selfID(c.MD)
+	peer := tg.FromInputPeer2(selfID, in.Peer)
+	if peer.PeerType != tg.PEER_CHAT {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	admins, err := c.svcCtx.Repo.ChatClient.ChatGetAdminsWithInvites(c.ctx, &chatpb.TLChatGetAdminsWithInvites{
+		SelfId: selfID,
+		ChatId: peer.PeerId,
+	})
+	if err != nil {
+		return nil, mapChatError(err)
+	}
+
+	data := []tg.ChatAdminWithInvitesClazz{}
+	if admins != nil {
+		data = admins.Datas
+	}
+	users, err := c.fetchUserClazzes(adminIDsFromAdmins(data), selfID)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessagesChatAdminsWithInvites(&tg.TLMessagesChatAdminsWithInvites{
+		Admins: data,
+		Users:  users,
+	}), nil
 }
