@@ -24,8 +24,5 @@ import (
 // ChatGetExportedChatInvite
 // chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 func (c *ChatCore) ChatGetExportedChatInvite(in *chat.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getExportedChatInvite - error: method ChatGetExportedChatInvite not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.inviteRepository().GetExportedChatInvite(c.ctx, in.ChatId, in.Link)
 }

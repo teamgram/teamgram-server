@@ -19,7 +19,9 @@ package core
 import (
 	"context"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -54,11 +56,28 @@ type chatWriteRepository interface {
 	UpdateChatAvailableReactions(ctx context.Context, chatID int64, kind int32, reactions []string) (int64, error)
 }
 
+type chatInviteRepository interface {
+	CreateExportedChatInvite(ctx context.Context, arg repository.ExportChatInviteArg) (*tg.ExportedChatInvite, error)
+	GetExportedChatInvite(ctx context.Context, chatID int64, link string) (*tg.ExportedChatInvite, error)
+	GetExportedChatInvites(ctx context.Context, chatID, adminID int64, revoked bool, offsetDate *int32, offsetLink *string, limit int32) ([]tg.ExportedChatInviteClazz, error)
+	EditExportedChatInvite(ctx context.Context, arg repository.EditExportedChatInviteArg) ([]tg.ExportedChatInviteClazz, error)
+	DeleteExportedChatInvite(ctx context.Context, chatID int64, link string) error
+	DeleteRevokedExportedChatInvites(ctx context.Context, chatID, adminID int64) error
+	GetChatInviteByLink(ctx context.Context, link string) (*model.ChatInvites, error)
+	GetAdminsWithInvites(ctx context.Context, chatID int64, adminIDs []int64) ([]tg.ChatAdminWithInvitesClazz, error)
+	CountChatInviteParticipants(ctx context.Context, link string, requested bool) (int32, error)
+	RecordInviteParticipant(ctx context.Context, arg repository.InviteParticipantArg) error
+	GetChatInviteImporters(ctx context.Context, q repository.ChatInviteImporterQuery) ([]tg.ChatInviteImporterClazz, error)
+	GetRecentChatInviteRequesters(ctx context.Context, chatID int64) (*chat.RecentChatInviteRequesters, error)
+	HideChatJoinRequest(ctx context.Context, arg repository.HideJoinRequestsArg) error
+}
+
 type ChatCore struct {
-	ctx       context.Context
-	svcCtx    *svc.ServiceContext
-	readRepo  chatReadRepository
-	writeRepo chatWriteRepository
+	ctx        context.Context
+	svcCtx     *svc.ServiceContext
+	readRepo   chatReadRepository
+	writeRepo  chatWriteRepository
+	inviteRepo chatInviteRepository
 	logx.Logger
 	MD *metadata.RpcMetadata
 }
@@ -82,6 +101,13 @@ func (c *ChatCore) repo() chatReadRepository {
 func (c *ChatCore) writeRepository() chatWriteRepository {
 	if c.writeRepo != nil {
 		return c.writeRepo
+	}
+	return c.svcCtx.Repo
+}
+
+func (c *ChatCore) inviteRepository() chatInviteRepository {
+	if c.inviteRepo != nil {
+		return c.inviteRepo
 	}
 	return c.svcCtx.Repo
 }

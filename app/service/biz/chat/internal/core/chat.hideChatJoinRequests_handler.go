@@ -16,16 +16,13 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatHideChatJoinRequests
 // chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
 func (c *ChatCore) ChatHideChatJoinRequests(in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.hideChatJoinRequests - error: method ChatHideChatJoinRequests not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in.UserId == nil {
+		return c.inviteRepository().GetRecentChatInviteRequesters(c.ctx, in.ChatId)
+	}
+	return c.hideSingleJoinRequest(in.SelfId, in.ChatId, *in.UserId, in.Approved)
 }

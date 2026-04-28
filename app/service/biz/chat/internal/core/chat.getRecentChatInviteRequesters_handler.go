@@ -16,16 +16,13 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatGetRecentChatInviteRequesters
 // chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
 func (c *ChatCore) ChatGetRecentChatInviteRequesters(in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getRecentChatInviteRequesters - error: method ChatGetRecentChatInviteRequesters not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if _, err := c.requireCanInvite(in.ChatId, in.SelfId); err != nil {
+		return nil, err
+	}
+	return c.inviteRepository().GetRecentChatInviteRequesters(c.ctx, in.ChatId)
 }

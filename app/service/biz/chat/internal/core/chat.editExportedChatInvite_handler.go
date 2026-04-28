@@ -18,14 +18,24 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 )
 
 // ChatEditExportedChatInvite
 // chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInvite) (*chat.VectorExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.editExportedChatInvite - error: method ChatEditExportedChatInvite not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	requestNeeded := boolFromTLBool(in.RequestNeeded)
+	invites, err := c.inviteRepository().EditExportedChatInvite(c.ctx, repository.EditExportedChatInviteArg{
+		ChatID:        in.ChatId,
+		Link:          in.Link,
+		Revoked:       in.Revoked,
+		ExpireDate:    in.ExpireDate,
+		UsageLimit:    in.UsageLimit,
+		RequestNeeded: requestNeeded,
+		Title:         in.Title,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &chat.VectorExportedChatInvite{Datas: invites}, nil
 }

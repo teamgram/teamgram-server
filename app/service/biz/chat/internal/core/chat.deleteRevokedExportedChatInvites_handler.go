@@ -24,8 +24,8 @@ import (
 // ChatDeleteRevokedExportedChatInvites
 // chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 func (c *ChatCore) ChatDeleteRevokedExportedChatInvites(in *chat.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.deleteRevokedExportedChatInvites - error: method ChatDeleteRevokedExportedChatInvites not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.inviteRepository().DeleteRevokedExportedChatInvites(c.ctx, in.ChatId, in.AdminId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

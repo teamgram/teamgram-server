@@ -24,8 +24,5 @@ import (
 // ChatImportChatInvite
 // chat.importChatInvite self_id:long hash:string = MutableChat;
 func (c *ChatCore) ChatImportChatInvite(in *chat.TLChatImportChatInvite) (*tg.MutableChat, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.importChatInvite - error: method ChatImportChatInvite not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.importChatInvite(in.SelfId, in.Hash)
 }

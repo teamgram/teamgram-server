@@ -16,16 +16,26 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatGetAdminsWithInvites
 // chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 func (c *ChatCore) ChatGetAdminsWithInvites(in *chat.TLChatGetAdminsWithInvites) (*chat.VectorChatAdminWithInvites, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getAdminsWithInvites - error: method ChatGetAdminsWithInvites not impl")
+	mChat, err := c.requireCanInvite(in.ChatId, in.SelfId)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	adminIDs := make([]int64, 0, len(mChat.ChatParticipants))
+	for _, participant := range mChat.ChatParticipants {
+		if participant == nil || !chat.CanInviteUsers(participant) {
+			continue
+		}
+		adminIDs = append(adminIDs, participant.UserId)
+	}
+	out, err := c.inviteRepository().GetAdminsWithInvites(c.ctx, in.ChatId, adminIDs)
+	if err != nil {
+		return nil, err
+	}
+	return &chat.VectorChatAdminWithInvites{Datas: out}, nil
 }

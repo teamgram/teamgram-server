@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 // ChatImportChatInvite2
 // chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
 func (c *ChatCore) ChatImportChatInvite2(in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.importChatInvite2 - error: method ChatImportChatInvite2 not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.importChatInvite2(in.SelfId, in.Hash)
 }

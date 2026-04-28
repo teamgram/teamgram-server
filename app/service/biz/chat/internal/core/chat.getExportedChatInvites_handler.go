@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChatGetExportedChatInvites
 // chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvites) (*chat.VectorExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getExportedChatInvites - error: method ChatGetExportedChatInvites not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	invites, err := c.inviteRepository().GetExportedChatInvites(c.ctx, in.ChatId, in.AdminId, in.Revoked, in.OffsetDate, in.OffsetLink, in.Limit)
+	if err != nil {
+		return nil, err
+	}
+	return &chat.VectorExportedChatInvite{Datas: invites}, nil
 }

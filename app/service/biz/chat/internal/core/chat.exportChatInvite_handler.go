@@ -18,14 +18,19 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ChatExportChatInvite
 // chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (c *ChatCore) ChatExportChatInvite(in *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.exportChatInvite - error: method ChatExportChatInvite not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.inviteRepository().CreateExportedChatInvite(c.ctx, repository.ExportChatInviteArg{
+		ChatID:        in.ChatId,
+		AdminID:       in.AdminId,
+		RequestNeeded: in.RequestNeeded,
+		ExpireDate:    in.ExpireDate,
+		UsageLimit:    in.UsageLimit,
+		Title:         in.Title,
+	})
 }

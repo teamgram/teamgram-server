@@ -18,14 +18,29 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/repository"
 )
 
 // ChatGetChatInviteImporters
 // chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 func (c *ChatCore) ChatGetChatInviteImporters(in *chat.TLChatGetChatInviteImporters) (*chat.VectorChatInviteImporter, error) {
-	// TODO: not impl
-	c.Logger.Errorf("chat.getChatInviteImporters - error: method ChatGetChatInviteImporters not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if _, err := c.requireCanInvite(in.ChatId, in.SelfId); err != nil {
+		return nil, err
+	}
+	link := ""
+	if in.Link != nil {
+		link = *in.Link
+	}
+	importers, err := c.inviteRepository().GetChatInviteImporters(c.ctx, repository.ChatInviteImporterQuery{
+		ChatID:     in.ChatId,
+		Link:       link,
+		Requested:  in.Requested,
+		OffsetDate: in.OffsetDate,
+		OffsetUser: in.OffsetUser,
+		Limit:      in.Limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &chat.VectorChatInviteImporter{Datas: importers}, nil
 }
