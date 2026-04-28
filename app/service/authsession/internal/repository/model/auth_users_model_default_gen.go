@@ -65,7 +65,8 @@ func newAuthUsersModel(db *sqlx.DB) *defaultAuthUsersModel {
 }
 
 func (m *defaultAuthUsersModel) Insert2(ctx context.Context, data *AuthUsers) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", authUsersRowsExpectAutoSet)
+	tableName := "auth_users"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", tableName, authUsersRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted)
 	if err != nil {
@@ -76,7 +77,8 @@ func (m *defaultAuthUsersModel) Insert2(ctx context.Context, data *AuthUsers) (s
 }
 
 func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `auth_users` where `id` = ?"
+	tableName := "auth_users"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -87,7 +89,8 @@ func (m *defaultAuthUsersModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultAuthUsersModel) FindOne(ctx context.Context, id int64) (*AuthUsers, error) {
-	query := fmt.Sprintf("select %s from auth_users where id = ? limit 1", authUsersRows)
+	tableName := "auth_users"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", authUsersRows, tableName)
 	var resp AuthUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -110,8 +113,9 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 	if len(id) == 0 {
 		return []AuthUsers{}, nil
 	}
+	tableName := "auth_users"
 
-	query := fmt.Sprintf("select %s from auth_users where id in (%s)", authUsersRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", authUsersRows, tableName, sqlx.InInt64List(id))
 
 	var resp []AuthUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -126,7 +130,8 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 }
 
 func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) error {
-	query := fmt.Sprintf("update `auth_users` set %s where `id` = ?", authUsersRowsWithPlaceHolder)
+	tableName := "auth_users"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, authUsersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.UserId, data.Hash, data.DateCreated, data.DateActive, data.State, data.AndroidPushSessionId, data.Deleted, data.Id)
 	if err != nil {
@@ -137,7 +142,8 @@ func (m *defaultAuthUsersModel) Update2(ctx context.Context, data *AuthUsers) er
 }
 
 func (m *defaultAuthUsersModel) FindOneByAuthKeyIdUserId(ctx context.Context, authKeyId int64, userId int64) (*AuthUsers, error) {
-	query := fmt.Sprintf("select %s from auth_users where auth_key_id = ? AND user_id = ? limit 1", authUsersRows)
+	tableName := "auth_users"
+	query := fmt.Sprintf("select %s from %s where auth_key_id = ? AND user_id = ? limit 1", authUsersRows, tableName)
 	var resp AuthUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, authKeyId, userId)

@@ -63,7 +63,8 @@ func newHashTagsModel(db *sqlx.DB) *defaultHashTagsModel {
 }
 
 func (m *defaultHashTagsModel) Insert2(ctx context.Context, data *HashTags) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `hash_tags` (%s) values (?, ?, ?, ?, ?, ?)", hashTagsRowsExpectAutoSet)
+	tableName := "hash_tags"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, hashTagsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted)
 	if err != nil {
@@ -74,7 +75,8 @@ func (m *defaultHashTagsModel) Insert2(ctx context.Context, data *HashTags) (sql
 }
 
 func (m *defaultHashTagsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `hash_tags` where `id` = ?"
+	tableName := "hash_tags"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -85,7 +87,8 @@ func (m *defaultHashTagsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultHashTagsModel) FindOne(ctx context.Context, id int64) (*HashTags, error) {
-	query := fmt.Sprintf("select %s from hash_tags where id = ? limit 1", hashTagsRows)
+	tableName := "hash_tags"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", hashTagsRows, tableName)
 	var resp HashTags
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -108,8 +111,9 @@ func (m *defaultHashTagsModel) FindListByIdList(ctx context.Context, id ...int64
 	if len(id) == 0 {
 		return []HashTags{}, nil
 	}
+	tableName := "hash_tags"
 
-	query := fmt.Sprintf("select %s from hash_tags where id in (%s)", hashTagsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", hashTagsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []HashTags
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -124,7 +128,8 @@ func (m *defaultHashTagsModel) FindListByIdList(ctx context.Context, id ...int64
 }
 
 func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) error {
-	query := fmt.Sprintf("update `hash_tags` set %s where `id` = ?", hashTagsRowsWithPlaceHolder)
+	tableName := "hash_tags"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, hashTagsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted, data.Id)
 	if err != nil {
@@ -135,7 +140,8 @@ func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) erro
 }
 
 func (m *defaultHashTagsModel) FindOneByUserIdHashTagHashTagMessageId(ctx context.Context, userId int64, hashTag string, hashTagMessageId int32) (*HashTags, error) {
-	query := fmt.Sprintf("select %s from hash_tags where user_id = ? AND hash_tag = ? AND hash_tag_message_id = ? limit 1", hashTagsRows)
+	tableName := "hash_tags"
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND hash_tag = ? AND hash_tag_message_id = ? limit 1", hashTagsRows, tableName)
 	var resp HashTags
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, hashTag, hashTagMessageId)

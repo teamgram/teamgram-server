@@ -72,7 +72,8 @@ func newChatParticipantsModel(db *sqlx.DB) *defaultChatParticipantsModel {
 }
 
 func (m *defaultChatParticipantsModel) Insert2(ctx context.Context, data *ChatParticipants) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `chat_participants` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", chatParticipantsRowsExpectAutoSet)
+	tableName := "chat_participants"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, chatParticipantsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.ChatId, data.UserId, data.ParticipantType, data.Link, data.Usage2, data.AdminRights, data.InviterUserId, data.InvitedAt, data.KickedAt, data.LeftAt, data.GroupcallDefaultJoinAsPeerType, data.GroupcallDefaultJoinAsPeerId, data.IsBot, data.State, data.Date2)
 	if err != nil {
@@ -83,7 +84,8 @@ func (m *defaultChatParticipantsModel) Insert2(ctx context.Context, data *ChatPa
 }
 
 func (m *defaultChatParticipantsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `chat_participants` where `id` = ?"
+	tableName := "chat_participants"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -94,7 +96,8 @@ func (m *defaultChatParticipantsModel) Delete2(ctx context.Context, id int64) er
 }
 
 func (m *defaultChatParticipantsModel) FindOne(ctx context.Context, id int64) (*ChatParticipants, error) {
-	query := fmt.Sprintf("select %s from chat_participants where id = ? limit 1", chatParticipantsRows)
+	tableName := "chat_participants"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", chatParticipantsRows, tableName)
 	var resp ChatParticipants
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -117,8 +120,9 @@ func (m *defaultChatParticipantsModel) FindListByIdList(ctx context.Context, id 
 	if len(id) == 0 {
 		return []ChatParticipants{}, nil
 	}
+	tableName := "chat_participants"
 
-	query := fmt.Sprintf("select %s from chat_participants where id in (%s)", chatParticipantsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", chatParticipantsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []ChatParticipants
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -133,7 +137,8 @@ func (m *defaultChatParticipantsModel) FindListByIdList(ctx context.Context, id 
 }
 
 func (m *defaultChatParticipantsModel) Update2(ctx context.Context, data *ChatParticipants) error {
-	query := fmt.Sprintf("update `chat_participants` set %s where `id` = ?", chatParticipantsRowsWithPlaceHolder)
+	tableName := "chat_participants"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, chatParticipantsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.ChatId, data.UserId, data.ParticipantType, data.Link, data.Usage2, data.AdminRights, data.InviterUserId, data.InvitedAt, data.KickedAt, data.LeftAt, data.GroupcallDefaultJoinAsPeerType, data.GroupcallDefaultJoinAsPeerId, data.IsBot, data.State, data.Date2, data.Id)
 	if err != nil {
@@ -144,7 +149,8 @@ func (m *defaultChatParticipantsModel) Update2(ctx context.Context, data *ChatPa
 }
 
 func (m *defaultChatParticipantsModel) FindOneByChatIdUserId(ctx context.Context, chatId int64, userId int64) (*ChatParticipants, error) {
-	query := fmt.Sprintf("select %s from chat_participants where chat_id = ? AND user_id = ? limit 1", chatParticipantsRows)
+	tableName := "chat_participants"
+	query := fmt.Sprintf("select %s from %s where chat_id = ? AND user_id = ? limit 1", chatParticipantsRows, tableName)
 	var resp ChatParticipants
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, chatId, userId)

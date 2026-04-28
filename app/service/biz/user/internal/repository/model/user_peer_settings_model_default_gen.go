@@ -70,7 +70,8 @@ func newUserPeerSettingsModel(db *sqlx.DB) *defaultUserPeerSettingsModel {
 }
 
 func (m *defaultUserPeerSettingsModel) Insert2(ctx context.Context, data *UserPeerSettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_peer_settings` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userPeerSettingsRowsExpectAutoSet)
+	tableName := "user_peer_settings"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userPeerSettingsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Hide, data.ReportSpam, data.AddContact, data.BlockContact, data.ShareContact, data.NeedContactsException, data.ReportGeo, data.Autoarchived, data.InviteMembers, data.GeoDistance)
 	if err != nil {
@@ -81,7 +82,8 @@ func (m *defaultUserPeerSettingsModel) Insert2(ctx context.Context, data *UserPe
 }
 
 func (m *defaultUserPeerSettingsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `user_peer_settings` where `id` = ?"
+	tableName := "user_peer_settings"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -92,7 +94,8 @@ func (m *defaultUserPeerSettingsModel) Delete2(ctx context.Context, id int64) er
 }
 
 func (m *defaultUserPeerSettingsModel) FindOne(ctx context.Context, id int64) (*UserPeerSettings, error) {
-	query := fmt.Sprintf("select %s from user_peer_settings where id = ? limit 1", userPeerSettingsRows)
+	tableName := "user_peer_settings"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", userPeerSettingsRows, tableName)
 	var resp UserPeerSettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -115,8 +118,9 @@ func (m *defaultUserPeerSettingsModel) FindListByIdList(ctx context.Context, id 
 	if len(id) == 0 {
 		return []UserPeerSettings{}, nil
 	}
+	tableName := "user_peer_settings"
 
-	query := fmt.Sprintf("select %s from user_peer_settings where id in (%s)", userPeerSettingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", userPeerSettingsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []UserPeerSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -131,7 +135,8 @@ func (m *defaultUserPeerSettingsModel) FindListByIdList(ctx context.Context, id 
 }
 
 func (m *defaultUserPeerSettingsModel) Update2(ctx context.Context, data *UserPeerSettings) error {
-	query := fmt.Sprintf("update `user_peer_settings` set %s where `id` = ?", userPeerSettingsRowsWithPlaceHolder)
+	tableName := "user_peer_settings"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, userPeerSettingsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Hide, data.ReportSpam, data.AddContact, data.BlockContact, data.ShareContact, data.NeedContactsException, data.ReportGeo, data.Autoarchived, data.InviteMembers, data.GeoDistance, data.Id)
 	if err != nil {
@@ -142,7 +147,8 @@ func (m *defaultUserPeerSettingsModel) Update2(ctx context.Context, data *UserPe
 }
 
 func (m *defaultUserPeerSettingsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserPeerSettings, error) {
-	query := fmt.Sprintf("select %s from user_peer_settings where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", userPeerSettingsRows)
+	tableName := "user_peer_settings"
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", userPeerSettingsRows, tableName)
 	var resp UserPeerSettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)

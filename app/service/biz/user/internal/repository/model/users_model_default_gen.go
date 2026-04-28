@@ -94,7 +94,8 @@ func newUsersModel(db *sqlx.DB) *defaultUsersModel {
 }
 
 func (m *defaultUsersModel) Insert2(ctx context.Context, data *Users) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", usersRowsExpectAutoSet)
+	tableName := "users"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, usersRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason)
 	if err != nil {
@@ -105,7 +106,8 @@ func (m *defaultUsersModel) Insert2(ctx context.Context, data *Users) (sql.Resul
 }
 
 func (m *defaultUsersModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `users` where `id` = ?"
+	tableName := "users"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -116,7 +118,8 @@ func (m *defaultUsersModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultUsersModel) FindOne(ctx context.Context, id int64) (*Users, error) {
-	query := fmt.Sprintf("select %s from users where id = ? limit 1", usersRows)
+	tableName := "users"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", usersRows, tableName)
 	var resp Users
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -139,8 +142,9 @@ func (m *defaultUsersModel) FindListByIdList(ctx context.Context, id ...int64) (
 	if len(id) == 0 {
 		return []Users{}, nil
 	}
+	tableName := "users"
 
-	query := fmt.Sprintf("select %s from users where id in (%s)", usersRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", usersRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -155,7 +159,8 @@ func (m *defaultUsersModel) FindListByIdList(ctx context.Context, id ...int64) (
 }
 
 func (m *defaultUsersModel) Update2(ctx context.Context, data *Users) error {
-	query := fmt.Sprintf("update `users` set %s where `id` = ?", usersRowsWithPlaceHolder)
+	tableName := "users"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, usersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserType, data.AccessHash, data.SecretKeyId, data.FirstName, data.LastName, data.Username, data.Phone, data.CountryCode, data.Verified, data.Support, data.Scam, data.Fake, data.Premium, data.PremiumExpireDate, data.About, data.State, data.IsBot, data.AccountDaysTtl, data.PhotoId, data.Restricted, data.RestrictionReason, data.ArchiveAndMuteNewNoncontactPeers, data.EmojiStatusDocumentId, data.EmojiStatusUntil, data.StoriesMaxId, data.Color, data.ColorBackgroundEmojiId, data.ProfileColor, data.ProfileColorBackgroundEmojiId, data.Birthday, data.PersonalChannelId, data.AuthorizationTtlDays, data.SavedMusicId, data.MainTab, data.Deleted, data.DeleteReason, data.Id)
 	if err != nil {
@@ -166,7 +171,8 @@ func (m *defaultUsersModel) Update2(ctx context.Context, data *Users) error {
 }
 
 func (m *defaultUsersModel) FindOneByPhone(ctx context.Context, phone string) (*Users, error) {
-	query := fmt.Sprintf("select %s from users where phone = ? limit 1", usersRows)
+	tableName := "users"
+	query := fmt.Sprintf("select %s from %s where phone = ? limit 1", usersRows, tableName)
 	var resp Users
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone)
@@ -189,8 +195,9 @@ func (m *defaultUsersModel) FindListByPhoneList(ctx context.Context, phone ...st
 	if len(phone) == 0 {
 		return []Users{}, nil
 	}
+	tableName := "users"
 
-	query := fmt.Sprintf("select %s from users where phone in (%s)", usersRows, sqlx.InStringList(phone))
+	query := fmt.Sprintf("select %s from %s where phone in (%s)", usersRows, tableName, sqlx.InStringList(phone))
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {

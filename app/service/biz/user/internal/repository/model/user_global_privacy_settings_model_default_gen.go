@@ -64,7 +64,8 @@ func newUserGlobalPrivacySettingsModel(db *sqlx.DB) *defaultUserGlobalPrivacySet
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Insert2(ctx context.Context, data *UserGlobalPrivacySettings) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_global_privacy_settings` (%s) values (?, ?, ?, ?, ?, ?)", userGlobalPrivacySettingsRowsExpectAutoSet)
+	tableName := "user_global_privacy_settings"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, userGlobalPrivacySettingsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium)
 	if err != nil {
@@ -75,7 +76,8 @@ func (m *defaultUserGlobalPrivacySettingsModel) Insert2(ctx context.Context, dat
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `user_global_privacy_settings` where `id` = ?"
+	tableName := "user_global_privacy_settings"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -86,7 +88,8 @@ func (m *defaultUserGlobalPrivacySettingsModel) Delete2(ctx context.Context, id 
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOne(ctx context.Context, id int64) (*UserGlobalPrivacySettings, error) {
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where id = ? limit 1", userGlobalPrivacySettingsRows)
+	tableName := "user_global_privacy_settings"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", userGlobalPrivacySettingsRows, tableName)
 	var resp UserGlobalPrivacySettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -109,8 +112,9 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 	if len(id) == 0 {
 		return []UserGlobalPrivacySettings{}, nil
 	}
+	tableName := "user_global_privacy_settings"
 
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where id in (%s)", userGlobalPrivacySettingsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", userGlobalPrivacySettingsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -125,7 +129,8 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) Update2(ctx context.Context, data *UserGlobalPrivacySettings) error {
-	query := fmt.Sprintf("update `user_global_privacy_settings` set %s where `id` = ?", userGlobalPrivacySettingsRowsWithPlaceHolder)
+	tableName := "user_global_privacy_settings"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, userGlobalPrivacySettingsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ArchiveAndMuteNewNoncontactPeers, data.KeepArchivedUnmuted, data.KeepArchivedFolders, data.HideReadMarks, data.NewNoncontactPeersRequirePremium, data.Id)
 	if err != nil {
@@ -136,7 +141,8 @@ func (m *defaultUserGlobalPrivacySettingsModel) Update2(ctx context.Context, dat
 }
 
 func (m *defaultUserGlobalPrivacySettingsModel) FindOneByUserId(ctx context.Context, userId int64) (*UserGlobalPrivacySettings, error) {
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id = ? limit 1", userGlobalPrivacySettingsRows)
+	tableName := "user_global_privacy_settings"
+	query := fmt.Sprintf("select %s from %s where user_id = ? limit 1", userGlobalPrivacySettingsRows, tableName)
 	var resp UserGlobalPrivacySettings
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
@@ -159,8 +165,9 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByUserIdList(ctx context
 	if len(userId) == 0 {
 		return []UserGlobalPrivacySettings{}, nil
 	}
+	tableName := "user_global_privacy_settings"
 
-	query := fmt.Sprintf("select %s from user_global_privacy_settings where user_id in (%s)", userGlobalPrivacySettingsRows, sqlx.InInt64List(userId))
+	query := fmt.Sprintf("select %s from %s where user_id in (%s)", userGlobalPrivacySettingsRows, tableName, sqlx.InInt64List(userId))
 
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)

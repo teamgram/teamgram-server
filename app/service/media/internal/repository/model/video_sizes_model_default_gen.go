@@ -64,7 +64,8 @@ func newVideoSizesModel(db *sqlx.DB) *defaultVideoSizesModel {
 }
 
 func (m *defaultVideoSizesModel) Insert2(ctx context.Context, data *VideoSizes) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `video_sizes` (%s) values (?, ?, ?, ?, ?, ?, ?)", videoSizesRowsExpectAutoSet)
+	tableName := "video_sizes"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, videoSizesRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath)
 	if err != nil {
@@ -75,7 +76,8 @@ func (m *defaultVideoSizesModel) Insert2(ctx context.Context, data *VideoSizes) 
 }
 
 func (m *defaultVideoSizesModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `video_sizes` where `id` = ?"
+	tableName := "video_sizes"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -86,7 +88,8 @@ func (m *defaultVideoSizesModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultVideoSizesModel) FindOne(ctx context.Context, id int64) (*VideoSizes, error) {
-	query := fmt.Sprintf("select %s from video_sizes where id = ? limit 1", videoSizesRows)
+	tableName := "video_sizes"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", videoSizesRows, tableName)
 	var resp VideoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -109,8 +112,9 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 	if len(id) == 0 {
 		return []VideoSizes{}, nil
 	}
+	tableName := "video_sizes"
 
-	query := fmt.Sprintf("select %s from video_sizes where id in (%s)", videoSizesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", videoSizesRows, tableName, sqlx.InInt64List(id))
 
 	var resp []VideoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -125,7 +129,8 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 }
 
 func (m *defaultVideoSizesModel) Update2(ctx context.Context, data *VideoSizes) error {
-	query := fmt.Sprintf("update `video_sizes` set %s where `id` = ?", videoSizesRowsWithPlaceHolder)
+	tableName := "video_sizes"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, videoSizesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.VideoSizeId, data.SizeType, data.Width, data.Height, data.FileSize, data.VideoStartTs, data.FilePath, data.Id)
 	if err != nil {
@@ -136,7 +141,8 @@ func (m *defaultVideoSizesModel) Update2(ctx context.Context, data *VideoSizes) 
 }
 
 func (m *defaultVideoSizesModel) FindOneByVideoSizeIdSizeType(ctx context.Context, videoSizeId int64, sizeType string) (*VideoSizes, error) {
-	query := fmt.Sprintf("select %s from video_sizes where video_size_id = ? AND size_type = ? limit 1", videoSizesRows)
+	tableName := "video_sizes"
+	query := fmt.Sprintf("select %s from %s where video_size_id = ? AND size_type = ? limit 1", videoSizesRows, tableName)
 	var resp VideoSizes
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, videoSizeId, sizeType)

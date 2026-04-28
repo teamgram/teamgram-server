@@ -63,7 +63,8 @@ func newImportedContactsModel(db *sqlx.DB) *defaultImportedContactsModel {
 }
 
 func (m *defaultImportedContactsModel) Insert2(ctx context.Context, data *ImportedContacts) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `imported_contacts` (%s) values (?, ?, ?)", importedContactsRowsExpectAutoSet)
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?)", tableName, importedContactsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted)
 	if err != nil {
@@ -74,7 +75,8 @@ func (m *defaultImportedContactsModel) Insert2(ctx context.Context, data *Import
 }
 
 func (m *defaultImportedContactsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `imported_contacts` where `id` = ?"
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -85,7 +87,8 @@ func (m *defaultImportedContactsModel) Delete2(ctx context.Context, id int64) er
 }
 
 func (m *defaultImportedContactsModel) FindOne(ctx context.Context, id int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where id = ? limit 1", importedContactsRows)
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", importedContactsRows, tableName)
 	var resp ImportedContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -108,8 +111,9 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 	if len(id) == 0 {
 		return []ImportedContacts{}, nil
 	}
+	tableName := "imported_contacts"
 
-	query := fmt.Sprintf("select %s from imported_contacts where id in (%s)", importedContactsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", importedContactsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -124,7 +128,8 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 }
 
 func (m *defaultImportedContactsModel) Update2(ctx context.Context, data *ImportedContacts) error {
-	query := fmt.Sprintf("update `imported_contacts` set %s where `id` = ?", importedContactsRowsWithPlaceHolder)
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, importedContactsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.ImportedUserId, data.Deleted, data.Id)
 	if err != nil {
@@ -135,7 +140,8 @@ func (m *defaultImportedContactsModel) Update2(ctx context.Context, data *Import
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserId(ctx context.Context, userId int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? limit 1", importedContactsRows)
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("select %s from %s where user_id = ? limit 1", importedContactsRows, tableName)
 	var resp ImportedContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId)
@@ -158,8 +164,9 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 	if len(userId) == 0 {
 		return []ImportedContacts{}, nil
 	}
+	tableName := "imported_contacts"
 
-	query := fmt.Sprintf("select %s from imported_contacts where user_id in (%s)", importedContactsRows, sqlx.InInt64List(userId))
+	query := fmt.Sprintf("select %s from %s where user_id in (%s)", importedContactsRows, tableName, sqlx.InInt64List(userId))
 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -174,7 +181,8 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? AND imported_user_id = ? limit 1", importedContactsRows)
+	tableName := "imported_contacts"
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND imported_user_id = ? limit 1", importedContactsRows, tableName)
 	var resp ImportedContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, importedUserId)

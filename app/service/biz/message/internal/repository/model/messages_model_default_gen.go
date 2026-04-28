@@ -15,6 +15,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -33,16 +34,17 @@ var (
 type (
 	messagesModel interface {
 		Insert2(ctx context.Context, data *Messages) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*Messages, error)
-		FindListByIdList(ctx context.Context, id ...int64) ([]Messages, error)
+		FindOne(ctx context.Context, tableName string, id int64) (*Messages, error)
+		FindListByIdList(ctx context.Context, tableName string, id ...int64) ([]Messages, error)
 		Update2(ctx context.Context, data *Messages) error
-		Delete2(ctx context.Context, id int64) error
+		Delete2(ctx context.Context, tableName string, id int64) error
 
 		FindOneByUserIdUserMessageBoxId(ctx context.Context, userId int64, userMessageBoxId int32) (*Messages, error)
 	}
 
 	defaultMessagesModel struct {
-		db *sqlx.DB
+		db           *sqlx.DB
+		ShardingSize int
 	}
 
 	Messages struct {
@@ -75,14 +77,27 @@ type (
 	}
 )
 
-func newMessagesModel(db *sqlx.DB) *defaultMessagesModel {
+func newMessagesModel(db *sqlx.DB, shardingSize int) *defaultMessagesModel {
+	if shardingSize <= 1 {
+		shardingSize = 0
+	}
 	return &defaultMessagesModel{
-		db: db,
+		db:           db,
+		ShardingSize: shardingSize,
 	}
 }
 
+func (m *defaultMessagesModel) CalcTableName(id int64) string {
+	if m.ShardingSize == 0 {
+		return "messages"
+	}
+	return "messages_" + strconv.FormatInt(id%int64(m.ShardingSize), 10)
+}
+
 func (m *defaultMessagesModel) Insert2(ctx context.Context, data *Messages) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `messages` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", messagesRowsExpectAutoSet)
+	tableName := "messages"
+	tableName = m.CalcTableName(data.UserId)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, messagesRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.UserMessageBoxId, data.DialogId1, data.DialogId2, data.DialogMessageId, data.SenderUserId, data.PeerType, data.PeerId, data.RandomId, data.MessageFilterType, data.MessageData, data.Message, data.Mentioned, data.MediaUnread, data.Pinned, data.HasReaction, data.Reaction, data.ReactionDate, data.ReactionUnread, data.Date2, data.TtlPeriod, data.SavedPeerType, data.SavedPeerId, data.OutboxReadDate, data.Deleted)
 	if err != nil {
@@ -92,8 +107,8 @@ func (m *defaultMessagesModel) Insert2(ctx context.Context, data *Messages) (sql
 	return r, nil
 }
 
-func (m *defaultMessagesModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `messages` where `id` = ?"
+func (m *defaultMessagesModel) Delete2(ctx context.Context, tableName string, id int64) error {
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -103,8 +118,8 @@ func (m *defaultMessagesModel) Delete2(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (m *defaultMessagesModel) FindOne(ctx context.Context, id int64) (*Messages, error) {
-	query := fmt.Sprintf("select %s from messages where id = ? limit 1", messagesRows)
+func (m *defaultMessagesModel) FindOne(ctx context.Context, tableName string, id int64) (*Messages, error) {
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", messagesRows, tableName)
 	var resp Messages
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -123,12 +138,12 @@ func (m *defaultMessagesModel) FindOne(ctx context.Context, id int64) (*Messages
 	return &resp, nil
 }
 
-func (m *defaultMessagesModel) FindListByIdList(ctx context.Context, id ...int64) ([]Messages, error) {
+func (m *defaultMessagesModel) FindListByIdList(ctx context.Context, tableName string, id ...int64) ([]Messages, error) {
 	if len(id) == 0 {
 		return []Messages{}, nil
 	}
 
-	query := fmt.Sprintf("select %s from messages where id in (%s)", messagesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", messagesRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Messages
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -143,7 +158,9 @@ func (m *defaultMessagesModel) FindListByIdList(ctx context.Context, id ...int64
 }
 
 func (m *defaultMessagesModel) Update2(ctx context.Context, data *Messages) error {
-	query := fmt.Sprintf("update `messages` set %s where `id` = ?", messagesRowsWithPlaceHolder)
+	tableName := "messages"
+	tableName = m.CalcTableName(data.UserId)
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, messagesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.UserMessageBoxId, data.DialogId1, data.DialogId2, data.DialogMessageId, data.SenderUserId, data.PeerType, data.PeerId, data.RandomId, data.MessageFilterType, data.MessageData, data.Message, data.Mentioned, data.MediaUnread, data.Pinned, data.HasReaction, data.Reaction, data.ReactionDate, data.ReactionUnread, data.Date2, data.TtlPeriod, data.SavedPeerType, data.SavedPeerId, data.OutboxReadDate, data.Deleted, data.Id)
 	if err != nil {
@@ -154,7 +171,9 @@ func (m *defaultMessagesModel) Update2(ctx context.Context, data *Messages) erro
 }
 
 func (m *defaultMessagesModel) FindOneByUserIdUserMessageBoxId(ctx context.Context, userId int64, userMessageBoxId int32) (*Messages, error) {
-	query := fmt.Sprintf("select %s from messages where user_id = ? AND user_message_box_id = ? limit 1", messagesRows)
+	tableName := "messages"
+	tableName = m.CalcTableName(userId)
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND user_message_box_id = ? limit 1", messagesRows, tableName)
 	var resp Messages
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, userId, userMessageBoxId)

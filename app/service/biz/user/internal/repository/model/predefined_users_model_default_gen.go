@@ -63,7 +63,8 @@ func newPredefinedUsersModel(db *sqlx.DB) *defaultPredefinedUsersModel {
 }
 
 func (m *defaultPredefinedUsersModel) Insert2(ctx context.Context, data *PredefinedUsers) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `predefined_users` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", predefinedUsersRowsExpectAutoSet)
+	tableName := "predefined_users"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", tableName, predefinedUsersRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted)
 	if err != nil {
@@ -74,7 +75,8 @@ func (m *defaultPredefinedUsersModel) Insert2(ctx context.Context, data *Predefi
 }
 
 func (m *defaultPredefinedUsersModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `predefined_users` where `id` = ?"
+	tableName := "predefined_users"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -85,7 +87,8 @@ func (m *defaultPredefinedUsersModel) Delete2(ctx context.Context, id int64) err
 }
 
 func (m *defaultPredefinedUsersModel) FindOne(ctx context.Context, id int64) (*PredefinedUsers, error) {
-	query := fmt.Sprintf("select %s from predefined_users where id = ? limit 1", predefinedUsersRows)
+	tableName := "predefined_users"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", predefinedUsersRows, tableName)
 	var resp PredefinedUsers
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -108,8 +111,9 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 	if len(id) == 0 {
 		return []PredefinedUsers{}, nil
 	}
+	tableName := "predefined_users"
 
-	query := fmt.Sprintf("select %s from predefined_users where id in (%s)", predefinedUsersRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", predefinedUsersRows, tableName, sqlx.InInt64List(id))
 
 	var resp []PredefinedUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -124,7 +128,8 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 }
 
 func (m *defaultPredefinedUsersModel) Update2(ctx context.Context, data *PredefinedUsers) error {
-	query := fmt.Sprintf("update `predefined_users` set %s where `id` = ?", predefinedUsersRowsWithPlaceHolder)
+	tableName := "predefined_users"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, predefinedUsersRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Phone, data.FirstName, data.LastName, data.Username, data.Code, data.Verified, data.RegisteredUserId, data.Deleted, data.Id)
 	if err != nil {

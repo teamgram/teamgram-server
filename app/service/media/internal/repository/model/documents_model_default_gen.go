@@ -73,7 +73,8 @@ func newDocumentsModel(db *sqlx.DB) *defaultDocumentsModel {
 }
 
 func (m *defaultDocumentsModel) Insert2(ctx context.Context, data *Documents) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `documents` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", documentsRowsExpectAutoSet)
+	tableName := "documents"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, documentsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.DocumentId, data.AccessHash, data.DcId, data.FilePath, data.FileSize, data.UploadedFileName, data.Ext, data.MimeType, data.ThumbId, data.VideoThumbId, data.Version, data.Attributes, data.Date2, data.ImportDocumentId, data.Deleted)
 	if err != nil {
@@ -84,7 +85,8 @@ func (m *defaultDocumentsModel) Insert2(ctx context.Context, data *Documents) (s
 }
 
 func (m *defaultDocumentsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `documents` where `id` = ?"
+	tableName := "documents"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -95,7 +97,8 @@ func (m *defaultDocumentsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultDocumentsModel) FindOne(ctx context.Context, id int64) (*Documents, error) {
-	query := fmt.Sprintf("select %s from documents where id = ? limit 1", documentsRows)
+	tableName := "documents"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", documentsRows, tableName)
 	var resp Documents
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -118,8 +121,9 @@ func (m *defaultDocumentsModel) FindListByIdList(ctx context.Context, id ...int6
 	if len(id) == 0 {
 		return []Documents{}, nil
 	}
+	tableName := "documents"
 
-	query := fmt.Sprintf("select %s from documents where id in (%s)", documentsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", documentsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -134,7 +138,8 @@ func (m *defaultDocumentsModel) FindListByIdList(ctx context.Context, id ...int6
 }
 
 func (m *defaultDocumentsModel) Update2(ctx context.Context, data *Documents) error {
-	query := fmt.Sprintf("update `documents` set %s where `id` = ?", documentsRowsWithPlaceHolder)
+	tableName := "documents"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, documentsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.DocumentId, data.AccessHash, data.DcId, data.FilePath, data.FileSize, data.UploadedFileName, data.Ext, data.MimeType, data.ThumbId, data.VideoThumbId, data.Version, data.Attributes, data.Date2, data.ImportDocumentId, data.Deleted, data.Id)
 	if err != nil {
@@ -145,7 +150,8 @@ func (m *defaultDocumentsModel) Update2(ctx context.Context, data *Documents) er
 }
 
 func (m *defaultDocumentsModel) FindOneByDocumentId(ctx context.Context, documentId int64) (*Documents, error) {
-	query := fmt.Sprintf("select %s from documents where document_id = ? limit 1", documentsRows)
+	tableName := "documents"
+	query := fmt.Sprintf("select %s from %s where document_id = ? limit 1", documentsRows, tableName)
 	var resp Documents
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, documentId)
@@ -168,8 +174,9 @@ func (m *defaultDocumentsModel) FindListByDocumentIdList(ctx context.Context, do
 	if len(documentId) == 0 {
 		return []Documents{}, nil
 	}
+	tableName := "documents"
 
-	query := fmt.Sprintf("select %s from documents where document_id in (%s)", documentsRows, sqlx.InInt64List(documentId))
+	query := fmt.Sprintf("select %s from %s where document_id in (%s)", documentsRows, tableName, sqlx.InInt64List(documentId))
 
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)

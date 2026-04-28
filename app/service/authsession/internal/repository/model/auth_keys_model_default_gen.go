@@ -88,7 +88,8 @@ func newAuthKeysModel(db *sqlx.DB, c cache.CacheConf) *defaultAuthKeysModel {
 }
 
 func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_keys` (%s) values (?, ?, ?, ?, ?, ?, ?)", authKeysRowsExpectAutoSet)
+	tableName := "auth_keys"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, authKeysRowsExpectAutoSet)
 
 	keys := m.uniqueCacheKeys(data)
 	lastInsertId, rowsAffected, err := m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
@@ -114,7 +115,8 @@ func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql
 }
 
 func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `auth_keys` where `id` = ?"
+	tableName := "auth_keys"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	oldData, err := m.FindOne(ctx, id)
 	if err != nil {
@@ -142,7 +144,8 @@ func (m *defaultAuthKeysModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultAuthKeysModel) FindOne(ctx context.Context, id int64) (*AuthKeys, error) {
-	query := fmt.Sprintf("select %s from auth_keys where id = ? limit 1", authKeysRows)
+	tableName := "auth_keys"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", authKeysRows, tableName)
 	var resp AuthKeys
 
 	cacheKey := m.formatPrimary(id)
@@ -168,8 +171,9 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 	if len(id) == 0 {
 		return []AuthKeys{}, nil
 	}
+	tableName := "auth_keys"
 
-	query := fmt.Sprintf("select %s from auth_keys where id in (%s)", authKeysRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", authKeysRows, tableName, sqlx.InInt64List(id))
 
 	var resp []AuthKeys
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -184,7 +188,8 @@ func (m *defaultAuthKeysModel) FindListByIdList(ctx context.Context, id ...int64
 }
 
 func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) error {
-	query := fmt.Sprintf("update `auth_keys` set %s where `id` = ?", authKeysRowsWithPlaceHolder)
+	tableName := "auth_keys"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, authKeysRowsWithPlaceHolder)
 
 	oldData, err := m.FindOne(ctx, data.Id)
 	if err != nil {
@@ -212,7 +217,8 @@ func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) erro
 }
 
 func (m *defaultAuthKeysModel) FindOneByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error) {
-	query := fmt.Sprintf("select %s from auth_keys where auth_key_id = ? limit 1", authKeysRows)
+	tableName := "auth_keys"
+	query := fmt.Sprintf("select %s from %s where auth_key_id = ? limit 1", authKeysRows, tableName)
 	var resp AuthKeys
 
 	cacheAuthKeysAuthKeyIdKey := fmt.Sprintf("%s#%v", cacheAuthKeysAuthKeyIdPrefix, authKeyId)
@@ -241,8 +247,9 @@ func (m *defaultAuthKeysModel) FindListByAuthKeyIdList(ctx context.Context, auth
 	if len(authKeyId) == 0 {
 		return []AuthKeys{}, nil
 	}
+	tableName := "auth_keys"
 
-	query := fmt.Sprintf("select %s from auth_keys where auth_key_id in (%s)", authKeysRows, sqlx.InInt64List(authKeyId))
+	query := fmt.Sprintf("select %s from %s where auth_key_id in (%s)", authKeysRows, tableName, sqlx.InInt64List(authKeyId))
 
 	var resp []AuthKeys
 	err := m.db.QueryRowsPartial(ctx, &resp, query)

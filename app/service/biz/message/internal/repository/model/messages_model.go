@@ -31,8 +31,8 @@ type (
 )
 
 // NewMessagesModel returns a model for the database table.
-func NewMessagesModel(db *sqlx.DB) MessagesModel {
+func NewMessagesModel(db *sqlx.DB, shardingSize int) MessagesModel {
 	return &customMessagesModel{
-		defaultMessagesModel: newMessagesModel(db),
+		defaultMessagesModel: newMessagesModel(db, shardingSize),
 	}
 }

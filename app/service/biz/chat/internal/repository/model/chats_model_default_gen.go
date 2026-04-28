@@ -72,7 +72,8 @@ func newChatsModel(db *sqlx.DB) *defaultChatsModel {
 }
 
 func (m *defaultChatsModel) Insert2(ctx context.Context, data *Chats) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `chats` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", chatsRowsExpectAutoSet)
+	tableName := "chats"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, chatsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.CreatorUserId, data.AccessHash, data.RandomId, data.ParticipantCount, data.Title, data.About, data.PhotoId, data.DefaultBannedRights, data.MigratedToId, data.MigratedToAccessHash, data.AvailableReactionsType, data.AvailableReactions, data.Deactivated, data.Noforwards, data.TtlPeriod, data.Version, data.Date)
 	if err != nil {
@@ -83,7 +84,8 @@ func (m *defaultChatsModel) Insert2(ctx context.Context, data *Chats) (sql.Resul
 }
 
 func (m *defaultChatsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `chats` where `id` = ?"
+	tableName := "chats"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -94,7 +96,8 @@ func (m *defaultChatsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultChatsModel) FindOne(ctx context.Context, id int64) (*Chats, error) {
-	query := fmt.Sprintf("select %s from chats where id = ? limit 1", chatsRows)
+	tableName := "chats"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", chatsRows, tableName)
 	var resp Chats
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -117,8 +120,9 @@ func (m *defaultChatsModel) FindListByIdList(ctx context.Context, id ...int64) (
 	if len(id) == 0 {
 		return []Chats{}, nil
 	}
+	tableName := "chats"
 
-	query := fmt.Sprintf("select %s from chats where id in (%s)", chatsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", chatsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Chats
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -133,7 +137,8 @@ func (m *defaultChatsModel) FindListByIdList(ctx context.Context, id ...int64) (
 }
 
 func (m *defaultChatsModel) Update2(ctx context.Context, data *Chats) error {
-	query := fmt.Sprintf("update `chats` set %s where `id` = ?", chatsRowsWithPlaceHolder)
+	tableName := "chats"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, chatsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.CreatorUserId, data.AccessHash, data.RandomId, data.ParticipantCount, data.Title, data.About, data.PhotoId, data.DefaultBannedRights, data.MigratedToId, data.MigratedToAccessHash, data.AvailableReactionsType, data.AvailableReactions, data.Deactivated, data.Noforwards, data.TtlPeriod, data.Version, data.Date, data.Id)
 	if err != nil {

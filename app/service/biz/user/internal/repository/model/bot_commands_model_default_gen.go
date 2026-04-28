@@ -60,7 +60,8 @@ func newBotCommandsModel(db *sqlx.DB) *defaultBotCommandsModel {
 }
 
 func (m *defaultBotCommandsModel) Insert2(ctx context.Context, data *BotCommands) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `bot_commands` (%s) values (?, ?, ?)", botCommandsRowsExpectAutoSet)
+	tableName := "bot_commands"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?)", tableName, botCommandsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.BotId, data.Command, data.Description)
 	if err != nil {
@@ -71,7 +72,8 @@ func (m *defaultBotCommandsModel) Insert2(ctx context.Context, data *BotCommands
 }
 
 func (m *defaultBotCommandsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `bot_commands` where `id` = ?"
+	tableName := "bot_commands"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -82,7 +84,8 @@ func (m *defaultBotCommandsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultBotCommandsModel) FindOne(ctx context.Context, id int64) (*BotCommands, error) {
-	query := fmt.Sprintf("select %s from bot_commands where id = ? limit 1", botCommandsRows)
+	tableName := "bot_commands"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", botCommandsRows, tableName)
 	var resp BotCommands
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -105,8 +108,9 @@ func (m *defaultBotCommandsModel) FindListByIdList(ctx context.Context, id ...in
 	if len(id) == 0 {
 		return []BotCommands{}, nil
 	}
+	tableName := "bot_commands"
 
-	query := fmt.Sprintf("select %s from bot_commands where id in (%s)", botCommandsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", botCommandsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []BotCommands
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -121,7 +125,8 @@ func (m *defaultBotCommandsModel) FindListByIdList(ctx context.Context, id ...in
 }
 
 func (m *defaultBotCommandsModel) Update2(ctx context.Context, data *BotCommands) error {
-	query := fmt.Sprintf("update `bot_commands` set %s where `id` = ?", botCommandsRowsWithPlaceHolder)
+	tableName := "bot_commands"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, botCommandsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.BotId, data.Command, data.Description, data.Id)
 	if err != nil {
@@ -132,7 +137,8 @@ func (m *defaultBotCommandsModel) Update2(ctx context.Context, data *BotCommands
 }
 
 func (m *defaultBotCommandsModel) FindOneByBotIdCommand(ctx context.Context, botId int64, command string) (*BotCommands, error) {
-	query := fmt.Sprintf("select %s from bot_commands where bot_id = ? AND command = ? limit 1", botCommandsRows)
+	tableName := "bot_commands"
+	query := fmt.Sprintf("select %s from %s where bot_id = ? AND command = ? limit 1", botCommandsRows, tableName)
 	var resp BotCommands
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, botId, command)

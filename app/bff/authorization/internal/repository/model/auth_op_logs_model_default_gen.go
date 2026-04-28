@@ -59,7 +59,8 @@ func newAuthOpLogsModel(db *sqlx.DB) *defaultAuthOpLogsModel {
 }
 
 func (m *defaultAuthOpLogsModel) Insert2(ctx context.Context, data *AuthOpLogs) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_op_logs` (%s) values (?, ?, ?, ?)", authOpLogsRowsExpectAutoSet)
+	tableName := "auth_op_logs"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?)", tableName, authOpLogsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Ip, data.OpType, data.LogText)
 	if err != nil {
@@ -70,7 +71,8 @@ func (m *defaultAuthOpLogsModel) Insert2(ctx context.Context, data *AuthOpLogs) 
 }
 
 func (m *defaultAuthOpLogsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `auth_op_logs` where `id` = ?"
+	tableName := "auth_op_logs"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -81,7 +83,8 @@ func (m *defaultAuthOpLogsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultAuthOpLogsModel) FindOne(ctx context.Context, id int64) (*AuthOpLogs, error) {
-	query := fmt.Sprintf("select %s from auth_op_logs where id = ? limit 1", authOpLogsRows)
+	tableName := "auth_op_logs"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", authOpLogsRows, tableName)
 	var resp AuthOpLogs
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -104,8 +107,9 @@ func (m *defaultAuthOpLogsModel) FindListByIdList(ctx context.Context, id ...int
 	if len(id) == 0 {
 		return []AuthOpLogs{}, nil
 	}
+	tableName := "auth_op_logs"
 
-	query := fmt.Sprintf("select %s from auth_op_logs where id in (%s)", authOpLogsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", authOpLogsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []AuthOpLogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -120,7 +124,8 @@ func (m *defaultAuthOpLogsModel) FindListByIdList(ctx context.Context, id ...int
 }
 
 func (m *defaultAuthOpLogsModel) Update2(ctx context.Context, data *AuthOpLogs) error {
-	query := fmt.Sprintf("update `auth_op_logs` set %s where `id` = ?", authOpLogsRowsWithPlaceHolder)
+	tableName := "auth_op_logs"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, authOpLogsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthKeyId, data.Ip, data.OpType, data.LogText, data.Id)
 	if err != nil {

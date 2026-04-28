@@ -90,7 +90,8 @@ func newBotsModel(db *sqlx.DB) *defaultBotsModel {
 }
 
 func (m *defaultBotsModel) Insert2(ctx context.Context, data *Bots) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `bots` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", botsRowsExpectAutoSet)
+	tableName := "bots"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, botsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode)
 	if err != nil {
@@ -101,7 +102,8 @@ func (m *defaultBotsModel) Insert2(ctx context.Context, data *Bots) (sql.Result,
 }
 
 func (m *defaultBotsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `bots` where `id` = ?"
+	tableName := "bots"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -112,7 +114,8 @@ func (m *defaultBotsModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultBotsModel) FindOne(ctx context.Context, id int64) (*Bots, error) {
-	query := fmt.Sprintf("select %s from bots where id = ? limit 1", botsRows)
+	tableName := "bots"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", botsRows, tableName)
 	var resp Bots
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -135,8 +138,9 @@ func (m *defaultBotsModel) FindListByIdList(ctx context.Context, id ...int64) ([
 	if len(id) == 0 {
 		return []Bots{}, nil
 	}
+	tableName := "bots"
 
-	query := fmt.Sprintf("select %s from bots where id in (%s)", botsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", botsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -151,7 +155,8 @@ func (m *defaultBotsModel) FindListByIdList(ctx context.Context, id ...int64) ([
 }
 
 func (m *defaultBotsModel) Update2(ctx context.Context, data *Bots) error {
-	query := fmt.Sprintf("update `bots` set %s where `id` = ?", botsRowsWithPlaceHolder)
+	tableName := "bots"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, botsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.BotId, data.BotType, data.CreatorUserId, data.Token, data.Description, data.BotChatHistory, data.BotNochats, data.Verified, data.BotInlineGeo, data.BotInfoVersion, data.BotInlinePlaceholder, data.BotAttachMenu, data.AttachMenuEnabled, data.BotBusiness, data.BotHasMainApp, data.BotActiveUsers, data.HasMenuButton, data.MenuButtonText, data.MenuButtonUrl, data.BotCanEdit, data.HasPreviewMedias, data.DescriptionPhotoId, data.DescriptionDocumentId, data.MainAppUrl, data.HasAppSettings, data.PlaceholderPath, data.BackgroundColor, data.BackgroundDarkColor, data.HeaderColor, data.HeaderDarkColor, data.PrivacyPolicyUrl, data.Mode, data.Id)
 	if err != nil {
@@ -162,7 +167,8 @@ func (m *defaultBotsModel) Update2(ctx context.Context, data *Bots) error {
 }
 
 func (m *defaultBotsModel) FindOneByBotId(ctx context.Context, botId int64) (*Bots, error) {
-	query := fmt.Sprintf("select %s from bots where bot_id = ? limit 1", botsRows)
+	tableName := "bots"
+	query := fmt.Sprintf("select %s from %s where bot_id = ? limit 1", botsRows, tableName)
 	var resp Bots
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, botId)
@@ -185,8 +191,9 @@ func (m *defaultBotsModel) FindListByBotIdList(ctx context.Context, botId ...int
 	if len(botId) == 0 {
 		return []Bots{}, nil
 	}
+	tableName := "bots"
 
-	query := fmt.Sprintf("select %s from bots where bot_id in (%s)", botsRows, sqlx.InInt64List(botId))
+	query := fmt.Sprintf("select %s from %s where bot_id in (%s)", botsRows, tableName, sqlx.InInt64List(botId))
 
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)

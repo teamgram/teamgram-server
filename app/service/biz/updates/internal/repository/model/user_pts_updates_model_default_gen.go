@@ -61,7 +61,8 @@ func newUserPtsUpdatesModel(db *sqlx.DB) *defaultUserPtsUpdatesModel {
 }
 
 func (m *defaultUserPtsUpdatesModel) Insert2(ctx context.Context, data *UserPtsUpdates) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `user_pts_updates` (%s) values (?, ?, ?, ?, ?, ?)", userPtsUpdatesRowsExpectAutoSet)
+	tableName := "user_pts_updates"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, userPtsUpdatesRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2)
 	if err != nil {
@@ -72,7 +73,8 @@ func (m *defaultUserPtsUpdatesModel) Insert2(ctx context.Context, data *UserPtsU
 }
 
 func (m *defaultUserPtsUpdatesModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `user_pts_updates` where `id` = ?"
+	tableName := "user_pts_updates"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -83,7 +85,8 @@ func (m *defaultUserPtsUpdatesModel) Delete2(ctx context.Context, id int64) erro
 }
 
 func (m *defaultUserPtsUpdatesModel) FindOne(ctx context.Context, id int64) (*UserPtsUpdates, error) {
-	query := fmt.Sprintf("select %s from user_pts_updates where id = ? limit 1", userPtsUpdatesRows)
+	tableName := "user_pts_updates"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", userPtsUpdatesRows, tableName)
 	var resp UserPtsUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -106,8 +109,9 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	if len(id) == 0 {
 		return []UserPtsUpdates{}, nil
 	}
+	tableName := "user_pts_updates"
 
-	query := fmt.Sprintf("select %s from user_pts_updates where id in (%s)", userPtsUpdatesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", userPtsUpdatesRows, tableName, sqlx.InInt64List(id))
 
 	var resp []UserPtsUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -122,7 +126,8 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 }
 
 func (m *defaultUserPtsUpdatesModel) Update2(ctx context.Context, data *UserPtsUpdates) error {
-	query := fmt.Sprintf("update `user_pts_updates` set %s where `id` = ?", userPtsUpdatesRowsWithPlaceHolder)
+	tableName := "user_pts_updates"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, userPtsUpdatesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PtsCount, data.UpdateType, data.UpdateData, data.Date2, data.Id)
 	if err != nil {

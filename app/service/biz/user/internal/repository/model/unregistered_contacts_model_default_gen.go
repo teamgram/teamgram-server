@@ -62,7 +62,8 @@ func newUnregisteredContactsModel(db *sqlx.DB) *defaultUnregisteredContactsModel
 }
 
 func (m *defaultUnregisteredContactsModel) Insert2(ctx context.Context, data *UnregisteredContacts) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `unregistered_contacts` (%s) values (?, ?, ?, ?, ?)", unregisteredContactsRowsExpectAutoSet)
+	tableName := "unregistered_contacts"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?)", tableName, unregisteredContactsRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.Phone, data.ImporterUserId, data.ImportFirstName, data.ImportLastName, data.Imported)
 	if err != nil {
@@ -73,7 +74,8 @@ func (m *defaultUnregisteredContactsModel) Insert2(ctx context.Context, data *Un
 }
 
 func (m *defaultUnregisteredContactsModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `unregistered_contacts` where `id` = ?"
+	tableName := "unregistered_contacts"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -84,7 +86,8 @@ func (m *defaultUnregisteredContactsModel) Delete2(ctx context.Context, id int64
 }
 
 func (m *defaultUnregisteredContactsModel) FindOne(ctx context.Context, id int64) (*UnregisteredContacts, error) {
-	query := fmt.Sprintf("select %s from unregistered_contacts where id = ? limit 1", unregisteredContactsRows)
+	tableName := "unregistered_contacts"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", unregisteredContactsRows, tableName)
 	var resp UnregisteredContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -107,8 +110,9 @@ func (m *defaultUnregisteredContactsModel) FindListByIdList(ctx context.Context,
 	if len(id) == 0 {
 		return []UnregisteredContacts{}, nil
 	}
+	tableName := "unregistered_contacts"
 
-	query := fmt.Sprintf("select %s from unregistered_contacts where id in (%s)", unregisteredContactsRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", unregisteredContactsRows, tableName, sqlx.InInt64List(id))
 
 	var resp []UnregisteredContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -123,7 +127,8 @@ func (m *defaultUnregisteredContactsModel) FindListByIdList(ctx context.Context,
 }
 
 func (m *defaultUnregisteredContactsModel) Update2(ctx context.Context, data *UnregisteredContacts) error {
-	query := fmt.Sprintf("update `unregistered_contacts` set %s where `id` = ?", unregisteredContactsRowsWithPlaceHolder)
+	tableName := "unregistered_contacts"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, unregisteredContactsRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Phone, data.ImporterUserId, data.ImportFirstName, data.ImportLastName, data.Imported, data.Id)
 	if err != nil {
@@ -134,7 +139,8 @@ func (m *defaultUnregisteredContactsModel) Update2(ctx context.Context, data *Un
 }
 
 func (m *defaultUnregisteredContactsModel) FindOneByPhoneImporterUserId(ctx context.Context, phone string, importerUserId int64) (*UnregisteredContacts, error) {
-	query := fmt.Sprintf("select %s from unregistered_contacts where phone = ? AND importer_user_id = ? limit 1", unregisteredContactsRows)
+	tableName := "unregistered_contacts"
+	query := fmt.Sprintf("select %s from %s where phone = ? AND importer_user_id = ? limit 1", unregisteredContactsRows, tableName)
 	var resp UnregisteredContacts
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, phone, importerUserId)

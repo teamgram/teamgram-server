@@ -63,7 +63,8 @@ func newAuthSeqUpdatesModel(db *sqlx.DB) *defaultAuthSeqUpdatesModel {
 }
 
 func (m *defaultAuthSeqUpdatesModel) Insert2(ctx context.Context, data *AuthSeqUpdates) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `auth_seq_updates` (%s) values (?, ?, ?, ?, ?, ?)", authSeqUpdatesRowsExpectAutoSet)
+	tableName := "auth_seq_updates"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, authSeqUpdatesRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.AuthId, data.UserId, data.Seq, data.UpdateType, data.UpdateData, data.Date2)
 	if err != nil {
@@ -74,7 +75,8 @@ func (m *defaultAuthSeqUpdatesModel) Insert2(ctx context.Context, data *AuthSeqU
 }
 
 func (m *defaultAuthSeqUpdatesModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `auth_seq_updates` where `id` = ?"
+	tableName := "auth_seq_updates"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -85,7 +87,8 @@ func (m *defaultAuthSeqUpdatesModel) Delete2(ctx context.Context, id int64) erro
 }
 
 func (m *defaultAuthSeqUpdatesModel) FindOne(ctx context.Context, id int64) (*AuthSeqUpdates, error) {
-	query := fmt.Sprintf("select %s from auth_seq_updates where id = ? limit 1", authSeqUpdatesRows)
+	tableName := "auth_seq_updates"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", authSeqUpdatesRows, tableName)
 	var resp AuthSeqUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -108,8 +111,9 @@ func (m *defaultAuthSeqUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	if len(id) == 0 {
 		return []AuthSeqUpdates{}, nil
 	}
+	tableName := "auth_seq_updates"
 
-	query := fmt.Sprintf("select %s from auth_seq_updates where id in (%s)", authSeqUpdatesRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", authSeqUpdatesRows, tableName, sqlx.InInt64List(id))
 
 	var resp []AuthSeqUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -124,7 +128,8 @@ func (m *defaultAuthSeqUpdatesModel) FindListByIdList(ctx context.Context, id ..
 }
 
 func (m *defaultAuthSeqUpdatesModel) Update2(ctx context.Context, data *AuthSeqUpdates) error {
-	query := fmt.Sprintf("update `auth_seq_updates` set %s where `id` = ?", authSeqUpdatesRowsWithPlaceHolder)
+	tableName := "auth_seq_updates"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, authSeqUpdatesRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.AuthId, data.UserId, data.Seq, data.UpdateType, data.UpdateData, data.Date2, data.Id)
 	if err != nil {
@@ -135,7 +140,8 @@ func (m *defaultAuthSeqUpdatesModel) Update2(ctx context.Context, data *AuthSeqU
 }
 
 func (m *defaultAuthSeqUpdatesModel) FindOneByAuthIdUserIdSeq(ctx context.Context, authId int64, userId int64, seq int32) (*AuthSeqUpdates, error) {
-	query := fmt.Sprintf("select %s from auth_seq_updates where auth_id = ? AND user_id = ? AND seq = ? limit 1", authSeqUpdatesRows)
+	tableName := "auth_seq_updates"
+	query := fmt.Sprintf("select %s from %s where auth_id = ? AND user_id = ? AND seq = ? limit 1", authSeqUpdatesRows, tableName)
 	var resp AuthSeqUpdates
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, authId, userId, seq)

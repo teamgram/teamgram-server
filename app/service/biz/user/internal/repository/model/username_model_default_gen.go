@@ -65,7 +65,8 @@ func newUsernameModel(db *sqlx.DB) *defaultUsernameModel {
 }
 
 func (m *defaultUsernameModel) Insert2(ctx context.Context, data *Username) (sql.Result, error) {
-	query := fmt.Sprintf("insert into `username` (%s) values (?, ?, ?, ?, ?, ?, ?)", usernameRowsExpectAutoSet)
+	tableName := "username"
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, usernameRowsExpectAutoSet)
 
 	r, err := m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted)
 	if err != nil {
@@ -76,7 +77,8 @@ func (m *defaultUsernameModel) Insert2(ctx context.Context, data *Username) (sql
 }
 
 func (m *defaultUsernameModel) Delete2(ctx context.Context, id int64) error {
-	query := "delete from `username` where `id` = ?"
+	tableName := "username"
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
 	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
@@ -87,7 +89,8 @@ func (m *defaultUsernameModel) Delete2(ctx context.Context, id int64) error {
 }
 
 func (m *defaultUsernameModel) FindOne(ctx context.Context, id int64) (*Username, error) {
-	query := fmt.Sprintf("select %s from username where id = ? limit 1", usernameRows)
+	tableName := "username"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", usernameRows, tableName)
 	var resp Username
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, id)
@@ -110,8 +113,9 @@ func (m *defaultUsernameModel) FindListByIdList(ctx context.Context, id ...int64
 	if len(id) == 0 {
 		return []Username{}, nil
 	}
+	tableName := "username"
 
-	query := fmt.Sprintf("select %s from username where id in (%s)", usernameRows, sqlx.InInt64List(id))
+	query := fmt.Sprintf("select %s from %s where id in (%s)", usernameRows, tableName, sqlx.InInt64List(id))
 
 	var resp []Username
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
@@ -126,7 +130,8 @@ func (m *defaultUsernameModel) FindListByIdList(ctx context.Context, id ...int64
 }
 
 func (m *defaultUsernameModel) Update2(ctx context.Context, data *Username) error {
-	query := fmt.Sprintf("update `username` set %s where `id` = ?", usernameRowsWithPlaceHolder)
+	tableName := "username"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, usernameRowsWithPlaceHolder)
 
 	_, err := m.db.Exec(ctx, query, data.Username, data.PeerType, data.PeerId, data.Editable, data.Active, data.Order2, data.Deleted, data.Id)
 	if err != nil {
@@ -137,7 +142,8 @@ func (m *defaultUsernameModel) Update2(ctx context.Context, data *Username) erro
 }
 
 func (m *defaultUsernameModel) FindOneByUsername(ctx context.Context, username string) (*Username, error) {
-	query := fmt.Sprintf("select %s from username where username = ? limit 1", usernameRows)
+	tableName := "username"
+	query := fmt.Sprintf("select %s from %s where username = ? limit 1", usernameRows, tableName)
 	var resp Username
 
 	err := m.db.QueryRowPartial(ctx, &resp, query, username)
@@ -160,8 +166,9 @@ func (m *defaultUsernameModel) FindListByUsernameList(ctx context.Context, usern
 	if len(username) == 0 {
 		return []Username{}, nil
 	}
+	tableName := "username"
 
-	query := fmt.Sprintf("select %s from username where username in (%s)", usernameRows, sqlx.InStringList(username))
+	query := fmt.Sprintf("select %s from %s where username in (%s)", usernameRows, tableName, sqlx.InStringList(username))
 	var resp []Username
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
