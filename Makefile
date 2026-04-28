@@ -17,6 +17,11 @@ ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${bu
 
 all: geoip idgen status dfs media authsession biz msg sync bff session gnetway
 
+lint: lint-tg-primitives
+
+lint-tg-primitives:
+	@./scripts/lint-tg-primitives.sh
+
 geoip:
 	@echo "build geoip..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/geoip -tags=jsoniter app/infra/geoip/cmd/geoip/*.go
