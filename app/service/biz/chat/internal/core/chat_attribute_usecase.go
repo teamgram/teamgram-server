@@ -187,12 +187,11 @@ func (c *ChatCore) chatWithNormalParticipant(chatID, userID int64, missingErr er
 	return mChat, me, nil
 }
 
-func bumpMutableChat(mChat *tg.MutableChat, date int64) {
+func bumpMutableChat(mChat *tg.MutableChat, _ int64) {
 	if mChat == nil || mChat.Chat == nil {
 		return
 	}
 	mChat.Chat.Version++
-	mChat.Chat.Date = date
 }
 
 func replaceParticipant(mChat *tg.MutableChat, participant *tg.ImmutableChatParticipant) {

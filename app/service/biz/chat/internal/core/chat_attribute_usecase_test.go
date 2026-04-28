@@ -137,6 +137,7 @@ func TestChatSetChatAvailableReactionsPersistsThroughRepository(t *testing.T) {
 	adminRights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{AddAdmins: true}).ToChatAdminRights()
 	m := mutableChatForMemberTests(10, 1,
 		participantForMemberTests(10, 2, chat.ChatMemberAdmin, chat.ChatMemberStateNormal, adminRights))
+	m.Chat.Date = 77
 	write := &fakeWriteRepo{updateDate: 123}
 	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
 
@@ -152,7 +153,7 @@ func TestChatSetChatAvailableReactionsPersistsThroughRepository(t *testing.T) {
 	if write.reactionsCalls != 1 || write.reactionsType != 4 || len(write.reactions) != 2 {
 		t.Fatalf("repository reactions call = calls:%d type:%d reactions:%#v", write.reactionsCalls, write.reactionsType, write.reactions)
 	}
-	if got.Chat.Version != 1 || got.Chat.Date != 123 || strings.Join(got.Chat.AvailableReactions, ",") != "like,fire" {
+	if got.Chat.Version != 1 || got.Chat.Date != 77 || strings.Join(got.Chat.AvailableReactions, ",") != "like,fire" {
 		t.Fatalf("chat reaction update = version:%d date:%d reactions:%#v", got.Chat.Version, got.Chat.Date, got.Chat.AvailableReactions)
 	}
 }
@@ -213,6 +214,7 @@ func TestChatSetHistoryTTLRejectsMissingCreatorParticipant(t *testing.T) {
 func TestChatSetHistoryTTLPersistsCreatorMutation(t *testing.T) {
 	m := mutableChatForMemberTests(10, 1,
 		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil))
+	m.Chat.Date = 88
 	write := &fakeWriteRepo{updateDate: 321}
 	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
 
@@ -223,7 +225,7 @@ func TestChatSetHistoryTTLPersistsCreatorMutation(t *testing.T) {
 	if write.ttlCalls != 1 || write.ttlPeriod != 86400 {
 		t.Fatalf("repository ttl call = calls:%d ttl:%d", write.ttlCalls, write.ttlPeriod)
 	}
-	if got.Chat.TtlPeriod != 86400 || got.Chat.Version != 1 || got.Chat.Date != 321 {
+	if got.Chat.TtlPeriod != 86400 || got.Chat.Version != 1 || got.Chat.Date != 88 {
 		t.Fatalf("chat ttl update = ttl:%d version:%d date:%d", got.Chat.TtlPeriod, got.Chat.Version, got.Chat.Date)
 	}
 }

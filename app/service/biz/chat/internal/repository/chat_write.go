@@ -321,41 +321,20 @@ func (r *Repository) UpdateChatAdmin(ctx context.Context, arg UpdateChatAdminArg
 		return nil, 0, chatpb.ErrParticipantInvalid
 	}
 	now := time.Now().Unix()
-	row := &model.ChatParticipants{
-		Id:              arg.Participant.Id,
-		ChatId:          arg.ChatID,
-		UserId:          arg.Participant.UserId,
-		ParticipantType: chatpb.ChatMemberNormal,
-		State:           arg.Participant.State,
-		Link:            "",
-		InviterUserId:   arg.Participant.InviterUserId,
-		InvitedAt:       arg.Participant.InvitedAt,
-		KickedAt:        arg.Participant.KickedAt,
-		LeftAt:          arg.Participant.LeftAt,
-		Date2:           arg.Participant.Date,
-		IsBot:           arg.Participant.IsBot,
-	}
-	if arg.IsAdmin {
-		row.ParticipantType = chatpb.ChatMemberAdmin
-		row.AdminRights = defaultChatAdminRightsStorage()
-		row.Link = arg.Participant.Link
-		if row.Link == "" {
-			row.Link = chatpb.NormalizeInviteHash(chatpb.BuildInviteLink(chatpb.GenChatInviteHash()))
-		}
-	}
+	updated, adminRights, link := applyChatAdminMutation(arg.Participant, arg.IsAdmin)
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatParticipantsModel.UpdateAdminRightsTx(tx, row.ParticipantType, row.AdminRights, row.Id); err != nil {
+		if _, err := r.model.ChatParticipantsModel.UpdateAdminRightsTx(tx, updated.ParticipantType, adminRights, updated.Id); err != nil {
 			return err
 		}
-		if _, err := r.model.ChatParticipantsModel.UpdateLinkTx(tx, row.Link, arg.ChatID, row.UserId); err != nil {
+		if _, err := r.model.ChatParticipantsModel.UpdateLinkTx(tx, link, arg.ChatID, updated.UserId); err != nil {
 			return err
 		}
 		if arg.IsAdmin && arg.Participant.Link == "" {
 			if _, _, err := r.model.ChatInvitesModel.InsertTx(tx, &model.ChatInvites{
 				ChatId:    arg.ChatID,
-				AdminId:   row.UserId,
-				Link:      row.Link,
+				AdminId:   updated.UserId,
+				Link:      link,
 				Permanent: true,
 				Date2:     now,
 			}); err != nil {
@@ -370,8 +349,8 @@ func (r *Repository) UpdateChatAdmin(ctx context.Context, arg UpdateChatAdminArg
 	}); err != nil {
 		return nil, 0, wrapStorage("chat.UpdateChatAdmin transaction", err)
 	}
-	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{row.UserId})...)
-	return makeImmutableChatParticipant(row), now, nil
+	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{updated.UserId})...)
+	return updated, now, nil
 }
 
 func (r *Repository) UpdateChatDefaultBannedRights(ctx context.Context, chatID int64, rights tg.ChatBannedRightsClazz) (int64, error) {
@@ -451,6 +430,38 @@ func defaultChatAdminRightsStorage() int32 {
 		ManageCall:     true,
 		Other:          true,
 	}).ToChatAdminRights())
+}
+
+func defaultChatAdminRights() tg.ChatAdminRightsClazz {
+	return tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{
+		ChangeInfo:     true,
+		DeleteMessages: true,
+		BanUsers:       true,
+		InviteUsers:    true,
+		PinMessages:    true,
+		AddAdmins:      true,
+		ManageCall:     true,
+		Other:          true,
+	}).ToChatAdminRights()
+}
+
+func applyChatAdminMutation(participant *tg.ImmutableChatParticipant, isAdmin bool) (*tg.ImmutableChatParticipant, int32, string) {
+	if participant == nil {
+		return nil, 0, ""
+	}
+	updated := *participant
+	if !isAdmin {
+		updated.ParticipantType = chatpb.ChatMemberNormal
+		updated.AdminRights = nil
+		updated.Link = ""
+		return &updated, 0, ""
+	}
+	updated.ParticipantType = chatpb.ChatMemberAdmin
+	updated.AdminRights = defaultChatAdminRights()
+	if updated.Link == "" {
+		updated.Link = chatpb.NormalizeInviteHash(chatpb.BuildInviteLink(chatpb.GenChatInviteHash()))
+	}
+	return &updated, chatAdminRightsToStorage(updated.AdminRights), updated.Link
 }
 
 func backfillBulkInsertIDs(rows []*model.ChatParticipants, lastInsertID, rowsAffected int64) error {
