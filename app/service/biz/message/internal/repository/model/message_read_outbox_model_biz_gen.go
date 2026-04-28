@@ -101,6 +101,11 @@ func (m *defaultMessageReadOutboxModel) SelectList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []MessageReadOutbox{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("message_read_outbox.SelectList: %w", err)
 		return
 	}
@@ -120,6 +125,11 @@ func (m *defaultMessageReadOutboxModel) SelectListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []MessageReadOutbox{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("message_read_outbox.SelectListWithCB: %w", err)
 		return
 	}

@@ -141,6 +141,9 @@ func (m *defaultBotsModel) FindListByIdList(ctx context.Context, id ...int64) ([
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Bots{}, nil
+		}
 		return nil, fmt.Errorf("bots.FindListByIdList: %w", err)
 	}
 
@@ -188,6 +191,9 @@ func (m *defaultBotsModel) FindListByBotIdList(ctx context.Context, botId ...int
 	var resp []Bots
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Bots{}, nil
+		}
 		return nil, fmt.Errorf("bots.FindListByBotIdList: %w", err)
 	}
 

@@ -118,6 +118,11 @@ func (m *defaultChatInvitesModel) SelectListByAdminId(ctx context.Context, chatI
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectListByAdminId: %w", err)
 		return
 	}
@@ -137,6 +142,11 @@ func (m *defaultChatInvitesModel) SelectListByAdminIdWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectListByAdminIdWithCB: %w", err)
 		return
 	}
@@ -164,12 +174,15 @@ func (m *defaultChatInvitesModel) SelectByLink(ctx context.Context, link string)
 	err = m.db.QueryRowPartial(ctx, do, query, link)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("chat_invites.SelectByLink: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "chat_invites",
+				Key:      fmt.Sprintf("link=%v", link),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("chat_invites.SelectByLink: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -187,6 +200,11 @@ func (m *defaultChatInvitesModel) SelectAll(ctx context.Context) (rList []ChatIn
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectAll: %w", err)
 		return
 	}
@@ -206,6 +224,11 @@ func (m *defaultChatInvitesModel) SelectAllWithCB(ctx context.Context, cb func(s
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectAllWithCB: %w", err)
 		return
 	}
@@ -232,6 +255,11 @@ func (m *defaultChatInvitesModel) SelectListByChatId(ctx context.Context, chatId
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectListByChatId: %w", err)
 		return
 	}
@@ -251,6 +279,11 @@ func (m *defaultChatInvitesModel) SelectListByChatIdWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInvites{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invites.SelectListByChatIdWithCB: %w", err)
 		return
 	}
@@ -296,6 +329,7 @@ func (m *defaultChatInvitesModel) Update(ctx context.Context, cMap map[string]in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -329,6 +363,7 @@ func (m *defaultChatInvitesModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interfac
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -352,6 +387,7 @@ func (m *defaultChatInvitesModel) DeleteByLink(ctx context.Context, chatId int64
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.DeleteByLink rows affected: %w", err)
+		return
 	}
 
 	return
@@ -374,6 +410,7 @@ func (m *defaultChatInvitesModel) DeleteByLinkTx(tx *sqlx.Tx, chatId int64, link
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.DeleteByLinkTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -397,6 +434,7 @@ func (m *defaultChatInvitesModel) DeleteByRevoked(ctx context.Context, chatId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.DeleteByRevoked rows affected: %w", err)
+		return
 	}
 
 	return
@@ -419,6 +457,7 @@ func (m *defaultChatInvitesModel) DeleteByRevokedTx(tx *sqlx.Tx, chatId int64, a
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invites.DeleteByRevokedTx rows affected: %w", err)
+		return
 	}
 
 	return

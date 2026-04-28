@@ -115,6 +115,9 @@ func (m *defaultChatInviteParticipantsModel) FindListByIdList(ctx context.Contex
 	var resp []ChatInviteParticipants
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []ChatInviteParticipants{}, nil
+		}
 		return nil, fmt.Errorf("chat_invite_participants.FindListByIdList: %w", err)
 	}
 

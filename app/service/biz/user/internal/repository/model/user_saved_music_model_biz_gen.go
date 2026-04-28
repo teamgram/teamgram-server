@@ -107,6 +107,11 @@ func (m *defaultUserSavedMusicModel) SelectList(ctx context.Context, userId int6
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserSavedMusic{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_saved_music.SelectList: %w", err)
 		return
 	}
@@ -126,6 +131,11 @@ func (m *defaultUserSavedMusicModel) SelectListWithCB(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserSavedMusic{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_saved_music.SelectListWithCB: %w", err)
 		return
 	}
@@ -157,6 +167,11 @@ func (m *defaultUserSavedMusicModel) SelectListByIdList(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserSavedMusic{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_saved_music.SelectListByIdList: %w", err)
 		return
 	}
@@ -181,6 +196,11 @@ func (m *defaultUserSavedMusicModel) SelectListByIdListWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserSavedMusic{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_saved_music.SelectListByIdListWithCB: %w", err)
 		return
 	}
@@ -216,6 +236,7 @@ func (m *defaultUserSavedMusicModel) Delete(ctx context.Context, userId int64, s
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_saved_music.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -238,6 +259,7 @@ func (m *defaultUserSavedMusicModel) DeleteTx(tx *sqlx.Tx, userId int64, savedMu
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_saved_music.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return

@@ -22,7 +22,7 @@
         </sql>
     </operation>
 
-    <operation name="DeleteHashTagMessageId">
+    <operation name="DeleteHashTagMessageId" not_found="true">
         <sql>
             UPDATE
                 hash_tags

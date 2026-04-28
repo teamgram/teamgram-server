@@ -119,6 +119,9 @@ func (m *defaultPhotosModel) FindListByIdList(ctx context.Context, id ...int64) 
 	var resp []Photos
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Photos{}, nil
+		}
 		return nil, fmt.Errorf("photos.FindListByIdList: %w", err)
 	}
 
@@ -166,6 +169,9 @@ func (m *defaultPhotosModel) FindListByPhotoIdList(ctx context.Context, photoId 
 	var resp []Photos
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Photos{}, nil
+		}
 		return nil, fmt.Errorf("photos.FindListByPhotoIdList: %w", err)
 	}
 

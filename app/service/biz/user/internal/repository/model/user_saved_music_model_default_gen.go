@@ -111,6 +111,9 @@ func (m *defaultUserSavedMusicModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserSavedMusic
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserSavedMusic{}, nil
+		}
 		return nil, fmt.Errorf("user_saved_music.FindListByIdList: %w", err)
 	}
 

@@ -118,6 +118,7 @@ func (m *defaultPopularContactsModel) IncreaseImporters(ctx context.Context, pho
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("popular_contacts.IncreaseImporters rows affected: %w", err)
+		return
 	}
 
 	return
@@ -140,6 +141,7 @@ func (m *defaultPopularContactsModel) IncreaseImportersTx(tx *sqlx.Tx, phone str
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("popular_contacts.IncreaseImportersTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -168,6 +170,7 @@ func (m *defaultPopularContactsModel) IncreaseImportersList(ctx context.Context,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("popular_contacts.IncreaseImportersList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -195,6 +198,7 @@ func (m *defaultPopularContactsModel) IncreaseImportersListTx(tx *sqlx.Tx, phone
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("popular_contacts.IncreaseImportersListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -211,12 +215,15 @@ func (m *defaultPopularContactsModel) SelectImporters(ctx context.Context, phone
 	err = m.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("popular_contacts.SelectImporters: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "popular_contacts",
+				Key:      fmt.Sprintf("phone=%v", phone),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("popular_contacts.SelectImporters: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -239,6 +246,11 @@ func (m *defaultPopularContactsModel) SelectImportersList(ctx context.Context, p
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PopularContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("popular_contacts.SelectImportersList: %w", err)
 		return
 	}
@@ -263,6 +275,11 @@ func (m *defaultPopularContactsModel) SelectImportersListWithCB(ctx context.Cont
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PopularContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("popular_contacts.SelectImportersListWithCB: %w", err)
 		return
 	}

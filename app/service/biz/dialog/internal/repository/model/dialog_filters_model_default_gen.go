@@ -118,6 +118,9 @@ func (m *defaultDialogFiltersModel) FindListByIdList(ctx context.Context, id ...
 	var resp []DialogFilters
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []DialogFilters{}, nil
+		}
 		return nil, fmt.Errorf("dialog_filters.FindListByIdList: %w", err)
 	}
 

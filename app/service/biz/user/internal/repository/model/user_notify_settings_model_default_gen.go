@@ -116,6 +116,9 @@ func (m *defaultUserNotifySettingsModel) FindListByIdList(ctx context.Context, i
 	var resp []UserNotifySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserNotifySettings{}, nil
+		}
 		return nil, fmt.Errorf("user_notify_settings.FindListByIdList: %w", err)
 	}
 

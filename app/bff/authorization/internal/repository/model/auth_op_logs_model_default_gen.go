@@ -110,6 +110,9 @@ func (m *defaultAuthOpLogsModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []AuthOpLogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []AuthOpLogs{}, nil
+		}
 		return nil, fmt.Errorf("auth_op_logs.FindListByIdList: %w", err)
 	}
 

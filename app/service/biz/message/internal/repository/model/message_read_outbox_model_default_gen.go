@@ -113,6 +113,9 @@ func (m *defaultMessageReadOutboxModel) FindListByIdList(ctx context.Context, id
 	var resp []MessageReadOutbox
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []MessageReadOutbox{}, nil
+		}
 		return nil, fmt.Errorf("message_read_outbox.FindListByIdList: %w", err)
 	}
 

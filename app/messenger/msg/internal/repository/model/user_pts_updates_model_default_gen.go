@@ -112,6 +112,9 @@ func (m *defaultUserPtsUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserPtsUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPtsUpdates{}, nil
+		}
 		return nil, fmt.Errorf("user_pts_updates.FindListByIdList: %w", err)
 	}
 

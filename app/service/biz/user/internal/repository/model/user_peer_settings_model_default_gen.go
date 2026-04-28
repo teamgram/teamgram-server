@@ -121,6 +121,9 @@ func (m *defaultUserPeerSettingsModel) FindListByIdList(ctx context.Context, id 
 	var resp []UserPeerSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPeerSettings{}, nil
+		}
 		return nil, fmt.Errorf("user_peer_settings.FindListByIdList: %w", err)
 	}
 

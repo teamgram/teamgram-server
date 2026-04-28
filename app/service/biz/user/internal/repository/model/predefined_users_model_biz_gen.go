@@ -110,12 +110,15 @@ func (m *defaultPredefinedUsersModel) SelectByPhone(ctx context.Context, phone s
 	err = m.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("predefined_users.SelectByPhone: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "predefined_users",
+				Key:      fmt.Sprintf("phone=%v", phone),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("predefined_users.SelectByPhone: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -133,6 +136,11 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAll(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PredefinedUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("predefined_users.SelectPredefinedUsersAll: %w", err)
 		return
 	}
@@ -152,6 +160,11 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAllWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PredefinedUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("predefined_users.SelectPredefinedUsersAllWithCB: %w", err)
 		return
 	}
@@ -187,6 +200,7 @@ func (m *defaultPredefinedUsersModel) Delete(ctx context.Context, phone string) 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("predefined_users.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -209,6 +223,7 @@ func (m *defaultPredefinedUsersModel) DeleteTx(tx *sqlx.Tx, phone string) (rowsA
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("predefined_users.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -242,6 +257,7 @@ func (m *defaultPredefinedUsersModel) Update(ctx context.Context, cMap map[strin
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("predefined_users.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -274,6 +290,7 @@ func (m *defaultPredefinedUsersModel) UpdateTx(tx *sqlx.Tx, cMap map[string]inte
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("predefined_users.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return

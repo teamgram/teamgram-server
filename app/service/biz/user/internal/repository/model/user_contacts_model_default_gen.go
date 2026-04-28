@@ -118,6 +118,9 @@ func (m *defaultUserContactsModel) FindListByIdList(ctx context.Context, id ...i
 	var resp []UserContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserContacts{}, nil
+		}
 		return nil, fmt.Errorf("user_contacts.FindListByIdList: %w", err)
 	}
 

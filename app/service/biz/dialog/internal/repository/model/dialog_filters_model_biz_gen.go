@@ -112,12 +112,15 @@ func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int
 	err = m.db.QueryRowPartial(ctx, do, query, userId, slug)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("dialog_filters.SelectBySlug: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("user_id=%v,slug=%v", userId, slug),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("dialog_filters.SelectBySlug: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -136,12 +139,15 @@ func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, di
 	err = m.db.QueryRowPartial(ctx, do, query, userId, dialogFilterId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("dialog_filters.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("user_id=%v,dialog_filter_id=%v", userId, dialogFilterId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("dialog_filters.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -159,6 +165,11 @@ func (m *defaultDialogFiltersModel) SelectList(ctx context.Context, userId int64
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogFilters{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialog_filters.SelectList: %w", err)
 		return
 	}
@@ -178,6 +189,11 @@ func (m *defaultDialogFiltersModel) SelectListWithCB(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogFilters{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialog_filters.SelectListWithCB: %w", err)
 		return
 	}
@@ -213,6 +229,7 @@ func (m *defaultDialogFiltersModel) UpdateOrder(ctx context.Context, orderValue 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_filters.UpdateOrder rows affected: %w", err)
+		return
 	}
 
 	return
@@ -235,6 +252,7 @@ func (m *defaultDialogFiltersModel) UpdateOrderTx(tx *sqlx.Tx, orderValue int64,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_filters.UpdateOrderTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -259,6 +277,7 @@ func (m *defaultDialogFiltersModel) Clear(ctx context.Context, userId int64, dia
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_filters.Clear rows affected: %w", err)
+		return
 	}
 
 	return
@@ -281,6 +300,7 @@ func (m *defaultDialogFiltersModel) ClearTx(tx *sqlx.Tx, userId int64, dialogFil
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_filters.ClearTx rows affected: %w", err)
+		return
 	}
 
 	return

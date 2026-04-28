@@ -115,6 +115,9 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByIdList(ctx context.Con
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserGlobalPrivacySettings{}, nil
+		}
 		return nil, fmt.Errorf("user_global_privacy_settings.FindListByIdList: %w", err)
 	}
 
@@ -162,6 +165,9 @@ func (m *defaultUserGlobalPrivacySettingsModel) FindListByUserIdList(ctx context
 	var resp []UserGlobalPrivacySettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserGlobalPrivacySettings{}, nil
+		}
 		return nil, fmt.Errorf("user_global_privacy_settings.FindListByUserIdList: %w", err)
 	}
 

@@ -159,12 +159,15 @@ func (m *defaultAuthsModel) SelectByAuthKeyId(ctx context.Context, authKeyId int
 	err = m.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("auths.SelectByAuthKeyId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "auths",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("auths.SelectByAuthKeyId: %w", err)
+		return
 	} else {
 		rValue = do
 	}

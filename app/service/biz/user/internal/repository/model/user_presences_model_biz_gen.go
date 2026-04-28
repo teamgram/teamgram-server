@@ -107,12 +107,15 @@ func (m *defaultUserPresencesModel) Select(ctx context.Context, userId int64) (r
 	err = m.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_presences.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_presences",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_presences.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -135,6 +138,11 @@ func (m *defaultUserPresencesModel) SelectList(ctx context.Context, idList []int
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPresences{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_presences.SelectList: %w", err)
 		return
 	}
@@ -159,6 +167,11 @@ func (m *defaultUserPresencesModel) SelectListWithCB(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPresences{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_presences.SelectListWithCB: %w", err)
 		return
 	}
@@ -194,6 +207,7 @@ func (m *defaultUserPresencesModel) UpdateLastSeenAt(ctx context.Context, lastSe
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_presences.UpdateLastSeenAt rows affected: %w", err)
+		return
 	}
 
 	return
@@ -216,6 +230,7 @@ func (m *defaultUserPresencesModel) UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_presences.UpdateLastSeenAtTx rows affected: %w", err)
+		return
 	}
 
 	return

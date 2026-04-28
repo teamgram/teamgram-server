@@ -134,6 +134,9 @@ func (m *defaultDialogsModel) FindListByIdList(ctx context.Context, id ...int64)
 	var resp []Dialogs
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Dialogs{}, nil
+		}
 		return nil, fmt.Errorf("dialogs.FindListByIdList: %w", err)
 	}
 

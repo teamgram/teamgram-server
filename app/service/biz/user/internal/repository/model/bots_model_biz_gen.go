@@ -51,12 +51,15 @@ func (m *defaultBotsModel) Select(ctx context.Context, botId int64) (rValue *Bot
 	err = m.db.QueryRowPartial(ctx, do, query, botId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("bots.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("bot_id=%v", botId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("bots.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -71,12 +74,16 @@ func (m *defaultBotsModel) SelectByToken(ctx context.Context, token string) (rVa
 	err = m.db.QueryRowPartial(ctx, &rValue, query, token)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("bots.SelectByToken: %w", err)
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("token=%v", token),
+				Cause:    err,
+			}
 			return
-		} else {
-			err = nil
 		}
+		err = fmt.Errorf("bots.SelectByToken: %w", err)
+		return
 	}
 
 	return
@@ -97,6 +104,11 @@ func (m *defaultBotsModel) SelectByIdList(ctx context.Context, idList []int32) (
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Bots{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bots.SelectByIdList: %w", err)
 		return
 	}
@@ -121,6 +133,11 @@ func (m *defaultBotsModel) SelectByIdListWithCB(ctx context.Context, idList []in
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Bots{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bots.SelectByIdListWithCB: %w", err)
 		return
 	}
@@ -165,6 +182,7 @@ func (m *defaultBotsModel) Update(ctx context.Context, cMap map[string]interface
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("bots.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -197,6 +215,7 @@ func (m *defaultBotsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bo
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("bots.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return

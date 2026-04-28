@@ -103,6 +103,11 @@ func (m *defaultUserProfilePhotosModel) SelectList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_profile_photos.SelectList: %w", err)
 	}
 
@@ -116,7 +121,13 @@ func (m *defaultUserProfilePhotosModel) SelectListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_profile_photos.SelectListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -143,12 +154,16 @@ func (m *defaultUserProfilePhotosModel) SelectNext(ctx context.Context, userId i
 	err = m.db.QueryRowPartial(ctx, &rValue, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_profile_photos.SelectNext: %w", err)
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "user_profile_photos",
+				Key:      fmt.Sprintf("user_id=%v,id_list=%v", userId, idList),
+				Cause:    err,
+			}
 			return
-		} else {
-			err = nil
 		}
+		err = fmt.Errorf("user_profile_photos.SelectNext: %w", err)
+		return
 	}
 
 	return
@@ -177,6 +192,7 @@ func (m *defaultUserProfilePhotosModel) Delete(ctx context.Context, userId int64
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_profile_photos.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -204,6 +220,7 @@ func (m *defaultUserProfilePhotosModel) DeleteTx(tx *sqlx.Tx, userId int64, idLi
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_profile_photos.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return

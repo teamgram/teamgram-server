@@ -114,6 +114,9 @@ func (m *defaultPhoneBooksModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []PhoneBooks
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []PhoneBooks{}, nil
+		}
 		return nil, fmt.Errorf("phone_books.FindListByIdList: %w", err)
 	}
 

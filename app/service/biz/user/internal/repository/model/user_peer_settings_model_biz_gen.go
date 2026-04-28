@@ -107,12 +107,15 @@ func (m *defaultUserPeerSettingsModel) Select(ctx context.Context, userId int64,
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_peer_settings.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_peer_settings",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_peer_settings.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -150,6 +153,7 @@ func (m *defaultUserPeerSettingsModel) Update(ctx context.Context, cMap map[stri
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_settings.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -184,6 +188,7 @@ func (m *defaultUserPeerSettingsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_settings.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -208,6 +213,7 @@ func (m *defaultUserPeerSettingsModel) Delete(ctx context.Context, userId int64,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_settings.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -230,6 +236,7 @@ func (m *defaultUserPeerSettingsModel) DeleteTx(tx *sqlx.Tx, userId int64, peerT
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_settings.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return

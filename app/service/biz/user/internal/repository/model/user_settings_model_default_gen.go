@@ -112,6 +112,9 @@ func (m *defaultUserSettingsModel) FindListByIdList(ctx context.Context, id ...i
 	var resp []UserSettings
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserSettings{}, nil
+		}
 		return nil, fmt.Errorf("user_settings.FindListByIdList: %w", err)
 	}
 

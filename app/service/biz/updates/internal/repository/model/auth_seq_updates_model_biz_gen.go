@@ -107,12 +107,15 @@ func (m *defaultAuthSeqUpdatesModel) SelectLastSeq(ctx context.Context, authId i
 	err = m.db.QueryRowPartial(ctx, do, query, authId, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("auth_seq_updates.SelectLastSeq: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "auth_seq_updates",
+				Key:      fmt.Sprintf("auth_id=%v,user_id=%v", authId, userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("auth_seq_updates.SelectLastSeq: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -130,6 +133,11 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtSeq(ctx context.Context, authId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, seq)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_seq_updates.SelectByGtSeq: %w", err)
 		return
 	}
@@ -149,6 +157,11 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtSeqWithCB(ctx context.Context, au
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, seq)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_seq_updates.SelectByGtSeqWithCB: %w", err)
 		return
 	}
@@ -175,6 +188,11 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtDate(ctx context.Context, authId 
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_seq_updates.SelectByGtDate: %w", err)
 		return
 	}
@@ -194,6 +212,11 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtDateWithCB(ctx context.Context, a
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_seq_updates.SelectByGtDateWithCB: %w", err)
 		return
 	}

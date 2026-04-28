@@ -114,7 +114,9 @@ func (m *defaultAuthKeysModel) UpdatePermBinding(ctx context.Context, permAuthKe
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
+
 			err = nil
+
 			return
 		}
 		err = fmt.Errorf("auth_keys.UpdatePermBinding find one: %w", err)
@@ -135,6 +137,7 @@ func (m *defaultAuthKeysModel) UpdatePermBinding(ctx context.Context, permAuthKe
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
+
 	return
 }
 
@@ -155,6 +158,7 @@ func (m *defaultAuthKeysModel) UpdatePermBindingTx(tx *sqlx.Tx, permAuthKeyId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_keys.UpdatePermBindingTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -168,7 +172,9 @@ func (m *defaultAuthKeysModel) UpdateTempBinding(ctx context.Context, tempAuthKe
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
+
 			err = nil
+
 			return
 		}
 		err = fmt.Errorf("auth_keys.UpdateTempBinding find one: %w", err)
@@ -189,6 +195,7 @@ func (m *defaultAuthKeysModel) UpdateTempBinding(ctx context.Context, tempAuthKe
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
+
 	return
 }
 
@@ -209,6 +216,7 @@ func (m *defaultAuthKeysModel) UpdateTempBindingTx(tx *sqlx.Tx, tempAuthKeyId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_keys.UpdateTempBindingTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -222,7 +230,9 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBinding(ctx context.Context, media
 
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
+
 			err = nil
+
 			return
 		}
 		err = fmt.Errorf("auth_keys.UpdateMediaTempBinding find one: %w", err)
@@ -243,6 +253,7 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBinding(ctx context.Context, media
 		}
 		return 0, rowsAffected, nil
 	}, keys...)
+
 	return
 }
 
@@ -263,6 +274,7 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBindingTx(tx *sqlx.Tx, mediaTempAu
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_keys.UpdateMediaTempBindingTx rows affected: %w", err)
+		return
 	}
 
 	return

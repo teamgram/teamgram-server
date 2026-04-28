@@ -106,6 +106,11 @@ func (m *defaultUserNotifySettingsModel) SelectAll(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserNotifySettings{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_notify_settings.SelectAll: %w", err)
 		return
 	}
@@ -125,6 +130,11 @@ func (m *defaultUserNotifySettingsModel) SelectAllWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserNotifySettings{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_notify_settings.SelectAllWithCB: %w", err)
 		return
 	}
@@ -152,12 +162,15 @@ func (m *defaultUserNotifySettingsModel) Select(ctx context.Context, userId int6
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_notify_settings.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_notify_settings",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_notify_settings.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -184,6 +197,7 @@ func (m *defaultUserNotifySettingsModel) DeleteAll(ctx context.Context, userId i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_notify_settings.DeleteAll rows affected: %w", err)
+		return
 	}
 
 	return
@@ -206,6 +220,7 @@ func (m *defaultUserNotifySettingsModel) DeleteAllTx(tx *sqlx.Tx, userId int64) 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_notify_settings.DeleteAllTx rows affected: %w", err)
+		return
 	}
 
 	return

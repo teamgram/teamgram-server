@@ -206,12 +206,15 @@ func (m *defaultMessagesModel) SelectByRandomId(ctx context.Context, senderUserI
 	err = m.db.QueryRowPartial(ctx, do, query, senderUserId, randomId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectByRandomId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("sender_user_id=%v,random_id=%v", senderUserId, randomId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("messages.SelectByRandomId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -234,6 +237,11 @@ func (m *defaultMessagesModel) SelectByMessageIdList(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageIdList: %w", err)
 		return
 	}
@@ -258,6 +266,11 @@ func (m *defaultMessagesModel) SelectByMessageIdListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageIdListWithCB: %w", err)
 		return
 	}
@@ -285,12 +298,15 @@ func (m *defaultMessagesModel) SelectByMessageId(ctx context.Context, userId int
 	err = m.db.QueryRowPartial(ctx, do, query, userId, userMessageBoxId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectByMessageId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,user_message_box_id=%v", userId, userMessageBoxId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("messages.SelectByMessageId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -313,6 +329,11 @@ func (m *defaultMessagesModel) SelectByMessageDataIdList(ctx context.Context, id
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageDataIdList: %w", err)
 		return
 	}
@@ -337,6 +358,11 @@ func (m *defaultMessagesModel) SelectByMessageDataIdListWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageDataIdListWithCB: %w", err)
 		return
 	}
@@ -364,12 +390,15 @@ func (m *defaultMessagesModel) SelectByMessageDataId(ctx context.Context, userId
 	err = m.db.QueryRowPartial(ctx, do, query, userId, dialogMessageId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectByMessageDataId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_message_id=%v", userId, dialogMessageId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("messages.SelectByMessageDataId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -392,6 +421,11 @@ func (m *defaultMessagesModel) SelectByMessageDataIdUserIdList(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, dialogMessageId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageDataIdUserIdList: %w", err)
 		return
 	}
@@ -416,6 +450,11 @@ func (m *defaultMessagesModel) SelectByMessageDataIdUserIdListWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query, dialogMessageId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMessageDataIdUserIdListWithCB: %w", err)
 		return
 	}
@@ -442,6 +481,11 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetIdLimit(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardByOffsetIdLimit: %w", err)
 		return
 	}
@@ -461,6 +505,11 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetIdLimitWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -487,6 +536,11 @@ func (m *defaultMessagesModel) SelectForwardByOffsetIdLimit(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardByOffsetIdLimit: %w", err)
 		return
 	}
@@ -506,6 +560,11 @@ func (m *defaultMessagesModel) SelectForwardByOffsetIdLimitWithCB(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -532,6 +591,11 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetDateLimit(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardByOffsetDateLimit: %w", err)
 		return
 	}
@@ -551,6 +615,11 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetDateLimitWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardByOffsetDateLimitWithCB: %w", err)
 		return
 	}
@@ -577,6 +646,11 @@ func (m *defaultMessagesModel) SelectForwardByOffsetDateLimit(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardByOffsetDateLimit: %w", err)
 		return
 	}
@@ -596,6 +670,11 @@ func (m *defaultMessagesModel) SelectForwardByOffsetDateLimitWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardByOffsetDateLimitWithCB: %w", err)
 		return
 	}
@@ -623,12 +702,15 @@ func (m *defaultMessagesModel) SelectPeerUserMessageId(ctx context.Context, peer
 	err = m.db.QueryRowPartial(ctx, do, query, peerId, userId, userMessageBoxId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectPeerUserMessageId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("peerId=%v,user_id=%v,user_message_box_id=%v", peerId, userId, userMessageBoxId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("messages.SelectPeerUserMessageId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -647,12 +729,15 @@ func (m *defaultMessagesModel) SelectPeerUserMessage(ctx context.Context, peerId
 	err = m.db.QueryRowPartial(ctx, do, query, peerId, userId, userMessageBoxId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectPeerUserMessage: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("peerId=%v,user_id=%v,user_message_box_id=%v", peerId, userId, userMessageBoxId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("messages.SelectPeerUserMessage: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -667,12 +752,16 @@ func (m *defaultMessagesModel) SelectDialogLastMessageId(ctx context.Context, us
 	err = m.db.QueryRowPartial(ctx, &rValue, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectDialogLastMessageId: %w", err)
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_id1=%v,dialog_id2=%v", userId, dialogId1, dialogId2),
+				Cause:    err,
+			}
 			return
-		} else {
-			err = nil
 		}
+		err = fmt.Errorf("messages.SelectDialogLastMessageId: %w", err)
+		return
 	}
 
 	return
@@ -692,12 +781,16 @@ func (m *defaultMessagesModel) SelectDialogLastMessageIdNotIdList(ctx context.Co
 	err = m.db.QueryRowPartial(ctx, &rValue, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("messages.SelectDialogLastMessageIdNotIdList: %w", err)
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_id1=%v,dialog_id2=%v,idList=%v", userId, dialogId1, dialogId2, idList),
+				Cause:    err,
+			}
 			return
-		} else {
-			err = nil
 		}
+		err = fmt.Errorf("messages.SelectDialogLastMessageIdNotIdList: %w", err)
+		return
 	}
 
 	return
@@ -718,6 +811,11 @@ func (m *defaultMessagesModel) SelectDialogsByMessageIdList(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogsByMessageIdList: %w", err)
 		return
 	}
@@ -742,6 +840,11 @@ func (m *defaultMessagesModel) SelectDialogsByMessageIdListWithCB(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogsByMessageIdListWithCB: %w", err)
 		return
 	}
@@ -768,6 +871,11 @@ func (m *defaultMessagesModel) SelectDialogLastMessageList(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogLastMessageList: %w", err)
 		return
 	}
@@ -787,6 +895,11 @@ func (m *defaultMessagesModel) SelectDialogLastMessageListWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogLastMessageListWithCB: %w", err)
 		return
 	}
@@ -826,6 +939,7 @@ func (m *defaultMessagesModel) DeleteMessagesByMessageIdList(ctx context.Context
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.DeleteMessagesByMessageIdList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -853,6 +967,7 @@ func (m *defaultMessagesModel) DeleteMessagesByMessageIdListTx(tx *sqlx.Tx, user
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.DeleteMessagesByMessageIdListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -868,6 +983,11 @@ func (m *defaultMessagesModel) SelectDialogMessageIdList(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogMessageIdList: %w", err)
 		return
 	}
@@ -887,6 +1007,11 @@ func (m *defaultMessagesModel) SelectDialogMessageIdListWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectDialogMessageIdListWithCB: %w", err)
 		return
 	}
@@ -922,6 +1047,7 @@ func (m *defaultMessagesModel) UpdateMediaUnread(ctx context.Context, userId int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateMediaUnread rows affected: %w", err)
+		return
 	}
 
 	return
@@ -944,6 +1070,7 @@ func (m *defaultMessagesModel) UpdateMediaUnreadTx(tx *sqlx.Tx, userId int64, us
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateMediaUnreadTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -968,6 +1095,7 @@ func (m *defaultMessagesModel) UpdateMentionedAndMediaUnread(ctx context.Context
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnread rows affected: %w", err)
+		return
 	}
 
 	return
@@ -990,6 +1118,7 @@ func (m *defaultMessagesModel) UpdateMentionedAndMediaUnreadTx(tx *sqlx.Tx, user
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnreadTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1005,6 +1134,11 @@ func (m *defaultMessagesModel) SelectByMediaType(ctx context.Context, userId int
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, messageFilterType, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMediaType: %w", err)
 		return
 	}
@@ -1024,6 +1158,11 @@ func (m *defaultMessagesModel) SelectByMediaTypeWithCB(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, messageFilterType, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectByMediaTypeWithCB: %w", err)
 		return
 	}
@@ -1050,6 +1189,11 @@ func (m *defaultMessagesModel) SelectPhoneCallList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, messageFilterType, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPhoneCallList: %w", err)
 		return
 	}
@@ -1069,6 +1213,11 @@ func (m *defaultMessagesModel) SelectPhoneCallListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, messageFilterType, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPhoneCallListWithCB: %w", err)
 		return
 	}
@@ -1095,6 +1244,11 @@ func (m *defaultMessagesModel) Search(ctx context.Context, userId int64, dialogI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.Search: %w", err)
 		return
 	}
@@ -1114,6 +1268,11 @@ func (m *defaultMessagesModel) SearchWithCB(ctx context.Context, userId int64, d
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SearchWithCB: %w", err)
 		return
 	}
@@ -1140,6 +1299,11 @@ func (m *defaultMessagesModel) SearchGlobal(ctx context.Context, userId int64, u
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userMessageBoxId, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SearchGlobal: %w", err)
 		return
 	}
@@ -1159,6 +1323,11 @@ func (m *defaultMessagesModel) SearchGlobalWithCB(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userMessageBoxId, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SearchGlobalWithCB: %w", err)
 		return
 	}
@@ -1185,6 +1354,11 @@ func (m *defaultMessagesModel) SelectBackwardUnreadMentionsByOffsetIdLimit(ctx c
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardUnreadMentionsByOffsetIdLimit: %w", err)
 		return
 	}
@@ -1204,6 +1378,11 @@ func (m *defaultMessagesModel) SelectBackwardUnreadMentionsByOffsetIdLimitWithCB
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardUnreadMentionsByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -1230,6 +1409,11 @@ func (m *defaultMessagesModel) SelectForwardUnreadMentionsByOffsetIdLimit(ctx co
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardUnreadMentionsByOffsetIdLimit: %w", err)
 		return
 	}
@@ -1249,6 +1433,11 @@ func (m *defaultMessagesModel) SelectForwardUnreadMentionsByOffsetIdLimitWithCB(
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardUnreadMentionsByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -1275,6 +1464,11 @@ func (m *defaultMessagesModel) SelectPinnedList(ctx context.Context, userId int6
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPinnedList: %w", err)
 		return
 	}
@@ -1294,6 +1488,11 @@ func (m *defaultMessagesModel) SelectPinnedListWithCB(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPinnedListWithCB: %w", err)
 		return
 	}
@@ -1317,6 +1516,11 @@ func (m *defaultMessagesModel) SelectLastTwoPinnedList(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectLastTwoPinnedList: %w", err)
 	}
 
@@ -1330,7 +1534,13 @@ func (m *defaultMessagesModel) SelectLastTwoPinnedListWithCB(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectLastTwoPinnedListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -1362,6 +1572,7 @@ func (m *defaultMessagesModel) UpdatePinned(ctx context.Context, pinned bool, us
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdatePinned rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1384,6 +1595,7 @@ func (m *defaultMessagesModel) UpdatePinnedTx(tx *sqlx.Tx, pinned bool, userId i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdatePinnedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1396,6 +1608,11 @@ func (m *defaultMessagesModel) SelectPinnedMessageIdList(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPinnedMessageIdList: %w", err)
 	}
 
@@ -1409,7 +1626,13 @@ func (m *defaultMessagesModel) SelectPinnedMessageIdListWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectPinnedMessageIdListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -1445,6 +1668,7 @@ func (m *defaultMessagesModel) UpdateUnPinnedByIdList(ctx context.Context, userI
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateUnPinnedByIdList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1472,6 +1696,7 @@ func (m *defaultMessagesModel) UpdateUnPinnedByIdListTx(tx *sqlx.Tx, userId int6
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateUnPinnedByIdListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1496,6 +1721,7 @@ func (m *defaultMessagesModel) UpdateEditMessage(ctx context.Context, messageDat
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateEditMessage rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1518,6 +1744,7 @@ func (m *defaultMessagesModel) UpdateEditMessageTx(tx *sqlx.Tx, messageData stri
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateEditMessageTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1552,6 +1779,7 @@ func (m *defaultMessagesModel) UpdateCustomMap(ctx context.Context, cMap map[str
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateCustomMap rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1585,6 +1813,7 @@ func (m *defaultMessagesModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("messages.UpdateCustomMapTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1600,6 +1829,11 @@ func (m *defaultMessagesModel) SelectBackwardBySendUserIdOffsetIdLimit(ctx conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, senderUserId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardBySendUserIdOffsetIdLimit: %w", err)
 		return
 	}
@@ -1619,6 +1853,11 @@ func (m *defaultMessagesModel) SelectBackwardBySendUserIdOffsetIdLimitWithCB(ctx
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, senderUserId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardBySendUserIdOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -1645,6 +1884,11 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetIdLimit(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetIdLimit: %w", err)
 		return
 	}
@@ -1664,6 +1908,11 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetIdLimitWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -1690,6 +1939,11 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetIdLimit(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardSavedByOffsetIdLimit: %w", err)
 		return
 	}
@@ -1709,6 +1963,11 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetIdLimitWithCB(ctx conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardSavedByOffsetIdLimitWithCB: %w", err)
 		return
 	}
@@ -1735,6 +1994,11 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetDateLimit(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetDateLimit: %w", err)
 		return
 	}
@@ -1754,6 +2018,11 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetDateLimitWithCB(ctx co
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetDateLimitWithCB: %w", err)
 		return
 	}
@@ -1780,6 +2049,11 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetDateLimit(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardSavedByOffsetDateLimit: %w", err)
 		return
 	}
@@ -1799,6 +2073,11 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetDateLimitWithCB(ctx con
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, date2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("messages.SelectForwardSavedByOffsetDateLimitWithCB: %w", err)
 		return
 	}

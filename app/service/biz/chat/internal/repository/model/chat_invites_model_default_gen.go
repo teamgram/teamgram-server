@@ -124,6 +124,9 @@ func (m *defaultChatInvitesModel) FindListByIdList(ctx context.Context, id ...in
 	var resp []ChatInvites
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []ChatInvites{}, nil
+		}
 		return nil, fmt.Errorf("chat_invites.FindListByIdList: %w", err)
 	}
 
@@ -170,6 +173,9 @@ func (m *defaultChatInvitesModel) FindListByLinkList(ctx context.Context, link .
 	var resp []ChatInvites
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []ChatInvites{}, nil
+		}
 		return nil, fmt.Errorf("chat_invites.FindListByLinkList: %w", err)
 	}
 

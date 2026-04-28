@@ -113,6 +113,11 @@ func (m *defaultChatInviteParticipantsModel) SelectListByLink(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInviteParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invite_participants.SelectListByLink: %w", err)
 		return
 	}
@@ -132,6 +137,11 @@ func (m *defaultChatInviteParticipantsModel) SelectListByLinkWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInviteParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invite_participants.SelectListByLinkWithCB: %w", err)
 		return
 	}
@@ -166,6 +176,7 @@ func (m *defaultChatInviteParticipantsModel) Delete(ctx context.Context, chatId 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -188,6 +199,7 @@ func (m *defaultChatInviteParticipantsModel) DeleteTx(tx *sqlx.Tx, chatId int64,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -203,6 +215,11 @@ func (m *defaultChatInviteParticipantsModel) SelectRecentRequestedList(ctx conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInviteParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invite_participants.SelectRecentRequestedList: %w", err)
 		return
 	}
@@ -222,6 +239,11 @@ func (m *defaultChatInviteParticipantsModel) SelectRecentRequestedListWithCB(ctx
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatInviteParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_invite_participants.SelectRecentRequestedListWithCB: %w", err)
 		return
 	}
@@ -257,6 +279,7 @@ func (m *defaultChatInviteParticipantsModel) UpdateChatId(ctx context.Context, c
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.UpdateChatId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -279,6 +302,7 @@ func (m *defaultChatInviteParticipantsModel) UpdateChatIdTx(tx *sqlx.Tx, chatId 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.UpdateChatIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -303,6 +327,7 @@ func (m *defaultChatInviteParticipantsModel) UpdateApprovedBy(ctx context.Contex
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.UpdateApprovedBy rows affected: %w", err)
+		return
 	}
 
 	return
@@ -325,6 +350,7 @@ func (m *defaultChatInviteParticipantsModel) UpdateApprovedByTx(tx *sqlx.Tx, app
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_invite_participants.UpdateApprovedByTx rows affected: %w", err)
+		return
 	}
 
 	return

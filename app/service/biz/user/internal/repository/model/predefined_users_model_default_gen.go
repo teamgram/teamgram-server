@@ -114,6 +114,9 @@ func (m *defaultPredefinedUsersModel) FindListByIdList(ctx context.Context, id .
 	var resp []PredefinedUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []PredefinedUsers{}, nil
+		}
 		return nil, fmt.Errorf("predefined_users.FindListByIdList: %w", err)
 	}
 

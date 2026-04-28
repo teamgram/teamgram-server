@@ -125,6 +125,7 @@ func (m *defaultBotCommandsModel) Delete(ctx context.Context, botId int64) (rows
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("bot_commands.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -147,6 +148,7 @@ func (m *defaultBotCommandsModel) DeleteTx(tx *sqlx.Tx, botId int64) (rowsAffect
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("bot_commands.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -217,6 +219,11 @@ func (m *defaultBotCommandsModel) SelectList(ctx context.Context, botId int64) (
 	err = m.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bot_commands.SelectList: %w", err)
 		return
 	}
@@ -236,6 +243,11 @@ func (m *defaultBotCommandsModel) SelectListWithCB(ctx context.Context, botId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, botId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bot_commands.SelectListWithCB: %w", err)
 		return
 	}
@@ -267,6 +279,11 @@ func (m *defaultBotCommandsModel) SelectListByIdList(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bot_commands.SelectListByIdList: %w", err)
 		return
 	}
@@ -291,6 +308,11 @@ func (m *defaultBotCommandsModel) SelectListByIdListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("bot_commands.SelectListByIdListWithCB: %w", err)
 		return
 	}

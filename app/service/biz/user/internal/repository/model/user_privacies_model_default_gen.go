@@ -111,6 +111,9 @@ func (m *defaultUserPrivaciesModel) FindListByIdList(ctx context.Context, id ...
 	var resp []UserPrivacies
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPrivacies{}, nil
+		}
 		return nil, fmt.Errorf("user_privacies.FindListByIdList: %w", err)
 	}
 

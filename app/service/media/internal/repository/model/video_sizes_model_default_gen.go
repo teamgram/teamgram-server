@@ -115,6 +115,9 @@ func (m *defaultVideoSizesModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []VideoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []VideoSizes{}, nil
+		}
 		return nil, fmt.Errorf("video_sizes.FindListByIdList: %w", err)
 	}
 

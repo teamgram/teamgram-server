@@ -113,6 +113,9 @@ func (m *defaultUserPeerBlocksModel) FindListByIdList(ctx context.Context, id ..
 	var resp []UserPeerBlocks
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPeerBlocks{}, nil
+		}
 		return nil, fmt.Errorf("user_peer_blocks.FindListByIdList: %w", err)
 	}
 

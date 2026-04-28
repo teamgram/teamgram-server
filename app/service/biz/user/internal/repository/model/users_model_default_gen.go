@@ -145,6 +145,9 @@ func (m *defaultUsersModel) FindListByIdList(ctx context.Context, id ...int64) (
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Users{}, nil
+		}
 		return nil, fmt.Errorf("users.FindListByIdList: %w", err)
 	}
 
@@ -191,6 +194,9 @@ func (m *defaultUsersModel) FindListByPhoneList(ctx context.Context, phone ...st
 	var resp []Users
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Users{}, nil
+		}
 		return nil, fmt.Errorf("users.FindListByPhoneList: %w", err)
 	}
 

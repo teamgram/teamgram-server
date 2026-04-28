@@ -121,6 +121,9 @@ func (m *defaultPhotoSizesModel) FindListByIdList(ctx context.Context, id ...int
 	var resp []PhotoSizes
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []PhotoSizes{}, nil
+		}
 		return nil, fmt.Errorf("photo_sizes.FindListByIdList: %w", err)
 	}
 

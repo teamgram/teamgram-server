@@ -112,6 +112,9 @@ func (m *defaultUserProfilePhotosModel) FindListByIdList(ctx context.Context, id
 	var resp []UserProfilePhotos
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserProfilePhotos{}, nil
+		}
 		return nil, fmt.Errorf("user_profile_photos.FindListByIdList: %w", err)
 	}
 

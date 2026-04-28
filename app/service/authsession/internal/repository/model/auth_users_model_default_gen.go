@@ -116,6 +116,9 @@ func (m *defaultAuthUsersModel) FindListByIdList(ctx context.Context, id ...int6
 	var resp []AuthUsers
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []AuthUsers{}, nil
+		}
 		return nil, fmt.Errorf("auth_users.FindListByIdList: %w", err)
 	}
 

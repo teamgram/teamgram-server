@@ -112,6 +112,9 @@ func (m *defaultUserPresencesModel) FindListByIdList(ctx context.Context, id ...
 	var resp []UserPresences
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPresences{}, nil
+		}
 		return nil, fmt.Errorf("user_presences.FindListByIdList: %w", err)
 	}
 
@@ -159,6 +162,9 @@ func (m *defaultUserPresencesModel) FindListByUserIdList(ctx context.Context, us
 	var resp []UserPresences
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserPresences{}, nil
+		}
 		return nil, fmt.Errorf("user_presences.FindListByUserIdList: %w", err)
 	}
 

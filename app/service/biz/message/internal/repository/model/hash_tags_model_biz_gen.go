@@ -101,6 +101,11 @@ func (m *defaultHashTagsModel) SelectPeerHashTagList(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("hash_tags.SelectPeerHashTagList: %w", err)
 	}
 
@@ -114,7 +119,13 @@ func (m *defaultHashTagsModel) SelectPeerHashTagListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("hash_tags.SelectPeerHashTagListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -146,6 +157,7 @@ func (m *defaultHashTagsModel) DeleteHashTagMessageId(ctx context.Context, userI
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("hash_tags.DeleteHashTagMessageId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -168,6 +180,7 @@ func (m *defaultHashTagsModel) DeleteHashTagMessageIdTx(tx *sqlx.Tx, userId int6
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("hash_tags.DeleteHashTagMessageIdTx rows affected: %w", err)
+		return
 	}
 
 	return

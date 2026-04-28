@@ -113,6 +113,9 @@ func (m *defaultUnregisteredContactsModel) FindListByIdList(ctx context.Context,
 	var resp []UnregisteredContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UnregisteredContacts{}, nil
+		}
 		return nil, fmt.Errorf("unregistered_contacts.FindListByIdList: %w", err)
 	}
 

@@ -124,6 +124,9 @@ func (m *defaultDocumentsModel) FindListByIdList(ctx context.Context, id ...int6
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Documents{}, nil
+		}
 		return nil, fmt.Errorf("documents.FindListByIdList: %w", err)
 	}
 
@@ -171,6 +174,9 @@ func (m *defaultDocumentsModel) FindListByDocumentIdList(ctx context.Context, do
 	var resp []Documents
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Documents{}, nil
+		}
 		return nil, fmt.Errorf("documents.FindListByDocumentIdList: %w", err)
 	}
 

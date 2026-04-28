@@ -111,6 +111,9 @@ func (m *defaultDefaultHistoryTtlModel) FindListByIdList(ctx context.Context, id
 	var resp []DefaultHistoryTtl
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []DefaultHistoryTtl{}, nil
+		}
 		return nil, fmt.Errorf("default_history_ttl.FindListByIdList: %w", err)
 	}
 
@@ -158,6 +161,9 @@ func (m *defaultDefaultHistoryTtlModel) FindListByUserIdList(ctx context.Context
 	var resp []DefaultHistoryTtl
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []DefaultHistoryTtl{}, nil
+		}
 		return nil, fmt.Errorf("default_history_ttl.FindListByUserIdList: %w", err)
 	}
 

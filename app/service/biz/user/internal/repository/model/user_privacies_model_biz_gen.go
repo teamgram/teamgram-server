@@ -175,12 +175,15 @@ func (m *defaultUserPrivaciesModel) SelectPrivacy(ctx context.Context, userId in
 	err = m.db.QueryRowPartial(ctx, do, query, userId, keyType)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_privacies.SelectPrivacy: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_privacies",
+				Key:      fmt.Sprintf("user_id=%v,key_type=%v", userId, keyType),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_privacies.SelectPrivacy: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -203,6 +206,11 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyList(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectPrivacyList: %w", err)
 		return
 	}
@@ -227,6 +235,11 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectPrivacyListWithCB: %w", err)
 		return
 	}
@@ -262,6 +275,11 @@ func (m *defaultUserPrivaciesModel) SelectUsersPrivacyList(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectUsersPrivacyList: %w", err)
 		return
 	}
@@ -290,6 +308,11 @@ func (m *defaultUserPrivaciesModel) SelectUsersPrivacyListWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectUsersPrivacyListWithCB: %w", err)
 		return
 	}
@@ -316,6 +339,11 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyAll(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectPrivacyAll: %w", err)
 		return
 	}
@@ -335,6 +363,11 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyAllWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPrivacies{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_privacies.SelectPrivacyAllWithCB: %w", err)
 		return
 	}

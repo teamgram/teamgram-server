@@ -113,6 +113,9 @@ func (m *defaultPopularContactsModel) FindListByIdList(ctx context.Context, id .
 	var resp []PopularContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []PopularContacts{}, nil
+		}
 		return nil, fmt.Errorf("popular_contacts.FindListByIdList: %w", err)
 	}
 
@@ -159,6 +162,9 @@ func (m *defaultPopularContactsModel) FindListByPhoneList(ctx context.Context, p
 	var resp []PopularContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []PopularContacts{}, nil
+		}
 		return nil, fmt.Errorf("popular_contacts.FindListByPhoneList: %w", err)
 	}
 

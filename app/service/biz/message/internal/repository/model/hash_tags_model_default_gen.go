@@ -114,6 +114,9 @@ func (m *defaultHashTagsModel) FindListByIdList(ctx context.Context, id ...int64
 	var resp []HashTags
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []HashTags{}, nil
+		}
 		return nil, fmt.Errorf("hash_tags.FindListByIdList: %w", err)
 	}
 

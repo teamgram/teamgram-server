@@ -308,6 +308,7 @@ func (m *defaultDialogsModel) UpdateOutboxDialog(ctx context.Context, topMessage
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateOutboxDialog rows affected: %w", err)
+		return
 	}
 
 	return
@@ -330,6 +331,7 @@ func (m *defaultDialogsModel) UpdateOutboxDialogTx(tx *sqlx.Tx, topMessage int32
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateOutboxDialogTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -365,6 +367,7 @@ func (m *defaultDialogsModel) UpdateInboxDialog(ctx context.Context, cMap map[st
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateInboxDialog rows affected: %w", err)
+		return
 	}
 
 	return
@@ -399,6 +402,7 @@ func (m *defaultDialogsModel) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateInboxDialogTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -414,6 +418,11 @@ func (m *defaultDialogsModel) SelectPinnedDialogs(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectPinnedDialogs: %w", err)
 		return
 	}
@@ -433,6 +442,11 @@ func (m *defaultDialogsModel) SelectPinnedDialogsWithCB(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectPinnedDialogsWithCB: %w", err)
 		return
 	}
@@ -459,6 +473,11 @@ func (m *defaultDialogsModel) SelectFolderPinnedDialogs(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectFolderPinnedDialogs: %w", err)
 		return
 	}
@@ -478,6 +497,11 @@ func (m *defaultDialogsModel) SelectFolderPinnedDialogsWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectFolderPinnedDialogsWithCB: %w", err)
 		return
 	}
@@ -509,6 +533,11 @@ func (m *defaultDialogsModel) SelectPeerDialogList(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectPeerDialogList: %w", err)
 		return
 	}
@@ -533,6 +562,11 @@ func (m *defaultDialogsModel) SelectPeerDialogListWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectPeerDialogListWithCB: %w", err)
 		return
 	}
@@ -560,12 +594,15 @@ func (m *defaultDialogsModel) SelectDialog(ctx context.Context, userId int64, pe
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("dialogs.SelectDialog: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialogs",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("dialogs.SelectDialog: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -584,12 +621,15 @@ func (m *defaultDialogsModel) SelectByPeerDialogId(ctx context.Context, userId i
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerDialogId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("dialogs.SelectByPeerDialogId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialogs",
+				Key:      fmt.Sprintf("user_id=%v,peer_dialog_id=%v", userId, peerDialogId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("dialogs.SelectByPeerDialogId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -607,6 +647,11 @@ func (m *defaultDialogsModel) SelectDialogs(ctx context.Context, userId int64, f
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogs: %w", err)
 		return
 	}
@@ -626,6 +671,11 @@ func (m *defaultDialogsModel) SelectDialogsWithCB(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogsWithCB: %w", err)
 		return
 	}
@@ -652,6 +702,11 @@ func (m *defaultDialogsModel) SelectExcludePinnedDialogs(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectExcludePinnedDialogs: %w", err)
 		return
 	}
@@ -671,6 +726,11 @@ func (m *defaultDialogsModel) SelectExcludePinnedDialogsWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectExcludePinnedDialogsWithCB: %w", err)
 		return
 	}
@@ -697,6 +757,11 @@ func (m *defaultDialogsModel) SelectExcludeFolderPinnedDialogs(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectExcludeFolderPinnedDialogs: %w", err)
 		return
 	}
@@ -716,6 +781,11 @@ func (m *defaultDialogsModel) SelectExcludeFolderPinnedDialogsWithCB(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectExcludeFolderPinnedDialogsWithCB: %w", err)
 		return
 	}
@@ -751,6 +821,7 @@ func (m *defaultDialogsModel) UpdateReadInboxMaxId(ctx context.Context, unreadCo
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateReadInboxMaxId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -773,6 +844,7 @@ func (m *defaultDialogsModel) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, unreadCount in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateReadInboxMaxIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -797,6 +869,7 @@ func (m *defaultDialogsModel) UpdateReadOutboxMaxId(ctx context.Context, readOut
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -819,6 +892,7 @@ func (m *defaultDialogsModel) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, readOutboxMax
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateReadOutboxMaxIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -843,6 +917,7 @@ func (m *defaultDialogsModel) UpdateTopMessage(ctx context.Context, topMessage i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateTopMessage rows affected: %w", err)
+		return
 	}
 
 	return
@@ -865,6 +940,7 @@ func (m *defaultDialogsModel) UpdateTopMessageTx(tx *sqlx.Tx, topMessage int32, 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateTopMessageTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -889,6 +965,7 @@ func (m *defaultDialogsModel) UpdatePinnedMsgId(ctx context.Context, pinnedMsgId
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePinnedMsgId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -911,6 +988,7 @@ func (m *defaultDialogsModel) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinnedMsgId int32
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePinnedMsgIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -934,6 +1012,7 @@ func (m *defaultDialogsModel) Delete(ctx context.Context, userId int64, peerType
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -956,6 +1035,7 @@ func (m *defaultDialogsModel) DeleteTx(tx *sqlx.Tx, userId int64, peerType int32
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -968,6 +1048,11 @@ func (m *defaultDialogsModel) SelectDialogsByGTReadInboxMaxId(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &rList, query, peerType, peerId, readInboxMaxId, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogsByGTReadInboxMaxId: %w", err)
 	}
 
@@ -981,7 +1066,13 @@ func (m *defaultDialogsModel) SelectDialogsByGTReadInboxMaxIdWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &rList, query, peerType, peerId, readInboxMaxId, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogsByGTReadInboxMaxIdWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -1024,6 +1115,7 @@ func (m *defaultDialogsModel) UpdateCustomMap(ctx context.Context, cMap map[stri
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateCustomMap rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1058,6 +1150,7 @@ func (m *defaultDialogsModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateCustomMapTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1082,6 +1175,7 @@ func (m *defaultDialogsModel) SaveDraft(ctx context.Context, draftType int32, dr
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.SaveDraft rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1104,6 +1198,7 @@ func (m *defaultDialogsModel) SaveDraftTx(tx *sqlx.Tx, draftType int32, draftMes
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.SaveDraftTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1119,6 +1214,11 @@ func (m *defaultDialogsModel) SelectAllDrafts(ctx context.Context, userId int64)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectAllDrafts: %w", err)
 		return
 	}
@@ -1138,6 +1238,11 @@ func (m *defaultDialogsModel) SelectAllDraftsWithCB(ctx context.Context, userId 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectAllDraftsWithCB: %w", err)
 		return
 	}
@@ -1173,6 +1278,7 @@ func (m *defaultDialogsModel) ClearAllDrafts(ctx context.Context, userId int64) 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.ClearAllDrafts rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1195,6 +1301,7 @@ func (m *defaultDialogsModel) ClearAllDraftsTx(tx *sqlx.Tx, userId int64) (rowsA
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.ClearAllDraftsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1219,6 +1326,7 @@ func (m *defaultDialogsModel) UpdatePeerFolderId(ctx context.Context, folderId i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerFolderId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1241,6 +1349,7 @@ func (m *defaultDialogsModel) UpdatePeerFolderIdTx(tx *sqlx.Tx, folderId int32, 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerFolderIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1269,6 +1378,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListFolderId(ctx context.Context, 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1296,6 +1406,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerDialogListFolderIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1324,6 +1435,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListPinned(ctx context.Context, pi
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinned rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1351,6 +1463,7 @@ func (m *defaultDialogsModel) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdatePeerDialogListPinnedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1379,6 +1492,7 @@ func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinned(ctx context.Conte
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinned rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1406,6 +1520,7 @@ func (m *defaultDialogsModel) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, fo
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateFolderPeerDialogListPinnedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1434,6 +1549,7 @@ func (m *defaultDialogsModel) UpdateUnPinnedNotIdList(ctx context.Context, userI
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1461,6 +1577,7 @@ func (m *defaultDialogsModel) UpdateUnPinnedNotIdListTx(tx *sqlx.Tx, userId int6
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateUnPinnedNotIdListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1489,6 +1606,7 @@ func (m *defaultDialogsModel) UpdateFolderUnPinnedNotIdList(ctx context.Context,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1516,6 +1634,7 @@ func (m *defaultDialogsModel) UpdateFolderUnPinnedNotIdListTx(tx *sqlx.Tx, userI
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateFolderUnPinnedNotIdListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1531,6 +1650,11 @@ func (m *defaultDialogsModel) SelectAllDialogs(ctx context.Context, userId int64
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectAllDialogs: %w", err)
 		return
 	}
@@ -1550,6 +1674,11 @@ func (m *defaultDialogsModel) SelectAllDialogsWithCB(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectAllDialogsWithCB: %w", err)
 		return
 	}
@@ -1581,6 +1710,11 @@ func (m *defaultDialogsModel) SelectDialogsByPeerType(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogsByPeerType: %w", err)
 		return
 	}
@@ -1605,6 +1739,11 @@ func (m *defaultDialogsModel) SelectDialogsByPeerTypeWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Dialogs{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("dialogs.SelectDialogsByPeerTypeWithCB: %w", err)
 		return
 	}
@@ -1640,6 +1779,7 @@ func (m *defaultDialogsModel) UpdateUnreadCount(ctx context.Context, unreadCount
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateUnreadCount rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1662,6 +1802,7 @@ func (m *defaultDialogsModel) UpdateUnreadCountTx(tx *sqlx.Tx, unreadCount int32
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialogs.UpdateUnreadCountTx rows affected: %w", err)
+		return
 	}
 
 	return

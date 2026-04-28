@@ -104,6 +104,11 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeId(ctx context.Context, ph
 	err = m.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PhotoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("photo_sizes.SelectListByPhotoSizeId: %w", err)
 		return
 	}
@@ -123,6 +128,11 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PhotoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("photo_sizes.SelectListByPhotoSizeIdWithCB: %w", err)
 		return
 	}
@@ -154,6 +164,11 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdList(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PhotoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("photo_sizes.SelectListByPhotoSizeIdList: %w", err)
 		return
 	}
@@ -178,6 +193,11 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdListWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PhotoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("photo_sizes.SelectListByPhotoSizeIdListWithCB: %w", err)
 		return
 	}

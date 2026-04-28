@@ -107,12 +107,15 @@ func (m *defaultDocumentsModel) SelectByDocumentId(ctx context.Context, document
 	err = m.db.QueryRowPartial(ctx, do, query, documentId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("documents.SelectByDocumentId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "documents",
+				Key:      fmt.Sprintf("document_id=%v", documentId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("documents.SelectByDocumentId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -135,6 +138,11 @@ func (m *defaultDocumentsModel) SelectByDocumentIdList(ctx context.Context, idLi
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("documents.SelectByDocumentIdList: %w", err)
 		return
 	}
@@ -159,6 +167,11 @@ func (m *defaultDocumentsModel) SelectByDocumentIdListWithCB(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("documents.SelectByDocumentIdListWithCB: %w", err)
 		return
 	}
@@ -190,6 +203,11 @@ func (m *defaultDocumentsModel) SelectByIdList(ctx context.Context, idList []int
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("documents.SelectByIdList: %w", err)
 		return
 	}
@@ -214,6 +232,11 @@ func (m *defaultDocumentsModel) SelectByIdListWithCB(ctx context.Context, idList
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("documents.SelectByIdListWithCB: %w", err)
 		return
 	}

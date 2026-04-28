@@ -119,12 +119,15 @@ func (m *defaultAuthUsersModel) Select(ctx context.Context, authKeyId int64) (rV
 	err = m.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("auth_users.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "auth_users",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("auth_users.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -151,6 +154,7 @@ func (m *defaultAuthUsersModel) UpdateAndroidPushSessionId(ctx context.Context, 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -173,6 +177,7 @@ func (m *defaultAuthUsersModel) UpdateAndroidPushSessionIdTx(tx *sqlx.Tx, androi
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.UpdateAndroidPushSessionIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -188,6 +193,11 @@ func (m *defaultAuthUsersModel) SelectAuthKeyIds(ctx context.Context, userId int
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_users.SelectAuthKeyIds: %w", err)
 		return
 	}
@@ -207,6 +217,11 @@ func (m *defaultAuthUsersModel) SelectAuthKeyIdsWithCB(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_users.SelectAuthKeyIdsWithCB: %w", err)
 		return
 	}
@@ -246,6 +261,7 @@ func (m *defaultAuthUsersModel) DeleteByHashList(ctx context.Context, idList []i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.DeleteByHashList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -273,6 +289,7 @@ func (m *defaultAuthUsersModel) DeleteByHashListTx(tx *sqlx.Tx, idList []int64) 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.DeleteByHashListTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -288,6 +305,11 @@ func (m *defaultAuthUsersModel) SelectListByUserId(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_users.SelectListByUserId: %w", err)
 		return
 	}
@@ -307,6 +329,11 @@ func (m *defaultAuthUsersModel) SelectListByUserIdWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthUsers{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("auth_users.SelectListByUserIdWithCB: %w", err)
 		return
 	}
@@ -342,6 +369,7 @@ func (m *defaultAuthUsersModel) Delete(ctx context.Context, authKeyId int64, use
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -364,6 +392,7 @@ func (m *defaultAuthUsersModel) DeleteTx(tx *sqlx.Tx, authKeyId int64, userId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -388,6 +417,7 @@ func (m *defaultAuthUsersModel) DeleteUser(ctx context.Context, userId int64) (r
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.DeleteUser rows affected: %w", err)
+		return
 	}
 
 	return
@@ -410,6 +440,7 @@ func (m *defaultAuthUsersModel) DeleteUserTx(tx *sqlx.Tx, userId int64) (rowsAff
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("auth_users.DeleteUserTx rows affected: %w", err)
+		return
 	}
 
 	return

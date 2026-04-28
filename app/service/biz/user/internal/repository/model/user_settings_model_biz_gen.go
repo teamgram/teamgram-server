@@ -104,12 +104,15 @@ func (m *defaultUserSettingsModel) SelectByKey(ctx context.Context, userId int64
 	err = m.db.QueryRowPartial(ctx, do, query, userId, key2)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_settings.SelectByKey: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_settings",
+				Key:      fmt.Sprintf("user_id=%v,key2=%v", userId, key2),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_settings.SelectByKey: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -136,6 +139,7 @@ func (m *defaultUserSettingsModel) Update(ctx context.Context, value string, use
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_settings.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -158,6 +162,7 @@ func (m *defaultUserSettingsModel) UpdateTx(tx *sqlx.Tx, value string, userId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_settings.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return

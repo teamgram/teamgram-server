@@ -104,6 +104,11 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeId(ctx context.Context, vi
 	err = m.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []VideoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("video_sizes.SelectListByVideoSizeId: %w", err)
 		return
 	}
@@ -123,6 +128,11 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []VideoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdWithCB: %w", err)
 		return
 	}
@@ -154,6 +164,11 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdList(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []VideoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdList: %w", err)
 		return
 	}
@@ -178,6 +193,11 @@ func (m *defaultVideoSizesModel) SelectListByVideoSizeIdListWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []VideoSizes{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("video_sizes.SelectListByVideoSizeIdListWithCB: %w", err)
 		return
 	}

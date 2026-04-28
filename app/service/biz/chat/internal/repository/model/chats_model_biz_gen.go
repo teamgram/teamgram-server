@@ -142,12 +142,15 @@ func (m *defaultChatsModel) Select(ctx context.Context, id int64) (rValue *Chats
 	err = m.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("chats.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "chats",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("chats.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -166,12 +169,15 @@ func (m *defaultChatsModel) SelectLastCreator(ctx context.Context, creatorUserId
 	err = m.db.QueryRowPartial(ctx, do, query, creatorUserId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("chats.SelectLastCreator: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "chats",
+				Key:      fmt.Sprintf("creator_user_id=%v", creatorUserId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("chats.SelectLastCreator: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -198,6 +204,7 @@ func (m *defaultChatsModel) UpdateTitle(ctx context.Context, title string, id in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateTitle rows affected: %w", err)
+		return
 	}
 
 	return
@@ -220,6 +227,7 @@ func (m *defaultChatsModel) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateTitleTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -244,6 +252,7 @@ func (m *defaultChatsModel) UpdateAbout(ctx context.Context, about string, id in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateAbout rows affected: %w", err)
+		return
 	}
 
 	return
@@ -266,6 +275,7 @@ func (m *defaultChatsModel) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateAboutTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -286,6 +296,11 @@ func (m *defaultChatsModel) SelectByIdList(ctx context.Context, idList []int32) 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Chats{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chats.SelectByIdList: %w", err)
 		return
 	}
@@ -310,6 +325,11 @@ func (m *defaultChatsModel) SelectByIdListWithCB(ctx context.Context, idList []i
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Chats{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chats.SelectByIdListWithCB: %w", err)
 		return
 	}
@@ -345,6 +365,7 @@ func (m *defaultChatsModel) UpdateParticipantCount(ctx context.Context, particip
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateParticipantCount rows affected: %w", err)
+		return
 	}
 
 	return
@@ -367,6 +388,7 @@ func (m *defaultChatsModel) UpdateParticipantCountTx(tx *sqlx.Tx, participantCou
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateParticipantCountTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -391,6 +413,7 @@ func (m *defaultChatsModel) UpdatePhotoId(ctx context.Context, photoId int64, id
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdatePhotoId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -413,6 +436,7 @@ func (m *defaultChatsModel) UpdatePhotoIdTx(tx *sqlx.Tx, photoId int64, id int64
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdatePhotoIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -437,6 +461,7 @@ func (m *defaultChatsModel) UpdateDefaultBannedRights(ctx context.Context, defau
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateDefaultBannedRights rows affected: %w", err)
+		return
 	}
 
 	return
@@ -459,6 +484,7 @@ func (m *defaultChatsModel) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, defaultBann
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateDefaultBannedRightsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -483,6 +509,7 @@ func (m *defaultChatsModel) UpdateVersion(ctx context.Context, id int64) (rowsAf
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateVersion rows affected: %w", err)
+		return
 	}
 
 	return
@@ -505,6 +532,7 @@ func (m *defaultChatsModel) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateVersionTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -529,6 +557,7 @@ func (m *defaultChatsModel) UpdateDeactivated(ctx context.Context, deactivated b
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateDeactivated rows affected: %w", err)
+		return
 	}
 
 	return
@@ -551,6 +580,7 @@ func (m *defaultChatsModel) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateDeactivatedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -575,6 +605,7 @@ func (m *defaultChatsModel) UpdateMigratedTo(ctx context.Context, migratedToId i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateMigratedTo rows affected: %w", err)
+		return
 	}
 
 	return
@@ -597,6 +628,7 @@ func (m *defaultChatsModel) UpdateMigratedToTx(tx *sqlx.Tx, migratedToId int64, 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateMigratedToTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -621,6 +653,7 @@ func (m *defaultChatsModel) UpdateAvailableReactions(ctx context.Context, availa
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateAvailableReactions rows affected: %w", err)
+		return
 	}
 
 	return
@@ -643,6 +676,7 @@ func (m *defaultChatsModel) UpdateAvailableReactionsTx(tx *sqlx.Tx, availableRea
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateAvailableReactionsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -667,6 +701,7 @@ func (m *defaultChatsModel) UpdateNoforwards(ctx context.Context, noforwards boo
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateNoforwards rows affected: %w", err)
+		return
 	}
 
 	return
@@ -689,6 +724,7 @@ func (m *defaultChatsModel) UpdateNoforwardsTx(tx *sqlx.Tx, noforwards bool, id 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateNoforwardsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -713,6 +749,7 @@ func (m *defaultChatsModel) UpdateTTLPeriod(ctx context.Context, ttlPeriod int32
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateTTLPeriod rows affected: %w", err)
+		return
 	}
 
 	return
@@ -735,6 +772,7 @@ func (m *defaultChatsModel) UpdateTTLPeriodTx(tx *sqlx.Tx, ttlPeriod int32, id i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chats.UpdateTTLPeriodTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -747,6 +785,11 @@ func (m *defaultChatsModel) SearchByQueryString(ctx context.Context, q string, l
 	err = m.db.QueryRowsPartial(ctx, &rList, query, q, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chats.SearchByQueryString: %w", err)
 	}
 
@@ -760,7 +803,13 @@ func (m *defaultChatsModel) SearchByQueryStringWithCB(ctx context.Context, q str
 	err = m.db.QueryRowsPartial(ctx, &rList, query, q, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chats.SearchByQueryStringWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {

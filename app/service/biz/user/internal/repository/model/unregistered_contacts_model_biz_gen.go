@@ -110,6 +110,11 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhone(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UnregisteredContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("unregistered_contacts.SelectImportersByPhone: %w", err)
 		return
 	}
@@ -129,6 +134,11 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhoneWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UnregisteredContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("unregistered_contacts.SelectImportersByPhoneWithCB: %w", err)
 		return
 	}
@@ -164,6 +174,7 @@ func (m *defaultUnregisteredContactsModel) UpdateContactName(ctx context.Context
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.UpdateContactName rows affected: %w", err)
+		return
 	}
 
 	return
@@ -186,6 +197,7 @@ func (m *defaultUnregisteredContactsModel) UpdateContactNameTx(tx *sqlx.Tx, impo
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.UpdateContactNameTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -214,6 +226,7 @@ func (m *defaultUnregisteredContactsModel) DeleteContacts(ctx context.Context, i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.DeleteContacts rows affected: %w", err)
+		return
 	}
 
 	return
@@ -241,6 +254,7 @@ func (m *defaultUnregisteredContactsModel) DeleteContactsTx(tx *sqlx.Tx, idList 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.DeleteContactsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -265,6 +279,7 @@ func (m *defaultUnregisteredContactsModel) DeleteImportersByPhone(ctx context.Co
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhone rows affected: %w", err)
+		return
 	}
 
 	return
@@ -287,6 +302,7 @@ func (m *defaultUnregisteredContactsModel) DeleteImportersByPhoneTx(tx *sqlx.Tx,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhoneTx rows affected: %w", err)
+		return
 	}
 
 	return

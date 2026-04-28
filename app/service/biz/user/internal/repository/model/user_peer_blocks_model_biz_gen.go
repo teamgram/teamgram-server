@@ -109,6 +109,11 @@ func (m *defaultUserPeerBlocksModel) SelectList(ctx context.Context, userId int6
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPeerBlocks{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_peer_blocks.SelectList: %w", err)
 		return
 	}
@@ -128,6 +133,11 @@ func (m *defaultUserPeerBlocksModel) SelectListWithCB(ctx context.Context, userI
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPeerBlocks{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_peer_blocks.SelectListWithCB: %w", err)
 		return
 	}
@@ -158,6 +168,11 @@ func (m *defaultUserPeerBlocksModel) SelectListByIdList(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_peer_blocks.SelectListByIdList: %w", err)
 	}
 
@@ -178,7 +193,13 @@ func (m *defaultUserPeerBlocksModel) SelectListByIdListWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_peer_blocks.SelectListByIdListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -202,12 +223,15 @@ func (m *defaultUserPeerBlocksModel) Select(ctx context.Context, userId int64, p
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_peer_blocks.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_peer_blocks",
+				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_peer_blocks.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -234,6 +258,7 @@ func (m *defaultUserPeerBlocksModel) Delete(ctx context.Context, userId int64, p
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_blocks.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -256,6 +281,7 @@ func (m *defaultUserPeerBlocksModel) DeleteTx(tx *sqlx.Tx, userId int64, peerTyp
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_peer_blocks.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return

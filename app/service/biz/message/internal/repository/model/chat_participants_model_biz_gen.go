@@ -286,6 +286,11 @@ func (m *defaultChatParticipantsModel) SelectList(ctx context.Context, chatId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectList: %w", err)
 		return
 	}
@@ -305,6 +310,11 @@ func (m *defaultChatParticipantsModel) SelectListWithCB(ctx context.Context, cha
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectListWithCB: %w", err)
 		return
 	}
@@ -332,12 +342,15 @@ func (m *defaultChatParticipantsModel) SelectByParticipant(ctx context.Context, 
 	err = m.db.QueryRowPartial(ctx, do, query, chatId, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("chat_participants.SelectByParticipant: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "chat_participants",
+				Key:      fmt.Sprintf("chat_id=%v,user_id=%v", chatId, userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("chat_participants.SelectByParticipant: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -364,6 +377,7 @@ func (m *defaultChatParticipantsModel) Update(ctx context.Context, participantTy
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -386,6 +400,7 @@ func (m *defaultChatParticipantsModel) UpdateTx(tx *sqlx.Tx, participantType int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -410,6 +425,7 @@ func (m *defaultChatParticipantsModel) UpdateKicked(ctx context.Context, kickedA
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateKicked rows affected: %w", err)
+		return
 	}
 
 	return
@@ -432,6 +448,7 @@ func (m *defaultChatParticipantsModel) UpdateKickedTx(tx *sqlx.Tx, kickedAt int6
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateKickedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -456,6 +473,7 @@ func (m *defaultChatParticipantsModel) UpdateLeft(ctx context.Context, leftAt in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateLeft rows affected: %w", err)
+		return
 	}
 
 	return
@@ -478,6 +496,7 @@ func (m *defaultChatParticipantsModel) UpdateLeftTx(tx *sqlx.Tx, leftAt int64, i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateLeftTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -502,6 +521,7 @@ func (m *defaultChatParticipantsModel) UpdatePinnedMsgId(ctx context.Context, us
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdatePinnedMsgId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -524,6 +544,7 @@ func (m *defaultChatParticipantsModel) UpdatePinnedMsgIdTx(tx *sqlx.Tx, userId i
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdatePinnedMsgIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -548,6 +569,7 @@ func (m *defaultChatParticipantsModel) UpdateParticipantType(ctx context.Context
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateParticipantType rows affected: %w", err)
+		return
 	}
 
 	return
@@ -570,6 +592,7 @@ func (m *defaultChatParticipantsModel) UpdateParticipantTypeTx(tx *sqlx.Tx, part
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateParticipantTypeTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -594,6 +617,7 @@ func (m *defaultChatParticipantsModel) SaveDraft(ctx context.Context, userId int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.SaveDraft rows affected: %w", err)
+		return
 	}
 
 	return
@@ -616,6 +640,7 @@ func (m *defaultChatParticipantsModel) SaveDraftTx(tx *sqlx.Tx, userId int64, ch
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.SaveDraftTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -640,6 +665,7 @@ func (m *defaultChatParticipantsModel) ClearDraft(ctx context.Context, userId in
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.ClearDraft rows affected: %w", err)
+		return
 	}
 
 	return
@@ -662,6 +688,7 @@ func (m *defaultChatParticipantsModel) ClearDraftTx(tx *sqlx.Tx, userId int64, c
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.ClearDraftTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -677,6 +704,11 @@ func (m *defaultChatParticipantsModel) SelectDraftList(ctx context.Context, user
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectDraftList: %w", err)
 		return
 	}
@@ -696,6 +728,11 @@ func (m *defaultChatParticipantsModel) SelectDraftListWithCB(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectDraftListWithCB: %w", err)
 		return
 	}
@@ -741,6 +778,7 @@ func (m *defaultChatParticipantsModel) UpdateOutboxDialog(ctx context.Context, c
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateOutboxDialog rows affected: %w", err)
+		return
 	}
 
 	return
@@ -774,6 +812,7 @@ func (m *defaultChatParticipantsModel) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap ma
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateOutboxDialogTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -798,6 +837,7 @@ func (m *defaultChatParticipantsModel) UpdateUnreadByPeer(ctx context.Context, u
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateUnreadByPeer rows affected: %w", err)
+		return
 	}
 
 	return
@@ -820,6 +860,7 @@ func (m *defaultChatParticipantsModel) UpdateUnreadByPeerTx(tx *sqlx.Tx, userId 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateUnreadByPeerTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -844,6 +885,7 @@ func (m *defaultChatParticipantsModel) UpdateReadOutboxMaxIdByPeer(ctx context.C
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateReadOutboxMaxIdByPeer rows affected: %w", err)
+		return
 	}
 
 	return
@@ -866,6 +908,7 @@ func (m *defaultChatParticipantsModel) UpdateReadOutboxMaxIdByPeerTx(tx *sqlx.Tx
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateReadOutboxMaxIdByPeerTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -881,6 +924,11 @@ func (m *defaultChatParticipantsModel) SelectByOffsetId(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectByOffsetId: %w", err)
 		return
 	}
@@ -900,6 +948,11 @@ func (m *defaultChatParticipantsModel) SelectByOffsetIdWithCB(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectByOffsetIdWithCB: %w", err)
 		return
 	}
@@ -926,6 +979,11 @@ func (m *defaultChatParticipantsModel) SelectExcludePinnedByOffsetId(ctx context
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectExcludePinnedByOffsetId: %w", err)
 		return
 	}
@@ -945,6 +1003,11 @@ func (m *defaultChatParticipantsModel) SelectExcludePinnedByOffsetIdWithCB(ctx c
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectExcludePinnedByOffsetIdWithCB: %w", err)
 		return
 	}
@@ -976,6 +1039,11 @@ func (m *defaultChatParticipantsModel) SelectListByChatIdList(ctx context.Contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectListByChatIdList: %w", err)
 		return
 	}
@@ -1000,6 +1068,11 @@ func (m *defaultChatParticipantsModel) SelectListByChatIdListWithCB(ctx context.
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectListByChatIdListWithCB: %w", err)
 		return
 	}
@@ -1035,6 +1108,7 @@ func (m *defaultChatParticipantsModel) UpdatePinned(ctx context.Context, userId 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdatePinned rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1057,6 +1131,7 @@ func (m *defaultChatParticipantsModel) UpdatePinnedTx(tx *sqlx.Tx, userId int64,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdatePinnedTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1072,6 +1147,11 @@ func (m *defaultChatParticipantsModel) SelectPinnedDialogs(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectPinnedDialogs: %w", err)
 		return
 	}
@@ -1091,6 +1171,11 @@ func (m *defaultChatParticipantsModel) SelectPinnedDialogsWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectPinnedDialogsWithCB: %w", err)
 		return
 	}
@@ -1136,6 +1221,7 @@ func (m *defaultChatParticipantsModel) UpdateInboxDialog(ctx context.Context, cM
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateInboxDialog rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1169,6 +1255,7 @@ func (m *defaultChatParticipantsModel) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateInboxDialogTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1193,6 +1280,7 @@ func (m *defaultChatParticipantsModel) UpdateMarkDialogUnread(ctx context.Contex
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateMarkDialogUnread rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1215,6 +1303,7 @@ func (m *defaultChatParticipantsModel) UpdateMarkDialogUnreadTx(tx *sqlx.Tx, use
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateMarkDialogUnreadTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1227,6 +1316,11 @@ func (m *defaultChatParticipantsModel) SelectMarkDialogUnreadList(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectMarkDialogUnreadList: %w", err)
 	}
 
@@ -1240,7 +1334,13 @@ func (m *defaultChatParticipantsModel) SelectMarkDialogUnreadListWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("chat_participants.SelectMarkDialogUnreadListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -1282,6 +1382,7 @@ func (m *defaultChatParticipantsModel) UpdateCustomMap(ctx context.Context, cMap
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateCustomMap rows affected: %w", err)
+		return
 	}
 
 	return
@@ -1315,6 +1416,7 @@ func (m *defaultChatParticipantsModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[s
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("chat_participants.UpdateCustomMapTx rows affected: %w", err)
+		return
 	}
 
 	return

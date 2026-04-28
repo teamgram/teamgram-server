@@ -110,12 +110,15 @@ func (m *defaultDraftsModel) Select(ctx context.Context, userId int32, peerDialo
 	err = m.db.QueryRowPartial(ctx, do, query, userId, peerDialogId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("drafts.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "drafts",
+				Key:      fmt.Sprintf("user_id=%v,peer_dialog_id=%v", userId, peerDialogId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("drafts.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -130,6 +133,11 @@ func (m *defaultDraftsModel) SelectIdList(ctx context.Context, userId int32) (rL
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("drafts.SelectIdList: %w", err)
 	}
 
@@ -143,7 +151,13 @@ func (m *defaultDraftsModel) SelectIdListWithCB(ctx context.Context, userId int3
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("drafts.SelectIdListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -171,6 +185,11 @@ func (m *defaultDraftsModel) SelectByIdList(ctx context.Context, userId int32, i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Drafts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("drafts.SelectByIdList: %w", err)
 		return
 	}
@@ -195,6 +214,11 @@ func (m *defaultDraftsModel) SelectByIdListWithCB(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Drafts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("drafts.SelectByIdListWithCB: %w", err)
 		return
 	}
@@ -234,6 +258,7 @@ func (m *defaultDraftsModel) ClearByIdList(ctx context.Context, userId int32, id
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("drafts.ClearByIdList rows affected: %w", err)
+		return
 	}
 
 	return
@@ -261,6 +286,7 @@ func (m *defaultDraftsModel) ClearByIdListTx(tx *sqlx.Tx, userId int32, idList [
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("drafts.ClearByIdListTx rows affected: %w", err)
+		return
 	}
 
 	return

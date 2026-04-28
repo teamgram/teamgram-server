@@ -124,6 +124,9 @@ func (m *defaultAuthsModel) FindListByIdList(ctx context.Context, id ...int64) (
 	var resp []Auths
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Auths{}, nil
+		}
 		return nil, fmt.Errorf("auths.FindListByIdList: %w", err)
 	}
 
@@ -171,6 +174,9 @@ func (m *defaultAuthsModel) FindListByAuthKeyIdList(ctx context.Context, authKey
 	var resp []Auths
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Auths{}, nil
+		}
 		return nil, fmt.Errorf("auths.FindListByAuthKeyIdList: %w", err)
 	}
 

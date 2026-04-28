@@ -114,6 +114,9 @@ func (m *defaultAuthSeqUpdatesModel) FindListByIdList(ctx context.Context, id ..
 	var resp []AuthSeqUpdates
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []AuthSeqUpdates{}, nil
+		}
 		return nil, fmt.Errorf("auth_seq_updates.FindListByIdList: %w", err)
 	}
 

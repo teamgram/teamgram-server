@@ -112,6 +112,9 @@ func (m *defaultDraftsModel) FindListByIdList(ctx context.Context, id ...int32) 
 	var resp []Drafts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Drafts{}, nil
+		}
 		return nil, fmt.Errorf("drafts.FindListByIdList: %w", err)
 	}
 

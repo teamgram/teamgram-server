@@ -101,12 +101,15 @@ func (m *defaultPhotosModel) SelectByPhotoId(ctx context.Context, photoId int64)
 	err = m.db.QueryRowPartial(ctx, do, query, photoId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("photos.SelectByPhotoId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "photos",
+				Key:      fmt.Sprintf("photo_id=%v", photoId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("photos.SelectByPhotoId: %w", err)
+		return
 	} else {
 		rValue = do
 	}

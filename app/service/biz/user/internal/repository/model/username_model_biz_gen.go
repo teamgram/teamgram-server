@@ -138,6 +138,11 @@ func (m *defaultUsernameModel) SelectList(ctx context.Context, nameList []string
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectList: %w", err)
 		return
 	}
@@ -162,6 +167,11 @@ func (m *defaultUsernameModel) SelectListWithCB(ctx context.Context, nameList []
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectListWithCB: %w", err)
 		return
 	}
@@ -189,12 +199,15 @@ func (m *defaultUsernameModel) SelectByUsername(ctx context.Context, username st
 	err = m.db.QueryRowPartial(ctx, do, query, username)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("username.SelectByUsername: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("username=%v", username),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("username.SelectByUsername: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -230,6 +243,7 @@ func (m *defaultUsernameModel) Update(ctx context.Context, cMap map[string]inter
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.Update rows affected: %w", err)
+		return
 	}
 
 	return
@@ -262,6 +276,7 @@ func (m *defaultUsernameModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.UpdateTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -285,6 +300,7 @@ func (m *defaultUsernameModel) Delete(ctx context.Context, username string) (row
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -307,6 +323,7 @@ func (m *defaultUsernameModel) DeleteTx(tx *sqlx.Tx, username string) (rowsAffec
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -330,6 +347,7 @@ func (m *defaultUsernameModel) DeleteByPeer(ctx context.Context, peerType int32,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.DeleteByPeer rows affected: %w", err)
+		return
 	}
 
 	return
@@ -352,6 +370,7 @@ func (m *defaultUsernameModel) DeleteByPeerTx(tx *sqlx.Tx, peerType int32, peerI
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.DeleteByPeerTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -375,6 +394,7 @@ func (m *defaultUsernameModel) DeleteByChannelId(ctx context.Context, peerId int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.DeleteByChannelId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -397,6 +417,7 @@ func (m *defaultUsernameModel) DeleteByChannelIdTx(tx *sqlx.Tx, peerId int64) (r
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.DeleteByChannelIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -413,12 +434,15 @@ func (m *defaultUsernameModel) SelectByPeer(ctx context.Context, peerType int32,
 	err = m.db.QueryRowPartial(ctx, do, query, peerType, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("username.SelectByPeer: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("peer_type=%v,peer_id=%v", peerType, peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("username.SelectByPeer: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -437,12 +461,15 @@ func (m *defaultUsernameModel) SelectByUserId(ctx context.Context, peerId int64)
 	err = m.db.QueryRowPartial(ctx, do, query, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("username.SelectByUserId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("peer_id=%v", peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("username.SelectByUserId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -460,6 +487,11 @@ func (m *defaultUsernameModel) SelectListByUserId(ctx context.Context, peerId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectListByUserId: %w", err)
 		return
 	}
@@ -479,6 +511,11 @@ func (m *defaultUsernameModel) SelectListByUserIdWithCB(ctx context.Context, pee
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectListByUserIdWithCB: %w", err)
 		return
 	}
@@ -506,12 +543,15 @@ func (m *defaultUsernameModel) SelectByChannelId(ctx context.Context, peerId int
 	err = m.db.QueryRowPartial(ctx, do, query, peerId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("username.SelectByChannelId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "username",
+				Key:      fmt.Sprintf("peer_id=%v", peerId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("username.SelectByChannelId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -529,6 +569,11 @@ func (m *defaultUsernameModel) SelectListByChannelId(ctx context.Context, peerId
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectListByChannelId: %w", err)
 		return
 	}
@@ -548,6 +593,11 @@ func (m *defaultUsernameModel) SelectListByChannelIdWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, peerId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SelectListByChannelIdWithCB: %w", err)
 		return
 	}
@@ -583,6 +633,7 @@ func (m *defaultUsernameModel) UpdateUsername(ctx context.Context, username stri
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.UpdateUsername rows affected: %w", err)
+		return
 	}
 
 	return
@@ -605,6 +656,7 @@ func (m *defaultUsernameModel) UpdateUsernameTx(tx *sqlx.Tx, username string, pe
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("username.UpdateUsernameTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -625,6 +677,11 @@ func (m *defaultUsernameModel) SearchByQueryNotIdList(ctx context.Context, q2 st
 	err = m.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SearchByQueryNotIdList: %w", err)
 		return
 	}
@@ -649,6 +706,11 @@ func (m *defaultUsernameModel) SearchByQueryNotIdListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("username.SearchByQueryNotIdListWithCB: %w", err)
 		return
 	}

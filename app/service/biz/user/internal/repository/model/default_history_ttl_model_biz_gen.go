@@ -101,12 +101,15 @@ func (m *defaultDefaultHistoryTtlModel) Select(ctx context.Context, userId int64
 	err = m.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("default_history_ttl.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "default_history_ttl",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("default_history_ttl.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}

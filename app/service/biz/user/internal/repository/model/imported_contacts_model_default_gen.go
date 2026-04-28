@@ -38,10 +38,10 @@ type (
 		Update2(ctx context.Context, data *ImportedContacts) error
 		Delete2(ctx context.Context, id int64) error
 
-		FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error)
-
 		FindOneByUserId(ctx context.Context, userId int64) (*ImportedContacts, error)
 		FindListByUserIdList(ctx context.Context, userId ...int64) ([]ImportedContacts, error)
+
+		FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error)
 	}
 
 	defaultImportedContactsModel struct {
@@ -114,6 +114,9 @@ func (m *defaultImportedContactsModel) FindListByIdList(ctx context.Context, id 
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []ImportedContacts{}, nil
+		}
 		return nil, fmt.Errorf("imported_contacts.FindListByIdList: %w", err)
 	}
 
@@ -129,26 +132,6 @@ func (m *defaultImportedContactsModel) Update2(ctx context.Context, data *Import
 	}
 
 	return nil
-}
-
-func (m *defaultImportedContactsModel) FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error) {
-	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? AND imported_user_id = ? limit 1", importedContactsRows)
-	var resp ImportedContacts
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, importedUserId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "imported_contacts",
-				Key:      fmt.Sprintf("user_id=%v,imported_user_id=%v", userId, importedUserId),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("imported_contacts.FindOneByUserIdImportedUserId: %w", err)
-	}
-
-	return &resp, nil
 }
 
 func (m *defaultImportedContactsModel) FindOneByUserId(ctx context.Context, userId int64) (*ImportedContacts, error) {
@@ -181,8 +164,31 @@ func (m *defaultImportedContactsModel) FindListByUserIdList(ctx context.Context,
 	var resp []ImportedContacts
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []ImportedContacts{}, nil
+		}
 		return nil, fmt.Errorf("imported_contacts.FindListByUserIdList: %w", err)
 	}
 
 	return resp, nil
+}
+
+func (m *defaultImportedContactsModel) FindOneByUserIdImportedUserId(ctx context.Context, userId int64, importedUserId int64) (*ImportedContacts, error) {
+	query := fmt.Sprintf("select %s from imported_contacts where user_id = ? AND imported_user_id = ? limit 1", importedContactsRows)
+	var resp ImportedContacts
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, importedUserId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "imported_contacts",
+				Key:      fmt.Sprintf("user_id=%v,imported_user_id=%v", userId, importedUserId),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("imported_contacts.FindOneByUserIdImportedUserId: %w", err)
+	}
+
+	return &resp, nil
 }

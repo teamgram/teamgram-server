@@ -110,6 +110,11 @@ func (m *defaultImportedContactsModel) SelectList(ctx context.Context, userId in
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectList: %w", err)
 		return
 	}
@@ -129,6 +134,11 @@ func (m *defaultImportedContactsModel) SelectListWithCB(ctx context.Context, use
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectListWithCB: %w", err)
 		return
 	}
@@ -160,6 +170,11 @@ func (m *defaultImportedContactsModel) SelectListByImportedList(ctx context.Cont
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectListByImportedList: %w", err)
 		return
 	}
@@ -184,6 +199,11 @@ func (m *defaultImportedContactsModel) SelectListByImportedListWithCB(ctx contex
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectListByImportedListWithCB: %w", err)
 		return
 	}
@@ -210,6 +230,11 @@ func (m *defaultImportedContactsModel) SelectAllList(ctx context.Context, userId
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectAllList: %w", err)
 		return
 	}
@@ -229,6 +254,11 @@ func (m *defaultImportedContactsModel) SelectAllListWithCB(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ImportedContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("imported_contacts.SelectAllListWithCB: %w", err)
 		return
 	}
@@ -264,6 +294,7 @@ func (m *defaultImportedContactsModel) Delete(ctx context.Context, userId int64,
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("imported_contacts.Delete rows affected: %w", err)
+		return
 	}
 
 	return
@@ -286,6 +317,7 @@ func (m *defaultImportedContactsModel) DeleteTx(tx *sqlx.Tx, userId int64, impor
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("imported_contacts.DeleteTx rows affected: %w", err)
+		return
 	}
 
 	return

@@ -101,12 +101,15 @@ func (m *defaultUserGlobalPrivacySettingsModel) Select(ctx context.Context, user
 	err = m.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_global_privacy_settings.Select: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_global_privacy_settings",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_global_privacy_settings.Select: %w", err)
+		return
 	} else {
 		rValue = do
 	}

@@ -104,12 +104,15 @@ func (m *defaultUserPtsUpdatesModel) SelectLastPts(ctx context.Context, userId i
 	err = m.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_pts_updates.SelectLastPts: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_pts_updates",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_pts_updates.SelectLastPts: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -127,6 +130,11 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPts(ctx context.Context, userId i
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPtsUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_pts_updates.SelectByGtPts: %w", err)
 		return
 	}
@@ -146,6 +154,11 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPtsWithCB(ctx context.Context, us
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts, limit)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPtsUpdates{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_pts_updates.SelectByGtPtsWithCB: %w", err)
 		return
 	}

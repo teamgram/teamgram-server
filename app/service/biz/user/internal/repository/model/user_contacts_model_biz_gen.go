@@ -148,12 +148,15 @@ func (m *defaultUserContactsModel) SelectContact(ctx context.Context, ownerUserI
 	err = m.db.QueryRowPartial(ctx, do, query, ownerUserId, contactUserId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_contacts.SelectContact: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_contacts",
+				Key:      fmt.Sprintf("owner_user_id=%v,contact_user_id=%v", ownerUserId, contactUserId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_contacts.SelectContact: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -172,12 +175,15 @@ func (m *defaultUserContactsModel) SelectByContactId(ctx context.Context, ownerU
 	err = m.db.QueryRowPartial(ctx, do, query, ownerUserId, contactUserId)
 
 	if err != nil {
-		if !errors.Is(err, sqlx.ErrNotFound) {
-			err = fmt.Errorf("user_contacts.SelectByContactId: %w", err)
-			return
-		} else {
-			err = nil
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_contacts",
+				Key:      fmt.Sprintf("owner_user_id=%v,contact_user_id=%v", ownerUserId, contactUserId),
+				Cause:    err,
+			}
 		}
+		err = fmt.Errorf("user_contacts.SelectByContactId: %w", err)
+		return
 	} else {
 		rValue = do
 	}
@@ -200,6 +206,11 @@ func (m *defaultUserContactsModel) SelectListByPhoneList(ctx context.Context, ow
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByPhoneList: %w", err)
 		return
 	}
@@ -224,6 +235,11 @@ func (m *defaultUserContactsModel) SelectListByPhoneListWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByPhoneListWithCB: %w", err)
 		return
 	}
@@ -250,6 +266,11 @@ func (m *defaultUserContactsModel) SelectAllUserContacts(ctx context.Context, ow
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectAllUserContacts: %w", err)
 		return
 	}
@@ -269,6 +290,11 @@ func (m *defaultUserContactsModel) SelectAllUserContactsWithCB(ctx context.Conte
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectAllUserContactsWithCB: %w", err)
 		return
 	}
@@ -295,6 +321,11 @@ func (m *defaultUserContactsModel) SelectUserContacts(ctx context.Context, owner
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserContacts: %w", err)
 		return
 	}
@@ -314,6 +345,11 @@ func (m *defaultUserContactsModel) SelectUserContactsWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserContactsWithCB: %w", err)
 		return
 	}
@@ -337,6 +373,11 @@ func (m *defaultUserContactsModel) SelectUserContactIdList(ctx context.Context, 
 	err = m.db.QueryRowsPartial(ctx, &rList, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserContactIdList: %w", err)
 	}
 
@@ -350,7 +391,13 @@ func (m *defaultUserContactsModel) SelectUserContactIdListWithCB(ctx context.Con
 	err = m.db.QueryRowsPartial(ctx, &rList, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserContactIdListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -378,6 +425,11 @@ func (m *defaultUserContactsModel) SelectListByIdList(ctx context.Context, owner
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByIdList: %w", err)
 		return
 	}
@@ -402,6 +454,11 @@ func (m *defaultUserContactsModel) SelectListByIdListWithCB(ctx context.Context,
 	err = m.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByIdListWithCB: %w", err)
 		return
 	}
@@ -437,6 +494,11 @@ func (m *defaultUserContactsModel) SelectListByOwnerListAndContactList(ctx conte
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByOwnerListAndContactList: %w", err)
 		return
 	}
@@ -465,6 +527,11 @@ func (m *defaultUserContactsModel) SelectListByOwnerListAndContactListWithCB(ctx
 	err = m.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectListByOwnerListAndContactListWithCB: %w", err)
 		return
 	}
@@ -500,6 +567,7 @@ func (m *defaultUserContactsModel) UpdateContactNameById(ctx context.Context, co
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateContactNameById rows affected: %w", err)
+		return
 	}
 
 	return
@@ -522,6 +590,7 @@ func (m *defaultUserContactsModel) UpdateContactNameByIdTx(tx *sqlx.Tx, contactF
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateContactNameByIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -546,6 +615,7 @@ func (m *defaultUserContactsModel) UpdateContactName(ctx context.Context, contac
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateContactName rows affected: %w", err)
+		return
 	}
 
 	return
@@ -568,6 +638,7 @@ func (m *defaultUserContactsModel) UpdateContactNameTx(tx *sqlx.Tx, contactFirst
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateContactNameTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -592,6 +663,7 @@ func (m *defaultUserContactsModel) UpdateMutual(ctx context.Context, mutual bool
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateMutual rows affected: %w", err)
+		return
 	}
 
 	return
@@ -614,6 +686,7 @@ func (m *defaultUserContactsModel) UpdateMutualTx(tx *sqlx.Tx, mutual bool, owne
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateMutualTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -642,6 +715,7 @@ func (m *defaultUserContactsModel) DeleteContacts(ctx context.Context, ownerUser
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.DeleteContacts rows affected: %w", err)
+		return
 	}
 
 	return
@@ -669,6 +743,7 @@ func (m *defaultUserContactsModel) DeleteContactsTx(tx *sqlx.Tx, ownerUserId int
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.DeleteContactsTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -693,6 +768,7 @@ func (m *defaultUserContactsModel) UpdatePhoneByContactId(ctx context.Context, c
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdatePhoneByContactId rows affected: %w", err)
+		return
 	}
 
 	return
@@ -715,6 +791,7 @@ func (m *defaultUserContactsModel) UpdatePhoneByContactIdTx(tx *sqlx.Tx, contact
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdatePhoneByContactIdTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -727,6 +804,11 @@ func (m *defaultUserContactsModel) SelectUserReverseContactIdList(ctx context.Co
 	err = m.db.QueryRowsPartial(ctx, &rList, query, contactUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserReverseContactIdList: %w", err)
 	}
 
@@ -740,7 +822,13 @@ func (m *defaultUserContactsModel) SelectUserReverseContactIdListWithCB(ctx cont
 	err = m.db.QueryRowsPartial(ctx, &rList, query, contactUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectUserReverseContactIdListWithCB: %w", err)
+		return
 	}
 
 	if cb != nil {
@@ -768,6 +856,11 @@ func (m *defaultUserContactsModel) SelectReverseListByIdList(ctx context.Context
 	err = m.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectReverseListByIdList: %w", err)
 		return
 	}
@@ -792,6 +885,11 @@ func (m *defaultUserContactsModel) SelectReverseListByIdListWithCB(ctx context.C
 	err = m.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserContacts{}
+			err = nil
+			return
+		}
 		err = fmt.Errorf("user_contacts.SelectReverseListByIdListWithCB: %w", err)
 		return
 	}
@@ -831,6 +929,7 @@ func (m *defaultUserContactsModel) UpdateCloseFriend(ctx context.Context, closeF
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateCloseFriend rows affected: %w", err)
+		return
 	}
 
 	return
@@ -858,6 +957,7 @@ func (m *defaultUserContactsModel) UpdateCloseFriendTx(tx *sqlx.Tx, closeFriend 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateCloseFriendTx rows affected: %w", err)
+		return
 	}
 
 	return
@@ -882,6 +982,7 @@ func (m *defaultUserContactsModel) UpdateStoriesHidden(ctx context.Context, stor
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateStoriesHidden rows affected: %w", err)
+		return
 	}
 
 	return
@@ -904,6 +1005,7 @@ func (m *defaultUserContactsModel) UpdateStoriesHiddenTx(tx *sqlx.Tx, storiesHid
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_contacts.UpdateStoriesHiddenTx rows affected: %w", err)
+		return
 	}
 
 	return

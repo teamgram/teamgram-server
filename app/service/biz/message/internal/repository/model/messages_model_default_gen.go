@@ -133,6 +133,9 @@ func (m *defaultMessagesModel) FindListByIdList(ctx context.Context, id ...int64
 	var resp []Messages
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []Messages{}, nil
+		}
 		return nil, fmt.Errorf("messages.FindListByIdList: %w", err)
 	}
 

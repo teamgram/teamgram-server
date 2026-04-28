@@ -111,6 +111,9 @@ func (m *defaultBotCommandsModel) FindListByIdList(ctx context.Context, id ...in
 	var resp []BotCommands
 	err := m.db.QueryRowsPartial(ctx, &resp, query)
 	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []BotCommands{}, nil
+		}
 		return nil, fmt.Errorf("bot_commands.FindListByIdList: %w", err)
 	}
 
