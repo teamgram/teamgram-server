@@ -132,20 +132,24 @@ func (c *ChatCore) deleteChatUser(ctx context.Context, arg deleteChatUserArg) (*
 	if count < 0 {
 		count = 0
 	}
-	if err := c.writeRepository().DeleteChatUser(ctx, repository.DeleteChatUserArg{
+	at, err := c.writeRepository().DeleteChatUser(ctx, repository.DeleteChatUserArg{
 		ChatID:        arg.chatID,
 		DeleteUserID:  arg.deleteUserID,
 		ParticipantID: deletedUser.Id,
 		Kicked:        kicked,
 		Count:         count,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, err
 	}
 	if kicked {
 		deletedUser.State = chat.ChatMemberStateKicked
+		deletedUser.KickedAt = at
 	} else {
 		deletedUser.State = chat.ChatMemberStateLeft
+		deletedUser.LeftAt = at
 	}
+	deletedUser.Date = at
 	if mChat.Chat != nil {
 		mChat.Chat.ParticipantsCount = count
 		mChat.Chat.Version++

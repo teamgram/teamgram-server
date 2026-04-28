@@ -200,7 +200,7 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 	return makeImmutableChatParticipant(row), nil
 }
 
-func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) error {
+func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		var err error
@@ -218,10 +218,10 @@ func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) 
 		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.DeleteUserID)
 		return err
 	}); err != nil {
-		return wrapStorage("chat.DeleteChatUser transaction", err)
+		return 0, wrapStorage("chat.DeleteChatUser transaction", err)
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(arg.ChatID, []int64{arg.DeleteUserID})...)
-	return nil
+	return now, nil
 }
 
 func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChannelArg) error {

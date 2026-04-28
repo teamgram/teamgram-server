@@ -18,6 +18,7 @@ type fakeWriteRepo struct {
 	addArg            repository.AddChatUserArg
 	deleteChatID      int64
 	deleteChatUserArg repository.DeleteChatUserArg
+	deleteUserAt      int64
 	migratedArg       repository.MigratedToChannelArg
 	createCalls       int
 	addCalls          int
@@ -44,10 +45,10 @@ func (f *fakeWriteRepo) AddChatUser(ctx context.Context, arg repository.AddChatU
 	return f.participant, f.err
 }
 
-func (f *fakeWriteRepo) DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) error {
+func (f *fakeWriteRepo) DeleteChatUser(ctx context.Context, arg repository.DeleteChatUserArg) (int64, error) {
 	f.deleteUserCalls++
 	f.deleteChatUserArg = arg
-	return f.err
+	return f.deleteUserAt, f.err
 }
 
 func (f *fakeWriteRepo) MigratedToChannel(ctx context.Context, arg repository.MigratedToChannelArg) error {
@@ -238,6 +239,29 @@ func TestDeleteChatUserProtectsAdminTarget(t *testing.T) {
 	}
 	if write.deleteUserCalls != 0 {
 		t.Fatalf("DeleteChatUser calls = %d, want 0 for admin protection", write.deleteUserCalls)
+	}
+}
+
+func TestDeleteChatUserReturnsKickedTimestamp(t *testing.T) {
+	at := int64(12345)
+	adminRights := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{BanUsers: true}).ToChatAdminRights()
+	m := mutableChatForMemberTests(10, 1,
+		participantForMemberTests(10, 1, chat.ChatMemberCreator, chat.ChatMemberStateNormal, nil),
+		participantForMemberTests(10, 3, chat.ChatMemberAdmin, chat.ChatMemberStateNormal, adminRights),
+		participantForMemberTests(10, 4, chat.ChatMemberNormal, chat.ChatMemberStateNormal, nil))
+	write := &fakeWriteRepo{deleteUserAt: at}
+	core := newWriteTestCore(&fakeReadRepo{mutableChat: m}, write)
+
+	got, err := core.deleteChatUser(context.Background(), deleteChatUserArg{chatID: 10, operatorID: 3, deleteUserID: 4})
+	if err != nil {
+		t.Fatalf("deleteChatUser error: %v", err)
+	}
+	deleted, ok := chat.GetImmutableChatParticipant(got, 4)
+	if !ok {
+		t.Fatal("deleted participant missing")
+	}
+	if deleted.State != chat.ChatMemberStateKicked || deleted.KickedAt != at || deleted.Date != at {
+		t.Fatalf("deleted participant state/time = state:%d kicked_at:%d date:%d, want kicked/%d", deleted.State, deleted.KickedAt, deleted.Date, at)
 	}
 }
 
