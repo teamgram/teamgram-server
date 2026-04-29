@@ -20,19 +20,22 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/rpc"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	db    *sqlx.DB
-	model *model.Models
+	db        *sqlx.DB
+	model     *model.Models
+	dfsClient rpc.DfsMediaClient
 }
 
 // NewRepository creates a new Repository.
-func NewRepository(c config.Config) *Repository {
+func NewRepository(c config.Config, dfsClient rpc.DfsMediaClient) *Repository {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Repository{
-		db:    db,
-		model: model.NewModels(db),
+		db:        db,
+		model:     model.NewModels(db),
+		dfsClient: dfsClient,
 	}
 }
