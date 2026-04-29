@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogGetDialogById
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogById - error: method DialogGetDialogById not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	record, err := c.svcCtx.Repo.GetDialogByPeer(c.ctx, in.UserId, in.PeerType, in.PeerId)
+	if err != nil {
+		return nil, err
+	}
+	return makeDialogExt(*record), nil
 }

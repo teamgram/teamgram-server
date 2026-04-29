@@ -17,13 +17,22 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 )
 
+type DialogRepository interface {
+	ListDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) ([]repository.DialogRecord, error)
+	CountDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) (int32, error)
+	GetDialogByPeer(ctx context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error)
+	ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error)
+}
+
 type ServiceContext struct {
 	Config config.Config
-	Repo   *repository.Repository
+	Repo   DialogRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
