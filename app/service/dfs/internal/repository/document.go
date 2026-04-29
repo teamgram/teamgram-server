@@ -60,6 +60,28 @@ func (r *Repository) SaveEncryptedObject(ctx context.Context, fileID int64, data
 	return size, nil
 }
 
+func (r *Repository) GetDocumentObject(ctx context.Context, path string, offset int64, limit int32) ([]byte, error) {
+	if r == nil || r.objectStore == nil {
+		return nil, dfs.WrapDfsStorage("get document file", errors.New("object store unavailable"))
+	}
+	data, err := r.objectStore.GetDocumentFile(ctx, path, offset, limit)
+	if err != nil {
+		return nil, dfs.WrapDfsStorage("get document file", err)
+	}
+	return data, nil
+}
+
+func (r *Repository) GetEncryptedObject(ctx context.Context, path string, offset int64, limit int32) ([]byte, error) {
+	if r == nil || r.objectStore == nil {
+		return nil, dfs.WrapDfsStorage("get encrypted file", errors.New("object store unavailable"))
+	}
+	data, err := r.objectStore.GetEncryptedFile(ctx, path, offset, limit)
+	if err != nil {
+		return nil, dfs.WrapDfsStorage("get encrypted file", err)
+	}
+	return data, nil
+}
+
 func (r *Repository) SaveDocumentThumbs(ctx context.Context, documentID int64, image []byte, ext string) ([]StoredDocumentThumb, error) {
 	if documentID == 0 {
 		return nil, dfs.ErrDfsInvalidArgument

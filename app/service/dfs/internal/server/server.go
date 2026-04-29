@@ -17,10 +17,12 @@
 package server
 
 import (
+	"context"
 	"flag"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs/dfsservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
+	minihttp "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/server/http"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/server/tg/service"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -34,6 +36,8 @@ var configFile = flag.String("f", "etc/dfs.yaml", "the config file")
 
 type Server struct {
 	kitexSrv *kitex.RpcServer
+	httpSrv  *minihttp.Server
+	httpErr  chan error
 }
 
 func New() *Server {
@@ -47,7 +51,12 @@ func (s *Server) Initialize() error {
 	logx.Infov(c)
 
 	ctx := svc.NewServiceContext(c)
-	_ = ctx
+	httpSrv, err := minihttp.New(context.Background(), ctx, c.MiniHttp)
+	if err != nil {
+		return err
+	}
+	s.httpSrv = httpSrv
+	s.httpErr = make(chan error, 1)
 
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
@@ -59,17 +68,32 @@ func (s *Server) Initialize() error {
 }
 
 func (s *Server) RunLoop() {
+	if s.httpSrv != nil {
+		go func() {
+			s.httpErr <- s.httpSrv.Start()
+		}()
+	}
 	if err := s.kitexSrv.Run(); err != nil {
-		// log.Println("server stopped with error:", err)
+		logx.Errorf("dfs kitex server stopped with error: %v", err)
 	} else {
-		// log.Println("server stopped")
+		logx.Infof("dfs kitex server stopped")
+	}
+	select {
+	case err := <-s.httpErr:
+		if err != nil {
+			logx.Errorf("dfs minihttp server stopped with error: %v", err)
+		}
+	default:
 	}
 }
 
 func (s *Server) Destroy() {
+	if s.httpSrv != nil {
+		s.httpSrv.Stop()
+	}
 	if err := s.kitexSrv.Stop(); err != nil {
-		// log.Println("server stopped with error:", err)
+		logx.Errorf("dfs kitex server stop error: %v", err)
 	} else {
-		// log.Println("server stopped")
+		logx.Infof("dfs kitex server stopped")
 	}
 }

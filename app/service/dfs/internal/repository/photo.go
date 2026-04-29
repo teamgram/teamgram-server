@@ -84,6 +84,17 @@ func (r *Repository) GetPhotoFile(ctx context.Context, path string) ([]byte, err
 	return data, nil
 }
 
+func (r *Repository) GetPhotoObject(ctx context.Context, path string, offset int64, limit int32) ([]byte, error) {
+	if r == nil || r.objectStore == nil {
+		return nil, dfs.WrapDfsStorage("get photo file", errors.New("object store unavailable"))
+	}
+	data, err := r.objectStore.GetPhotoFile(ctx, path, offset, limit)
+	if err != nil {
+		return nil, dfs.WrapDfsStorage("get photo file", err)
+	}
+	return data, nil
+}
+
 func (r *Repository) LoadOriginalPhotoBytes(ctx context.Context, photoID int64) ([]byte, error) {
 	if photoID == 0 {
 		return nil, dfs.ErrDfsInvalidArgument
@@ -100,6 +111,17 @@ func (r *Repository) PutVideoBytes(ctx context.Context, path string, data []byte
 		return 0, dfs.WrapDfsStorage("put video file", err)
 	}
 	return size, nil
+}
+
+func (r *Repository) GetVideoObject(ctx context.Context, path string, offset int64, limit int32) ([]byte, error) {
+	if r == nil || r.objectStore == nil {
+		return nil, dfs.WrapDfsStorage("get video file", errors.New("object store unavailable"))
+	}
+	data, err := r.objectStore.GetVideoFile(ctx, path, offset, limit)
+	if err != nil {
+		return nil, dfs.WrapDfsStorage("get video file", err)
+	}
+	return data, nil
 }
 
 func (r *Repository) SaveProfileVideoObject(ctx context.Context, photoID int64, data []byte) (int64, error) {

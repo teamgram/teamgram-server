@@ -33,6 +33,7 @@ type DfsCore struct {
 	uploadSessionManager *UploadSessionManager
 	photoRepository      photoRepository
 	documentRepository   documentRepository
+	downloadRepository   downloadRepository
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *DfsCore {
