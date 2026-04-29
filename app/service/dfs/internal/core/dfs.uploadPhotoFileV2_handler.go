@@ -24,8 +24,12 @@ import (
 // DfsUploadPhotoFileV2
 // dfs.uploadPhotoFileV2 creator:long file:InputFile = Photo;
 func (c *DfsCore) DfsUploadPhotoFileV2(in *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.uploadPhotoFileV2 - error: method DfsUploadPhotoFileV2 not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || in.File == nil {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	file, err := inputFile(in.File)
+	if err != nil {
+		return nil, err
+	}
+	return c.buildPhotoFromUpload(in.Creator, file, false, nowUnix(), nil)
 }

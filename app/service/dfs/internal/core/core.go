@@ -31,6 +31,7 @@ type DfsCore struct {
 	logx.Logger
 	MD                   *metadata.RpcMetadata
 	uploadSessionManager *UploadSessionManager
+	photoRepository      photoRepository
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *DfsCore {
