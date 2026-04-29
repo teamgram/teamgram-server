@@ -24,8 +24,5 @@ import (
 // MediaUploadProfilePhotoFile
 // media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = Photo;
 func (c *MediaCore) MediaUploadProfilePhotoFile(in *media.TLMediaUploadProfilePhotoFile) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadProfilePhotoFile - error: method MediaUploadProfilePhotoFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UploadProfilePhotoFile(c.ctx, in)
 }

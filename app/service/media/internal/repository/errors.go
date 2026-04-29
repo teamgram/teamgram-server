@@ -27,6 +27,20 @@ func wrapMediaInvalidUploadedFile(op string, err error) error {
 	return fmt.Errorf("%w: %s: %w", media.ErrMediaInvalidUploadedFile, op, err)
 }
 
+func wrapMediaInvalidArgument(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%w: %s: %w", media.ErrMediaInvalidArgument, op, err)
+}
+
+func wrapMediaChecksumInvalid(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%w: %s: %w", media.ErrMediaChecksumInvalid, op, err)
+}
+
 func wrapMediaDownstream(op string, err error) error {
 	if err == nil {
 		return nil
@@ -38,10 +52,14 @@ func wrapDfsUploadError(op string, err error) error {
 	if err == nil {
 		return nil
 	}
+	if errors.Is(err, dfsapi.ErrDfsInvalidArgument) {
+		return wrapMediaInvalidArgument(op, err)
+	}
+	if errors.Is(err, dfsapi.ErrDfsChecksumInvalid) {
+		return wrapMediaChecksumInvalid(op, err)
+	}
 	if errors.Is(err, dfsapi.ErrDfsFileNotFound) ||
-		errors.Is(err, dfsapi.ErrDfsInvalidArgument) ||
 		errors.Is(err, dfsapi.ErrDfsInvalidFilePart) ||
-		errors.Is(err, dfsapi.ErrDfsChecksumInvalid) ||
 		errors.Is(err, dfsapi.ErrDfsImageProcessFailed) ||
 		errors.Is(err, dfsapi.ErrDfsVideoProcessFailed) {
 		return wrapMediaInvalidUploadedFile(op, err)
