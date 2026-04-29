@@ -17,7 +17,92 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
-type (
-// TODO: Add type aliases per business requirements.
+const (
+	PayloadCodecJSON int32 = 1
+
+	OpTypeSendMessage int32 = 1
+
+	EventTypeNewMessage int32 = 1
+
+	OperationResultStatusCompleted int32 = 1
+
+	MessageKindText   int32 = 1
+	MessageStatusLive int32 = 1
+
+	PushTypeUserUpdate    int32 = 1
+	PushTaskStatusPending int32 = 1
 )
+
+type ApplyUserOperationInput struct {
+	UserID        int64
+	OperationID   string
+	OpType        int32
+	PeerType      int32
+	PeerID        int64
+	PayloadCodec  int32
+	Payload       []byte
+	PayloadHash   string
+	BucketID      int32
+	PartitionID   int32
+	DependencyPts []int64
+}
+
+type ApplyUserOperationResult struct {
+	UserID          int64
+	OperationID     string
+	Pts             int64
+	PtsCount        int32
+	ResponsePayload []byte
+	ResponseHash    string
+	AlreadyApplied  bool
+}
+
+type OperationResult struct {
+	UserID            int64
+	OperationID       string
+	OpType            int32
+	Status            int32
+	Pts               int64
+	PtsCount          int32
+	PayloadHash       string
+	ResponsePayload   []byte
+	ResponseHash      string
+	TerminalErrorCode string
+}
+
+type UserState struct {
+	UserID      int64
+	Pts         int64
+	PartitionID int32
+	OwnerEpoch  int64
+	RowVersion  int64
+}
+
+type UserEvent struct {
+	UserID             int64
+	Pts                int64
+	PtsCount           int32
+	OperationID        string
+	OpType             int32
+	EventType          int32
+	PeerType           int32
+	PeerID             int64
+	CanonicalMessageID int64
+	PeerSeq            int64
+	ActorUserID        int64
+	EventSchemaVersion int32
+	EventCodec         int32
+	EventPayload       []byte
+	EventPayloadHash   string
+}
+
+type GetDifferenceInput struct {
+	UserID int64
+	Pts    int64
+	Limit  int32
+}
+
+type GetDifferenceResult struct {
+	State  UserState
+	Events []UserEvent
+}

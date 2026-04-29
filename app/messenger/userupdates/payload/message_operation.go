@@ -19,6 +19,7 @@ type MessageOperationV1 struct {
 	Out                bool              `json:"out"`
 	MessageText        string            `json:"message_text"`
 	Entities           []MessageEntityV1 `json:"entities,omitempty"`
+	DependencyPts      []int64           `json:"dependency_pts,omitempty"`
 }
 
 type MessageEntityV1 struct {

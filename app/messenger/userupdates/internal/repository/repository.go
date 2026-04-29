@@ -18,16 +18,63 @@
 package repository
 
 import (
+	"context"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	db            *sqlx.DB
+	models        *model.Models
+	idgen         IDGenerator
+	ownerInstance string
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	var db *sqlx.DB
+	if c.Mysql.DSN != "" {
+		db = sqlx.NewMySQL(&c.Mysql)
+	}
+	owner := c.OwnerInstance
+	if owner == "" {
+		owner = "local-userupdates"
+	}
+	return NewForTest(db, unavailableIDGenerator{}, owner)
+}
+
+type IDGenerator interface {
+	NextID(ctx context.Context) (int64, error)
+}
+
+type unavailableIDGenerator struct{}
+
+func (unavailableIDGenerator) NextID(context.Context) (int64, error) {
+	return 0, fmt.Errorf("%w: id generator unavailable", userupdates.ErrUserupdatesStorage)
+}
+
+func NewForTest(db *sqlx.DB, idgen IDGenerator, ownerInstance string) *Repository {
+	if ownerInstance == "" {
+		ownerInstance = "local-userupdates"
+	}
+	if idgen == nil {
+		idgen = unavailableIDGenerator{}
+	}
+	var models *model.Models
+	if db != nil {
+		models = model.NewModels(db)
+	}
+	return &Repository{
+		db:            db,
+		models:        models,
+		idgen:         idgen,
+		ownerInstance: ownerInstance,
+	}
 }
 
 // Close releases repository-owned clients.
@@ -37,4 +84,25 @@ func (r *Repository) Close() error {
 	}
 
 	return nil
+}
+
+func (r *Repository) OwnerInstance() string {
+	if r == nil || r.ownerInstance == "" {
+		return "local-userupdates"
+	}
+	return r.ownerInstance
+}
+
+func (r *Repository) requireDB() (*sqlx.DB, error) {
+	if r == nil || r.db == nil {
+		return nil, fmt.Errorf("%w: mysql is not configured", userupdates.ErrUserupdatesStorage)
+	}
+	return r.db, nil
+}
+
+func storageError(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%w: %s: %w", userupdates.ErrUserupdatesStorage, op, err)
 }
