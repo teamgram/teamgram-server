@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_pts_events">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO user_pts_events
+                (user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at)
+            VALUES
+                (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash, NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectByOperation">
+        <sql>
+            SELECT
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+            FROM
+                user_pts_events
+            WHERE
+                user_id = :user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectLatestPts">
+        <sql>
+            SELECT
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+            FROM
+                user_pts_events
+            WHERE
+                user_id = :user_id
+            ORDER BY
+                pts DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtPts" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+            FROM
+                user_pts_events
+            WHERE
+                user_id = :user_id AND pts > :pts
+            ORDER BY
+                pts LIMIT :limit
+        </sql>
+    </operation>
+</table>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_operation_results">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO user_operation_results
+                (user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, created_at, updated_at)
+            VALUES
+                (:user_id, :operation_id, :op_type, :status, :pts, :pts_count, :payload_hash, :response_schema_version, :response_codec, :response_payload, :response_payload_hash, :terminal_error_code, NOW(6), NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectByOperation">
+        <sql>
+            SELECT
+                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, created_at, updated_at
+            FROM
+                user_operation_results
+            WHERE
+                user_id = :user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByStatusCreatedBefore" result_set="list">
+        <params>
+            <param name="beforeCreatedAt" type="string" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, created_at, updated_at
+            FROM
+                user_operation_results
+            WHERE
+                status = :status AND created_at &lt; :beforeCreatedAt
+            ORDER BY
+                created_at LIMIT :limit
+        </sql>
+    </operation>
+</table>

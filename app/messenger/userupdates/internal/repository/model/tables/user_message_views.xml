@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_message_views">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_message_views
+                (user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :edit_date, :deleted_at, :view_schema_version, :view_payload, NOW(6), NOW(6))
+            ON DUPLICATE KEY UPDATE
+                message_status = VALUES(message_status),
+                edit_version = VALUES(edit_version),
+                edit_date = VALUES(edit_date),
+                deleted_at = VALUES(deleted_at),
+                view_schema_version = VALUES(view_schema_version),
+                view_payload = VALUES(view_payload),
+                updated_at = NOW(6)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserCanonical">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id AND canonical_message_id = :canonical_message_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserPeerSeq">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND peer_seq = :peer_seq LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerSeqRange" result_set="list">
+        <params>
+            <param name="maxPeerSeq" type="int64" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND peer_seq &gt; :peer_seq AND peer_seq &lt;= :maxPeerSeq
+            ORDER BY
+                peer_seq LIMIT :limit
+        </sql>
+    </operation>
+</table>
