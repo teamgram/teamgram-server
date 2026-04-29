@@ -1,20 +1,12 @@
 package repository
 
-import "context"
+import (
+	"context"
 
-type ReceiverOperation struct {
-	UserID        int64
-	BucketID      int32
-	PartitionID   int32
-	OperationID   string
-	OpType        int32
-	PeerType      int32
-	PeerID        int64
-	PayloadCodec  int32
-	Payload       []byte
-	PayloadHash   string
-	DependencyPts []int64
-}
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+)
+
+type ReceiverOperation = payload.ReceiverOperationEnvelopeV1
 
 type ReceiverOperationPublisher interface {
 	Publish(ctx context.Context, op ReceiverOperation) error
