@@ -18,15 +18,26 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"context"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+type MsgCore struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+	MD *metadata.RpcMetadata
+}
 
-	return nil, tg.ErrMethodNotImpl
+func New(ctx context.Context, svcCtx *svc.ServiceContext) *MsgCore {
+	return &MsgCore{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+		MD:     metadata.RpcMetadataFromIncoming(ctx),
+	}
 }

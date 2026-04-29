@@ -18,8 +18,8 @@
 package core
 
 import (
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesGetState

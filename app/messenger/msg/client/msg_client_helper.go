@@ -8,10 +8,10 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package userupdatesclient
+package msgclient
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates/userupdatesservice"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msgservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/client"
@@ -21,7 +21,7 @@ func MustNewKitexClient(c kitex.RpcClientConf) client.Client {
 	return kitex.MustNewClient(
 		c,
 		func(opts ...client.Option) (client.Client, error) {
-			return client.NewClient(userupdatesservice.NewServiceInfoForClient(), opts...)
+			return client.NewClient(msgservice.NewServiceInfoForClient(), opts...)
 		})
 }
 
@@ -29,6 +29,6 @@ func NewKitexClient(c kitex.RpcClientConf) (client.Client, error) {
 	return kitex.NewClient(
 		c,
 		func(opts ...client.Option) (client.Client, error) {
-			return client.NewClient(userupdatesservice.NewServiceInfoForClient(), opts...)
+			return client.NewClient(msgservice.NewServiceInfoForClient(), opts...)
 		})
 }

@@ -18,15 +18,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+// MsgPushUserMessage
+// msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
+func (c *MsgCore) MsgPushUserMessage(in *msg.TLMsgPushUserMessage) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+	c.Logger.Errorf("msg.pushUserMessage - error: method MsgPushUserMessage not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -13,13 +13,12 @@ package service
 import (
 	"context"
 
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 var _ *tg.Bool
-
 
 // UserupdatesProcessUserOperation
 // userupdates.processUserOperation operation:UserOperation = UserOperationResult;
@@ -29,7 +28,7 @@ func (s *Service) UserupdatesProcessUserOperation(ctx context.Context, request *
 
 	r, err := c.UserupdatesProcessUserOperation(request)
 	if err != nil {
-        c.Logger.Errorf("userupdates.processUserOperation - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("userupdates.processUserOperation - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -45,7 +44,7 @@ func (s *Service) UserupdatesGetOperationResult(ctx context.Context, request *us
 
 	r, err := c.UserupdatesGetOperationResult(request)
 	if err != nil {
-        c.Logger.Errorf("userupdates.getOperationResult - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("userupdates.getOperationResult - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -61,7 +60,7 @@ func (s *Service) UserupdatesGetState(ctx context.Context, request *userupdates.
 
 	r, err := c.UserupdatesGetState(request)
 	if err != nil {
-        c.Logger.Errorf("userupdates.getState - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("userupdates.getState - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
@@ -77,11 +76,10 @@ func (s *Service) UserupdatesGetDifference(ctx context.Context, request *userupd
 
 	r, err := c.UserupdatesGetDifference(request)
 	if err != nil {
-        c.Logger.Errorf("userupdates.getDifference - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("userupdates.getDifference - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
 	c.Logger.Debugf("userupdates.getDifference - reply: %s", r)
 	return r, err
 }
-

@@ -27,8 +27,7 @@ type Repository struct {
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{
-	}
+	return &Repository{}
 }
 
 // Close releases repository-owned clients.

@@ -18,15 +18,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+// MsgDeleteMessages
+// msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
+func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+	c.Logger.Errorf("msg.deleteMessages - error: method MsgDeleteMessages not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

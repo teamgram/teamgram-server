@@ -18,15 +18,15 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+// MsgReadHistoryV2
+// msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
+func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+	c.Logger.Errorf("msg.readHistoryV2 - error: method MsgReadHistoryV2 not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -20,10 +20,10 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/svc"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates/userupdatesservice"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msgservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
@@ -31,7 +31,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var configFile = flag.String("f", "etc/userupdates.yaml", "the config file")
+var configFile = flag.String("f", "etc/msg.yaml", "the config file")
 
 type Server struct {
 	kitexSrv *kitex.RpcServer
@@ -55,7 +55,7 @@ func (s *Server) Initialize() error {
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
 		func(s server.Server) error {
-			return userupdatesservice.RegisterService(s, service.New(ctx))
+			return msgservice.RegisterService(s, service.New(ctx))
 		})
 
 	return nil

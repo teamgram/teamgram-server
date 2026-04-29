@@ -15,18 +15,27 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package svc
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+type ServiceContext struct {
+	Config config.Config
+	Repo   *repository.Repository
+}
 
-	return nil, tg.ErrMethodNotImpl
+func NewServiceContext(c config.Config) *ServiceContext {
+	return &ServiceContext{
+		Config: c,
+		Repo:   repository.NewRepository(c),
+	}
+}
+func (s *ServiceContext) Close() error {
+	if s == nil || s.Repo == nil {
+		return nil
+	}
+	return s.Repo.Close()
 }

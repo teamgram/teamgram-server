@@ -13,13 +13,13 @@ package userupdatesservice
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"errors"
+	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
@@ -58,19 +58,18 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	
 }
 
 var (
-    userupdatesServiceServiceInfo                = NewServiceInfo()
-    userupdatesServiceServiceInfoForClient       = NewServiceInfoForClient()
-    userupdatesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
+	userupdatesServiceServiceInfo                = NewServiceInfo()
+	userupdatesServiceServiceInfoForClient       = NewServiceInfoForClient()
+	userupdatesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
 func init() {
-    iface.RegisterKitexServiceInfo("RPCUserupdates", userupdatesServiceServiceInfo)
-    iface.RegisterKitexServiceInfoForClient("RPCUserupdates", userupdatesServiceServiceInfoForClient)
-    iface.RegisterKitexServiceInfoForStreamClient("RPCUserupdates", userupdatesServiceServiceInfoForStreamClient)
+	iface.RegisterKitexServiceInfo("RPCUserupdates", userupdatesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUserupdates", userupdatesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUserupdates", userupdatesServiceServiceInfoForStreamClient)
 }
 
 // for server
@@ -87,7 +86,6 @@ func serviceInfoForStreamClient() *kitex.ServiceInfo {
 func serviceInfoForClient() *kitex.ServiceInfo {
 	return userupdatesServiceServiceInfoForClient
 }
-
 
 // NewServiceInfo creates a new ServiceInfo containing all methods
 func NewServiceInfo() *kitex.ServiceInfo {
@@ -132,7 +130,6 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	}
 	return svcInfo
 }
-
 
 func processUserOperationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*ProcessUserOperationArgs)
@@ -257,7 +254,6 @@ func (p *ProcessUserOperationResult) SetSuccess(x interface{}) {
 	p.Success = x.(*userupdates.UserOperationResult)
 }
 
-
 func (p *ProcessUserOperationResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
@@ -265,7 +261,6 @@ func (p *ProcessUserOperationResult) IsSetSuccess() bool {
 func (p *ProcessUserOperationResult) GetResult() interface{} {
 	return p.Success
 }
-
 
 func getOperationResultHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*GetOperationResultArgs)
@@ -390,7 +385,6 @@ func (p *GetOperationResultResult) SetSuccess(x interface{}) {
 	p.Success = x.(*userupdates.UserOperationResult)
 }
 
-
 func (p *GetOperationResultResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
@@ -398,7 +392,6 @@ func (p *GetOperationResultResult) IsSetSuccess() bool {
 func (p *GetOperationResultResult) GetResult() interface{} {
 	return p.Success
 }
-
 
 func getStateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*GetStateArgs)
@@ -523,7 +516,6 @@ func (p *GetStateResult) SetSuccess(x interface{}) {
 	p.Success = x.(*userupdates.UserState)
 }
 
-
 func (p *GetStateResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
@@ -531,7 +523,6 @@ func (p *GetStateResult) IsSetSuccess() bool {
 func (p *GetStateResult) GetResult() interface{} {
 	return p.Success
 }
-
 
 func getDifferenceHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*GetDifferenceArgs)
@@ -656,7 +647,6 @@ func (p *GetDifferenceResult) SetSuccess(x interface{}) {
 	p.Success = x.(*userupdates.UserDifference)
 }
 
-
 func (p *GetDifferenceResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
@@ -664,9 +654,6 @@ func (p *GetDifferenceResult) IsSetSuccess() bool {
 func (p *GetDifferenceResult) GetResult() interface{} {
 	return p.Success
 }
-
-
-
 
 type kClient struct {
 	c client.Client
@@ -737,5 +724,3 @@ func (p *kClient) UserupdatesGetDifference(ctx context.Context, req *userupdates
 	// return _result.GetSuccess(), nil
 	return _result, nil
 }
-
-

@@ -15,7 +15,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
-    "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
@@ -25,11 +25,10 @@ var _ *tg.Bool
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-    UserupdatesProcessUserOperation(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperation, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
-    UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
-    UserupdatesGetState(ctx context.Context, req *userupdates.TLUserupdatesGetState, callOptions ...callopt.Option) (r *userupdates.UserState, err error)
-    UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference, callOptions ...callopt.Option) (r *userupdates.UserDifference, err error)
-
+	UserupdatesProcessUserOperation(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperation, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
+	UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
+	UserupdatesGetState(ctx context.Context, req *userupdates.TLUserupdatesGetState, callOptions ...callopt.Option) (r *userupdates.UserState, err error)
+	UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference, callOptions ...callopt.Option) (r *userupdates.UserDifference, err error)
 }
 
 // Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
@@ -88,4 +87,3 @@ func (p *kUserupdatesClient) UserupdatesGetDifference(ctx context.Context, req *
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserupdatesGetDifference(ctx, req)
 }
-

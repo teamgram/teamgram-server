@@ -15,18 +15,26 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package repository
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+// Repository is the dependency container for repository instances.
+type Repository struct {
+}
 
-	return nil, tg.ErrMethodNotImpl
+// NewRepository creates a new Repository.
+func NewRepository(c config.Config) *Repository {
+	return &Repository{}
+}
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
+	}
+
+	return nil
 }

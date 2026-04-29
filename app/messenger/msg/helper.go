@@ -15,18 +15,18 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package msghelper
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/svc"
 )
 
-// UserupdatesProcessUserOperation
-// userupdates.processUserOperation operation:UserOperation = UserOperationResult;
-func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+type (
+	Config = config.Config
+)
 
-	return nil, tg.ErrMethodNotImpl
+func New(c Config) *service.Service {
+	return service.New(svc.NewServiceContext(c))
 }
