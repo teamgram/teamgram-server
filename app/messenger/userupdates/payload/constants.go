@@ -1,6 +1,9 @@
 package payload
 
 const (
+	PayloadCodecJSON  int32 = 1
+	OpTypeSendMessage int32 = 1
+
 	BucketCount            = 4096
 	ReceiverPartitionCount = 256
 	PushPartitionCount     = 256

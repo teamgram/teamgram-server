@@ -12,3 +12,12 @@ Idgen:
     Hosts:
       - 127.0.0.1:2379
     Key: service.idgen
+
+Userupdates:
+  DestService: messenger.userupdates
+  ServiceName: RPCUserupdates
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.userupdates

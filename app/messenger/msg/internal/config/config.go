@@ -24,6 +24,7 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql sqlx.Config         `json:",optional"`
-	Idgen kitex.RpcClientConf `json:",optional"`
+	Mysql       sqlx.Config         `json:",optional"`
+	Idgen       kitex.RpcClientConf `json:",optional"`
+	Userupdates kitex.RpcClientConf `json:",optional"`
 }

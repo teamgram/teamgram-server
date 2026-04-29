@@ -18,24 +18,56 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
+type MsgRepository interface {
+	repository.MessageRepository
+	repository.MessageSendStateRepository
+}
+
+type UserUpdatesClient interface {
+	UserupdatesProcessUserOperation(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error)
+	UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
+	Config            config.Config
+	Repo              MsgRepository
+	UserUpdates       UserUpdatesClient
+	ReceiverPublisher repository.ReceiverOperationPublisher
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	var updates UserUpdatesClient
+	if hasRPCClientConfig(c.Userupdates) {
+		updates = userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
+	}
 	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c),
+		Config:      c,
+		Repo:        repository.NewRepository(c),
+		UserUpdates: updates,
 	}
 }
 func (s *ServiceContext) Close() error {
 	if s == nil || s.Repo == nil {
 		return nil
 	}
-	return s.Repo.Close()
+	if closer, ok := s.Repo.(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }
