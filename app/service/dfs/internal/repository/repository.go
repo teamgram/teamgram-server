@@ -17,23 +17,58 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
+	minioadapter "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/minio"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/rpc"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
+	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	kv               kv.ExtStore
 	uploadStateModel xkv.UploadStateModel
+	objectStore      minioadapter.ObjectStore
+	idgen            rpc.IDGenerator
+	imaging          imaging2.Processor
+	ffmpeg           ffmpeg2.Processor
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
 	kv2 := kv.NewStore(c.Kv)
+	var objectStore minioadapter.ObjectStore
+	if c.Minio.Endpoint != "" {
+		store, err := minioadapter.NewObjectStore(c.Minio)
+		if err != nil {
+			panic(fmt.Errorf("new dfs minio object store: %w", err))
+		}
+		objectStore = store
+	}
+	var idgen rpc.IDGenerator
+	if hasRPCClientConfig(c.Idgen) {
+		idgen = rpc.NewIDGenClient(idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.Idgen)))
+	}
 
 	return &Repository{
 		kv:               kv2,
 		uploadStateModel: xkv.NewUploadStateModel(kv2),
+		objectStore:      objectStore,
+		idgen:            idgen,
+		imaging:          imaging2.NewProcessor(),
+		ffmpeg:           ffmpeg2.NewProcessor(),
 	}
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }
