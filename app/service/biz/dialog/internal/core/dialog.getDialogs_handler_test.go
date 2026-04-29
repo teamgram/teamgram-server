@@ -123,3 +123,81 @@ func testDialogRecord() repository.DialogRecord {
 		Date:                 1710000000,
 	}
 }
+
+func TestDialogGetDialogsCount(t *testing.T) {
+	repo := fakeDialogRepo{
+		countFn: func(_ context.Context, userID int64, excludePinned bool, folderID int32) (int32, error) {
+			if userID != 1001 || excludePinned || folderID != 7 {
+				t.Fatalf("request = userID:%d excludePinned:%t folderID:%d", userID, excludePinned, folderID)
+			}
+			return 4, nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.DialogGetDialogsCount(&dialogpb.TLDialogGetDialogsCount{
+		UserId:        1001,
+		ExcludePinned: tg.BoolFalseClazz,
+		FolderId:      7,
+	})
+	if err != nil {
+		t.Fatalf("DialogGetDialogsCount error = %v", err)
+	}
+	if got.V != 4 {
+		t.Fatalf("count = %d, want 4", got.V)
+	}
+}
+
+func TestDialogGetDialogById(t *testing.T) {
+	record := testDialogRecord()
+	repo := fakeDialogRepo{
+		getFn: func(_ context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error) {
+			if userID != 1001 || peerType != tg.PEER_USER || peerID != 2002 {
+				t.Fatalf("request = userID:%d peerType:%d peerID:%d", userID, peerType, peerID)
+			}
+			return &record, nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.DialogGetDialogById(&dialogpb.TLDialogGetDialogById{
+		UserId:   1001,
+		PeerType: tg.PEER_USER,
+		PeerId:   2002,
+	})
+	if err != nil {
+		t.Fatalf("DialogGetDialogById error = %v", err)
+	}
+	if got.Order != 17 {
+		t.Fatalf("Order = %d, want 17", got.Order)
+	}
+}
+
+func TestDialogGetDialogsByIdList(t *testing.T) {
+	repo := fakeDialogRepo{
+		idsFn: func(_ context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error) {
+			if userID != 1001 {
+				t.Fatalf("userID = %d, want 1001", userID)
+			}
+			if len(ids) != 2 || ids[0] != 17 || ids[1] != 18 {
+				t.Fatalf("ids = %#v, want [17 18]", ids)
+			}
+			first := testDialogRecord()
+			second := testDialogRecord()
+			second.PeerDialogID = 18
+			return []repository.DialogRecord{first, second}, nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.DialogGetDialogsByIdList(&dialogpb.TLDialogGetDialogsByIdList{
+		UserId: 1001,
+		IdList: []int64{17, 18},
+	})
+	if err != nil {
+		t.Fatalf("DialogGetDialogsByIdList error = %v", err)
+	}
+	if len(got.Datas) != 2 {
+		t.Fatalf("len(Datas) = %d, want 2", len(got.Datas))
+	}
+}
