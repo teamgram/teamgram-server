@@ -1,2 +1,14 @@
 Name: messenger.msg
 ListenOn: 0.0.0.0:20380
+
+Mysql:
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Idgen:
+  DestService: service.idgen
+  ServiceName: RPCIdgen
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen

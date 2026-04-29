@@ -17,7 +17,96 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
-type (
-// TODO: Add type aliases per business requirements.
+import "context"
+
+const (
+	SendStateStatusInitialized     int32 = 1
+	SendStateStatusCanonical       int32 = 2
+	SendStateStatusSenderCommitted int32 = 3
+	SendStateStatusReceiverAcked   int32 = 4
+	SendStateStatusCompleted       int32 = 5
+	SendStateStatusFailedRetryable int32 = 6
+
+	MessageKindText   int32 = 1
+	MessageStatusLive int32 = 1
 )
+
+type CreateSendStateInput struct {
+	SenderUserID                int64
+	PeerType                    int32
+	PeerID                      int64
+	ClientRandomID              int64
+	RequestPayloadSchemaVersion int32
+	RequestPayloadHash          string
+}
+
+type SendState struct {
+	SendStateID                 int64
+	SenderUserID                int64
+	PeerType                    int32
+	PeerID                      int64
+	ClientRandomID              int64
+	CanonicalMessageID          int64
+	PeerSeq                     int64
+	Status                      int32
+	RequestPayloadSchemaVersion int32
+	RequestPayloadHash          string
+	SenderOperationID           string
+	SenderPTS                   int64
+	SenderPTSCount              int32
+	SenderUpdateSchemaVersion   int32
+	SenderUpdatePayload         []byte
+	SenderUpdatePayloadHash     string
+	ReceiverManifestID          int64
+	RetryCount                  int32
+}
+
+type CreateCanonicalMessageInput struct {
+	SendStateID        int64
+	SenderUserID       int64
+	PeerType           int32
+	PeerID             int64
+	ClientRandomID     int64
+	RequestPayloadHash string
+	MessageText        string
+	MessageDate        int32
+}
+
+type CanonicalMessageResult struct {
+	SendStateID        int64
+	CanonicalMessageID int64
+	PeerSeq            int64
+	MessageDate        int32
+	RequestPayloadHash string
+	CreatedNew         bool
+}
+
+type MarkSenderCommittedInput struct {
+	SendStateID               int64
+	SenderOperationID         string
+	SenderPTS                 int64
+	SenderPTSCount            int32
+	SenderUpdateSchemaVersion int32
+	SenderUpdatePayload       []byte
+	SenderUpdatePayloadHash   string
+}
+
+type MarkRetryableFailureInput struct {
+	SendStateID       int64
+	LastErrorCategory int32
+	LastErrorCode     string
+	LastErrorMessage  string
+}
+
+type MessageRepository interface {
+	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
+}
+
+type MessageSendStateRepository interface {
+	CreateOrLoadSendState(ctx context.Context, in CreateSendStateInput) (*SendState, error)
+	MarkCanonicalCreated(ctx context.Context, sendStateID int64, canonicalMessageID int64, peerSeq int64) error
+	MarkSenderCommitted(ctx context.Context, in MarkSenderCommittedInput) error
+	MarkReceiverOpsAcked(ctx context.Context, sendStateID int64, receiverManifestID int64) error
+	MarkCompleted(ctx context.Context, sendStateID int64) error
+	MarkRetryableFailure(ctx context.Context, in MarkRetryableFailureInput) error
+}
