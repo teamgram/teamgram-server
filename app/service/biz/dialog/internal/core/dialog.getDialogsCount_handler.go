@@ -24,8 +24,9 @@ import (
 // DialogGetDialogsCount
 // dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 func (c *DialogCore) DialogGetDialogsCount(in *dialog.TLDialogGetDialogsCount) (*tg.Int32, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogsCount - error: method DialogGetDialogsCount not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	count, err := c.svcCtx.Repo.CountDialogs(c.ctx, in.UserId, tg.FromBoolClazz(in.ExcludePinned), in.FolderId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeInt32(count), nil
 }

@@ -24,8 +24,9 @@ import (
 // DialogGetDialogs
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogs - error: method DialogGetDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	records, err := c.svcCtx.Repo.ListDialogs(c.ctx, in.UserId, tg.FromBoolClazz(in.ExcludePinned), in.FolderId)
+	if err != nil {
+		return nil, err
+	}
+	return makeDialogExtVector(records), nil
 }
