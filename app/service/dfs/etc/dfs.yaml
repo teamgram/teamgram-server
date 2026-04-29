@@ -1,2 +1,30 @@
 Name: service.dfs
 ListenOn: 0.0.0.0:20640
+
+MiniHttp:
+  Name: service.dfs_mini_http
+  Host: 0.0.0.0
+  Port: 20641
+
+Kv:
+  - Host: 127.0.0.1:6379
+    Pass: ""
+
+Minio:
+  Endpoint: 127.0.0.1:9000
+  AccessKeyID: minioadmin
+  SecretAccessKey: minioadmin
+  UseSSL: false
+  PhotosBucket: teamgram-photos
+  VideosBucket: teamgram-videos
+  DocumentsBucket: teamgram-documents
+  EncryptedBucket: teamgram-encrypted
+
+Idgen:
+  DestService: service.idgen
+  ServiceName: RPCIdgen
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen

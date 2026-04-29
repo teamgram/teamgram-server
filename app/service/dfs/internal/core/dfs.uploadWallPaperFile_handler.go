@@ -24,8 +24,35 @@ import (
 // DfsUploadWallPaperFile
 // dfs.uploadWallPaperFile creator:long file:InputFile mime_type:string admin:Bool = Document;
 func (c *DfsCore) DfsUploadWallPaperFile(in *dfs.TLDfsUploadWallPaperFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.uploadWallPaperFile - error: method DfsUploadWallPaperFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	file, err := inputFile(in.File)
+	if err != nil {
+		return nil, err
+	}
+	uploaded, err := c.readUploadedDocumentData(in.Creator, file)
+	if err != nil {
+		return nil, err
+	}
+	repo := c.documents()
+	documentID, err := repo.NextDocumentID(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := c.uploadSessions().SaveObjectCacheRef(c.ctx, documentID, in.Creator, file.id); err != nil {
+		return nil, err
+	}
+	stored, err := repo.SaveDocumentThumbs(c.ctx, documentID, uploaded.data, uploaded.ext)
+	if err != nil {
+		return nil, err
+	}
+	size, err := repo.SaveDocumentObject(c.ctx, documentID, uploaded.data)
+	if err != nil {
+		return nil, err
+	}
+	attrs := []tg.DocumentAttributeClazz{
+		imageSizeAttributeFromThumbs(stored),
+	}
+	if tg.FromBoolClazz(in.Admin) {
+		attrs = append(attrs, tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: file.name}))
+	}
+	return makeDocumentWithThumbs(documentID, uploaded.ext, uploaded.date, in.MimeType, size, photoSizesFromStored(stored), nil, attrs), nil
 }

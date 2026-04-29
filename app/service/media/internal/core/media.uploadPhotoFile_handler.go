@@ -24,8 +24,5 @@ import (
 // MediaUploadPhotoFile
 // media.uploadPhotoFile flags:# owner_id:long file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = Photo;
 func (c *MediaCore) MediaUploadPhotoFile(in *media.TLMediaUploadPhotoFile) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadPhotoFile - error: method MediaUploadPhotoFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UploadPhotoFile(c.ctx, in)
 }

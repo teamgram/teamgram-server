@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 
 // MediaGetDocumentList
 // media.getDocumentList id_list:Vector<long> = Vector<Document>;
 func (c *MediaCore) MediaGetDocumentList(in *media.TLMediaGetDocumentList) (*media.VectorDocument, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.getDocumentList - error: method MediaGetDocumentList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetDocumentList(c.ctx, in.IdList)
 }

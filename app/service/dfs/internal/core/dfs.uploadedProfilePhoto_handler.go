@@ -24,8 +24,16 @@ import (
 // DfsUploadedProfilePhoto
 // dfs.uploadedProfilePhoto creator:long photo_id:long = Photo;
 func (c *DfsCore) DfsUploadedProfilePhoto(in *dfs.TLDfsUploadedProfilePhoto) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.uploadedProfilePhoto - error: method DfsUploadedProfilePhoto not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || in.PhotoId == 0 {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	repo := c.photos()
+	if repo == nil {
+		return nil, dfs.WrapDfsStorage("uploaded profile photo", dfs.ErrDfsStorage)
+	}
+	data, err := repo.LoadOriginalPhotoBytes(c.ctx, in.PhotoId)
+	if err != nil {
+		return nil, err
+	}
+	return c.buildPhotoFromBytes(data, ".jpeg", true, nowUnix(), nil, false)
 }

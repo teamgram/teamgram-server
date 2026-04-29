@@ -18,8 +18,25 @@ package config
 
 import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/zeromicro/go-zero/core/stores/kv"
+	"github.com/zeromicro/go-zero/rest"
 )
 
 type Config struct {
 	kitex.RpcServerConf
+	MiniHttp rest.RestConf
+	Kv       kv.KvConf
+	Minio    MinioConf
+	Idgen    kitex.RpcClientConf
+}
+
+type MinioConf struct {
+	Endpoint        string
+	AccessKeyID     string
+	SecretAccessKey string
+	UseSSL          bool
+	PhotosBucket    string
+	VideosBucket    string
+	DocumentsBucket string
+	EncryptedBucket string
 }

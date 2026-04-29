@@ -24,8 +24,5 @@ import (
 // MediaUploadedProfilePhoto
 // media.uploadedProfilePhoto owner_id:long photo_id:long = Photo;
 func (c *MediaCore) MediaUploadedProfilePhoto(in *media.TLMediaUploadedProfilePhoto) (*tg.Photo, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadedProfilePhoto - error: method MediaUploadedProfilePhoto not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UploadedProfilePhoto(c.ctx, in)
 }

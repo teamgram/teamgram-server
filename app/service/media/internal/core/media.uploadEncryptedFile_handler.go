@@ -24,8 +24,5 @@ import (
 // MediaUploadEncryptedFile
 // media.uploadEncryptedFile owner_id:long file:InputEncryptedFile = EncryptedFile;
 func (c *MediaCore) MediaUploadEncryptedFile(in *media.TLMediaUploadEncryptedFile) (*tg.EncryptedFile, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadEncryptedFile - error: method MediaUploadEncryptedFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }

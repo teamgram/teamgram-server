@@ -29,7 +29,11 @@ type DfsCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	MD *metadata.RpcMetadata
+	MD                   *metadata.RpcMetadata
+	uploadSessionManager *UploadSessionManager
+	photoRepository      photoRepository
+	documentRepository   documentRepository
+	downloadRepository   downloadRepository
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *DfsCore {

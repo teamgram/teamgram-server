@@ -24,8 +24,16 @@ import (
 // DfsWriteFilePartData
 // dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (c *DfsCore) DfsWriteFilePartData(in *dfs.TLDfsWriteFilePartData) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.writeFilePartData - error: method DfsWriteFilePartData not impl")
+	if err := c.uploadSessions().WritePart(c.ctx, WritePartCommand{
+		Creator:        in.Creator,
+		FileID:         in.FileId,
+		FilePart:       in.FilePart,
+		Bytes:          in.Bytes,
+		Big:            in.Big,
+		FileTotalParts: in.FileTotalParts,
+	}); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

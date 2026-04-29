@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 
 // MediaGetPhotoSizeList
 // media.getPhotoSizeList size_id:long = PhotoSizeList;
 func (c *MediaCore) MediaGetPhotoSizeList(in *media.TLMediaGetPhotoSizeList) (*media.PhotoSizeList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.getPhotoSizeList - error: method MediaGetPhotoSizeList not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.GetPhotoSizeList(c.ctx, in.SizeId)
 }

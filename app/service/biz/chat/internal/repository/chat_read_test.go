@@ -19,6 +19,18 @@ func (f failingMediaReader) GetChatPhoto(ctx context.Context, photoID int64) (*t
 	return nil, f.err
 }
 
+type successfulMediaReader struct {
+	photo *tg.Photo
+	calls int
+	id    int64
+}
+
+func (s *successfulMediaReader) GetChatPhoto(ctx context.Context, photoID int64) (*tg.Photo, error) {
+	s.calls++
+	s.id = photoID
+	return s.photo, nil
+}
+
 func TestGetMutableChatRequiresIntegrationDB(t *testing.T) {
 	t.Skip("repository aggregate read requires a MySQL fixture")
 }
@@ -88,6 +100,34 @@ func TestPhotoFallbackIsNonFatal(t *testing.T) {
 	photo, ok := got.Chat.Photo.(*tg.TLPhotoEmpty)
 	if !ok || photo.Id != 99 {
 		t.Fatalf("photo fallback = %#v, want photoEmpty id 99", got.Chat.Photo)
+	}
+}
+
+func TestPhotoMediaPositivePathIsUsed(t *testing.T) {
+	expected := tg.MakeTLPhoto(&tg.TLPhoto{
+		Id:         99,
+		AccessHash: 12345,
+		Sizes: []tg.PhotoSizeClazz{
+			tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "x", W: 10, H: 10, Size2: 100}),
+		},
+		DcId: 1,
+	}).ToPhoto()
+	reader := &successfulMediaReader{photo: expected}
+	r := &Repository{mediaReader: reader}
+
+	got := r.makeMutableChatFromRows(context.Background(), &model.Chats{
+		Id:      10,
+		PhotoId: 99,
+		Title:   "chat",
+	}, nil)
+	if reader.calls != 1 || reader.id != 99 {
+		t.Fatalf("media reader calls = %d id = %d, want 1 id 99", reader.calls, reader.id)
+	}
+	if got == nil || got.Chat == nil || got.Chat.Photo != expected.Clazz {
+		t.Fatalf("chat photo = %#v, want media photo %#v", got, expected.Clazz)
+	}
+	if _, ok := got.Chat.Photo.(*tg.TLPhotoEmpty); ok {
+		t.Fatalf("positive media path returned photoEmpty: %#v", got.Chat.Photo)
 	}
 }
 

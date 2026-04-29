@@ -24,4 +24,5 @@ import (
 type Config struct {
 	kitex.RpcServerConf
 	Mysql sqlx.Config
+	Dfs   kitex.RpcClientConf
 }
