@@ -113,6 +113,17 @@ func (m *UploadSessionManager) OpenUploadedFile(ctx context.Context, creator, fi
 	return reader, nil
 }
 
+func (m *UploadSessionManager) LoadUploadedFileInfo(ctx context.Context, creator, fileID int64) (*DfsFileInfo, error) {
+	if err := m.ensureRepo("load uploaded file info"); err != nil {
+		return nil, err
+	}
+	info, err := m.repo.LoadUploadFileInfo(ctx, creator, fileID)
+	if err != nil {
+		return nil, wrapUploadStorage("load upload file info", err)
+	}
+	return info, nil
+}
+
 func (m *UploadSessionManager) ReadUploadedFileRange(ctx context.Context, creator, fileID int64, offset, limit int64) ([]byte, error) {
 	if offset < 0 || limit < 0 {
 		return nil, dfs.ErrDfsInvalidArgument

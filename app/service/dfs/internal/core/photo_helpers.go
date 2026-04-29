@@ -92,7 +92,7 @@ func (c *DfsCore) buildPhotoFromBytes(data []byte, ext string, isABC bool, date 
 	return tg.MakeTLPhoto(&tg.TLPhoto{
 		HasStickers:   false,
 		Id:            photoID,
-		AccessHash:    minioadapter.MakeAccessHash(storageFileTypeConstructor(ext), rand.Uint32()),
+		AccessHash:    minioadapter.MakeAccessHash(storageFileTypeConstructor(ext), rand32()),
 		FileReference: []byte{},
 		Date:          date,
 		Sizes:         sizes,
@@ -162,6 +162,10 @@ func storageFileTypeConstructor(ext string) int32 {
 
 func storageConstructor(id uint32) int32 {
 	return int32(id)
+}
+
+func rand32() uint32 {
+	return rand.Uint32()
 }
 
 func nowUnix() int32 {
