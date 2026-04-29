@@ -17,14 +17,23 @@
 package repository
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	kv               kv.ExtStore
+	uploadStateModel xkv.UploadStateModel
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	kv2 := kv.NewStore(c.Kv)
+
+	return &Repository{
+		kv:               kv2,
+		uploadStateModel: xkv.NewUploadStateModel(kv2),
+	}
 }
