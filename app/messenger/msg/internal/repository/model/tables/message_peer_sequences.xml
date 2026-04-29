@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_peer_sequences">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO message_peer_sequences
+                (peer_type, peer_id, next_peer_seq, created_at, updated_at)
+            VALUES
+                (:peer_type, :peer_id, :next_peer_seq, NOW(6), NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectForUpdate">
+        <sql>
+            SELECT
+                peer_type, peer_id, next_peer_seq, created_at, updated_at
+            FROM
+                message_peer_sequences
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id LIMIT 1 FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="UpdateNextPeerSeq">
+        <sql>
+            UPDATE
+                message_peer_sequences
+            SET
+                next_peer_seq = :next_peer_seq,
+                updated_at = NOW(6)
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+</table>

@@ -15,13 +15,25 @@ import (
 )
 
 type Models struct {
-	HashTagsModel       HashTagsModel
-	UserPtsUpdatesModel UserPtsUpdatesModel
+	CanonicalMessagesModel      CanonicalMessagesModel
+	HashTagsModel               HashTagsModel
+	MessageClientRandomsModel   MessageClientRandomsModel
+	MessageFanoutManifestsModel MessageFanoutManifestsModel
+	MessageFanoutReceiversModel MessageFanoutReceiversModel
+	MessagePeerSequencesModel   MessagePeerSequencesModel
+	MessageSendStatesModel      MessageSendStatesModel
+	UserPtsUpdatesModel         UserPtsUpdatesModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
-		HashTagsModel:       NewHashTagsModel(db),
-		UserPtsUpdatesModel: NewUserPtsUpdatesModel(db),
+		CanonicalMessagesModel:      NewCanonicalMessagesModel(db),
+		HashTagsModel:               NewHashTagsModel(db),
+		MessageClientRandomsModel:   NewMessageClientRandomsModel(db),
+		MessageFanoutManifestsModel: NewMessageFanoutManifestsModel(db),
+		MessageFanoutReceiversModel: NewMessageFanoutReceiversModel(db),
+		MessagePeerSequencesModel:   NewMessagePeerSequencesModel(db),
+		MessageSendStatesModel:      NewMessageSendStatesModel(db),
+		UserPtsUpdatesModel:         NewUserPtsUpdatesModel(db),
 	}
 }

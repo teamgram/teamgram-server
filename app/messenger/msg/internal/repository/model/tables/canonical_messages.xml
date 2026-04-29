@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="canonical_messages">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO canonical_messages
+                (canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, date, edit_date, deleted_at, storage_schema_version, created_at, updated_at)
+            VALUES
+                (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :edit_date, :deleted_at, :storage_schema_version, NOW(6), NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectByCanonicalMessageId">
+        <sql>
+            SELECT
+                canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, date, edit_date, deleted_at, storage_schema_version, created_at, updated_at
+            FROM
+                canonical_messages
+            WHERE
+                canonical_message_id = :canonical_message_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByPeerSeq">
+        <sql>
+            SELECT
+                canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, date, edit_date, deleted_at, storage_schema_version, created_at, updated_at
+            FROM
+                canonical_messages
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id AND peer_seq = :peer_seq LIMIT 1
+        </sql>
+    </operation>
+</table>

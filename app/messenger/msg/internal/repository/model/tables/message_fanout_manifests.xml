@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_fanout_manifests">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO message_fanout_manifests
+                (manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, status, created_at, updated_at, completed_at)
+            VALUES
+                (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, NOW(6), NOW(6), :completed_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectByManifestId">
+        <sql>
+            SELECT
+                manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, status, created_at, updated_at, completed_at
+            FROM
+                message_fanout_manifests
+            WHERE
+                manifest_id = :manifest_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByCanonicalMessageId">
+        <sql>
+            SELECT
+                manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, status, created_at, updated_at, completed_at
+            FROM
+                message_fanout_manifests
+            WHERE
+                canonical_message_id = :canonical_message_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="MarkCompleted">
+        <sql>
+            UPDATE
+                message_fanout_manifests
+            SET
+                status = :status,
+                completed_at = :completed_at,
+                updated_at = NOW(6)
+            WHERE
+                manifest_id = :manifest_id
+        </sql>
+    </operation>
+</table>

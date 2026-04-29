@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_client_randoms">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO message_client_randoms
+                (sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at)
+            VALUES
+                (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash, NOW(6), NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectByRandom">
+        <sql>
+            SELECT
+                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at
+            FROM
+                message_client_randoms
+            WHERE
+                sender_user_id = :sender_user_id AND peer_type = :peer_type AND peer_id = :peer_id AND client_random_id = :client_random_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByCanonicalMessageId">
+        <sql>
+            SELECT
+                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at
+            FROM
+                message_client_randoms
+            WHERE
+                canonical_message_id = :canonical_message_id LIMIT 1
+        </sql>
+    </operation>
+</table>

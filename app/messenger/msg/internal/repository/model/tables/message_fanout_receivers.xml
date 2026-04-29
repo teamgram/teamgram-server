@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_fanout_receivers">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO message_fanout_receivers
+                (manifest_id, receiver_user_id, operation_id, operation_payload_schema_version, operation_payload_codec, operation_payload, operation_payload_hash, kafka_topic, kafka_partition, kafka_offset, status, retry_count, next_retry_at, last_attempt_at, last_error_code, created_at, updated_at)
+            VALUES
+                (:manifest_id, :receiver_user_id, :operation_id, :operation_payload_schema_version, :operation_payload_codec, :operation_payload, :operation_payload_hash, :kafka_topic, :kafka_partition, :kafka_offset, :status, :retry_count, :next_retry_at, :last_attempt_at, :last_error_code, NOW(6), NOW(6))
+        </sql>
+    </operation>
+
+    <operation name="SelectByReceiverOperation">
+        <sql>
+            SELECT
+                manifest_id, receiver_user_id, operation_id, operation_payload_schema_version, operation_payload_codec, operation_payload, operation_payload_hash, kafka_topic, kafka_partition, kafka_offset, status, retry_count, next_retry_at, last_attempt_at, last_error_code, created_at, updated_at
+            FROM
+                message_fanout_receivers
+            WHERE
+                receiver_user_id = :receiver_user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByManifest" result_set="list">
+        <sql>
+            SELECT
+                manifest_id, receiver_user_id, operation_id, operation_payload_schema_version, operation_payload_codec, operation_payload, operation_payload_hash, kafka_topic, kafka_partition, kafka_offset, status, retry_count, next_retry_at, last_attempt_at, last_error_code, created_at, updated_at
+            FROM
+                message_fanout_receivers
+            WHERE
+                manifest_id = :manifest_id
+            ORDER BY
+                receiver_user_id
+        </sql>
+    </operation>
+
+    <operation name="MarkPublished">
+        <sql>
+            UPDATE
+                message_fanout_receivers
+            SET
+                kafka_topic = :kafka_topic,
+                kafka_partition = :kafka_partition,
+                kafka_offset = :kafka_offset,
+                status = :status,
+                last_attempt_at = :last_attempt_at,
+                updated_at = NOW(6)
+            WHERE
+                manifest_id = :manifest_id AND receiver_user_id = :receiver_user_id
+        </sql>
+    </operation>
+
+    <operation name="MarkRetryableFailure">
+        <sql>
+            UPDATE
+                message_fanout_receivers
+            SET
+                status = :status,
+                retry_count = retry_count + 1,
+                next_retry_at = :next_retry_at,
+                last_attempt_at = :last_attempt_at,
+                last_error_code = :last_error_code,
+                updated_at = NOW(6)
+            WHERE
+                manifest_id = :manifest_id AND receiver_user_id = :receiver_user_id
+        </sql>
+    </operation>
+</table>
