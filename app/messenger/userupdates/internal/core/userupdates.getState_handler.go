@@ -18,15 +18,29 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesGetState
 // userupdates.getState user_id:long auth_key_id:long = UserState;
 func (c *UserupdatesCore) UserupdatesGetState(in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.getState - error: method UserupdatesGetState not impl")
+	if in == nil {
+		return nil, fmt.Errorf("%w: missing getState request", userupdates.ErrOperationTerminal)
+	}
+	state, err := c.svcCtx.Repo.GetState(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if state == nil {
+		return stateToTL(repositoryZeroState(in.UserId)), nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return stateToTL(*state), nil
+}
+
+func repositoryZeroState(userID int64) repository.UserState {
+	return repository.UserState{UserID: userID}
 }

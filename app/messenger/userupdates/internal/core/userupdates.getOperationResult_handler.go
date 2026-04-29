@@ -18,15 +18,24 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesGetOperationResult
 // userupdates.getOperationResult user_id:long operation_id:string payload_hash:bytes = UserOperationResult;
 func (c *UserupdatesCore) UserupdatesGetOperationResult(in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.getOperationResult - error: method UserupdatesGetOperationResult not impl")
+	if in == nil {
+		return nil, fmt.Errorf("%w: missing getOperationResult request", userupdates.ErrOperationTerminal)
+	}
+	result, err := c.svcCtx.Repo.GetOperationResult(c.ctx, in.UserId, in.OperationId)
+	if err != nil {
+		return nil, err
+	}
+	if expected := operationHashHex(in.PayloadHash); expected != "" && result.PayloadHash != expected {
+		return nil, userupdates.ErrOperationPayloadConflict
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return operationResultToTL(result)
 }

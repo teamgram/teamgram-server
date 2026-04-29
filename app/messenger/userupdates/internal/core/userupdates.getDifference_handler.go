@@ -18,15 +18,30 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesGetDifference
 // userupdates.getDifference flags:# user_id:long auth_key_id:long pts:long pts_total_limit:flags.0?int date:flags.1?long = UserDifference;
 func (c *UserupdatesCore) UserupdatesGetDifference(in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.getDifference - error: method UserupdatesGetDifference not impl")
+	if in == nil {
+		return nil, fmt.Errorf("%w: missing getDifference request", userupdates.ErrOperationTerminal)
+	}
+	limit := int32(0)
+	if in.PtsTotalLimit != nil {
+		limit = *in.PtsTotalLimit
+	}
+	difference, err := c.svcCtx.Repo.GetDifference(c.ctx, repository.GetDifferenceInput{
+		UserID: in.UserId,
+		Pts:    in.Pts,
+		Limit:  limit,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return differenceToTL(difference)
 }

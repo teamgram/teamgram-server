@@ -18,13 +18,22 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 )
 
+type UserUpdatesRepository interface {
+	ApplyUserOperation(ctx context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error)
+	GetOperationResult(ctx context.Context, userID int64, operationID string) (*repository.OperationResult, error)
+	GetState(ctx context.Context, userID int64) (*repository.UserState, error)
+	GetDifference(ctx context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error)
+}
+
 type ServiceContext struct {
 	Config config.Config
-	Repo   *repository.Repository
+	Repo   UserUpdatesRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,5 +46,8 @@ func (s *ServiceContext) Close() error {
 	if s == nil || s.Repo == nil {
 		return nil
 	}
-	return s.Repo.Close()
+	if closer, ok := s.Repo.(interface{ Close() error }); ok {
+		return closer.Close()
+	}
+	return nil
 }

@@ -18,15 +18,39 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesProcessUserOperation
 // userupdates.processUserOperation operation:UserOperation = UserOperationResult;
 func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
-	// TODO: not impl
-	c.Logger.Errorf("userupdates.processUserOperation - error: method UserupdatesProcessUserOperation not impl")
+	if in == nil || in.Operation == nil {
+		return nil, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
+	}
+	op := in.Operation
+	var dependencyPts []int64
+	if op.DependencyPts != nil {
+		dependencyPts = []int64{*op.DependencyPts}
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	result, err := c.svcCtx.Repo.ApplyUserOperation(c.ctx, repository.ApplyUserOperationInput{
+		UserID:        op.UserId,
+		OperationID:   op.OperationId,
+		OpType:        op.OpType,
+		PeerType:      op.PeerType,
+		PeerID:        op.PeerId,
+		PayloadCodec:  op.PayloadCodec,
+		Payload:       op.Payload,
+		PayloadHash:   operationHashHex(op.PayloadHash),
+		BucketID:      op.BucketId,
+		PartitionID:   op.PartitionId,
+		DependencyPts: dependencyPts,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return applyResultToTL(result)
 }

@@ -1,0 +1,237 @@
+package core
+
+import (
+	"context"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"testing"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
+func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
+	operationPayload := []byte(`{"schema_version":1,"operation_kind":"send_message"}`)
+	operationHashHex := payload.HashBytes(operationPayload)
+	operationHash := mustDecodeHex(t, operationHashHex)
+	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
+	responseHashHex := payload.HashBytes(responsePayload)
+
+	repo := &fakeUserUpdatesRepository{
+		applyResult: &repository.ApplyUserOperationResult{
+			UserID:          1001,
+			OperationID:     "v1:msg:2001:sender:1001:out",
+			Pts:             12,
+			PtsCount:        1,
+			ResponsePayload: responsePayload,
+			ResponseHash:    responseHashHex,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesProcessUserOperation(&userupdates.TLUserupdatesProcessUserOperation{
+		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:               1001,
+			BucketId:             77,
+			PartitionId:          13,
+			OperationId:          "v1:msg:2001:sender:1001:out",
+			OpType:               repository.OpTypeSendMessage,
+			PeerType:             payload.PeerTypeUser,
+			PeerId:               1002,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         repository.PayloadCodecJSON,
+			PayloadHash:          operationHash,
+			Payload:              operationPayload,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("ProcessUserOperation returned error: %v", err)
+	}
+	if got.Pts != 12 || got.PtsCount != 1 || got.CurrentPts != 12 {
+		t.Fatalf("unexpected pts result: pts=%d pts_count=%d current_pts=%d", got.Pts, got.PtsCount, got.CurrentPts)
+	}
+	if got.ResponseSchemaVersion == nil || *got.ResponseSchemaVersion != payload.OperationResponseSchemaVersion {
+		t.Fatalf("unexpected response schema version: %v", got.ResponseSchemaVersion)
+	}
+	if string(got.ResponsePayload) != string(responsePayload) {
+		t.Fatalf("unexpected response payload: %s", string(got.ResponsePayload))
+	}
+	if hex.EncodeToString(got.ResponsePayloadHash) != responseHashHex {
+		t.Fatalf("unexpected response hash: %x", got.ResponsePayloadHash)
+	}
+	if repo.applyInput.UserID != 1001 ||
+		repo.applyInput.OperationID != "v1:msg:2001:sender:1001:out" ||
+		repo.applyInput.PayloadHash != operationHashHex ||
+		repo.applyInput.BucketID != 77 ||
+		repo.applyInput.PartitionID != 13 {
+		t.Fatalf("unexpected repository input: %+v", repo.applyInput)
+	}
+}
+
+func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
+	goodPayload := []byte(`{"good":true}`)
+	badPayload := []byte(`{"good":false}`)
+	repo := &fakeUserUpdatesRepository{
+		operationResult: &repository.OperationResult{
+			UserID:      1001,
+			OperationID: "v1:msg:2001:receiver:1001:in",
+			Status:      repository.OperationResultStatusCompleted,
+			Pts:         8,
+			PtsCount:    1,
+			PayloadHash: payload.HashBytes(goodPayload),
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.UserupdatesGetOperationResult(&userupdates.TLUserupdatesGetOperationResult{
+		UserId:      1001,
+		OperationId: "v1:msg:2001:receiver:1001:in",
+		PayloadHash: mustDecodeHex(t, payload.HashBytes(badPayload)),
+	})
+	if !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
+		t.Fatalf("expected ErrOperationPayloadConflict, got %v", err)
+	}
+}
+
+func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2001,
+		MessageID:          9,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1002,
+		ToUserID:           1001,
+		Date:               1_772_000_000,
+		Out:                false,
+		MessageText:        "hello from event payload",
+	})
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 18},
+			Events: []repository.UserEvent{
+				{
+					UserID:             1001,
+					Pts:                18,
+					PtsCount:           1,
+					OperationID:        "v1:msg:2001:receiver:1001:in",
+					EventType:          repository.EventTypeNewMessage,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1002,
+					CanonicalMessageID: 2001,
+					PeerSeq:            9,
+					ActorUserID:        1002,
+					EventSchemaVersion: payload.MessageEventSchemaVersion,
+					EventCodec:         repository.PayloadCodecJSON,
+					EventPayload:       eventPayload,
+					EventPayloadHash:   payload.HashBytes(eventPayload),
+				},
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:        1001,
+		AuthKeyId:     9001,
+		Pts:           17,
+		PtsTotalLimit: int32Ptr(10),
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifference()
+	if !ok {
+		t.Fatalf("expected userDifference, got %s", got.ClazzName())
+	}
+	if diff.State == nil || diff.State.Pts != 18 {
+		t.Fatalf("unexpected state: %#v", diff.State)
+	}
+	if len(diff.NewMessages) != 1 {
+		t.Fatalf("expected one new message, got %d", len(diff.NewMessages))
+	}
+	message, ok := diff.NewMessages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("expected TLMessage, got %T", diff.NewMessages[0])
+	}
+	if message.Id != 9 || message.Message != "hello from event payload" || message.Out {
+		t.Fatalf("unexpected message projection: %+v", message)
+	}
+	if len(diff.OtherUpdates) != 1 {
+		t.Fatalf("expected one update, got %d", len(diff.OtherUpdates))
+	}
+	update, ok := diff.OtherUpdates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("expected TLUpdateNewMessage, got %T", diff.OtherUpdates[0])
+	}
+	if update.Pts != 18 || update.PtsCount != 1 {
+		t.Fatalf("unexpected update pts: %+v", update)
+	}
+}
+
+func TestGetStateReturnsRepositoryState(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{
+		state: &repository.UserState{UserID: 1001, Pts: 55},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetState(&userupdates.TLUserupdatesGetState{UserId: 1001, AuthKeyId: 9001})
+	if err != nil {
+		t.Fatalf("GetState returned error: %v", err)
+	}
+	if got.Pts != 55 {
+		t.Fatalf("unexpected pts: %d", got.Pts)
+	}
+}
+
+type fakeUserUpdatesRepository struct {
+	applyInput      repository.ApplyUserOperationInput
+	applyResult     *repository.ApplyUserOperationResult
+	operationResult *repository.OperationResult
+	state           *repository.UserState
+	difference      *repository.GetDifferenceResult
+}
+
+func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
+	f.applyInput = in
+	return f.applyResult, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetOperationResult(_ context.Context, _ int64, _ string) (*repository.OperationResult, error) {
+	return f.operationResult, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetState(_ context.Context, _ int64) (*repository.UserState, error) {
+	return f.state, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, _ repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
+	return f.difference, nil
+}
+
+func mustDecodeHex(t *testing.T, s string) []byte {
+	t.Helper()
+	b, err := hex.DecodeString(s)
+	if err != nil {
+		t.Fatalf("decode hex: %v", err)
+	}
+	return b
+}
+
+func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event: %v", err)
+	}
+	return b
+}
+
+func int32Ptr(v int32) *int32 {
+	return &v
+}
