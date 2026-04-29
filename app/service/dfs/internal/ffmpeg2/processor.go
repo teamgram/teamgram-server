@@ -94,6 +94,10 @@ func (p *ExternalProcessor) GetVideoMetadata(ctx context.Context, input io.Reade
 	if err != nil {
 		return nil, fmt.Errorf("%w: ffprobe metadata: %w", ErrProcessorUnavailable, err)
 	}
+	return decodeMetadata(out)
+}
+
+func decodeMetadata(out []byte) (*VideoMetadata, error) {
 	var probed struct {
 		Streams []struct {
 			Width    int32  `json:"width"`
@@ -108,7 +112,11 @@ func (p *ExternalProcessor) GetVideoMetadata(ctx context.Context, input io.Reade
 		return nil, fmt.Errorf("ffprobe metadata decode: %w", err)
 	}
 	if len(probed.Streams) == 0 {
-		return nil, fmt.Errorf("%w: no video stream", ErrProcessorUnavailable)
+		duration := parseDurationSeconds(probed.Format.Duration)
+		if duration == 0 {
+			return nil, fmt.Errorf("%w: no media duration", ErrProcessorUnavailable)
+		}
+		return &VideoMetadata{Duration: duration}, nil
 	}
 	duration := parseDurationSeconds(probed.Streams[0].Duration)
 	if duration == 0 {

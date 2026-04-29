@@ -24,8 +24,43 @@ import (
 // DfsUploadThemeFile
 // dfs.uploadThemeFile flags:# creator:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 func (c *DfsCore) DfsUploadThemeFile(in *dfs.TLDfsUploadThemeFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.uploadThemeFile - error: method DfsUploadThemeFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	file, err := inputFile(in.File)
+	if err != nil {
+		return nil, err
+	}
+	uploaded, err := c.readUploadedDocumentData(in.Creator, file)
+	if err != nil {
+		return nil, err
+	}
+	repo := c.documents()
+	documentID, err := repo.NextDocumentID(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := c.uploadSessions().SaveObjectCacheRef(c.ctx, documentID, in.Creator, file.id); err != nil {
+		return nil, err
+	}
+	var thumbs []tg.PhotoSizeClazz
+	if in.Thumb != nil {
+		thumbFile, err := inputFile(in.Thumb)
+		if err != nil {
+			return nil, err
+		}
+		thumb, err := c.readUploadedDocumentData(in.Creator, thumbFile)
+		if err != nil {
+			return nil, err
+		}
+		stored, err := repo.SaveDocumentThumbs(c.ctx, documentID, thumb.data, thumb.ext)
+		if err != nil {
+			return nil, err
+		}
+		thumbs = photoSizesFromStored(stored)
+	}
+	size, err := repo.SaveDocumentObject(c.ctx, documentID, uploaded.data)
+	if err != nil {
+		return nil, err
+	}
+	return makeDocumentWithThumbs(documentID, uploaded.ext, uploaded.date, in.MimeType, size, thumbs, nil, []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: in.FileName}),
+	}), nil
 }

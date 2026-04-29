@@ -19,3 +19,13 @@ func TestExternalProcessorReportsUnavailable(t *testing.T) {
 		t.Fatalf("GetVideoMetadata() error = %v, want ErrProcessorUnavailable", err)
 	}
 }
+
+func TestDecodeMetadataReturnsAudioOnlyDuration(t *testing.T) {
+	metadata, err := decodeMetadata([]byte(`{"streams":[],"format":{"duration":"11.2"}}`))
+	if err != nil {
+		t.Fatalf("decodeMetadata() error = %v", err)
+	}
+	if metadata.Width != 0 || metadata.Height != 0 || metadata.Duration != 11 {
+		t.Fatalf("metadata = %+v, want duration-only 11 seconds", metadata)
+	}
+}

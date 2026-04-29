@@ -24,8 +24,42 @@ import (
 // DfsUploadRingtoneFile
 // dfs.uploadRingtoneFile creator:long file:InputFile mime_type:string file_name:string = Document;
 func (c *DfsCore) DfsUploadRingtoneFile(in *dfs.TLDfsUploadRingtoneFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dfs.uploadRingtoneFile - error: method DfsUploadRingtoneFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	file, err := inputFile(in.File)
+	if err != nil {
+		return nil, err
+	}
+	uploaded, err := c.readUploadedDocumentData(in.Creator, file)
+	if err != nil {
+		return nil, err
+	}
+	repo := c.documents()
+	documentID, err := repo.NextDocumentID(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := c.uploadSessions().SaveObjectCacheRef(c.ctx, documentID, in.Creator, file.id); err != nil {
+		return nil, err
+	}
+	metadata, err := repo.GetDocumentVideoMetadata(c.ctx, uploaded.data)
+	if err != nil {
+		return nil, err
+	}
+	var duration int32
+	if metadata != nil {
+		duration = metadata.Duration
+	}
+	size, err := repo.SaveDocumentObject(c.ctx, documentID, uploaded.data)
+	if err != nil {
+		return nil, err
+	}
+	title := in.FileName
+	performer := ""
+	return makeDocument(documentID, uploaded.ext, uploaded.date, in.MimeType, size, []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeAudio(&tg.TLDocumentAttributeAudio{
+			Duration:  duration,
+			Title:     &title,
+			Performer: &performer,
+		}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: in.FileName}),
+	}), nil
 }
