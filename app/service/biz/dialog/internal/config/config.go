@@ -17,9 +17,11 @@
 package config
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
 	kitex.RpcServerConf
+	Mysql sqlx.Config
 }
