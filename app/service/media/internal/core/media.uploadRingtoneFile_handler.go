@@ -24,8 +24,5 @@ import (
 // MediaUploadRingtoneFile
 // media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
 func (c *MediaCore) MediaUploadRingtoneFile(in *media.TLMediaUploadRingtoneFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadRingtoneFile - error: method MediaUploadRingtoneFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }

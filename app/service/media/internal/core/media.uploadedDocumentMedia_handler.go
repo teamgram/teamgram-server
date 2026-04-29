@@ -24,8 +24,5 @@ import (
 // MediaUploadedDocumentMedia
 // media.uploadedDocumentMedia owner_id:long media:InputMedia = MessageMedia;
 func (c *MediaCore) MediaUploadedDocumentMedia(in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadedDocumentMedia - error: method MediaUploadedDocumentMedia not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UploadedDocumentMedia(c.ctx, in)
 }

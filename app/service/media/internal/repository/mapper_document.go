@@ -24,11 +24,18 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 		Date:          int32(doc.Date2),
 		MimeType:      doc.MimeType,
 		Size2:         doc.FileSize,
-		Thumbs:        mapPhotoSizes(thumbs),
+		Thumbs:        mapOptionalPhotoSizes(thumbs),
 		VideoThumbs:   mapVideoSizes(videoThumbs),
 		DcId:          doc.DcId,
 		Attributes:    attrs,
 	}).ToDocument(), nil
+}
+
+func mapOptionalPhotoSizes(sizes []model.PhotoSizes) []tg.PhotoSizeClazz {
+	if len(sizes) == 0 {
+		return nil
+	}
+	return mapPhotoSizes(sizes)
 }
 
 func decodeLegacyDocumentAttributes(raw string) ([]tg.DocumentAttributeClazz, error) {

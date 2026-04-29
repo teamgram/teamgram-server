@@ -24,8 +24,5 @@ import (
 // MediaGetEncryptedFile
 // media.getEncryptedFile id:long access_hash:long = EncryptedFile;
 func (c *MediaCore) MediaGetEncryptedFile(in *media.TLMediaGetEncryptedFile) (*tg.EncryptedFile, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.getEncryptedFile - error: method MediaGetEncryptedFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }

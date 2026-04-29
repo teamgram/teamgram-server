@@ -77,9 +77,13 @@ func (m *captureVideoSizesModel) SelectListByVideoSizeId(_ context.Context, _ in
 
 type fakeDfsMediaClient struct {
 	photo              *tg.Photo
+	document           *tg.Document
 	uploadPhotoRequest *dfsapi.TLDfsUploadPhotoFileV2
 	uploadProfileReq   *dfsapi.TLDfsUploadProfilePhotoFileV2
 	uploadedProfileReq *dfsapi.TLDfsUploadedProfilePhoto
+	uploadDocumentReq  *dfsapi.TLDfsUploadDocumentFileV2
+	uploadGifReq       *dfsapi.TLDfsUploadGifDocumentMedia
+	uploadMp4Req       *dfsapi.TLDfsUploadMp4DocumentMedia
 }
 
 func (c *fakeDfsMediaClient) UploadPhotoFileV2(_ context.Context, in *dfsapi.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
@@ -92,16 +96,19 @@ func (c *fakeDfsMediaClient) UploadProfilePhotoFileV2(_ context.Context, in *dfs
 	return c.photo, nil
 }
 
-func (c *fakeDfsMediaClient) UploadDocumentFileV2(context.Context, *dfsapi.TLDfsUploadDocumentFileV2) (*tg.Document, error) {
-	return nil, errors.New("not used")
+func (c *fakeDfsMediaClient) UploadDocumentFileV2(_ context.Context, in *dfsapi.TLDfsUploadDocumentFileV2) (*tg.Document, error) {
+	c.uploadDocumentReq = in
+	return c.document, nil
 }
 
-func (c *fakeDfsMediaClient) UploadGifDocumentMedia(context.Context, *dfsapi.TLDfsUploadGifDocumentMedia) (*tg.Document, error) {
-	return nil, errors.New("not used")
+func (c *fakeDfsMediaClient) UploadGifDocumentMedia(_ context.Context, in *dfsapi.TLDfsUploadGifDocumentMedia) (*tg.Document, error) {
+	c.uploadGifReq = in
+	return c.document, nil
 }
 
-func (c *fakeDfsMediaClient) UploadMp4DocumentMedia(context.Context, *dfsapi.TLDfsUploadMp4DocumentMedia) (*tg.Document, error) {
-	return nil, errors.New("not used")
+func (c *fakeDfsMediaClient) UploadMp4DocumentMedia(_ context.Context, in *dfsapi.TLDfsUploadMp4DocumentMedia) (*tg.Document, error) {
+	c.uploadMp4Req = in
+	return c.document, nil
 }
 
 func (c *fakeDfsMediaClient) UploadedProfilePhoto(_ context.Context, in *dfsapi.TLDfsUploadedProfilePhoto) (*tg.Photo, error) {

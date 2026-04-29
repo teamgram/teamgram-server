@@ -24,8 +24,5 @@ import (
 // MediaUploadThemeFile
 // media.uploadThemeFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 func (c *MediaCore) MediaUploadThemeFile(in *media.TLMediaUploadThemeFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadThemeFile - error: method MediaUploadThemeFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }

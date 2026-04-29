@@ -24,8 +24,5 @@ import (
 // MediaUploadWallPaperFile
 // media.uploadWallPaperFile owner_id:long file:InputFile mime_type:string admin:Bool = Document;
 func (c *MediaCore) MediaUploadWallPaperFile(in *media.TLMediaUploadWallPaperFile) (*tg.Document, error) {
-	// TODO: not impl
-	c.Logger.Errorf("media.uploadWallPaperFile - error: method MediaUploadWallPaperFile not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }
