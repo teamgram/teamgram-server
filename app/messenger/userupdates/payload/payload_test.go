@@ -118,3 +118,69 @@ func TestOperationResponseAndEventCarrySchemaVersion(t *testing.T) {
 		t.Fatalf("event schema version = %d, want 1", event.SchemaVersion)
 	}
 }
+
+func TestReceiverKafkaMessageV1RoundTrip(t *testing.T) {
+	op := ReceiverOperationEnvelopeV1{
+		UserID:       1001,
+		BucketID:     9,
+		PartitionID:  9,
+		OperationID:  "v1:msg:2001:receiver:1001:in",
+		OpType:       OpTypeSendMessage,
+		PeerType:     PeerTypeUser,
+		PeerID:       2002,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      []byte(`{"schema_version":1}`),
+		PayloadHash:  HashBytes([]byte(`{"schema_version":1}`)),
+	}
+	msg := ReceiverKafkaMessageV1{
+		SchemaVersion: ReceiverKafkaMessageSchemaVersion,
+		Operation:     op,
+		Attempt:       0,
+	}
+	body, err := MarshalReceiverKafkaMessage(msg)
+	if err != nil {
+		t.Fatalf("MarshalReceiverKafkaMessage() error = %v", err)
+	}
+	got, err := UnmarshalReceiverKafkaMessage(body)
+	if err != nil {
+		t.Fatalf("UnmarshalReceiverKafkaMessage() error = %v", err)
+	}
+	if got.SchemaVersion != ReceiverKafkaMessageSchemaVersion {
+		t.Fatalf("schema version = %d", got.SchemaVersion)
+	}
+	if got.Operation.OperationID != op.OperationID {
+		t.Fatalf("operation id = %q", got.Operation.OperationID)
+	}
+}
+
+func TestReceiverKafkaMessageRejectsUnknownSchema(t *testing.T) {
+	_, err := UnmarshalReceiverKafkaMessage([]byte(`{"schema_version":999}`))
+	if err == nil {
+		t.Fatal("expected unknown schema error")
+	}
+}
+
+func TestPushTaskKafkaMessageV1RoundTrip(t *testing.T) {
+	msg := PushTaskKafkaMessageV1{
+		SchemaVersion: PushTaskKafkaMessageSchemaVersion,
+		TaskID:        3001,
+		UserID:        1001,
+		Pts:           42,
+		PushType:      1,
+		PeerType:      PeerTypeUser,
+		PeerID:        2002,
+		OperationID:   "v1:msg:2001:receiver:1001:in",
+		Payload:       []byte(`{"schema_version":1}`),
+	}
+	body, err := MarshalPushTaskKafkaMessage(msg)
+	if err != nil {
+		t.Fatalf("MarshalPushTaskKafkaMessage() error = %v", err)
+	}
+	got, err := UnmarshalPushTaskKafkaMessage(body)
+	if err != nil {
+		t.Fatalf("UnmarshalPushTaskKafkaMessage() error = %v", err)
+	}
+	if got.TaskID != msg.TaskID || got.UserID != msg.UserID || got.Pts != msg.Pts {
+		t.Fatalf("push task = %+v", got)
+	}
+}

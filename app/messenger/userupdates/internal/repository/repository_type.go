@@ -33,6 +33,26 @@ const (
 	PushTaskStatusPending int32 = 1
 )
 
+const (
+	DeliveryFailedOperationStatusOpen      int32 = 1
+	DeliveryFailedOperationStatusReplaying int32 = 2
+	DeliveryFailedOperationStatusReplayed  int32 = 3
+	DeliveryFailedOperationStatusIgnored   int32 = 4
+	DeliveryFailedOperationStatusTerminal  int32 = 5
+)
+
+const (
+	FailureCategoryControlFlow    int32 = 1
+	FailureCategoryInfrastructure int32 = 2
+	FailureCategoryCorruption     int32 = 3
+)
+
+type KafkaAck struct {
+	Topic     string
+	Partition int32
+	Offset    int64
+}
+
 type ApplyUserOperationInput struct {
 	UserID        int64
 	OperationID   string
@@ -105,4 +125,19 @@ type GetDifferenceInput struct {
 type GetDifferenceResult struct {
 	State  UserState
 	Events []UserEvent
+}
+
+type RecordDeliveryFailureInput struct {
+	FailedId        int64
+	UserId          int64
+	OperationId     string
+	OpType          int32
+	BucketId        int32
+	KafkaTopic      string
+	KafkaPartition  int32
+	KafkaOffset     int64
+	PayloadHash     []byte
+	FailureCategory int32
+	FailureCode     string
+	FailureMessage  string
 }

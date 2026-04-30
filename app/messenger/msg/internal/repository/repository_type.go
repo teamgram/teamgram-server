@@ -31,6 +31,12 @@ const (
 	MessageStatusLive int32 = 1
 )
 
+type KafkaAck struct {
+	Topic     string
+	Partition int32
+	Offset    int64
+}
+
 type CreateSendStateInput struct {
 	SenderUserID                int64
 	PeerType                    int32
