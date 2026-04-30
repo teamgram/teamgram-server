@@ -34,12 +34,13 @@ func (r *Repository) CreateNewUser(ctx context.Context, secretKeyID int64, phone
 		AccountDaysTtl: 548,
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		id, _, err := r.model.UsersModel.InsertTx(tx, userDO)
+		txModel := r.model.WithTx(tx)
+		id, _, err := txModel.UsersModel.Insert(userDO)
 		if err != nil {
 			return fmt.Errorf("insert user: %w", err)
 		}
 		userDO.Id = id
-		if _, _, err := r.model.UserPresencesModel.InsertOrUpdateTx(tx, &model.UserPresences{
+		if _, _, err := txModel.UserPresencesModel.InsertOrUpdate(&model.UserPresences{
 			UserId:     userDO.Id,
 			LastSeenAt: now,
 			Expires:    300,

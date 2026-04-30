@@ -172,10 +172,11 @@ func (r *Repository) updateUsernameByPeer(ctx context.Context, peerType int32, p
 	}
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.UsernameModel.DeleteByPeerTx(tx, peerType, peerID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.UsernameModel.DeleteByPeer(peerType, peerID); err != nil {
 			return fmt.Errorf("delete old username by peer %d/%d: %w", peerType, peerID, err)
 		}
-		if _, _, err := r.model.UsernameModel.InsertTx(tx, &model.Username{
+		if _, _, err := txModel.UsernameModel.Insert(&model.Username{
 			Username: username,
 			PeerType: peerType,
 			PeerId:   peerID,
@@ -189,7 +190,7 @@ func (r *Repository) updateUsernameByPeer(ctx context.Context, peerType int32, p
 			return fmt.Errorf("insert username %s: %w", username, err)
 		}
 		if syncUserRow {
-			rows, err := r.model.UsersModel.UpdateUsernameTx(tx, username, peerID)
+			rows, err := txModel.UsersModel.UpdateUsername(username, peerID)
 			if err != nil {
 				return fmt.Errorf("update user username %d: %w", peerID, err)
 			}

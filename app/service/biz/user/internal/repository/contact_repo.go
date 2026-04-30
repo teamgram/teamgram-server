@@ -14,6 +14,7 @@ import (
 func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID int64, firstName, lastName, phone string) (bool, error) {
 	var mutual bool
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		currentDO, err := r.model.UserContactsModel.SelectContactTx(tx, userID, contactUserID)
 		if err != nil {
 			if !isNotFound(err) {
@@ -36,7 +37,7 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 			mutual = true
 		}
 
-		if _, _, err := r.model.UserContactsModel.InsertOrUpdateTx(tx, &model.UserContacts{
+		if _, _, err := txModel.UserContactsModel.InsertOrUpdate(&model.UserContacts{
 			OwnerUserId:      userID,
 			ContactUserId:    contactUserID,
 			ContactPhone:     phone,
@@ -49,7 +50,7 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 		}
 
 		if reverseDO != nil && !reverseDO.Mutual {
-			if _, err := r.model.UserContactsModel.UpdateMutualTx(tx, true, contactUserID, userID); err != nil {
+			if _, err := txModel.UserContactsModel.UpdateMutual(true, contactUserID, userID); err != nil {
 				return fmt.Errorf("update reverse mutual: %w", err)
 			}
 		}
@@ -66,10 +67,11 @@ func (r *Repository) AddContact(ctx context.Context, userID int64, contactUserID
 
 func (r *Repository) DeleteContact(ctx context.Context, userID int64, contactUserID int64) error {
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.UserContactsModel.DeleteContactsTx(tx, userID, []int64{contactUserID}); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.UserContactsModel.DeleteContacts(userID, []int64{contactUserID}); err != nil {
 			return fmt.Errorf("delete contact: %w", err)
 		}
-		if _, err := r.model.UserContactsModel.UpdateMutualTx(tx, false, contactUserID, userID); err != nil {
+		if _, err := txModel.UserContactsModel.UpdateMutual(false, contactUserID, userID); err != nil {
 			return fmt.Errorf("update reverse mutual: %w", err)
 		}
 		return nil
@@ -142,13 +144,14 @@ func (r *Repository) EditCloseFriends(ctx context.Context, userID int64, idList 
 		return nil
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		if len(currentIDs) > 0 {
-			if _, err := r.model.UserContactsModel.UpdateCloseFriendTx(tx, false, userID, currentIDs); err != nil {
+			if _, err := txModel.UserContactsModel.UpdateCloseFriend(false, userID, currentIDs); err != nil {
 				return fmt.Errorf("clear close friends: %w", err)
 			}
 		}
 		if len(idList) > 0 {
-			if _, err := r.model.UserContactsModel.UpdateCloseFriendTx(tx, true, userID, idList); err != nil {
+			if _, err := txModel.UserContactsModel.UpdateCloseFriend(true, userID, idList); err != nil {
 				return fmt.Errorf("set close friends: %w", err)
 			}
 		}

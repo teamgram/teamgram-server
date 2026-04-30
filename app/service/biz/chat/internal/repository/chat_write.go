@@ -141,6 +141,7 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 	}
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		id, _, err := r.model.ChatsModel.InsertFullTx(tx, chatRow)
 		if err != nil {
 			return err
@@ -149,14 +150,14 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 		for _, p := range participantRows {
 			p.ChatId = id
 		}
-		lastInsertID, rowsAffected, err := r.model.ChatParticipantsModel.InsertBulkTx(tx, participantRows)
+		lastInsertID, rowsAffected, err := txModel.ChatParticipantsModel.InsertBulk(participantRows)
 		if err != nil {
 			return err
 		}
 		if err = backfillBulkInsertIDs(participantRows, lastInsertID, rowsAffected); err != nil {
 			return err
 		}
-		_, _, err = r.model.ChatInvitesModel.InsertTx(tx, &model.ChatInvites{
+		_, _, err = txModel.ChatInvitesModel.Insert(&model.ChatInvites{
 			ChatId:    id,
 			AdminId:   arg.CreatorID,
 			Link:      creatorHash,
@@ -184,13 +185,14 @@ func (r *Repository) DeleteChat(ctx context.Context, chatID int64) error {
 		return err
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatParticipantsModel.UpdateStateByChatIdTx(tx, chatpb.ChatMemberStateKicked, chatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatParticipantsModel.UpdateStateByChatId(chatpb.ChatMemberStateKicked, chatID); err != nil {
 			return err
 		}
-		if _, err := r.model.ChatsModel.UpdateParticipantCountTx(tx, 0, chatID); err != nil {
+		if _, err := txModel.ChatsModel.UpdateParticipantCount(0, chatID); err != nil {
 			return err
 		}
-		_, err := r.model.ChatsModel.UpdateDeactivatedTx(tx, true, chatID)
+		_, err := txModel.ChatsModel.UpdateDeactivated(true, chatID)
 		return err
 	}); err != nil {
 		return wrapStorage("chat.DeleteChat transaction", err)
@@ -218,25 +220,26 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 	}
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		lastInsertID, _, err := r.model.ChatParticipantsModel.InsertOrUpdateTx(tx, row)
+		txModel := r.model.WithTx(tx)
+		lastInsertID, _, err := txModel.ChatParticipantsModel.InsertOrUpdate(row)
 		if err != nil {
 			return err
 		}
 		if row.Id == 0 && lastInsertID != 0 {
 			row.Id = lastInsertID
 		}
-		if _, err := r.model.ChatsModel.UpdateParticipantCountTx(tx, arg.Count, arg.ChatID); err != nil {
+		if _, err := txModel.ChatsModel.UpdateParticipantCount(arg.Count, arg.ChatID); err != nil {
 			return err
 		}
 		switch {
 		case arg.ApproveJoinRequest:
-			rowsAffected, err := r.model.ChatInviteParticipantsModel.UpdateApprovedByTx(tx, arg.ApprovedBy, arg.ChatID, arg.UserID)
+			rowsAffected, err := txModel.ChatInviteParticipantsModel.UpdateApprovedBy(arg.ApprovedBy, arg.ChatID, arg.UserID)
 			if err != nil {
 				return err
 			}
 			return requireRowsAffected(rowsAffected)
 		case arg.RecordInviteParticipant:
-			_, _, err = r.model.ChatInviteParticipantsModel.InsertTx(tx, &model.ChatInviteParticipants{
+			_, _, err = txModel.ChatInviteParticipantsModel.Insert(&model.ChatInviteParticipants{
 				ChatId:    arg.ChatID,
 				Link:      chatpb.NormalizeInviteHash(arg.InviteLink),
 				UserId:    arg.UserID,
@@ -245,7 +248,7 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 			})
 			return err
 		default:
-			_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.UserID)
+			_, err = txModel.ChatInviteParticipantsModel.Delete(arg.ChatID, arg.UserID)
 			return err
 		}
 	}); err != nil {
@@ -258,19 +261,20 @@ func (r *Repository) AddChatUser(ctx context.Context, arg AddChatUserArg) (*tg.I
 func (r *Repository) DeleteChatUser(ctx context.Context, arg DeleteChatUserArg) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		var err error
 		if arg.Kicked {
-			_, err = r.model.ChatParticipantsModel.UpdateKickedTx(tx, now, arg.ParticipantID)
+			_, err = txModel.ChatParticipantsModel.UpdateKicked(now, arg.ParticipantID)
 		} else {
-			_, err = r.model.ChatParticipantsModel.UpdateLeftTx(tx, now, arg.ParticipantID)
+			_, err = txModel.ChatParticipantsModel.UpdateLeft(now, arg.ParticipantID)
 		}
 		if err != nil {
 			return err
 		}
-		if _, err = r.model.ChatsModel.UpdateParticipantCountTx(tx, arg.Count, arg.ChatID); err != nil {
+		if _, err = txModel.ChatsModel.UpdateParticipantCount(arg.Count, arg.ChatID); err != nil {
 			return err
 		}
-		_, err = r.model.ChatInviteParticipantsModel.DeleteTx(tx, arg.ChatID, arg.DeleteUserID)
+		_, err = txModel.ChatInviteParticipantsModel.Delete(arg.ChatID, arg.DeleteUserID)
 		return err
 	}); err != nil {
 		return 0, wrapStorage("chat.DeleteChatUser transaction", err)
@@ -285,10 +289,11 @@ func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChanne
 		return err
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatsModel.UpdateMigratedToTx(tx, arg.ChannelID, arg.AccessHash, arg.ChatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatsModel.UpdateMigratedTo(arg.ChannelID, arg.AccessHash, arg.ChatID); err != nil {
 			return err
 		}
-		_, err := r.model.ChatParticipantsModel.UpdateStateByChatIdTx(tx, chatpb.ChatMemberStateMigrated, arg.ChatID)
+		_, err := txModel.ChatParticipantsModel.UpdateStateByChatId(chatpb.ChatMemberStateMigrated, arg.ChatID)
 		return err
 	}); err != nil {
 		return wrapStorage("chat.MigratedToChannel transaction", err)
@@ -300,7 +305,8 @@ func (r *Repository) MigratedToChannel(ctx context.Context, arg MigratedToChanne
 func (r *Repository) UpdateChatTitle(ctx context.Context, chatID int64, title string) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		_, err := r.model.ChatsModel.UpdateTitleTx(tx, title, chatID)
+		txModel := r.model.WithTx(tx)
+		_, err := txModel.ChatsModel.UpdateTitle(title, chatID)
 		return err
 	}); err != nil {
 		return 0, wrapStorage("chat.UpdateChatTitle transaction", err)
@@ -312,11 +318,12 @@ func (r *Repository) UpdateChatTitle(ctx context.Context, chatID int64, title st
 func (r *Repository) UpdateChatAbout(ctx context.Context, chatID int64, about string) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatsModel.UpdateAboutTx(tx, about, chatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatsModel.UpdateAbout(about, chatID); err != nil {
 			return err
 		}
 		if chatAttributeMutationAbout.needsExplicitVersionBump() {
-			_, err := r.model.ChatsModel.UpdateVersionTx(tx, chatID)
+			_, err := txModel.ChatsModel.UpdateVersion(chatID)
 			return err
 		}
 		return nil
@@ -330,7 +337,8 @@ func (r *Repository) UpdateChatAbout(ctx context.Context, chatID int64, about st
 func (r *Repository) UpdateChatPhoto(ctx context.Context, chatID int64, photoID int64) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		_, err := r.model.ChatsModel.UpdatePhotoIdTx(tx, photoID, chatID)
+		txModel := r.model.WithTx(tx)
+		_, err := txModel.ChatsModel.UpdatePhotoId(photoID, chatID)
 		return err
 	}); err != nil {
 		return 0, wrapStorage("chat.UpdateChatPhoto transaction", err)
@@ -347,14 +355,15 @@ func (r *Repository) UpdateChatAdmin(ctx context.Context, arg UpdateChatAdminArg
 	updated, adminRights, link := applyChatAdminMutation(arg.Participant, arg.IsAdmin)
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		if _, err := r.model.ChatParticipantsModel.UpdateAdminRightsTx(tx, updated.ParticipantType, adminRights, updated.Id); err != nil {
 			return err
 		}
-		if _, err := r.model.ChatParticipantsModel.UpdateLinkTx(tx, link, arg.ChatID, updated.UserId); err != nil {
+		if _, err := txModel.ChatParticipantsModel.UpdateLink(link, arg.ChatID, updated.UserId); err != nil {
 			return err
 		}
 		if arg.IsAdmin && arg.Participant.Link == "" {
-			if _, _, err := r.model.ChatInvitesModel.InsertTx(tx, &model.ChatInvites{
+			if _, _, err := txModel.ChatInvitesModel.Insert(&model.ChatInvites{
 				ChatId:    arg.ChatID,
 				AdminId:   updated.UserId,
 				Link:      link,
@@ -365,7 +374,7 @@ func (r *Repository) UpdateChatAdmin(ctx context.Context, arg UpdateChatAdminArg
 			}
 		}
 		if chatAttributeMutationAdmin.needsExplicitVersionBump() {
-			_, err := r.model.ChatsModel.UpdateVersionTx(tx, arg.ChatID)
+			_, err := txModel.ChatsModel.UpdateVersion(arg.ChatID)
 			return err
 		}
 		return nil
@@ -382,7 +391,8 @@ func (r *Repository) UpdateChatDefaultBannedRights(ctx context.Context, chatID i
 		rights.UntilDate = math.MaxInt32
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		_, err := r.model.ChatsModel.UpdateDefaultBannedRightsTx(tx, chatBannedRightsToStorage(rights), chatID)
+		txModel := r.model.WithTx(tx)
+		_, err := txModel.ChatsModel.UpdateDefaultBannedRights(chatBannedRightsToStorage(rights), chatID)
 		return err
 	}); err != nil {
 		return 0, wrapStorage("chat.UpdateChatDefaultBannedRights transaction", err)
@@ -394,7 +404,8 @@ func (r *Repository) UpdateChatDefaultBannedRights(ctx context.Context, chatID i
 func (r *Repository) UpdateChatNoForwards(ctx context.Context, chatID int64, noforwards bool) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatsModel.UpdateNoforwardsTx(tx, noforwards, chatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatsModel.UpdateNoforwards(noforwards, chatID); err != nil {
 			return err
 		}
 		return nil
@@ -408,11 +419,12 @@ func (r *Repository) UpdateChatNoForwards(ctx context.Context, chatID int64, nof
 func (r *Repository) UpdateChatTTLPeriod(ctx context.Context, chatID int64, ttlPeriod int32) (int64, error) {
 	now := time.Now().Unix()
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatsModel.UpdateTTLPeriodTx(tx, ttlPeriod, chatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatsModel.UpdateTTLPeriod(ttlPeriod, chatID); err != nil {
 			return err
 		}
 		if chatAttributeMutationTTLPeriod.needsExplicitVersionBump() {
-			_, err := r.model.ChatsModel.UpdateVersionTx(tx, chatID)
+			_, err := txModel.ChatsModel.UpdateVersion(chatID)
 			return err
 		}
 		return nil
@@ -427,11 +439,12 @@ func (r *Repository) UpdateChatAvailableReactions(ctx context.Context, chatID in
 	now := time.Now().Unix()
 	payload := availableReactionsToStorage(reactions)
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.ChatsModel.UpdateAvailableReactionsTx(tx, kind, payload, chatID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.ChatsModel.UpdateAvailableReactions(kind, payload, chatID); err != nil {
 			return err
 		}
 		if chatAttributeMutationAvailableReactions.needsExplicitVersionBump() {
-			_, err := r.model.ChatsModel.UpdateVersionTx(tx, chatID)
+			_, err := txModel.ChatsModel.UpdateVersion(chatID)
 			return err
 		}
 		return nil

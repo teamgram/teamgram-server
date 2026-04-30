@@ -55,11 +55,12 @@ func (r *Repository) SetBotCommands(ctx context.Context, botID int64, commands [
 		})
 	}
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
-		if _, err := r.model.BotCommandsModel.DeleteTx(tx, botID); err != nil {
+		txModel := r.model.WithTx(tx)
+		if _, err := txModel.BotCommandsModel.Delete(botID); err != nil {
 			return fmt.Errorf("delete bot commands: %w", err)
 		}
 		if len(commandDOList) > 0 {
-			if _, _, err := r.model.BotCommandsModel.InsertBulkTx(tx, commandDOList); err != nil {
+			if _, _, err := txModel.BotCommandsModel.InsertBulk(commandDOList); err != nil {
 				return fmt.Errorf("insert bot commands: %w", err)
 			}
 		}

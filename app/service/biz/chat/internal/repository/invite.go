@@ -167,16 +167,17 @@ func (r *Repository) EditExportedChatInvite(ctx context.Context, arg EditExporte
 			}
 		}
 		if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+			txModel := r.model.WithTx(tx)
 			if _, err := updateChatInviteTx(r, tx, arg.ChatID, hash, chatInviteUpdate{Revoked: boolPtr(true)}); err != nil {
 				return err
 			}
 			if newRow == nil {
 				return nil
 			}
-			if _, _, err := r.model.ChatInvitesModel.InsertTx(tx, newRow); err != nil {
+			if _, _, err := txModel.ChatInvitesModel.Insert(newRow); err != nil {
 				return err
 			}
-			_, err := r.model.ChatParticipantsModel.UpdateLinkTx(tx, newRow.Link, arg.ChatID, newRow.AdminId)
+			_, err := txModel.ChatParticipantsModel.UpdateLink(newRow.Link, arg.ChatID, newRow.AdminId)
 			return err
 		}); err != nil {
 			return nil, wrapStorage("chat_invites.Edit revoked transaction", err)
@@ -517,7 +518,7 @@ func updateChatInviteTx(r *Repository, tx *sqlx.Tx, chatID int64, link string, u
 	if len(cMap) == 0 {
 		return 0, nil
 	}
-	return r.model.ChatInvitesModel.UpdateTx(tx, cMap, chatID, link)
+	return r.model.WithTx(tx).ChatInvitesModel.Update(cMap, chatID, link)
 }
 
 func makeChatInviteUpdateMap(update chatInviteUpdate) map[string]interface{} {

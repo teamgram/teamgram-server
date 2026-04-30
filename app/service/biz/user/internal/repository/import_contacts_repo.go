@@ -46,6 +46,7 @@ func (r *Repository) ImportContacts(ctx context.Context, userID int64, contacts 
 	updateIDSet := make(map[int64]bool, len(contacts))
 
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		for _, contact := range contacts {
 			if contact == nil || contact.Phone == "" {
 				continue
@@ -53,7 +54,7 @@ func (r *Repository) ImportContacts(ctx context.Context, userID int64, contacts 
 
 			userDO := userByPhone[contact.Phone]
 			if userDO == nil {
-				if _, _, err := r.model.UnregisteredContactsModel.InsertOrUpdateTx(tx, &model.UnregisteredContacts{
+				if _, _, err := txModel.UnregisteredContactsModel.InsertOrUpdate(&model.UnregisteredContacts{
 					Phone:           contact.Phone,
 					ImporterUserId:  userID,
 					ImportFirstName: contact.FirstName,
@@ -67,27 +68,27 @@ func (r *Repository) ImportContacts(ctx context.Context, userID int64, contacts 
 			contactDO := currentContacts[userDO.Id]
 			mutual := reverseContacts[userDO.Id]
 			if contactDO != nil {
-				if _, err := r.model.UserContactsModel.UpdateContactNameTx(tx, contact.FirstName, contact.LastName, userID, userDO.Id); err != nil {
+				if _, err := txModel.UserContactsModel.UpdateContactName(contact.FirstName, contact.LastName, userID, userDO.Id); err != nil {
 					return fmt.Errorf("update contact name %d/%d: %w", userID, userDO.Id, err)
 				}
 				if mutual && !contactDO.Mutual {
-					if _, err := r.model.UserContactsModel.UpdateMutualTx(tx, true, userID, userDO.Id); err != nil {
+					if _, err := txModel.UserContactsModel.UpdateMutual(true, userID, userDO.Id); err != nil {
 						return fmt.Errorf("update contact mutual %d/%d: %w", userID, userDO.Id, err)
 					}
 				}
 			} else {
 				if mutual {
-					if _, err := r.model.UserContactsModel.UpdateMutualTx(tx, true, userDO.Id, userID); err != nil {
+					if _, err := txModel.UserContactsModel.UpdateMutual(true, userDO.Id, userID); err != nil {
 						return fmt.Errorf("update reverse mutual %d/%d: %w", userDO.Id, userID, err)
 					}
-				} else if _, _, err := r.model.ImportedContactsModel.InsertOrUpdateTx(tx, &model.ImportedContacts{
+				} else if _, _, err := txModel.ImportedContactsModel.InsertOrUpdate(&model.ImportedContacts{
 					UserId:         userDO.Id,
 					ImportedUserId: userID,
 				}); err != nil {
 					return fmt.Errorf("insert imported contact %d/%d: %w", userDO.Id, userID, err)
 				}
 
-				if _, _, err := r.model.UserContactsModel.InsertOrUpdateTx(tx, &model.UserContacts{
+				if _, _, err := txModel.UserContactsModel.InsertOrUpdate(&model.UserContacts{
 					OwnerUserId:      userID,
 					ContactUserId:    userDO.Id,
 					ContactPhone:     contact.Phone,

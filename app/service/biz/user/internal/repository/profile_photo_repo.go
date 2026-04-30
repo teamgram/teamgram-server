@@ -17,6 +17,7 @@ func (r *Repository) UpdateProfilePhoto(ctx context.Context, userID, photoID int
 
 	mainPhotoID := photoID
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		if photoID == 0 {
 			currentPhotoID, err := r.model.UsersModel.SelectProfilePhotoTx(tx, userID)
 			if err != nil {
@@ -27,13 +28,13 @@ func (r *Repository) UpdateProfilePhoto(ctx context.Context, userID, photoID int
 				if err != nil {
 					return fmt.Errorf("select next profile photo: %w", err)
 				}
-				if _, err := r.model.UserProfilePhotosModel.DeleteTx(tx, userID, []int64{currentPhotoID}); err != nil {
+				if _, err := txModel.UserProfilePhotosModel.Delete(userID, []int64{currentPhotoID}); err != nil {
 					return fmt.Errorf("delete current profile photo: %w", err)
 				}
 				mainPhotoID = nextPhotoID
 			}
 		} else {
-			if _, _, err := r.model.UserProfilePhotosModel.InsertOrUpdateTx(tx, &model.UserProfilePhotos{
+			if _, _, err := txModel.UserProfilePhotosModel.InsertOrUpdate(&model.UserProfilePhotos{
 				UserId:  userID,
 				PhotoId: photoID,
 				Date2:   time.Now().Unix(),
@@ -42,7 +43,7 @@ func (r *Repository) UpdateProfilePhoto(ctx context.Context, userID, photoID int
 			}
 		}
 
-		rows, err := r.model.UsersModel.UpdateProfilePhotoTx(tx, mainPhotoID, userID)
+		rows, err := txModel.UsersModel.UpdateProfilePhoto(mainPhotoID, userID)
 		if err != nil {
 			return fmt.Errorf("update user profile photo: %w", err)
 		}
@@ -84,6 +85,7 @@ func (r *Repository) DeleteProfilePhotos(ctx context.Context, userID int64, phot
 
 	nextMainPhotoID := int64(0)
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModel := r.model.WithTx(tx)
 		mainPhotoID, err := r.model.UsersModel.SelectProfilePhotoTx(tx, userID)
 		if err != nil {
 			return fmt.Errorf("select profile photo: %w", err)
@@ -98,11 +100,11 @@ func (r *Repository) DeleteProfilePhotos(ctx context.Context, userID int64, phot
 			nextMainPhotoID = nextPhotoID
 		}
 
-		if _, err := r.model.UserProfilePhotosModel.DeleteTx(tx, userID, photoIDs); err != nil {
+		if _, err := txModel.UserProfilePhotosModel.Delete(userID, photoIDs); err != nil {
 			return fmt.Errorf("delete profile photos: %w", err)
 		}
 		if nextMainPhotoID != mainPhotoID {
-			rows, err := r.model.UsersModel.UpdateProfilePhotoTx(tx, nextMainPhotoID, userID)
+			rows, err := txModel.UsersModel.UpdateProfilePhoto(nextMainPhotoID, userID)
 			if err != nil {
 				return fmt.Errorf("update user profile photo: %w", err)
 			}
