@@ -34,6 +34,13 @@ const (
 )
 
 const (
+	PushTaskStatusPublishing      int32 = 2
+	PushTaskStatusPublished       int32 = 3
+	PushTaskStatusFailedRetryable int32 = 4
+	PushTaskStatusFailedTerminal  int32 = 5
+)
+
+const (
 	DeliveryFailedOperationStatusOpen      int32 = 1
 	DeliveryFailedOperationStatusReplaying int32 = 2
 	DeliveryFailedOperationStatusReplayed  int32 = 3
@@ -51,6 +58,18 @@ type KafkaAck struct {
 	Topic     string
 	Partition int32
 	Offset    int64
+}
+
+type PushTask struct {
+	TaskID          int64
+	UserID          int64
+	Pts             int64
+	PushType        int32
+	PeerType        int32
+	PeerID          int64
+	OperationID     string
+	PushPartitionID int32
+	TaskPayload     []byte
 }
 
 type ApplyUserOperationInput struct {
