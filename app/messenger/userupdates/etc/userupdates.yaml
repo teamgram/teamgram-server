@@ -10,3 +10,15 @@ ReceiverOperations:
   Topics:
     - userupdates.receiver_operations.v1
   Group: userupdates.receiver_operations.v1
+
+PushTasks:
+  Brokers:
+    - 127.0.0.1:9092
+  Topic: userupdates.push_tasks.v1
+  ProducerAck: wait_for_all
+
+PushOutboxWorker:
+  Enabled: true
+  PollInterval: 1000
+  BatchSize: 100
+  PublishingTimeoutMs: 60000

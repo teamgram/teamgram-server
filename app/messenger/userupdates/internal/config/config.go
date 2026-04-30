@@ -28,4 +28,13 @@ type Config struct {
 	Mysql              sqlx.Config              `json:",optional"`
 	OwnerInstance      string                   `json:",default=local-userupdates"`
 	ReceiverOperations *kafka.KafkaConsumerConf `json:",optional"`
+	PushTasks          *kafka.KafkaProducerConf `json:",optional"`
+	PushOutboxWorker   PushOutboxWorkerConf     `json:",optional"`
+}
+
+type PushOutboxWorkerConf struct {
+	Enabled             bool  `json:",default=false"`
+	PollInterval        int64 `json:",default=1000"`
+	BatchSize           int32 `json:",default=100"`
+	PublishingTimeoutMs int64 `json:",default=60000"`
 }

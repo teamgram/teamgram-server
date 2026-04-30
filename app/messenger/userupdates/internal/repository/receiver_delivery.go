@@ -5,13 +5,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func (r *Repository) HandleReceiverKafkaRecord(ctx context.Context, record event.ReceiverKafkaRecord) error {
+func (r *Repository) HandleReceiverKafkaRecord(ctx context.Context, record ReceiverKafkaRecord) error {
 	msg, err := payload.UnmarshalReceiverKafkaMessage(record.Value)
 	if err != nil {
 		if dlqErr := r.recordReceiverTerminal(ctx, record, nil, "payload_decode_failed", err); dlqErr != nil {
@@ -47,7 +46,7 @@ func (r *Repository) HandleReceiverKafkaRecord(ctx context.Context, record event
 	return fmt.Errorf("receiver delivery retryable: operation_id=%s topic=%s partition=%d offset=%d: %w", msg.Operation.OperationID, record.Topic, record.Partition, record.Offset, err)
 }
 
-func (r *Repository) recordReceiverTerminal(ctx context.Context, record event.ReceiverKafkaRecord, op *payload.ReceiverOperationEnvelopeV1, code string, cause error) error {
+func (r *Repository) recordReceiverTerminal(ctx context.Context, record ReceiverKafkaRecord, op *payload.ReceiverOperationEnvelopeV1, code string, cause error) error {
 	in := RecordDeliveryFailureInput{
 		KafkaTopic:      record.Topic,
 		KafkaPartition:  record.Partition,

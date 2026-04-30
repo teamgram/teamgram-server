@@ -7,16 +7,11 @@ import (
 
 	"github.com/IBM/sarama"
 	kafka "github.com/teamgram/marmota/pkg/mq"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ReceiverKafkaRecord struct {
-	Topic     string
-	Partition int32
-	Offset    int64
-	Key       []byte
-	Value     []byte
-}
+type ReceiverKafkaRecord = repository.ReceiverKafkaRecord
 
 type ReceiverKafkaHandler interface {
 	HandleReceiverKafkaRecord(ctx context.Context, record ReceiverKafkaRecord) error

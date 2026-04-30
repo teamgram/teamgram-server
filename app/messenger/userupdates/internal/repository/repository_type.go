@@ -60,6 +60,14 @@ type KafkaAck struct {
 	Offset    int64
 }
 
+type ReceiverKafkaRecord struct {
+	Topic     string
+	Partition int32
+	Offset    int64
+	Key       []byte
+	Value     []byte
+}
+
 type PushTask struct {
 	TaskID          int64
 	UserID          int64

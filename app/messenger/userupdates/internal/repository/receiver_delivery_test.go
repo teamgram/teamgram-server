@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 )
 
@@ -40,7 +39,7 @@ func TestReceiverDeliveryRecordsDLQForDecodeFailure(t *testing.T) {
 	db := openIntegrationDB(t)
 	base := time.Now().UnixNano() % 1_000_000_000
 	repo := NewForTest(db, &testIDGenerator{next: base + 90_000}, "local-userupdates")
-	record := event.ReceiverKafkaRecord{Topic: "test.receiver.ops", Partition: 8, Offset: base + 4, Value: []byte("{bad-json")}
+	record := ReceiverKafkaRecord{Topic: "test.receiver.ops", Partition: 8, Offset: base + 4, Value: []byte("{bad-json")}
 
 	if err := repo.HandleReceiverKafkaRecord(ctx, record); err != nil {
 		t.Fatalf("HandleReceiverKafkaRecord() error = %v", err)
@@ -96,7 +95,7 @@ func TestReceiverDeliveryWrapsRetryableErrorWithKafkaContext(t *testing.T) {
 	}
 }
 
-func buildReceiverKafkaRecord(t *testing.T, in ApplyUserOperationInput, topic string, partition int32, offset int64) event.ReceiverKafkaRecord {
+func buildReceiverKafkaRecord(t *testing.T, in ApplyUserOperationInput, topic string, partition int32, offset int64) ReceiverKafkaRecord {
 	t.Helper()
 	body, err := payload.MarshalReceiverKafkaMessage(payload.ReceiverKafkaMessageV1{
 		SchemaVersion: payload.ReceiverKafkaMessageSchemaVersion,
@@ -117,5 +116,5 @@ func buildReceiverKafkaRecord(t *testing.T, in ApplyUserOperationInput, topic st
 	if err != nil {
 		t.Fatalf("MarshalReceiverKafkaMessage() error = %v", err)
 	}
-	return event.ReceiverKafkaRecord{Topic: topic, Partition: partition, Offset: offset, Value: body}
+	return ReceiverKafkaRecord{Topic: topic, Partition: partition, Offset: offset, Value: body}
 }
