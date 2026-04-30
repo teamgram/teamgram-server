@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
@@ -101,8 +100,8 @@ func userEventFromModel(r model.UserPtsEvents) UserEvent {
 	}
 }
 
-func selectOperationResult(tx *sqlx.Tx, userID int64, operationID string) (*OperationResult, bool, error) {
-	row, err := model.NewUserOperationResultsModel(nil).SelectByOperationTx(tx, userID, operationID)
+func selectOperationResult(txModels *model.TxModels, userID int64, operationID string) (*OperationResult, bool, error) {
+	row, err := txModels.UserOperationResultsModel.SelectByOperation(userID, operationID)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return nil, false, nil

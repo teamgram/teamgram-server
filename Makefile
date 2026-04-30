@@ -52,7 +52,7 @@ biz:
 
 msg:
 	@echo "build msg..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msg -tags=jsoniter app/messenger/msg/msg/cmd/msg/*.go
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msg -tags=jsoniter app/messenger/msg/cmd/msg/*.go
 
 inbox:
 	@echo "build inbox..."

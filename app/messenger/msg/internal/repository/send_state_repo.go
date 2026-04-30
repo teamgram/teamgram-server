@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 )
@@ -152,8 +151,8 @@ func (r *Repository) selectSendStateByID(ctx context.Context, sendStateID int64)
 	return sendStateFromModel(row), nil
 }
 
-func selectSendStateByIDTx(tx *sqlx.Tx, sendStateID int64) (*SendState, error) {
-	row, err := model.NewMessageSendStatesModel(nil).SelectBySendStateIdTx(tx, sendStateID)
+func selectSendStateByIDTx(txModels *model.TxModels, sendStateID int64) (*SendState, error) {
+	row, err := txModels.MessageSendStatesModel.SelectBySendStateId(sendStateID)
 	if err != nil {
 		return nil, storageError("select send state by id for update", err)
 	}

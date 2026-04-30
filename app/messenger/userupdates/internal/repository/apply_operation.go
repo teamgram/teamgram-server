@@ -68,7 +68,8 @@ func (r *Repository) ApplyUserOperation(ctx context.Context, in ApplyUserOperati
 }
 
 func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in ApplyUserOperationInput) (*ApplyUserOperationResult, error) {
-	fence, err := r.lockPartitionFence(tx, in.PartitionID)
+	txModels := r.models.WithTx(tx)
+	fence, err := r.lockPartitionFence(txModels, in.PartitionID)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		return nil, userupdates.ErrNotOwner
 	}
 
-	if _, _, err := r.models.UserPtsStateModel.InsertIgnoreTx(tx, &model.UserPtsState{
+	if _, _, err := txModels.UserPtsStateModel.InsertIgnore(&model.UserPtsState{
 		UserId:       in.UserID,
 		Pts:          0,
 		PtsUpdatedAt: mysqlNow(),
@@ -87,7 +88,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		return nil, storageError("init user pts state", err)
 	}
 
-	state, err := r.lockUserPTSState(tx, in.UserID)
+	state, err := r.lockUserPTSState(txModels, in.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +96,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		return nil, fmt.Errorf("%w: user %d partition %d != operation partition %d", userupdates.ErrNotOwner, in.UserID, state.PartitionId, in.PartitionID)
 	}
 
-	existing, found, err := selectOperationResult(tx, in.UserID, in.OperationID)
+	existing, found, err := selectOperationResult(txModels, in.UserID, in.OperationID)
 	if err != nil {
 		return nil, err
 	}
@@ -131,22 +132,22 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err != nil {
 		return nil, err
 	}
-	if err := insertUserMessageView(tx, in, op, eventPayload); err != nil {
+	if err := insertUserMessageView(txModels, in, op, eventPayload); err != nil {
 		return nil, err
 	}
-	if err := upsertUserDialog(tx, in, op, eventPayload); err != nil {
+	if err := upsertUserDialog(txModels, in, op, eventPayload); err != nil {
 		return nil, err
 	}
-	if err := insertPTSEvent(tx, in, op, nextPTS, ptsCount, eventPayload, eventPayloadHash); err != nil {
+	if err := insertPTSEvent(txModels, in, op, nextPTS, ptsCount, eventPayload, eventPayloadHash); err != nil {
 		return nil, err
 	}
-	if err := insertPushTask(ctx, tx, r, in, op, nextPTS, eventPayload); err != nil {
+	if err := insertPushTask(ctx, txModels, r, in, op, nextPTS, eventPayload); err != nil {
 		return nil, err
 	}
-	if err := insertOperationResult(tx, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
+	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
 		return nil, err
 	}
-	affected, err := r.models.UserPtsStateModel.UpdatePtsTx(tx, nextPTS, mysqlNow(), in.PartitionID, fence.OwnerEpoch, in.UserID)
+	affected, err := txModels.UserPtsStateModel.UpdatePts(nextPTS, mysqlNow(), in.PartitionID, fence.OwnerEpoch, in.UserID)
 	if err != nil {
 		return nil, storageError("update user pts state", err)
 	}
@@ -163,8 +164,8 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	}, nil
 }
 
-func (r *Repository) lockPartitionFence(tx *sqlx.Tx, partitionID int32) (*model.UserupdatesPartitionFences, error) {
-	fence, err := r.models.UserupdatesPartitionFencesModel.SelectByPartitionIdTx(tx, partitionID)
+func (r *Repository) lockPartitionFence(txModels *model.TxModels, partitionID int32) (*model.UserupdatesPartitionFences, error) {
+	fence, err := txModels.UserupdatesPartitionFencesModel.SelectByPartitionId(partitionID)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return nil, userupdates.ErrNotOwner
@@ -174,8 +175,8 @@ func (r *Repository) lockPartitionFence(tx *sqlx.Tx, partitionID int32) (*model.
 	return fence, nil
 }
 
-func (r *Repository) lockUserPTSState(tx *sqlx.Tx, userID int64) (*model.UserPtsState, error) {
-	state, err := r.models.UserPtsStateModel.SelectForUpdateTx(tx, userID)
+func (r *Repository) lockUserPTSState(txModels *model.TxModels, userID int64) (*model.UserPtsState, error) {
+	state, err := txModels.UserPtsStateModel.SelectForUpdate(userID)
 	if err != nil {
 		return nil, storageError("lock user pts state", err)
 	}
@@ -215,8 +216,8 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
 }
 
-func insertUserMessageView(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
-	_, _, err := model.NewUserMessageViewsModel(nil).InsertOrUpdateTx(tx, &model.UserMessageViews{
+func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
+	_, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(&model.UserMessageViews{
 		UserId:             in.UserID,
 		PeerType:           op.PeerType,
 		PeerId:             op.PeerID,
@@ -239,12 +240,12 @@ func insertUserMessageView(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.M
 	return nil
 }
 
-func upsertUserDialog(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.MessageOperationV1, dialogPayload []byte) error {
+func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, dialogPayload []byte) error {
 	unread := int32(0)
 	if !op.Out {
 		unread = 1
 	}
-	_, _, err := model.NewUserDialogsModel(nil).InsertOrUpdateMessageEventTx(tx, &model.UserDialogs{
+	_, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(&model.UserDialogs{
 		UserId:                in.UserID,
 		PeerType:              op.PeerType,
 		PeerId:                op.PeerID,
@@ -266,8 +267,8 @@ func upsertUserDialog(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.Messag
 	return nil
 }
 
-func insertPTSEvent(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, ptsCount int32, eventPayload []byte, eventPayloadHash []byte) error {
-	_, _, err := model.NewUserPtsEventsModel(nil).InsertTx(tx, &model.UserPtsEvents{
+func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, ptsCount int32, eventPayload []byte, eventPayloadHash []byte) error {
+	_, _, err := txModels.UserPtsEventsModel.Insert(&model.UserPtsEvents{
 		UserId:             in.UserID,
 		Pts:                pts,
 		PtsCount:           ptsCount,
@@ -290,13 +291,13 @@ func insertPTSEvent(tx *sqlx.Tx, in ApplyUserOperationInput, op payload.MessageO
 	return nil
 }
 
-func insertPushTask(ctx context.Context, tx *sqlx.Tx, r *Repository, in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, taskPayload []byte) error {
+func insertPushTask(ctx context.Context, txModels *model.TxModels, r *Repository, in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, taskPayload []byte) error {
 	taskID, err := r.idgen.NextID(ctx)
 	if err != nil {
 		return storageError("next push task id", err)
 	}
 	route := payload.RouteUser(in.UserID)
-	_, _, err = r.models.PushTaskOutboxModel.InsertTx(tx, &model.PushTaskOutbox{
+	_, _, err = txModels.PushTaskOutboxModel.Insert(&model.PushTaskOutbox{
 		TaskId:             taskID,
 		UserId:             in.UserID,
 		Pts:                pts,
@@ -323,8 +324,8 @@ func insertPushTask(ctx context.Context, tx *sqlx.Tx, r *Repository, in ApplyUse
 	return nil
 }
 
-func insertOperationResult(tx *sqlx.Tx, in ApplyUserOperationInput, pts int64, ptsCount int32, responsePayload []byte, responseHash []byte) error {
-	_, _, err := model.NewUserOperationResultsModel(nil).InsertTx(tx, &model.UserOperationResults{
+func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput, pts int64, ptsCount int32, responsePayload []byte, responseHash []byte) error {
+	_, _, err := txModels.UserOperationResultsModel.Insert(&model.UserOperationResults{
 		UserId:                in.UserID,
 		OperationId:           in.OperationID,
 		OpType:                in.OpType,

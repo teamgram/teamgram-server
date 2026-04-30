@@ -18,7 +18,8 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 	}
 	var out *CanonicalMessageResult
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
-		existing, found, err := selectCanonicalByRandomTx(tx, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID)
+		txModels := r.models.WithTx(tx)
+		existing, found, err := selectCanonicalByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID)
 		if err != nil {
 			return err
 		}
@@ -30,7 +31,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return nil
 		}
 
-		state, err := selectSendStateByIDTx(tx, in.SendStateID)
+		state, err := selectSendStateByIDTx(txModels, in.SendStateID)
 		if err != nil {
 			return err
 		}
@@ -42,7 +43,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return msg.ErrRandomIdConflict
 		}
 		if state.CanonicalMessageID != 0 {
-			existing, err := selectCanonicalByIDTx(tx, state.CanonicalMessageID, state.RequestPayloadHash, state.SendStateID)
+			existing, err := selectCanonicalByIDTx(txModels, state.CanonicalMessageID, state.RequestPayloadHash, state.SendStateID)
 			if err != nil {
 				return err
 			}
@@ -50,7 +51,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return nil
 		}
 
-		peerSeq, err := nextPeerSeqTx(tx, in.PeerType, in.PeerID)
+		peerSeq, err := nextPeerSeqTx(txModels, in.PeerType, in.PeerID)
 		if err != nil {
 			return err
 		}
@@ -62,10 +63,10 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		if messageDate == 0 {
 			messageDate = int32(time.Now().Unix())
 		}
-		if err := insertCanonicalMessageTx(tx, canonicalID, peerSeq, messageDate, in); err != nil {
+		if err := insertCanonicalMessageTx(txModels, canonicalID, peerSeq, messageDate, in); err != nil {
 			return err
 		}
-		if err := insertClientRandomTx(tx, canonicalID, peerSeq, messageDate, in); err != nil {
+		if err := insertClientRandomTx(txModels, canonicalID, peerSeq, messageDate, in); err != nil {
 			return err
 		}
 		out = &CanonicalMessageResult{
@@ -84,62 +85,38 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 	return out, nil
 }
 
-func selectCanonicalByRandomTx(tx *sqlx.Tx, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*CanonicalMessageResult, bool, error) {
-	var row canonicalResultRow
-	err := tx.QueryRowPartial(&row, `
-SELECT r.send_state_id,
-       r.canonical_message_id,
-       c.peer_seq,
-       c.date AS message_date,
-       r.request_payload_hash
-FROM message_client_randoms r
-JOIN canonical_messages c ON c.canonical_message_id = r.canonical_message_id
-WHERE r.sender_user_id = ?
-  AND r.peer_type = ?
-  AND r.peer_id = ?
-  AND r.client_random_id = ?
-LIMIT 1
-`, senderUserID, peerType, peerID, clientRandomID)
+func selectCanonicalByRandomTx(txModels *model.TxModels, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*CanonicalMessageResult, bool, error) {
+	row, err := txModels.CanonicalQueries.SelectCanonicalByRandom(senderUserID, peerType, peerID, clientRandomID)
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
 			return nil, false, nil
 		}
 		return nil, false, storageError("select canonical by random", err)
 	}
-	return row.toResult(false), true, nil
+	return canonicalMessageRowToResult(row, false), true, nil
 }
 
-func selectCanonicalByIDTx(tx *sqlx.Tx, canonicalMessageID int64, requestPayloadHash []byte, sendStateID int64) (*CanonicalMessageResult, error) {
-	var row canonicalResultRow
-	err := tx.QueryRowPartial(&row, `
-SELECT ? AS send_state_id,
-       canonical_message_id,
-       peer_seq,
-       date AS message_date,
-       ? AS request_payload_hash
-FROM canonical_messages
-WHERE canonical_message_id = ?
-LIMIT 1
-`, sendStateID, requestPayloadHash, canonicalMessageID)
+func selectCanonicalByIDTx(txModels *model.TxModels, canonicalMessageID int64, requestPayloadHash []byte, sendStateID int64) (*CanonicalMessageResult, error) {
+	row, err := txModels.CanonicalQueries.SelectCanonicalByID(sendStateID, requestPayloadHash, canonicalMessageID)
 	if err != nil {
 		return nil, storageError("select canonical by id", err)
 	}
-	return row.toResult(false), nil
+	return canonicalMessageRowToResult(row, false), nil
 }
 
-func nextPeerSeqTx(tx *sqlx.Tx, peerType int32, peerID int64) (int64, error) {
-	if _, _, err := model.NewMessagePeerSequencesModel(nil).InsertIgnoreTx(tx, &model.MessagePeerSequences{
+func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64) (int64, error) {
+	if _, _, err := txModels.MessagePeerSequencesModel.InsertIgnore(&model.MessagePeerSequences{
 		PeerType:    peerType,
 		PeerId:      peerID,
 		NextPeerSeq: 1,
 	}); err != nil {
 		return 0, storageError("init peer sequence", err)
 	}
-	row, err := model.NewMessagePeerSequencesModel(nil).SelectForUpdateTx(tx, peerType, peerID)
+	row, err := txModels.MessagePeerSequencesModel.SelectForUpdate(peerType, peerID)
 	if err != nil {
 		return 0, storageError("lock peer sequence", err)
 	}
-	if affected, err := model.NewMessagePeerSequencesModel(nil).UpdateNextPeerSeqTx(tx, row.NextPeerSeq+1, peerType, peerID); err != nil {
+	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(row.NextPeerSeq+1, peerType, peerID); err != nil {
 		return 0, storageError("advance peer sequence", err)
 	} else if affected == 0 {
 		return 0, msg.ErrSendStateConflict
@@ -147,8 +124,8 @@ func nextPeerSeqTx(tx *sqlx.Tx, peerType int32, peerID int64) (int64, error) {
 	return row.NextPeerSeq, nil
 }
 
-func insertCanonicalMessageTx(tx *sqlx.Tx, canonicalID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
-	_, _, err := model.NewCanonicalMessagesModel(nil).InsertTx(tx, &model.CanonicalMessages{
+func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
+	_, _, err := txModels.CanonicalMessagesModel.Insert(&model.CanonicalMessages{
 		CanonicalMessageId:           canonicalID,
 		PeerType:                     in.PeerType,
 		PeerId:                       in.PeerID,
@@ -175,8 +152,8 @@ func insertCanonicalMessageTx(tx *sqlx.Tx, canonicalID int64, peerSeq int64, mes
 	return nil
 }
 
-func insertClientRandomTx(tx *sqlx.Tx, canonicalID int64, _ int64, _ int32, in CreateCanonicalMessageInput) error {
-	_, _, err := model.NewMessageClientRandomsModel(nil).InsertTx(tx, &model.MessageClientRandoms{
+func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int32, in CreateCanonicalMessageInput) error {
+	_, _, err := txModels.MessageClientRandomsModel.Insert(&model.MessageClientRandoms{
 		SenderUserId:       in.SenderUserID,
 		PeerType:           in.PeerType,
 		PeerId:             in.PeerID,
@@ -191,15 +168,10 @@ func insertClientRandomTx(tx *sqlx.Tx, canonicalID int64, _ int64, _ int32, in C
 	return nil
 }
 
-type canonicalResultRow struct {
-	SendStateID        int64     `db:"send_state_id"`
-	CanonicalMessageID int64     `db:"canonical_message_id"`
-	PeerSeq            int64     `db:"peer_seq"`
-	MessageDate        time.Time `db:"message_date"`
-	RequestPayloadHash []byte    `db:"request_payload_hash"`
-}
-
-func (r canonicalResultRow) toResult(created bool) *CanonicalMessageResult {
+func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *CanonicalMessageResult {
+	if r == nil {
+		return nil
+	}
 	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return &CanonicalMessageResult{
 		SendStateID:        r.SendStateID,
