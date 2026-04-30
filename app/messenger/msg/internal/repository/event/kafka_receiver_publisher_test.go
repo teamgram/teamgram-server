@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/IBM/sarama"
@@ -16,16 +17,31 @@ type fakeSyncProducer struct {
 	partition int32
 	offset    int64
 	err       error
+	closeErr  error
+	onSend    func()
 }
 
 func (p *fakeSyncProducer) SendMessage(msg *sarama.ProducerMessage) (int32, int64, error) {
 	p.msg = msg
+	if p.onSend != nil {
+		p.onSend()
+	}
 	return p.partition, p.offset, p.err
 }
 
 func (p *fakeSyncProducer) SendMessages([]*sarama.ProducerMessage) error { return nil }
 
-func (p *fakeSyncProducer) Close() error { return nil }
+func (p *fakeSyncProducer) Close() error { return p.closeErr }
+
+type fakeProducerCounters struct {
+	publishSuccess int
+	publishError   int
+	closeError     int
+}
+
+func (c *fakeProducerCounters) IncPublishSuccess() { c.publishSuccess++ }
+func (c *fakeProducerCounters) IncPublishError()   { c.publishError++ }
+func (c *fakeProducerCounters) IncCloseError()     { c.closeError++ }
 
 func TestKafkaReceiverOperationPublisherUsesExplicitPartition(t *testing.T) {
 	producer := &fakeSyncProducer{partition: 7, offset: 42}
@@ -68,5 +84,83 @@ func TestKafkaReceiverOperationPublisherReturnsProducerError(t *testing.T) {
 	_, err := pub.Publish(context.Background(), repository.ReceiverOperation{PartitionID: 1, OperationID: "op"})
 	if err == nil {
 		t.Fatal("expected publish error")
+	}
+}
+
+func TestKafkaReceiverOperationPublisherCountsPublishSuccess(t *testing.T) {
+	producer := &fakeSyncProducer{partition: 7, offset: 42}
+	counters := &fakeProducerCounters{}
+	pub := NewKafkaReceiverOperationPublisherForTest("topic", producer).WithCounters(counters)
+
+	_, err := pub.Publish(context.Background(), repository.ReceiverOperation{
+		PartitionID: 1,
+		BucketID:    1,
+		OperationID: "op-success",
+	})
+	if err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+	if counters.publishSuccess != 1 || counters.publishError != 0 {
+		t.Fatalf("counters success=%d error=%d, want 1/0", counters.publishSuccess, counters.publishError)
+	}
+}
+
+func TestKafkaReceiverOperationPublisherCountsAndSanitizesProducerError(t *testing.T) {
+	producer := &fakeSyncProducer{err: errors.New("broker 10.0.0.7 unavailable")}
+	counters := &fakeProducerCounters{}
+	pub := NewKafkaReceiverOperationPublisherForTest("topic", producer).WithCounters(counters)
+
+	_, err := pub.Publish(context.Background(), repository.ReceiverOperation{
+		PartitionID: 1,
+		BucketID:    1,
+		OperationID: "op-error",
+	})
+	if err == nil {
+		t.Fatal("expected publish error")
+	}
+	if strings.Contains(err.Error(), "broker 10.0.0.7 unavailable") {
+		t.Fatalf("error leaked raw kafka detail: %v", err)
+	}
+	if !strings.Contains(err.Error(), "receiver operation publish failed") {
+		t.Fatalf("error = %v, want sanitized publish failure", err)
+	}
+	if counters.publishSuccess != 0 || counters.publishError != 1 {
+		t.Fatalf("counters success=%d error=%d, want 0/1", counters.publishSuccess, counters.publishError)
+	}
+}
+
+func TestKafkaReceiverOperationPublisherKeepsAckWhenContextCanceledAfterSend(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	producer := &fakeSyncProducer{
+		partition: 7,
+		offset:    42,
+		onSend:    cancel,
+	}
+	pub := NewKafkaReceiverOperationPublisherForTest("topic", producer)
+
+	ack, err := pub.Publish(ctx, repository.ReceiverOperation{
+		PartitionID: 7,
+		BucketID:    7,
+		OperationID: "op-acked",
+	})
+	if err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+	if ack.Topic != "topic" || ack.Partition != 7 || ack.Offset != 42 {
+		t.Fatalf("ack = %+v", ack)
+	}
+}
+
+func TestKafkaReceiverOperationPublisherCountsCloseError(t *testing.T) {
+	producer := &fakeSyncProducer{closeErr: errors.New("close failed")}
+	counters := &fakeProducerCounters{}
+	pub := NewKafkaReceiverOperationPublisherForTest("topic", producer).WithCounters(counters)
+
+	err := pub.Close()
+	if err == nil {
+		t.Fatal("expected close error")
+	}
+	if counters.closeError != 1 {
+		t.Fatalf("close error counter = %d, want 1", counters.closeError)
 	}
 }

@@ -107,7 +107,8 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 	ack, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", msg.ErrReceiverBackpressure, err)
+		c.Logger.Errorf("msg.sendMessageV2 - receiver operation publish failed: operation_id=%s err=%v", receiverOp.OperationID, err)
+		return nil, msg.ErrReceiverBackpressure
 	}
 	c.Logger.Debugf(
 		"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",

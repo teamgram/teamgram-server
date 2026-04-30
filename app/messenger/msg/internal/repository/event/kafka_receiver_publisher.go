@@ -9,6 +9,7 @@ import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type syncProducer interface {
@@ -16,9 +17,22 @@ type syncProducer interface {
 	Close() error
 }
 
+type ProducerCounters interface {
+	IncPublishSuccess()
+	IncPublishError()
+	IncCloseError()
+}
+
+type noopProducerCounters struct{}
+
+func (noopProducerCounters) IncPublishSuccess() {}
+func (noopProducerCounters) IncPublishError()   {}
+func (noopProducerCounters) IncCloseError()     {}
+
 type KafkaReceiverOperationPublisher struct {
 	topic    string
 	producer syncProducer
+	counters ProducerCounters
 }
 
 func NewKafkaReceiverOperationPublisher(c *kafka.KafkaProducerConf) (*KafkaReceiverOperationPublisher, error) {
@@ -34,11 +48,20 @@ func NewKafkaReceiverOperationPublisher(c *kafka.KafkaProducerConf) (*KafkaRecei
 	if err != nil {
 		return nil, err
 	}
-	return &KafkaReceiverOperationPublisher{topic: c.Topic, producer: producer}, nil
+	return &KafkaReceiverOperationPublisher{topic: c.Topic, producer: producer, counters: noopProducerCounters{}}, nil
 }
 
 func NewKafkaReceiverOperationPublisherForTest(topic string, producer syncProducer) *KafkaReceiverOperationPublisher {
-	return &KafkaReceiverOperationPublisher{topic: topic, producer: producer}
+	return &KafkaReceiverOperationPublisher{topic: topic, producer: producer, counters: noopProducerCounters{}}
+}
+
+func (p *KafkaReceiverOperationPublisher) WithCounters(counters ProducerCounters) *KafkaReceiverOperationPublisher {
+	if counters == nil {
+		p.counters = noopProducerCounters{}
+		return p
+	}
+	p.counters = counters
+	return p
 }
 
 func (p *KafkaReceiverOperationPublisher) Publish(ctx context.Context, op repository.ReceiverOperation) (repository.KafkaAck, error) {
@@ -61,11 +84,11 @@ func (p *KafkaReceiverOperationPublisher) Publish(ctx context.Context, op reposi
 	}
 	partition, offset, err := p.producer.SendMessage(msg)
 	if err != nil {
-		return repository.KafkaAck{}, err
+		p.counters.IncPublishError()
+		logx.WithContext(ctx).Errorf("receiver operation publish failed: operation_id=%s topic=%s partition=%d err=%v", op.OperationID, p.topic, op.PartitionID, err)
+		return repository.KafkaAck{}, fmt.Errorf("receiver operation publish failed")
 	}
-	if err := ctx.Err(); err != nil {
-		return repository.KafkaAck{}, err
-	}
+	p.counters.IncPublishSuccess()
 	return repository.KafkaAck{Topic: p.topic, Partition: partition, Offset: offset}, nil
 }
 
@@ -73,5 +96,9 @@ func (p *KafkaReceiverOperationPublisher) Close() error {
 	if p == nil || p.producer == nil {
 		return nil
 	}
-	return p.producer.Close()
+	err := p.producer.Close()
+	if err != nil {
+		p.counters.IncCloseError()
+	}
+	return err
 }
