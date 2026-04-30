@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"context"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
@@ -45,5 +46,38 @@ func TestServiceContextCloseClosesRegisteredClosers(t *testing.T) {
 	}
 	if closer.closed != 1 {
 		t.Fatalf("closed = %d, want 1", closer.closed)
+	}
+}
+
+type waitableWorker struct {
+	stopped bool
+	waited  bool
+}
+
+func (w *waitableWorker) Run(context.Context) {}
+
+func (w *waitableWorker) Stop() {
+	w.stopped = true
+}
+
+func (w *waitableWorker) Wait() {
+	if !w.stopped {
+		panic("Wait called before Stop")
+	}
+	w.waited = true
+}
+
+func TestServiceContextCloseWaitsForWaitableWorkers(t *testing.T) {
+	worker := &waitableWorker{}
+	ctx := &ServiceContext{workers: []backgroundWorker{worker}}
+
+	if err := ctx.Close(); err != nil {
+		t.Fatalf("Close() error = %v", err)
+	}
+	if !worker.stopped {
+		t.Fatal("worker was not stopped")
+	}
+	if !worker.waited {
+		t.Fatal("worker was not waited")
 	}
 }

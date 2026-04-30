@@ -38,6 +38,10 @@ type backgroundWorker interface {
 	Stop()
 }
 
+type waitableBackgroundWorker interface {
+	Wait()
+}
+
 type ServiceContext struct {
 	Config  config.Config
 	Repo    UserUpdatesRepository
@@ -102,6 +106,11 @@ func (s *ServiceContext) StopWorkers() {
 	}
 	for _, worker := range s.workers {
 		worker.Stop()
+	}
+	for _, worker := range s.workers {
+		if waitable, ok := worker.(waitableBackgroundWorker); ok {
+			waitable.Wait()
+		}
 	}
 }
 
