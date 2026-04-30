@@ -13,7 +13,9 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"errors"
+
 	"fmt"
 	"strings"
 
@@ -49,7 +51,7 @@ type (
 		ClientRandomId     int64  `db:"client_random_id" json:"client_random_id"`
 		CanonicalMessageId int64  `db:"canonical_message_id" json:"canonical_message_id"`
 		SendStateId        int64  `db:"send_state_id" json:"send_state_id"`
-		RequestPayloadHash string `db:"request_payload_hash" json:"request_payload_hash"`
+		RequestPayloadHash []byte `db:"request_payload_hash" json:"request_payload_hash"`
 	}
 )
 

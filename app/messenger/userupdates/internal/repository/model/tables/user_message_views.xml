@@ -3,24 +3,21 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO user_message_views
-                (user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at)
+                (user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
             VALUES
-                (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :edit_date, :deleted_at, :view_schema_version, :view_payload, NOW(6), NOW(6))
+                (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload)
             ON DUPLICATE KEY UPDATE
                 message_status = VALUES(message_status),
                 edit_version = VALUES(edit_version),
-                edit_date = VALUES(edit_date),
-                deleted_at = VALUES(deleted_at),
                 view_schema_version = VALUES(view_schema_version),
-                view_payload = VALUES(view_payload),
-                updated_at = NOW(6)
+                view_payload = VALUES(view_payload)
         </sql>
     </operation>
 
     <operation name="SelectByUserCanonical">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
@@ -31,7 +28,7 @@
     <operation name="SelectByUserPeerSeq">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
@@ -46,7 +43,7 @@
         </params>
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, edit_date, deleted_at, view_schema_version, view_payload, created_at, updated_at
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE

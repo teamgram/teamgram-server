@@ -32,6 +32,7 @@ type (
 		InsertIgnoreTx(tx *sqlx.Tx, data *MessagePeerSequences) (lastInsertId, rowsAffected int64, err error)
 
 		SelectForUpdate(ctx context.Context, peerType int32, peerId int64) (*MessagePeerSequences, error)
+		SelectForUpdateTx(tx *sqlx.Tx, peerType int32, peerId int64) (*MessagePeerSequences, error)
 
 		UpdateNextPeerSeq(ctx context.Context, nextPeerSeq int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 		UpdateNextPeerSeqTx(tx *sqlx.Tx, nextPeerSeq int64, peerType int32, peerId int64) (rowsAffected int64, err error)
@@ -39,10 +40,10 @@ type (
 )
 
 // InsertIgnore
-// insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq, created_at, updated_at) values (:peer_type, :peer_id, :next_peer_seq, NOW(6), NOW(6))
+// insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq) values (:peer_type, :peer_id, :next_peer_seq)
 func (m *defaultMessagePeerSequencesModel) InsertIgnore(ctx context.Context, data *MessagePeerSequences) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq, created_at, updated_at) values (:peer_type, :peer_id, :next_peer_seq, NOW(6), NOW(6))"
+		query = "insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq) values (:peer_type, :peer_id, :next_peer_seq)"
 		r     sql.Result
 	)
 
@@ -67,10 +68,10 @@ func (m *defaultMessagePeerSequencesModel) InsertIgnore(ctx context.Context, dat
 }
 
 // InsertIgnoreTx
-// insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq, created_at, updated_at) values (:peer_type, :peer_id, :next_peer_seq, NOW(6), NOW(6))
+// insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq) values (:peer_type, :peer_id, :next_peer_seq)
 func (m *defaultMessagePeerSequencesModel) InsertIgnoreTx(tx *sqlx.Tx, data *MessagePeerSequences) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq, created_at, updated_at) values (:peer_type, :peer_id, :next_peer_seq, NOW(6), NOW(6))"
+		query = "insert ignore into message_peer_sequences(peer_type, peer_id, next_peer_seq) values (:peer_type, :peer_id, :next_peer_seq)"
 		r     sql.Result
 	)
 
@@ -94,11 +95,11 @@ func (m *defaultMessagePeerSequencesModel) InsertIgnoreTx(tx *sqlx.Tx, data *Mes
 }
 
 // SelectForUpdate
-// select peer_type, peer_id, next_peer_seq, created_at, updated_at from message_peer_sequences where peer_type = :peer_type and peer_id = :peer_id limit 1 for update
+// select peer_type, peer_id, next_peer_seq from message_peer_sequences where peer_type = :peer_type and peer_id = :peer_id limit 1 for update
 func (m *defaultMessagePeerSequencesModel) SelectForUpdate(ctx context.Context, peerType int32, peerId int64) (rValue *MessagePeerSequences, err error) {
 
 	var (
-		query = "select peer_type, peer_id, next_peer_seq, created_at, updated_at from message_peer_sequences where peer_type = ? and peer_id = ? limit 1 for update"
+		query = "select peer_type, peer_id, next_peer_seq from message_peer_sequences where peer_type = ? and peer_id = ? limit 1 for update"
 		do    = &MessagePeerSequences{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, peerType, peerId)
@@ -120,12 +121,37 @@ func (m *defaultMessagePeerSequencesModel) SelectForUpdate(ctx context.Context, 
 	return
 }
 
+// SelectForUpdateTx
+// select peer_type, peer_id, next_peer_seq from message_peer_sequences where peer_type = :peer_type and peer_id = :peer_id limit 1 for update
+func (m *defaultMessagePeerSequencesModel) SelectForUpdateTx(tx *sqlx.Tx, peerType int32, peerId int64) (rValue *MessagePeerSequences, err error) {
+	var (
+		query = "select peer_type, peer_id, next_peer_seq from message_peer_sequences where peer_type = ? and peer_id = ? limit 1 for update"
+		do    = &MessagePeerSequences{}
+	)
+	err = tx.QueryRowPartial(do, query, peerType, peerId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "message_peer_sequences",
+				Key:      fmt.Sprintf("peer_type=%v,peer_id=%v", peerType, peerId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("message_peer_sequences.SelectForUpdateTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // UpdateNextPeerSeq
-// update message_peer_sequences set next_peer_seq = :next_peer_seq, updated_at = NOW(6) where peer_type = :peer_type and peer_id = :peer_id
+// update message_peer_sequences set next_peer_seq = :next_peer_seq where peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultMessagePeerSequencesModel) UpdateNextPeerSeq(ctx context.Context, nextPeerSeq int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update message_peer_sequences set next_peer_seq = ?, updated_at = NOW(6) where peer_type = ? and peer_id = ?"
+		query   = "update message_peer_sequences set next_peer_seq = ? where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
 
@@ -146,10 +172,10 @@ func (m *defaultMessagePeerSequencesModel) UpdateNextPeerSeq(ctx context.Context
 }
 
 // UpdateNextPeerSeqTx
-// update message_peer_sequences set next_peer_seq = :next_peer_seq, updated_at = NOW(6) where peer_type = :peer_type and peer_id = :peer_id
+// update message_peer_sequences set next_peer_seq = :next_peer_seq where peer_type = :peer_type and peer_id = :peer_id
 func (m *defaultMessagePeerSequencesModel) UpdateNextPeerSeqTx(tx *sqlx.Tx, nextPeerSeq int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update message_peer_sequences set next_peer_seq = ?, updated_at = NOW(6) where peer_type = ? and peer_id = ?"
+		query   = "update message_peer_sequences set next_peer_seq = ? where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
 	rResult, err = tx.Exec(query, nextPeerSeq, peerType, peerId)

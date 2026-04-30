@@ -18,6 +18,7 @@
 package core
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -33,7 +34,7 @@ func (c *UserupdatesCore) UserupdatesGetOperationResult(in *userupdates.TLUserup
 	if err != nil {
 		return nil, err
 	}
-	if expected := operationHashHex(in.PayloadHash); expected != "" && result.PayloadHash != expected {
+	if len(in.PayloadHash) != 0 && !bytes.Equal(result.PayloadHash, in.PayloadHash) {
 		return nil, userupdates.ErrOperationPayloadConflict
 	}
 

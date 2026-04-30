@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS message_peer_sequences (
   peer_type             INT NOT NULL,
   peer_id               BIGINT NOT NULL,
   next_peer_seq         BIGINT NOT NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (peer_type, peer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS canonical_messages (
   edit_date                   DATETIME(6) NULL,
   deleted_at                  DATETIME(6) NULL,
   storage_schema_version      INT NOT NULL DEFAULT 1,
-  created_at                  DATETIME(6) NOT NULL,
-  updated_at                  DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (canonical_message_id),
   UNIQUE KEY uk_peer_seq (peer_type, peer_id, peer_seq),
   KEY idx_peer_date (peer_type, peer_id, date),
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS message_client_randoms (
   canonical_message_id  BIGINT NOT NULL,
   send_state_id         BIGINT NOT NULL,
   request_payload_hash  BINARY(32) NOT NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (sender_user_id, peer_type, peer_id, client_random_id),
   UNIQUE KEY uk_canonical_message (canonical_message_id),
   KEY idx_created_at (created_at)
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS message_send_states (
   last_error_code       VARCHAR(128) NULL,
   last_error_message    VARCHAR(512) NULL,
   retry_count           INT NOT NULL DEFAULT 0,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   completed_at          DATETIME(6) NULL,
   PRIMARY KEY (send_state_id),
   UNIQUE KEY uk_random (sender_user_id, peer_type, peer_id, client_random_id),
@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS message_fanout_manifests (
   actor_user_id         BIGINT NOT NULL,
   affected_user_count   INT NOT NULL,
   status                INT NOT NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   completed_at          DATETIME(6) NULL,
   PRIMARY KEY (manifest_id),
   UNIQUE KEY uk_canonical_message (canonical_message_id),
@@ -140,8 +140,8 @@ CREATE TABLE IF NOT EXISTS message_fanout_receivers (
   next_retry_at         DATETIME(6) NULL,
   last_attempt_at       DATETIME(6) NULL,
   last_error_code       VARCHAR(128) NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (manifest_id, receiver_user_id),
   UNIQUE KEY uk_operation (receiver_user_id, operation_id),
   KEY idx_retry (status, next_retry_at),
@@ -158,8 +158,8 @@ CREATE TABLE IF NOT EXISTS userupdates_partition_fences (
   owner_instance_id     VARCHAR(128) NOT NULL,
   lease_id              VARCHAR(128) NULL,
   lease_expires_at      DATETIME(6) NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (partition_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -170,8 +170,8 @@ CREATE TABLE IF NOT EXISTS user_pts_state (
   partition_id          INT NOT NULL,
   owner_epoch           BIGINT NOT NULL,
   row_version           BIGINT NOT NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id),
   KEY idx_partition (partition_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS user_pts_events (
   event_codec           INT NOT NULL,
   event_payload         BLOB NOT NULL,
   event_payload_hash    BINARY(32) NOT NULL,
-  created_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, pts),
   UNIQUE KEY uk_user_operation (user_id, operation_id),
   KEY idx_user_created (user_id, created_at),
@@ -212,8 +212,8 @@ CREATE TABLE IF NOT EXISTS user_operation_results (
   response_payload      BLOB NOT NULL,
   response_payload_hash BINARY(32) NOT NULL,
   terminal_error_code   VARCHAR(128) NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, operation_id),
   KEY idx_user_created (user_id, created_at),
   KEY idx_status_created (status, created_at)
@@ -235,8 +235,8 @@ CREATE TABLE IF NOT EXISTS user_message_views (
   deleted_at            DATETIME(6) NULL,
   view_schema_version   INT NOT NULL,
   view_payload          BLOB NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, peer_type, peer_id, peer_seq),
   UNIQUE KEY uk_user_canonical (user_id, canonical_message_id),
   KEY idx_user_peer_date (user_id, peer_type, peer_id, date),
@@ -258,8 +258,8 @@ CREATE TABLE IF NOT EXISTS user_dialogs (
   folder_id             INT NULL,
   dialog_schema_version INT NOT NULL DEFAULT 1,
   dialog_payload        BLOB NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, peer_type, peer_id),
   KEY idx_user_top_date (user_id, top_message_date),
   KEY idx_user_pinned (user_id, pinned)
@@ -284,8 +284,8 @@ CREATE TABLE IF NOT EXISTS push_task_outbox (
   published_partition   INT NULL,
   published_offset      BIGINT NULL,
   last_error_code       VARCHAR(128) NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   published_at          DATETIME(6) NULL,
   PRIMARY KEY (task_id),
   UNIQUE KEY uk_user_pts_push (user_id, pts, push_type),
@@ -311,8 +311,8 @@ CREATE TABLE IF NOT EXISTS delivery_failed_operations (
   status                INT NOT NULL,
   replayed_at           DATETIME(6) NULL,
   replayed_by           VARCHAR(128) NULL,
-  created_at            DATETIME(6) NOT NULL,
-  updated_at            DATETIME(6) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (failed_id),
   UNIQUE KEY uk_operation_offset (kafka_topic, kafka_partition, kafka_offset),
   KEY idx_user_operation (user_id, operation_id),
@@ -331,8 +331,7 @@ CREATE TABLE IF NOT EXISTS delivery_failed_operations (
 --   SET owner_epoch = owner_epoch + 1,
 --       owner_instance_id = :new_instance,
 --       lease_id = :lease_id,
---       lease_expires_at = :lease_expires_at,
---       updated_at = NOW(6)
+--       lease_expires_at = :lease_expires_at
 --   WHERE partition_id = :partition_id
 --     AND owner_epoch = :prev_epoch;
 
@@ -350,17 +349,13 @@ BEGIN
       owner_epoch,
       owner_instance_id,
       lease_id,
-      lease_expires_at,
-      created_at,
-      updated_at
+      lease_expires_at
     ) VALUES (
       i,
       0,
       'unassigned',
       NULL,
-      NULL,
-      NOW(6),
-      NOW(6)
+      NULL
     );
 
     SET i = i + 1;

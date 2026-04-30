@@ -44,7 +44,7 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 		PeerID:        op.PeerId,
 		PayloadCodec:  op.PayloadCodec,
 		Payload:       op.Payload,
-		PayloadHash:   operationHashHex(op.PayloadHash),
+		PayloadHash:   op.PayloadHash,
 		BucketID:      op.BucketId,
 		PartitionID:   op.PartitionId,
 		DependencyPts: dependencyPts,

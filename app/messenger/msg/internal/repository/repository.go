@@ -125,7 +125,7 @@ func (r *Repository) nextID(ctx context.Context, op string) (int64, error) {
 }
 
 func storageError(op string, err error) error {
-	return fmt.Errorf("%w: %s: %v", msg.ErrMsgStorage, op, err)
+	return fmt.Errorf("%w: %s: %w", msg.ErrMsgStorage, op, err)
 }
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {

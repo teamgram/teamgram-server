@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"testing"
@@ -30,7 +31,7 @@ func TestReceiverProcessorAppliesEnvelope(t *testing.T) {
 	}
 	if repo.input.UserID != envelope.UserID ||
 		repo.input.OperationID != envelope.OperationID ||
-		repo.input.PayloadHash != envelope.PayloadHash ||
+		!bytes.Equal(repo.input.PayloadHash, envelope.PayloadHash) ||
 		repo.input.PartitionID != envelope.PartitionID {
 		t.Fatalf("unexpected repository input: %+v", repo.input)
 	}

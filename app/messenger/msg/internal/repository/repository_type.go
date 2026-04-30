@@ -37,7 +37,7 @@ type CreateSendStateInput struct {
 	PeerID                      int64
 	ClientRandomID              int64
 	RequestPayloadSchemaVersion int32
-	RequestPayloadHash          string
+	RequestPayloadHash          []byte
 }
 
 type SendState struct {
@@ -50,13 +50,13 @@ type SendState struct {
 	PeerSeq                     int64
 	Status                      int32
 	RequestPayloadSchemaVersion int32
-	RequestPayloadHash          string
+	RequestPayloadHash          []byte
 	SenderOperationID           string
 	SenderPTS                   int64
 	SenderPTSCount              int32
 	SenderUpdateSchemaVersion   int32
 	SenderUpdatePayload         []byte
-	SenderUpdatePayloadHash     string
+	SenderUpdatePayloadHash     []byte
 	ReceiverManifestID          int64
 	RetryCount                  int32
 }
@@ -67,7 +67,7 @@ type CreateCanonicalMessageInput struct {
 	PeerType           int32
 	PeerID             int64
 	ClientRandomID     int64
-	RequestPayloadHash string
+	RequestPayloadHash []byte
 	MessageText        string
 	MessageDate        int32
 }
@@ -77,7 +77,7 @@ type CanonicalMessageResult struct {
 	CanonicalMessageID int64
 	PeerSeq            int64
 	MessageDate        int32
-	RequestPayloadHash string
+	RequestPayloadHash []byte
 	CreatedNew         bool
 }
 
@@ -88,7 +88,7 @@ type MarkSenderCommittedInput struct {
 	SenderPTSCount            int32
 	SenderUpdateSchemaVersion int32
 	SenderUpdatePayload       []byte
-	SenderUpdatePayloadHash   string
+	SenderUpdatePayloadHash   []byte
 }
 
 type MarkRetryableFailureInput struct {

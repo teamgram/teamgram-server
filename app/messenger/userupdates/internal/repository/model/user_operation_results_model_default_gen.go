@@ -13,6 +13,7 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"fmt"
 	"strings"
 
@@ -45,11 +46,11 @@ type (
 		Status                int32  `db:"status" json:"status"`
 		Pts                   int64  `db:"pts" json:"pts"`
 		PtsCount              int32  `db:"pts_count" json:"pts_count"`
-		PayloadHash           string `db:"payload_hash" json:"payload_hash"`
+		PayloadHash           []byte `db:"payload_hash" json:"payload_hash"`
 		ResponseSchemaVersion int32  `db:"response_schema_version" json:"response_schema_version"`
 		ResponseCodec         int32  `db:"response_codec" json:"response_codec"`
 		ResponsePayload       []byte `db:"response_payload" json:"response_payload"`
-		ResponsePayloadHash   string `db:"response_payload_hash" json:"response_payload_hash"`
+		ResponsePayloadHash   []byte `db:"response_payload_hash" json:"response_payload_hash"`
 		TerminalErrorCode     string `db:"terminal_error_code" json:"terminal_error_code"`
 	}
 )

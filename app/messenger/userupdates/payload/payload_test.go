@@ -1,17 +1,29 @@
 package payload
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"math"
 	"strings"
 	"testing"
 )
 
-func TestHashBytesUsesSHA256Hex(t *testing.T) {
+func TestHashBytesUsesSHA256RawDigest(t *testing.T) {
 	got := HashBytes([]byte("teamgram"))
 	const want = "bb142b781fe5b7b5679b8a3417a26f967aab3e054f836d07872d2c7d1a686547"
+	if hex.EncodeToString(got) != want {
+		t.Fatalf("HashBytes() = %x, want %s", got, want)
+	}
+	if len(got) != 32 {
+		t.Fatalf("HashBytes() len = %d, want 32", len(got))
+	}
+}
+
+func TestHashHexUsesSHA256Hex(t *testing.T) {
+	got := HashHex([]byte("teamgram"))
+	const want = "bb142b781fe5b7b5679b8a3417a26f967aab3e054f836d07872d2c7d1a686547"
 	if got != want {
-		t.Fatalf("HashBytes() = %q, want %q", got, want)
+		t.Fatalf("HashHex() = %q, want %q", got, want)
 	}
 }
 

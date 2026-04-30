@@ -13,7 +13,9 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"errors"
+
 	"fmt"
 	"strings"
 
@@ -48,7 +50,7 @@ type (
 		OperationPayloadSchemaVersion int32  `db:"operation_payload_schema_version" json:"operation_payload_schema_version"`
 		OperationPayloadCodec         int32  `db:"operation_payload_codec" json:"operation_payload_codec"`
 		OperationPayload              []byte `db:"operation_payload" json:"operation_payload"`
-		OperationPayloadHash          string `db:"operation_payload_hash" json:"operation_payload_hash"`
+		OperationPayloadHash          []byte `db:"operation_payload_hash" json:"operation_payload_hash"`
 		KafkaTopic                    string `db:"kafka_topic" json:"kafka_topic"`
 		KafkaPartition                int32  `db:"kafka_partition" json:"kafka_partition"`
 		KafkaOffset                   int64  `db:"kafka_offset" json:"kafka_offset"`

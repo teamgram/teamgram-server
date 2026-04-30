@@ -1,8 +1,8 @@
 package core
 
 import (
+	"bytes"
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -16,10 +16,9 @@ import (
 
 func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 	operationPayload := []byte(`{"schema_version":1,"operation_kind":"send_message"}`)
-	operationHashHex := payload.HashBytes(operationPayload)
-	operationHash := mustDecodeHex(t, operationHashHex)
+	operationHash := payload.HashBytes(operationPayload)
 	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
-	responseHashHex := payload.HashBytes(responsePayload)
+	responseHash := payload.HashBytes(responsePayload)
 
 	repo := &fakeUserUpdatesRepository{
 		applyResult: &repository.ApplyUserOperationResult{
@@ -28,7 +27,7 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 			Pts:             12,
 			PtsCount:        1,
 			ResponsePayload: responsePayload,
-			ResponseHash:    responseHashHex,
+			ResponseHash:    responseHash,
 		},
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
@@ -60,12 +59,12 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 	if string(got.ResponsePayload) != string(responsePayload) {
 		t.Fatalf("unexpected response payload: %s", string(got.ResponsePayload))
 	}
-	if hex.EncodeToString(got.ResponsePayloadHash) != responseHashHex {
+	if !bytes.Equal(got.ResponsePayloadHash, responseHash) {
 		t.Fatalf("unexpected response hash: %x", got.ResponsePayloadHash)
 	}
 	if repo.applyInput.UserID != 1001 ||
 		repo.applyInput.OperationID != "v1:msg:2001:sender:1001:out" ||
-		repo.applyInput.PayloadHash != operationHashHex ||
+		!bytes.Equal(repo.applyInput.PayloadHash, operationHash) ||
 		repo.applyInput.BucketID != 77 ||
 		repo.applyInput.PartitionID != 13 {
 		t.Fatalf("unexpected repository input: %+v", repo.applyInput)
@@ -90,7 +89,7 @@ func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 	_, err := core.UserupdatesGetOperationResult(&userupdates.TLUserupdatesGetOperationResult{
 		UserId:      1001,
 		OperationId: "v1:msg:2001:receiver:1001:in",
-		PayloadHash: mustDecodeHex(t, payload.HashBytes(badPayload)),
+		PayloadHash: payload.HashBytes(badPayload),
 	})
 	if !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
 		t.Fatalf("expected ErrOperationPayloadConflict, got %v", err)
@@ -212,15 +211,6 @@ func (f *fakeUserUpdatesRepository) GetState(_ context.Context, _ int64) (*repos
 
 func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, _ repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
 	return f.difference, nil
-}
-
-func mustDecodeHex(t *testing.T, s string) []byte {
-	t.Helper()
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		t.Fatalf("decode hex: %v", err)
-	}
-	return b
 }
 
 func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {

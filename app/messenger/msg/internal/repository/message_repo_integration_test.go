@@ -3,6 +3,7 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
@@ -125,7 +126,7 @@ func TestMessageRepositoryCreateAndCommitSendState(t *testing.T) {
 		committed.CanonicalMessageID != canonical.CanonicalMessageID ||
 		committed.PeerSeq != canonical.PeerSeq ||
 		committed.SenderPTS != 7 ||
-		committed.SenderUpdatePayloadHash != senderUpdateHash {
+		!bytes.Equal(committed.SenderUpdatePayloadHash, senderUpdateHash) {
 		t.Fatalf("unexpected committed state: %+v", committed)
 	}
 }

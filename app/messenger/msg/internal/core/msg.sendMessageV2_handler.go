@@ -18,7 +18,6 @@
 package core
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -128,7 +127,7 @@ type sendRequestPayloadV1 struct {
 	MessageText    string `json:"message_text"`
 }
 
-func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, randomID int64, text string) ([]byte, string, error) {
+func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, randomID int64, text string) ([]byte, []byte, error) {
 	body, err := json.Marshal(sendRequestPayloadV1{
 		SchemaVersion:  payload.MessageOperationSchemaVersion,
 		SenderUserID:   senderUserID,
@@ -138,7 +137,7 @@ func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, random
 		MessageText:    text,
 	})
 	if err != nil {
-		return nil, "", fmt.Errorf("%w: marshal send request: %v", msg.ErrMsgStorage, err)
+		return nil, nil, fmt.Errorf("%w: marshal send request: %v", msg.ErrMsgStorage, err)
 	}
 	return body, payload.HashBytes(body), nil
 }
@@ -214,7 +213,7 @@ func (c *MsgCore) markSenderCommitted(canonical *repository.CanonicalMessageResu
 		SenderPTSCount:            result.PtsCount,
 		SenderUpdateSchemaVersion: payload.OperationResponseSchemaVersion,
 		SenderUpdatePayload:       result.ResponsePayload,
-		SenderUpdatePayloadHash:   hex.EncodeToString(result.ResponsePayloadHash),
+		SenderUpdatePayloadHash:   result.ResponsePayloadHash,
 	})
 }
 
@@ -239,7 +238,7 @@ func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.Ca
 	}, nil
 }
 
-func buildMessageOperationPayload(userID int64, fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string) ([]byte, string, []byte, error) {
+func buildMessageOperationPayload(userID int64, fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string) ([]byte, []byte, []byte, error) {
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:      payload.MessageOperationSchemaVersion,
 		OperationKind:      payload.OperationKindSendMessage,
@@ -254,14 +253,10 @@ func buildMessageOperationPayload(userID int64, fromUserID int64, toUserID int64
 		MessageText:        text,
 	})
 	if err != nil {
-		return nil, "", nil, fmt.Errorf("%w: marshal message operation user_id=%d", msg.ErrMsgStorage, userID)
+		return nil, nil, nil, fmt.Errorf("%w: marshal message operation user_id=%d", msg.ErrMsgStorage, userID)
 	}
-	hashHex := payload.HashBytes(body)
-	hashBytes, err := hex.DecodeString(hashHex)
-	if err != nil {
-		return nil, "", nil, fmt.Errorf("%w: decode operation hash", msg.ErrMsgStorage)
-	}
-	return body, hashHex, hashBytes, nil
+	hashBytes := payload.HashBytes(body)
+	return body, hashBytes, hashBytes, nil
 }
 
 func shortSentMessage(canonical *repository.CanonicalMessageResult, result *userupdates.UserOperationResult) (*tg.Updates, error) {
