@@ -62,17 +62,26 @@ func (s *Server) Initialize() error {
 }
 
 func (s *Server) RunLoop() {
+	s.ctx.StartWorkers()
 	if err := s.kitexSrv.Run(); err != nil {
 		logx.Errorf("server run failed: %v", err)
 	}
 }
 
 func (s *Server) Destroy() {
-	if err := s.kitexSrv.Stop(); err != nil {
-		logx.Errorf("server stop failed: %v", err)
+	if s.ctx != nil {
+		s.ctx.StopWorkers()
 	}
 
-	if err := s.ctx.Close(); err != nil {
-		logx.Errorf("service context close failed: %v", err)
+	if s.kitexSrv != nil {
+		if err := s.kitexSrv.Stop(); err != nil {
+			logx.Errorf("server stop failed: %v", err)
+		}
+	}
+
+	if s.ctx != nil {
+		if err := s.ctx.Close(); err != nil {
+			logx.Errorf("service context close failed: %v", err)
+		}
 	}
 }

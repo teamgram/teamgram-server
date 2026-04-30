@@ -19,9 +19,11 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 )
 
 type UserUpdatesRepository interface {
@@ -31,23 +33,91 @@ type UserUpdatesRepository interface {
 	GetDifference(ctx context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error)
 }
 
+type backgroundWorker interface {
+	Run(ctx context.Context)
+	Stop()
+}
+
 type ServiceContext struct {
-	Config config.Config
-	Repo   UserUpdatesRepository
+	Config  config.Config
+	Repo    UserUpdatesRepository
+	workers []backgroundWorker
+	closers []interface{ Close() error }
+	cancel  context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	repo := repository.NewRepository(c)
+	sc := &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repo,
+	}
+	if closer, ok := any(repo).(interface{ Close() error }); ok {
+		sc.closers = append(sc.closers, closer)
+	}
+
+	if c.ReceiverOperations != nil {
+		consumer, err := receiverevent.NewReceiverConsumer(c.ReceiverOperations, repo)
+		if err != nil {
+			panic(err)
+		}
+		sc.workers = append(sc.workers, consumer)
+		sc.closers = append(sc.closers, consumer)
+	}
+
+	if c.PushOutboxWorker.Enabled && c.PushTasks != nil {
+		publisher, err := receiverevent.NewPushTaskPublisher(c.PushTasks)
+		if err != nil {
+			panic(err)
+		}
+		worker := repository.NewPushOutboxWorker(repo, publisher, repository.PushOutboxWorkerOptions{
+			Interval:          time.Duration(c.PushOutboxWorker.PollInterval) * time.Millisecond,
+			BatchSize:         c.PushOutboxWorker.BatchSize,
+			PublishingTimeout: time.Duration(c.PushOutboxWorker.PublishingTimeoutMs) * time.Millisecond,
+		})
+		sc.workers = append(sc.workers, worker)
+		sc.closers = append(sc.closers, publisher)
+	}
+
+	return sc
+}
+
+func (s *ServiceContext) StartWorkers() {
+	if s == nil || len(s.workers) == 0 {
+		return
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+	for _, worker := range s.workers {
+		go worker.Run(ctx)
 	}
 }
+
+func (s *ServiceContext) StopWorkers() {
+	if s == nil {
+		return
+	}
+	if s.cancel != nil {
+		s.cancel()
+	}
+	for _, worker := range s.workers {
+		worker.Stop()
+	}
+}
+
 func (s *ServiceContext) Close() error {
-	if s == nil || s.Repo == nil {
+	if s == nil {
 		return nil
 	}
-	if closer, ok := s.Repo.(interface{ Close() error }); ok {
-		return closer.Close()
+	s.StopWorkers()
+	var firstErr error
+	for _, closer := range s.closers {
+		if closer == nil {
+			continue
+		}
+		if err := closer.Close(); err != nil && firstErr == nil {
+			firstErr = err
+		}
 	}
-	return nil
+	return firstErr
 }
