@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table sqlname="push_task_outbox">
-    <operation name="Insert">
-        <sql>
-            INSERT INTO push_task_outbox
-                (task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, published_topic, published_partition, published_offset, last_error_code)
-            VALUES
-                (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)
-        </sql>
-    </operation>
+	    <operation name="Insert">
+	        <sql>
+	            INSERT INTO push_task_outbox
+	                (task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code)
+	            VALUES
+	                (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :available_at, :published_topic, :published_partition, :published_offset, :last_error_code)
+	        </sql>
+	    </operation>
 
     <operation name="SelectPending" result_set="list">
         <params>
             <param name="limit" type="int32" />
         </params>
-        <sql>
-            SELECT
-                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at
-            FROM
-                push_task_outbox
-            WHERE
-                status = :status AND (next_retry_at IS NULL OR next_retry_at &lt;= :next_retry_at)
-            ORDER BY
-                created_at LIMIT :limit
-        </sql>
-    </operation>
+	        <sql>
+	            SELECT
+	                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code
+	            FROM
+	                push_task_outbox
+	            WHERE
+	                status = :status AND available_at &lt;= :available_at
+	            ORDER BY
+	                available_at, task_id LIMIT :limit
+	        </sql>
+	    </operation>
 
     <operation name="MarkPublishing">
         <sql>
@@ -56,11 +56,12 @@
         <sql>
             UPDATE
                 push_task_outbox
-            SET
-                status = :status,
-                next_retry_at = :next_retry_at,
-                last_error_code = :last_error_code
-            WHERE
+	            SET
+	                status = :status,
+	                next_retry_at = :next_retry_at,
+	                available_at = :available_at,
+	                last_error_code = :last_error_code
+	            WHERE
                 task_id = :task_id
         </sql>
     </operation>

@@ -279,6 +279,7 @@ CREATE TABLE IF NOT EXISTS push_task_outbox (
   task_payload          BLOB NOT NULL,
   status                INT NOT NULL,
   publish_attempts      INT NOT NULL DEFAULT 0,
+  available_at          DATETIME(6) NOT NULL,
   next_retry_at         DATETIME(6) NULL,
   published_topic       VARCHAR(128) NULL,
   published_partition   INT NULL,
@@ -290,6 +291,7 @@ CREATE TABLE IF NOT EXISTS push_task_outbox (
   PRIMARY KEY (task_id),
   UNIQUE KEY uk_user_pts_push (user_id, pts, push_type),
   KEY idx_status_retry (status, next_retry_at),
+  KEY idx_status_available (status, available_at, task_id),
   KEY idx_user_created (user_id, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

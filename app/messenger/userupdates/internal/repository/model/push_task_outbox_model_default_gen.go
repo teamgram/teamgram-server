@@ -59,6 +59,7 @@ type (
 		TaskPayload        []byte `db:"task_payload" json:"task_payload"`
 		Status             int32  `db:"status" json:"status"`
 		PublishAttempts    int32  `db:"publish_attempts" json:"publish_attempts"`
+		AvailableAt        string `db:"available_at" json:"available_at"`
 		NextRetryAt        string `db:"next_retry_at" json:"next_retry_at"`
 		PublishedTopic     string `db:"published_topic" json:"published_topic"`
 		PublishedPartition int32  `db:"published_partition" json:"published_partition"`
@@ -76,9 +77,9 @@ func newPushTaskOutboxModel(db *sqlx.DB) *defaultPushTaskOutboxModel {
 
 func (m *defaultPushTaskOutboxModel) Insert2(ctx context.Context, data *PushTaskOutbox) (sql.Result, error) {
 	tableName := "push_task_outbox"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, pushTaskOutboxRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, pushTaskOutboxRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PushType, data.PeerType, data.PeerId, data.OperationId, data.PushPartitionId, data.TaskSchemaVersion, data.TaskCodec, data.TaskPayload, data.Status, data.PublishAttempts, data.NextRetryAt, data.PublishedTopic, data.PublishedPartition, data.PublishedOffset, data.LastErrorCode, data.PublishedAt)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PushType, data.PeerType, data.PeerId, data.OperationId, data.PushPartitionId, data.TaskSchemaVersion, data.TaskCodec, data.TaskPayload, data.Status, data.PublishAttempts, data.AvailableAt, data.NextRetryAt, data.PublishedTopic, data.PublishedPartition, data.PublishedOffset, data.LastErrorCode, data.PublishedAt)
 	if err != nil {
 		return nil, fmt.Errorf("push_task_outbox.Insert2 exec: %w", err)
 	}
@@ -143,7 +144,7 @@ func (m *defaultPushTaskOutboxModel) Update2(ctx context.Context, data *PushTask
 	tableName := "push_task_outbox"
 	query := fmt.Sprintf("update `%s` set %s where `task_id` = ?", tableName, pushTaskOutboxRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PushType, data.PeerType, data.PeerId, data.OperationId, data.PushPartitionId, data.TaskSchemaVersion, data.TaskCodec, data.TaskPayload, data.Status, data.PublishAttempts, data.NextRetryAt, data.PublishedTopic, data.PublishedPartition, data.PublishedOffset, data.LastErrorCode, data.PublishedAt, data.TaskId)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.Pts, data.PushType, data.PeerType, data.PeerId, data.OperationId, data.PushPartitionId, data.TaskSchemaVersion, data.TaskCodec, data.TaskPayload, data.Status, data.PublishAttempts, data.AvailableAt, data.NextRetryAt, data.PublishedTopic, data.PublishedPartition, data.PublishedOffset, data.LastErrorCode, data.PublishedAt, data.TaskId)
 	if err != nil {
 		return fmt.Errorf("push_task_outbox.Update2 exec: %w", err)
 	}
