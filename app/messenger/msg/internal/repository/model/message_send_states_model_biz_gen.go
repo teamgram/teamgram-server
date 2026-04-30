@@ -25,34 +25,37 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizMessageSendStatesModel interface {
-		Insert(ctx context.Context, data *MessageSendStates) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *MessageSendStates) (lastInsertId, rowsAffected int64, err error)
+type bizMessageSendStatesModel interface {
+	Insert(ctx context.Context, data *MessageSendStates) (lastInsertId, rowsAffected int64, err error)
+	SelectBySendStateId(ctx context.Context, sendStateId int64) (*MessageSendStates, error)
+	SelectByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
+	MarkCanonicalCreated(ctx context.Context, canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkSenderCommitted(ctx context.Context, senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkReceiverOpsAcked(ctx context.Context, receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkCompleted(ctx context.Context, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(ctx context.Context, status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
+}
 
-		SelectBySendStateId(ctx context.Context, sendStateId int64) (*MessageSendStates, error)
-		SelectBySendStateIdTx(tx *sqlx.Tx, sendStateId int64) (*MessageSendStates, error)
+type MessageSendStatesTxModel interface {
+	Insert(data *MessageSendStates) (lastInsertId, rowsAffected int64, err error)
+	SelectBySendStateId(sendStateId int64) (*MessageSendStates, error)
+	SelectByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
+	MarkCanonicalCreated(canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkSenderCommitted(senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkReceiverOpsAcked(receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
+	MarkCompleted(status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
+}
 
-		SelectByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
-		SelectByRandomTx(tx *sqlx.Tx, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
+type defaultMessageSendStatesTxModel struct {
+	tx *sqlx.Tx
+}
 
-		MarkCanonicalCreated(ctx context.Context, canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-		MarkCanonicalCreatedTx(tx *sqlx.Tx, canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-
-		MarkSenderCommitted(ctx context.Context, senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
-		MarkSenderCommittedTx(tx *sqlx.Tx, senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
-
-		MarkReceiverOpsAcked(ctx context.Context, receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-		MarkReceiverOpsAckedTx(tx *sqlx.Tx, receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-
-		MarkCompleted(ctx context.Context, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
-		MarkCompletedTx(tx *sqlx.Tx, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
-
-		MarkRetryableFailure(ctx context.Context, status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
-		MarkRetryableFailureTx(tx *sqlx.Tx, status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
-	}
-)
+func NewMessageSendStatesTxModel(tx *sqlx.Tx) MessageSendStatesTxModel {
+	return &defaultMessageSendStatesTxModel{tx: tx}
+}
 
 // Insert
 // insert into message_send_states(send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count) values (:send_state_id, :sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :peer_seq, :status, :request_payload_schema_version, :request_payload_hash, :sender_pts, :sender_pts_count, :sender_update_schema_version, :sender_update_payload, :sender_update_payload_hash, :receiver_manifest_id, :last_error_category, :last_error_code, :last_error_message, :retry_count)
@@ -82,28 +85,28 @@ func (m *defaultMessageSendStatesModel) Insert(ctx context.Context, data *Messag
 
 }
 
-// InsertTx
+// Insert
 // insert into message_send_states(send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count) values (:send_state_id, :sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :peer_seq, :status, :request_payload_schema_version, :request_payload_hash, :sender_pts, :sender_pts_count, :sender_update_schema_version, :sender_update_payload, :sender_update_payload_hash, :receiver_manifest_id, :last_error_category, :last_error_code, :last_error_message, :retry_count)
-func (m *defaultMessageSendStatesModel) InsertTx(tx *sqlx.Tx, data *MessageSendStates) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) Insert(data *MessageSendStates) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into message_send_states(send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count) values (:send_state_id, :sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :peer_seq, :status, :request_payload_schema_version, :request_payload_hash, :sender_pts, :sender_pts_count, :sender_update_schema_version, :sender_update_payload, :sender_update_payload_hash, :receiver_manifest_id, :last_error_category, :last_error_code, :last_error_message, :retry_count)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("message_send_states.InsertTx named exec: %w", err)
+		err = fmt.Errorf("message_send_states.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("message_send_states.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.Insert rows affected: %w", err)
 	}
 
 	return
@@ -136,14 +139,14 @@ func (m *defaultMessageSendStatesModel) SelectBySendStateId(ctx context.Context,
 	return
 }
 
-// SelectBySendStateIdTx
+// SelectBySendStateId
 // select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = :send_state_id limit 1
-func (m *defaultMessageSendStatesModel) SelectBySendStateIdTx(tx *sqlx.Tx, sendStateId int64) (rValue *MessageSendStates, err error) {
+func (m *defaultMessageSendStatesTxModel) SelectBySendStateId(sendStateId int64) (rValue *MessageSendStates, err error) {
 	var (
 		query = "select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = ? limit 1"
 		do    = &MessageSendStates{}
 	)
-	err = tx.QueryRowPartial(do, query, sendStateId)
+	err = m.tx.QueryRowPartial(do, query, sendStateId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -153,7 +156,7 @@ func (m *defaultMessageSendStatesModel) SelectBySendStateIdTx(tx *sqlx.Tx, sendS
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("message_send_states.SelectBySendStateIdTx: %w", err)
+		err = fmt.Errorf("message_send_states.SelectBySendStateId: %w", err)
 		return
 	}
 	rValue = do
@@ -188,14 +191,14 @@ func (m *defaultMessageSendStatesModel) SelectByRandom(ctx context.Context, send
 	return
 }
 
-// SelectByRandomTx
+// SelectByRandom
 // select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
-func (m *defaultMessageSendStatesModel) SelectByRandomTx(tx *sqlx.Tx, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageSendStates, err error) {
+func (m *defaultMessageSendStatesTxModel) SelectByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageSendStates, err error) {
 	var (
 		query = "select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = ? and peer_type = ? and peer_id = ? and client_random_id = ? limit 1"
 		do    = &MessageSendStates{}
 	)
-	err = tx.QueryRowPartial(do, query, senderUserId, peerType, peerId, clientRandomId)
+	err = m.tx.QueryRowPartial(do, query, senderUserId, peerType, peerId, clientRandomId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -205,7 +208,7 @@ func (m *defaultMessageSendStatesModel) SelectByRandomTx(tx *sqlx.Tx, senderUser
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("message_send_states.SelectByRandomTx: %w", err)
+		err = fmt.Errorf("message_send_states.SelectByRandom: %w", err)
 		return
 	}
 	rValue = do
@@ -238,23 +241,23 @@ func (m *defaultMessageSendStatesModel) MarkCanonicalCreated(ctx context.Context
 	return
 }
 
-// MarkCanonicalCreatedTx
+// MarkCanonicalCreated
 // update message_send_states set canonical_message_id = :canonical_message_id, peer_seq = :peer_seq, `status` = :status where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesModel) MarkCanonicalCreatedTx(tx *sqlx.Tx, canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkCanonicalCreated(canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set canonical_message_id = ?, peer_seq = ?, `status` = ? where send_state_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, canonicalMessageId, peerSeq, status, sendStateId)
+	rResult, err = m.tx.Exec(query, canonicalMessageId, peerSeq, status, sendStateId)
 
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkCanonicalCreatedTx exec: %w", err)
+		err = fmt.Errorf("message_send_states.MarkCanonicalCreated exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkCanonicalCreatedTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.MarkCanonicalCreated rows affected: %w", err)
 		return
 	}
 
@@ -286,23 +289,23 @@ func (m *defaultMessageSendStatesModel) MarkSenderCommitted(ctx context.Context,
 	return
 }
 
-// MarkSenderCommittedTx
+// MarkSenderCommitted
 // update message_send_states set sender_operation_id = :sender_operation_id, sender_pts = :sender_pts, sender_pts_count = :sender_pts_count, sender_update_schema_version = :sender_update_schema_version, sender_update_payload = :sender_update_payload, sender_update_payload_hash = :sender_update_payload_hash, `status` = :status where send_state_id = :send_state_id and (sender_operation_id is null or sender_operation_id = :sender_operation_id)
-func (m *defaultMessageSendStatesModel) MarkSenderCommittedTx(tx *sqlx.Tx, senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkSenderCommitted(senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set sender_operation_id = ?, sender_pts = ?, sender_pts_count = ?, sender_update_schema_version = ?, sender_update_payload = ?, sender_update_payload_hash = ?, `status` = ? where send_state_id = ? and (sender_operation_id is null or sender_operation_id = ?)"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, senderOperationId, senderPts, senderPtsCount, senderUpdateSchemaVersion, senderUpdatePayload, senderUpdatePayloadHash, status, sendStateId, senderOperationId)
+	rResult, err = m.tx.Exec(query, senderOperationId, senderPts, senderPtsCount, senderUpdateSchemaVersion, senderUpdatePayload, senderUpdatePayloadHash, status, sendStateId, senderOperationId)
 
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkSenderCommittedTx exec: %w", err)
+		err = fmt.Errorf("message_send_states.MarkSenderCommitted exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkSenderCommittedTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.MarkSenderCommitted rows affected: %w", err)
 		return
 	}
 
@@ -334,23 +337,23 @@ func (m *defaultMessageSendStatesModel) MarkReceiverOpsAcked(ctx context.Context
 	return
 }
 
-// MarkReceiverOpsAckedTx
+// MarkReceiverOpsAcked
 // update message_send_states set receiver_manifest_id = :receiver_manifest_id, `status` = :status where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesModel) MarkReceiverOpsAckedTx(tx *sqlx.Tx, receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkReceiverOpsAcked(receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set receiver_manifest_id = ?, `status` = ? where send_state_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, receiverManifestId, status, sendStateId)
+	rResult, err = m.tx.Exec(query, receiverManifestId, status, sendStateId)
 
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkReceiverOpsAckedTx exec: %w", err)
+		err = fmt.Errorf("message_send_states.MarkReceiverOpsAcked exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkReceiverOpsAckedTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.MarkReceiverOpsAcked rows affected: %w", err)
 		return
 	}
 
@@ -382,23 +385,23 @@ func (m *defaultMessageSendStatesModel) MarkCompleted(ctx context.Context, statu
 	return
 }
 
-// MarkCompletedTx
+// MarkCompleted
 // update message_send_states set `status` = :status, completed_at = :completed_at where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesModel) MarkCompletedTx(tx *sqlx.Tx, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkCompleted(status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set `status` = ?, completed_at = ? where send_state_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, status, completedAt, sendStateId)
+	rResult, err = m.tx.Exec(query, status, completedAt, sendStateId)
 
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkCompletedTx exec: %w", err)
+		err = fmt.Errorf("message_send_states.MarkCompleted exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkCompletedTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.MarkCompleted rows affected: %w", err)
 		return
 	}
 
@@ -430,23 +433,23 @@ func (m *defaultMessageSendStatesModel) MarkRetryableFailure(ctx context.Context
 	return
 }
 
-// MarkRetryableFailureTx
+// MarkRetryableFailure
 // update message_send_states set `status` = :status, last_error_category = :last_error_category, last_error_code = :last_error_code, last_error_message = :last_error_message, retry_count = retry_count + 1 where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesModel) MarkRetryableFailureTx(tx *sqlx.Tx, status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkRetryableFailure(status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set `status` = ?, last_error_category = ?, last_error_code = ?, last_error_message = ?, retry_count = retry_count + 1 where send_state_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, status, lastErrorCategory, lastErrorCode, lastErrorMessage, sendStateId)
+	rResult, err = m.tx.Exec(query, status, lastErrorCategory, lastErrorCode, lastErrorMessage, sendStateId)
 
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkRetryableFailureTx exec: %w", err)
+		err = fmt.Errorf("message_send_states.MarkRetryableFailure exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_send_states.MarkRetryableFailureTx rows affected: %w", err)
+		err = fmt.Errorf("message_send_states.MarkRetryableFailure rows affected: %w", err)
 		return
 	}
 

@@ -25,20 +25,30 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizBotsModel interface {
-		Select(ctx context.Context, botId int64) (*Bots, error)
+type bizBotsModel interface {
+	Select(ctx context.Context, botId int64) (*Bots, error)
+	SelectByToken(ctx context.Context, token string) (int64, error)
+	SelectByIdList(ctx context.Context, idList []int32) ([]Bots, error)
+	SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *Bots)) ([]Bots, error)
+	Update(ctx context.Context, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error)
+}
 
-		SelectByToken(ctx context.Context, token string) (int64, error)
+type BotsTxModel interface {
+	Select(botId int64) (*Bots, error)
+	SelectByToken(token string) (int64, error)
+	SelectByIdList(idList []int32) ([]Bots, error)
+	Update(cMap map[string]interface{}, botId int64) (rowsAffected int64, err error)
+}
 
-		SelectByIdList(ctx context.Context, idList []int32) ([]Bots, error)
-		SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *Bots)) ([]Bots, error)
+type defaultBotsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		Update(ctx context.Context, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error)
-		UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error)
-	}
-)
+func NewBotsTxModel(tx *sqlx.Tx) BotsTxModel {
+	return &defaultBotsTxModel{tx: tx}
+}
 
 // Select
 // select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id = :bot_id
@@ -67,11 +77,58 @@ func (m *defaultBotsModel) Select(ctx context.Context, botId int64) (rValue *Bot
 	return
 }
 
+// Select
+// select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id = :bot_id
+func (m *defaultBotsTxModel) Select(botId int64) (rValue *Bots, err error) {
+	var (
+		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id = ?"
+		do    = &Bots{}
+	)
+	err = m.tx.QueryRowPartial(do, query, botId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("bot_id=%v", botId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("bots.Select: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByToken
 // select bot_id from bots where token = :token
 func (m *defaultBotsModel) SelectByToken(ctx context.Context, token string) (rValue int64, err error) {
 	var query = "select bot_id from bots where token = ?"
 	err = m.db.QueryRowPartial(ctx, &rValue, query, token)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "bots",
+				Key:      fmt.Sprintf("token=%v", token),
+				Cause:    err,
+			}
+			return
+		}
+		err = fmt.Errorf("bots.SelectByToken: %w", err)
+		return
+	}
+
+	return
+}
+
+// SelectByToken
+// select bot_id from bots where token = :token
+func (m *defaultBotsTxModel) SelectByToken(token string) (rValue int64, err error) {
+	var query = "select bot_id from bots where token = ?"
+	err = m.tx.QueryRowPartial(&rValue, query, token)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -102,6 +159,35 @@ func (m *defaultBotsModel) SelectByIdList(ctx context.Context, idList []int32) (
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Bots{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("bots.SelectByIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByIdList
+// select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id in (:id_list)
+func (m *defaultBotsTxModel) SelectByIdList(idList []int32) (rList []Bots, err error) {
+	var (
+		query  = fmt.Sprintf("select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id in (%s)", sqlx.InInt32List(idList))
+		values []Bots
+	)
+	if len(idList) == 0 {
+		rList = []Bots{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -188,9 +274,9 @@ func (m *defaultBotsModel) Update(ctx context.Context, cMap map[string]interface
 	return
 }
 
-// UpdateTx
+// Update
 // update bots set %s where bot_id = :bot_id
-func (m *defaultBotsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error) {
+func (m *defaultBotsTxModel) Update(cMap map[string]interface{}, botId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -205,16 +291,16 @@ func (m *defaultBotsModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bo
 
 	aValues = append(aValues, botId)
 
-	rResult, err = tx.Exec(query, aValues...)
+	rResult, err = m.tx.Exec(query, aValues...)
 
 	if err != nil {
-		err = fmt.Errorf("bots.UpdateTx exec: %w", err)
+		err = fmt.Errorf("bots.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("bots.UpdateTx rows affected: %w", err)
+		err = fmt.Errorf("bots.Update rows affected: %w", err)
 		return
 	}
 

@@ -25,20 +25,28 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUserPtsUpdatesModel interface {
-		Insert(ctx context.Context, data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error)
+type bizUserPtsUpdatesModel interface {
+	Insert(ctx context.Context, data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error)
+	SelectLastPts(ctx context.Context, userId int64) (*UserPtsUpdates, error)
+	SelectByGtPts(ctx context.Context, userId int64, pts int32) ([]UserPtsUpdates, error)
+	SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int32, cb func(sz, i int, v *UserPtsUpdates)) ([]UserPtsUpdates, error)
+}
 
-		SelectLastPts(ctx context.Context, userId int64) (*UserPtsUpdates, error)
-		SelectLastPtsTx(tx *sqlx.Tx, userId int64) (*UserPtsUpdates, error)
+type UserPtsUpdatesTxModel interface {
+	Insert(data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error)
+	SelectLastPts(userId int64) (*UserPtsUpdates, error)
+	SelectByGtPts(userId int64, pts int32) ([]UserPtsUpdates, error)
+}
 
-		SelectByGtPts(ctx context.Context, userId int64, pts int32) ([]UserPtsUpdates, error)
-		SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int32) ([]UserPtsUpdates, error)
-		SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int32, cb func(sz, i int, v *UserPtsUpdates)) ([]UserPtsUpdates, error)
-	}
-)
+type defaultUserPtsUpdatesTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewUserPtsUpdatesTxModel(tx *sqlx.Tx) UserPtsUpdatesTxModel {
+	return &defaultUserPtsUpdatesTxModel{tx: tx}
+}
 
 // Insert
 // insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)
@@ -68,28 +76,28 @@ func (m *defaultUserPtsUpdatesModel) Insert(ctx context.Context, data *UserPtsUp
 
 }
 
-// InsertTx
+// Insert
 // insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)
-func (m *defaultUserPtsUpdatesModel) InsertTx(tx *sqlx.Tx, data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUserPtsUpdatesTxModel) Insert(data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_pts_updates(user_id, pts, pts_count, update_type, update_data, date2) values (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("user_pts_updates.InsertTx named exec: %w", err)
+		err = fmt.Errorf("user_pts_updates.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("user_pts_updates.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("user_pts_updates.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_pts_updates.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("user_pts_updates.Insert rows affected: %w", err)
 	}
 
 	return
@@ -122,14 +130,14 @@ func (m *defaultUserPtsUpdatesModel) SelectLastPts(ctx context.Context, userId i
 	return
 }
 
-// SelectLastPtsTx
+// SelectLastPts
 // select pts from user_pts_updates where user_id = :user_id order by pts desc limit 1
-func (m *defaultUserPtsUpdatesModel) SelectLastPtsTx(tx *sqlx.Tx, userId int64) (rValue *UserPtsUpdates, err error) {
+func (m *defaultUserPtsUpdatesTxModel) SelectLastPts(userId int64) (rValue *UserPtsUpdates, err error) {
 	var (
 		query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
 		do    = &UserPtsUpdates{}
 	)
-	err = tx.QueryRowPartial(do, query, userId)
+	err = m.tx.QueryRowPartial(do, query, userId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -139,7 +147,7 @@ func (m *defaultUserPtsUpdatesModel) SelectLastPtsTx(tx *sqlx.Tx, userId int64) 
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("user_pts_updates.SelectLastPtsTx: %w", err)
+		err = fmt.Errorf("user_pts_updates.SelectLastPts: %w", err)
 		return
 	}
 	rValue = do
@@ -171,14 +179,14 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPts(ctx context.Context, userId i
 	return
 }
 
-// SelectByGtPtsTx
+// SelectByGtPts
 // select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = :user_id and pts > :pts order by pts asc
-func (m *defaultUserPtsUpdatesModel) SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int32) (rList []UserPtsUpdates, err error) {
+func (m *defaultUserPtsUpdatesTxModel) SelectByGtPts(userId int64, pts int32) (rList []UserPtsUpdates, err error) {
 	var (
 		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
 		values []UserPtsUpdates
 	)
-	err = tx.QueryRowsPartial(&values, query, userId, pts)
+	err = m.tx.QueryRowsPartial(&values, query, userId, pts)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -186,7 +194,7 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPtsTx(tx *sqlx.Tx, userId int64, 
 			err = nil
 			return
 		}
-		err = fmt.Errorf("user_pts_updates.SelectByGtPtsTx: %w", err)
+		err = fmt.Errorf("user_pts_updates.SelectByGtPts: %w", err)
 		return
 	}
 

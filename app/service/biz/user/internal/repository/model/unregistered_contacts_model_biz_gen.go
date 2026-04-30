@@ -25,25 +25,32 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUnregisteredContactsModel interface {
-		InsertOrUpdate(ctx context.Context, data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error)
+type bizUnregisteredContactsModel interface {
+	InsertOrUpdate(ctx context.Context, data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error)
+	SelectImportersByPhone(ctx context.Context, phone string) ([]UnregisteredContacts, error)
+	SelectImportersByPhoneWithCB(ctx context.Context, phone string, cb func(sz, i int, v *UnregisteredContacts)) ([]UnregisteredContacts, error)
+	UpdateContactName(ctx context.Context, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error)
+	DeleteContacts(ctx context.Context, idList []int64) (rowsAffected int64, err error)
+	DeleteImportersByPhone(ctx context.Context, phone string) (rowsAffected int64, err error)
+}
 
-		SelectImportersByPhone(ctx context.Context, phone string) ([]UnregisteredContacts, error)
-		SelectImportersByPhoneWithCB(ctx context.Context, phone string, cb func(sz, i int, v *UnregisteredContacts)) ([]UnregisteredContacts, error)
+type UnregisteredContactsTxModel interface {
+	InsertOrUpdate(data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error)
+	SelectImportersByPhone(phone string) ([]UnregisteredContacts, error)
+	UpdateContactName(importFirstName string, importLastName string, id int64) (rowsAffected int64, err error)
+	DeleteContacts(idList []int64) (rowsAffected int64, err error)
+	DeleteImportersByPhone(phone string) (rowsAffected int64, err error)
+}
 
-		UpdateContactName(ctx context.Context, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error)
-		UpdateContactNameTx(tx *sqlx.Tx, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error)
+type defaultUnregisteredContactsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		DeleteContacts(ctx context.Context, idList []int64) (rowsAffected int64, err error)
-		DeleteContactsTx(tx *sqlx.Tx, idList []int64) (rowsAffected int64, err error)
-
-		DeleteImportersByPhone(ctx context.Context, phone string) (rowsAffected int64, err error)
-		DeleteImportersByPhoneTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error)
-	}
-)
+func NewUnregisteredContactsTxModel(tx *sqlx.Tx) UnregisteredContactsTxModel {
+	return &defaultUnregisteredContactsTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)
@@ -73,28 +80,28 @@ func (m *defaultUnregisteredContactsModel) InsertOrUpdate(ctx context.Context, d
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)
-func (m *defaultUnregisteredContactsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUnregisteredContactsTxModel) InsertOrUpdate(data *UnregisteredContacts) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("unregistered_contacts.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -108,6 +115,30 @@ func (m *defaultUnregisteredContactsModel) SelectImportersByPhone(ctx context.Co
 		values []UnregisteredContacts
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, phone)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UnregisteredContacts{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("unregistered_contacts.SelectImportersByPhone: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectImportersByPhone
+// select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = :phone and imported = 0
+func (m *defaultUnregisteredContactsTxModel) SelectImportersByPhone(phone string) (rList []UnregisteredContacts, err error) {
+	var (
+		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
+		values []UnregisteredContacts
+	)
+	err = m.tx.QueryRowsPartial(&values, query, phone)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -180,23 +211,23 @@ func (m *defaultUnregisteredContactsModel) UpdateContactName(ctx context.Context
 	return
 }
 
-// UpdateContactNameTx
+// UpdateContactName
 // update unregistered_contacts set import_first_name = :import_first_name, import_last_name = :import_last_name where id = :id
-func (m *defaultUnregisteredContactsModel) UpdateContactNameTx(tx *sqlx.Tx, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error) {
+func (m *defaultUnregisteredContactsTxModel) UpdateContactName(importFirstName string, importLastName string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set import_first_name = ?, import_last_name = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, importFirstName, importLastName, id)
+	rResult, err = m.tx.Exec(query, importFirstName, importLastName, id)
 
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.UpdateContactNameTx exec: %w", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactName exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.UpdateContactNameTx rows affected: %w", err)
+		err = fmt.Errorf("unregistered_contacts.UpdateContactName rows affected: %w", err)
 		return
 	}
 
@@ -232,9 +263,9 @@ func (m *defaultUnregisteredContactsModel) DeleteContacts(ctx context.Context, i
 	return
 }
 
-// DeleteContactsTx
+// DeleteContacts
 // update unregistered_contacts set imported = 1 where id in (:id_list)
-func (m *defaultUnregisteredContactsModel) DeleteContactsTx(tx *sqlx.Tx, idList []int64) (rowsAffected int64, err error) {
+func (m *defaultUnregisteredContactsTxModel) DeleteContacts(idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
@@ -244,16 +275,16 @@ func (m *defaultUnregisteredContactsModel) DeleteContactsTx(tx *sqlx.Tx, idList 
 		return
 	}
 
-	rResult, err = tx.Exec(query)
+	rResult, err = m.tx.Exec(query)
 
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.DeleteContactsTx exec: %w", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContacts exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.DeleteContactsTx rows affected: %w", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteContacts rows affected: %w", err)
 		return
 	}
 
@@ -285,23 +316,23 @@ func (m *defaultUnregisteredContactsModel) DeleteImportersByPhone(ctx context.Co
 	return
 }
 
-// DeleteImportersByPhoneTx
+// DeleteImportersByPhone
 // update unregistered_contacts set imported = 1 where phone = :phone
-func (m *defaultUnregisteredContactsModel) DeleteImportersByPhoneTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
+func (m *defaultUnregisteredContactsTxModel) DeleteImportersByPhone(phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set imported = 1 where phone = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, phone)
+	rResult, err = m.tx.Exec(query, phone)
 
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhoneTx exec: %w", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhone exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhoneTx rows affected: %w", err)
+		err = fmt.Errorf("unregistered_contacts.DeleteImportersByPhone rows affected: %w", err)
 		return
 	}
 

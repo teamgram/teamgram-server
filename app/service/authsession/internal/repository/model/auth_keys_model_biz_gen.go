@@ -25,24 +25,31 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizAuthKeysModel interface {
-		InsertIgnore(ctx context.Context, data *AuthKeys) (lastInsertId, rowsAffected int64, err error)
-		InsertIgnoreTx(tx *sqlx.Tx, data *AuthKeys) (lastInsertId, rowsAffected int64, err error)
+type bizAuthKeysModel interface {
+	InsertIgnore(ctx context.Context, data *AuthKeys) (lastInsertId, rowsAffected int64, err error)
+	SelectByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error)
+	UpdatePermBinding(ctx context.Context, permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+	UpdateTempBinding(ctx context.Context, tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+	UpdateMediaTempBinding(ctx context.Context, mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+}
 
-		SelectByAuthKeyId(ctx context.Context, authKeyId int64) (*AuthKeys, error)
+type AuthKeysTxModel interface {
+	InsertIgnore(data *AuthKeys) (lastInsertId, rowsAffected int64, err error)
+	SelectByAuthKeyId(authKeyId int64) (*AuthKeys, error)
+	UpdatePermBinding(permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+	UpdateTempBinding(tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+	UpdateMediaTempBinding(mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+}
 
-		UpdatePermBinding(ctx context.Context, permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
-		UpdatePermBindingTx(tx *sqlx.Tx, permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
+type defaultAuthKeysTxModel struct {
+	tx *sqlx.Tx
+}
 
-		UpdateTempBinding(ctx context.Context, tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
-		UpdateTempBindingTx(tx *sqlx.Tx, tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
-
-		UpdateMediaTempBinding(ctx context.Context, mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
-		UpdateMediaTempBindingTx(tx *sqlx.Tx, mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error)
-	}
-)
+func NewAuthKeysTxModel(tx *sqlx.Tx) AuthKeysTxModel {
+	return &defaultAuthKeysTxModel{tx: tx}
+}
 
 // InsertIgnore
 // insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
@@ -68,32 +75,33 @@ func (m *defaultAuthKeysModel) InsertIgnore(ctx context.Context, data *AuthKeys)
 		}
 		return lastInsertId, rowsAffected, nil
 	}, keys...)
+
 	return
 
 }
 
-// InsertIgnoreTx
+// InsertIgnore
 // insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
-func (m *defaultAuthKeysModel) InsertIgnoreTx(tx *sqlx.Tx, data *AuthKeys) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultAuthKeysTxModel) InsertIgnore(data *AuthKeys) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("auth_keys.InsertIgnoreTx named exec: %w", err)
+		err = fmt.Errorf("auth_keys.InsertIgnore named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("auth_keys.InsertIgnoreTx last insert id: %w", err)
+		err = fmt.Errorf("auth_keys.InsertIgnore last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_keys.InsertIgnoreTx rows affected: %w", err)
+		err = fmt.Errorf("auth_keys.InsertIgnore rows affected: %w", err)
 	}
 
 	return
@@ -104,6 +112,31 @@ func (m *defaultAuthKeysModel) InsertIgnoreTx(tx *sqlx.Tx, data *AuthKeys) (last
 func (m *defaultAuthKeysModel) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *AuthKeys, err error) {
 
 	return m.FindOneByAuthKeyId(ctx, authKeyId)
+}
+
+// SelectByAuthKeyId
+// select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = :auth_key_id
+func (m *defaultAuthKeysTxModel) SelectByAuthKeyId(authKeyId int64) (rValue *AuthKeys, err error) {
+	var (
+		query = "select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = ?"
+		do    = &AuthKeys{}
+	)
+	err = m.tx.QueryRowPartial(do, query, authKeyId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "auth_keys",
+				Key:      fmt.Sprintf("auth_key_id=%v", authKeyId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("auth_keys.SelectByAuthKeyId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
 }
 
 // UpdatePermBinding
@@ -152,23 +185,23 @@ func (m *defaultAuthKeysModel) UpdatePermBinding(ctx context.Context, permAuthKe
 	return
 }
 
-// UpdatePermBindingTx
+// UpdatePermBinding
 // update auth_keys set perm_auth_key_id = :perm_auth_key_id where auth_key_id = :auth_key_id
-func (m *defaultAuthKeysModel) UpdatePermBindingTx(tx *sqlx.Tx, permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
+func (m *defaultAuthKeysTxModel) UpdatePermBinding(permAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update auth_keys set perm_auth_key_id = ? where auth_key_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, permAuthKeyId, authKeyId)
+	rResult, err = m.tx.Exec(query, permAuthKeyId, authKeyId)
 
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdatePermBindingTx exec: %w", err)
+		err = fmt.Errorf("auth_keys.UpdatePermBinding exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdatePermBindingTx rows affected: %w", err)
+		err = fmt.Errorf("auth_keys.UpdatePermBinding rows affected: %w", err)
 		return
 	}
 
@@ -229,23 +262,23 @@ func (m *defaultAuthKeysModel) UpdateTempBinding(ctx context.Context, tempAuthKe
 	return
 }
 
-// UpdateTempBindingTx
+// UpdateTempBinding
 // update auth_keys set temp_auth_key_id = :temp_auth_key_id where auth_key_id = :auth_key_id
-func (m *defaultAuthKeysModel) UpdateTempBindingTx(tx *sqlx.Tx, tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
+func (m *defaultAuthKeysTxModel) UpdateTempBinding(tempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update auth_keys set temp_auth_key_id = ? where auth_key_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, tempAuthKeyId, authKeyId)
+	rResult, err = m.tx.Exec(query, tempAuthKeyId, authKeyId)
 
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdateTempBindingTx exec: %w", err)
+		err = fmt.Errorf("auth_keys.UpdateTempBinding exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdateTempBindingTx rows affected: %w", err)
+		err = fmt.Errorf("auth_keys.UpdateTempBinding rows affected: %w", err)
 		return
 	}
 
@@ -306,23 +339,23 @@ func (m *defaultAuthKeysModel) UpdateMediaTempBinding(ctx context.Context, media
 	return
 }
 
-// UpdateMediaTempBindingTx
+// UpdateMediaTempBinding
 // update auth_keys set media_temp_auth_key_id = :media_temp_auth_key_id where auth_key_id = :auth_key_id
-func (m *defaultAuthKeysModel) UpdateMediaTempBindingTx(tx *sqlx.Tx, mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
+func (m *defaultAuthKeysTxModel) UpdateMediaTempBinding(mediaTempAuthKeyId int64, authKeyId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update auth_keys set media_temp_auth_key_id = ? where auth_key_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, mediaTempAuthKeyId, authKeyId)
+	rResult, err = m.tx.Exec(query, mediaTempAuthKeyId, authKeyId)
 
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdateMediaTempBindingTx exec: %w", err)
+		err = fmt.Errorf("auth_keys.UpdateMediaTempBinding exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_keys.UpdateMediaTempBindingTx rows affected: %w", err)
+		err = fmt.Errorf("auth_keys.UpdateMediaTempBinding rows affected: %w", err)
 		return
 	}
 

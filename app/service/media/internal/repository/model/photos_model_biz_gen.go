@@ -25,15 +25,25 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizPhotosModel interface {
-		Insert(ctx context.Context, data *Photos) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *Photos) (lastInsertId, rowsAffected int64, err error)
+type bizPhotosModel interface {
+	Insert(ctx context.Context, data *Photos) (lastInsertId, rowsAffected int64, err error)
+	SelectByPhotoId(ctx context.Context, photoId int64) (*Photos, error)
+}
 
-		SelectByPhotoId(ctx context.Context, photoId int64) (*Photos, error)
-	}
-)
+type PhotosTxModel interface {
+	Insert(data *Photos) (lastInsertId, rowsAffected int64, err error)
+	SelectByPhotoId(photoId int64) (*Photos, error)
+}
+
+type defaultPhotosTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewPhotosTxModel(tx *sqlx.Tx) PhotosTxModel {
+	return &defaultPhotosTxModel{tx: tx}
+}
 
 // Insert
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
@@ -63,28 +73,28 @@ func (m *defaultPhotosModel) Insert(ctx context.Context, data *Photos) (lastInse
 
 }
 
-// InsertTx
+// Insert
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
-func (m *defaultPhotosModel) InsertTx(tx *sqlx.Tx, data *Photos) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultPhotosTxModel) Insert(data *Photos) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("photos.InsertTx named exec: %w", err)
+		err = fmt.Errorf("photos.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("photos.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("photos.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("photos.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("photos.Insert rows affected: %w", err)
 	}
 
 	return
@@ -113,6 +123,31 @@ func (m *defaultPhotosModel) SelectByPhotoId(ctx context.Context, photoId int64)
 	} else {
 		rValue = do
 	}
+
+	return
+}
+
+// SelectByPhotoId
+// select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = :photo_id limit 1
+func (m *defaultPhotosTxModel) SelectByPhotoId(photoId int64) (rValue *Photos, err error) {
+	var (
+		query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
+		do    = &Photos{}
+	)
+	err = m.tx.QueryRowPartial(do, query, photoId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "photos",
+				Key:      fmt.Sprintf("photo_id=%v", photoId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("photos.SelectByPhotoId: %w", err)
+		return
+	}
+	rValue = do
 
 	return
 }

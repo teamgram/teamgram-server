@@ -25,15 +25,25 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizDefaultHistoryTtlModel interface {
-		InsertOrUpdate(ctx context.Context, data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error)
+type bizDefaultHistoryTtlModel interface {
+	InsertOrUpdate(ctx context.Context, data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error)
+	Select(ctx context.Context, userId int64) (*DefaultHistoryTtl, error)
+}
 
-		Select(ctx context.Context, userId int64) (*DefaultHistoryTtl, error)
-	}
-)
+type DefaultHistoryTtlTxModel interface {
+	InsertOrUpdate(data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error)
+	Select(userId int64) (*DefaultHistoryTtl, error)
+}
+
+type defaultDefaultHistoryTtlTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewDefaultHistoryTtlTxModel(tx *sqlx.Tx) DefaultHistoryTtlTxModel {
+	return &defaultDefaultHistoryTtlTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)
@@ -63,28 +73,28 @@ func (m *defaultDefaultHistoryTtlModel) InsertOrUpdate(ctx context.Context, data
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)
-func (m *defaultDefaultHistoryTtlModel) InsertOrUpdateTx(tx *sqlx.Tx, data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultDefaultHistoryTtlTxModel) InsertOrUpdate(data *DefaultHistoryTtl) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into default_history_ttl(user_id, period) values (:user_id, :period) on duplicate key update period = values(period)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("default_history_ttl.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("default_history_ttl.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("default_history_ttl.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("default_history_ttl.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("default_history_ttl.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("default_history_ttl.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -113,6 +123,31 @@ func (m *defaultDefaultHistoryTtlModel) Select(ctx context.Context, userId int64
 	} else {
 		rValue = do
 	}
+
+	return
+}
+
+// Select
+// select id, user_id, period from default_history_ttl where user_id = :user_id
+func (m *defaultDefaultHistoryTtlTxModel) Select(userId int64) (rValue *DefaultHistoryTtl, err error) {
+	var (
+		query = "select id, user_id, period from default_history_ttl where user_id = ?"
+		do    = &DefaultHistoryTtl{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "default_history_ttl",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("default_history_ttl.Select: %w", err)
+		return
+	}
+	rValue = do
 
 	return
 }

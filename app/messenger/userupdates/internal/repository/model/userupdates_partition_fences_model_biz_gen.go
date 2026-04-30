@@ -25,19 +25,27 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUserupdatesPartitionFencesModel interface {
-		InsertIgnore(ctx context.Context, data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error)
-		InsertIgnoreTx(tx *sqlx.Tx, data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error)
+type bizUserupdatesPartitionFencesModel interface {
+	InsertIgnore(ctx context.Context, data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error)
+	SelectByPartitionId(ctx context.Context, partitionId int32) (*UserupdatesPartitionFences, error)
+	CasAcquireOwner(ctx context.Context, ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error)
+}
 
-		SelectByPartitionId(ctx context.Context, partitionId int32) (*UserupdatesPartitionFences, error)
-		SelectByPartitionIdTx(tx *sqlx.Tx, partitionId int32) (*UserupdatesPartitionFences, error)
+type UserupdatesPartitionFencesTxModel interface {
+	InsertIgnore(data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error)
+	SelectByPartitionId(partitionId int32) (*UserupdatesPartitionFences, error)
+	CasAcquireOwner(ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error)
+}
 
-		CasAcquireOwner(ctx context.Context, ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error)
-		CasAcquireOwnerTx(tx *sqlx.Tx, ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error)
-	}
-)
+type defaultUserupdatesPartitionFencesTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewUserupdatesPartitionFencesTxModel(tx *sqlx.Tx) UserupdatesPartitionFencesTxModel {
+	return &defaultUserupdatesPartitionFencesTxModel{tx: tx}
+}
 
 // InsertIgnore
 // insert ignore into userupdates_partition_fences(partition_id, owner_epoch, owner_instance_id, lease_id) values (:partition_id, :owner_epoch, :owner_instance_id, :lease_id)
@@ -67,28 +75,28 @@ func (m *defaultUserupdatesPartitionFencesModel) InsertIgnore(ctx context.Contex
 
 }
 
-// InsertIgnoreTx
+// InsertIgnore
 // insert ignore into userupdates_partition_fences(partition_id, owner_epoch, owner_instance_id, lease_id) values (:partition_id, :owner_epoch, :owner_instance_id, :lease_id)
-func (m *defaultUserupdatesPartitionFencesModel) InsertIgnoreTx(tx *sqlx.Tx, data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUserupdatesPartitionFencesTxModel) InsertIgnore(data *UserupdatesPartitionFences) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert ignore into userupdates_partition_fences(partition_id, owner_epoch, owner_instance_id, lease_id) values (:partition_id, :owner_epoch, :owner_instance_id, :lease_id)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("userupdates_partition_fences.InsertIgnoreTx named exec: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.InsertIgnore named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("userupdates_partition_fences.InsertIgnoreTx last insert id: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.InsertIgnore last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("userupdates_partition_fences.InsertIgnoreTx rows affected: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.InsertIgnore rows affected: %w", err)
 	}
 
 	return
@@ -121,14 +129,14 @@ func (m *defaultUserupdatesPartitionFencesModel) SelectByPartitionId(ctx context
 	return
 }
 
-// SelectByPartitionIdTx
+// SelectByPartitionId
 // select partition_id, owner_epoch, owner_instance_id from userupdates_partition_fences where partition_id = :partition_id limit 1
-func (m *defaultUserupdatesPartitionFencesModel) SelectByPartitionIdTx(tx *sqlx.Tx, partitionId int32) (rValue *UserupdatesPartitionFences, err error) {
+func (m *defaultUserupdatesPartitionFencesTxModel) SelectByPartitionId(partitionId int32) (rValue *UserupdatesPartitionFences, err error) {
 	var (
 		query = "select partition_id, owner_epoch, owner_instance_id from userupdates_partition_fences where partition_id = ? limit 1"
 		do    = &UserupdatesPartitionFences{}
 	)
-	err = tx.QueryRowPartial(do, query, partitionId)
+	err = m.tx.QueryRowPartial(do, query, partitionId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -138,7 +146,7 @@ func (m *defaultUserupdatesPartitionFencesModel) SelectByPartitionIdTx(tx *sqlx.
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("userupdates_partition_fences.SelectByPartitionIdTx: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.SelectByPartitionId: %w", err)
 		return
 	}
 	rValue = do
@@ -171,23 +179,23 @@ func (m *defaultUserupdatesPartitionFencesModel) CasAcquireOwner(ctx context.Con
 	return
 }
 
-// CasAcquireOwnerTx
+// CasAcquireOwner
 // update userupdates_partition_fences set owner_epoch = owner_epoch + 1, owner_instance_id = :owner_instance_id, lease_id = :lease_id where partition_id = :partition_id and owner_epoch = :prevOwnerEpoch
-func (m *defaultUserupdatesPartitionFencesModel) CasAcquireOwnerTx(tx *sqlx.Tx, ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error) {
+func (m *defaultUserupdatesPartitionFencesTxModel) CasAcquireOwner(ownerInstanceId string, leaseId string, partitionId int32, prevOwnerEpoch int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update userupdates_partition_fences set owner_epoch = owner_epoch + 1, owner_instance_id = ?, lease_id = ? where partition_id = ? and owner_epoch = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, ownerInstanceId, leaseId, partitionId, prevOwnerEpoch)
+	rResult, err = m.tx.Exec(query, ownerInstanceId, leaseId, partitionId, prevOwnerEpoch)
 
 	if err != nil {
-		err = fmt.Errorf("userupdates_partition_fences.CasAcquireOwnerTx exec: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.CasAcquireOwner exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("userupdates_partition_fences.CasAcquireOwnerTx rows affected: %w", err)
+		err = fmt.Errorf("userupdates_partition_fences.CasAcquireOwner rows affected: %w", err)
 		return
 	}
 

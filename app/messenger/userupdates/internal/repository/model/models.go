@@ -25,6 +25,17 @@ type Models struct {
 	UserupdatesPartitionFencesModel UserupdatesPartitionFencesModel
 }
 
+type TxModels struct {
+	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
+	PushTaskOutboxModel             PushTaskOutboxTxModel
+	UserDialogsModel                UserDialogsTxModel
+	UserMessageViewsModel           UserMessageViewsTxModel
+	UserOperationResultsModel       UserOperationResultsTxModel
+	UserPtsEventsModel              UserPtsEventsTxModel
+	UserPtsStateModel               UserPtsStateTxModel
+	UserupdatesPartitionFencesModel UserupdatesPartitionFencesTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
@@ -35,5 +46,18 @@ func NewModels(db *sqlx.DB) *Models {
 		UserPtsEventsModel:              NewUserPtsEventsModel(db),
 		UserPtsStateModel:               NewUserPtsStateModel(db),
 		UserupdatesPartitionFencesModel: NewUserupdatesPartitionFencesModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
+		PushTaskOutboxModel:             NewPushTaskOutboxTxModel(tx),
+		UserDialogsModel:                NewUserDialogsTxModel(tx),
+		UserMessageViewsModel:           NewUserMessageViewsTxModel(tx),
+		UserOperationResultsModel:       NewUserOperationResultsTxModel(tx),
+		UserPtsEventsModel:              NewUserPtsEventsTxModel(tx),
+		UserPtsStateModel:               NewUserPtsStateTxModel(tx),
+		UserupdatesPartitionFencesModel: NewUserupdatesPartitionFencesTxModel(tx),
 	}
 }

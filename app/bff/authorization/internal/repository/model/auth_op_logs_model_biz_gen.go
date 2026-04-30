@@ -25,13 +25,23 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizAuthOpLogsModel interface {
-		Insert(ctx context.Context, data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error)
-	}
-)
+type bizAuthOpLogsModel interface {
+	Insert(ctx context.Context, data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error)
+}
+
+type AuthOpLogsTxModel interface {
+	Insert(data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error)
+}
+
+type defaultAuthOpLogsTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewAuthOpLogsTxModel(tx *sqlx.Tx) AuthOpLogsTxModel {
+	return &defaultAuthOpLogsTxModel{tx: tx}
+}
 
 // Insert
 // insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)
@@ -61,28 +71,28 @@ func (m *defaultAuthOpLogsModel) Insert(ctx context.Context, data *AuthOpLogs) (
 
 }
 
-// InsertTx
+// Insert
 // insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)
-func (m *defaultAuthOpLogsModel) InsertTx(tx *sqlx.Tx, data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultAuthOpLogsTxModel) Insert(data *AuthOpLogs) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_op_logs(auth_key_id, ip, op_type, log_text) values (:auth_key_id, :ip, :op_type, :log_text)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("auth_op_logs.InsertTx named exec: %w", err)
+		err = fmt.Errorf("auth_op_logs.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("auth_op_logs.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("auth_op_logs.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_op_logs.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("auth_op_logs.Insert rows affected: %w", err)
 	}
 
 	return

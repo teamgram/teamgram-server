@@ -25,120 +25,123 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizMessagesModel interface {
-		InsertOrReturnId(ctx context.Context, data *Messages) (lastInsertId, rowsAffected int64, err error)
-		InsertOrReturnIdTx(tx *sqlx.Tx, data *Messages) (lastInsertId, rowsAffected int64, err error)
+type bizMessagesModel interface {
+	InsertOrReturnId(ctx context.Context, data *Messages) (lastInsertId, rowsAffected int64, err error)
+	SelectByRandomId(ctx context.Context, tableName string, senderUserId int64, randomId int64) (*Messages, error)
+	SelectByMessageIdList(ctx context.Context, userId int64, idList []int32) ([]Messages, error)
+	SelectByMessageIdListWithCB(ctx context.Context, userId int64, idList []int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectByMessageId(ctx context.Context, userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectByMessageDataIdList(ctx context.Context, tableName string, idList []int64) ([]Messages, error)
+	SelectByMessageDataIdListWithCB(ctx context.Context, tableName string, idList []int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectByMessageDataId(ctx context.Context, userId int64, dialogMessageId int64) (*Messages, error)
+	SelectByMessageDataIdUserIdList(ctx context.Context, tableName string, dialogMessageId int64, idList []int64) ([]Messages, error)
+	SelectByMessageDataIdUserIdListWithCB(ctx context.Context, tableName string, dialogMessageId int64, idList []int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectBackwardByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectForwardByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectBackwardByOffsetDateLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
+	SelectBackwardByOffsetDateLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectForwardByOffsetDateLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
+	SelectForwardByOffsetDateLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectPeerUserMessageId(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectPeerUserMessage(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectDialogLastMessageId(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) (int32, error)
+	SelectDialogLastMessageIdNotIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, idList []int32) (int32, error)
+	SelectDialogsByMessageIdList(ctx context.Context, userId int64, idList []int32) ([]Messages, error)
+	SelectDialogsByMessageIdListWithCB(ctx context.Context, userId int64, idList []int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectDialogLastMessageList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, limit int32) ([]Messages, error)
+	SelectDialogLastMessageListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	DeleteMessagesByMessageIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error)
+	SelectDialogMessageIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
+	SelectDialogMessageIdListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	UpdateMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	UpdateMentionedAndMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectByMediaType(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectByMediaTypeWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectPhoneCallList(ctx context.Context, userId int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectPhoneCallListWithCB(ctx context.Context, userId int64, messageFilterType int32, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	Search(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
+	SearchWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SearchGlobal(ctx context.Context, userId int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
+	SearchGlobalWithCB(ctx context.Context, userId int64, userMessageBoxId int32, q2 string, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectBackwardUnreadMentionsByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardUnreadMentionsByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectForwardUnreadMentionsByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardUnreadMentionsByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectPinnedList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
+	SelectPinnedListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectLastTwoPinnedList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
+	SelectLastTwoPinnedListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v int32)) ([]int32, error)
+	UpdatePinned(ctx context.Context, pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectPinnedMessageIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
+	SelectPinnedMessageIdListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v int32)) ([]int32, error)
+	UpdateUnPinnedByIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error)
+	UpdateEditMessage(ctx context.Context, messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectBackwardBySendUserIdOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardBySendUserIdOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectBackwardSavedByOffsetIdLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardSavedByOffsetIdLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectForwardSavedByOffsetIdLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardSavedByOffsetIdLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectBackwardSavedByOffsetDateLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
+	SelectBackwardSavedByOffsetDateLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+	SelectForwardSavedByOffsetDateLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
+	SelectForwardSavedByOffsetDateLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+}
 
-		SelectByRandomId(ctx context.Context, tableName string, senderUserId int64, randomId int64) (*Messages, error)
+type MessagesTxModel interface {
+	InsertOrReturnId(data *Messages) (lastInsertId, rowsAffected int64, err error)
+	SelectByRandomId(tableName string, senderUserId int64, randomId int64) (*Messages, error)
+	SelectByMessageIdList(userId int64, idList []int32) ([]Messages, error)
+	SelectByMessageId(userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectByMessageDataIdList(tableName string, idList []int64) ([]Messages, error)
+	SelectByMessageDataId(userId int64, dialogMessageId int64) (*Messages, error)
+	SelectByMessageDataIdUserIdList(tableName string, dialogMessageId int64, idList []int64) ([]Messages, error)
+	SelectBackwardByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardByOffsetDateLimit(userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
+	SelectForwardByOffsetDateLimit(userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
+	SelectPeerUserMessageId(peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectPeerUserMessage(peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
+	SelectDialogLastMessageId(userId int64, dialogId1 int64, dialogId2 int64) (int32, error)
+	SelectDialogLastMessageIdNotIdList(userId int64, dialogId1 int64, dialogId2 int64, idList []int32) (int32, error)
+	SelectDialogsByMessageIdList(userId int64, idList []int32) ([]Messages, error)
+	SelectDialogLastMessageList(userId int64, dialogId1 int64, dialogId2 int64, limit int32) ([]Messages, error)
+	DeleteMessagesByMessageIdList(userId int64, idList []int32) (rowsAffected int64, err error)
+	SelectDialogMessageIdList(userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
+	UpdateMediaUnread(userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	UpdateMentionedAndMediaUnread(userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectByMediaType(userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectPhoneCallList(userId int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
+	Search(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
+	SearchGlobal(userId int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
+	SelectBackwardUnreadMentionsByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardUnreadMentionsByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectPinnedList(userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
+	SelectLastTwoPinnedList(userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
+	UpdatePinned(pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectPinnedMessageIdList(userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
+	UpdateUnPinnedByIdList(userId int64, idList []int32) (rowsAffected int64, err error)
+	UpdateEditMessage(messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	UpdateCustomMap(cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
+	SelectBackwardBySendUserIdOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardSavedByOffsetIdLimit(userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectForwardSavedByOffsetIdLimit(userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
+	SelectBackwardSavedByOffsetDateLimit(userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
+	SelectForwardSavedByOffsetDateLimit(userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
+}
 
-		SelectByMessageIdList(ctx context.Context, userId int64, idList []int32) ([]Messages, error)
-		SelectByMessageIdListWithCB(ctx context.Context, userId int64, idList []int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
+type defaultMessagesTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectByMessageId(ctx context.Context, userId int64, userMessageBoxId int32) (*Messages, error)
-
-		SelectByMessageDataIdList(ctx context.Context, tableName string, idList []int64) ([]Messages, error)
-		SelectByMessageDataIdListWithCB(ctx context.Context, tableName string, idList []int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectByMessageDataId(ctx context.Context, userId int64, dialogMessageId int64) (*Messages, error)
-
-		SelectByMessageDataIdUserIdList(ctx context.Context, tableName string, dialogMessageId int64, idList []int64) ([]Messages, error)
-		SelectByMessageDataIdUserIdListWithCB(ctx context.Context, tableName string, dialogMessageId int64, idList []int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectBackwardByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectBackwardByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectForwardByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectForwardByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectBackwardByOffsetDateLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
-		SelectBackwardByOffsetDateLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectForwardByOffsetDateLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) ([]Messages, error)
-		SelectForwardByOffsetDateLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectPeerUserMessageId(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
-
-		SelectPeerUserMessage(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (*Messages, error)
-
-		SelectDialogLastMessageId(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) (int32, error)
-
-		SelectDialogLastMessageIdNotIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, idList []int32) (int32, error)
-
-		SelectDialogsByMessageIdList(ctx context.Context, userId int64, idList []int32) ([]Messages, error)
-		SelectDialogsByMessageIdListWithCB(ctx context.Context, userId int64, idList []int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectDialogLastMessageList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, limit int32) ([]Messages, error)
-		SelectDialogLastMessageListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		DeleteMessagesByMessageIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error)
-		DeleteMessagesByMessageIdListTx(tx *sqlx.Tx, userId int64, idList []int32) (rowsAffected int64, err error)
-
-		SelectDialogMessageIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
-		SelectDialogMessageIdListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		UpdateMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-		UpdateMediaUnreadTx(tx *sqlx.Tx, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-
-		UpdateMentionedAndMediaUnread(ctx context.Context, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-		UpdateMentionedAndMediaUnreadTx(tx *sqlx.Tx, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-
-		SelectByMediaType(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectByMediaTypeWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectPhoneCallList(ctx context.Context, userId int64, messageFilterType int32, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectPhoneCallListWithCB(ctx context.Context, userId int64, messageFilterType int32, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		Search(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
-		SearchWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SearchGlobal(ctx context.Context, userId int64, userMessageBoxId int32, q2 string, limit int32) ([]Messages, error)
-		SearchGlobalWithCB(ctx context.Context, userId int64, userMessageBoxId int32, q2 string, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectBackwardUnreadMentionsByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectBackwardUnreadMentionsByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectForwardUnreadMentionsByOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectForwardUnreadMentionsByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectPinnedList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]Messages, error)
-		SelectPinnedListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectLastTwoPinnedList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
-		SelectLastTwoPinnedListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v int32)) ([]int32, error)
-
-		UpdatePinned(ctx context.Context, pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-		UpdatePinnedTx(tx *sqlx.Tx, pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-
-		SelectPinnedMessageIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) ([]int32, error)
-		SelectPinnedMessageIdListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v int32)) ([]int32, error)
-
-		UpdateUnPinnedByIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error)
-		UpdateUnPinnedByIdListTx(tx *sqlx.Tx, userId int64, idList []int32) (rowsAffected int64, err error)
-
-		UpdateEditMessage(ctx context.Context, messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-		UpdateEditMessageTx(tx *sqlx.Tx, messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-
-		UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-		UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error)
-
-		SelectBackwardBySendUserIdOffsetIdLimit(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectBackwardBySendUserIdOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectBackwardSavedByOffsetIdLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectBackwardSavedByOffsetIdLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectForwardSavedByOffsetIdLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) ([]Messages, error)
-		SelectForwardSavedByOffsetIdLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectBackwardSavedByOffsetDateLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
-		SelectBackwardSavedByOffsetDateLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-
-		SelectForwardSavedByOffsetDateLimit(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) ([]Messages, error)
-		SelectForwardSavedByOffsetDateLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) ([]Messages, error)
-	}
-)
+func NewMessagesTxModel(tx *sqlx.Tx) MessagesTxModel {
+	return &defaultMessagesTxModel{tx: tx}
+}
 
 // InsertOrReturnId
 // insert into messages(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)
@@ -168,28 +171,28 @@ func (m *defaultMessagesModel) InsertOrReturnId(ctx context.Context, data *Messa
 
 }
 
-// InsertOrReturnIdTx
+// InsertOrReturnId
 // insert into messages(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)
-func (m *defaultMessagesModel) InsertOrReturnIdTx(tx *sqlx.Tx, data *Messages) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) InsertOrReturnId(data *Messages) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = strings.Replace("insert into __TABLE__(user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, saved_peer_type, saved_peer_id, date2, ttl_period) values (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :saved_peer_type, :saved_peer_id, :date2, :ttl_period) on duplicate key update id = last_insert_id(id)", "__TABLE__", m.CalcTableName(data.UserId), -1)
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("messages.InsertOrReturnIdTx named exec: %w", err)
+		err = fmt.Errorf("messages.InsertOrReturnId named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("messages.InsertOrReturnIdTx last insert id: %w", err)
+		err = fmt.Errorf("messages.InsertOrReturnId last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.InsertOrReturnIdTx rows affected: %w", err)
+		err = fmt.Errorf("messages.InsertOrReturnId rows affected: %w", err)
 	}
 
 	return
@@ -222,6 +225,31 @@ func (m *defaultMessagesModel) SelectByRandomId(ctx context.Context, tableName s
 	return
 }
 
+// SelectByRandomId
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where sender_user_id = :sender_user_id and random_id = :random_id and deleted = 0 limit 1
+func (m *defaultMessagesTxModel) SelectByRandomId(tableName string, senderUserId int64, randomId int64) (rValue *Messages, err error) {
+	var (
+		query = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where sender_user_id = ? and random_id = ? and deleted = 0 limit 1", "__TABLE__", tableName, -1)
+		do    = &Messages{}
+	)
+	err = m.tx.QueryRowPartial(do, query, senderUserId, randomId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("sender_user_id=%v,random_id=%v", senderUserId, randomId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("messages.SelectByRandomId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByMessageIdList
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and deleted = 0 and user_message_box_id in (:idList) order by user_message_box_id desc
 func (m *defaultMessagesModel) SelectByMessageIdList(ctx context.Context, userId int64, idList []int32) (rList []Messages, err error) {
@@ -235,6 +263,35 @@ func (m *defaultMessagesModel) SelectByMessageIdList(ctx context.Context, userId
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectByMessageIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByMessageIdList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and deleted = 0 and user_message_box_id in (:idList) order by user_message_box_id desc
+func (m *defaultMessagesTxModel) SelectByMessageIdList(userId int64, idList []int32) (rList []Messages, err error) {
+	var (
+		query  = fmt.Sprintf(strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and deleted = 0 and user_message_box_id in (%s) order by user_message_box_id desc", "__TABLE__", m.CalcTableName(userId), -1), sqlx.InInt32List(idList))
+		values []Messages
+	)
+	if len(idList) == 0 {
+		rList = []Messages{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query, userId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -314,6 +371,31 @@ func (m *defaultMessagesModel) SelectByMessageId(ctx context.Context, userId int
 	return
 }
 
+// SelectByMessageId
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1
+func (m *defaultMessagesTxModel) SelectByMessageId(userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+	var (
+		query = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1", "__TABLE__", m.CalcTableName(userId), -1)
+		do    = &Messages{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId, userMessageBoxId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,user_message_box_id=%v", userId, userMessageBoxId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("messages.SelectByMessageId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByMessageDataIdList
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where deleted = 0 and dialog_message_id in (:idList) order by user_message_box_id desc
 func (m *defaultMessagesModel) SelectByMessageDataIdList(ctx context.Context, tableName string, idList []int64) (rList []Messages, err error) {
@@ -327,6 +409,35 @@ func (m *defaultMessagesModel) SelectByMessageDataIdList(ctx context.Context, ta
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectByMessageDataIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByMessageDataIdList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where deleted = 0 and dialog_message_id in (:idList) order by user_message_box_id desc
+func (m *defaultMessagesTxModel) SelectByMessageDataIdList(tableName string, idList []int64) (rList []Messages, err error) {
+	var (
+		query  = fmt.Sprintf(strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where deleted = 0 and dialog_message_id in (%s) order by user_message_box_id desc", "__TABLE__", tableName, -1), sqlx.InInt64List(idList))
+		values []Messages
+	)
+	if len(idList) == 0 {
+		rList = []Messages{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -406,6 +517,31 @@ func (m *defaultMessagesModel) SelectByMessageDataId(ctx context.Context, userId
 	return
 }
 
+// SelectByMessageDataId
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and dialog_message_id = :dialog_message_id and deleted = 0 limit 1
+func (m *defaultMessagesTxModel) SelectByMessageDataId(userId int64, dialogMessageId int64) (rValue *Messages, err error) {
+	var (
+		query = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and dialog_message_id = ? and deleted = 0 limit 1", "__TABLE__", m.CalcTableName(userId), -1)
+		do    = &Messages{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId, dialogMessageId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_message_id=%v", userId, dialogMessageId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("messages.SelectByMessageDataId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByMessageDataIdUserIdList
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where dialog_message_id = :dialog_message_id and user_id in (:idList) and deleted = 0
 func (m *defaultMessagesModel) SelectByMessageDataIdUserIdList(ctx context.Context, tableName string, dialogMessageId int64, idList []int64) (rList []Messages, err error) {
@@ -419,6 +555,35 @@ func (m *defaultMessagesModel) SelectByMessageDataIdUserIdList(ctx context.Conte
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query, dialogMessageId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectByMessageDataIdUserIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByMessageDataIdUserIdList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where dialog_message_id = :dialog_message_id and user_id in (:idList) and deleted = 0
+func (m *defaultMessagesTxModel) SelectByMessageDataIdUserIdList(tableName string, dialogMessageId int64, idList []int64) (rList []Messages, err error) {
+	var (
+		query  = fmt.Sprintf(strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where dialog_message_id = ? and user_id in (%s) and deleted = 0", "__TABLE__", tableName, -1), sqlx.InInt64List(idList))
+		values []Messages
+	)
+	if len(idList) == 0 {
+		rList = []Messages{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query, dialogMessageId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -495,6 +660,30 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetIdLimit(ctx context.Context
 	return
 }
 
+// SelectBackwardByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectBackwardByOffsetIdLimitWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectBackwardByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -534,6 +723,30 @@ func (m *defaultMessagesModel) SelectForwardByOffsetIdLimit(ctx context.Context,
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectForwardByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectForwardByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id >= :user_message_box_id and deleted = 0 order by user_message_box_id asc limit :limit
+func (m *defaultMessagesTxModel) SelectForwardByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and user_message_box_id >= ? and deleted = 0 order by user_message_box_id asc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -605,6 +818,30 @@ func (m *defaultMessagesModel) SelectBackwardByOffsetDateLimit(ctx context.Conte
 	return
 }
 
+// SelectBackwardByOffsetDateLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and date2 < :date2 and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardByOffsetDateLimit(userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and date2 < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, date2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardByOffsetDateLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectBackwardByOffsetDateLimitWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and date2 < :date2 and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectBackwardByOffsetDateLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -644,6 +881,30 @@ func (m *defaultMessagesModel) SelectForwardByOffsetDateLimit(ctx context.Contex
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, date2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectForwardByOffsetDateLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectForwardByOffsetDateLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and date2 >= :date2 and deleted = 0 order by user_message_box_id asc limit :limit
+func (m *defaultMessagesTxModel) SelectForwardByOffsetDateLimit(userId int64, dialogId1 int64, dialogId2 int64, date2 int64, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and date2 >= ? and deleted = 0 order by user_message_box_id asc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, date2, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -718,6 +979,31 @@ func (m *defaultMessagesModel) SelectPeerUserMessageId(ctx context.Context, peer
 	return
 }
 
+// SelectPeerUserMessageId
+// select user_message_box_id, message_box_type from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
+func (m *defaultMessagesTxModel) SelectPeerUserMessageId(peerId int64, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+	var (
+		query = strings.Replace("select user_message_box_id, message_box_type from __TABLE__ where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from __TABLE__ where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)", "__TABLE__", m.CalcTableName(userId), -1)
+		do    = &Messages{}
+	)
+	err = m.tx.QueryRowPartial(do, query, peerId, userId, userMessageBoxId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("peerId=%v,user_id=%v,user_message_box_id=%v", peerId, userId, userMessageBoxId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("messages.SelectPeerUserMessageId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectPeerUserMessage
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
 func (m *defaultMessagesModel) SelectPeerUserMessage(ctx context.Context, peerId int64, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
@@ -745,11 +1031,58 @@ func (m *defaultMessagesModel) SelectPeerUserMessage(ctx context.Context, peerId
 	return
 }
 
+// SelectPeerUserMessage
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :peerId and deleted = 0 and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id and deleted = 0 limit 1)
+func (m *defaultMessagesTxModel) SelectPeerUserMessage(peerId int64, userId int64, userMessageBoxId int32) (rValue *Messages, err error) {
+	var (
+		query = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and deleted = 0 and dialog_message_id = (select dialog_message_id from __TABLE__ where user_id = ? and user_message_box_id = ? and deleted = 0 limit 1)", "__TABLE__", m.CalcTableName(userId), -1)
+		do    = &Messages{}
+	)
+	err = m.tx.QueryRowPartial(do, query, peerId, userId, userMessageBoxId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("peerId=%v,user_id=%v,user_message_box_id=%v", peerId, userId, userMessageBoxId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("messages.SelectPeerUserMessage: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectDialogLastMessageId
 // select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and deleted = 0 order by user_message_box_id desc limit 1
 func (m *defaultMessagesModel) SelectDialogLastMessageId(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) (rValue int32, err error) {
 	var query = strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and dialog_id1 = ? and dialog_id2 = ? and deleted = 0 order by user_message_box_id desc limit 1", "__TABLE__", m.CalcTableName(userId), -1)
 	err = m.db.QueryRowPartial(ctx, &rValue, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_id1=%v,dialog_id2=%v", userId, dialogId1, dialogId2),
+				Cause:    err,
+			}
+			return
+		}
+		err = fmt.Errorf("messages.SelectDialogLastMessageId: %w", err)
+		return
+	}
+
+	return
+}
+
+// SelectDialogLastMessageId
+// select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and deleted = 0 order by user_message_box_id desc limit 1
+func (m *defaultMessagesTxModel) SelectDialogLastMessageId(userId int64, dialogId1 int64, dialogId2 int64) (rValue int32, err error) {
+	var query = strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and dialog_id1 = ? and dialog_id2 = ? and deleted = 0 order by user_message_box_id desc limit 1", "__TABLE__", m.CalcTableName(userId), -1)
+	err = m.tx.QueryRowPartial(&rValue, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -796,6 +1129,35 @@ func (m *defaultMessagesModel) SelectDialogLastMessageIdNotIdList(ctx context.Co
 	return
 }
 
+// SelectDialogLastMessageIdNotIdList
+// select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and user_message_box_id not in (:idList) and deleted = 0 order by user_message_box_id desc limit 1
+func (m *defaultMessagesTxModel) SelectDialogLastMessageIdNotIdList(userId int64, dialogId1 int64, dialogId2 int64, idList []int32) (rValue int32, err error) {
+	var (
+		query = fmt.Sprintf(strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and dialog_id1 = ? and dialog_id2 = ? and user_message_box_id not in (%s) and deleted = 0 order by user_message_box_id desc limit 1", "__TABLE__", m.CalcTableName(userId), -1), sqlx.InInt32List(idList))
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	err = m.tx.QueryRowPartial(&rValue, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			err = &NotFoundError{
+				Resource: "messages",
+				Key:      fmt.Sprintf("user_id=%v,dialog_id1=%v,dialog_id2=%v,idList=%v", userId, dialogId1, dialogId2, idList),
+				Cause:    err,
+			}
+			return
+		}
+		err = fmt.Errorf("messages.SelectDialogLastMessageIdNotIdList: %w", err)
+		return
+	}
+
+	return
+}
+
 // SelectDialogsByMessageIdList
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id in (:idList) and deleted = 0
 func (m *defaultMessagesModel) SelectDialogsByMessageIdList(ctx context.Context, userId int64, idList []int32) (rList []Messages, err error) {
@@ -809,6 +1171,35 @@ func (m *defaultMessagesModel) SelectDialogsByMessageIdList(ctx context.Context,
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectDialogsByMessageIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectDialogsByMessageIdList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id in (:idList) and deleted = 0
+func (m *defaultMessagesTxModel) SelectDialogsByMessageIdList(userId int64, idList []int32) (rList []Messages, err error) {
+	var (
+		query  = fmt.Sprintf(strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and user_message_box_id in (%s) and deleted = 0", "__TABLE__", m.CalcTableName(userId), -1), sqlx.InInt32List(idList))
+		values []Messages
+	)
+	if len(idList) == 0 {
+		rList = []Messages{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query, userId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -885,6 +1276,30 @@ func (m *defaultMessagesModel) SelectDialogLastMessageList(ctx context.Context, 
 	return
 }
 
+// SelectDialogLastMessageList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectDialogLastMessageList(userId int64, dialogId1 int64, dialogId2 int64, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectDialogLastMessageList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectDialogLastMessageListWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectDialogLastMessageListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -945,9 +1360,9 @@ func (m *defaultMessagesModel) DeleteMessagesByMessageIdList(ctx context.Context
 	return
 }
 
-// DeleteMessagesByMessageIdListTx
+// DeleteMessagesByMessageIdList
 // update messages set deleted = 1 where user_id = :user_id and user_message_box_id in (:idList) and deleted = 0
-func (m *defaultMessagesModel) DeleteMessagesByMessageIdListTx(tx *sqlx.Tx, userId int64, idList []int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) DeleteMessagesByMessageIdList(userId int64, idList []int32) (rowsAffected int64, err error) {
 	var (
 		query   = fmt.Sprintf(strings.Replace("update __TABLE__ set deleted = 1 where user_id = ? and user_message_box_id in (%s) and deleted = 0", "__TABLE__", m.CalcTableName(userId), -1), sqlx.InInt32List(idList))
 		rResult sql.Result
@@ -957,16 +1372,16 @@ func (m *defaultMessagesModel) DeleteMessagesByMessageIdListTx(tx *sqlx.Tx, user
 		return
 	}
 
-	rResult, err = tx.Exec(query, userId)
+	rResult, err = m.tx.Exec(query, userId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.DeleteMessagesByMessageIdListTx exec: %w", err)
+		err = fmt.Errorf("messages.DeleteMessagesByMessageIdList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.DeleteMessagesByMessageIdListTx rows affected: %w", err)
+		err = fmt.Errorf("messages.DeleteMessagesByMessageIdList rows affected: %w", err)
 		return
 	}
 
@@ -981,6 +1396,30 @@ func (m *defaultMessagesModel) SelectDialogMessageIdList(ctx context.Context, us
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectDialogMessageIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectDialogMessageIdList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and deleted = 0 order by user_message_box_id desc
+func (m *defaultMessagesTxModel) SelectDialogMessageIdList(userId int64, dialogId1 int64, dialogId2 int64) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and deleted = 0 order by user_message_box_id desc", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1053,23 +1492,23 @@ func (m *defaultMessagesModel) UpdateMediaUnread(ctx context.Context, userId int
 	return
 }
 
-// UpdateMediaUnreadTx
+// UpdateMediaUnread
 // update messages set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
-func (m *defaultMessagesModel) UpdateMediaUnreadTx(tx *sqlx.Tx, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdateMediaUnread(userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
 	var (
 		query   = strings.Replace("update __TABLE__ set media_unread = 0 where user_id = ? and user_message_box_id = ?", "__TABLE__", m.CalcTableName(userId), -1)
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, userId, userMessageBoxId)
+	rResult, err = m.tx.Exec(query, userId, userMessageBoxId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateMediaUnreadTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdateMediaUnread exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateMediaUnreadTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdateMediaUnread rows affected: %w", err)
 		return
 	}
 
@@ -1101,23 +1540,23 @@ func (m *defaultMessagesModel) UpdateMentionedAndMediaUnread(ctx context.Context
 	return
 }
 
-// UpdateMentionedAndMediaUnreadTx
+// UpdateMentionedAndMediaUnread
 // update messages set mentioned = 0, media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
-func (m *defaultMessagesModel) UpdateMentionedAndMediaUnreadTx(tx *sqlx.Tx, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdateMentionedAndMediaUnread(userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
 	var (
 		query   = strings.Replace("update __TABLE__ set mentioned = 0, media_unread = 0 where user_id = ? and user_message_box_id = ?", "__TABLE__", m.CalcTableName(userId), -1)
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, userId, userMessageBoxId)
+	rResult, err = m.tx.Exec(query, userId, userMessageBoxId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnreadTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnread exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnreadTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdateMentionedAndMediaUnread rows affected: %w", err)
 		return
 	}
 
@@ -1132,6 +1571,30 @@ func (m *defaultMessagesModel) SelectByMediaType(ctx context.Context, userId int
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, messageFilterType, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectByMediaType: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByMediaType
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and message_filter_type = :message_filter_type and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectByMediaType(userId int64, dialogId1 int64, dialogId2 int64, messageFilterType int32, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and message_filter_type = ? and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, messageFilterType, userMessageBoxId, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1203,6 +1666,30 @@ func (m *defaultMessagesModel) SelectPhoneCallList(ctx context.Context, userId i
 	return
 }
 
+// SelectPhoneCallList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and message_filter_type = :message_filter_type and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectPhoneCallList(userId int64, messageFilterType int32, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and message_filter_type = ? and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, messageFilterType, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectPhoneCallList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectPhoneCallListWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and message_filter_type = :message_filter_type and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectPhoneCallListWithCB(ctx context.Context, userId int64, messageFilterType int32, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -1242,6 +1729,30 @@ func (m *defaultMessagesModel) Search(ctx context.Context, userId int64, dialogI
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, q2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.Search: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// Search
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id < :user_message_box_id and deleted = 0 and message != ” and message like :q2 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) Search(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, q2 string, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and user_message_box_id < ? and deleted = 0 and message != '' and message like ? order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, userMessageBoxId, q2, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1313,6 +1824,30 @@ func (m *defaultMessagesModel) SearchGlobal(ctx context.Context, userId int64, u
 	return
 }
 
+// SearchGlobal
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id < :user_message_box_id and deleted = 0 and message != ” and message like :q2 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SearchGlobal(userId int64, userMessageBoxId int32, q2 string, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and user_message_box_id < ? and deleted = 0 and message != '' and message like ? order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, userMessageBoxId, q2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SearchGlobal: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SearchGlobalWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and user_message_box_id < :user_message_box_id and deleted = 0 and message != ” and message like :q2 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SearchGlobalWithCB(ctx context.Context, userId int64, userMessageBoxId int32, q2 string, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -1352,6 +1887,30 @@ func (m *defaultMessagesModel) SelectBackwardUnreadMentionsByOffsetIdLimit(ctx c
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardUnreadMentionsByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectBackwardUnreadMentionsByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id < :user_message_box_id and mentioned = 1 and media_unread = 1 and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardUnreadMentionsByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and user_message_box_id < ? and mentioned = 1 and media_unread = 1 and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1423,6 +1982,30 @@ func (m *defaultMessagesModel) SelectForwardUnreadMentionsByOffsetIdLimit(ctx co
 	return
 }
 
+// SelectForwardUnreadMentionsByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id >= :user_message_box_id and mentioned = 1 and media_unread = 1 and deleted = 0 order by user_message_box_id asc limit :limit
+func (m *defaultMessagesTxModel) SelectForwardUnreadMentionsByOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and user_message_box_id >= ? and mentioned = 1 and media_unread = 1 and deleted = 0 order by user_message_box_id asc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectForwardUnreadMentionsByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectForwardUnreadMentionsByOffsetIdLimitWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and user_message_box_id >= :user_message_box_id and mentioned = 1 and media_unread = 1 and deleted = 0 order by user_message_box_id asc limit :limit
 func (m *defaultMessagesModel) SelectForwardUnreadMentionsByOffsetIdLimitWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -1462,6 +2045,30 @@ func (m *defaultMessagesModel) SelectPinnedList(ctx context.Context, userId int6
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectPinnedList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectPinnedList
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and pinned = 1 and deleted = 0 order by user_message_box_id desc
+func (m *defaultMessagesTxModel) SelectPinnedList(userId int64, dialogId1 int64, dialogId2 int64) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and pinned = 1 and deleted = 0 order by user_message_box_id desc", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1527,6 +2134,24 @@ func (m *defaultMessagesModel) SelectLastTwoPinnedList(ctx context.Context, user
 	return
 }
 
+// SelectLastTwoPinnedList
+// select user_message_box_id from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and pinned = 1 and deleted = 0 order by user_message_box_id desc limit 2
+func (m *defaultMessagesTxModel) SelectLastTwoPinnedList(userId int64, dialogId1 int64, dialogId2 int64) (rList []int32, err error) {
+	var query = strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and pinned = 1 and deleted = 0 order by user_message_box_id desc limit 2", "__TABLE__", m.CalcTableName(userId), -1)
+	err = m.tx.QueryRowsPartial(&rList, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectLastTwoPinnedList: %w", err)
+	}
+
+	return
+}
+
 // SelectLastTwoPinnedListWithCB
 // select user_message_box_id from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and pinned = 1 and deleted = 0 order by user_message_box_id desc limit 2
 func (m *defaultMessagesModel) SelectLastTwoPinnedListWithCB(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64, cb func(sz, i int, v int32)) (rList []int32, err error) {
@@ -1578,23 +2203,23 @@ func (m *defaultMessagesModel) UpdatePinned(ctx context.Context, pinned bool, us
 	return
 }
 
-// UpdatePinnedTx
+// UpdatePinned
 // update messages set pinned = :pinned where user_id = :user_id and user_message_box_id = :user_message_box_id
-func (m *defaultMessagesModel) UpdatePinnedTx(tx *sqlx.Tx, pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdatePinned(pinned bool, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
 	var (
 		query   = strings.Replace("update __TABLE__ set pinned = ? where user_id = ? and user_message_box_id = ?", "__TABLE__", m.CalcTableName(userId), -1)
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, pinned, userId, userMessageBoxId)
+	rResult, err = m.tx.Exec(query, pinned, userId, userMessageBoxId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdatePinnedTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdatePinned exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdatePinnedTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdatePinned rows affected: %w", err)
 		return
 	}
 
@@ -1606,6 +2231,24 @@ func (m *defaultMessagesModel) UpdatePinnedTx(tx *sqlx.Tx, pinned bool, userId i
 func (m *defaultMessagesModel) SelectPinnedMessageIdList(ctx context.Context, userId int64, dialogId1 int64, dialogId2 int64) (rList []int32, err error) {
 	var query = strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and pinned = 1 and deleted = 0 order by user_message_box_id desc", "__TABLE__", m.CalcTableName(userId), -1)
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, dialogId1, dialogId2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int32{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectPinnedMessageIdList: %w", err)
+	}
+
+	return
+}
+
+// SelectPinnedMessageIdList
+// select user_message_box_id from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and pinned = 1 and deleted = 0 order by user_message_box_id desc
+func (m *defaultMessagesTxModel) SelectPinnedMessageIdList(userId int64, dialogId1 int64, dialogId2 int64) (rList []int32, err error) {
+	var query = strings.Replace("select user_message_box_id from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and pinned = 1 and deleted = 0 order by user_message_box_id desc", "__TABLE__", m.CalcTableName(userId), -1)
+	err = m.tx.QueryRowsPartial(&rList, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1674,9 +2317,9 @@ func (m *defaultMessagesModel) UpdateUnPinnedByIdList(ctx context.Context, userI
 	return
 }
 
-// UpdateUnPinnedByIdListTx
+// UpdateUnPinnedByIdList
 // update messages set pinned = 0 where user_id = :user_id and user_message_box_id in (:idList)
-func (m *defaultMessagesModel) UpdateUnPinnedByIdListTx(tx *sqlx.Tx, userId int64, idList []int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdateUnPinnedByIdList(userId int64, idList []int32) (rowsAffected int64, err error) {
 	var (
 		query   = fmt.Sprintf(strings.Replace("update __TABLE__ set pinned = 0 where user_id = ? and user_message_box_id in (%s)", "__TABLE__", m.CalcTableName(userId), -1), sqlx.InInt32List(idList))
 		rResult sql.Result
@@ -1686,16 +2329,16 @@ func (m *defaultMessagesModel) UpdateUnPinnedByIdListTx(tx *sqlx.Tx, userId int6
 		return
 	}
 
-	rResult, err = tx.Exec(query, userId)
+	rResult, err = m.tx.Exec(query, userId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateUnPinnedByIdListTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdateUnPinnedByIdList exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateUnPinnedByIdListTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdateUnPinnedByIdList rows affected: %w", err)
 		return
 	}
 
@@ -1727,23 +2370,23 @@ func (m *defaultMessagesModel) UpdateEditMessage(ctx context.Context, messageDat
 	return
 }
 
-// UpdateEditMessageTx
+// UpdateEditMessage
 // update messages set message_data = :message_data, message = :message where user_id = :user_id and user_message_box_id = :user_message_box_id
-func (m *defaultMessagesModel) UpdateEditMessageTx(tx *sqlx.Tx, messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdateEditMessage(messageData string, message string, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
 	var (
 		query   = strings.Replace("update __TABLE__ set message_data = ?, message = ? where user_id = ? and user_message_box_id = ?", "__TABLE__", m.CalcTableName(userId), -1)
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, messageData, message, userId, userMessageBoxId)
+	rResult, err = m.tx.Exec(query, messageData, message, userId, userMessageBoxId)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateEditMessageTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdateEditMessage exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateEditMessageTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdateEditMessage rows affected: %w", err)
 		return
 	}
 
@@ -1785,9 +2428,9 @@ func (m *defaultMessagesModel) UpdateCustomMap(ctx context.Context, cMap map[str
 	return
 }
 
-// UpdateCustomMapTx
+// UpdateCustomMap
 // update messages set %s where user_id = :user_id and user_message_box_id = :user_message_box_id
-func (m *defaultMessagesModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
+func (m *defaultMessagesTxModel) UpdateCustomMap(cMap map[string]interface{}, userId int64, userMessageBoxId int32) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1803,16 +2446,16 @@ func (m *defaultMessagesModel) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]in
 	aValues = append(aValues, userId)
 	aValues = append(aValues, userMessageBoxId)
 
-	rResult, err = tx.Exec(query, aValues...)
+	rResult, err = m.tx.Exec(query, aValues...)
 
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateCustomMapTx exec: %w", err)
+		err = fmt.Errorf("messages.UpdateCustomMap exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("messages.UpdateCustomMapTx rows affected: %w", err)
+		err = fmt.Errorf("messages.UpdateCustomMap rows affected: %w", err)
 		return
 	}
 
@@ -1827,6 +2470,30 @@ func (m *defaultMessagesModel) SelectBackwardBySendUserIdOffsetIdLimit(ctx conte
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, dialogId1, dialogId2, senderUserId, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardBySendUserIdOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectBackwardBySendUserIdOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and sender_user_id = :sender_user_id and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardBySendUserIdOffsetIdLimit(userId int64, dialogId1 int64, dialogId2 int64, senderUserId int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and sender_user_id = ? and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, dialogId1, dialogId2, senderUserId, userMessageBoxId, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -1898,6 +2565,30 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetIdLimit(ctx context.Co
 	return
 }
 
+// SelectBackwardSavedByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardSavedByOffsetIdLimit(userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (saved_peer_type = ? and saved_peer_id = ?) and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectBackwardSavedByOffsetIdLimitWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectBackwardSavedByOffsetIdLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -1937,6 +2628,30 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetIdLimit(ctx context.Con
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectForwardSavedByOffsetIdLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectForwardSavedByOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and user_message_box_id >= :user_message_box_id and deleted = 0 order by user_message_box_id asc limit :limit
+func (m *defaultMessagesTxModel) SelectForwardSavedByOffsetIdLimit(userId int64, savedPeerType int32, savedPeerId int64, userMessageBoxId int32, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (saved_peer_type = ? and saved_peer_id = ?) and user_message_box_id >= ? and deleted = 0 order by user_message_box_id asc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, savedPeerType, savedPeerId, userMessageBoxId, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -2008,6 +2723,30 @@ func (m *defaultMessagesModel) SelectBackwardSavedByOffsetDateLimit(ctx context.
 	return
 }
 
+// SelectBackwardSavedByOffsetDateLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and date2 < :date2 and deleted = 0 order by user_message_box_id desc limit :limit
+func (m *defaultMessagesTxModel) SelectBackwardSavedByOffsetDateLimit(userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (saved_peer_type = ? and saved_peer_id = ?) and date2 < ? and deleted = 0 order by user_message_box_id desc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, savedPeerType, savedPeerId, date2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectBackwardSavedByOffsetDateLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
 // SelectBackwardSavedByOffsetDateLimitWithCB
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and date2 < :date2 and deleted = 0 order by user_message_box_id desc limit :limit
 func (m *defaultMessagesModel) SelectBackwardSavedByOffsetDateLimitWithCB(ctx context.Context, userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32, cb func(sz, i int, v *Messages)) (rList []Messages, err error) {
@@ -2047,6 +2786,30 @@ func (m *defaultMessagesModel) SelectForwardSavedByOffsetDateLimit(ctx context.C
 		values []Messages
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, savedPeerType, savedPeerId, date2, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Messages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("messages.SelectForwardSavedByOffsetDateLimit: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectForwardSavedByOffsetDateLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from messages where user_id = :user_id and (saved_peer_type = :saved_peer_type and saved_peer_id = :saved_peer_id) and date2 >= :date2 and deleted = 0 order by user_message_box_id asc limit :limit
+func (m *defaultMessagesTxModel) SelectForwardSavedByOffsetDateLimit(userId int64, savedPeerType int32, savedPeerId int64, date2 int64, limit int32) (rList []Messages, err error) {
+	var (
+		query  = strings.Replace("select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, saved_peer_type, saved_peer_id, date2, ttl_period from __TABLE__ where user_id = ? and (saved_peer_type = ? and saved_peer_id = ?) and date2 >= ? and deleted = 0 order by user_message_box_id asc limit ?", "__TABLE__", m.CalcTableName(userId), -1)
+		values []Messages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, savedPeerType, savedPeerId, date2, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {

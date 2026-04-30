@@ -25,6 +25,17 @@ type Models struct {
 	UserPtsUpdatesModel         UserPtsUpdatesModel
 }
 
+type TxModels struct {
+	CanonicalMessagesModel      CanonicalMessagesTxModel
+	HashTagsModel               HashTagsTxModel
+	MessageClientRandomsModel   MessageClientRandomsTxModel
+	MessageFanoutManifestsModel MessageFanoutManifestsTxModel
+	MessageFanoutReceiversModel MessageFanoutReceiversTxModel
+	MessagePeerSequencesModel   MessagePeerSequencesTxModel
+	MessageSendStatesModel      MessageSendStatesTxModel
+	UserPtsUpdatesModel         UserPtsUpdatesTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		CanonicalMessagesModel:      NewCanonicalMessagesModel(db),
@@ -35,5 +46,18 @@ func NewModels(db *sqlx.DB) *Models {
 		MessagePeerSequencesModel:   NewMessagePeerSequencesModel(db),
 		MessageSendStatesModel:      NewMessageSendStatesModel(db),
 		UserPtsUpdatesModel:         NewUserPtsUpdatesModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		CanonicalMessagesModel:      NewCanonicalMessagesTxModel(tx),
+		HashTagsModel:               NewHashTagsTxModel(tx),
+		MessageClientRandomsModel:   NewMessageClientRandomsTxModel(tx),
+		MessageFanoutManifestsModel: NewMessageFanoutManifestsTxModel(tx),
+		MessageFanoutReceiversModel: NewMessageFanoutReceiversTxModel(tx),
+		MessagePeerSequencesModel:   NewMessagePeerSequencesTxModel(tx),
+		MessageSendStatesModel:      NewMessageSendStatesTxModel(tx),
+		UserPtsUpdatesModel:         NewUserPtsUpdatesTxModel(tx),
 	}
 }

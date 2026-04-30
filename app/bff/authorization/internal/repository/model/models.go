@@ -18,8 +18,18 @@ type Models struct {
 	AuthOpLogsModel AuthOpLogsModel
 }
 
+type TxModels struct {
+	AuthOpLogsModel AuthOpLogsTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		AuthOpLogsModel: NewAuthOpLogsModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		AuthOpLogsModel: NewAuthOpLogsTxModel(tx),
 	}
 }

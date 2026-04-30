@@ -25,23 +25,30 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUserMessageViewsModel interface {
-		InsertOrUpdate(ctx context.Context, data *UserMessageViews) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *UserMessageViews) (lastInsertId, rowsAffected int64, err error)
+type bizUserMessageViewsModel interface {
+	InsertOrUpdate(ctx context.Context, data *UserMessageViews) (lastInsertId, rowsAffected int64, err error)
+	SelectByUserCanonical(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
+	SelectByUserPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64) (*UserMessageViews, error)
+	SelectPeerSeqRange(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
+	SelectPeerSeqRangeWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32, cb func(sz, i int, v *UserMessageViews)) ([]UserMessageViews, error)
+}
 
-		SelectByUserCanonical(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
-		SelectByUserCanonicalTx(tx *sqlx.Tx, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
+type UserMessageViewsTxModel interface {
+	InsertOrUpdate(data *UserMessageViews) (lastInsertId, rowsAffected int64, err error)
+	SelectByUserCanonical(userId int64, canonicalMessageId int64) (*UserMessageViews, error)
+	SelectByUserPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64) (*UserMessageViews, error)
+	SelectPeerSeqRange(userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
+}
 
-		SelectByUserPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64) (*UserMessageViews, error)
-		SelectByUserPeerSeqTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64, peerSeq int64) (*UserMessageViews, error)
+type defaultUserMessageViewsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectPeerSeqRange(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
-		SelectPeerSeqRangeTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
-		SelectPeerSeqRangeWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32, cb func(sz, i int, v *UserMessageViews)) ([]UserMessageViews, error)
-	}
-)
+func NewUserMessageViewsTxModel(tx *sqlx.Tx) UserMessageViewsTxModel {
+	return &defaultUserMessageViewsTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into user_message_views(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload) values (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload) on duplicate key update message_status = values(message_status), edit_version = values(edit_version), view_schema_version = values(view_schema_version), view_payload = values(view_payload)
@@ -71,28 +78,28 @@ func (m *defaultUserMessageViewsModel) InsertOrUpdate(ctx context.Context, data 
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into user_message_views(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload) values (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload) on duplicate key update message_status = values(message_status), edit_version = values(edit_version), view_schema_version = values(view_schema_version), view_payload = values(view_payload)
-func (m *defaultUserMessageViewsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserMessageViews) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUserMessageViewsTxModel) InsertOrUpdate(data *UserMessageViews) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_message_views(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload) values (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload) on duplicate key update message_status = values(message_status), edit_version = values(edit_version), view_schema_version = values(view_schema_version), view_payload = values(view_payload)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("user_message_views.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("user_message_views.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("user_message_views.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("user_message_views.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_message_views.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("user_message_views.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -125,14 +132,14 @@ func (m *defaultUserMessageViewsModel) SelectByUserCanonical(ctx context.Context
 	return
 }
 
-// SelectByUserCanonicalTx
+// SelectByUserCanonical
 // select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = :user_id and canonical_message_id = :canonical_message_id limit 1
-func (m *defaultUserMessageViewsModel) SelectByUserCanonicalTx(tx *sqlx.Tx, userId int64, canonicalMessageId int64) (rValue *UserMessageViews, err error) {
+func (m *defaultUserMessageViewsTxModel) SelectByUserCanonical(userId int64, canonicalMessageId int64) (rValue *UserMessageViews, err error) {
 	var (
 		query = "select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = ? and canonical_message_id = ? limit 1"
 		do    = &UserMessageViews{}
 	)
-	err = tx.QueryRowPartial(do, query, userId, canonicalMessageId)
+	err = m.tx.QueryRowPartial(do, query, userId, canonicalMessageId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -142,7 +149,7 @@ func (m *defaultUserMessageViewsModel) SelectByUserCanonicalTx(tx *sqlx.Tx, user
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("user_message_views.SelectByUserCanonicalTx: %w", err)
+		err = fmt.Errorf("user_message_views.SelectByUserCanonical: %w", err)
 		return
 	}
 	rValue = do
@@ -177,14 +184,14 @@ func (m *defaultUserMessageViewsModel) SelectByUserPeerSeq(ctx context.Context, 
 	return
 }
 
-// SelectByUserPeerSeqTx
+// SelectByUserPeerSeq
 // select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and peer_seq = :peer_seq limit 1
-func (m *defaultUserMessageViewsModel) SelectByUserPeerSeqTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64, peerSeq int64) (rValue *UserMessageViews, err error) {
+func (m *defaultUserMessageViewsTxModel) SelectByUserPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64) (rValue *UserMessageViews, err error) {
 	var (
 		query = "select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and peer_seq = ? limit 1"
 		do    = &UserMessageViews{}
 	)
-	err = tx.QueryRowPartial(do, query, userId, peerType, peerId, peerSeq)
+	err = m.tx.QueryRowPartial(do, query, userId, peerType, peerId, peerSeq)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -194,7 +201,7 @@ func (m *defaultUserMessageViewsModel) SelectByUserPeerSeqTx(tx *sqlx.Tx, userId
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("user_message_views.SelectByUserPeerSeqTx: %w", err)
+		err = fmt.Errorf("user_message_views.SelectByUserPeerSeq: %w", err)
 		return
 	}
 	rValue = do
@@ -226,14 +233,14 @@ func (m *defaultUserMessageViewsModel) SelectPeerSeqRange(ctx context.Context, u
 	return
 }
 
-// SelectPeerSeqRangeTx
+// SelectPeerSeqRange
 // select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and peer_seq > :peer_seq and peer_seq <= :maxPeerSeq order by peer_seq asc limit :limit
-func (m *defaultUserMessageViewsModel) SelectPeerSeqRangeTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) (rList []UserMessageViews, err error) {
+func (m *defaultUserMessageViewsTxModel) SelectPeerSeqRange(userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) (rList []UserMessageViews, err error) {
 	var (
 		query  = "select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and peer_seq > ? and peer_seq <= ? order by peer_seq asc limit ?"
 		values []UserMessageViews
 	)
-	err = tx.QueryRowsPartial(&values, query, userId, peerType, peerId, peerSeq, maxPeerSeq, limit)
+	err = m.tx.QueryRowsPartial(&values, query, userId, peerType, peerId, peerSeq, maxPeerSeq, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -241,7 +248,7 @@ func (m *defaultUserMessageViewsModel) SelectPeerSeqRangeTx(tx *sqlx.Tx, userId 
 			err = nil
 			return
 		}
-		err = fmt.Errorf("user_message_views.SelectPeerSeqRangeTx: %w", err)
+		err = fmt.Errorf("user_message_views.SelectPeerSeqRange: %w", err)
 		return
 	}
 

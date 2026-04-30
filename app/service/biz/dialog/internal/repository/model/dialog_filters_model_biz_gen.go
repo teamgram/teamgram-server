@@ -25,26 +25,34 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizDialogFiltersModel interface {
-		InsertOrUpdate(ctx context.Context, data *DialogFilters) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *DialogFilters) (lastInsertId, rowsAffected int64, err error)
+type bizDialogFiltersModel interface {
+	InsertOrUpdate(ctx context.Context, data *DialogFilters) (lastInsertId, rowsAffected int64, err error)
+	SelectBySlug(ctx context.Context, userId int64, slug string) (*DialogFilters, error)
+	Select(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error)
+	SelectList(ctx context.Context, userId int64) ([]DialogFilters, error)
+	SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogFilters)) ([]DialogFilters, error)
+	UpdateOrder(ctx context.Context, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
+	Clear(ctx context.Context, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
+}
 
-		SelectBySlug(ctx context.Context, userId int64, slug string) (*DialogFilters, error)
+type DialogFiltersTxModel interface {
+	InsertOrUpdate(data *DialogFilters) (lastInsertId, rowsAffected int64, err error)
+	SelectBySlug(userId int64, slug string) (*DialogFilters, error)
+	Select(userId int64, dialogFilterId int32) (*DialogFilters, error)
+	SelectList(userId int64) ([]DialogFilters, error)
+	UpdateOrder(orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
+	Clear(userId int64, dialogFilterId int32) (rowsAffected int64, err error)
+}
 
-		Select(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error)
+type defaultDialogFiltersTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectList(ctx context.Context, userId int64) ([]DialogFilters, error)
-		SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogFilters)) ([]DialogFilters, error)
-
-		UpdateOrder(ctx context.Context, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
-		UpdateOrderTx(tx *sqlx.Tx, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
-
-		Clear(ctx context.Context, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
-		ClearTx(tx *sqlx.Tx, userId int64, dialogFilterId int32) (rowsAffected int64, err error)
-	}
-)
+func NewDialogFiltersTxModel(tx *sqlx.Tx) DialogFiltersTxModel {
+	return &defaultDialogFiltersTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
@@ -74,28 +82,28 @@ func (m *defaultDialogFiltersModel) InsertOrUpdate(ctx context.Context, data *Di
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
-func (m *defaultDialogFiltersModel) InsertOrUpdateTx(tx *sqlx.Tx, data *DialogFilters) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultDialogFiltersTxModel) InsertOrUpdate(data *DialogFilters) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("dialog_filters.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("dialog_filters.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("dialog_filters.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -128,6 +136,31 @@ func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int
 	return
 }
 
+// SelectBySlug
+// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 order by order_value desc
+func (m *defaultDialogFiltersTxModel) SelectBySlug(userId int64, slug string) (rValue *DialogFilters, err error) {
+	var (
+		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
+		do    = &DialogFilters{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId, slug)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("user_id=%v,slug=%v", userId, slug),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("dialog_filters.SelectBySlug: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // Select
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
 func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, dialogFilterId int32) (rValue *DialogFilters, err error) {
@@ -155,6 +188,31 @@ func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, di
 	return
 }
 
+// Select
+// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
+func (m *defaultDialogFiltersTxModel) Select(userId int64, dialogFilterId int32) (rValue *DialogFilters, err error) {
+	var (
+		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
+		do    = &DialogFilters{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId, dialogFilterId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "dialog_filters",
+				Key:      fmt.Sprintf("user_id=%v,dialog_filter_id=%v", userId, dialogFilterId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("dialog_filters.Select: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectList
 // select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
 func (m *defaultDialogFiltersModel) SelectList(ctx context.Context, userId int64) (rList []DialogFilters, err error) {
@@ -163,6 +221,30 @@ func (m *defaultDialogFiltersModel) SelectList(ctx context.Context, userId int64
 		values []DialogFilters
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogFilters{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_filters.SelectList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectList
+// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
+func (m *defaultDialogFiltersTxModel) SelectList(userId int64) (rList []DialogFilters, err error) {
+	var (
+		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		values []DialogFilters
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -235,23 +317,23 @@ func (m *defaultDialogFiltersModel) UpdateOrder(ctx context.Context, orderValue 
 	return
 }
 
-// UpdateOrderTx
+// UpdateOrder
 // update dialog_filters set order_value = :order_value where user_id = :user_id and dialog_filter_id = :dialog_filter_id
-func (m *defaultDialogFiltersModel) UpdateOrderTx(tx *sqlx.Tx, orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
+func (m *defaultDialogFiltersTxModel) UpdateOrder(orderValue int64, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_filters set order_value = ? where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, orderValue, userId, dialogFilterId)
+	rResult, err = m.tx.Exec(query, orderValue, userId, dialogFilterId)
 
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.UpdateOrderTx exec: %w", err)
+		err = fmt.Errorf("dialog_filters.UpdateOrder exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.UpdateOrderTx rows affected: %w", err)
+		err = fmt.Errorf("dialog_filters.UpdateOrder rows affected: %w", err)
 		return
 	}
 
@@ -283,23 +365,23 @@ func (m *defaultDialogFiltersModel) Clear(ctx context.Context, userId int64, dia
 	return
 }
 
-// ClearTx
+// Clear
 // update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
-func (m *defaultDialogFiltersModel) ClearTx(tx *sqlx.Tx, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
+func (m *defaultDialogFiltersTxModel) Clear(userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, userId, dialogFilterId)
+	rResult, err = m.tx.Exec(query, userId, dialogFilterId)
 
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.ClearTx exec: %w", err)
+		err = fmt.Errorf("dialog_filters.Clear exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("dialog_filters.ClearTx rows affected: %w", err)
+		err = fmt.Errorf("dialog_filters.Clear rows affected: %w", err)
 		return
 	}
 

@@ -25,21 +25,31 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizAuthSeqUpdatesModel interface {
-		Insert(ctx context.Context, data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error)
+type bizAuthSeqUpdatesModel interface {
+	Insert(ctx context.Context, data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error)
+	SelectLastSeq(ctx context.Context, authId int64, userId int64) (*AuthSeqUpdates, error)
+	SelectByGtSeq(ctx context.Context, authId int64, userId int64, seq int32) ([]AuthSeqUpdates, error)
+	SelectByGtSeqWithCB(ctx context.Context, authId int64, userId int64, seq int32, cb func(sz, i int, v *AuthSeqUpdates)) ([]AuthSeqUpdates, error)
+	SelectByGtDate(ctx context.Context, authId int64, userId int64, date2 int64) ([]AuthSeqUpdates, error)
+	SelectByGtDateWithCB(ctx context.Context, authId int64, userId int64, date2 int64, cb func(sz, i int, v *AuthSeqUpdates)) ([]AuthSeqUpdates, error)
+}
 
-		SelectLastSeq(ctx context.Context, authId int64, userId int64) (*AuthSeqUpdates, error)
+type AuthSeqUpdatesTxModel interface {
+	Insert(data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error)
+	SelectLastSeq(authId int64, userId int64) (*AuthSeqUpdates, error)
+	SelectByGtSeq(authId int64, userId int64, seq int32) ([]AuthSeqUpdates, error)
+	SelectByGtDate(authId int64, userId int64, date2 int64) ([]AuthSeqUpdates, error)
+}
 
-		SelectByGtSeq(ctx context.Context, authId int64, userId int64, seq int32) ([]AuthSeqUpdates, error)
-		SelectByGtSeqWithCB(ctx context.Context, authId int64, userId int64, seq int32, cb func(sz, i int, v *AuthSeqUpdates)) ([]AuthSeqUpdates, error)
+type defaultAuthSeqUpdatesTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectByGtDate(ctx context.Context, authId int64, userId int64, date2 int64) ([]AuthSeqUpdates, error)
-		SelectByGtDateWithCB(ctx context.Context, authId int64, userId int64, date2 int64, cb func(sz, i int, v *AuthSeqUpdates)) ([]AuthSeqUpdates, error)
-	}
-)
+func NewAuthSeqUpdatesTxModel(tx *sqlx.Tx) AuthSeqUpdatesTxModel {
+	return &defaultAuthSeqUpdatesTxModel{tx: tx}
+}
 
 // Insert
 // insert into auth_seq_updates(auth_id, user_id, seq, update_type, update_data, date2) values (:auth_id, :user_id, :seq, :update_type, :update_data, :date2)
@@ -69,28 +79,28 @@ func (m *defaultAuthSeqUpdatesModel) Insert(ctx context.Context, data *AuthSeqUp
 
 }
 
-// InsertTx
+// Insert
 // insert into auth_seq_updates(auth_id, user_id, seq, update_type, update_data, date2) values (:auth_id, :user_id, :seq, :update_type, :update_data, :date2)
-func (m *defaultAuthSeqUpdatesModel) InsertTx(tx *sqlx.Tx, data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultAuthSeqUpdatesTxModel) Insert(data *AuthSeqUpdates) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_seq_updates(auth_id, user_id, seq, update_type, update_data, date2) values (:auth_id, :user_id, :seq, :update_type, :update_data, :date2)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("auth_seq_updates.InsertTx named exec: %w", err)
+		err = fmt.Errorf("auth_seq_updates.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("auth_seq_updates.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("auth_seq_updates.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("auth_seq_updates.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("auth_seq_updates.Insert rows affected: %w", err)
 	}
 
 	return
@@ -123,6 +133,31 @@ func (m *defaultAuthSeqUpdatesModel) SelectLastSeq(ctx context.Context, authId i
 	return
 }
 
+// SelectLastSeq
+// select seq from auth_seq_updates where auth_id = :auth_id and user_id = :user_id order by seq desc limit 1
+func (m *defaultAuthSeqUpdatesTxModel) SelectLastSeq(authId int64, userId int64) (rValue *AuthSeqUpdates, err error) {
+	var (
+		query = "select seq from auth_seq_updates where auth_id = ? and user_id = ? order by seq desc limit 1"
+		do    = &AuthSeqUpdates{}
+	)
+	err = m.tx.QueryRowPartial(do, query, authId, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "auth_seq_updates",
+				Key:      fmt.Sprintf("auth_id=%v,user_id=%v", authId, userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("auth_seq_updates.SelectLastSeq: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByGtSeq
 // select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = :auth_id and user_id = :user_id and seq > :seq order by seq asc
 func (m *defaultAuthSeqUpdatesModel) SelectByGtSeq(ctx context.Context, authId int64, userId int64, seq int32) (rList []AuthSeqUpdates, err error) {
@@ -131,6 +166,30 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtSeq(ctx context.Context, authId i
 		values []AuthSeqUpdates
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, seq)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("auth_seq_updates.SelectByGtSeq: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByGtSeq
+// select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = :auth_id and user_id = :user_id and seq > :seq order by seq asc
+func (m *defaultAuthSeqUpdatesTxModel) SelectByGtSeq(authId int64, userId int64, seq int32) (rList []AuthSeqUpdates, err error) {
+	var (
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
+		values []AuthSeqUpdates
+	)
+	err = m.tx.QueryRowsPartial(&values, query, authId, userId, seq)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -186,6 +245,30 @@ func (m *defaultAuthSeqUpdatesModel) SelectByGtDate(ctx context.Context, authId 
 		values []AuthSeqUpdates
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, authId, userId, date2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []AuthSeqUpdates{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("auth_seq_updates.SelectByGtDate: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByGtDate
+// select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = :auth_id and user_id = :user_id and date2 > :date2 order by seq asc
+func (m *defaultAuthSeqUpdatesTxModel) SelectByGtDate(authId int64, userId int64, date2 int64) (rList []AuthSeqUpdates, err error) {
+	var (
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
+		values []AuthSeqUpdates
+	)
+	err = m.tx.QueryRowsPartial(&values, query, authId, userId, date2)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {

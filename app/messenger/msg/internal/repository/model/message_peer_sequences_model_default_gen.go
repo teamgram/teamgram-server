@@ -13,7 +13,6 @@ package model
 import (
 	"context"
 	"database/sql"
-
 	"fmt"
 	"strings"
 

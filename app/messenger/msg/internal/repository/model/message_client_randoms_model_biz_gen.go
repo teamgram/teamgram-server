@@ -25,19 +25,27 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizMessageClientRandomsModel interface {
-		Insert(ctx context.Context, data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error)
+type bizMessageClientRandomsModel interface {
+	Insert(ctx context.Context, data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error)
+	SelectByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageClientRandoms, error)
+	SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*MessageClientRandoms, error)
+}
 
-		SelectByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageClientRandoms, error)
-		SelectByRandomTx(tx *sqlx.Tx, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageClientRandoms, error)
+type MessageClientRandomsTxModel interface {
+	Insert(data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error)
+	SelectByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageClientRandoms, error)
+	SelectByCanonicalMessageId(canonicalMessageId int64) (*MessageClientRandoms, error)
+}
 
-		SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*MessageClientRandoms, error)
-		SelectByCanonicalMessageIdTx(tx *sqlx.Tx, canonicalMessageId int64) (*MessageClientRandoms, error)
-	}
-)
+type defaultMessageClientRandomsTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewMessageClientRandomsTxModel(tx *sqlx.Tx) MessageClientRandomsTxModel {
+	return &defaultMessageClientRandomsTxModel{tx: tx}
+}
 
 // Insert
 // insert into message_client_randoms(sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash) values (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash)
@@ -67,28 +75,28 @@ func (m *defaultMessageClientRandomsModel) Insert(ctx context.Context, data *Mes
 
 }
 
-// InsertTx
+// Insert
 // insert into message_client_randoms(sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash) values (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash)
-func (m *defaultMessageClientRandomsModel) InsertTx(tx *sqlx.Tx, data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultMessageClientRandomsTxModel) Insert(data *MessageClientRandoms) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into message_client_randoms(sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash) values (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("message_client_randoms.InsertTx named exec: %w", err)
+		err = fmt.Errorf("message_client_randoms.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("message_client_randoms.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("message_client_randoms.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("message_client_randoms.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("message_client_randoms.Insert rows affected: %w", err)
 	}
 
 	return
@@ -121,14 +129,14 @@ func (m *defaultMessageClientRandomsModel) SelectByRandom(ctx context.Context, s
 	return
 }
 
-// SelectByRandomTx
+// SelectByRandom
 // select sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash from message_client_randoms where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
-func (m *defaultMessageClientRandomsModel) SelectByRandomTx(tx *sqlx.Tx, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageClientRandoms, err error) {
+func (m *defaultMessageClientRandomsTxModel) SelectByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageClientRandoms, err error) {
 	var (
 		query = "select sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash from message_client_randoms where sender_user_id = ? and peer_type = ? and peer_id = ? and client_random_id = ? limit 1"
 		do    = &MessageClientRandoms{}
 	)
-	err = tx.QueryRowPartial(do, query, senderUserId, peerType, peerId, clientRandomId)
+	err = m.tx.QueryRowPartial(do, query, senderUserId, peerType, peerId, clientRandomId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -138,7 +146,7 @@ func (m *defaultMessageClientRandomsModel) SelectByRandomTx(tx *sqlx.Tx, senderU
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("message_client_randoms.SelectByRandomTx: %w", err)
+		err = fmt.Errorf("message_client_randoms.SelectByRandom: %w", err)
 		return
 	}
 	rValue = do
@@ -173,14 +181,14 @@ func (m *defaultMessageClientRandomsModel) SelectByCanonicalMessageId(ctx contex
 	return
 }
 
-// SelectByCanonicalMessageIdTx
+// SelectByCanonicalMessageId
 // select sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash from message_client_randoms where canonical_message_id = :canonical_message_id limit 1
-func (m *defaultMessageClientRandomsModel) SelectByCanonicalMessageIdTx(tx *sqlx.Tx, canonicalMessageId int64) (rValue *MessageClientRandoms, err error) {
+func (m *defaultMessageClientRandomsTxModel) SelectByCanonicalMessageId(canonicalMessageId int64) (rValue *MessageClientRandoms, err error) {
 	var (
 		query = "select sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash from message_client_randoms where canonical_message_id = ? limit 1"
 		do    = &MessageClientRandoms{}
 	)
-	err = tx.QueryRowPartial(do, query, canonicalMessageId)
+	err = m.tx.QueryRowPartial(do, query, canonicalMessageId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -190,7 +198,7 @@ func (m *defaultMessageClientRandomsModel) SelectByCanonicalMessageIdTx(tx *sqlx
 				Cause:    err,
 			}
 		}
-		err = fmt.Errorf("message_client_randoms.SelectByCanonicalMessageIdTx: %w", err)
+		err = fmt.Errorf("message_client_randoms.SelectByCanonicalMessageId: %w", err)
 		return
 	}
 	rValue = do

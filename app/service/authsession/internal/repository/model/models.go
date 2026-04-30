@@ -21,10 +21,24 @@ type Models struct {
 	AuthsModel     AuthsModel
 }
 
+type TxModels struct {
+	AuthKeysModel  AuthKeysTxModel
+	AuthUsersModel AuthUsersTxModel
+	AuthsModel     AuthsTxModel
+}
+
 func NewModels(db *sqlx.DB, c cache.CacheConf) *Models {
 	return &Models{
 		AuthKeysModel:  NewAuthKeysModel(db, c),
 		AuthUsersModel: NewAuthUsersModel(db),
 		AuthsModel:     NewAuthsModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		AuthKeysModel:  NewAuthKeysTxModel(tx),
+		AuthUsersModel: NewAuthUsersTxModel(tx),
+		AuthsModel:     NewAuthsTxModel(tx),
 	}
 }

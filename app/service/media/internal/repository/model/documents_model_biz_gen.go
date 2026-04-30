@@ -25,21 +25,31 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizDocumentsModel interface {
-		Insert(ctx context.Context, data *Documents) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *Documents) (lastInsertId, rowsAffected int64, err error)
+type bizDocumentsModel interface {
+	Insert(ctx context.Context, data *Documents) (lastInsertId, rowsAffected int64, err error)
+	SelectByDocumentId(ctx context.Context, documentId int64) (*Documents, error)
+	SelectByDocumentIdList(ctx context.Context, idList []int64) ([]Documents, error)
+	SelectByDocumentIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Documents)) ([]Documents, error)
+	SelectByIdList(ctx context.Context, idList []int64) ([]Documents, error)
+	SelectByIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Documents)) ([]Documents, error)
+}
 
-		SelectByDocumentId(ctx context.Context, documentId int64) (*Documents, error)
+type DocumentsTxModel interface {
+	Insert(data *Documents) (lastInsertId, rowsAffected int64, err error)
+	SelectByDocumentId(documentId int64) (*Documents, error)
+	SelectByDocumentIdList(idList []int64) ([]Documents, error)
+	SelectByIdList(idList []int64) ([]Documents, error)
+}
 
-		SelectByDocumentIdList(ctx context.Context, idList []int64) ([]Documents, error)
-		SelectByDocumentIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Documents)) ([]Documents, error)
+type defaultDocumentsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectByIdList(ctx context.Context, idList []int64) ([]Documents, error)
-		SelectByIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Documents)) ([]Documents, error)
-	}
-)
+func NewDocumentsTxModel(tx *sqlx.Tx) DocumentsTxModel {
+	return &defaultDocumentsTxModel{tx: tx}
+}
 
 // Insert
 // insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)
@@ -69,28 +79,28 @@ func (m *defaultDocumentsModel) Insert(ctx context.Context, data *Documents) (la
 
 }
 
-// InsertTx
+// Insert
 // insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)
-func (m *defaultDocumentsModel) InsertTx(tx *sqlx.Tx, data *Documents) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultDocumentsTxModel) Insert(data *Documents) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into documents(document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, date2) values (:document_id, :access_hash, :dc_id, :file_path, :file_size, :uploaded_file_name, :ext, :mime_type, :thumb_id, :video_thumb_id, :attributes, :date2)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("documents.InsertTx named exec: %w", err)
+		err = fmt.Errorf("documents.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("documents.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("documents.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("documents.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("documents.Insert rows affected: %w", err)
 	}
 
 	return
@@ -123,6 +133,31 @@ func (m *defaultDocumentsModel) SelectByDocumentId(ctx context.Context, document
 	return
 }
 
+// SelectByDocumentId
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = :document_id
+func (m *defaultDocumentsTxModel) SelectByDocumentId(documentId int64) (rValue *Documents, err error) {
+	var (
+		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
+		do    = &Documents{}
+	)
+	err = m.tx.QueryRowPartial(do, query, documentId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "documents",
+				Key:      fmt.Sprintf("document_id=%v", documentId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("documents.SelectByDocumentId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByDocumentIdList
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (:idList)
 func (m *defaultDocumentsModel) SelectByDocumentIdList(ctx context.Context, idList []int64) (rList []Documents, err error) {
@@ -136,6 +171,35 @@ func (m *defaultDocumentsModel) SelectByDocumentIdList(ctx context.Context, idLi
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("documents.SelectByDocumentIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByDocumentIdList
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (:idList)
+func (m *defaultDocumentsTxModel) SelectByDocumentIdList(idList []int64) (rList []Documents, err error) {
+	var (
+		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (%s)", sqlx.InInt64List(idList))
+		values []Documents
+	)
+	if len(idList) == 0 {
+		rList = []Documents{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -201,6 +265,35 @@ func (m *defaultDocumentsModel) SelectByIdList(ctx context.Context, idList []int
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Documents{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("documents.SelectByIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByIdList
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (:idList)
+func (m *defaultDocumentsTxModel) SelectByIdList(idList []int64) (rList []Documents, err error) {
+	var (
+		query  = fmt.Sprintf("select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (%s)", sqlx.InInt64List(idList))
+		values []Documents
+	)
+	if len(idList) == 0 {
+		rList = []Documents{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {

@@ -25,13 +25,23 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizPhoneBooksModel interface {
-		InsertOrUpdate(ctx context.Context, data *PhoneBooks) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *PhoneBooks) (lastInsertId, rowsAffected int64, err error)
-	}
-)
+type bizPhoneBooksModel interface {
+	InsertOrUpdate(ctx context.Context, data *PhoneBooks) (lastInsertId, rowsAffected int64, err error)
+}
+
+type PhoneBooksTxModel interface {
+	InsertOrUpdate(data *PhoneBooks) (lastInsertId, rowsAffected int64, err error)
+}
+
+type defaultPhoneBooksTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewPhoneBooksTxModel(tx *sqlx.Tx) PhoneBooksTxModel {
+	return &defaultPhoneBooksTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)
@@ -61,28 +71,28 @@ func (m *defaultPhoneBooksModel) InsertOrUpdate(ctx context.Context, data *Phone
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)
-func (m *defaultPhoneBooksModel) InsertOrUpdateTx(tx *sqlx.Tx, data *PhoneBooks) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultPhoneBooksTxModel) InsertOrUpdate(data *PhoneBooks) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into phone_books(auth_key_id, client_id, phone, first_name, last_name) values (:auth_key_id, :client_id, :phone, :first_name, :last_name) on duplicate key update phone = values(phone), first_name = values(first_name), last_name = values(last_name)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("phone_books.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("phone_books.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("phone_books.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("phone_books.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("phone_books.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("phone_books.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return

@@ -25,21 +25,30 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUserPresencesModel interface {
-		InsertOrUpdate(ctx context.Context, data *UserPresences) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *UserPresences) (lastInsertId, rowsAffected int64, err error)
+type bizUserPresencesModel interface {
+	InsertOrUpdate(ctx context.Context, data *UserPresences) (lastInsertId, rowsAffected int64, err error)
+	Select(ctx context.Context, userId int64) (*UserPresences, error)
+	SelectList(ctx context.Context, idList []int64) ([]UserPresences, error)
+	SelectListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *UserPresences)) ([]UserPresences, error)
+	UpdateLastSeenAt(ctx context.Context, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error)
+}
 
-		Select(ctx context.Context, userId int64) (*UserPresences, error)
+type UserPresencesTxModel interface {
+	InsertOrUpdate(data *UserPresences) (lastInsertId, rowsAffected int64, err error)
+	Select(userId int64) (*UserPresences, error)
+	SelectList(idList []int64) ([]UserPresences, error)
+	UpdateLastSeenAt(lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error)
+}
 
-		SelectList(ctx context.Context, idList []int64) ([]UserPresences, error)
-		SelectListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *UserPresences)) ([]UserPresences, error)
+type defaultUserPresencesTxModel struct {
+	tx *sqlx.Tx
+}
 
-		UpdateLastSeenAt(ctx context.Context, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error)
-		UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error)
-	}
-)
+func NewUserPresencesTxModel(tx *sqlx.Tx) UserPresencesTxModel {
+	return &defaultUserPresencesTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)
@@ -69,28 +78,28 @@ func (m *defaultUserPresencesModel) InsertOrUpdate(ctx context.Context, data *Us
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)
-func (m *defaultUserPresencesModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserPresences) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUserPresencesTxModel) InsertOrUpdate(data *UserPresences) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_presences(user_id, last_seen_at, expires) values (:user_id, :last_seen_at, :expires) on duplicate key update last_seen_at = values(last_seen_at), expires = values(expires)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("user_presences.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("user_presences.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_presences.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("user_presences.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -123,6 +132,31 @@ func (m *defaultUserPresencesModel) Select(ctx context.Context, userId int64) (r
 	return
 }
 
+// Select
+// select id, user_id, last_seen_at, expires from user_presences where user_id = :user_id
+func (m *defaultUserPresencesTxModel) Select(userId int64) (rValue *UserPresences, err error) {
+	var (
+		query = "select id, user_id, last_seen_at, expires from user_presences where user_id = ?"
+		do    = &UserPresences{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_presences",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("user_presences.Select: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectList
 // select id, user_id, last_seen_at, expires from user_presences where user_id in (:idList)
 func (m *defaultUserPresencesModel) SelectList(ctx context.Context, idList []int64) (rList []UserPresences, err error) {
@@ -136,6 +170,35 @@ func (m *defaultUserPresencesModel) SelectList(ctx context.Context, idList []int
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPresences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("user_presences.SelectList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectList
+// select id, user_id, last_seen_at, expires from user_presences where user_id in (:idList)
+func (m *defaultUserPresencesTxModel) SelectList(idList []int64) (rList []UserPresences, err error) {
+	var (
+		query  = fmt.Sprintf("select id, user_id, last_seen_at, expires from user_presences where user_id in (%s)", sqlx.InInt64List(idList))
+		values []UserPresences
+	)
+	if len(idList) == 0 {
+		rList = []UserPresences{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -213,23 +276,23 @@ func (m *defaultUserPresencesModel) UpdateLastSeenAt(ctx context.Context, lastSe
 	return
 }
 
-// UpdateLastSeenAtTx
+// UpdateLastSeenAt
 // update user_presences set last_seen_at = :last_seen_at, expires = :expires where user_id = :user_id
-func (m *defaultUserPresencesModel) UpdateLastSeenAtTx(tx *sqlx.Tx, lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error) {
+func (m *defaultUserPresencesTxModel) UpdateLastSeenAt(lastSeenAt int64, expires int32, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_presences set last_seen_at = ?, expires = ? where user_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, lastSeenAt, expires, userId)
+	rResult, err = m.tx.Exec(query, lastSeenAt, expires, userId)
 
 	if err != nil {
-		err = fmt.Errorf("user_presences.UpdateLastSeenAtTx exec: %w", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAt exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_presences.UpdateLastSeenAtTx rows affected: %w", err)
+		err = fmt.Errorf("user_presences.UpdateLastSeenAt rows affected: %w", err)
 		return
 	}
 

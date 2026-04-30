@@ -25,24 +25,32 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizPredefinedUsersModel interface {
-		Insert(ctx context.Context, data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error)
+type bizPredefinedUsersModel interface {
+	Insert(ctx context.Context, data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error)
+	SelectByPhone(ctx context.Context, phone string) (*PredefinedUsers, error)
+	SelectPredefinedUsersAll(ctx context.Context) ([]PredefinedUsers, error)
+	SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(sz, i int, v *PredefinedUsers)) ([]PredefinedUsers, error)
+	Delete(ctx context.Context, phone string) (rowsAffected int64, err error)
+	Update(ctx context.Context, cMap map[string]interface{}, phone string) (rowsAffected int64, err error)
+}
 
-		SelectByPhone(ctx context.Context, phone string) (*PredefinedUsers, error)
+type PredefinedUsersTxModel interface {
+	Insert(data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error)
+	SelectByPhone(phone string) (*PredefinedUsers, error)
+	SelectPredefinedUsersAll() ([]PredefinedUsers, error)
+	Delete(phone string) (rowsAffected int64, err error)
+	Update(cMap map[string]interface{}, phone string) (rowsAffected int64, err error)
+}
 
-		SelectPredefinedUsersAll(ctx context.Context) ([]PredefinedUsers, error)
-		SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(sz, i int, v *PredefinedUsers)) ([]PredefinedUsers, error)
+type defaultPredefinedUsersTxModel struct {
+	tx *sqlx.Tx
+}
 
-		Delete(ctx context.Context, phone string) (rowsAffected int64, err error)
-		DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error)
-
-		Update(ctx context.Context, cMap map[string]interface{}, phone string) (rowsAffected int64, err error)
-		UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, phone string) (rowsAffected int64, err error)
-	}
-)
+func NewPredefinedUsersTxModel(tx *sqlx.Tx) PredefinedUsersTxModel {
+	return &defaultPredefinedUsersTxModel{tx: tx}
+}
 
 // Insert
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
@@ -72,28 +80,28 @@ func (m *defaultPredefinedUsersModel) Insert(ctx context.Context, data *Predefin
 
 }
 
-// InsertTx
+// Insert
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
-func (m *defaultPredefinedUsersModel) InsertTx(tx *sqlx.Tx, data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultPredefinedUsersTxModel) Insert(data *PredefinedUsers) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("predefined_users.InsertTx named exec: %w", err)
+		err = fmt.Errorf("predefined_users.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("predefined_users.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("predefined_users.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("predefined_users.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("predefined_users.Insert rows affected: %w", err)
 	}
 
 	return
@@ -126,6 +134,31 @@ func (m *defaultPredefinedUsersModel) SelectByPhone(ctx context.Context, phone s
 	return
 }
 
+// SelectByPhone
+// select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = :phone and deleted = 0 limit 1
+func (m *defaultPredefinedUsersTxModel) SelectByPhone(phone string) (rValue *PredefinedUsers, err error) {
+	var (
+		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
+		do    = &PredefinedUsers{}
+	)
+	err = m.tx.QueryRowPartial(do, query, phone)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "predefined_users",
+				Key:      fmt.Sprintf("phone=%v", phone),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("predefined_users.SelectByPhone: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectPredefinedUsersAll
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
 func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAll(ctx context.Context) (rList []PredefinedUsers, err error) {
@@ -134,6 +167,30 @@ func (m *defaultPredefinedUsersModel) SelectPredefinedUsersAll(ctx context.Conte
 		values []PredefinedUsers
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []PredefinedUsers{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("predefined_users.SelectPredefinedUsersAll: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectPredefinedUsersAll
+// select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
+func (m *defaultPredefinedUsersTxModel) SelectPredefinedUsersAll() (rList []PredefinedUsers, err error) {
+	var (
+		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
+		values []PredefinedUsers
+	)
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -206,23 +263,23 @@ func (m *defaultPredefinedUsersModel) Delete(ctx context.Context, phone string) 
 	return
 }
 
-// DeleteTx
+// Delete
 // update predefined_users set deleted = 0 where phone = :phone
-func (m *defaultPredefinedUsersModel) DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
+func (m *defaultPredefinedUsersTxModel) Delete(phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update predefined_users set deleted = 0 where phone = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, phone)
+	rResult, err = m.tx.Exec(query, phone)
 
 	if err != nil {
-		err = fmt.Errorf("predefined_users.DeleteTx exec: %w", err)
+		err = fmt.Errorf("predefined_users.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("predefined_users.DeleteTx rows affected: %w", err)
+		err = fmt.Errorf("predefined_users.Delete rows affected: %w", err)
 		return
 	}
 
@@ -263,9 +320,9 @@ func (m *defaultPredefinedUsersModel) Update(ctx context.Context, cMap map[strin
 	return
 }
 
-// UpdateTx
+// Update
 // update predefined_users set %s where phone = :phone
-func (m *defaultPredefinedUsersModel) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, phone string) (rowsAffected int64, err error) {
+func (m *defaultPredefinedUsersTxModel) Update(cMap map[string]interface{}, phone string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -280,16 +337,16 @@ func (m *defaultPredefinedUsersModel) UpdateTx(tx *sqlx.Tx, cMap map[string]inte
 
 	aValues = append(aValues, phone)
 
-	rResult, err = tx.Exec(query, aValues...)
+	rResult, err = m.tx.Exec(query, aValues...)
 
 	if err != nil {
-		err = fmt.Errorf("predefined_users.UpdateTx exec: %w", err)
+		err = fmt.Errorf("predefined_users.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("predefined_users.UpdateTx rows affected: %w", err)
+		err = fmt.Errorf("predefined_users.Update rows affected: %w", err)
 		return
 	}
 

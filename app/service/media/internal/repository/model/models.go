@@ -21,11 +21,27 @@ type Models struct {
 	VideoSizesModel VideoSizesModel
 }
 
+type TxModels struct {
+	DocumentsModel  DocumentsTxModel
+	PhotoSizesModel PhotoSizesTxModel
+	PhotosModel     PhotosTxModel
+	VideoSizesModel VideoSizesTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DocumentsModel:  NewDocumentsModel(db),
 		PhotoSizesModel: NewPhotoSizesModel(db),
 		PhotosModel:     NewPhotosModel(db),
 		VideoSizesModel: NewVideoSizesModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		DocumentsModel:  NewDocumentsTxModel(tx),
+		PhotoSizesModel: NewPhotoSizesTxModel(tx),
+		PhotosModel:     NewPhotosTxModel(tx),
+		VideoSizesModel: NewVideoSizesTxModel(tx),
 	}
 }

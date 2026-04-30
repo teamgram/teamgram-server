@@ -19,9 +19,21 @@ type Models struct {
 	UserPtsUpdatesModel UserPtsUpdatesModel
 }
 
+type TxModels struct {
+	AuthSeqUpdatesModel AuthSeqUpdatesTxModel
+	UserPtsUpdatesModel UserPtsUpdatesTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		AuthSeqUpdatesModel: NewAuthSeqUpdatesModel(db),
 		UserPtsUpdatesModel: NewUserPtsUpdatesModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		AuthSeqUpdatesModel: NewAuthSeqUpdatesTxModel(tx),
+		UserPtsUpdatesModel: NewUserPtsUpdatesTxModel(tx),
 	}
 }

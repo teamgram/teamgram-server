@@ -25,18 +25,27 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizUserSettingsModel interface {
-		InsertOrUpdate(ctx context.Context, data *UserSettings) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *UserSettings) (lastInsertId, rowsAffected int64, err error)
+type bizUserSettingsModel interface {
+	InsertOrUpdate(ctx context.Context, data *UserSettings) (lastInsertId, rowsAffected int64, err error)
+	SelectByKey(ctx context.Context, userId int64, key2 string) (*UserSettings, error)
+	Update(ctx context.Context, value string, userId int64, key2 string) (rowsAffected int64, err error)
+}
 
-		SelectByKey(ctx context.Context, userId int64, key2 string) (*UserSettings, error)
+type UserSettingsTxModel interface {
+	InsertOrUpdate(data *UserSettings) (lastInsertId, rowsAffected int64, err error)
+	SelectByKey(userId int64, key2 string) (*UserSettings, error)
+	Update(value string, userId int64, key2 string) (rowsAffected int64, err error)
+}
 
-		Update(ctx context.Context, value string, userId int64, key2 string) (rowsAffected int64, err error)
-		UpdateTx(tx *sqlx.Tx, value string, userId int64, key2 string) (rowsAffected int64, err error)
-	}
-)
+type defaultUserSettingsTxModel struct {
+	tx *sqlx.Tx
+}
+
+func NewUserSettingsTxModel(tx *sqlx.Tx) UserSettingsTxModel {
+	return &defaultUserSettingsTxModel{tx: tx}
+}
 
 // InsertOrUpdate
 // insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)
@@ -66,28 +75,28 @@ func (m *defaultUserSettingsModel) InsertOrUpdate(ctx context.Context, data *Use
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)
-func (m *defaultUserSettingsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *UserSettings) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultUserSettingsTxModel) InsertOrUpdate(data *UserSettings) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_settings(user_id, key2, value) values (:user_id, :key2, :value) on duplicate key update value = values(value)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("user_settings.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("user_settings.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_settings.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("user_settings.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -120,6 +129,31 @@ func (m *defaultUserSettingsModel) SelectByKey(ctx context.Context, userId int64
 	return
 }
 
+// SelectByKey
+// select id, user_id, key2, value from user_settings where user_id = :user_id and key2 = :key2 and deleted = 0 limit 1
+func (m *defaultUserSettingsTxModel) SelectByKey(userId int64, key2 string) (rValue *UserSettings, err error) {
+	var (
+		query = "select id, user_id, key2, value from user_settings where user_id = ? and key2 = ? and deleted = 0 limit 1"
+		do    = &UserSettings{}
+	)
+	err = m.tx.QueryRowPartial(do, query, userId, key2)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_settings",
+				Key:      fmt.Sprintf("user_id=%v,key2=%v", userId, key2),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("user_settings.SelectByKey: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // Update
 // update user_settings set value = :value, deleted = 0 where user_id = :user_id and key2 = :key2
 func (m *defaultUserSettingsModel) Update(ctx context.Context, value string, userId int64, key2 string) (rowsAffected int64, err error) {
@@ -145,23 +179,23 @@ func (m *defaultUserSettingsModel) Update(ctx context.Context, value string, use
 	return
 }
 
-// UpdateTx
+// Update
 // update user_settings set value = :value, deleted = 0 where user_id = :user_id and key2 = :key2
-func (m *defaultUserSettingsModel) UpdateTx(tx *sqlx.Tx, value string, userId int64, key2 string) (rowsAffected int64, err error) {
+func (m *defaultUserSettingsTxModel) Update(value string, userId int64, key2 string) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_settings set value = ?, deleted = 0 where user_id = ? and key2 = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, value, userId, key2)
+	rResult, err = m.tx.Exec(query, value, userId, key2)
 
 	if err != nil {
-		err = fmt.Errorf("user_settings.UpdateTx exec: %w", err)
+		err = fmt.Errorf("user_settings.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("user_settings.UpdateTx rows affected: %w", err)
+		err = fmt.Errorf("user_settings.Update rows affected: %w", err)
 		return
 	}
 

@@ -25,60 +25,61 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizChatParticipantsModel interface {
-		Insert(ctx context.Context, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
-		InsertTx(tx *sqlx.Tx, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+type bizChatParticipantsModel interface {
+	Insert(ctx context.Context, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	InsertBulk(ctx context.Context, doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	InsertOrUpdate(ctx context.Context, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	SelectList(ctx context.Context, chatId int64) ([]ChatParticipants, error)
+	SelectListWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
+	SelectChatParticipantIdList(ctx context.Context, chatId int64) ([]int64, error)
+	SelectChatParticipantIdListWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v int64)) ([]int64, error)
+	SelectByParticipantId(ctx context.Context, chatId int64, userId int64) (*ChatParticipants, error)
+	SelectListByParticipantIdList(ctx context.Context, chatId int64, idList []int64) ([]ChatParticipants, error)
+	SelectListByParticipantIdListWithCB(ctx context.Context, chatId int64, idList []int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
+	Update(ctx context.Context, participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error)
+	UpdateKicked(ctx context.Context, kickedAt int64, id int64) (rowsAffected int64, err error)
+	UpdateLeft(ctx context.Context, leftAt int64, id int64) (rowsAffected int64, err error)
+	UpdateParticipantType(ctx context.Context, participantType int32, id int64) (rowsAffected int64, err error)
+	SelectUsersChatIdList(ctx context.Context, idList []int64) ([]ChatParticipants, error)
+	SelectUsersChatIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
+	SelectMyAdminList(ctx context.Context, userId int64) ([]int64, error)
+	SelectMyAdminListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) ([]int64, error)
+	SelectMyAllList(ctx context.Context, userId int64) ([]int64, error)
+	SelectMyAllListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) ([]int64, error)
+	UpdateStateByChatId(ctx context.Context, state int32, chatId int64) (rowsAffected int64, err error)
+	UpdateLink(ctx context.Context, link string, chatId int64, userId int64) (rowsAffected int64, err error)
+	UpdateLinkUsage(ctx context.Context, usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error)
+}
 
-		InsertBulk(ctx context.Context, doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error)
-		InsertBulkTx(tx *sqlx.Tx, doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+type ChatParticipantsTxModel interface {
+	Insert(data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	InsertBulk(doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	InsertOrUpdate(data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+	SelectList(chatId int64) ([]ChatParticipants, error)
+	SelectChatParticipantIdList(chatId int64) ([]int64, error)
+	SelectByParticipantId(chatId int64, userId int64) (*ChatParticipants, error)
+	SelectListByParticipantIdList(chatId int64, idList []int64) ([]ChatParticipants, error)
+	Update(participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error)
+	UpdateKicked(kickedAt int64, id int64) (rowsAffected int64, err error)
+	UpdateLeft(leftAt int64, id int64) (rowsAffected int64, err error)
+	UpdateParticipantType(participantType int32, id int64) (rowsAffected int64, err error)
+	SelectUsersChatIdList(idList []int64) ([]ChatParticipants, error)
+	SelectMyAdminList(userId int64) ([]int64, error)
+	SelectMyAllList(userId int64) ([]int64, error)
+	UpdateStateByChatId(state int32, chatId int64) (rowsAffected int64, err error)
+	UpdateLink(link string, chatId int64, userId int64) (rowsAffected int64, err error)
+	UpdateLinkUsage(usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error)
+}
 
-		InsertOrUpdate(ctx context.Context, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error)
+type defaultChatParticipantsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectList(ctx context.Context, chatId int64) ([]ChatParticipants, error)
-		SelectListWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
-
-		SelectChatParticipantIdList(ctx context.Context, chatId int64) ([]int64, error)
-		SelectChatParticipantIdListWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v int64)) ([]int64, error)
-
-		SelectByParticipantId(ctx context.Context, chatId int64, userId int64) (*ChatParticipants, error)
-
-		SelectListByParticipantIdList(ctx context.Context, chatId int64, idList []int64) ([]ChatParticipants, error)
-		SelectListByParticipantIdListWithCB(ctx context.Context, chatId int64, idList []int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
-
-		Update(ctx context.Context, participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error)
-		UpdateTx(tx *sqlx.Tx, participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error)
-
-		UpdateKicked(ctx context.Context, kickedAt int64, id int64) (rowsAffected int64, err error)
-		UpdateKickedTx(tx *sqlx.Tx, kickedAt int64, id int64) (rowsAffected int64, err error)
-
-		UpdateLeft(ctx context.Context, leftAt int64, id int64) (rowsAffected int64, err error)
-		UpdateLeftTx(tx *sqlx.Tx, leftAt int64, id int64) (rowsAffected int64, err error)
-
-		UpdateParticipantType(ctx context.Context, participantType int32, id int64) (rowsAffected int64, err error)
-		UpdateParticipantTypeTx(tx *sqlx.Tx, participantType int32, id int64) (rowsAffected int64, err error)
-
-		SelectUsersChatIdList(ctx context.Context, idList []int64) ([]ChatParticipants, error)
-		SelectUsersChatIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *ChatParticipants)) ([]ChatParticipants, error)
-
-		SelectMyAdminList(ctx context.Context, userId int64) ([]int64, error)
-		SelectMyAdminListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) ([]int64, error)
-
-		SelectMyAllList(ctx context.Context, userId int64) ([]int64, error)
-		SelectMyAllListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) ([]int64, error)
-
-		UpdateStateByChatId(ctx context.Context, state int32, chatId int64) (rowsAffected int64, err error)
-		UpdateStateByChatIdTx(tx *sqlx.Tx, state int32, chatId int64) (rowsAffected int64, err error)
-
-		UpdateLink(ctx context.Context, link string, chatId int64, userId int64) (rowsAffected int64, err error)
-		UpdateLinkTx(tx *sqlx.Tx, link string, chatId int64, userId int64) (rowsAffected int64, err error)
-
-		UpdateLinkUsage(ctx context.Context, usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error)
-		UpdateLinkUsageTx(tx *sqlx.Tx, usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error)
-	}
-)
+func NewChatParticipantsTxModel(tx *sqlx.Tx) ChatParticipantsTxModel {
+	return &defaultChatParticipantsTxModel{tx: tx}
+}
 
 // Insert
 // insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
@@ -108,28 +109,28 @@ func (m *defaultChatParticipantsModel) Insert(ctx context.Context, data *ChatPar
 
 }
 
-// InsertTx
+// Insert
 // insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
-func (m *defaultChatParticipantsModel) InsertTx(tx *sqlx.Tx, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) Insert(data *ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertTx named exec: %w", err)
+		err = fmt.Errorf("chat_participants.Insert named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertTx last insert id: %w", err)
+		err = fmt.Errorf("chat_participants.Insert last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.Insert rows affected: %w", err)
 	}
 
 	return
@@ -166,9 +167,9 @@ func (m *defaultChatParticipantsModel) InsertBulk(ctx context.Context, doList []
 	return
 }
 
-// InsertBulkTx
+// InsertBulk
 // insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
-func (m *defaultChatParticipantsModel) InsertBulkTx(tx *sqlx.Tx, doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) InsertBulk(doList []*ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
@@ -178,20 +179,20 @@ func (m *defaultChatParticipantsModel) InsertBulkTx(tx *sqlx.Tx, doList []*ChatP
 		return
 	}
 
-	r, err = tx.NamedExec(query, doList)
+	r, err = m.tx.NamedExec(query, doList)
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertBulkTx named exec: %w", err)
+		err = fmt.Errorf("chat_participants.InsertBulk named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertBulkTx last insert id: %w", err)
+		err = fmt.Errorf("chat_participants.InsertBulk last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertBulkTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.InsertBulk rows affected: %w", err)
 	}
 
 	return
@@ -225,28 +226,28 @@ func (m *defaultChatParticipantsModel) InsertOrUpdate(ctx context.Context, data 
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)
-func (m *defaultChatParticipantsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) InsertOrUpdate(data *ChatParticipants) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("chat_participants.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("chat_participants.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -260,6 +261,30 @@ func (m *defaultChatParticipantsModel) SelectList(ctx context.Context, chatId in
 		values []ChatParticipants
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectList
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id
+func (m *defaultChatParticipantsTxModel) SelectList(chatId int64) (rList []ChatParticipants, err error) {
+	var (
+		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ?"
+		values []ChatParticipants
+	)
+	err = m.tx.QueryRowsPartial(&values, query, chatId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -312,6 +337,24 @@ func (m *defaultChatParticipantsModel) SelectListWithCB(ctx context.Context, cha
 func (m *defaultChatParticipantsModel) SelectChatParticipantIdList(ctx context.Context, chatId int64) (rList []int64, err error) {
 	var query = "select user_id from chat_participants where chat_id = ?"
 	err = m.db.QueryRowsPartial(ctx, &rList, query, chatId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectChatParticipantIdList: %w", err)
+	}
+
+	return
+}
+
+// SelectChatParticipantIdList
+// select user_id from chat_participants where chat_id = :chat_id
+func (m *defaultChatParticipantsTxModel) SelectChatParticipantIdList(chatId int64) (rList []int64, err error) {
+	var query = "select user_id from chat_participants where chat_id = ?"
+	err = m.tx.QueryRowsPartial(&rList, query, chatId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -378,6 +421,31 @@ func (m *defaultChatParticipantsModel) SelectByParticipantId(ctx context.Context
 	return
 }
 
+// SelectByParticipantId
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
+func (m *defaultChatParticipantsTxModel) SelectByParticipantId(chatId int64, userId int64) (rValue *ChatParticipants, err error) {
+	var (
+		query = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id = ?"
+		do    = &ChatParticipants{}
+	)
+	err = m.tx.QueryRowPartial(do, query, chatId, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "chat_participants",
+				Key:      fmt.Sprintf("chat_id=%v,user_id=%v", chatId, userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("chat_participants.SelectByParticipantId: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectListByParticipantIdList
 // select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
 func (m *defaultChatParticipantsModel) SelectListByParticipantIdList(ctx context.Context, chatId int64, idList []int64) (rList []ChatParticipants, err error) {
@@ -391,6 +459,35 @@ func (m *defaultChatParticipantsModel) SelectListByParticipantIdList(ctx context
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query, chatId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectListByParticipantIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectListByParticipantIdList
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
+func (m *defaultChatParticipantsTxModel) SelectListByParticipantIdList(chatId int64, idList []int64) (rList []ChatParticipants, err error) {
+	var (
+		query  = fmt.Sprintf("select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id in (%s)", sqlx.InInt64List(idList))
+		values []ChatParticipants
+	)
+	if len(idList) == 0 {
+		rList = []ChatParticipants{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query, chatId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -468,23 +565,23 @@ func (m *defaultChatParticipantsModel) Update(ctx context.Context, participantTy
 	return
 }
 
-// UpdateTx
+// Update
 // update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0, is_bot = :is_bot where id = :id
-func (m *defaultChatParticipantsModel) UpdateTx(tx *sqlx.Tx, participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) Update(participantType int32, inviterUserId int64, invitedAt int64, isBot bool, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0, is_bot = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, participantType, inviterUserId, invitedAt, isBot, id)
+	rResult, err = m.tx.Exec(query, participantType, inviterUserId, invitedAt, isBot, id)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.Update exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.Update rows affected: %w", err)
 		return
 	}
 
@@ -516,23 +613,23 @@ func (m *defaultChatParticipantsModel) UpdateKicked(ctx context.Context, kickedA
 	return
 }
 
-// UpdateKickedTx
+// UpdateKicked
 // update chat_participants set kicked_at = :kicked_at, left_at = 0, state = 2 where id = :id
-func (m *defaultChatParticipantsModel) UpdateKickedTx(tx *sqlx.Tx, kickedAt int64, id int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateKicked(kickedAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set kicked_at = ?, left_at = 0, state = 2 where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, kickedAt, id)
+	rResult, err = m.tx.Exec(query, kickedAt, id)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateKickedTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateKicked exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateKickedTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateKicked rows affected: %w", err)
 		return
 	}
 
@@ -564,23 +661,23 @@ func (m *defaultChatParticipantsModel) UpdateLeft(ctx context.Context, leftAt in
 	return
 }
 
-// UpdateLeftTx
+// UpdateLeft
 // update chat_participants set kicked_at = 0, left_at = :left_at, state = 1 where id = :id
-func (m *defaultChatParticipantsModel) UpdateLeftTx(tx *sqlx.Tx, leftAt int64, id int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateLeft(leftAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set kicked_at = 0, left_at = ?, state = 1 where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, leftAt, id)
+	rResult, err = m.tx.Exec(query, leftAt, id)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLeftTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLeft exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLeftTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLeft rows affected: %w", err)
 		return
 	}
 
@@ -612,23 +709,23 @@ func (m *defaultChatParticipantsModel) UpdateParticipantType(ctx context.Context
 	return
 }
 
-// UpdateParticipantTypeTx
+// UpdateParticipantType
 // update chat_participants set participant_type = :participant_type where id = :id
-func (m *defaultChatParticipantsModel) UpdateParticipantTypeTx(tx *sqlx.Tx, participantType int32, id int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateParticipantType(participantType int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, participantType, id)
+	rResult, err = m.tx.Exec(query, participantType, id)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateParticipantTypeTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateParticipantType exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateParticipantTypeTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateParticipantType rows affected: %w", err)
 		return
 	}
 
@@ -648,6 +745,35 @@ func (m *defaultChatParticipantsModel) SelectUsersChatIdList(ctx context.Context
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []ChatParticipants{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectUsersChatIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectUsersChatIdList
+// select chat_participants.chat_id as chat_id, chat_participants.user_id as user_id from chat_participants, chats where chat_participants.state = 0 and chat_participants.user_id in (:idList) and chats.id = chat_participants.chat_id and chats.deactivated = 0
+func (m *defaultChatParticipantsTxModel) SelectUsersChatIdList(idList []int64) (rList []ChatParticipants, err error) {
+	var (
+		query  = fmt.Sprintf("select chat_participants.chat_id as chat_id, chat_participants.user_id as user_id from chat_participants, chats where chat_participants.state = 0 and chat_participants.user_id in (%s) and chats.id = chat_participants.chat_id and chats.deactivated = 0", sqlx.InInt64List(idList))
+		values []ChatParticipants
+	)
+	if len(idList) == 0 {
+		rList = []ChatParticipants{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -718,6 +844,24 @@ func (m *defaultChatParticipantsModel) SelectMyAdminList(ctx context.Context, us
 	return
 }
 
+// SelectMyAdminList
+// select chat_id from chat_participants where user_id = :user_id and participant_type = 1 and state = 0
+func (m *defaultChatParticipantsTxModel) SelectMyAdminList(userId int64) (rList []int64, err error) {
+	var query = "select chat_id from chat_participants where user_id = ? and participant_type = 1 and state = 0"
+	err = m.tx.QueryRowsPartial(&rList, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectMyAdminList: %w", err)
+	}
+
+	return
+}
+
 // SelectMyAdminListWithCB
 // select chat_id from chat_participants where user_id = :user_id and participant_type = 1 and state = 0
 func (m *defaultChatParticipantsModel) SelectMyAdminListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) (rList []int64, err error) {
@@ -749,6 +893,24 @@ func (m *defaultChatParticipantsModel) SelectMyAdminListWithCB(ctx context.Conte
 func (m *defaultChatParticipantsModel) SelectMyAllList(ctx context.Context, userId int64) (rList []int64, err error) {
 	var query = "select chat_id from chat_participants where user_id = ? and state = 0"
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []int64{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("chat_participants.SelectMyAllList: %w", err)
+	}
+
+	return
+}
+
+// SelectMyAllList
+// select chat_id from chat_participants where user_id = :user_id and state = 0
+func (m *defaultChatParticipantsTxModel) SelectMyAllList(userId int64) (rList []int64, err error) {
+	var query = "select chat_id from chat_participants where user_id = ? and state = 0"
+	err = m.tx.QueryRowsPartial(&rList, query, userId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -813,23 +975,23 @@ func (m *defaultChatParticipantsModel) UpdateStateByChatId(ctx context.Context, 
 	return
 }
 
-// UpdateStateByChatIdTx
+// UpdateStateByChatId
 // update chat_participants set state = :state where chat_id = :chat_id and state = 0
-func (m *defaultChatParticipantsModel) UpdateStateByChatIdTx(tx *sqlx.Tx, state int32, chatId int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateStateByChatId(state int32, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set state = ? where chat_id = ? and state = 0"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, state, chatId)
+	rResult, err = m.tx.Exec(query, state, chatId)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateStateByChatIdTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateStateByChatId exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateStateByChatIdTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateStateByChatId rows affected: %w", err)
 		return
 	}
 
@@ -861,23 +1023,23 @@ func (m *defaultChatParticipantsModel) UpdateLink(ctx context.Context, link stri
 	return
 }
 
-// UpdateLinkTx
+// UpdateLink
 // update chat_participants set link = :link where chat_id = :chat_id and user_id = :user_id
-func (m *defaultChatParticipantsModel) UpdateLinkTx(tx *sqlx.Tx, link string, chatId int64, userId int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateLink(link string, chatId int64, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set link = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, link, chatId, userId)
+	rResult, err = m.tx.Exec(query, link, chatId, userId)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLinkTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLink exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLinkTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLink rows affected: %w", err)
 		return
 	}
 
@@ -909,23 +1071,23 @@ func (m *defaultChatParticipantsModel) UpdateLinkUsage(ctx context.Context, usag
 	return
 }
 
-// UpdateLinkUsageTx
+// UpdateLinkUsage
 // update chat_participants set usage2 = :usage2 where chat_id = :chat_id and user_id = :user_id
-func (m *defaultChatParticipantsModel) UpdateLinkUsageTx(tx *sqlx.Tx, usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error) {
+func (m *defaultChatParticipantsTxModel) UpdateLinkUsage(usage2 int32, chatId int64, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set usage2 = ? where chat_id = ? and user_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, usage2, chatId, userId)
+	rResult, err = m.tx.Exec(query, usage2, chatId, userId)
 
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLinkUsageTx exec: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLinkUsage exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("chat_participants.UpdateLinkUsageTx rows affected: %w", err)
+		err = fmt.Errorf("chat_participants.UpdateLinkUsage rows affected: %w", err)
 		return
 	}
 

@@ -21,11 +21,27 @@ type Models struct {
 	SavedDialogsModel  SavedDialogsModel
 }
 
+type TxModels struct {
+	DialogFiltersModel DialogFiltersTxModel
+	DialogsModel       DialogsTxModel
+	DraftsModel        DraftsTxModel
+	SavedDialogsModel  SavedDialogsTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DialogFiltersModel: NewDialogFiltersModel(db),
 		DialogsModel:       NewDialogsModel(db),
 		DraftsModel:        NewDraftsModel(db),
 		SavedDialogsModel:  NewSavedDialogsModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		DialogFiltersModel: NewDialogFiltersTxModel(tx),
+		DialogsModel:       NewDialogsTxModel(tx),
+		DraftsModel:        NewDraftsTxModel(tx),
+		SavedDialogsModel:  NewSavedDialogsTxModel(tx),
 	}
 }

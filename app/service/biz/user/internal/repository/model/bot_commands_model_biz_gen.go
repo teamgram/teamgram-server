@@ -25,25 +25,33 @@ var _ = fmt.Sprintf
 var _ = strings.Join
 var _ = errors.Is
 var _ *sqlx.DB
+var _ *sqlx.Tx
 
-type (
-	bizBotCommandsModel interface {
-		InsertBulk(ctx context.Context, doList []*BotCommands) (lastInsertId, rowsAffected int64, err error)
-		InsertBulkTx(tx *sqlx.Tx, doList []*BotCommands) (lastInsertId, rowsAffected int64, err error)
+type bizBotCommandsModel interface {
+	InsertBulk(ctx context.Context, doList []*BotCommands) (lastInsertId, rowsAffected int64, err error)
+	Delete(ctx context.Context, botId int64) (rowsAffected int64, err error)
+	InsertOrUpdate(ctx context.Context, data *BotCommands) (lastInsertId, rowsAffected int64, err error)
+	SelectList(ctx context.Context, botId int64) ([]BotCommands, error)
+	SelectListWithCB(ctx context.Context, botId int64, cb func(sz, i int, v *BotCommands)) ([]BotCommands, error)
+	SelectListByIdList(ctx context.Context, idList []int32) ([]BotCommands, error)
+	SelectListByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *BotCommands)) ([]BotCommands, error)
+}
 
-		Delete(ctx context.Context, botId int64) (rowsAffected int64, err error)
-		DeleteTx(tx *sqlx.Tx, botId int64) (rowsAffected int64, err error)
+type BotCommandsTxModel interface {
+	InsertBulk(doList []*BotCommands) (lastInsertId, rowsAffected int64, err error)
+	Delete(botId int64) (rowsAffected int64, err error)
+	InsertOrUpdate(data *BotCommands) (lastInsertId, rowsAffected int64, err error)
+	SelectList(botId int64) ([]BotCommands, error)
+	SelectListByIdList(idList []int32) ([]BotCommands, error)
+}
 
-		InsertOrUpdate(ctx context.Context, data *BotCommands) (lastInsertId, rowsAffected int64, err error)
-		InsertOrUpdateTx(tx *sqlx.Tx, data *BotCommands) (lastInsertId, rowsAffected int64, err error)
+type defaultBotCommandsTxModel struct {
+	tx *sqlx.Tx
+}
 
-		SelectList(ctx context.Context, botId int64) ([]BotCommands, error)
-		SelectListWithCB(ctx context.Context, botId int64, cb func(sz, i int, v *BotCommands)) ([]BotCommands, error)
-
-		SelectListByIdList(ctx context.Context, idList []int32) ([]BotCommands, error)
-		SelectListByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *BotCommands)) ([]BotCommands, error)
-	}
-)
+func NewBotCommandsTxModel(tx *sqlx.Tx) BotCommandsTxModel {
+	return &defaultBotCommandsTxModel{tx: tx}
+}
 
 // InsertBulk
 // insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)
@@ -76,9 +84,9 @@ func (m *defaultBotCommandsModel) InsertBulk(ctx context.Context, doList []*BotC
 	return
 }
 
-// InsertBulkTx
+// InsertBulk
 // insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)
-func (m *defaultBotCommandsModel) InsertBulkTx(tx *sqlx.Tx, doList []*BotCommands) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultBotCommandsTxModel) InsertBulk(doList []*BotCommands) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)"
 		r     sql.Result
@@ -88,20 +96,20 @@ func (m *defaultBotCommandsModel) InsertBulkTx(tx *sqlx.Tx, doList []*BotCommand
 		return
 	}
 
-	r, err = tx.NamedExec(query, doList)
+	r, err = m.tx.NamedExec(query, doList)
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertBulkTx named exec: %w", err)
+		err = fmt.Errorf("bot_commands.InsertBulk named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertBulkTx last insert id: %w", err)
+		err = fmt.Errorf("bot_commands.InsertBulk last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertBulkTx rows affected: %w", err)
+		err = fmt.Errorf("bot_commands.InsertBulk rows affected: %w", err)
 	}
 
 	return
@@ -131,23 +139,23 @@ func (m *defaultBotCommandsModel) Delete(ctx context.Context, botId int64) (rows
 	return
 }
 
-// DeleteTx
+// Delete
 // delete from bot_commands where bot_id = :bot_id
-func (m *defaultBotCommandsModel) DeleteTx(tx *sqlx.Tx, botId int64) (rowsAffected int64, err error) {
+func (m *defaultBotCommandsTxModel) Delete(botId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from bot_commands where bot_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, botId)
+	rResult, err = m.tx.Exec(query, botId)
 
 	if err != nil {
-		err = fmt.Errorf("bot_commands.DeleteTx exec: %w", err)
+		err = fmt.Errorf("bot_commands.Delete exec: %w", err)
 		return
 	}
 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("bot_commands.DeleteTx rows affected: %w", err)
+		err = fmt.Errorf("bot_commands.Delete rows affected: %w", err)
 		return
 	}
 
@@ -182,28 +190,28 @@ func (m *defaultBotCommandsModel) InsertOrUpdate(ctx context.Context, data *BotC
 
 }
 
-// InsertOrUpdateTx
+// InsertOrUpdate
 // insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)
-func (m *defaultBotCommandsModel) InsertOrUpdateTx(tx *sqlx.Tx, data *BotCommands) (lastInsertId, rowsAffected int64, err error) {
+func (m *defaultBotCommandsTxModel) InsertOrUpdate(data *BotCommands) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into bot_commands(bot_id, command, description) values (:bot_id, :command, :description)"
 		r     sql.Result
 	)
 
-	r, err = tx.NamedExec(query, data)
+	r, err = m.tx.NamedExec(query, data)
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertOrUpdateTx named exec: %w", err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate named exec: %w", err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertOrUpdateTx last insert id: %w", err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate last insert id: %w", err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		err = fmt.Errorf("bot_commands.InsertOrUpdateTx rows affected: %w", err)
+		err = fmt.Errorf("bot_commands.InsertOrUpdate rows affected: %w", err)
 	}
 
 	return
@@ -217,6 +225,30 @@ func (m *defaultBotCommandsModel) SelectList(ctx context.Context, botId int64) (
 		values []BotCommands
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, botId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("bot_commands.SelectList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectList
+// select id, bot_id, command, description from bot_commands where bot_id = :bot_id
+func (m *defaultBotCommandsTxModel) SelectList(botId int64) (rList []BotCommands, err error) {
+	var (
+		query  = "select id, bot_id, command, description from bot_commands where bot_id = ?"
+		values []BotCommands
+	)
+	err = m.tx.QueryRowsPartial(&values, query, botId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -277,6 +309,35 @@ func (m *defaultBotCommandsModel) SelectListByIdList(ctx context.Context, idList
 	}
 
 	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []BotCommands{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("bot_commands.SelectListByIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectListByIdList
+// select id, bot_id, command, description from bot_commands where bot_id in (:id_list)
+func (m *defaultBotCommandsTxModel) SelectListByIdList(idList []int32) (rList []BotCommands, err error) {
+	var (
+		query  = fmt.Sprintf("select id, bot_id, command, description from bot_commands where bot_id in (%s)", sqlx.InInt32List(idList))
+		values []BotCommands
+	)
+	if len(idList) == 0 {
+		rList = []BotCommands{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {

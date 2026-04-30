@@ -21,11 +21,27 @@ type Models struct {
 	ChatsModel                  ChatsModel
 }
 
+type TxModels struct {
+	ChatInviteParticipantsModel ChatInviteParticipantsTxModel
+	ChatInvitesModel            ChatInvitesTxModel
+	ChatParticipantsModel       ChatParticipantsTxModel
+	ChatsModel                  ChatsTxModel
+}
+
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		ChatInviteParticipantsModel: NewChatInviteParticipantsModel(db),
 		ChatInvitesModel:            NewChatInvitesModel(db),
 		ChatParticipantsModel:       NewChatParticipantsModel(db),
 		ChatsModel:                  NewChatsModel(db),
+	}
+}
+
+func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
+	return &TxModels{
+		ChatInviteParticipantsModel: NewChatInviteParticipantsTxModel(tx),
+		ChatInvitesModel:            NewChatInvitesTxModel(tx),
+		ChatParticipantsModel:       NewChatParticipantsTxModel(tx),
+		ChatsModel:                  NewChatsTxModel(tx),
 	}
 }
