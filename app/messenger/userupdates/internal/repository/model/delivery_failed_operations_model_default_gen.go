@@ -61,6 +61,7 @@ type (
 		FailureMessage       string `db:"failure_message" json:"failure_message"`
 		RetryCount           int32  `db:"retry_count" json:"retry_count"`
 		Status               int32  `db:"status" json:"status"`
+		FailedAt             string `db:"failed_at" json:"failed_at"`
 		ReplayedAt           string `db:"replayed_at" json:"replayed_at"`
 		ReplayedBy           string `db:"replayed_by" json:"replayed_by"`
 	}
@@ -74,9 +75,9 @@ func newDeliveryFailedOperationsModel(db *sqlx.DB) *defaultDeliveryFailedOperati
 
 func (m *defaultDeliveryFailedOperationsModel) Insert2(ctx context.Context, data *DeliveryFailedOperations) (sql.Result, error) {
 	tableName := "delivery_failed_operations"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, deliveryFailedOperationsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, deliveryFailedOperationsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.BucketId, data.KafkaTopic, data.KafkaPartition, data.KafkaOffset, data.PayloadSchemaVersion, data.PayloadHash, data.FailureCategory, data.FailureCode, data.FailureMessage, data.RetryCount, data.Status, data.ReplayedAt, data.ReplayedBy)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.BucketId, data.KafkaTopic, data.KafkaPartition, data.KafkaOffset, data.PayloadSchemaVersion, data.PayloadHash, data.FailureCategory, data.FailureCode, data.FailureMessage, data.RetryCount, data.Status, data.FailedAt, data.ReplayedAt, data.ReplayedBy)
 	if err != nil {
 		return nil, fmt.Errorf("delivery_failed_operations.Insert2 exec: %w", err)
 	}
@@ -141,7 +142,7 @@ func (m *defaultDeliveryFailedOperationsModel) Update2(ctx context.Context, data
 	tableName := "delivery_failed_operations"
 	query := fmt.Sprintf("update `%s` set %s where `failed_id` = ?", tableName, deliveryFailedOperationsRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.BucketId, data.KafkaTopic, data.KafkaPartition, data.KafkaOffset, data.PayloadSchemaVersion, data.PayloadHash, data.FailureCategory, data.FailureCode, data.FailureMessage, data.RetryCount, data.Status, data.ReplayedAt, data.ReplayedBy, data.FailedId)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.BucketId, data.KafkaTopic, data.KafkaPartition, data.KafkaOffset, data.PayloadSchemaVersion, data.PayloadHash, data.FailureCategory, data.FailureCode, data.FailureMessage, data.RetryCount, data.Status, data.FailedAt, data.ReplayedAt, data.ReplayedBy, data.FailedId)
 	if err != nil {
 		return fmt.Errorf("delivery_failed_operations.Update2 exec: %w", err)
 	}

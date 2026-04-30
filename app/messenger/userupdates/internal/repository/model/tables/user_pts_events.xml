@@ -12,7 +12,7 @@
     <operation name="SelectByOperation">
         <sql>
             SELECT
-                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash
             FROM
                 user_pts_events
             WHERE
@@ -23,7 +23,7 @@
     <operation name="SelectLatestPts">
         <sql>
             SELECT
-                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash
             FROM
                 user_pts_events
             WHERE
@@ -39,7 +39,7 @@
         </params>
         <sql>
             SELECT
-                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at
+                user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash
             FROM
                 user_pts_events
             WHERE

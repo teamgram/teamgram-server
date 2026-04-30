@@ -3,16 +3,16 @@
     <operation name="Insert">
         <sql>
             INSERT INTO delivery_failed_operations
-                (failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, replayed_at, replayed_by)
+                (failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, failed_at)
             VALUES
-                (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :replayed_at, :replayed_by)
+                (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :failed_at)
         </sql>
     </operation>
 
     <operation name="SelectByKafkaOffset">
         <sql>
             SELECT
-                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, replayed_at, replayed_by
+                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, failed_at
             FROM
                 delivery_failed_operations
             WHERE
@@ -23,7 +23,7 @@
     <operation name="SelectByUserOperation">
         <sql>
             SELECT
-                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, replayed_at, replayed_by
+                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, failed_at
             FROM
                 delivery_failed_operations
             WHERE
@@ -37,13 +37,13 @@
         </params>
         <sql>
             SELECT
-                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, replayed_at, replayed_by
+                failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, status, failed_at
             FROM
                 delivery_failed_operations
             WHERE
                 bucket_id = :bucket_id AND status = :status
             ORDER BY
-                created_at LIMIT :limit
+                failed_at, failed_id LIMIT :limit
         </sql>
     </operation>
 

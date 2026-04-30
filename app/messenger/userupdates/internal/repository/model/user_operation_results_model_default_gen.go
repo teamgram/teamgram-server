@@ -51,6 +51,7 @@ type (
 		ResponsePayload       []byte `db:"response_payload" json:"response_payload"`
 		ResponsePayloadHash   []byte `db:"response_payload_hash" json:"response_payload_hash"`
 		TerminalErrorCode     string `db:"terminal_error_code" json:"terminal_error_code"`
+		CompletedAt           string `db:"completed_at" json:"completed_at"`
 	}
 )
 
@@ -62,9 +63,9 @@ func newUserOperationResultsModel(db *sqlx.DB) *defaultUserOperationResultsModel
 
 func (m *defaultUserOperationResultsModel) Insert2(ctx context.Context, data *UserOperationResults) (sql.Result, error) {
 	tableName := "user_operation_results"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userOperationResultsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userOperationResultsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.Status, data.Pts, data.PtsCount, data.PayloadHash, data.ResponseSchemaVersion, data.ResponseCodec, data.ResponsePayload, data.ResponsePayloadHash, data.TerminalErrorCode)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.OperationId, data.OpType, data.Status, data.Pts, data.PtsCount, data.PayloadHash, data.ResponseSchemaVersion, data.ResponseCodec, data.ResponsePayload, data.ResponsePayloadHash, data.TerminalErrorCode, data.CompletedAt)
 	if err != nil {
 		return nil, fmt.Errorf("user_operation_results.Insert2 exec: %w", err)
 	}

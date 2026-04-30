@@ -106,11 +106,11 @@ func (m *defaultUserPtsEventsTxModel) Insert(data *UserPtsEvents) (lastInsertId,
 }
 
 // SelectByOperation
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and operation_id = :operation_id limit 1
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultUserPtsEventsModel) SelectByOperation(ctx context.Context, userId int64, operationId string) (rValue *UserPtsEvents, err error) {
 
 	var (
-		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and operation_id = ? limit 1"
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? and operation_id = ? limit 1"
 		do    = &UserPtsEvents{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId, operationId)
@@ -133,10 +133,10 @@ func (m *defaultUserPtsEventsModel) SelectByOperation(ctx context.Context, userI
 }
 
 // SelectByOperation
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and operation_id = :operation_id limit 1
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultUserPtsEventsTxModel) SelectByOperation(userId int64, operationId string) (rValue *UserPtsEvents, err error) {
 	var (
-		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and operation_id = ? limit 1"
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? and operation_id = ? limit 1"
 		do    = &UserPtsEvents{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId, operationId)
@@ -158,11 +158,11 @@ func (m *defaultUserPtsEventsTxModel) SelectByOperation(userId int64, operationI
 }
 
 // SelectLatestPts
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id order by pts desc limit 1
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id order by pts desc limit 1
 func (m *defaultUserPtsEventsModel) SelectLatestPts(ctx context.Context, userId int64) (rValue *UserPtsEvents, err error) {
 
 	var (
-		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? order by pts desc limit 1"
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? order by pts desc limit 1"
 		do    = &UserPtsEvents{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId)
@@ -185,10 +185,10 @@ func (m *defaultUserPtsEventsModel) SelectLatestPts(ctx context.Context, userId 
 }
 
 // SelectLatestPts
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id order by pts desc limit 1
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id order by pts desc limit 1
 func (m *defaultUserPtsEventsTxModel) SelectLatestPts(userId int64) (rValue *UserPtsEvents, err error) {
 	var (
-		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? order by pts desc limit 1"
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? order by pts desc limit 1"
 		do    = &UserPtsEvents{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId)
@@ -210,10 +210,10 @@ func (m *defaultUserPtsEventsTxModel) SelectLatestPts(userId int64) (rValue *Use
 }
 
 // SelectByGtPts
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
 func (m *defaultUserPtsEventsModel) SelectByGtPts(ctx context.Context, userId int64, pts int64, limit int32) (rList []UserPtsEvents, err error) {
 	var (
-		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
+		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
 		values []UserPtsEvents
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts, limit)
@@ -234,10 +234,10 @@ func (m *defaultUserPtsEventsModel) SelectByGtPts(ctx context.Context, userId in
 }
 
 // SelectByGtPts
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
 func (m *defaultUserPtsEventsTxModel) SelectByGtPts(userId int64, pts int64, limit int32) (rList []UserPtsEvents, err error) {
 	var (
-		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
+		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
 		values []UserPtsEvents
 	)
 	err = m.tx.QueryRowsPartial(&values, query, userId, pts, limit)
@@ -258,10 +258,10 @@ func (m *defaultUserPtsEventsTxModel) SelectByGtPts(userId int64, pts int64, lim
 }
 
 // SelectByGtPtsWithCB
-// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
 func (m *defaultUserPtsEventsModel) SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int64, limit int32, cb func(sz, i int, v *UserPtsEvents)) (rList []UserPtsEvents, err error) {
 	var (
-		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
+		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
 		values []UserPtsEvents
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, pts, limit)

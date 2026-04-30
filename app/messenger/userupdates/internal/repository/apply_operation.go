@@ -339,6 +339,7 @@ func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput,
 		ResponsePayload:       responsePayload,
 		ResponsePayloadHash:   responseHash,
 		TerminalErrorCode:     "",
+		CompletedAt:           mysqlNow(),
 	})
 	if err != nil {
 		return storageError("insert operation result", err)
