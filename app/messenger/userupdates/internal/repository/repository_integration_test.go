@@ -130,7 +130,7 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		firstTaskID := base + 70_001
 		secondTaskID := base + 70_002
 		futureTaskID := base + 70_003
-		status := int32(91_001)
+		status := int32(100_000 + base%1_000_000_000)
 
 		insertTestPushTask(t, ctx, db, secondTaskID, status, past)
 		insertTestPushTask(t, ctx, db, firstTaskID, status, past)
