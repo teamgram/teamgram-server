@@ -18,6 +18,7 @@
 package config
 
 import (
+	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
@@ -27,4 +28,6 @@ type Config struct {
 	Mysql       sqlx.Config         `json:",optional"`
 	Idgen       kitex.RpcClientConf `json:",optional"`
 	Userupdates kitex.RpcClientConf `json:",optional"`
+	// ReceiverOperations is nil when durable receiver production is disabled.
+	ReceiverOperations *kafka.KafkaProducerConf `json:",optional"`
 }

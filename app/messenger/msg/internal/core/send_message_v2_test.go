@@ -212,14 +212,18 @@ func (f *fakeUserUpdatesClient) UserupdatesGetOperationResult(_ context.Context,
 }
 
 type fakeReceiverPublisher struct {
-	calls     int
-	published repository.ReceiverOperation
+	calls      int
+	published  repository.ReceiverOperation
+	publishErr error
 }
 
-func (f *fakeReceiverPublisher) Publish(_ context.Context, op repository.ReceiverOperation) error {
+func (f *fakeReceiverPublisher) Publish(_ context.Context, op repository.ReceiverOperation) (repository.KafkaAck, error) {
 	f.calls++
 	f.published = op
-	return nil
+	if f.publishErr != nil {
+		return repository.KafkaAck{}, f.publishErr
+	}
+	return repository.KafkaAck{Topic: "memory", Partition: op.PartitionID, Offset: 0}, nil
 }
 
 func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.TLMsgSendMessageV2 {

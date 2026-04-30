@@ -22,6 +22,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
+	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/event"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -49,20 +50,39 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if hasRPCClientConfig(c.Userupdates) {
 		updates = userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
 	}
-	return &ServiceContext{
+	sc := &ServiceContext{
 		Config:      c,
 		Repo:        repository.NewRepository(c),
 		UserUpdates: updates,
 	}
+	if c.ReceiverOperations != nil {
+		publisher, err := receiverevent.NewKafkaReceiverOperationPublisher(c.ReceiverOperations)
+		if err != nil {
+			panic(err)
+		}
+		sc.ReceiverPublisher = publisher
+	}
+	return sc
 }
+
 func (s *ServiceContext) Close() error {
-	if s == nil || s.Repo == nil {
+	if s == nil {
 		return nil
 	}
-	if closer, ok := s.Repo.(interface{ Close() error }); ok {
-		return closer.Close()
+	var closeErr error
+	if s.Repo != nil {
+		if closer, ok := s.Repo.(interface{ Close() error }); ok {
+			closeErr = closer.Close()
+		}
 	}
-	return nil
+	if s.ReceiverPublisher != nil {
+		if closer, ok := s.ReceiverPublisher.(interface{ Close() error }); ok {
+			if err := closer.Close(); err != nil && closeErr == nil {
+				closeErr = err
+			}
+		}
+	}
+	return closeErr
 }
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {

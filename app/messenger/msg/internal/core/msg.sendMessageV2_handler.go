@@ -105,9 +105,17 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	if c.svcCtx.ReceiverPublisher == nil {
 		return nil, msg.ErrReceiverBackpressure
 	}
-	if err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp); err != nil {
+	ack, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp)
+	if err != nil {
 		return nil, fmt.Errorf("%w: %v", msg.ErrReceiverBackpressure, err)
 	}
+	c.Logger.Debugf(
+		"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",
+		receiverOp.OperationID,
+		ack.Topic,
+		ack.Partition,
+		ack.Offset,
+	)
 	if err := c.svcCtx.Repo.MarkReceiverOpsAcked(c.ctx, canonical.SendStateID, 0); err != nil {
 		return nil, err
 	}

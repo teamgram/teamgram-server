@@ -21,3 +21,9 @@ Userupdates:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.userupdates
+
+ReceiverOperations:
+  Brokers:
+    - 127.0.0.1:9092
+  Topic: userupdates.receiver_operations.v1
+  ProducerAck: wait_for_all
