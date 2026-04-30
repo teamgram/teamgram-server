@@ -25,6 +25,24 @@
 	        </sql>
 	    </operation>
 
+    <operation name="SelectDueForPublish" result_set="list">
+        <params>
+            <param name="pending_status" type="int32" />
+            <param name="failed_retryable_status" type="int32" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code
+            FROM
+                push_task_outbox
+            WHERE
+                status IN (:pending_status, :failed_retryable_status) AND available_at &lt;= :available_at
+            ORDER BY
+                available_at, task_id LIMIT :limit
+        </sql>
+    </operation>
+
     <operation name="MarkPublishing">
         <sql>
             UPDATE
@@ -34,6 +52,27 @@
                 publish_attempts = publish_attempts + 1
             WHERE
                 task_id = :task_id
+        </sql>
+    </operation>
+
+    <operation name="TryMarkPublishingDue">
+        <params>
+            <param name="lease_expires_at" type="string" />
+            <param name="pending_status" type="int32" />
+            <param name="failed_retryable_status" type="int32" />
+            <param name="now" type="string" />
+        </params>
+        <sql>
+            UPDATE
+                push_task_outbox
+            SET
+                status = :status,
+                publish_attempts = publish_attempts + 1,
+                available_at = :lease_expires_at
+            WHERE
+                task_id = :task_id
+                AND status IN (:pending_status, :failed_retryable_status)
+                AND available_at &lt;= :now
         </sql>
     </operation>
 
@@ -63,6 +102,26 @@
 	                last_error_code = :last_error_code
 	            WHERE
                 task_id = :task_id
+        </sql>
+    </operation>
+
+    <operation name="ResetExpiredPublishing">
+        <params>
+            <param name="pending_status" type="int32" />
+            <param name="publishing_status" type="int32" />
+            <param name="expired_at" type="string" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            UPDATE
+                push_task_outbox
+            SET
+                status = :pending_status,
+                available_at = :available_at
+            WHERE
+                status = :publishing_status
+                AND available_at &lt;= :expired_at
+            LIMIT :limit
         </sql>
     </operation>
 </table>
