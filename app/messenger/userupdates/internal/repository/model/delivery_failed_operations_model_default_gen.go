@@ -13,7 +13,9 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"errors"
+
 	"fmt"
 	"strings"
 
@@ -55,7 +57,7 @@ type (
 		KafkaPartition       int32  `db:"kafka_partition" json:"kafka_partition"`
 		KafkaOffset          int64  `db:"kafka_offset" json:"kafka_offset"`
 		PayloadSchemaVersion int32  `db:"payload_schema_version" json:"payload_schema_version"`
-		PayloadHash          string `db:"payload_hash" json:"payload_hash"`
+		PayloadHash          []byte `db:"payload_hash" json:"payload_hash"`
 		FailureCategory      int32  `db:"failure_category" json:"failure_category"`
 		FailureCode          string `db:"failure_code" json:"failure_code"`
 		FailureMessage       string `db:"failure_message" json:"failure_message"`

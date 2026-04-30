@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -240,9 +239,5 @@ func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.T
 
 func mustHashBytes(t *testing.T, b []byte) []byte {
 	t.Helper()
-	out, err := hex.DecodeString(payload.HashBytes(b))
-	if err != nil {
-		t.Fatalf("decode hash: %v", err)
-	}
-	return out
+	return payload.HashBytes(b)
 }

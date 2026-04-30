@@ -3,16 +3,16 @@
     <operation name="InsertIgnore">
         <sql>
             INSERT IGNORE INTO user_pts_state
-                (user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version, created_at, updated_at)
+                (user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version)
             VALUES
-                (:user_id, :pts, :pts_updated_at, :partition_id, :owner_epoch, :row_version, NOW(6), NOW(6))
+                (:user_id, :pts, :pts_updated_at, :partition_id, :owner_epoch, :row_version)
         </sql>
     </operation>
 
     <operation name="SelectByUserId">
         <sql>
             SELECT
-                user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version, created_at, updated_at
+                user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version
             FROM
                 user_pts_state
             WHERE
@@ -23,7 +23,7 @@
     <operation name="SelectForUpdate">
         <sql>
             SELECT
-                user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version, created_at, updated_at
+                user_id, pts, pts_updated_at, partition_id, owner_epoch, row_version
             FROM
                 user_pts_state
             WHERE
@@ -40,8 +40,7 @@
                 pts_updated_at = :pts_updated_at,
                 partition_id = :partition_id,
                 owner_epoch = :owner_epoch,
-                row_version = row_version + 1,
-                updated_at = NOW(6)
+                row_version = row_version + 1
             WHERE
                 user_id = :user_id
         </sql>

@@ -3,16 +3,16 @@
     <operation name="InsertIgnore">
         <sql>
             INSERT IGNORE INTO userupdates_partition_fences
-                (partition_id, owner_epoch, owner_instance_id, lease_id, lease_expires_at, created_at, updated_at)
+                (partition_id, owner_epoch, owner_instance_id, lease_id)
             VALUES
-                (:partition_id, :owner_epoch, :owner_instance_id, :lease_id, :lease_expires_at, NOW(6), NOW(6))
+                (:partition_id, :owner_epoch, :owner_instance_id, :lease_id)
         </sql>
     </operation>
 
     <operation name="SelectByPartitionId">
         <sql>
             SELECT
-                partition_id, owner_epoch, owner_instance_id, lease_id, lease_expires_at, created_at, updated_at
+                partition_id, owner_epoch, owner_instance_id
             FROM
                 userupdates_partition_fences
             WHERE
@@ -30,9 +30,7 @@
             SET
                 owner_epoch = owner_epoch + 1,
                 owner_instance_id = :owner_instance_id,
-                lease_id = :lease_id,
-                lease_expires_at = :lease_expires_at,
-                updated_at = NOW(6)
+                lease_id = :lease_id
             WHERE
                 partition_id = :partition_id AND owner_epoch = :prevOwnerEpoch
         </sql>

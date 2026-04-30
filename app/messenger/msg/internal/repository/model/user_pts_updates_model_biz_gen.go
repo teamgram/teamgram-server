@@ -32,8 +32,10 @@ type (
 		InsertTx(tx *sqlx.Tx, data *UserPtsUpdates) (lastInsertId, rowsAffected int64, err error)
 
 		SelectLastPts(ctx context.Context, userId int64) (*UserPtsUpdates, error)
+		SelectLastPtsTx(tx *sqlx.Tx, userId int64) (*UserPtsUpdates, error)
 
 		SelectByGtPts(ctx context.Context, userId int64, pts int32) ([]UserPtsUpdates, error)
+		SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int32) ([]UserPtsUpdates, error)
 		SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int32, cb func(sz, i int, v *UserPtsUpdates)) ([]UserPtsUpdates, error)
 	}
 )
@@ -120,6 +122,31 @@ func (m *defaultUserPtsUpdatesModel) SelectLastPts(ctx context.Context, userId i
 	return
 }
 
+// SelectLastPtsTx
+// select pts from user_pts_updates where user_id = :user_id order by pts desc limit 1
+func (m *defaultUserPtsUpdatesModel) SelectLastPtsTx(tx *sqlx.Tx, userId int64) (rValue *UserPtsUpdates, err error) {
+	var (
+		query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
+		do    = &UserPtsUpdates{}
+	)
+	err = tx.QueryRowPartial(do, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_pts_updates",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("user_pts_updates.SelectLastPtsTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByGtPts
 // select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = :user_id and pts > :pts order by pts asc
 func (m *defaultUserPtsUpdatesModel) SelectByGtPts(ctx context.Context, userId int64, pts int32) (rList []UserPtsUpdates, err error) {
@@ -136,6 +163,30 @@ func (m *defaultUserPtsUpdatesModel) SelectByGtPts(ctx context.Context, userId i
 			return
 		}
 		err = fmt.Errorf("user_pts_updates.SelectByGtPts: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByGtPtsTx
+// select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = :user_id and pts > :pts order by pts asc
+func (m *defaultUserPtsUpdatesModel) SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int32) (rList []UserPtsUpdates, err error) {
+	var (
+		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
+		values []UserPtsUpdates
+	)
+	err = tx.QueryRowsPartial(&values, query, userId, pts)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPtsUpdates{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("user_pts_updates.SelectByGtPtsTx: %w", err)
 		return
 	}
 

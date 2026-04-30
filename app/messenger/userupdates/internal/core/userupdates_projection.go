@@ -1,7 +1,7 @@
 package core
 
 import (
-	"encoding/hex"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -12,28 +12,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func operationHashHex(hash []byte) string {
-	return hex.EncodeToString(hash)
-}
-
-func hexPayload(hash string) ([]byte, error) {
-	if hash == "" {
-		return nil, nil
-	}
-	b, err := hex.DecodeString(hash)
-	if err != nil {
-		return nil, fmt.Errorf("%w: invalid repository payload hash", userupdates.ErrUserupdatesStorage)
-	}
-	return b, nil
-}
-
 func applyResultToTL(in *repository.ApplyUserOperationResult) (*userupdates.UserOperationResult, error) {
 	if in == nil {
 		return nil, userupdates.ErrOperationTerminal
-	}
-	hash, err := hexPayload(in.ResponseHash)
-	if err != nil {
-		return nil, err
 	}
 	schemaVersion := int32(payload.OperationResponseSchemaVersion)
 	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
@@ -45,17 +26,13 @@ func applyResultToTL(in *repository.ApplyUserOperationResult) (*userupdates.User
 		CurrentPts:            in.Pts,
 		ResponseSchemaVersion: &schemaVersion,
 		ResponsePayload:       in.ResponsePayload,
-		ResponsePayloadHash:   hash,
+		ResponsePayloadHash:   in.ResponseHash,
 	}).ToUserOperationResult(), nil
 }
 
 func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOperationResult, error) {
 	if in == nil {
 		return nil, userupdates.ErrOperationTerminal
-	}
-	hash, err := hexPayload(in.ResponseHash)
-	if err != nil {
-		return nil, err
 	}
 	var schemaVersion *int32
 	if len(in.ResponsePayload) != 0 {
@@ -71,7 +48,7 @@ func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOpera
 		CurrentPts:            in.Pts,
 		ResponseSchemaVersion: schemaVersion,
 		ResponsePayload:       in.ResponsePayload,
-		ResponsePayloadHash:   hash,
+		ResponsePayloadHash:   in.ResponseHash,
 	}).ToUserOperationResult(), nil
 }
 
@@ -115,7 +92,7 @@ func eventToTLUpdate(event repository.UserEvent) (*tg.TLMessage, *tg.TLUpdateNew
 	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion != payload.MessageEventSchemaVersion {
 		return nil, nil, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
-	if event.EventPayloadHash != "" && payload.HashBytes(event.EventPayload) != event.EventPayloadHash {
+	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
 		return nil, nil, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
 

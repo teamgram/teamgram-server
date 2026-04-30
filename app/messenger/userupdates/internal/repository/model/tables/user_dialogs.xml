@@ -3,9 +3,9 @@
     <operation name="InsertOrUpdateMessageEvent">
         <sql>
             INSERT INTO user_dialogs
-                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload, created_at, updated_at)
+                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload)
             VALUES
-                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, :unread_count, :unread_mentions_count, :read_inbox_max_peer_seq, :read_outbox_max_peer_seq, :pinned, :folder_id, :dialog_schema_version, :dialog_payload, NOW(6), NOW(6))
+                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, :unread_count, :unread_mentions_count, :read_inbox_max_peer_seq, :read_outbox_max_peer_seq, :pinned, :folder_id, :dialog_schema_version, :dialog_payload)
             ON DUPLICATE KEY UPDATE
                 top_peer_seq = VALUES(top_peer_seq),
                 top_canonical_message_id = VALUES(top_canonical_message_id),
@@ -13,15 +13,14 @@
                 unread_count = unread_count + VALUES(unread_count),
                 unread_mentions_count = unread_mentions_count + VALUES(unread_mentions_count),
                 dialog_schema_version = VALUES(dialog_schema_version),
-                dialog_payload = VALUES(dialog_payload),
-                updated_at = NOW(6)
+                dialog_payload = VALUES(dialog_payload)
         </sql>
     </operation>
 
     <operation name="SelectByUserPeer">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload, created_at, updated_at
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload
             FROM
                 user_dialogs
             WHERE
@@ -35,7 +34,7 @@
         </params>
         <sql>
             SELECT
-                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload, created_at, updated_at
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, unread_count, unread_mentions_count, read_inbox_max_peer_seq, read_outbox_max_peer_seq, pinned, folder_id, dialog_schema_version, dialog_payload
             FROM
                 user_dialogs
             WHERE
@@ -53,8 +52,7 @@
                 unread_count = :unread_count,
                 unread_mentions_count = :unread_mentions_count,
                 read_inbox_max_peer_seq = :read_inbox_max_peer_seq,
-                read_outbox_max_peer_seq = :read_outbox_max_peer_seq,
-                updated_at = NOW(6)
+                read_outbox_max_peer_seq = :read_outbox_max_peer_seq
             WHERE
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
         </sql>
@@ -65,8 +63,7 @@
             UPDATE
                 user_dialogs
             SET
-                pinned = :pinned,
-                updated_at = NOW(6)
+                pinned = :pinned
             WHERE
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
         </sql>

@@ -52,9 +52,15 @@ type MessageEventV1 struct {
 	Entities           []MessageEntityV1 `json:"entities,omitempty"`
 }
 
-func HashBytes(b []byte) string {
+func HashBytes(b []byte) []byte {
 	sum := sha256.Sum256(b)
-	return hex.EncodeToString(sum[:])
+	out := make([]byte, len(sum))
+	copy(out, sum[:])
+	return out
+}
+
+func HashHex(b []byte) string {
+	return hex.EncodeToString(HashBytes(b))
 }
 
 func SenderOperationID(canonicalMessageID, senderUserID int64) string {

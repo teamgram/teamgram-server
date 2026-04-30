@@ -32,8 +32,10 @@ type (
 		InsertTx(tx *sqlx.Tx, data *MessageFanoutManifests) (lastInsertId, rowsAffected int64, err error)
 
 		SelectByManifestId(ctx context.Context, manifestId int64) (*MessageFanoutManifests, error)
+		SelectByManifestIdTx(tx *sqlx.Tx, manifestId int64) (*MessageFanoutManifests, error)
 
 		SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*MessageFanoutManifests, error)
+		SelectByCanonicalMessageIdTx(tx *sqlx.Tx, canonicalMessageId int64) (*MessageFanoutManifests, error)
 
 		MarkCompleted(ctx context.Context, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error)
 		MarkCompletedTx(tx *sqlx.Tx, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error)
@@ -41,10 +43,10 @@ type (
 )
 
 // Insert
-// insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, NOW(6), NOW(6), :completed_at)
+// insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, :completed_at)
 func (m *defaultMessageFanoutManifestsModel) Insert(ctx context.Context, data *MessageFanoutManifests) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, NOW(6), NOW(6), :completed_at)"
+		query = "insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, :completed_at)"
 		r     sql.Result
 	)
 
@@ -69,10 +71,10 @@ func (m *defaultMessageFanoutManifestsModel) Insert(ctx context.Context, data *M
 }
 
 // InsertTx
-// insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, NOW(6), NOW(6), :completed_at)
+// insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, :completed_at)
 func (m *defaultMessageFanoutManifestsModel) InsertTx(tx *sqlx.Tx, data *MessageFanoutManifests) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, NOW(6), NOW(6), :completed_at)"
+		query = "insert into message_fanout_manifests(manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at) values (:manifest_id, :canonical_message_id, :peer_type, :peer_id, :peer_seq, :actor_user_id, :affected_user_count, :status, :completed_at)"
 		r     sql.Result
 	)
 
@@ -96,11 +98,11 @@ func (m *defaultMessageFanoutManifestsModel) InsertTx(tx *sqlx.Tx, data *Message
 }
 
 // SelectByManifestId
-// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at from message_fanout_manifests where manifest_id = :manifest_id limit 1
+// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where manifest_id = :manifest_id limit 1
 func (m *defaultMessageFanoutManifestsModel) SelectByManifestId(ctx context.Context, manifestId int64) (rValue *MessageFanoutManifests, err error) {
 
 	var (
-		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at from message_fanout_manifests where manifest_id = ? limit 1"
+		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where manifest_id = ? limit 1"
 		do    = &MessageFanoutManifests{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, manifestId)
@@ -122,12 +124,37 @@ func (m *defaultMessageFanoutManifestsModel) SelectByManifestId(ctx context.Cont
 	return
 }
 
+// SelectByManifestIdTx
+// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where manifest_id = :manifest_id limit 1
+func (m *defaultMessageFanoutManifestsModel) SelectByManifestIdTx(tx *sqlx.Tx, manifestId int64) (rValue *MessageFanoutManifests, err error) {
+	var (
+		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where manifest_id = ? limit 1"
+		do    = &MessageFanoutManifests{}
+	)
+	err = tx.QueryRowPartial(do, query, manifestId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "message_fanout_manifests",
+				Key:      fmt.Sprintf("manifest_id=%v", manifestId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("message_fanout_manifests.SelectByManifestIdTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByCanonicalMessageId
-// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at from message_fanout_manifests where canonical_message_id = :canonical_message_id limit 1
+// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where canonical_message_id = :canonical_message_id limit 1
 func (m *defaultMessageFanoutManifestsModel) SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (rValue *MessageFanoutManifests, err error) {
 
 	var (
-		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, created_at, updated_at, completed_at from message_fanout_manifests where canonical_message_id = ? limit 1"
+		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where canonical_message_id = ? limit 1"
 		do    = &MessageFanoutManifests{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, canonicalMessageId)
@@ -149,12 +176,37 @@ func (m *defaultMessageFanoutManifestsModel) SelectByCanonicalMessageId(ctx cont
 	return
 }
 
+// SelectByCanonicalMessageIdTx
+// select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where canonical_message_id = :canonical_message_id limit 1
+func (m *defaultMessageFanoutManifestsModel) SelectByCanonicalMessageIdTx(tx *sqlx.Tx, canonicalMessageId int64) (rValue *MessageFanoutManifests, err error) {
+	var (
+		query = "select manifest_id, canonical_message_id, peer_type, peer_id, peer_seq, actor_user_id, affected_user_count, `status`, completed_at from message_fanout_manifests where canonical_message_id = ? limit 1"
+		do    = &MessageFanoutManifests{}
+	)
+	err = tx.QueryRowPartial(do, query, canonicalMessageId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "message_fanout_manifests",
+				Key:      fmt.Sprintf("canonical_message_id=%v", canonicalMessageId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("message_fanout_manifests.SelectByCanonicalMessageIdTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // MarkCompleted
-// update message_fanout_manifests set `status` = :status, completed_at = :completed_at, updated_at = NOW(6) where manifest_id = :manifest_id
+// update message_fanout_manifests set `status` = :status, completed_at = :completed_at where manifest_id = :manifest_id
 func (m *defaultMessageFanoutManifestsModel) MarkCompleted(ctx context.Context, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update message_fanout_manifests set `status` = ?, completed_at = ?, updated_at = NOW(6) where manifest_id = ?"
+		query   = "update message_fanout_manifests set `status` = ?, completed_at = ? where manifest_id = ?"
 		rResult sql.Result
 	)
 
@@ -175,10 +227,10 @@ func (m *defaultMessageFanoutManifestsModel) MarkCompleted(ctx context.Context, 
 }
 
 // MarkCompletedTx
-// update message_fanout_manifests set `status` = :status, completed_at = :completed_at, updated_at = NOW(6) where manifest_id = :manifest_id
+// update message_fanout_manifests set `status` = :status, completed_at = :completed_at where manifest_id = :manifest_id
 func (m *defaultMessageFanoutManifestsModel) MarkCompletedTx(tx *sqlx.Tx, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update message_fanout_manifests set `status` = ?, completed_at = ?, updated_at = NOW(6) where manifest_id = ?"
+		query   = "update message_fanout_manifests set `status` = ?, completed_at = ? where manifest_id = ?"
 		rResult sql.Result
 	)
 	rResult, err = tx.Exec(query, status, completedAt, manifestId)

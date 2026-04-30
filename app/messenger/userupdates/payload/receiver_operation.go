@@ -10,6 +10,6 @@ type ReceiverOperationEnvelopeV1 struct {
 	PeerID        int64
 	PayloadCodec  int32
 	Payload       []byte
-	PayloadHash   string
+	PayloadHash   []byte
 	DependencyPts []int64
 }

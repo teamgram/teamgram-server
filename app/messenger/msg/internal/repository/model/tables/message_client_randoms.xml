@@ -3,16 +3,16 @@
     <operation name="Insert">
         <sql>
             INSERT INTO message_client_randoms
-                (sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at)
+                (sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash)
             VALUES
-                (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash, NOW(6), NOW(6))
+                (:sender_user_id, :peer_type, :peer_id, :client_random_id, :canonical_message_id, :send_state_id, :request_payload_hash)
         </sql>
     </operation>
 
     <operation name="SelectByRandom">
         <sql>
             SELECT
-                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at
+                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash
             FROM
                 message_client_randoms
             WHERE
@@ -23,7 +23,7 @@
     <operation name="SelectByCanonicalMessageId">
         <sql>
             SELECT
-                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at
+                sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash
             FROM
                 message_client_randoms
             WHERE

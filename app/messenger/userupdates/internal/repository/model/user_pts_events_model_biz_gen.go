@@ -32,19 +32,22 @@ type (
 		InsertTx(tx *sqlx.Tx, data *UserPtsEvents) (lastInsertId, rowsAffected int64, err error)
 
 		SelectByOperation(ctx context.Context, userId int64, operationId string) (*UserPtsEvents, error)
+		SelectByOperationTx(tx *sqlx.Tx, userId int64, operationId string) (*UserPtsEvents, error)
 
 		SelectLatestPts(ctx context.Context, userId int64) (*UserPtsEvents, error)
+		SelectLatestPtsTx(tx *sqlx.Tx, userId int64) (*UserPtsEvents, error)
 
 		SelectByGtPts(ctx context.Context, userId int64, pts int64, limit int32) ([]UserPtsEvents, error)
+		SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int64, limit int32) ([]UserPtsEvents, error)
 		SelectByGtPtsWithCB(ctx context.Context, userId int64, pts int64, limit int32, cb func(sz, i int, v *UserPtsEvents)) ([]UserPtsEvents, error)
 	}
 )
 
 // Insert
-// insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash, NOW(6))
+// insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash)
 func (m *defaultUserPtsEventsModel) Insert(ctx context.Context, data *UserPtsEvents) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash, NOW(6))"
+		query = "insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash)"
 		r     sql.Result
 	)
 
@@ -69,10 +72,10 @@ func (m *defaultUserPtsEventsModel) Insert(ctx context.Context, data *UserPtsEve
 }
 
 // InsertTx
-// insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash, NOW(6))
+// insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash)
 func (m *defaultUserPtsEventsModel) InsertTx(tx *sqlx.Tx, data *UserPtsEvents) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash, NOW(6))"
+		query = "insert into user_pts_events(user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash) values (:user_id, :pts, :pts_count, :operation_id, :op_type, :event_type, :peer_type, :peer_id, :canonical_message_id, :peer_seq, :actor_user_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash)"
 		r     sql.Result
 	)
 
@@ -122,6 +125,31 @@ func (m *defaultUserPtsEventsModel) SelectByOperation(ctx context.Context, userI
 	return
 }
 
+// SelectByOperationTx
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and operation_id = :operation_id limit 1
+func (m *defaultUserPtsEventsModel) SelectByOperationTx(tx *sqlx.Tx, userId int64, operationId string) (rValue *UserPtsEvents, err error) {
+	var (
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and operation_id = ? limit 1"
+		do    = &UserPtsEvents{}
+	)
+	err = tx.QueryRowPartial(do, query, userId, operationId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_pts_events",
+				Key:      fmt.Sprintf("user_id=%v,operation_id=%v", userId, operationId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("user_pts_events.SelectByOperationTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectLatestPts
 // select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id order by pts desc limit 1
 func (m *defaultUserPtsEventsModel) SelectLatestPts(ctx context.Context, userId int64) (rValue *UserPtsEvents, err error) {
@@ -149,6 +177,31 @@ func (m *defaultUserPtsEventsModel) SelectLatestPts(ctx context.Context, userId 
 	return
 }
 
+// SelectLatestPtsTx
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id order by pts desc limit 1
+func (m *defaultUserPtsEventsModel) SelectLatestPtsTx(tx *sqlx.Tx, userId int64) (rValue *UserPtsEvents, err error) {
+	var (
+		query = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? order by pts desc limit 1"
+		do    = &UserPtsEvents{}
+	)
+	err = tx.QueryRowPartial(do, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_pts_events",
+				Key:      fmt.Sprintf("user_id=%v", userId),
+				Cause:    err,
+			}
+		}
+		err = fmt.Errorf("user_pts_events.SelectLatestPtsTx: %w", err)
+		return
+	}
+	rValue = do
+
+	return
+}
+
 // SelectByGtPts
 // select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
 func (m *defaultUserPtsEventsModel) SelectByGtPts(ctx context.Context, userId int64, pts int64, limit int32) (rList []UserPtsEvents, err error) {
@@ -165,6 +218,30 @@ func (m *defaultUserPtsEventsModel) SelectByGtPts(ctx context.Context, userId in
 			return
 		}
 		err = fmt.Errorf("user_pts_events.SelectByGtPts: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByGtPtsTx
+// select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = :user_id and pts > :pts order by pts asc limit :limit
+func (m *defaultUserPtsEventsModel) SelectByGtPtsTx(tx *sqlx.Tx, userId int64, pts int64, limit int32) (rList []UserPtsEvents, err error) {
+	var (
+		query  = "select user_id, pts, pts_count, operation_id, op_type, event_type, peer_type, peer_id, canonical_message_id, peer_seq, actor_user_id, event_schema_version, event_codec, event_payload, event_payload_hash, created_at from user_pts_events where user_id = ? and pts > ? order by pts asc limit ?"
+		values []UserPtsEvents
+	)
+	err = tx.QueryRowsPartial(&values, query, userId, pts, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []UserPtsEvents{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("user_pts_events.SelectByGtPtsTx: %w", err)
 		return
 	}
 

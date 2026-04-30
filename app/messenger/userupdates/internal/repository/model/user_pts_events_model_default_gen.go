@@ -13,7 +13,9 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"errors"
+
 	"fmt"
 	"strings"
 
@@ -56,7 +58,7 @@ type (
 		EventSchemaVersion int32  `db:"event_schema_version" json:"event_schema_version"`
 		EventCodec         int32  `db:"event_codec" json:"event_codec"`
 		EventPayload       []byte `db:"event_payload" json:"event_payload"`
-		EventPayloadHash   string `db:"event_payload_hash" json:"event_payload_hash"`
+		EventPayloadHash   []byte `db:"event_payload_hash" json:"event_payload_hash"`
 	}
 )
 

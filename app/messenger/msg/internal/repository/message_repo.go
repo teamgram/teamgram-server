@@ -1,11 +1,13 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 )
 
@@ -21,7 +23,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return err
 		}
 		if found {
-			if existing.RequestPayloadHash != in.RequestPayloadHash {
+			if !bytes.Equal(existing.RequestPayloadHash, in.RequestPayloadHash) {
 				return msg.ErrRandomIdConflict
 			}
 			out = existing
@@ -32,7 +34,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		if err != nil {
 			return err
 		}
-		if state.RequestPayloadHash != in.RequestPayloadHash ||
+		if !bytes.Equal(state.RequestPayloadHash, in.RequestPayloadHash) ||
 			state.SenderUserID != in.SenderUserID ||
 			state.PeerType != in.PeerType ||
 			state.PeerID != in.PeerID ||
@@ -88,8 +90,8 @@ func selectCanonicalByRandomTx(tx *sqlx.Tx, senderUserID int64, peerType int32, 
 SELECT r.send_state_id,
        r.canonical_message_id,
        c.peer_seq,
-       TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', c.date) AS message_date,
-       LOWER(HEX(r.request_payload_hash)) AS request_payload_hash
+       c.date AS message_date,
+       r.request_payload_hash
 FROM message_client_randoms r
 JOIN canonical_messages c ON c.canonical_message_id = r.canonical_message_id
 WHERE r.sender_user_id = ?
@@ -107,13 +109,13 @@ LIMIT 1
 	return row.toResult(false), true, nil
 }
 
-func selectCanonicalByIDTx(tx *sqlx.Tx, canonicalMessageID int64, requestPayloadHash string, sendStateID int64) (*CanonicalMessageResult, error) {
+func selectCanonicalByIDTx(tx *sqlx.Tx, canonicalMessageID int64, requestPayloadHash []byte, sendStateID int64) (*CanonicalMessageResult, error) {
 	var row canonicalResultRow
 	err := tx.QueryRowPartial(&row, `
 SELECT ? AS send_state_id,
        canonical_message_id,
        peer_seq,
-       TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', date) AS message_date,
+       date AS message_date,
        ? AS request_payload_hash
 FROM canonical_messages
 WHERE canonical_message_id = ?
@@ -126,45 +128,47 @@ LIMIT 1
 }
 
 func nextPeerSeqTx(tx *sqlx.Tx, peerType int32, peerID int64) (int64, error) {
-	if _, err := tx.Exec(`
-INSERT INTO message_peer_sequences (peer_type, peer_id, next_peer_seq, created_at, updated_at)
-VALUES (?, ?, 1, NOW(6), NOW(6))
-ON DUPLICATE KEY UPDATE peer_type = peer_type
-`, peerType, peerID); err != nil {
+	if _, _, err := model.NewMessagePeerSequencesModel(nil).InsertIgnoreTx(tx, &model.MessagePeerSequences{
+		PeerType:    peerType,
+		PeerId:      peerID,
+		NextPeerSeq: 1,
+	}); err != nil {
 		return 0, storageError("init peer sequence", err)
 	}
-	var row struct {
-		NextPeerSeq int64 `db:"next_peer_seq"`
-	}
-	if err := tx.QueryRowPartial(&row, `
-SELECT next_peer_seq
-FROM message_peer_sequences
-WHERE peer_type = ? AND peer_id = ?
-LIMIT 1 FOR UPDATE
-`, peerType, peerID); err != nil {
+	row, err := model.NewMessagePeerSequencesModel(nil).SelectForUpdateTx(tx, peerType, peerID)
+	if err != nil {
 		return 0, storageError("lock peer sequence", err)
 	}
-	if _, err := tx.Exec(`
-UPDATE message_peer_sequences
-SET next_peer_seq = next_peer_seq + 1,
-    updated_at = NOW(6)
-WHERE peer_type = ? AND peer_id = ?
-`, peerType, peerID); err != nil {
+	if affected, err := model.NewMessagePeerSequencesModel(nil).UpdateNextPeerSeqTx(tx, row.NextPeerSeq+1, peerType, peerID); err != nil {
 		return 0, storageError("advance peer sequence", err)
+	} else if affected == 0 {
+		return 0, msg.ErrSendStateConflict
 	}
 	return row.NextPeerSeq, nil
 }
 
 func insertCanonicalMessageTx(tx *sqlx.Tx, canonicalID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
-	_, err := tx.Exec(`
-INSERT INTO canonical_messages
-  (canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text,
-   entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload,
-   service_action_schema_version, service_action_payload, message_status, edit_version, date,
-   edit_date, deleted_at, storage_schema_version, created_at, updated_at)
-VALUES
-  (?, ?, ?, ?, ?, ?, ?, 1, NULL, 1, NULL, 1, NULL, ?, 0, ?, NULL, NULL, 1, NOW(6), NOW(6))
-`, canonicalID, in.PeerType, in.PeerID, peerSeq, in.SenderUserID, MessageKindText, in.MessageText, MessageStatusLive, mysqlDate(messageDate))
+	_, _, err := model.NewCanonicalMessagesModel(nil).InsertTx(tx, &model.CanonicalMessages{
+		CanonicalMessageId:           canonicalID,
+		PeerType:                     in.PeerType,
+		PeerId:                       in.PeerID,
+		PeerSeq:                      peerSeq,
+		FromUserId:                   in.SenderUserID,
+		MessageKind:                  MessageKindText,
+		MessageText:                  in.MessageText,
+		EntitiesPayloadSchemaVersion: 1,
+		EntitiesPayload:              nil,
+		MediaRefSchemaVersion:        1,
+		MediaRefPayload:              nil,
+		ServiceActionSchemaVersion:   1,
+		ServiceActionPayload:         nil,
+		MessageStatus:                MessageStatusLive,
+		EditVersion:                  0,
+		Date:                         mysqlDate(messageDate),
+		EditDate:                     "",
+		DeletedAt:                    "",
+		StorageSchemaVersion:         1,
+	})
 	if err != nil {
 		return storageError("insert canonical message", err)
 	}
@@ -172,12 +176,15 @@ VALUES
 }
 
 func insertClientRandomTx(tx *sqlx.Tx, canonicalID int64, _ int64, _ int32, in CreateCanonicalMessageInput) error {
-	_, err := tx.Exec(`
-INSERT INTO message_client_randoms
-  (sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, send_state_id, request_payload_hash, created_at, updated_at)
-VALUES
-  (?, ?, ?, ?, ?, ?, UNHEX(?), NOW(6), NOW(6))
-`, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID, canonicalID, in.SendStateID, in.RequestPayloadHash)
+	_, _, err := model.NewMessageClientRandomsModel(nil).InsertTx(tx, &model.MessageClientRandoms{
+		SenderUserId:       in.SenderUserID,
+		PeerType:           in.PeerType,
+		PeerId:             in.PeerID,
+		ClientRandomId:     in.ClientRandomID,
+		CanonicalMessageId: canonicalID,
+		SendStateId:        in.SendStateID,
+		RequestPayloadHash: in.RequestPayloadHash,
+	})
 	if err != nil {
 		return storageError("insert client random", err)
 	}
@@ -185,19 +192,20 @@ VALUES
 }
 
 type canonicalResultRow struct {
-	SendStateID        int64  `db:"send_state_id"`
-	CanonicalMessageID int64  `db:"canonical_message_id"`
-	PeerSeq            int64  `db:"peer_seq"`
-	MessageDate        int64  `db:"message_date"`
-	RequestPayloadHash string `db:"request_payload_hash"`
+	SendStateID        int64     `db:"send_state_id"`
+	CanonicalMessageID int64     `db:"canonical_message_id"`
+	PeerSeq            int64     `db:"peer_seq"`
+	MessageDate        time.Time `db:"message_date"`
+	RequestPayloadHash []byte    `db:"request_payload_hash"`
 }
 
 func (r canonicalResultRow) toResult(created bool) *CanonicalMessageResult {
+	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return &CanonicalMessageResult{
 		SendStateID:        r.SendStateID,
 		CanonicalMessageID: r.CanonicalMessageID,
 		PeerSeq:            r.PeerSeq,
-		MessageDate:        int32(r.MessageDate),
+		MessageDate:        int32(messageDate.Unix()),
 		RequestPayloadHash: r.RequestPayloadHash,
 		CreatedNew:         created,
 	}
@@ -205,4 +213,8 @@ func (r canonicalResultRow) toResult(created bool) *CanonicalMessageResult {
 
 func mysqlDate(unix int32) string {
 	return time.Unix(int64(unix), 0).UTC().Format("2006-01-02 15:04:05.000000")
+}
+
+func mysqlNow() string {
+	return time.Now().UTC().Format("2006-01-02 15:04:05.000000")
 }

@@ -3,6 +3,7 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -81,7 +82,7 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		if err != nil {
 			t.Fatalf("GetOperationResult() error = %v", err)
 		}
-		if opResult.Pts != 1 || opResult.PayloadHash != in.PayloadHash {
+		if opResult.Pts != 1 || !bytes.Equal(opResult.PayloadHash, in.PayloadHash) {
 			t.Fatalf("operation result mismatch: %+v", opResult)
 		}
 	})

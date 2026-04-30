@@ -13,7 +13,9 @@ package model
 import (
 	"context"
 	"database/sql"
+
 	"errors"
+
 	"fmt"
 	"strings"
 
@@ -38,10 +40,10 @@ type (
 		Update2(ctx context.Context, data *MessageSendStates) error
 		Delete2(ctx context.Context, sendStateId int64) error
 
-		FindOneBySenderUserIdPeerTypePeerIdClientRandomId(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
-
 		FindOneBySenderOperationId(ctx context.Context, senderOperationId string) (*MessageSendStates, error)
 		FindListBySenderOperationIdList(ctx context.Context, senderOperationId ...string) ([]MessageSendStates, error)
+
+		FindOneBySenderUserIdPeerTypePeerIdClientRandomId(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error)
 	}
 
 	defaultMessageSendStatesModel struct {
@@ -58,13 +60,13 @@ type (
 		PeerSeq                     int64  `db:"peer_seq" json:"peer_seq"`
 		Status                      int32  `db:"status" json:"status"`
 		RequestPayloadSchemaVersion int32  `db:"request_payload_schema_version" json:"request_payload_schema_version"`
-		RequestPayloadHash          string `db:"request_payload_hash" json:"request_payload_hash"`
+		RequestPayloadHash          []byte `db:"request_payload_hash" json:"request_payload_hash"`
 		SenderOperationId           string `db:"sender_operation_id" json:"sender_operation_id"`
 		SenderPts                   int64  `db:"sender_pts" json:"sender_pts"`
 		SenderPtsCount              int32  `db:"sender_pts_count" json:"sender_pts_count"`
 		SenderUpdateSchemaVersion   int32  `db:"sender_update_schema_version" json:"sender_update_schema_version"`
 		SenderUpdatePayload         []byte `db:"sender_update_payload" json:"sender_update_payload"`
-		SenderUpdatePayloadHash     string `db:"sender_update_payload_hash" json:"sender_update_payload_hash"`
+		SenderUpdatePayloadHash     []byte `db:"sender_update_payload_hash" json:"sender_update_payload_hash"`
 		ReceiverManifestId          int64  `db:"receiver_manifest_id" json:"receiver_manifest_id"`
 		LastErrorCategory           int32  `db:"last_error_category" json:"last_error_category"`
 		LastErrorCode               string `db:"last_error_code" json:"last_error_code"`
@@ -157,27 +159,6 @@ func (m *defaultMessageSendStatesModel) Update2(ctx context.Context, data *Messa
 	return nil
 }
 
-func (m *defaultMessageSendStatesModel) FindOneBySenderUserIdPeerTypePeerIdClientRandomId(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error) {
-	tableName := "message_send_states"
-	query := fmt.Sprintf("select %s from %s where sender_user_id = ? AND peer_type = ? AND peer_id = ? AND client_random_id = ? limit 1", messageSendStatesRows, tableName)
-	var resp MessageSendStates
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, senderUserId, peerType, peerId, clientRandomId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "message_send_states",
-				Key:      fmt.Sprintf("sender_user_id=%v,peer_type=%v,peer_id=%v,client_random_id=%v", senderUserId, peerType, peerId, clientRandomId),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("message_send_states.FindOneBySenderUserIdPeerTypePeerIdClientRandomId: %w", err)
-	}
-
-	return &resp, nil
-}
-
 func (m *defaultMessageSendStatesModel) FindOneBySenderOperationId(ctx context.Context, senderOperationId string) (*MessageSendStates, error) {
 	tableName := "message_send_states"
 	query := fmt.Sprintf("select %s from %s where sender_operation_id = ? limit 1", messageSendStatesRows, tableName)
@@ -216,4 +197,25 @@ func (m *defaultMessageSendStatesModel) FindListBySenderOperationIdList(ctx cont
 	}
 
 	return resp, nil
+}
+
+func (m *defaultMessageSendStatesModel) FindOneBySenderUserIdPeerTypePeerIdClientRandomId(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*MessageSendStates, error) {
+	tableName := "message_send_states"
+	query := fmt.Sprintf("select %s from %s where sender_user_id = ? AND peer_type = ? AND peer_id = ? AND client_random_id = ? limit 1", messageSendStatesRows, tableName)
+	var resp MessageSendStates
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, senderUserId, peerType, peerId, clientRandomId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "message_send_states",
+				Key:      fmt.Sprintf("sender_user_id=%v,peer_type=%v,peer_id=%v,client_random_id=%v", senderUserId, peerType, peerId, clientRandomId),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("message_send_states.FindOneBySenderUserIdPeerTypePeerIdClientRandomId: %w", err)
+	}
+
+	return &resp, nil
 }

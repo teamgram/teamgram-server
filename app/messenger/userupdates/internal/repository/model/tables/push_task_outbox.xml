@@ -3,9 +3,9 @@
     <operation name="Insert">
         <sql>
             INSERT INTO push_task_outbox
-                (task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, created_at, updated_at, published_at)
+                (task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, published_topic, published_partition, published_offset, last_error_code)
             VALUES
-                (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :next_retry_at, :published_topic, :published_partition, :published_offset, :last_error_code, NOW(6), NOW(6), :published_at)
+                (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)
         </sql>
     </operation>
 
@@ -15,7 +15,7 @@
         </params>
         <sql>
             SELECT
-                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, created_at, updated_at, published_at
+                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at
             FROM
                 push_task_outbox
             WHERE
@@ -31,8 +31,7 @@
                 push_task_outbox
             SET
                 status = :status,
-                publish_attempts = publish_attempts + 1,
-                updated_at = NOW(6)
+                publish_attempts = publish_attempts + 1
             WHERE
                 task_id = :task_id
         </sql>
@@ -47,8 +46,7 @@
                 published_topic = :published_topic,
                 published_partition = :published_partition,
                 published_offset = :published_offset,
-                published_at = :published_at,
-                updated_at = NOW(6)
+                published_at = :published_at
             WHERE
                 task_id = :task_id
         </sql>
@@ -61,8 +59,7 @@
             SET
                 status = :status,
                 next_retry_at = :next_retry_at,
-                last_error_code = :last_error_code,
-                updated_at = NOW(6)
+                last_error_code = :last_error_code
             WHERE
                 task_id = :task_id
         </sql>

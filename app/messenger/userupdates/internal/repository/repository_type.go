@@ -41,7 +41,7 @@ type ApplyUserOperationInput struct {
 	PeerID        int64
 	PayloadCodec  int32
 	Payload       []byte
-	PayloadHash   string
+	PayloadHash   []byte
 	BucketID      int32
 	PartitionID   int32
 	DependencyPts []int64
@@ -53,7 +53,7 @@ type ApplyUserOperationResult struct {
 	Pts             int64
 	PtsCount        int32
 	ResponsePayload []byte
-	ResponseHash    string
+	ResponseHash    []byte
 	AlreadyApplied  bool
 }
 
@@ -64,9 +64,9 @@ type OperationResult struct {
 	Status            int32
 	Pts               int64
 	PtsCount          int32
-	PayloadHash       string
+	PayloadHash       []byte
 	ResponsePayload   []byte
-	ResponseHash      string
+	ResponseHash      []byte
 	TerminalErrorCode string
 }
 
@@ -93,7 +93,7 @@ type UserEvent struct {
 	EventSchemaVersion int32
 	EventCodec         int32
 	EventPayload       []byte
-	EventPayloadHash   string
+	EventPayloadHash   []byte
 }
 
 type GetDifferenceInput struct {
