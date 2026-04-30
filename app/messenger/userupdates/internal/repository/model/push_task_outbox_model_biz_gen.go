@@ -108,10 +108,10 @@ func (m *defaultPushTaskOutboxTxModel) Insert(data *PushTaskOutbox) (lastInsertI
 }
 
 // SelectPending
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
 func (m *defaultPushTaskOutboxModel) SelectPending(ctx context.Context, status int32, availableAt string, limit int32) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, status, availableAt, limit)
@@ -132,10 +132,10 @@ func (m *defaultPushTaskOutboxModel) SelectPending(ctx context.Context, status i
 }
 
 // SelectPending
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
 func (m *defaultPushTaskOutboxTxModel) SelectPending(status int32, availableAt string, limit int32) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
 	err = m.tx.QueryRowsPartial(&values, query, status, availableAt, limit)
@@ -156,10 +156,10 @@ func (m *defaultPushTaskOutboxTxModel) SelectPending(status int32, availableAt s
 }
 
 // SelectPendingWithCB
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
 func (m *defaultPushTaskOutboxModel) SelectPendingWithCB(ctx context.Context, status int32, availableAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, status, availableAt, limit)

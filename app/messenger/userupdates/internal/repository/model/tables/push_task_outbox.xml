@@ -15,7 +15,7 @@
         </params>
 	        <sql>
 	            SELECT
-	                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at
+	                task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, status, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code
 	            FROM
 	                push_task_outbox
 	            WHERE
