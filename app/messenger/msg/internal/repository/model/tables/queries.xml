@@ -1,0 +1,54 @@
+<queries namespace="CanonicalQueries">
+    <result name="CanonicalMessageRow">
+        <field name="SendStateID" type="int64" db="send_state_id"/>
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="RequestPayloadHash" type="[]byte" db="request_payload_hash"/>
+    </result>
+
+    <query name="SelectCanonicalByRandom" result="CanonicalMessageRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                r.send_state_id,
+                r.canonical_message_id,
+                c.peer_seq,
+                c.date AS message_date,
+                r.request_payload_hash
+            FROM
+                message_client_randoms r
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = r.canonical_message_id
+            WHERE
+                r.sender_user_id = :sender_user_id
+                AND r.peer_type = :peer_type
+                AND r.peer_id = :peer_id
+                AND r.client_random_id = :client_random_id
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectCanonicalByID" result="CanonicalMessageRow">
+        <params>
+            <param name="request_payload_hash" type="[]byte"/>
+        </params>
+        <sql>
+            SELECT
+                :send_state_id AS send_state_id,
+                canonical_message_id,
+                peer_seq,
+                date AS message_date,
+                :request_payload_hash AS request_payload_hash
+            FROM
+                canonical_messages
+            WHERE
+                canonical_message_id = :canonical_message_id
+            LIMIT 1
+        </sql>
+    </query>
+</queries>

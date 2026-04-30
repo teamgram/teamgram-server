@@ -1,0 +1,17 @@
+<queries namespace="IdgenNgenQueries">
+    <result name="IdgenNgenRow">
+        <field name="MaxSeq" type="int64" db="max_seq"/>
+    </result>
+
+    <query name="GetMaxSeqQuery" result="IdgenNgenRow">
+        <sql>
+            SELECT
+                max_seq
+            FROM
+                pts_updates_ngen
+            WHERE
+                id = :id
+            LIMIT 1
+        </sql>
+    </query>
+</queries>

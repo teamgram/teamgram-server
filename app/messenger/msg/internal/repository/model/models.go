@@ -23,6 +23,7 @@ type Models struct {
 	MessagePeerSequencesModel   MessagePeerSequencesModel
 	MessageSendStatesModel      MessageSendStatesModel
 	UserPtsUpdatesModel         UserPtsUpdatesModel
+	CanonicalQueries            CanonicalQueriesModel
 }
 
 type TxModels struct {
@@ -34,6 +35,7 @@ type TxModels struct {
 	MessagePeerSequencesModel   MessagePeerSequencesTxModel
 	MessageSendStatesModel      MessageSendStatesTxModel
 	UserPtsUpdatesModel         UserPtsUpdatesTxModel
+	CanonicalQueries            CanonicalQueriesTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
@@ -46,6 +48,7 @@ func NewModels(db *sqlx.DB) *Models {
 		MessagePeerSequencesModel:   NewMessagePeerSequencesModel(db),
 		MessageSendStatesModel:      NewMessageSendStatesModel(db),
 		UserPtsUpdatesModel:         NewUserPtsUpdatesModel(db),
+		CanonicalQueries:            NewCanonicalQueriesModel(db),
 	}
 }
 
@@ -59,5 +62,6 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 		MessagePeerSequencesModel:   NewMessagePeerSequencesTxModel(tx),
 		MessageSendStatesModel:      NewMessageSendStatesTxModel(tx),
 		UserPtsUpdatesModel:         NewUserPtsUpdatesTxModel(tx),
+		CanonicalQueries:            NewCanonicalQueriesTxModel(tx),
 	}
 }
