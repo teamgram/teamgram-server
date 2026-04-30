@@ -29,19 +29,19 @@ var _ *sqlx.Tx
 
 type bizPushTaskOutboxModel interface {
 	Insert(ctx context.Context, data *PushTaskOutbox) (lastInsertId, rowsAffected int64, err error)
-	SelectPending(ctx context.Context, status int32, nextRetryAt string, limit int32) ([]PushTaskOutbox, error)
-	SelectPendingWithCB(ctx context.Context, status int32, nextRetryAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) ([]PushTaskOutbox, error)
+	SelectPending(ctx context.Context, status int32, availableAt string, limit int32) ([]PushTaskOutbox, error)
+	SelectPendingWithCB(ctx context.Context, status int32, availableAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) ([]PushTaskOutbox, error)
 	MarkPublishing(ctx context.Context, status int32, taskId int64) (rowsAffected int64, err error)
 	MarkPublished(ctx context.Context, status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error)
-	MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
+	MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
 }
 
 type PushTaskOutboxTxModel interface {
 	Insert(data *PushTaskOutbox) (lastInsertId, rowsAffected int64, err error)
-	SelectPending(status int32, nextRetryAt string, limit int32) ([]PushTaskOutbox, error)
+	SelectPending(status int32, availableAt string, limit int32) ([]PushTaskOutbox, error)
 	MarkPublishing(status int32, taskId int64) (rowsAffected int64, err error)
 	MarkPublished(status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error)
-	MarkPublishFailed(status int32, nextRetryAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
+	MarkPublishFailed(status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
 }
 
 type defaultPushTaskOutboxTxModel struct {
@@ -53,10 +53,10 @@ func NewPushTaskOutboxTxModel(tx *sqlx.Tx) PushTaskOutboxTxModel {
 }
 
 // Insert
-// insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)
+// insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :available_at, :published_topic, :published_partition, :published_offset, :last_error_code)
 func (m *defaultPushTaskOutboxModel) Insert(ctx context.Context, data *PushTaskOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)"
+		query = "insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :available_at, :published_topic, :published_partition, :published_offset, :last_error_code)"
 		r     sql.Result
 	)
 
@@ -81,10 +81,10 @@ func (m *defaultPushTaskOutboxModel) Insert(ctx context.Context, data *PushTaskO
 }
 
 // Insert
-// insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)
+// insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :available_at, :published_topic, :published_partition, :published_offset, :last_error_code)
 func (m *defaultPushTaskOutboxTxModel) Insert(data *PushTaskOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :published_topic, :published_partition, :published_offset, :last_error_code)"
+		query = "insert into push_task_outbox(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, published_topic, published_partition, published_offset, last_error_code) values (:task_id, :user_id, :pts, :push_type, :peer_type, :peer_id, :operation_id, :push_partition_id, :task_schema_version, :task_codec, :task_payload, :status, :publish_attempts, :available_at, :published_topic, :published_partition, :published_offset, :last_error_code)"
 		r     sql.Result
 	)
 
@@ -108,13 +108,13 @@ func (m *defaultPushTaskOutboxTxModel) Insert(data *PushTaskOutbox) (lastInsertI
 }
 
 // SelectPending
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and (next_retry_at is null or next_retry_at <= :next_retry_at) order by created_at asc limit :limit
-func (m *defaultPushTaskOutboxModel) SelectPending(ctx context.Context, status int32, nextRetryAt string, limit int32) (rList []PushTaskOutbox, err error) {
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+func (m *defaultPushTaskOutboxModel) SelectPending(ctx context.Context, status int32, availableAt string, limit int32) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and (next_retry_at is null or next_retry_at <= ?) order by created_at asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
-	err = m.db.QueryRowsPartial(ctx, &values, query, status, nextRetryAt, limit)
+	err = m.db.QueryRowsPartial(ctx, &values, query, status, availableAt, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -132,13 +132,13 @@ func (m *defaultPushTaskOutboxModel) SelectPending(ctx context.Context, status i
 }
 
 // SelectPending
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and (next_retry_at is null or next_retry_at <= :next_retry_at) order by created_at asc limit :limit
-func (m *defaultPushTaskOutboxTxModel) SelectPending(status int32, nextRetryAt string, limit int32) (rList []PushTaskOutbox, err error) {
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+func (m *defaultPushTaskOutboxTxModel) SelectPending(status int32, availableAt string, limit int32) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and (next_retry_at is null or next_retry_at <= ?) order by created_at asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
-	err = m.tx.QueryRowsPartial(&values, query, status, nextRetryAt, limit)
+	err = m.tx.QueryRowsPartial(&values, query, status, availableAt, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -156,13 +156,13 @@ func (m *defaultPushTaskOutboxTxModel) SelectPending(status int32, nextRetryAt s
 }
 
 // SelectPendingWithCB
-// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and (next_retry_at is null or next_retry_at <= :next_retry_at) order by created_at asc limit :limit
-func (m *defaultPushTaskOutboxModel) SelectPendingWithCB(ctx context.Context, status int32, nextRetryAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) (rList []PushTaskOutbox, err error) {
+// select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = :status and available_at <= :available_at order by available_at asc, task_id asc limit :limit
+func (m *defaultPushTaskOutboxModel) SelectPendingWithCB(ctx context.Context, status int32, availableAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) (rList []PushTaskOutbox, err error) {
 	var (
-		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and (next_retry_at is null or next_retry_at <= ?) order by created_at asc limit ?"
+		query  = "select task_id, user_id, pts, push_type, peer_type, peer_id, operation_id, push_partition_id, task_schema_version, task_codec, task_payload, `status`, publish_attempts, available_at, next_retry_at, published_topic, published_partition, published_offset, last_error_code, published_at from push_task_outbox where `status` = ? and available_at <= ? order by available_at asc, task_id asc limit ?"
 		values []PushTaskOutbox
 	)
-	err = m.db.QueryRowsPartial(ctx, &values, query, status, nextRetryAt, limit)
+	err = m.db.QueryRowsPartial(ctx, &values, query, status, availableAt, limit)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
@@ -283,15 +283,15 @@ func (m *defaultPushTaskOutboxTxModel) MarkPublished(status int32, publishedTopi
 }
 
 // MarkPublishFailed
-// update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, last_error_code = :last_error_code where task_id = :task_id
-func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
+// update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, available_at = :available_at, last_error_code = :last_error_code where task_id = :task_id
+func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, last_error_code = ? where task_id = ?"
+		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, available_at = ?, last_error_code = ? where task_id = ?"
 		rResult sql.Result
 	)
 
-	rResult, err = m.db.Exec(ctx, query, status, nextRetryAt, lastErrorCode, taskId)
+	rResult, err = m.db.Exec(ctx, query, status, nextRetryAt, availableAt, lastErrorCode, taskId)
 
 	if err != nil {
 		err = fmt.Errorf("push_task_outbox.MarkPublishFailed exec: %w", err)
@@ -308,13 +308,13 @@ func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, stat
 }
 
 // MarkPublishFailed
-// update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, last_error_code = :last_error_code where task_id = :task_id
-func (m *defaultPushTaskOutboxTxModel) MarkPublishFailed(status int32, nextRetryAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
+// update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, available_at = :available_at, last_error_code = :last_error_code where task_id = :task_id
+func (m *defaultPushTaskOutboxTxModel) MarkPublishFailed(status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, last_error_code = ? where task_id = ?"
+		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, available_at = ?, last_error_code = ? where task_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = m.tx.Exec(query, status, nextRetryAt, lastErrorCode, taskId)
+	rResult, err = m.tx.Exec(query, status, nextRetryAt, availableAt, lastErrorCode, taskId)
 
 	if err != nil {
 		err = fmt.Errorf("push_task_outbox.MarkPublishFailed exec: %w", err)
