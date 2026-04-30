@@ -3,16 +3,16 @@
     <operation name="Insert">
         <sql>
             INSERT INTO user_operation_results
-                (user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code)
+                (user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at)
             VALUES
-                (:user_id, :operation_id, :op_type, :status, :pts, :pts_count, :payload_hash, :response_schema_version, :response_codec, :response_payload, :response_payload_hash, :terminal_error_code)
+                (:user_id, :operation_id, :op_type, :status, :pts, :pts_count, :payload_hash, :response_schema_version, :response_codec, :response_payload, :response_payload_hash, :terminal_error_code, :completed_at)
         </sql>
     </operation>
 
     <operation name="SelectByOperation">
         <sql>
             SELECT
-                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code
+                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at
             FROM
                 user_operation_results
             WHERE
@@ -20,20 +20,20 @@
         </sql>
     </operation>
 
-    <operation name="SelectByStatusCreatedBefore" result_set="list">
+    <operation name="SelectByStatusCompletedBefore" result_set="list">
         <params>
-            <param name="beforeCreatedAt" type="string" />
+            <param name="beforeCompletedAt" type="string" />
             <param name="limit" type="int32" />
         </params>
         <sql>
             SELECT
-                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code
+                user_id, operation_id, op_type, status, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at
             FROM
                 user_operation_results
             WHERE
-                status = :status AND created_at &lt; :beforeCreatedAt
+                status = :status AND completed_at &lt; :beforeCompletedAt
             ORDER BY
-                created_at LIMIT :limit
+                completed_at, user_id, operation_id LIMIT :limit
         </sql>
     </operation>
 </table>

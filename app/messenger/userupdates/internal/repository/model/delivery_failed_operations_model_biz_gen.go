@@ -55,10 +55,10 @@ func NewDeliveryFailedOperationsTxModel(tx *sqlx.Tx) DeliveryFailedOperationsTxM
 }
 
 // Insert
-// insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :replayed_at, :replayed_by)
+// insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :failed_at)
 func (m *defaultDeliveryFailedOperationsModel) Insert(ctx context.Context, data *DeliveryFailedOperations) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :replayed_at, :replayed_by)"
+		query = "insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :failed_at)"
 		r     sql.Result
 	)
 
@@ -83,10 +83,10 @@ func (m *defaultDeliveryFailedOperationsModel) Insert(ctx context.Context, data 
 }
 
 // Insert
-// insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :replayed_at, :replayed_by)
+// insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :failed_at)
 func (m *defaultDeliveryFailedOperationsTxModel) Insert(data *DeliveryFailedOperations) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :replayed_at, :replayed_by)"
+		query = "insert into delivery_failed_operations(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at) values (:failed_id, :user_id, :operation_id, :op_type, :bucket_id, :kafka_topic, :kafka_partition, :kafka_offset, :payload_schema_version, :payload_hash, :failure_category, :failure_code, :failure_message, :retry_count, :status, :failed_at)"
 		r     sql.Result
 	)
 
@@ -110,11 +110,11 @@ func (m *defaultDeliveryFailedOperationsTxModel) Insert(data *DeliveryFailedOper
 }
 
 // SelectByKafkaOffset
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where kafka_topic = :kafka_topic and kafka_partition = :kafka_partition and kafka_offset = :kafka_offset limit 1
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where kafka_topic = :kafka_topic and kafka_partition = :kafka_partition and kafka_offset = :kafka_offset limit 1
 func (m *defaultDeliveryFailedOperationsModel) SelectByKafkaOffset(ctx context.Context, kafkaTopic string, kafkaPartition int32, kafkaOffset int64) (rValue *DeliveryFailedOperations, err error) {
 
 	var (
-		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where kafka_topic = ? and kafka_partition = ? and kafka_offset = ? limit 1"
+		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where kafka_topic = ? and kafka_partition = ? and kafka_offset = ? limit 1"
 		do    = &DeliveryFailedOperations{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, kafkaTopic, kafkaPartition, kafkaOffset)
@@ -137,10 +137,10 @@ func (m *defaultDeliveryFailedOperationsModel) SelectByKafkaOffset(ctx context.C
 }
 
 // SelectByKafkaOffset
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where kafka_topic = :kafka_topic and kafka_partition = :kafka_partition and kafka_offset = :kafka_offset limit 1
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where kafka_topic = :kafka_topic and kafka_partition = :kafka_partition and kafka_offset = :kafka_offset limit 1
 func (m *defaultDeliveryFailedOperationsTxModel) SelectByKafkaOffset(kafkaTopic string, kafkaPartition int32, kafkaOffset int64) (rValue *DeliveryFailedOperations, err error) {
 	var (
-		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where kafka_topic = ? and kafka_partition = ? and kafka_offset = ? limit 1"
+		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where kafka_topic = ? and kafka_partition = ? and kafka_offset = ? limit 1"
 		do    = &DeliveryFailedOperations{}
 	)
 	err = m.tx.QueryRowPartial(do, query, kafkaTopic, kafkaPartition, kafkaOffset)
@@ -162,11 +162,11 @@ func (m *defaultDeliveryFailedOperationsTxModel) SelectByKafkaOffset(kafkaTopic 
 }
 
 // SelectByUserOperation
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where user_id = :user_id and operation_id = :operation_id limit 1
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultDeliveryFailedOperationsModel) SelectByUserOperation(ctx context.Context, userId int64, operationId string) (rValue *DeliveryFailedOperations, err error) {
 
 	var (
-		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where user_id = ? and operation_id = ? limit 1"
+		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where user_id = ? and operation_id = ? limit 1"
 		do    = &DeliveryFailedOperations{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId, operationId)
@@ -189,10 +189,10 @@ func (m *defaultDeliveryFailedOperationsModel) SelectByUserOperation(ctx context
 }
 
 // SelectByUserOperation
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where user_id = :user_id and operation_id = :operation_id limit 1
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultDeliveryFailedOperationsTxModel) SelectByUserOperation(userId int64, operationId string) (rValue *DeliveryFailedOperations, err error) {
 	var (
-		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where user_id = ? and operation_id = ? limit 1"
+		query = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where user_id = ? and operation_id = ? limit 1"
 		do    = &DeliveryFailedOperations{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId, operationId)
@@ -214,10 +214,10 @@ func (m *defaultDeliveryFailedOperationsTxModel) SelectByUserOperation(userId in
 }
 
 // SelectByBucketStatus
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by created_at asc limit :limit
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by failed_at asc, failed_id asc limit :limit
 func (m *defaultDeliveryFailedOperationsModel) SelectByBucketStatus(ctx context.Context, bucketId int32, status int32, limit int32) (rList []DeliveryFailedOperations, err error) {
 	var (
-		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = ? and `status` = ? order by created_at asc limit ?"
+		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = ? and `status` = ? order by failed_at asc, failed_id asc limit ?"
 		values []DeliveryFailedOperations
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, bucketId, status, limit)
@@ -238,10 +238,10 @@ func (m *defaultDeliveryFailedOperationsModel) SelectByBucketStatus(ctx context.
 }
 
 // SelectByBucketStatus
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by created_at asc limit :limit
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by failed_at asc, failed_id asc limit :limit
 func (m *defaultDeliveryFailedOperationsTxModel) SelectByBucketStatus(bucketId int32, status int32, limit int32) (rList []DeliveryFailedOperations, err error) {
 	var (
-		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = ? and `status` = ? order by created_at asc limit ?"
+		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = ? and `status` = ? order by failed_at asc, failed_id asc limit ?"
 		values []DeliveryFailedOperations
 	)
 	err = m.tx.QueryRowsPartial(&values, query, bucketId, status, limit)
@@ -262,10 +262,10 @@ func (m *defaultDeliveryFailedOperationsTxModel) SelectByBucketStatus(bucketId i
 }
 
 // SelectByBucketStatusWithCB
-// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by created_at asc limit :limit
+// select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = :bucket_id and `status` = :status order by failed_at asc, failed_id asc limit :limit
 func (m *defaultDeliveryFailedOperationsModel) SelectByBucketStatusWithCB(ctx context.Context, bucketId int32, status int32, limit int32, cb func(sz, i int, v *DeliveryFailedOperations)) (rList []DeliveryFailedOperations, err error) {
 	var (
-		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, replayed_at, replayed_by from delivery_failed_operations where bucket_id = ? and `status` = ? order by created_at asc limit ?"
+		query  = "select failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic, kafka_partition, kafka_offset, payload_schema_version, payload_hash, failure_category, failure_code, failure_message, retry_count, `status`, failed_at from delivery_failed_operations where bucket_id = ? and `status` = ? order by failed_at asc, failed_id asc limit ?"
 		values []DeliveryFailedOperations
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, bucketId, status, limit)

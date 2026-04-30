@@ -195,7 +195,6 @@ CREATE TABLE IF NOT EXISTS user_pts_events (
   created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, pts),
   UNIQUE KEY uk_user_operation (user_id, operation_id),
-  KEY idx_user_created (user_id, created_at),
   KEY idx_peer (peer_type, peer_id, peer_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -212,11 +211,11 @@ CREATE TABLE IF NOT EXISTS user_operation_results (
   response_payload      BLOB NOT NULL,
   response_payload_hash BINARY(32) NOT NULL,
   terminal_error_code   VARCHAR(128) NULL,
+  completed_at          DATETIME(6) NOT NULL,
   created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, operation_id),
-  KEY idx_user_created (user_id, created_at),
-  KEY idx_status_created (status, created_at)
+  KEY idx_status_completed (status, completed_at, user_id, operation_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS user_message_views (
@@ -311,6 +310,7 @@ CREATE TABLE IF NOT EXISTS delivery_failed_operations (
   failure_message       VARCHAR(1024) NULL,
   retry_count           INT NOT NULL DEFAULT 0,
   status                INT NOT NULL,
+  failed_at             DATETIME(6) NOT NULL,
   replayed_at           DATETIME(6) NULL,
   replayed_by           VARCHAR(128) NULL,
   created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -318,8 +318,7 @@ CREATE TABLE IF NOT EXISTS delivery_failed_operations (
   PRIMARY KEY (failed_id),
   UNIQUE KEY uk_operation_offset (kafka_topic, kafka_partition, kafka_offset),
   KEY idx_user_operation (user_id, operation_id),
-  KEY idx_bucket_status (bucket_id, status),
-  KEY idx_status_created (status, created_at)
+  KEY idx_bucket_status_failed (bucket_id, status, failed_at, failed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ---------------------------------------------------------------------------

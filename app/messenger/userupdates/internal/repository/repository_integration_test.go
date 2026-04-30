@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 
@@ -175,6 +176,66 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		}
 	})
 
+	t.Run("failed operation replay uses failed_at", func(t *testing.T) {
+		now := time.Now().UTC().Truncate(time.Second)
+		bucketID := int32(base % 10_000)
+		status := int32(210_000 + base%1_000_000)
+		firstFailedID := base + 80_001
+		secondFailedID := base + 80_002
+		futureFailedID := base + 80_003
+
+		insertTestDeliveryFailedOperation(t, ctx, db, secondFailedID, bucketID, status, now.Add(-time.Minute))
+		insertTestDeliveryFailedOperation(t, ctx, db, firstFailedID, bucketID, status, now.Add(-time.Minute))
+		// SelectByBucketStatus is a bucket FIFO replay listing. It orders by failed_at
+		// but does not filter by failed_at <= now.
+		insertTestDeliveryFailedOperation(t, ctx, db, futureFailedID, bucketID, status, now.Add(time.Hour))
+
+		rows, err := NewForTest(db, &testIDGenerator{next: base + 80_000}, "local-userupdates").
+			models.DeliveryFailedOperationsModel.SelectByBucketStatus(ctx, bucketID, status, 10)
+		if err != nil {
+			t.Fatalf("SelectByBucketStatus() error = %v", err)
+		}
+		if len(rows) < 3 {
+			t.Fatalf("SelectByBucketStatus() row_count=%d, want at least 3", len(rows))
+		}
+		if rows[0].FailedId != firstFailedID || rows[1].FailedId != secondFailedID || rows[2].FailedId != futureFailedID {
+			t.Fatalf("failed replay order = [%d %d %d], want [%d %d %d]",
+				rows[0].FailedId, rows[1].FailedId, rows[2].FailedId,
+				firstFailedID, secondFailedID, futureFailedID)
+		}
+	})
+
+	t.Run("terminal operation retention uses completed_at", func(t *testing.T) {
+		now := time.Now().UTC().Truncate(time.Second)
+		status := int32(220_000 + base%1_000_000)
+		oldUserID := base + 90_001
+		newUserID := base + 90_002
+		oldOperationID := fmt.Sprintf("retention-old-%d", base)
+		newOperationID := fmt.Sprintf("retention-new-%d", base)
+
+		insertTestOperationResult(t, ctx, db, oldUserID, oldOperationID, status, now.Add(-time.Hour))
+		insertTestOperationResult(t, ctx, db, newUserID, newOperationID, status, now.Add(time.Hour))
+
+		rows, err := NewForTest(db, &testIDGenerator{next: base + 90_000}, "local-userupdates").
+			models.UserOperationResultsModel.SelectByStatusCompletedBefore(ctx, status, mysqlTestTime(now), 10)
+		if err != nil {
+			t.Fatalf("SelectByStatusCompletedBefore() error = %v", err)
+		}
+		if len(rows) != 1 {
+			t.Fatalf("SelectByStatusCompletedBefore() row_count=%d, want 1: %+v", len(rows), rows)
+		}
+		if rows[0].UserId != oldUserID || rows[0].OperationId != oldOperationID {
+			t.Fatalf("retention row = %+v, want user_id=%d operation_id=%s", rows[0], oldUserID, oldOperationID)
+		}
+	})
+
+	t.Run("pts event business reads do not expose created_at", func(t *testing.T) {
+		eventType := reflect.TypeOf(model.UserPtsEvents{})
+		if _, ok := eventType.FieldByName("CreatedAt"); ok {
+			t.Fatalf("model.UserPtsEvents exposes CreatedAt; lifecycle fields must not be normal business read fields")
+		}
+	})
+
 	t.Run("operation id conflict", func(t *testing.T) {
 		userID := base + 301
 		repo := NewForTest(db, &testIDGenerator{next: base + 20_000}, "local-userupdates")
@@ -328,6 +389,66 @@ VALUES
 	)
 	if err != nil {
 		t.Fatalf("insert test push task: %v", err)
+	}
+}
+
+func insertTestDeliveryFailedOperation(t *testing.T, ctx context.Context, db *sqlx.DB, failedID int64, bucketID int32, status int32, failedAt time.Time) {
+	t.Helper()
+	_, err := db.Exec(ctx, `
+INSERT INTO delivery_failed_operations
+	(failed_id, user_id, operation_id, op_type, bucket_id, kafka_topic,
+	 kafka_partition, kafka_offset, payload_schema_version, payload_hash,
+	 failure_category, failure_code, failure_message, retry_count, status,
+	 failed_at)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		failedID,
+		failedID+10_000,
+		fmt.Sprintf("failed-op-%d", failedID),
+		int32(1),
+		bucketID,
+		"test-topic",
+		int32(failedID%16),
+		failedID,
+		int32(1),
+		[]byte("01234567890123456789012345678901"),
+		int32(1),
+		"test_failure",
+		"test failure",
+		int32(0),
+		status,
+		mysqlTestTime(failedAt),
+	)
+	if err != nil {
+		t.Fatalf("insert failed operation: %v", err)
+	}
+}
+
+func insertTestOperationResult(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64, operationID string, status int32, completedAt time.Time) {
+	t.Helper()
+	_, err := db.Exec(ctx, `
+INSERT INTO user_operation_results
+	(user_id, operation_id, op_type, status, pts, pts_count, payload_hash,
+	 response_schema_version, response_codec, response_payload,
+	 response_payload_hash, terminal_error_code, completed_at)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID,
+		operationID,
+		int32(1),
+		status,
+		int64(1),
+		int32(1),
+		[]byte("01234567890123456789012345678901"),
+		int32(1),
+		PayloadCodecJSON,
+		[]byte(`{"test":true}`),
+		[]byte("12345678901234567890123456789012"),
+		"",
+		mysqlTestTime(completedAt),
+	)
+	if err != nil {
+		t.Fatalf("insert operation result: %v", err)
 	}
 }
 
