@@ -3,7 +3,10 @@ package sessionstate
 import (
 	"bytes"
 	"context"
+	"crypto/rsa"
 	"crypto/sha1"
+	"crypto/x509"
+	"encoding/pem"
 	"math/big"
 	"testing"
 
@@ -143,19 +146,27 @@ func encryptPQInnerForTest(t *testing.T, manager *HandshakeManager, nonce, serve
 	for i, j := 0, len(data)-1; i < j; i, j = i+1, j-1 {
 		data[i], data[j] = data[j], data[i]
 	}
-	tempKey := bytes.Repeat([]byte{0x11}, 32)
-	hash := crypto.Sha256Digest(append(append([]byte(nil), tempKey...), data...))
-	withHash := append(data, hash...)
-	encrypted, err := crypto.NewAES256IGECryptor(tempKey, zeroIV).Encrypt(withHash)
-	if err != nil {
-		t.Fatalf("encrypt pq inner: %v", err)
+	modulus := rsaPrivateKeyForTest(t).N
+	for seed := byte(1); seed != 0; seed++ {
+		tempKey := bytes.Repeat([]byte{seed}, 32)
+		hash := crypto.Sha256Digest(append(append([]byte(nil), tempKey...), data...))
+		withHash := append(data, hash...)
+		encrypted, err := crypto.NewAES256IGECryptor(tempKey, zeroIV).Encrypt(withHash)
+		if err != nil {
+			t.Fatalf("encrypt pq inner: %v", err)
+		}
+		tempKeyXor := append([]byte(nil), tempKey...)
+		encryptedHash := crypto.Sha256Digest(encrypted)
+		for i := range tempKeyXor {
+			tempKeyXor[i] ^= encryptedHash[i]
+		}
+		block := append(tempKeyXor, encrypted...)
+		if new(big.Int).SetBytes(block).Cmp(modulus) < 0 {
+			return rsaEncryptForTest(t, block)
+		}
 	}
-	tempKeyXor := append([]byte(nil), tempKey...)
-	encryptedHash := crypto.Sha256Digest(encrypted)
-	for i := range tempKeyXor {
-		tempKeyXor[i] ^= encryptedHash[i]
-	}
-	return manager.rsa.Encrypt(append(tempKeyXor, encrypted...))
+	t.Fatal("failed to build RSA payload smaller than modulus")
+	return nil
 }
 
 func decryptServerDHForTest(t *testing.T, newNonce bin.Int256, serverNonce bin.Int128, encrypted []byte) *mt.TLServerDHInnerData {
@@ -241,4 +252,26 @@ func encodeTL(t *testing.T, obj interface {
 		}
 	}
 	return append([]byte(nil), x.Bytes()...)
+}
+
+func rsaEncryptForTest(t *testing.T, payload []byte) []byte {
+	t.Helper()
+	key := rsaPrivateKeyForTest(t)
+	ciphertext := new(big.Int).Exp(new(big.Int).SetBytes(payload), big.NewInt(int64(key.E)), key.N).Bytes()
+	out := make([]byte, 256)
+	copy(out[256-len(ciphertext):], ciphertext)
+	return out
+}
+
+func rsaPrivateKeyForTest(t *testing.T) *rsa.PrivateKey {
+	t.Helper()
+	block, _ := pem.Decode(defaultRSAPrivateKey)
+	if block == nil {
+		t.Fatal("default RSA private key PEM decode failed")
+	}
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		t.Fatalf("ParsePKCS1PrivateKey() error = %v", err)
+	}
+	return key
 }

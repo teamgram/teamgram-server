@@ -93,6 +93,9 @@ func TestRawInvokerInvokeRawRejectsUnknownConstructor(t *testing.T) {
 	if err == nil {
 		t.Fatal("InvokeRaw() error = nil, want error")
 	}
+	if !errors.Is(err, ErrRawConstructorNotRegistered) {
+		t.Fatalf("InvokeRaw() error = %v, want %v", err, ErrRawConstructorNotRegistered)
+	}
 }
 
 func TestRawInvokerInvokeRawRejectsMissingClient(t *testing.T) {

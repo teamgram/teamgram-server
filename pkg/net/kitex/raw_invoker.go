@@ -11,7 +11,10 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
-var ErrRawClientNotFound = errors.New("raw rpc client not found")
+var (
+	ErrRawClientNotFound           = errors.New("raw rpc client not found")
+	ErrRawConstructorNotRegistered = errors.New("raw rpc constructor not registered")
+)
 
 type RawRPCResponse struct {
 	Payload []byte
@@ -38,7 +41,7 @@ func (m *RawInvoker) InvokeRaw(ctx context.Context, rpcMetaData *metadata.RpcMet
 
 	tuple := iface.FindRPCContextTupleByClazzID(clazzID)
 	if tuple == nil {
-		return nil, fmt.Errorf("raw rpc constructor %#x is not registered", clazzID)
+		return nil, fmt.Errorf("%w: %#x", ErrRawConstructorNotRegistered, clazzID)
 	}
 
 	return m.InvokeRawMethod(ctx, rpcMetaData, tuple.ServiceName(), tuple.Method, reqPayload)
