@@ -23,8 +23,11 @@ import (
 // HelpGetNearestDc
 // help.getNearestDc#1fb33026 = NearestDc;
 func (c *ConfigurationCore) HelpGetNearestDc(in *tg.TLHelpGetNearestDc) (*tg.NearestDc, error) {
-	// TODO: not impl
-	c.Logger.Errorf("help.getNearestDc - error: method HelpGetNearestDc not impl")
+	_ = in
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLNearestDc(&tg.TLNearestDc{
+		Country:   startupCountry,
+		ThisDc:    startupThisDC,
+		NearestDc: startupThisDC,
+	}).ToNearestDc(), nil
 }

@@ -23,8 +23,7 @@ import (
 // HelpGetConfig
 // help.getConfig#c4f9186b = Config;
 func (c *ConfigurationCore) HelpGetConfig(in *tg.TLHelpGetConfig) (*tg.Config, error) {
-	// TODO: not impl
-	c.Logger.Errorf("help.getConfig - error: method HelpGetConfig not impl")
+	_ = in
 
-	return nil, tg.ErrMethodNotImpl
+	return makeStartupConfig(startupNow()), nil
 }

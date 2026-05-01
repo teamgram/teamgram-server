@@ -23,8 +23,12 @@ import (
 // HelpGetCountriesList
 // help.getCountriesList#735787a8 lang_code:string hash:int = help.CountriesList;
 func (c *ConfigurationCore) HelpGetCountriesList(in *tg.TLHelpGetCountriesList) (*tg.HelpCountriesList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("help.getCountriesList - error: method HelpGetCountriesList not impl")
+	if in.Hash == startupCountriesHash {
+		return tg.HelpCountriesListNotModified, nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpCountriesList(&tg.TLHelpCountriesList{
+		Countries: []tg.HelpCountryClazz{},
+		Hash:      startupCountriesHash,
+	}).ToHelpCountriesList(), nil
 }

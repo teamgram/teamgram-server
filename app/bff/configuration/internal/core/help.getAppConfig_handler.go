@@ -23,8 +23,12 @@ import (
 // HelpGetAppConfig
 // help.getAppConfig#61e3f854 hash:int = help.AppConfig;
 func (c *ConfigurationCore) HelpGetAppConfig(in *tg.TLHelpGetAppConfig) (*tg.HelpAppConfig, error) {
-	// TODO: not impl
-	c.Logger.Errorf("help.getAppConfig - error: method HelpGetAppConfig not impl")
+	if in.Hash == startupAppConfigHash {
+		return tg.HelpAppConfigNotModified, nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpAppConfig(&tg.TLHelpAppConfig{
+		Hash:   startupAppConfigHash,
+		Config: tg.JsonNullClazz,
+	}).ToHelpAppConfig(), nil
 }
