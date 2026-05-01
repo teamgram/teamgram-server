@@ -25,8 +25,6 @@ import (
 // GatewayPushSessionUpdatesData
 // gateway.pushSessionUpdatesData flags:# perm_auth_key_id:long auth_key_id:long session_id:long updates:Updates = Bool;
 func (c *GatewayCore) GatewayPushSessionUpdatesData(in *gateway.TLGatewayPushSessionUpdatesData) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("gateway.pushSessionUpdatesData - error: method GatewayPushSessionUpdatesData not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	c.Logger.Debugf("gateway.pushSessionUpdatesData - phase3 local no-op")
+	return tg.BoolTrue, nil
 }

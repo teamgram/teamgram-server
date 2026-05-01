@@ -23,6 +23,7 @@ import (
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/qrcode/qrcode/qrcodeservice"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"
 )
 
@@ -30,6 +31,7 @@ type ServiceContext struct {
 	Config config.Config
 	Repo   *repository.Repository
 	BFF    *bffproxyclient.BFFProxyClient2
+	Push   *push.LocalWriter
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,6 +39,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config: c,
 		Repo:   repository.NewRepository(c),
 		BFF:    bffproxyclient.NewBFFProxyClient2(c.BffClient.Clients),
+		Push:   push.NewLocalWriter(),
 	}
 }
 func (s *ServiceContext) Close() error {
