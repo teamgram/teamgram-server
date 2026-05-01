@@ -17,14 +17,69 @@
 package core
 
 import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSendMessage
 // messages.sendMessage#545cd15a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.sendMessage - error: method MessagesSendMessage not impl")
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	selfUserID := md.UserId
+	authKeyID := md.PermAuthKeyId
 
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	peerUser, ok := in.Peer.(*tg.TLInputPeerUser)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+
+	if err := checkMessage(in.Message); err != nil {
+		return nil, err
+	}
+
+	if in.RandomId == 0 {
+		return nil, tg.ErrRandomIdEmpty
+	}
+
+	if err := checkUnsupportedFields(in); err != nil {
+		return nil, err
+	}
+
+	outgoingMsg := tg.MakeTLMessage(&tg.TLMessage{
+		Out:     true,
+		FromId:  tg.MakePeerUser(selfUserID),
+		PeerId:  tg.MakePeerUser(peerUser.UserId),
+		Date:    int32(time.Now().Unix()),
+		Message: in.Message,
+	})
+
+	outbox := msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
+		RandomId: in.RandomId,
+		Message:  outgoingMsg,
+	})
+
+	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
+	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
+		UserId:    selfUserID,
+		AuthKeyId: authKeyID,
+		PeerType:  tg.PEER_USER,
+		PeerId:    peerUser.UserId,
+		Message:   []msg.OutboxMessageClazz{outbox},
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
+			selfUserID, peerUser.UserId, in.RandomId, err)
+		return nil, mapMsgSendError(err)
+	}
+
+	return updates, nil
 }

@@ -8,3 +8,11 @@ ChatClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service.chat
+MsgClient:
+  DestService: messenger.msg
+  ServiceName: RPCMsg
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.msg

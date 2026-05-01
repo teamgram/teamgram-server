@@ -20,10 +20,16 @@ import (
 	"context"
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+type sendMessageClient interface {
+	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+}
 
 type MessagesCore struct {
 	ctx    context.Context
