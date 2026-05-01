@@ -15,7 +15,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: geoip idgen status dfs media authsession biz msg sync bff session gnetway userupdates
+all: geoip idgen status dfs media authsession biz msg sync bff session gnetway gateway userupdates
 
 lint: lint-tg-primitives
 
@@ -74,6 +74,10 @@ gnetway:
 	@echo "build gnetway..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/gnetway -tags=jsoniter app/interface/gnetway/cmd/gnetway/*.go
 
+gateway:
+	@echo "build gateway..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/gateway -tags=jsoniter app/interface/gateway/cmd/gateway/*.go
+
 userupdates:
 	@echo "build userupdates..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/userupdates -tags=jsoniter app/messenger/userupdates/cmd/userupdates/*.go
@@ -92,4 +96,5 @@ clean:
 	@rm -rf ${INSTALL}/bin/bff
 	@rm -rf ${INSTALL}/bin/session
 	@rm -rf ${INSTALL}/bin/gnetway
+	@rm -rf ${INSTALL}/bin/gateway
 	@rm -rf ${INSTALL}/bin/userupdates

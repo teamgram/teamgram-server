@@ -18,12 +18,16 @@
 package server
 
 import (
+	"context"
 	"flag"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway/gatewayservice"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/dispatch"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/svc"
+	gttransport "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/transport"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
 	"github.com/cloudwego/kitex/server"
@@ -35,6 +39,7 @@ var configFile = flag.String("f", "etc/gateway.yaml", "the config file")
 
 type Server struct {
 	kitexSrv *kitex.RpcServer
+	tcpSrv   *gttransport.Server
 	ctx      *svc.ServiceContext
 }
 
@@ -57,17 +62,31 @@ func (s *Server) Initialize() error {
 		func(s server.Server) error {
 			return gatewayservice.RegisterService(s, service.New(ctx))
 		})
+	s.tcpSrv = gttransport.NewServer(
+		c.Transport.TCPListenOn,
+		sessionstate.NewHandshakeManager(ctx.Repo),
+		sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF)))
 
 	return nil
 }
 
 func (s *Server) RunLoop() {
+	if s.tcpSrv != nil {
+		if err := s.tcpSrv.Start(context.Background()); err != nil {
+			logx.Errorf("gateway tcp server start failed: %v", err)
+		}
+	}
 	if err := s.kitexSrv.Run(); err != nil {
 		logx.Errorf("server run failed: %v", err)
 	}
 }
 
 func (s *Server) Destroy() {
+	if s.tcpSrv != nil {
+		if err := s.tcpSrv.Stop(); err != nil {
+			logx.Errorf("gateway tcp server stop failed: %v", err)
+		}
+	}
 	if err := s.kitexSrv.Stop(); err != nil {
 		logx.Errorf("server stop failed: %v", err)
 	}
