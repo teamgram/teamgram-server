@@ -235,7 +235,10 @@ func encodeTL(t *testing.T, obj interface {
 	x := bin.NewEncoder()
 	defer x.End()
 	if err := obj.Encode(x, 0); err != nil {
-		t.Fatalf("Encode(%T) error = %v", obj, err)
+		x.Reset()
+		if err2 := obj.Encode(x, 224); err2 != nil {
+			t.Fatalf("Encode(%T) error = %v", obj, err)
+		}
 	}
 	return append([]byte(nil), x.Bytes()...)
 }
