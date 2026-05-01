@@ -7,8 +7,9 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -85,8 +86,8 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	if got.AuthKeyId != 200 {
 		t.Fatalf("AuthKeyId = %d, want 200", got.AuthKeyId)
 	}
-	if got.PeerType != tg.PEER_USER {
-		t.Fatalf("PeerType = %d, want %d", got.PeerType, tg.PEER_USER)
+	if got.PeerType != payload.PeerTypeUser {
+		t.Fatalf("PeerType = %d, want %d", got.PeerType, payload.PeerTypeUser)
 	}
 	if got.PeerId != 300 {
 		t.Fatalf("PeerId = %d, want 300", got.PeerId)

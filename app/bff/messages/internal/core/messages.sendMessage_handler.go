@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -71,7 +72,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
 		UserId:    selfUserID,
 		AuthKeyId: authKeyID,
-		PeerType:  tg.PEER_USER,
+		PeerType:  payload.PeerTypeUser,
 		PeerId:    peerUser.UserId,
 		Message:   []msg.OutboxMessageClazz{outbox},
 	})
