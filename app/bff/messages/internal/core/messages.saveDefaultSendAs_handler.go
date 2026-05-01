@@ -24,7 +24,7 @@ import (
 // messages.saveDefaultSendAs#ccfddf96 peer:InputPeer send_as:InputPeer = Bool;
 func (c *MessagesCore) MessagesSaveDefaultSendAs(in *tg.TLMessagesSaveDefaultSendAs) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Errorf("messages.saveDefaultSendAs - error: method MessagesSaveDefaultSendAs not impl")
+	c.Logger.Errorf("messages.saveDefaultSendAs - error: method MessagesSaveDefaultSendAs not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

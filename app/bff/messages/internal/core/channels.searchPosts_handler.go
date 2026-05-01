@@ -24,7 +24,7 @@ import (
 // channels.searchPosts#f2c4f24d flags:# hashtag:flags.0?string query:flags.1?string offset_rate:int offset_peer:InputPeer offset_id:int limit:int allow_paid_stars:flags.2?long = messages.Messages;
 func (c *MessagesCore) ChannelsSearchPosts(in *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Errorf("channels.searchPosts - error: method ChannelsSearchPosts not impl")
+	c.Logger.Errorf("channels.searchPosts - error: method ChannelsSearchPosts not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -77,7 +77,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		Message:   []msg.OutboxMessageClazz{outbox},
 	})
 	if err != nil {
-		c.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
+		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
 			selfUserID, peerUser.UserId, in.RandomId, err)
 		return nil, mapMsgSendError(err)
 	}

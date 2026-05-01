@@ -24,7 +24,7 @@ import (
 // messages.getMessagesViews#5784d3e1 peer:InputPeer id:Vector<int> increment:Bool = messages.MessageViews;
 func (c *MessagesCore) MessagesGetMessagesViews(in *tg.TLMessagesGetMessagesViews) (*tg.MessagesMessageViews, error) {
 	// TODO: not impl
-	c.Errorf("messages.getMessagesViews - error: method MessagesGetMessagesViews not impl")
+	c.Logger.Errorf("messages.getMessagesViews - error: method MessagesGetMessagesViews not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

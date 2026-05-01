@@ -34,8 +34,8 @@ type sendMessageClient interface {
 type MessagesCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
-	logx.Logger
-	MD *metadata.RpcMetadata
+	Logger logx.Logger
+	MD     *metadata.RpcMetadata
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *MessagesCore {
@@ -45,4 +45,12 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *MessagesCore {
 		Logger: logx.WithContext(ctx),
 		MD:     metadata.RpcMetadataFromIncoming(ctx),
 	}
+}
+
+func (c *MessagesCore) Debugf(format string, v ...any) {
+	c.Logger.Debugf(format, v...)
+}
+
+func (c *MessagesCore) Errorf(format string, v ...any) {
+	c.Logger.Errorf(format, v...)
 }

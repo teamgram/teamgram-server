@@ -24,7 +24,7 @@ import (
 // messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
 func (c *MessagesCore) MessagesGetOutboxReadDate(in *tg.TLMessagesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
 	// TODO: not impl
-	c.Errorf("messages.getOutboxReadDate - error: method MessagesGetOutboxReadDate not impl")
+	c.Logger.Errorf("messages.getOutboxReadDate - error: method MessagesGetOutboxReadDate not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

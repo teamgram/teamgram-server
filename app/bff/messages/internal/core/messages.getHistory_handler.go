@@ -24,7 +24,7 @@ import (
 // messages.getHistory#4423e6c5 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Errorf("messages.getHistory - error: method MessagesGetHistory not impl")
+	c.Logger.Errorf("messages.getHistory - error: method MessagesGetHistory not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

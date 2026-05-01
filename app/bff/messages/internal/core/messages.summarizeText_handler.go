@@ -24,7 +24,7 @@ import (
 // messages.summarizeText#abbbd346 flags:# peer:InputPeer id:int to_lang:flags.0?string tone:flags.2?string = TextWithEntities;
 func (c *MessagesCore) MessagesSummarizeText(in *tg.TLMessagesSummarizeText) (*tg.TextWithEntities, error) {
 	// TODO: not impl
-	c.Errorf("messages.summarizeText - error: method MessagesSummarizeText not impl")
+	c.Logger.Errorf("messages.summarizeText - error: method MessagesSummarizeText not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

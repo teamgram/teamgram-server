@@ -24,7 +24,7 @@ import (
 // messages.getSearchResultsCalendar#6aa3f6bd flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
 func (c *MessagesCore) MessagesGetSearchResultsCalendar(in *tg.TLMessagesGetSearchResultsCalendar) (*tg.MessagesSearchResultsCalendar, error) {
 	// TODO: not impl
-	c.Errorf("messages.getSearchResultsCalendar - error: method MessagesGetSearchResultsCalendar not impl")
+	c.Logger.Errorf("messages.getSearchResultsCalendar - error: method MessagesGetSearchResultsCalendar not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

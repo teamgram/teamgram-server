@@ -24,7 +24,7 @@ import (
 // messages.search#29ee847a flags:# peer:InputPeer q:string from_id:flags.0?InputPeer saved_peer_id:flags.2?InputPeer saved_reaction:flags.3?Vector<Reaction> top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Errorf("messages.search - error: method MessagesSearch not impl")
+	c.Logger.Errorf("messages.search - error: method MessagesSearch not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

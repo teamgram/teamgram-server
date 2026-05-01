@@ -24,7 +24,7 @@ import (
 // messages.composeMessageWithAI#fd426afe flags:# proofread:flags.0?true emojify:flags.3?true text:TextWithEntities translate_to_lang:flags.1?string change_tone:flags.2?string = messages.ComposedMessageWithAI;
 func (c *MessagesCore) MessagesComposeMessageWithAI(in *tg.TLMessagesComposeMessageWithAI) (*tg.MessagesComposedMessageWithAI, error) {
 	// TODO: not impl
-	c.Errorf("messages.composeMessageWithAI - error: method MessagesComposeMessageWithAI not impl")
+	c.Logger.Errorf("messages.composeMessageWithAI - error: method MessagesComposeMessageWithAI not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

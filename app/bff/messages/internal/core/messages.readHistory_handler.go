@@ -24,7 +24,7 @@ import (
 // messages.readHistory#e306d3a peer:InputPeer max_id:int = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadHistory(in *tg.TLMessagesReadHistory) (*tg.MessagesAffectedMessages, error) {
 	// TODO: not impl
-	c.Errorf("messages.readHistory - error: method MessagesReadHistory not impl")
+	c.Logger.Errorf("messages.readHistory - error: method MessagesReadHistory not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

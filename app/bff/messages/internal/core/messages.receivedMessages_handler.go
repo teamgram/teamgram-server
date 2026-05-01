@@ -24,7 +24,7 @@ import (
 // messages.receivedMessages#5a954c0 max_id:int = Vector<ReceivedNotifyMessage>;
 func (c *MessagesCore) MessagesReceivedMessages(in *tg.TLMessagesReceivedMessages) (*tg.VectorReceivedNotifyMessage, error) {
 	// TODO: not impl
-	c.Errorf("messages.receivedMessages - error: method MessagesReceivedMessages not impl")
+	c.Logger.Errorf("messages.receivedMessages - error: method MessagesReceivedMessages not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

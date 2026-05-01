@@ -24,7 +24,7 @@ import (
 // messages.deleteMessages#e58e95d2 flags:# revoke:flags.0?true id:Vector<int> = messages.AffectedMessages;
 func (c *MessagesCore) MessagesDeleteMessages(in *tg.TLMessagesDeleteMessages) (*tg.MessagesAffectedMessages, error) {
 	// TODO: not impl
-	c.Errorf("messages.deleteMessages - error: method MessagesDeleteMessages not impl")
+	c.Logger.Errorf("messages.deleteMessages - error: method MessagesDeleteMessages not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -24,7 +24,7 @@ import (
 // messages.editMessage#51e842e1 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int = Updates;
 func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Updates, error) {
 	// TODO: not impl
-	c.Errorf("messages.editMessage - error: method MessagesEditMessage not impl")
+	c.Logger.Errorf("messages.editMessage - error: method MessagesEditMessage not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

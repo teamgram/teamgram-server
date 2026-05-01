@@ -24,7 +24,7 @@ import (
 // channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
 func (c *MessagesCore) ChannelsCheckSearchPostsFlood(in *tg.TLChannelsCheckSearchPostsFlood) (*tg.SearchPostsFlood, error) {
 	// TODO: not impl
-	c.Errorf("channels.checkSearchPostsFlood - error: method ChannelsCheckSearchPostsFlood not impl")
+	c.Logger.Errorf("channels.checkSearchPostsFlood - error: method ChannelsCheckSearchPostsFlood not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

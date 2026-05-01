@@ -24,7 +24,7 @@ import (
 // channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true for_live_stories:flags.1?true peer:InputPeer = channels.SendAsPeers;
 func (c *MessagesCore) ChannelsGetSendAs(in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error) {
 	// TODO: not impl
-	c.Errorf("channels.getSendAs - error: method ChannelsGetSendAs not impl")
+	c.Logger.Errorf("channels.getSendAs - error: method ChannelsGetSendAs not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

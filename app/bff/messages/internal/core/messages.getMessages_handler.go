@@ -24,7 +24,7 @@ import (
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 func (c *MessagesCore) MessagesGetMessages(in *tg.TLMessagesGetMessages) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Errorf("messages.getMessages - error: method MessagesGetMessages not impl")
+	c.Logger.Errorf("messages.getMessages - error: method MessagesGetMessages not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -24,7 +24,7 @@ import (
 // messages.updatePinnedMessage#d2aaf7ec flags:# silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer:InputPeer id:int = Updates;
 func (c *MessagesCore) MessagesUpdatePinnedMessage(in *tg.TLMessagesUpdatePinnedMessage) (*tg.Updates, error) {
 	// TODO: not impl
-	c.Errorf("messages.updatePinnedMessage - error: method MessagesUpdatePinnedMessage not impl")
+	c.Logger.Errorf("messages.updatePinnedMessage - error: method MessagesUpdatePinnedMessage not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }
