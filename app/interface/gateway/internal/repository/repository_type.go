@@ -17,7 +17,36 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
-type (
-// TODO: Add type aliases per business requirements.
+import (
+	"context"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type AuthsessionClient interface {
+	AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error)
+	AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error)
+	AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
+}
+
+type AuthKeyStore interface {
+	QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error)
+	SetAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, futureSalt *tg.FutureSalt, expiresIn int32) error
+	GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error)
+}
+
+type OnlineSessionStore interface {
+	RegisterOnlineSession(ctx context.Context, target OnlineTarget) error
+	UnregisterOnlineSession(ctx context.Context, authKeyId int64, sessionId int64) error
+}
+
+type OnlineTarget struct {
+	UserId    int64
+	AuthKeyId int64
+	SessionId int64
+	GatewayId string
+	ConnId    string
+	Layer     int32
+	ExpiresAt int64
+}

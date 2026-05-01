@@ -18,9 +18,20 @@
 package config
 
 import (
+	bffproxyclient "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
 	kitex.RpcServerConf
+	Transport         TransportConf
+	GatewayId         string
+	AuthsessionClient kitex.RpcClientConf
+	BffClient         bffproxyclient.BFFProxyClientListConf
+}
+
+type TransportConf struct {
+	TCPListenOn string
+	// Reserved for future HTTP/WebSocket MTProto transport. Phase 3 only serves TCP.
+	HTTPListenOn string
 }

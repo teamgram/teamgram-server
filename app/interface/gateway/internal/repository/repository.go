@@ -18,16 +18,28 @@
 package repository
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	AuthsessionClient AuthsessionClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.AuthsessionClient) {
+		r.AuthsessionClient = authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthsessionClient))
+	}
+	return r
 }
 
 // Close releases repository-owned clients.
@@ -37,4 +49,61 @@ func (r *Repository) Close() error {
 	}
 
 	return nil
+}
+
+func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
+	if r.AuthsessionClient == nil {
+		return nil, fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	key, err := r.AuthsessionClient.AuthsessionQueryAuthKey(ctx, &authsession.TLAuthsessionQueryAuthKey{
+		AuthKeyId: authKeyId,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("gateway repository: query auth key %d: %w", authKeyId, err)
+	}
+	if key == nil {
+		return nil, fmt.Errorf("gateway repository: query auth key %d returned nil", authKeyId)
+	}
+	return key, nil
+}
+
+func (r *Repository) SetAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, futureSalt *tg.FutureSalt, expiresIn int32) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	if authKey == nil {
+		return fmt.Errorf("gateway repository: set auth key: auth key is nil")
+	}
+	if futureSalt == nil {
+		return fmt.Errorf("gateway repository: set auth key %d: future salt is nil", authKey.AuthKeyId)
+	}
+	if _, err := r.AuthsessionClient.AuthsessionSetAuthKey(ctx, &authsession.TLAuthsessionSetAuthKey{
+		AuthKey:    authKey,
+		FutureSalt: futureSalt,
+		ExpiresIn:  expiresIn,
+	}); err != nil {
+		return fmt.Errorf("gateway repository: set auth key %d: %w", authKey.AuthKeyId, err)
+	}
+	return nil
+}
+
+func (r *Repository) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
+	if r.AuthsessionClient == nil {
+		return nil, fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	salts, err := r.AuthsessionClient.AuthsessionGetFutureSalts(ctx, &authsession.TLAuthsessionGetFutureSalts{
+		AuthKeyId: authKeyId,
+		Num:       num,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("gateway repository: get future salts %d: %w", authKeyId, err)
+	}
+	if salts == nil {
+		return nil, fmt.Errorf("gateway repository: get future salts %d returned nil", authKeyId)
+	}
+	return salts, nil
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }

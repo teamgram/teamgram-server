@@ -18,6 +18,10 @@
 package svc
 
 import (
+	_ "github.com/teamgram/teamgram-server/v2/app/bff/authorization/authorization/authorizationservice"
+	bffproxyclient "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
+	_ "github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
+	_ "github.com/teamgram/teamgram-server/v2/app/bff/qrcode/qrcode/qrcodeservice"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"
 )
@@ -25,12 +29,14 @@ import (
 type ServiceContext struct {
 	Config config.Config
 	Repo   *repository.Repository
+	BFF    *bffproxyclient.BFFProxyClient2
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		Repo:   repository.NewRepository(c),
+		BFF:    bffproxyclient.NewBFFProxyClient2(c.BffClient.Clients),
 	}
 }
 func (s *ServiceContext) Close() error {
