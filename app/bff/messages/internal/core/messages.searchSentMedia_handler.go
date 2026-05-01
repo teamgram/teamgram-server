@@ -24,7 +24,7 @@ import (
 // messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
 func (c *MessagesCore) MessagesSearchSentMedia(in *tg.TLMessagesSearchSentMedia) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.searchSentMedia - error: method MessagesSearchSentMedia not impl")
+	c.Errorf("messages.searchSentMedia - error: method MessagesSearchSentMedia not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

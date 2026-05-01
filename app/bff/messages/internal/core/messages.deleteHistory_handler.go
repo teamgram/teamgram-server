@@ -24,7 +24,7 @@ import (
 // messages.deleteHistory#b08f922a flags:# just_clear:flags.0?true revoke:flags.1?true peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesDeleteHistory(in *tg.TLMessagesDeleteHistory) (*tg.MessagesAffectedHistory, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.deleteHistory - error: method MessagesDeleteHistory not impl")
+	c.Errorf("messages.deleteHistory - error: method MessagesDeleteHistory not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

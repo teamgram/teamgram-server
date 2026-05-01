@@ -24,7 +24,7 @@ import (
 // messages.getRecentLocations#702a40e0 peer:InputPeer limit:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetRecentLocations(in *tg.TLMessagesGetRecentLocations) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getRecentLocations - error: method MessagesGetRecentLocations not impl")
+	c.Errorf("messages.getRecentLocations - error: method MessagesGetRecentLocations not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

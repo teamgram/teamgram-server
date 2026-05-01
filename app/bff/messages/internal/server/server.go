@@ -60,16 +60,12 @@ func (s *Server) Initialize() error {
 
 func (s *Server) RunLoop() {
 	if err := s.kitexSrv.Run(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("messages server stopped with error: %v", err)
 	}
 }
 
 func (s *Server) Destroy() {
 	if err := s.kitexSrv.Stop(); err != nil {
-		// log.Println("server stopped with error:", err)
-	} else {
-		// log.Println("server stopped")
+		logx.Errorf("messages server stop failed: %v", err)
 	}
 }

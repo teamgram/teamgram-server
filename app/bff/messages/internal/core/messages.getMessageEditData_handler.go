@@ -24,7 +24,7 @@ import (
 // messages.getMessageEditData#fda68d36 peer:InputPeer id:int = messages.MessageEditData;
 func (c *MessagesCore) MessagesGetMessageEditData(in *tg.TLMessagesGetMessageEditData) (*tg.MessagesMessageEditData, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getMessageEditData - error: method MessagesGetMessageEditData not impl")
+	c.Errorf("messages.getMessageEditData - error: method MessagesGetMessageEditData not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

@@ -13,7 +13,6 @@ package messagesservice
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -23,8 +22,6 @@ import (
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
-
-var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCMessages/messages.getMessages": kitex.NewMethodInfo(
@@ -291,11 +288,6 @@ func serviceInfo() *kitex.ServiceInfo {
 	return messagesServiceServiceInfo
 }
 
-// for stream client
-func serviceInfoForStreamClient() *kitex.ServiceInfo {
-	return messagesServiceServiceInfoForStreamClient
-}
-
 // for client
 func serviceInfoForClient() *kitex.ServiceInfo {
 	return messagesServiceServiceInfoForClient
@@ -370,7 +362,7 @@ type MessagesGetMessagesArgs struct {
 
 func (p *MessagesGetMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesGetMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -386,7 +378,7 @@ func (p *MessagesGetMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetMessagesArgs")
+		return fmt.Errorf("no req in MessagesGetMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -426,7 +418,7 @@ var MessagesGetMessagesResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesGetMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetMessagesResult")
+		return out, fmt.Errorf("no req in MessagesGetMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -442,7 +434,7 @@ func (p *MessagesGetMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetMessagesResult")
+		return fmt.Errorf("no req in MessagesGetMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -501,7 +493,7 @@ type MessagesGetHistoryArgs struct {
 
 func (p *MessagesGetHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetHistoryArgs")
+		return out, fmt.Errorf("no req in MessagesGetHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -517,7 +509,7 @@ func (p *MessagesGetHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetHistoryArgs")
+		return fmt.Errorf("no req in MessagesGetHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -557,7 +549,7 @@ var MessagesGetHistoryResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesGetHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetHistoryResult")
+		return out, fmt.Errorf("no req in MessagesGetHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -573,7 +565,7 @@ func (p *MessagesGetHistoryResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetHistoryResult")
+		return fmt.Errorf("no req in MessagesGetHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -632,7 +624,7 @@ type MessagesSearchArgs struct {
 
 func (p *MessagesSearchArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSearchArgs")
+		return out, fmt.Errorf("no req in MessagesSearchArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -648,7 +640,7 @@ func (p *MessagesSearchArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSearchArgs")
+		return fmt.Errorf("no req in MessagesSearchArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -688,7 +680,7 @@ var MessagesSearchResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesSearchResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSearchResult")
+		return out, fmt.Errorf("no req in MessagesSearchResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -704,7 +696,7 @@ func (p *MessagesSearchResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSearchResult")
+		return fmt.Errorf("no req in MessagesSearchResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -763,7 +755,7 @@ type MessagesReadHistoryArgs struct {
 
 func (p *MessagesReadHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReadHistoryArgs")
+		return out, fmt.Errorf("no req in MessagesReadHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -779,7 +771,7 @@ func (p *MessagesReadHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReadHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReadHistoryArgs")
+		return fmt.Errorf("no req in MessagesReadHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -819,7 +811,7 @@ var MessagesReadHistoryResult_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *MessagesReadHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReadHistoryResult")
+		return out, fmt.Errorf("no req in MessagesReadHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -835,7 +827,7 @@ func (p *MessagesReadHistoryResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReadHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReadHistoryResult")
+		return fmt.Errorf("no req in MessagesReadHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -894,7 +886,7 @@ type MessagesDeleteHistoryArgs struct {
 
 func (p *MessagesDeleteHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteHistoryArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -910,7 +902,7 @@ func (p *MessagesDeleteHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteHistoryArgs")
+		return fmt.Errorf("no req in MessagesDeleteHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -950,7 +942,7 @@ var MessagesDeleteHistoryResult_Success_DEFAULT *tg.MessagesAffectedHistory
 
 func (p *MessagesDeleteHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteHistoryResult")
+		return out, fmt.Errorf("no req in MessagesDeleteHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -966,7 +958,7 @@ func (p *MessagesDeleteHistoryResult) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteHistoryResult")
+		return fmt.Errorf("no req in MessagesDeleteHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1025,7 +1017,7 @@ type MessagesDeleteMessagesArgs struct {
 
 func (p *MessagesDeleteMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1041,7 +1033,7 @@ func (p *MessagesDeleteMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteMessagesArgs")
+		return fmt.Errorf("no req in MessagesDeleteMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1081,7 +1073,7 @@ var MessagesDeleteMessagesResult_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *MessagesDeleteMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteMessagesResult")
+		return out, fmt.Errorf("no req in MessagesDeleteMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1097,7 +1089,7 @@ func (p *MessagesDeleteMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteMessagesResult")
+		return fmt.Errorf("no req in MessagesDeleteMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1156,7 +1148,7 @@ type MessagesReceivedMessagesArgs struct {
 
 func (p *MessagesReceivedMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReceivedMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesReceivedMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1172,7 +1164,7 @@ func (p *MessagesReceivedMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReceivedMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReceivedMessagesArgs")
+		return fmt.Errorf("no req in MessagesReceivedMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1212,7 +1204,7 @@ var MessagesReceivedMessagesResult_Success_DEFAULT *tg.VectorReceivedNotifyMessa
 
 func (p *MessagesReceivedMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReceivedMessagesResult")
+		return out, fmt.Errorf("no req in MessagesReceivedMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1228,7 +1220,7 @@ func (p *MessagesReceivedMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReceivedMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReceivedMessagesResult")
+		return fmt.Errorf("no req in MessagesReceivedMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1287,7 +1279,7 @@ type MessagesSendMessageArgs struct {
 
 func (p *MessagesSendMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSendMessageArgs")
+		return out, fmt.Errorf("no req in MessagesSendMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1303,7 +1295,7 @@ func (p *MessagesSendMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSendMessageArgs")
+		return fmt.Errorf("no req in MessagesSendMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1343,7 +1335,7 @@ var MessagesSendMessageResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesSendMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSendMessageResult")
+		return out, fmt.Errorf("no req in MessagesSendMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1359,7 +1351,7 @@ func (p *MessagesSendMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSendMessageResult")
+		return fmt.Errorf("no req in MessagesSendMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1418,7 +1410,7 @@ type MessagesSendMediaArgs struct {
 
 func (p *MessagesSendMediaArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSendMediaArgs")
+		return out, fmt.Errorf("no req in MessagesSendMediaArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1434,7 +1426,7 @@ func (p *MessagesSendMediaArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSendMediaArgs")
+		return fmt.Errorf("no req in MessagesSendMediaArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1474,7 +1466,7 @@ var MessagesSendMediaResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesSendMediaResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSendMediaResult")
+		return out, fmt.Errorf("no req in MessagesSendMediaResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1490,7 +1482,7 @@ func (p *MessagesSendMediaResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMediaResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSendMediaResult")
+		return fmt.Errorf("no req in MessagesSendMediaResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1549,7 +1541,7 @@ type MessagesForwardMessagesArgs struct {
 
 func (p *MessagesForwardMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesForwardMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesForwardMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1565,7 +1557,7 @@ func (p *MessagesForwardMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesForwardMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesForwardMessagesArgs")
+		return fmt.Errorf("no req in MessagesForwardMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1605,7 +1597,7 @@ var MessagesForwardMessagesResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesForwardMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesForwardMessagesResult")
+		return out, fmt.Errorf("no req in MessagesForwardMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1621,7 +1613,7 @@ func (p *MessagesForwardMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesForwardMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesForwardMessagesResult")
+		return fmt.Errorf("no req in MessagesForwardMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1680,7 +1672,7 @@ type MessagesReadMessageContentsArgs struct {
 
 func (p *MessagesReadMessageContentsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReadMessageContentsArgs")
+		return out, fmt.Errorf("no req in MessagesReadMessageContentsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1696,7 +1688,7 @@ func (p *MessagesReadMessageContentsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReadMessageContentsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReadMessageContentsArgs")
+		return fmt.Errorf("no req in MessagesReadMessageContentsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1736,7 +1728,7 @@ var MessagesReadMessageContentsResult_Success_DEFAULT *tg.MessagesAffectedMessag
 
 func (p *MessagesReadMessageContentsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReadMessageContentsResult")
+		return out, fmt.Errorf("no req in MessagesReadMessageContentsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1752,7 +1744,7 @@ func (p *MessagesReadMessageContentsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReadMessageContentsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReadMessageContentsResult")
+		return fmt.Errorf("no req in MessagesReadMessageContentsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1811,7 +1803,7 @@ type MessagesGetMessagesViewsArgs struct {
 
 func (p *MessagesGetMessagesViewsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetMessagesViewsArgs")
+		return out, fmt.Errorf("no req in MessagesGetMessagesViewsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1827,7 +1819,7 @@ func (p *MessagesGetMessagesViewsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessagesViewsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetMessagesViewsArgs")
+		return fmt.Errorf("no req in MessagesGetMessagesViewsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1867,7 +1859,7 @@ var MessagesGetMessagesViewsResult_Success_DEFAULT *tg.MessagesMessageViews
 
 func (p *MessagesGetMessagesViewsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetMessagesViewsResult")
+		return out, fmt.Errorf("no req in MessagesGetMessagesViewsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1883,7 +1875,7 @@ func (p *MessagesGetMessagesViewsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessagesViewsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetMessagesViewsResult")
+		return fmt.Errorf("no req in MessagesGetMessagesViewsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1942,7 +1934,7 @@ type MessagesSearchGlobalArgs struct {
 
 func (p *MessagesSearchGlobalArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSearchGlobalArgs")
+		return out, fmt.Errorf("no req in MessagesSearchGlobalArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1958,7 +1950,7 @@ func (p *MessagesSearchGlobalArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchGlobalArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSearchGlobalArgs")
+		return fmt.Errorf("no req in MessagesSearchGlobalArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1998,7 +1990,7 @@ var MessagesSearchGlobalResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesSearchGlobalResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSearchGlobalResult")
+		return out, fmt.Errorf("no req in MessagesSearchGlobalResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2014,7 +2006,7 @@ func (p *MessagesSearchGlobalResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchGlobalResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSearchGlobalResult")
+		return fmt.Errorf("no req in MessagesSearchGlobalResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2073,7 +2065,7 @@ type MessagesGetMessageEditDataArgs struct {
 
 func (p *MessagesGetMessageEditDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetMessageEditDataArgs")
+		return out, fmt.Errorf("no req in MessagesGetMessageEditDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2089,7 +2081,7 @@ func (p *MessagesGetMessageEditDataArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessageEditDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetMessageEditDataArgs")
+		return fmt.Errorf("no req in MessagesGetMessageEditDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2129,7 +2121,7 @@ var MessagesGetMessageEditDataResult_Success_DEFAULT *tg.MessagesMessageEditData
 
 func (p *MessagesGetMessageEditDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetMessageEditDataResult")
+		return out, fmt.Errorf("no req in MessagesGetMessageEditDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2145,7 +2137,7 @@ func (p *MessagesGetMessageEditDataResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessageEditDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetMessageEditDataResult")
+		return fmt.Errorf("no req in MessagesGetMessageEditDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2204,7 +2196,7 @@ type MessagesEditMessageArgs struct {
 
 func (p *MessagesEditMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditMessageArgs")
+		return out, fmt.Errorf("no req in MessagesEditMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2220,7 +2212,7 @@ func (p *MessagesEditMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditMessageArgs")
+		return fmt.Errorf("no req in MessagesEditMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2260,7 +2252,7 @@ var MessagesEditMessageResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditMessageResult")
+		return out, fmt.Errorf("no req in MessagesEditMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2276,7 +2268,7 @@ func (p *MessagesEditMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditMessageResult")
+		return fmt.Errorf("no req in MessagesEditMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2335,7 +2327,7 @@ type MessagesGetUnreadMentionsArgs struct {
 
 func (p *MessagesGetUnreadMentionsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetUnreadMentionsArgs")
+		return out, fmt.Errorf("no req in MessagesGetUnreadMentionsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2351,7 +2343,7 @@ func (p *MessagesGetUnreadMentionsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetUnreadMentionsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetUnreadMentionsArgs")
+		return fmt.Errorf("no req in MessagesGetUnreadMentionsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2391,7 +2383,7 @@ var MessagesGetUnreadMentionsResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesGetUnreadMentionsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetUnreadMentionsResult")
+		return out, fmt.Errorf("no req in MessagesGetUnreadMentionsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2407,7 +2399,7 @@ func (p *MessagesGetUnreadMentionsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetUnreadMentionsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetUnreadMentionsResult")
+		return fmt.Errorf("no req in MessagesGetUnreadMentionsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2466,7 +2458,7 @@ type MessagesReadMentionsArgs struct {
 
 func (p *MessagesReadMentionsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReadMentionsArgs")
+		return out, fmt.Errorf("no req in MessagesReadMentionsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2482,7 +2474,7 @@ func (p *MessagesReadMentionsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReadMentionsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReadMentionsArgs")
+		return fmt.Errorf("no req in MessagesReadMentionsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2522,7 +2514,7 @@ var MessagesReadMentionsResult_Success_DEFAULT *tg.MessagesAffectedHistory
 
 func (p *MessagesReadMentionsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReadMentionsResult")
+		return out, fmt.Errorf("no req in MessagesReadMentionsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2538,7 +2530,7 @@ func (p *MessagesReadMentionsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReadMentionsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReadMentionsResult")
+		return fmt.Errorf("no req in MessagesReadMentionsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2597,7 +2589,7 @@ type MessagesGetRecentLocationsArgs struct {
 
 func (p *MessagesGetRecentLocationsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetRecentLocationsArgs")
+		return out, fmt.Errorf("no req in MessagesGetRecentLocationsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2613,7 +2605,7 @@ func (p *MessagesGetRecentLocationsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetRecentLocationsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetRecentLocationsArgs")
+		return fmt.Errorf("no req in MessagesGetRecentLocationsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2653,7 +2645,7 @@ var MessagesGetRecentLocationsResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesGetRecentLocationsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetRecentLocationsResult")
+		return out, fmt.Errorf("no req in MessagesGetRecentLocationsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2669,7 +2661,7 @@ func (p *MessagesGetRecentLocationsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetRecentLocationsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetRecentLocationsResult")
+		return fmt.Errorf("no req in MessagesGetRecentLocationsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2728,7 +2720,7 @@ type MessagesSendMultiMediaArgs struct {
 
 func (p *MessagesSendMultiMediaArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSendMultiMediaArgs")
+		return out, fmt.Errorf("no req in MessagesSendMultiMediaArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2744,7 +2736,7 @@ func (p *MessagesSendMultiMediaArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMultiMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSendMultiMediaArgs")
+		return fmt.Errorf("no req in MessagesSendMultiMediaArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2784,7 +2776,7 @@ var MessagesSendMultiMediaResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesSendMultiMediaResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSendMultiMediaResult")
+		return out, fmt.Errorf("no req in MessagesSendMultiMediaResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2800,7 +2792,7 @@ func (p *MessagesSendMultiMediaResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSendMultiMediaResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSendMultiMediaResult")
+		return fmt.Errorf("no req in MessagesSendMultiMediaResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2859,7 +2851,7 @@ type MessagesUpdatePinnedMessageArgs struct {
 
 func (p *MessagesUpdatePinnedMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesUpdatePinnedMessageArgs")
+		return out, fmt.Errorf("no req in MessagesUpdatePinnedMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2875,7 +2867,7 @@ func (p *MessagesUpdatePinnedMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesUpdatePinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesUpdatePinnedMessageArgs")
+		return fmt.Errorf("no req in MessagesUpdatePinnedMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2915,7 +2907,7 @@ var MessagesUpdatePinnedMessageResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesUpdatePinnedMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesUpdatePinnedMessageResult")
+		return out, fmt.Errorf("no req in MessagesUpdatePinnedMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2931,7 +2923,7 @@ func (p *MessagesUpdatePinnedMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesUpdatePinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesUpdatePinnedMessageResult")
+		return fmt.Errorf("no req in MessagesUpdatePinnedMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2990,7 +2982,7 @@ type MessagesGetSearchCountersArgs struct {
 
 func (p *MessagesGetSearchCountersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetSearchCountersArgs")
+		return out, fmt.Errorf("no req in MessagesGetSearchCountersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3006,7 +2998,7 @@ func (p *MessagesGetSearchCountersArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchCountersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetSearchCountersArgs")
+		return fmt.Errorf("no req in MessagesGetSearchCountersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3046,7 +3038,7 @@ var MessagesGetSearchCountersResult_Success_DEFAULT *tg.VectorMessagesSearchCoun
 
 func (p *MessagesGetSearchCountersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetSearchCountersResult")
+		return out, fmt.Errorf("no req in MessagesGetSearchCountersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3062,7 +3054,7 @@ func (p *MessagesGetSearchCountersResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchCountersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetSearchCountersResult")
+		return fmt.Errorf("no req in MessagesGetSearchCountersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3121,7 +3113,7 @@ type MessagesUnpinAllMessagesArgs struct {
 
 func (p *MessagesUnpinAllMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesUnpinAllMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesUnpinAllMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3137,7 +3129,7 @@ func (p *MessagesUnpinAllMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesUnpinAllMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesUnpinAllMessagesArgs")
+		return fmt.Errorf("no req in MessagesUnpinAllMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3177,7 +3169,7 @@ var MessagesUnpinAllMessagesResult_Success_DEFAULT *tg.MessagesAffectedHistory
 
 func (p *MessagesUnpinAllMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesUnpinAllMessagesResult")
+		return out, fmt.Errorf("no req in MessagesUnpinAllMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3193,7 +3185,7 @@ func (p *MessagesUnpinAllMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesUnpinAllMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesUnpinAllMessagesResult")
+		return fmt.Errorf("no req in MessagesUnpinAllMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3252,7 +3244,7 @@ type MessagesGetSearchResultsCalendarArgs struct {
 
 func (p *MessagesGetSearchResultsCalendarArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetSearchResultsCalendarArgs")
+		return out, fmt.Errorf("no req in MessagesGetSearchResultsCalendarArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3268,7 +3260,7 @@ func (p *MessagesGetSearchResultsCalendarArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchResultsCalendarArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetSearchResultsCalendarArgs")
+		return fmt.Errorf("no req in MessagesGetSearchResultsCalendarArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3308,7 +3300,7 @@ var MessagesGetSearchResultsCalendarResult_Success_DEFAULT *tg.MessagesSearchRes
 
 func (p *MessagesGetSearchResultsCalendarResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetSearchResultsCalendarResult")
+		return out, fmt.Errorf("no req in MessagesGetSearchResultsCalendarResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3324,7 +3316,7 @@ func (p *MessagesGetSearchResultsCalendarResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchResultsCalendarResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetSearchResultsCalendarResult")
+		return fmt.Errorf("no req in MessagesGetSearchResultsCalendarResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3383,7 +3375,7 @@ type MessagesGetSearchResultsPositionsArgs struct {
 
 func (p *MessagesGetSearchResultsPositionsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetSearchResultsPositionsArgs")
+		return out, fmt.Errorf("no req in MessagesGetSearchResultsPositionsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3399,7 +3391,7 @@ func (p *MessagesGetSearchResultsPositionsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchResultsPositionsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetSearchResultsPositionsArgs")
+		return fmt.Errorf("no req in MessagesGetSearchResultsPositionsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3439,7 +3431,7 @@ var MessagesGetSearchResultsPositionsResult_Success_DEFAULT *tg.MessagesSearchRe
 
 func (p *MessagesGetSearchResultsPositionsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetSearchResultsPositionsResult")
+		return out, fmt.Errorf("no req in MessagesGetSearchResultsPositionsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3455,7 +3447,7 @@ func (p *MessagesGetSearchResultsPositionsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSearchResultsPositionsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetSearchResultsPositionsResult")
+		return fmt.Errorf("no req in MessagesGetSearchResultsPositionsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3514,7 +3506,7 @@ type MessagesToggleNoForwardsArgs struct {
 
 func (p *MessagesToggleNoForwardsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesToggleNoForwardsArgs")
+		return out, fmt.Errorf("no req in MessagesToggleNoForwardsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3530,7 +3522,7 @@ func (p *MessagesToggleNoForwardsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesToggleNoForwardsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesToggleNoForwardsArgs")
+		return fmt.Errorf("no req in MessagesToggleNoForwardsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3570,7 +3562,7 @@ var MessagesToggleNoForwardsResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesToggleNoForwardsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesToggleNoForwardsResult")
+		return out, fmt.Errorf("no req in MessagesToggleNoForwardsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3586,7 +3578,7 @@ func (p *MessagesToggleNoForwardsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesToggleNoForwardsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesToggleNoForwardsResult")
+		return fmt.Errorf("no req in MessagesToggleNoForwardsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3645,7 +3637,7 @@ type MessagesSaveDefaultSendAsArgs struct {
 
 func (p *MessagesSaveDefaultSendAsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSaveDefaultSendAsArgs")
+		return out, fmt.Errorf("no req in MessagesSaveDefaultSendAsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3661,7 +3653,7 @@ func (p *MessagesSaveDefaultSendAsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSaveDefaultSendAsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSaveDefaultSendAsArgs")
+		return fmt.Errorf("no req in MessagesSaveDefaultSendAsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3701,7 +3693,7 @@ var MessagesSaveDefaultSendAsResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesSaveDefaultSendAsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSaveDefaultSendAsResult")
+		return out, fmt.Errorf("no req in MessagesSaveDefaultSendAsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3717,7 +3709,7 @@ func (p *MessagesSaveDefaultSendAsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSaveDefaultSendAsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSaveDefaultSendAsResult")
+		return fmt.Errorf("no req in MessagesSaveDefaultSendAsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3776,7 +3768,7 @@ type MessagesSearchSentMediaArgs struct {
 
 func (p *MessagesSearchSentMediaArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSearchSentMediaArgs")
+		return out, fmt.Errorf("no req in MessagesSearchSentMediaArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3792,7 +3784,7 @@ func (p *MessagesSearchSentMediaArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchSentMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSearchSentMediaArgs")
+		return fmt.Errorf("no req in MessagesSearchSentMediaArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3832,7 +3824,7 @@ var MessagesSearchSentMediaResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *MessagesSearchSentMediaResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSearchSentMediaResult")
+		return out, fmt.Errorf("no req in MessagesSearchSentMediaResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3848,7 +3840,7 @@ func (p *MessagesSearchSentMediaResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSearchSentMediaResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSearchSentMediaResult")
+		return fmt.Errorf("no req in MessagesSearchSentMediaResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3907,7 +3899,7 @@ type MessagesGetOutboxReadDateArgs struct {
 
 func (p *MessagesGetOutboxReadDateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetOutboxReadDateArgs")
+		return out, fmt.Errorf("no req in MessagesGetOutboxReadDateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3923,7 +3915,7 @@ func (p *MessagesGetOutboxReadDateArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetOutboxReadDateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetOutboxReadDateArgs")
+		return fmt.Errorf("no req in MessagesGetOutboxReadDateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3963,7 +3955,7 @@ var MessagesGetOutboxReadDateResult_Success_DEFAULT *tg.OutboxReadDate
 
 func (p *MessagesGetOutboxReadDateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetOutboxReadDateResult")
+		return out, fmt.Errorf("no req in MessagesGetOutboxReadDateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3979,7 +3971,7 @@ func (p *MessagesGetOutboxReadDateResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetOutboxReadDateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetOutboxReadDateResult")
+		return fmt.Errorf("no req in MessagesGetOutboxReadDateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4038,7 +4030,7 @@ type MessagesSummarizeTextArgs struct {
 
 func (p *MessagesSummarizeTextArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSummarizeTextArgs")
+		return out, fmt.Errorf("no req in MessagesSummarizeTextArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4054,7 +4046,7 @@ func (p *MessagesSummarizeTextArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSummarizeTextArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSummarizeTextArgs")
+		return fmt.Errorf("no req in MessagesSummarizeTextArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4094,7 +4086,7 @@ var MessagesSummarizeTextResult_Success_DEFAULT *tg.TextWithEntities
 
 func (p *MessagesSummarizeTextResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSummarizeTextResult")
+		return out, fmt.Errorf("no req in MessagesSummarizeTextResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4110,7 +4102,7 @@ func (p *MessagesSummarizeTextResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSummarizeTextResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSummarizeTextResult")
+		return fmt.Errorf("no req in MessagesSummarizeTextResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4169,7 +4161,7 @@ type MessagesComposeMessageWithAIArgs struct {
 
 func (p *MessagesComposeMessageWithAIArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesComposeMessageWithAIArgs")
+		return out, fmt.Errorf("no req in MessagesComposeMessageWithAIArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4185,7 +4177,7 @@ func (p *MessagesComposeMessageWithAIArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesComposeMessageWithAIArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesComposeMessageWithAIArgs")
+		return fmt.Errorf("no req in MessagesComposeMessageWithAIArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4225,7 +4217,7 @@ var MessagesComposeMessageWithAIResult_Success_DEFAULT *tg.MessagesComposedMessa
 
 func (p *MessagesComposeMessageWithAIResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesComposeMessageWithAIResult")
+		return out, fmt.Errorf("no req in MessagesComposeMessageWithAIResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4241,7 +4233,7 @@ func (p *MessagesComposeMessageWithAIResult) Unmarshal(in []byte) error {
 
 func (p *MessagesComposeMessageWithAIResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesComposeMessageWithAIResult")
+		return fmt.Errorf("no req in MessagesComposeMessageWithAIResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4300,7 +4292,7 @@ type MessagesReportReadMetricsArgs struct {
 
 func (p *MessagesReportReadMetricsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReportReadMetricsArgs")
+		return out, fmt.Errorf("no req in MessagesReportReadMetricsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4316,7 +4308,7 @@ func (p *MessagesReportReadMetricsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReportReadMetricsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReportReadMetricsArgs")
+		return fmt.Errorf("no req in MessagesReportReadMetricsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4356,7 +4348,7 @@ var MessagesReportReadMetricsResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesReportReadMetricsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReportReadMetricsResult")
+		return out, fmt.Errorf("no req in MessagesReportReadMetricsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4372,7 +4364,7 @@ func (p *MessagesReportReadMetricsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReportReadMetricsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReportReadMetricsResult")
+		return fmt.Errorf("no req in MessagesReportReadMetricsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4431,7 +4423,7 @@ type MessagesReportMusicListenArgs struct {
 
 func (p *MessagesReportMusicListenArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReportMusicListenArgs")
+		return out, fmt.Errorf("no req in MessagesReportMusicListenArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4447,7 +4439,7 @@ func (p *MessagesReportMusicListenArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReportMusicListenArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReportMusicListenArgs")
+		return fmt.Errorf("no req in MessagesReportMusicListenArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4487,7 +4479,7 @@ var MessagesReportMusicListenResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesReportMusicListenResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReportMusicListenResult")
+		return out, fmt.Errorf("no req in MessagesReportMusicListenResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4503,7 +4495,7 @@ func (p *MessagesReportMusicListenResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReportMusicListenResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReportMusicListenResult")
+		return fmt.Errorf("no req in MessagesReportMusicListenResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4562,7 +4554,7 @@ type ChannelsGetSendAsArgs struct {
 
 func (p *ChannelsGetSendAsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsGetSendAsArgs")
+		return out, fmt.Errorf("no req in ChannelsGetSendAsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4578,7 +4570,7 @@ func (p *ChannelsGetSendAsArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsGetSendAsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsGetSendAsArgs")
+		return fmt.Errorf("no req in ChannelsGetSendAsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4618,7 +4610,7 @@ var ChannelsGetSendAsResult_Success_DEFAULT *tg.ChannelsSendAsPeers
 
 func (p *ChannelsGetSendAsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsGetSendAsResult")
+		return out, fmt.Errorf("no req in ChannelsGetSendAsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4634,7 +4626,7 @@ func (p *ChannelsGetSendAsResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsGetSendAsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsGetSendAsResult")
+		return fmt.Errorf("no req in ChannelsGetSendAsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4693,7 +4685,7 @@ type ChannelsSearchPostsArgs struct {
 
 func (p *ChannelsSearchPostsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsSearchPostsArgs")
+		return out, fmt.Errorf("no req in ChannelsSearchPostsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4709,7 +4701,7 @@ func (p *ChannelsSearchPostsArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsSearchPostsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsSearchPostsArgs")
+		return fmt.Errorf("no req in ChannelsSearchPostsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4749,7 +4741,7 @@ var ChannelsSearchPostsResult_Success_DEFAULT *tg.MessagesMessages
 
 func (p *ChannelsSearchPostsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsSearchPostsResult")
+		return out, fmt.Errorf("no req in ChannelsSearchPostsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4765,7 +4757,7 @@ func (p *ChannelsSearchPostsResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsSearchPostsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsSearchPostsResult")
+		return fmt.Errorf("no req in ChannelsSearchPostsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4824,7 +4816,7 @@ type ChannelsCheckSearchPostsFloodArgs struct {
 
 func (p *ChannelsCheckSearchPostsFloodArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsCheckSearchPostsFloodArgs")
+		return out, fmt.Errorf("no req in ChannelsCheckSearchPostsFloodArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4840,7 +4832,7 @@ func (p *ChannelsCheckSearchPostsFloodArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsCheckSearchPostsFloodArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsCheckSearchPostsFloodArgs")
+		return fmt.Errorf("no req in ChannelsCheckSearchPostsFloodArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4880,7 +4872,7 @@ var ChannelsCheckSearchPostsFloodResult_Success_DEFAULT *tg.SearchPostsFlood
 
 func (p *ChannelsCheckSearchPostsFloodResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsCheckSearchPostsFloodResult")
+		return out, fmt.Errorf("no req in ChannelsCheckSearchPostsFloodResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4896,7 +4888,7 @@ func (p *ChannelsCheckSearchPostsFloodResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsCheckSearchPostsFloodResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsCheckSearchPostsFloodResult")
+		return fmt.Errorf("no req in ChannelsCheckSearchPostsFloodResult")
 	}
 
 	return p.Success.Encode(x, layer)

@@ -24,7 +24,7 @@ import (
 // messages.unpinAllMessages#62dd747 flags:# peer:InputPeer top_msg_id:flags.0?int saved_peer_id:flags.1?InputPeer = messages.AffectedHistory;
 func (c *MessagesCore) MessagesUnpinAllMessages(in *tg.TLMessagesUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.unpinAllMessages - error: method MessagesUnpinAllMessages not impl")
+	c.Errorf("messages.unpinAllMessages - error: method MessagesUnpinAllMessages not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

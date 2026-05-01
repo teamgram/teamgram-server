@@ -24,7 +24,7 @@ import (
 // messages.readMessageContents#36a73f77 id:Vector<int> = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadMessageContents(in *tg.TLMessagesReadMessageContents) (*tg.MessagesAffectedMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.readMessageContents - error: method MessagesReadMessageContents not impl")
+	c.Errorf("messages.readMessageContents - error: method MessagesReadMessageContents not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

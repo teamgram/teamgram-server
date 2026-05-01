@@ -24,7 +24,7 @@ import (
 // messages.reportMusicListen#ddbcd819 id:InputDocument listened_duration:int = Bool;
 func (c *MessagesCore) MessagesReportMusicListen(in *tg.TLMessagesReportMusicListen) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.reportMusicListen - error: method MessagesReportMusicListen not impl")
+	c.Errorf("messages.reportMusicListen - error: method MessagesReportMusicListen not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

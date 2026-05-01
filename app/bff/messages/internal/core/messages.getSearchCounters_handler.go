@@ -24,7 +24,7 @@ import (
 // messages.getSearchCounters#1bbcf300 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (c *MessagesCore) MessagesGetSearchCounters(in *tg.TLMessagesGetSearchCounters) (*tg.VectorMessagesSearchCounter, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSearchCounters - error: method MessagesGetSearchCounters not impl")
+	c.Errorf("messages.getSearchCounters - error: method MessagesGetSearchCounters not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

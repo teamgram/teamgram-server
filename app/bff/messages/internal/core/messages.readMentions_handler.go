@@ -24,7 +24,7 @@ import (
 // messages.readMentions#36e5bf4d flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesReadMentions(in *tg.TLMessagesReadMentions) (*tg.MessagesAffectedHistory, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.readMentions - error: method MessagesReadMentions not impl")
+	c.Errorf("messages.readMentions - error: method MessagesReadMentions not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

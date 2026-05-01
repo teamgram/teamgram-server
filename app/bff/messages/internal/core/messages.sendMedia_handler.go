@@ -24,7 +24,7 @@ import (
 // messages.sendMedia#330e77f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Updates, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.sendMedia - error: method MessagesSendMedia not impl")
+	c.Errorf("messages.sendMedia - error: method MessagesSendMedia not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }

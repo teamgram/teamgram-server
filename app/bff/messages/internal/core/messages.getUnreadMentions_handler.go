@@ -24,7 +24,7 @@ import (
 // messages.getUnreadMentions#f107e790 flags:# peer:InputPeer top_msg_id:flags.0?int offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
 func (c *MessagesCore) MessagesGetUnreadMentions(in *tg.TLMessagesGetUnreadMentions) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getUnreadMentions - error: method MessagesGetUnreadMentions not impl")
+	c.Errorf("messages.getUnreadMentions - error: method MessagesGetUnreadMentions not impl")
 
 	return nil, tg.ErrMethodNotImpl
 }
