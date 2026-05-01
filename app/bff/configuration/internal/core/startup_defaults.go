@@ -45,7 +45,7 @@ func makeStartupConfig(now int32) *tg.Config {
 		OfflineBlurTimeoutMs:    5000,
 		OfflineIdleTimeoutMs:    30000,
 		OnlineCloudTimeoutMs:    300000,
-		NotifyCloudDelayMs:     30000,
+		NotifyCloudDelayMs:      30000,
 		NotifyDefaultDelayMs:    1500,
 		PushChatPeriodMs:        60000,
 		PushChatLimit:           2,

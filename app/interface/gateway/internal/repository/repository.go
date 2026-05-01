@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,21 +18,23 @@
 package repository
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/config"
-	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
-	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	ChatClient chatclient.ChatClient
-	MsgClient  msgclient.MsgClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{
-		ChatClient: chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
-		MsgClient:  msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient)),
+	return &Repository{}
+}
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
 	}
+
+	return nil
 }
