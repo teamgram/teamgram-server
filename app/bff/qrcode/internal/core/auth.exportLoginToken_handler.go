@@ -23,8 +23,10 @@ import (
 // AuthExportLoginToken
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (c *QrCodeCore) AuthExportLoginToken(in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error) {
-	// TODO: not impl
-	c.Logger.Errorf("auth.exportLoginToken - error: method AuthExportLoginToken not impl")
+	seed := in.ApiHash
+	if seed == "" {
+		seed = "tdesktop-startup-qrcode"
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return makeStartupQRLoginToken(startupQRNow(), seed), nil
 }

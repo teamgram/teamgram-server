@@ -17,21 +17,22 @@
 package core
 
 import (
+	"crypto/sha256"
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// AuthLogOut
-// auth.logOut#3e72ba19 = auth.LoggedOut;
-func (c *AuthorizationCore) AuthLogOut(in *tg.TLAuthLogOut) (*tg.AuthLoggedOut, error) {
-	_ = in
+const startupQRLoginTokenTTL int32 = 60
 
-	authKeyID := startupAuthKeyID(c)
-	userID := startupUserID(c)
-	if authKeyID != 0 && userID != 0 {
-		if err := c.svcCtx.Repo.UnbindAuthKeyUser(c.ctx, authKeyID, userID); err != nil {
-			return nil, err
-		}
-	}
+func makeStartupQRLoginToken(now int32, seed string) *tg.AuthLoginToken {
+	sum := sha256.Sum256([]byte(seed))
+	return tg.MakeTLAuthLoginToken(&tg.TLAuthLoginToken{
+		Expires: now + startupQRLoginTokenTTL,
+		Token:   sum[:],
+	}).ToAuthLoginToken()
+}
 
-	return tg.MakeTLAuthLoggedOut(&tg.TLAuthLoggedOut{}).ToAuthLoggedOut(), nil
+func startupQRNow() int32 {
+	return int32(time.Now().Unix())
 }

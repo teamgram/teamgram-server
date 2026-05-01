@@ -1,2 +1,18 @@
 Name: bff.authorization
 ListenOn: 0.0.0.0:21250
+AuthsessionClient:
+  DestService: service.authsession
+  ServiceName: RPCAuthsession
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user

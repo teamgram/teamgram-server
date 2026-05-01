@@ -17,14 +17,42 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthSignIn
 // auth.signIn#8d52a951 flags:# phone_number:string phone_code_hash:string phone_code:flags.0?string email_verification:flags.1?EmailVerification = auth.Authorization;
 func (c *AuthorizationCore) AuthSignIn(in *tg.TLAuthSignIn) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	c.Logger.Errorf("auth.signIn - error: method AuthSignIn not impl")
+	if in.PhoneCode == nil {
+		return nil, tg.ErrPhoneCodeEmpty
+	}
+	_, phone, err := normalizeStartupPhone(in.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = verifyStartupPhoneCode(phone, in.PhoneCodeHash, *in.PhoneCode); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	user, err := c.svcCtx.Repo.GetUserByPhone(c.ctx, phone)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			return makeSignupRequired(), nil
+		}
+		return nil, err
+	}
+
+	authKeyID := startupAuthKeyID(c)
+	userID := immutableUserID(user)
+	if authKeyID != 0 && userID != 0 {
+		if err = c.svcCtx.Repo.BindAuthKeyUser(c.ctx, authKeyID, userID); err != nil {
+			return nil, err
+		}
+	}
+
+	deleteStartupPhoneCode(in.PhoneCodeHash)
+	return makeAuthAuthorization(user), nil
 }

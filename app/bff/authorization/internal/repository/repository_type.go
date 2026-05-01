@@ -16,7 +16,28 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
+import (
+	"context"
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
+var ErrUserNotFound = errors.New("authorization repository: user not found")
+
 type (
-// TODO: Add type aliases per business requirements.
+	AuthorizationRepository interface {
+		AuthsessionBinding
+		UserDirectory
+	}
+
+	AuthsessionBinding interface {
+		BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error
+		UnbindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error
+	}
+
+	UserDirectory interface {
+		GetUserByPhone(ctx context.Context, phone string) (*tg.ImmutableUser, error)
+		CreateUser(ctx context.Context, secretKeyId int64, phone string, countryCode string, firstName string, lastName string) (*tg.ImmutableUser, error)
+	}
 )

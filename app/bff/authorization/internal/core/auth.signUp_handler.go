@@ -23,8 +23,33 @@ import (
 // AuthSignUp
 // auth.signUp#aac7b717 flags:# no_joined_notifications:flags.0?true phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
 func (c *AuthorizationCore) AuthSignUp(in *tg.TLAuthSignUp) (*tg.AuthAuthorization, error) {
-	// TODO: not impl
-	c.Logger.Errorf("auth.signUp - error: method AuthSignUp not impl")
+	_, phone, err := normalizeStartupPhone(in.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+	if in.FirstName == "" {
+		return nil, tg.ErrFirstnameInvalid
+	}
+	tx, err := lookupStartupPhoneCode(in.PhoneCodeHash)
+	if err != nil {
+		return nil, err
+	}
+	if tx.Phone != phone {
+		return nil, tg.ErrPhoneCodeExpired
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	authKeyID := startupAuthKeyID(c)
+	user, err := c.svcCtx.Repo.CreateUser(c.ctx, startupSecretKeyID(authKeyID), phone, tx.CountryCode, in.FirstName, in.LastName)
+	if err != nil {
+		return nil, err
+	}
+	userID := immutableUserID(user)
+	if authKeyID != 0 && userID != 0 {
+		if err = c.svcCtx.Repo.BindAuthKeyUser(c.ctx, authKeyID, userID); err != nil {
+			return nil, err
+		}
+	}
+
+	deleteStartupPhoneCode(in.PhoneCodeHash)
+	return makeAuthAuthorization(user), nil
 }

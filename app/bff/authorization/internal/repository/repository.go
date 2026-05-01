@@ -17,14 +17,105 @@
 package repository
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"strings"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	AuthsessionClient authsessionclient.AuthsessionClient
+	UserClient        userclient.UserClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.AuthsessionClient) {
+		r.AuthsessionClient = authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthsessionClient))
+	}
+	if hasRPCClientConfig(c.UserClient) {
+		r.UserClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+	}
+	return r
+}
+
+func (r *Repository) BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("authorization repository: authsession client is not configured")
+	}
+	if _, err := r.AuthsessionClient.AuthsessionBindAuthKeyUser(ctx, &authsession.TLAuthsessionBindAuthKeyUser{
+		AuthKeyId: authKeyId,
+		UserId:    userId,
+	}); err != nil {
+		return fmt.Errorf("authorization repository: bind auth key user %d/%d: %w", authKeyId, userId, err)
+	}
+	return nil
+}
+
+func (r *Repository) UnbindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("authorization repository: authsession client is not configured")
+	}
+	if _, err := r.AuthsessionClient.AuthsessionUnbindAuthKeyUser(ctx, &authsession.TLAuthsessionUnbindAuthKeyUser{
+		AuthKeyId: authKeyId,
+		UserId:    userId,
+	}); err != nil {
+		return fmt.Errorf("authorization repository: unbind auth key user %d/%d: %w", authKeyId, userId, err)
+	}
+	return nil
+}
+
+func (r *Repository) GetUserByPhone(ctx context.Context, phone string) (*tg.ImmutableUser, error) {
+	if r.UserClient == nil {
+		return nil, fmt.Errorf("authorization repository: user client is not configured")
+	}
+	user, err := r.UserClient.UserGetImmutableUserByPhone(ctx, &userpb.TLUserGetImmutableUserByPhone{Phone: phone})
+	if err != nil {
+		if isUserNotFound(err) {
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("authorization repository: get user by phone %s: %w", phone, err)
+	}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+	return user, nil
+}
+
+func (r *Repository) CreateUser(ctx context.Context, secretKeyId int64, phone string, countryCode string, firstName string, lastName string) (*tg.ImmutableUser, error) {
+	if r.UserClient == nil {
+		return nil, fmt.Errorf("authorization repository: user client is not configured")
+	}
+	user, err := r.UserClient.UserCreateNewUser(ctx, &userpb.TLUserCreateNewUser{
+		SecretKeyId: secretKeyId,
+		Phone:       phone,
+		CountryCode: countryCode,
+		FirstName:   firstName,
+		LastName:    lastName,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("authorization repository: create user %s: %w", phone, err)
+	}
+	if user == nil {
+		return nil, fmt.Errorf("authorization repository: create user %s returned nil", phone)
+	}
+	return user, nil
+}
+
+func isUserNotFound(err error) bool {
+	return errors.Is(err, userpb.ErrUserNotFound) || errors.Is(err, ErrUserNotFound) || strings.Contains(err.Error(), userpb.ErrUserNotFound.Error())
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }

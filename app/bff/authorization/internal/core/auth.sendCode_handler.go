@@ -23,8 +23,10 @@ import (
 // AuthSendCode
 // auth.sendCode#a677244f phone_number:string api_id:int api_hash:string settings:CodeSettings = auth.SentCode;
 func (c *AuthorizationCore) AuthSendCode(in *tg.TLAuthSendCode) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	c.Logger.Errorf("auth.sendCode - error: method AuthSendCode not impl")
+	countryCode, phone, err := normalizeStartupPhone(in.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return makeAuthSentCode(storeStartupPhoneCode(phone, countryCode)), nil
 }

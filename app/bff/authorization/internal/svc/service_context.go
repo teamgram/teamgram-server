@@ -23,7 +23,7 @@ import (
 
 type ServiceContext struct {
 	Config config.Config
-	Repo   *repository.Repository
+	Repo   repository.AuthorizationRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
