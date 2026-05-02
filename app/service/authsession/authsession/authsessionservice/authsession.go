@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/authsession.RPCAuthsession/authsession.getAuthorizations": kitex.NewMethodInfo(
@@ -355,6 +380,9 @@ func (p *GetAuthorizationsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAuthorizationsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountAuthorizations)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -486,6 +514,9 @@ func (p *ResetAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ResetAuthorizationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(authsession.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -617,6 +648,9 @@ func (p *GetLayerResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetLayerResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -748,6 +782,9 @@ func (p *GetLangPackResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetLangPackResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.String)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -879,6 +916,9 @@ func (p *GetClientResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetClientResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.String)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1010,6 +1050,9 @@ func (p *GetLangCodeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetLangCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.String)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1141,6 +1184,9 @@ func (p *GetUserIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1272,6 +1318,9 @@ func (p *GetPushSessionIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPushSessionIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1403,8 +1452,7 @@ func (p *GetFutureSaltsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetFutureSaltsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.FutureSalts)
-	msg.ClazzID, err = d.ClazzID()
-	if err != nil {
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
 		return err
 	}
 	if err = msg.Decode(d); err != nil {
@@ -1538,8 +1586,7 @@ func (p *QueryAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *QueryAuthKeyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthKeyInfo)
-	msg.ClazzID, err = d.ClazzID()
-	if err != nil {
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
 		return err
 	}
 	if err = msg.Decode(d); err != nil {
@@ -1673,6 +1720,9 @@ func (p *SetAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetAuthKeyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1804,6 +1854,9 @@ func (p *BindAuthKeyUserResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *BindAuthKeyUserResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1935,6 +1988,9 @@ func (p *UnbindAuthKeyUserResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UnbindAuthKeyUserResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2066,6 +2122,9 @@ func (p *GetPermAuthKeyIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPermAuthKeyIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2197,6 +2256,9 @@ func (p *BindTempAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *BindTempAuthKeyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2328,6 +2390,9 @@ func (p *SetClientSessionInfoResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetClientSessionInfoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2459,6 +2524,9 @@ func (p *GetAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAuthorizationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Authorization)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2590,6 +2658,9 @@ func (p *GetAuthStateDataResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAuthStateDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(authsession.AuthKeyStateData)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2721,6 +2792,9 @@ func (p *SetLayerResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetLayerResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2852,6 +2926,9 @@ func (p *SetInitConnectionResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetInitConnectionResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2983,6 +3060,9 @@ func (p *SetAndroidPushSessionIdResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *SetAndroidPushSessionIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3022,121 +3102,97 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AuthsessionGetAuthorizations(ctx context.Context, req *authsession.TLAuthsessionGetAuthorizations) (r *tg.AccountAuthorizations, err error) {
 	// var _args GetAuthorizationsArgs
 	// _args.Req = req
-	// var _result GetAuthorizationsResult
+	var _result GetAuthorizationsResult
 
-	_result := new(tg.AccountAuthorizations)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorizations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorizations", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionResetAuthorization(ctx context.Context, req *authsession.TLAuthsessionResetAuthorization) (r *authsession.VectorLong, err error) {
 	// var _args ResetAuthorizationArgs
 	// _args.Req = req
-	// var _result ResetAuthorizationResult
+	var _result ResetAuthorizationResult
 
-	_result := new(authsession.VectorLong)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.resetAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.resetAuthorization", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetLayer(ctx context.Context, req *authsession.TLAuthsessionGetLayer) (r *tg.Int32, err error) {
 	// var _args GetLayerArgs
 	// _args.Req = req
-	// var _result GetLayerResult
+	var _result GetLayerResult
 
-	_result := new(tg.Int32)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLayer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLayer", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetLangPack(ctx context.Context, req *authsession.TLAuthsessionGetLangPack) (r *tg.String, err error) {
 	// var _args GetLangPackArgs
 	// _args.Req = req
-	// var _result GetLangPackResult
+	var _result GetLangPackResult
 
-	_result := new(tg.String)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangPack", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangPack", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetClient(ctx context.Context, req *authsession.TLAuthsessionGetClient) (r *tg.String, err error) {
 	// var _args GetClientArgs
 	// _args.Req = req
-	// var _result GetClientResult
+	var _result GetClientResult
 
-	_result := new(tg.String)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getClient", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getClient", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetLangCode(ctx context.Context, req *authsession.TLAuthsessionGetLangCode) (r *tg.String, err error) {
 	// var _args GetLangCodeArgs
 	// _args.Req = req
-	// var _result GetLangCodeResult
+	var _result GetLangCodeResult
 
-	_result := new(tg.String)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetUserId(ctx context.Context, req *authsession.TLAuthsessionGetUserId) (r *tg.Int64, err error) {
 	// var _args GetUserIdArgs
 	// _args.Req = req
-	// var _result GetUserIdResult
+	var _result GetUserIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getUserId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getUserId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetPushSessionId(ctx context.Context, req *authsession.TLAuthsessionGetPushSessionId) (r *tg.Int64, err error) {
 	// var _args GetPushSessionIdArgs
 	// _args.Req = req
-	// var _result GetPushSessionIdResult
+	var _result GetPushSessionIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPushSessionId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPushSessionId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetFutureSalts(ctx context.Context, req *authsession.TLAuthsessionGetFutureSalts) (r *tg.FutureSalts, err error) {
@@ -3166,164 +3222,131 @@ func (p *kClient) AuthsessionQueryAuthKey(ctx context.Context, req *authsession.
 func (p *kClient) AuthsessionSetAuthKey(ctx context.Context, req *authsession.TLAuthsessionSetAuthKey) (r *tg.Bool, err error) {
 	// var _args SetAuthKeyArgs
 	// _args.Req = req
-	// var _result SetAuthKeyResult
+	var _result SetAuthKeyResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAuthKey", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionBindAuthKeyUser(ctx context.Context, req *authsession.TLAuthsessionBindAuthKeyUser) (r *tg.Int64, err error) {
 	// var _args BindAuthKeyUserArgs
 	// _args.Req = req
-	// var _result BindAuthKeyUserResult
+	var _result BindAuthKeyUserResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindAuthKeyUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindAuthKeyUser", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionUnbindAuthKeyUser(ctx context.Context, req *authsession.TLAuthsessionUnbindAuthKeyUser) (r *tg.Bool, err error) {
 	// var _args UnbindAuthKeyUserArgs
 	// _args.Req = req
-	// var _result UnbindAuthKeyUserResult
+	var _result UnbindAuthKeyUserResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.unbindAuthKeyUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.unbindAuthKeyUser", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetPermAuthKeyId(ctx context.Context, req *authsession.TLAuthsessionGetPermAuthKeyId) (r *tg.Int64, err error) {
 	// var _args GetPermAuthKeyIdArgs
 	// _args.Req = req
-	// var _result GetPermAuthKeyIdResult
+	var _result GetPermAuthKeyIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPermAuthKeyId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPermAuthKeyId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionBindTempAuthKey(ctx context.Context, req *authsession.TLAuthsessionBindTempAuthKey) (r *tg.Bool, err error) {
 	// var _args BindTempAuthKeyArgs
 	// _args.Req = req
-	// var _result BindTempAuthKeyResult
+	var _result BindTempAuthKeyResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindTempAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindTempAuthKey", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionSetClientSessionInfo(ctx context.Context, req *authsession.TLAuthsessionSetClientSessionInfo) (r *tg.Bool, err error) {
 	// var _args SetClientSessionInfoArgs
 	// _args.Req = req
-	// var _result SetClientSessionInfoResult
+	var _result SetClientSessionInfoResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setClientSessionInfo", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setClientSessionInfo", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetAuthorization(ctx context.Context, req *authsession.TLAuthsessionGetAuthorization) (r *tg.Authorization, err error) {
 	// var _args GetAuthorizationArgs
 	// _args.Req = req
-	// var _result GetAuthorizationResult
+	var _result GetAuthorizationResult
 
-	_result := new(tg.Authorization)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorization", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionGetAuthStateData(ctx context.Context, req *authsession.TLAuthsessionGetAuthStateData) (r *authsession.AuthKeyStateData, err error) {
 	// var _args GetAuthStateDataArgs
 	// _args.Req = req
-	// var _result GetAuthStateDataResult
+	var _result GetAuthStateDataResult
 
-	_result := new(authsession.AuthKeyStateData)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthStateData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthStateData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionSetLayer(ctx context.Context, req *authsession.TLAuthsessionSetLayer) (r *tg.Bool, err error) {
 	// var _args SetLayerArgs
 	// _args.Req = req
-	// var _result SetLayerResult
+	var _result SetLayerResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setLayer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setLayer", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionSetInitConnection(ctx context.Context, req *authsession.TLAuthsessionSetInitConnection) (r *tg.Bool, err error) {
 	// var _args SetInitConnectionArgs
 	// _args.Req = req
-	// var _result SetInitConnectionResult
+	var _result SetInitConnectionResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setInitConnection", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setInitConnection", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionSetAndroidPushSessionId(ctx context.Context, req *authsession.TLAuthsessionSetAndroidPushSessionId) (r *tg.Bool, err error) {
 	// var _args SetAndroidPushSessionIdArgs
 	// _args.Req = req
-	// var _result SetAndroidPushSessionIdResult
+	var _result SetAndroidPushSessionIdResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAndroidPushSessionId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAndroidPushSessionId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

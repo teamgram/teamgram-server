@@ -3,6 +3,7 @@ package authsessionservice
 import (
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -44,6 +45,33 @@ func TestGetFutureSaltsResultBinaryDecodeReadsInnerConstructor(t *testing.T) {
 	}
 	if dst.Success.ReqMsgId != src.Success.ReqMsgId || len(dst.Success.Salts) != 1 || dst.Success.Salts[0].Salt != 55 {
 		t.Fatalf("decoded future salts = %#v, want %#v", dst.Success, src.Success)
+	}
+}
+
+func TestResetAuthorizationResultBinaryDecodeDoesNotConsumeVectorAsConstructor(t *testing.T) {
+	src := &ResetAuthorizationResult{
+		Success: &authsession.VectorLong{Datas: []int64{11, 22}},
+	}
+
+	var dst ResetAuthorizationResult
+	roundTripResult(t, src, &dst)
+
+	if dst.Success == nil {
+		t.Fatal("decoded vector is nil")
+	}
+	if len(dst.Success.Datas) != 2 || dst.Success.Datas[0] != 11 || dst.Success.Datas[1] != 22 {
+		t.Fatalf("decoded vector = %#v, want %#v", dst.Success, src.Success)
+	}
+}
+
+func TestSetAuthKeyResultBinaryDecodeLetsBoolConsumeConstructor(t *testing.T) {
+	src := &SetAuthKeyResult{Success: tg.BoolTrue}
+
+	var dst SetAuthKeyResult
+	roundTripResult(t, src, &dst)
+
+	if _, ok := dst.Success.ToBoolTrue(); !ok {
+		t.Fatalf("decoded bool = %#v, want BoolTrue", dst.Success)
 	}
 }
 
