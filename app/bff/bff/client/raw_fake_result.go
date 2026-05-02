@@ -11,7 +11,6 @@ import (
 
 func TryReturnRawFakeRpcResult(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, bool, error) {
 	_ = ctx
-	_ = md
 
 	constructorID, err := bin.NewDecoder(payload).PeekClazzID()
 	if err != nil {
@@ -33,9 +32,13 @@ func TryReturnRawFakeRpcResult(ctx context.Context, md *metadata.RpcMetadata, pa
 	}
 	x := bin.NewEncoder()
 	defer x.End()
-	if err := result.Encode(x, 0); err != nil {
+	layer := int32(224)
+	if md != nil && md.Layer > 0 {
+		layer = md.Layer
+	}
+	if err := result.Encode(x, layer); err != nil {
 		x.Reset()
-		if err2 := result.Encode(x, 224); err2 != nil {
+		if err2 := result.Encode(x, 0); err2 != nil {
 			return nil, true, fmt.Errorf("encode raw fake result: %w", err)
 		}
 	}

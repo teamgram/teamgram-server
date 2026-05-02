@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -198,6 +199,28 @@ func TestRawFakeMainScreenStartupMethods(t *testing.T) {
 			}
 			tt.want(t, obj)
 		})
+	}
+}
+
+func TestRawFakeEncodesResponseWithClientLayer(t *testing.T) {
+	payload, ok, err := TryReturnRawFakeRpcResult(
+		context.Background(),
+		&metadata.RpcMetadata{Layer: 223},
+		encodeRawFakeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}),
+	)
+	if err != nil {
+		t.Fatalf("TryReturnRawFakeRpcResult() error = %v", err)
+	}
+	if !ok {
+		t.Fatal("TryReturnRawFakeRpcResult() ok = false")
+	}
+
+	d := bin.NewDecoder(payload)
+	if id, err := d.ClazzID(); err != nil || id != tg.ClazzID_users_userFull {
+		t.Fatalf("response constructor = %#x, %v; want users.userFull", id, err)
+	}
+	if id, err := d.ClazzID(); err != nil || id != 0xa02bc13e {
+		t.Fatalf("full_user constructor = %#x, %v; want userFull#a02bc13e for layer 223", id, err)
 	}
 }
 
