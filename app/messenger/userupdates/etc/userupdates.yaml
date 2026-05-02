@@ -1,19 +1,33 @@
 Name: messenger.userupdates
 ListenOn: 0.0.0.0:30670
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.userupdates
+Log:
+  #Mode: file
+  #Path: ../logs/userupdates
+  Level: debug
+
 OwnerInstance: local-userupdates
+
 Mysql:
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
 
 ReceiverOperations:
   Brokers:
-    - 127.0.0.1:9092
+    - 127.0.0.1:9094
   Topics:
     - userupdates.receiver_operations.v1
   Group: userupdates.receiver_operations.v1
 
 PushTasks:
   Brokers:
-    - 127.0.0.1:9092
+    - 127.0.0.1:9094
   Topic: userupdates.push_tasks.v1
   ProducerAck: wait_for_all
 

@@ -82,9 +82,9 @@ func (s *Server) Initialize() error {
 				chathelper.New(
 					chathelper.Config{
 						RpcServerConf: c.RpcServerConf,
-						//Mysql:         c.Mysql,
-						//Cache:         c.Cache,
-						//MediaClient:   c.MediaClient,
+						Mysql:         c.Mysql,
+						Cache:         c.Cache,
+						MediaClient:   c.MediaClient,
 					}))
 
 			// codehelper
@@ -100,7 +100,7 @@ func (s *Server) Initialize() error {
 				s,
 				dialoghelper.New(dialoghelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					//Mysql:         c.Mysql,
+					Mysql:         c.Mysql,
 					//Cache:         c.Cache,
 				}))
 

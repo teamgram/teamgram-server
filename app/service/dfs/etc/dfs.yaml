@@ -1,13 +1,23 @@
 Name: service.dfs
 ListenOn: 0.0.0.0:20640
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.dfs
 
 MiniHttp:
   Name: service.dfs_mini_http
   Host: 0.0.0.0
   Port: 20641
+  Log:
+    #Mode: file
+    #Path: ../logs/dfs
+    Level: debug
 
 Kv:
-  - Host: 127.0.0.1:6379
+  - Host: "127.0.0.1:6379"
+    Type: "node"
     Pass: ""
 
 Minio:
@@ -28,3 +38,4 @@ Idgen:
     Hosts:
       - 127.0.0.1:2379
     Key: service.idgen
+

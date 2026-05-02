@@ -19,7 +19,6 @@
 package config
 
 import (
-	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/zeromicro/go-zero/core/stores/kv"
@@ -34,7 +33,6 @@ type Config struct {
 	MediaClient               kitex.RpcClientConf
 	IdgenClient               kitex.RpcClientConf
 	MsgClient                 kitex.RpcClientConf
-	SyncClient                *kafka.KafkaProducerConf
 	DfsClient                 kitex.RpcClientConf
 	StatusClient              kitex.RpcClientConf
 	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`

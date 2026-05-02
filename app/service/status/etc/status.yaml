@@ -1,6 +1,20 @@
 Name: service.status
 ListenOn: 0.0.0.0:20670
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.status
+Log:
+  #Mode: file
+  #Path: ../logs/status
+  Level: debug
+
 KV:
-  - Host: 127.0.0.1:6379
+  - Host: "127.0.0.1:6379"
+    Type: "node"
     Pass: ""
+
 StatusExpire: 300
+
+

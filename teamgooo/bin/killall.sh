@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-killall gnetway session bff authsession status idgen status
+killall geoip idgen status dfs media authsession biz userupdates msg bff gateway

@@ -1,5 +1,14 @@
 Name: service.idgen
 ListenOn: 0.0.0.0:20660
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.idgen
+Log:
+  #Mode: file
+  #Path: ../logs/idgen
+  Level: debug
 
 # NodeId is the snowflake node id (range [0, 1023]). Each idgen instance
 # in the cluster MUST have a unique value to keep generated ids globally
@@ -13,6 +22,9 @@ NodeId: 0
 # every database referenced here before enabling the service.
 Mysql:
   DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Local"
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
 
 # KV is the optional segment cache placed in front of the Mysql store.
 # When omitted (or with zero total weight) the allocator runs in

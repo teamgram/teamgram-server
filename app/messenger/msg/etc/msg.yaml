@@ -1,8 +1,20 @@
 Name: messenger.msg
 ListenOn: 0.0.0.0:20380
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.msg
+Log:
+  #Mode: file
+  #Path: ../logs/msg
+  Level: debug
 
 Mysql:
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
 
 Idgen:
   DestService: service.idgen
@@ -24,6 +36,6 @@ Userupdates:
 
 ReceiverOperations:
   Brokers:
-    - 127.0.0.1:9092
+    - 127.0.0.1:9094
   Topic: userupdates.receiver_operations.v1
   ProducerAck: wait_for_all

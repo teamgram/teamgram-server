@@ -1,11 +1,34 @@
 Name: service.media
 ListenOn: 0.0.0.0:20650
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.media
+Log:
+  #Mode: file
+  #Path: ../logs/media
+  Level: debug
+
 Mysql:
   Addr: 127.0.0.1:3306
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Local"
   Active: 64
   Idle: 64
   IdleTimeout: 4h
   QueryTimeout: 5s
   ExecTimeout: 5s
   TranTimeout: 5s
+Cache:
+  - Host: "127.0.0.1:6379"
+    Type: "node"
+    Pass: ""
+
+Dfs:
+  DestService: service.dfs
+  ServiceName: RPCDfs
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.dfs

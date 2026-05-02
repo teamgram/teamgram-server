@@ -1,8 +1,19 @@
 Name: interface.gateway
 ListenOn: 0.0.0.0:20110
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.gateway
+Log:
+  #Mode: file
+  #Path: ../logs/gateway
+  Level: debug
+
 GatewayId: gateway-dev-1
 Transport:
   TCPListenOn: 0.0.0.0:10443
+
 AuthsessionClient:
   DestService: service.authsession
   ServiceName: RPCAuthsession
@@ -11,6 +22,7 @@ AuthsessionClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.authsession
+
 BffClient:
   Clients:
     - DestService: bff.configuration

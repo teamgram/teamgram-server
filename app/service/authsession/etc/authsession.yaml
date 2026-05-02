@@ -1,5 +1,14 @@
 Name: service.authsession
 ListenOn: 0.0.0.0:20450
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.authsession
+Log:
+  #Mode: file
+  #Path: ../logs/authsession
+  Level: debug
 
 Geoip:
   DestService: service.geoip
@@ -9,3 +18,18 @@ Geoip:
     Hosts:
       - 127.0.0.1:2379
     Key: service.geoip
+
+Mysql:
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+Cache:
+  - Host: "127.0.0.1:6379"
+    Type: "node"
+    Pass: ""
+
+KV:
+  - Host: "127.0.0.1:6379"
+    Type: "node"
+    Pass: ""
