@@ -19,12 +19,16 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 // Repository is the dependency container for repository instances.
@@ -45,7 +49,13 @@ func NewRepository(c config.Config) *Repository {
 	if owner == "" {
 		owner = "local-userupdates"
 	}
-	return NewForTest(db, unavailableIDGenerator{}, owner)
+	var idgen IDGenerator = unavailableIDGenerator{}
+	if hasRPCClientConfig(c.Idgen) {
+		idgen = &idgenRPCGenerator{
+			client: idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.Idgen)),
+		}
+	}
+	return NewForTest(db, idgen, owner)
 }
 
 type IDGenerator interface {
@@ -55,7 +65,25 @@ type IDGenerator interface {
 type unavailableIDGenerator struct{}
 
 func (unavailableIDGenerator) NextID(context.Context) (int64, error) {
-	return 0, fmt.Errorf("%w: id generator unavailable", userupdates.ErrUserupdatesStorage)
+	return 0, errors.New("id generator unavailable")
+}
+
+type idgenRPCGenerator struct {
+	client idgenclient.IdgenClient
+}
+
+func (g *idgenRPCGenerator) NextID(ctx context.Context) (int64, error) {
+	if g == nil || g.client == nil {
+		return 0, errors.New("id generator unavailable")
+	}
+	id, err := g.client.IdgenNextId(ctx, &idgen.TLIdgenNextId{})
+	if err != nil {
+		return 0, err
+	}
+	if id == nil {
+		return 0, errors.New("id generator returned nil")
+	}
+	return id.V, nil
 }
 
 func NewForTest(db *sqlx.DB, idgen IDGenerator, ownerInstance string) *Repository {
@@ -105,4 +133,11 @@ func storageError(op string, err error) error {
 		return nil
 	}
 	return fmt.Errorf("%w: %s: %w", userupdates.ErrUserupdatesStorage, op, err)
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }

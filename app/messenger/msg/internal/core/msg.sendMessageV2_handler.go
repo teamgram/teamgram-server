@@ -75,56 +75,86 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	if err != nil {
 		return nil, err
 	}
-	if err := c.svcCtx.Repo.MarkCanonicalCreated(c.ctx, canonical.SendStateID, canonical.CanonicalMessageID, canonical.PeerSeq); err != nil {
-		return nil, err
+	if canonical.CreatedNew || sendState.Status < repository.SendStateStatusCanonical {
+		if err := c.svcCtx.Repo.MarkCanonicalCreated(c.ctx, canonical.SendStateID, canonical.CanonicalMessageID, canonical.PeerSeq); err != nil {
+			return nil, err
+		}
 	}
 
 	senderOperationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
-	senderResult, senderHash, err := c.processSenderOperation(in, canonical, senderOperationID, messageText)
-	if err != nil {
-		return nil, err
-	}
-	if err := c.markSenderCommitted(canonical, senderOperationID, senderResult); err != nil {
-		c.Logger.Errorf("msg.sendMessageV2 - sender commit recovery: send_state_id=%d canonical_message_id=%d operation_id=%s err=%v", canonical.SendStateID, canonical.CanonicalMessageID, senderOperationID, err)
-		recovered, recoverErr := c.recoverSenderOperation(in.UserId, senderOperationID, senderHash)
-		if recoverErr != nil {
-			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_commit_recovery_failed", LastErrorMessage: "sender commit recovery failed"})
-			return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, recoverErr)
+	var senderResult *userupdates.UserOperationResult
+	if sendState.Status >= repository.SendStateStatusSenderCommitted {
+		senderResult = senderResultFromSendState(sendState)
+	} else {
+		var senderHash []byte
+		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText)
+		if err != nil {
+			return nil, err
 		}
-		if err := c.markSenderCommitted(canonical, senderOperationID, recovered); err != nil {
-			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_commit_failed", LastErrorMessage: "sender commit failed"})
-			return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+		if err := c.markSenderCommitted(canonical, senderOperationID, senderResult); err != nil {
+			c.Logger.Errorf("msg.sendMessageV2 - sender commit recovery: send_state_id=%d canonical_message_id=%d operation_id=%s err=%v", canonical.SendStateID, canonical.CanonicalMessageID, senderOperationID, err)
+			recovered, recoverErr := c.recoverSenderOperation(in.UserId, senderOperationID, senderHash)
+			if recoverErr != nil {
+				_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_commit_recovery_failed", LastErrorMessage: "sender commit recovery failed"})
+				return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, recoverErr)
+			}
+			if err := c.markSenderCommitted(canonical, senderOperationID, recovered); err != nil {
+				_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_commit_failed", LastErrorMessage: "sender commit failed"})
+				return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+			}
+			senderResult = recovered
 		}
-		senderResult = recovered
 	}
 
-	receiverOp, err := buildReceiverOperation(in, canonical, messageText)
-	if err != nil {
-		return nil, err
+	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
+		receiverOp, err := buildReceiverOperation(in, canonical, messageText)
+		if err != nil {
+			return nil, err
+		}
+		if c.svcCtx.ReceiverPublisher == nil {
+			return nil, msg.ErrReceiverBackpressure
+		}
+		ack, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp)
+		if err != nil {
+			c.Logger.Errorf("msg.sendMessageV2 - receiver operation publish failed: operation_id=%s err=%v", receiverOp.OperationID, err)
+			return nil, msg.ErrReceiverBackpressure
+		}
+		c.Logger.Debugf(
+			"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",
+			receiverOp.OperationID,
+			ack.Topic,
+			ack.Partition,
+			ack.Offset,
+		)
 	}
-	if c.svcCtx.ReceiverPublisher == nil {
-		return nil, msg.ErrReceiverBackpressure
+	if sendState.Status < repository.SendStateStatusReceiverAcked {
+		if err := c.svcCtx.Repo.MarkReceiverOpsAcked(c.ctx, canonical.SendStateID, 0); err != nil {
+			return nil, err
+		}
 	}
-	ack, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp)
-	if err != nil {
-		c.Logger.Errorf("msg.sendMessageV2 - receiver operation publish failed: operation_id=%s err=%v", receiverOp.OperationID, err)
-		return nil, msg.ErrReceiverBackpressure
-	}
-	c.Logger.Debugf(
-		"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",
-		receiverOp.OperationID,
-		ack.Topic,
-		ack.Partition,
-		ack.Offset,
-	)
-	if err := c.svcCtx.Repo.MarkReceiverOpsAcked(c.ctx, canonical.SendStateID, 0); err != nil {
-		return nil, err
-	}
-	if err := c.svcCtx.Repo.MarkCompleted(c.ctx, canonical.SendStateID); err != nil {
-		return nil, err
+	if sendState.Status < repository.SendStateStatusCompleted {
+		if err := c.svcCtx.Repo.MarkCompleted(c.ctx, canonical.SendStateID); err != nil {
+			return nil, err
+		}
 	}
 
 	return shortSentMessage(canonical, senderResult)
+}
+
+func senderResultFromSendState(sendState *repository.SendState) *userupdates.UserOperationResult {
+	if sendState == nil {
+		return nil
+	}
+	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+		UserId:              sendState.SenderUserID,
+		OperationId:         sendState.SenderOperationID,
+		Status:              1,
+		Pts:                 sendState.SenderPTS,
+		PtsCount:            sendState.SenderPTSCount,
+		CurrentPts:          sendState.SenderPTS,
+		ResponsePayload:     sendState.SenderUpdatePayload,
+		ResponsePayloadHash: sendState.SenderUpdatePayloadHash,
+	})
 }
 
 type sendRequestPayloadV1 struct {

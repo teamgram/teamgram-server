@@ -145,6 +145,111 @@ func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T)
 	}
 }
 
+func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":13,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{
+			SendStateID:        1,
+			Status:             repository.SendStateStatusCanonical,
+			CanonicalMessageID: 4001,
+			PeerSeq:            7,
+		},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 4001,
+			PeerSeq:            7,
+			MessageDate:        1_772_000_030,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         false,
+		},
+		markCanonicalErr: errors.New("canonical mark should not be retried"),
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(4001, 1001),
+			Status:              1,
+			Pts:                 13,
+			PtsCount:            1,
+			CurrentPts:          13,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "retry"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if _, ok := got.ToUpdateShortSentMessage(); !ok {
+		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
+	}
+	if repo.markCanonicalCalls != 0 {
+		t.Fatalf("mark canonical calls = %d, want 0", repo.markCanonicalCalls)
+	}
+	if repo.markSenderCalls != 1 || publisher.calls != 1 || repo.markCompletedCalls != 1 {
+		t.Fatalf("unexpected retry call counts: repo=%+v publisher_calls=%d", repo, publisher.calls)
+	}
+}
+
+func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":14,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{
+			SendStateID:             1,
+			Status:                  repository.SendStateStatusSenderCommitted,
+			CanonicalMessageID:      5001,
+			PeerSeq:                 8,
+			SenderOperationID:       payload.SenderOperationID(5001, 1001),
+			SenderPTS:               14,
+			SenderPTSCount:          1,
+			SenderUpdatePayload:     responsePayload,
+			SenderUpdatePayloadHash: responseHash,
+		},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 5001,
+			PeerSeq:            8,
+			MessageDate:        1_772_000_040,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         false,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1001, 9001, "self retry"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	short, ok := got.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
+	}
+	if short.Pts != 14 || short.PtsCount != 1 || short.Id != 8 {
+		t.Fatalf("unexpected short sent message: %+v", short)
+	}
+	if updatesClient.processed != nil || repo.markSenderCalls != 0 || publisher.calls != 0 {
+		t.Fatalf("unexpected retry side effects: processed=%+v repo=%+v publisher_calls=%d", updatesClient.processed, repo, publisher.calls)
+	}
+	if repo.markReceiverAckedCalls != 1 || repo.markCompletedCalls != 1 {
+		t.Fatalf("unexpected completion calls: repo=%+v", repo)
+	}
+}
+
 func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	repo := &fakeMsgRepository{
 		history: []repository.HistoryMessage{
@@ -210,6 +315,7 @@ type fakeMsgRepository struct {
 	canonical              *repository.CanonicalMessageResult
 	history                []repository.HistoryMessage
 	historyInput           repository.ListHistoryMessagesInput
+	markCanonicalErr       error
 	markSenderErrs         []error
 	markCanonicalCalls     int
 	markSenderCalls        int
@@ -233,7 +339,7 @@ func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository
 
 func (f *fakeMsgRepository) MarkCanonicalCreated(context.Context, int64, int64, int64) error {
 	f.markCanonicalCalls++
-	return nil
+	return f.markCanonicalErr
 }
 
 func (f *fakeMsgRepository) MarkSenderCommitted(_ context.Context, _ repository.MarkSenderCommittedInput) error {

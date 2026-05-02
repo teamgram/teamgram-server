@@ -26,6 +26,7 @@ import (
 type Config struct {
 	kitex.RpcServerConf
 	Mysql              sqlx.Config              `json:",optional"`
+	Idgen              kitex.RpcClientConf      `json:",optional"`
 	OwnerInstance      string                   `json:",default=local-userupdates"`
 	ReceiverOperations *kafka.KafkaConsumerConf `json:",optional"`
 	PushTasks          *kafka.KafkaProducerConf `json:",optional"`
