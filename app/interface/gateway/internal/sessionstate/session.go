@@ -38,14 +38,16 @@ type Processor struct {
 	store        repository.AuthKeyStore
 	dispatch     Dispatcher
 	authKeys     map[int64]*crypto.AuthKey
+	authKeyInfos map[int64]*tg.AuthKeyInfo
 	disconnectAt time.Time
 }
 
 func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor {
 	return &Processor{
-		store:    store,
-		dispatch: dispatch,
-		authKeys: make(map[int64]*crypto.AuthKey),
+		store:        store,
+		dispatch:     dispatch,
+		authKeys:     make(map[int64]*crypto.AuthKey),
+		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
 	}
 }
 
@@ -92,7 +94,7 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 
 func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthKey, *tg.AuthKeyInfo, error) {
 	if key, ok := p.authKeys[authKeyId]; ok {
-		return key, nil, nil
+		return key, p.authKeyInfos[authKeyId], nil
 	}
 	if p.store == nil {
 		return nil, nil, fmt.Errorf("session processor: auth key store is nil")
@@ -106,6 +108,7 @@ func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthK
 	}
 	key := crypto.NewAuthKey(keyInfo.AuthKeyId, keyInfo.AuthKey)
 	p.authKeys[authKeyId] = key
+	p.authKeyInfos[authKeyId] = keyInfo
 	return key, keyInfo, nil
 }
 

@@ -89,6 +89,25 @@ func TestSessionUnwrapsInitConnectionMetadata(t *testing.T) {
 	}
 }
 
+func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	requestBody := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 103, requestBody)
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 104, requestBody)
+	if len(dispatch.md) != 2 {
+		t.Fatalf("dispatch count = %d, want 2", len(dispatch.md))
+	}
+	if got := dispatch.md[1].PermAuthKeyId; got != 4242 {
+		t.Fatalf("cached PermAuthKeyId = %d, want 4242", got)
+	}
+}
+
 func TestSessionWrapsDispatchRPCError(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
