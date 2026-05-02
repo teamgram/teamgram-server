@@ -11,6 +11,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -88,6 +89,30 @@ func TestRawDispatchInfrastructureError(t *testing.T) {
 	_, err := dispatcher.Invoke(context.Background(), nil, []byte{0x02, 0x30, 0xed, 0xfe})
 	if !errors.Is(err, want) {
 		t.Fatalf("Invoke() error = %v, want %v", err, want)
+	}
+}
+
+func TestRawDispatchWrapsTLRPCError(t *testing.T) {
+	const reqClazzID = uint32(0xfeed3004)
+	iface.RegisterClazzName("raw_dispatch_rpc_error", 0, reqClazzID)
+	iface.RegisterClazzIDName("raw_dispatch_rpc_error", reqClazzID)
+	iface.RegisterRPCContextTuple("TLRawDispatchRpcError", "/tg.RPCRawDispatchRPCError/raw.dispatchRPCError", func() interface{} {
+		return codec.NewRawTLObject(nil)
+	})
+	rawClient := &fakeRawClient{err: ecode.NewCodeError(400, "PHONE_NUMBER_UNOCCUPIED")}
+	dispatcher := NewRawDispatcher(&bffclient.BFFProxyClient2{
+		RawClients: map[string]kitex.Client{"RPCRawDispatchRPCError": rawClient},
+	})
+
+	_, err := dispatcher.Invoke(context.Background(), nil, []byte{0x04, 0x30, 0xed, 0xfe})
+	var rpcErr interface {
+		RPCError() *tg.TLRpcError
+	}
+	if !errors.As(err, &rpcErr) {
+		t.Fatalf("Invoke() error = %T %[1]v, want RPCError", err)
+	}
+	if got := rpcErr.RPCError(); got.ErrorCode != 400 || got.ErrorMessage != "PHONE_NUMBER_UNOCCUPIED" {
+		t.Fatalf("RPCError() = %#v", got)
 	}
 }
 

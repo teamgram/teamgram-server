@@ -2,6 +2,7 @@ package sessionstate
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -24,6 +25,15 @@ type Dispatcher interface {
 	Invoke(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, error)
 }
 
+type ActiveSession struct {
+	AuthKeyId int64
+	SessionId int64
+	Salt      int64
+	AuthKey   *crypto.AuthKey
+}
+
+type SessionObserver func(ActiveSession)
+
 type Processor struct {
 	store        repository.AuthKeyStore
 	dispatch     Dispatcher
@@ -40,6 +50,10 @@ func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor
 }
 
 func (p *Processor) HandleEncrypted(ctx context.Context, conn ConnInfo, payload []byte) ([]byte, error) {
+	return p.HandleEncryptedWithSession(ctx, conn, payload, nil)
+}
+
+func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInfo, payload []byte, observe SessionObserver) ([]byte, error) {
 	authKeyId, err := readAuthKeyID(payload)
 	if err != nil {
 		return nil, err
@@ -52,6 +66,14 @@ func (p *Processor) HandleEncrypted(ctx context.Context, conn ConnInfo, payload 
 	msg, err := gmtproto.DecodeEncryptedMessage(payload, key)
 	if err != nil {
 		return nil, err
+	}
+	if observe != nil {
+		observe(ActiveSession{
+			AuthKeyId: msg.AuthKeyId,
+			SessionId: msg.SessionId,
+			Salt:      msg.Salt,
+			AuthKey:   key,
+		})
 	}
 
 	body, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg)
@@ -160,6 +182,15 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	}
 	result, err := p.dispatch.Invoke(ctx, md, inner)
 	if err != nil {
+		var rpcErr interface {
+			RPCError() *tg.TLRpcError
+		}
+		if errors.As(err, &rpcErr) {
+			e := rpcErr.RPCError()
+			if e != nil {
+				return gmtproto.WrapRPCError(msg.MsgId, e.ErrorCode, e.ErrorMessage)
+			}
+		}
 		return nil, err
 	}
 	return gmtproto.WrapRPCResult(msg.MsgId, result)

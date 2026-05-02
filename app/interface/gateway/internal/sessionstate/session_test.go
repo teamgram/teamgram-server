@@ -17,12 +17,28 @@ type fakeDispatcher struct {
 	payloads [][]byte
 	md       []*metadata.RpcMetadata
 	result   []byte
+	err      error
 }
 
 func (f *fakeDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, error) {
 	f.md = append(f.md, md)
 	f.payloads = append(f.payloads, append([]byte(nil), payload...))
+	if f.err != nil {
+		return nil, f.err
+	}
 	return f.result, nil
+}
+
+type fakeRPCError struct {
+	err *tg.TLRpcError
+}
+
+func (e fakeRPCError) Error() string {
+	return e.err.Error()
+}
+
+func (e fakeRPCError) RPCError() *tg.TLRpcError {
+	return e.err
 }
 
 func TestSessionDispatchesRawRPCWithMetadata(t *testing.T) {
@@ -70,6 +86,27 @@ func TestSessionUnwrapsInitConnectionMetadata(t *testing.T) {
 	}
 	if got := dispatch.md[0]; got.Layer != 224 || got.Client != "tdesktop macOS 5.0" || got.Langpack != "tdesktop" || got.LangCode != "en" {
 		t.Fatalf("metadata = %#v", got)
+	}
+}
+
+func TestSessionWrapsDispatchRPCError(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{err: fakeRPCError{err: mt.MakeTLRpcError(&mt.TLRpcError{
+		ErrorCode:    400,
+		ErrorMessage: "PHONE_NUMBER_UNOCCUPIED",
+	})}}
+	processor := NewProcessor(store, dispatch)
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 102, encodeTL(t, &mt.TLGetFutureSalts{Num: 1}))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	rpcResult := decodeBodyAs[*mt.TLRpcResult](t, decoded.Body)
+	errObj, ok := rpcResult.Result.(*mt.TLRpcError)
+	if !ok {
+		t.Fatalf("rpc_result result = %T, want *mt.TLRpcError", rpcResult.Result)
+	}
+	if errObj.ErrorCode != 400 || errObj.ErrorMessage != "PHONE_NUMBER_UNOCCUPIED" {
+		t.Fatalf("rpc_error = %#v", errObj)
 	}
 }
 

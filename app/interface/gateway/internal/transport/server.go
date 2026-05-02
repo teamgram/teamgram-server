@@ -9,19 +9,23 @@ import (
 	"sync"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 )
 
 type Server struct {
 	addr      string
+	gatewayID string
 	handshake *sessionstate.HandshakeManager
 	processor *sessionstate.Processor
+	push      *push.LocalWriter
 	listener  net.Listener
 	wg        sync.WaitGroup
 }
 
-func NewServer(addr string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor) *Server {
-	return &Server{addr: addr, handshake: handshake, processor: processor}
+func NewServer(addr string, gatewayID string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter) *Server {
+	return &Server{addr: addr, gatewayID: gatewayID, handshake: handshake, processor: processor, push: pushWriter}
 }
 
 func (s *Server) Start(ctx context.Context) error {
@@ -70,25 +74,38 @@ func (s *Server) ServeConn(ctx context.Context, conn net.Conn) error {
 	if err != nil {
 		return fmt.Errorf("gateway transport detect codec: %w", err)
 	}
+	var writeMu sync.Mutex
+	writers := make(map[sessionKey]*connSessionWriter)
+	defer func() {
+		if s.push == nil {
+			return
+		}
+		for key := range writers {
+			s.push.Unregister(key.authKeyId, key.sessionId)
+		}
+	}()
 	for {
 		frame, err := codec.ReadFrame(reader)
 		if err != nil {
 			return err
 		}
-		resp, err := s.handleFrame(ctx, conn, frame)
+		resp, err := s.handleFrame(ctx, conn, codec, &writeMu, writers, frame)
 		if err != nil {
 			return err
 		}
 		if resp == nil {
 			continue
 		}
+		writeMu.Lock()
 		if err := codec.WriteFrame(conn, resp); err != nil {
+			writeMu.Unlock()
 			return err
 		}
+		writeMu.Unlock()
 	}
 }
 
-func (s *Server) handleFrame(ctx context.Context, conn net.Conn, frame []byte) ([]byte, error) {
+func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, writeMu *sync.Mutex, writers map[sessionKey]*connSessionWriter, frame []byte) ([]byte, error) {
 	if len(frame) < 8 {
 		return nil, fmt.Errorf("gateway transport: frame too short")
 	}
@@ -106,5 +123,79 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, frame []byte) (
 	if s.processor == nil {
 		return nil, fmt.Errorf("gateway transport: session processor is nil")
 	}
-	return s.processor.HandleEncrypted(ctx, sessionstate.ConnInfo{ClientAddr: conn.RemoteAddr().String()}, frame)
+	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) {
+		if s.push == nil || active.AuthKey == nil {
+			return
+		}
+		key := sessionKey{authKeyId: active.AuthKeyId, sessionId: active.SessionId}
+		writer := writers[key]
+		if writer == nil {
+			writer = &connSessionWriter{
+				conn:    conn,
+				codec:   codec,
+				writeMu: writeMu,
+			}
+			writers[key] = writer
+		}
+		writer.Update(active.AuthKey, active.Salt)
+		s.push.Register(push.LocalTarget{
+			AuthKeyId: active.AuthKeyId,
+			SessionId: active.SessionId,
+			AuthKey:   active.AuthKey,
+			Writer:    writer,
+		})
+	})
+}
+
+type sessionKey struct {
+	authKeyId int64
+	sessionId int64
+}
+
+type connSessionWriter struct {
+	conn    net.Conn
+	codec   Codec
+	writeMu *sync.Mutex
+
+	mu      sync.Mutex
+	authKey *crypto.AuthKey
+	salt    int64
+	seq     int32
+}
+
+func (w *connSessionWriter) Update(authKey *crypto.AuthKey, salt int64) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	w.authKey = authKey
+	w.salt = salt
+}
+
+func (w *connSessionWriter) NextSeqNo(contentRelated bool) int32 {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	seq := w.seq * 2
+	if contentRelated {
+		seq++
+		w.seq++
+	}
+	return seq
+}
+
+func (w *connSessionWriter) WriteEncrypted(ctx context.Context, msg gmtproto.EncryptedMessage) error {
+	w.mu.Lock()
+	authKey := w.authKey
+	if msg.Salt == 0 {
+		msg.Salt = w.salt
+	}
+	w.mu.Unlock()
+	if authKey == nil {
+		return fmt.Errorf("gateway transport: session auth key is nil")
+	}
+	payload, err := gmtproto.EncodeEncryptedMessage(msg, authKey)
+	if err != nil {
+		return err
+	}
+	w.writeMu.Lock()
+	defer w.writeMu.Unlock()
+	return w.codec.WriteFrame(w.conn, payload)
 }

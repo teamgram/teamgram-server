@@ -64,8 +64,10 @@ func (s *Server) Initialize() error {
 		})
 	s.tcpSrv = gttransport.NewServer(
 		c.Transport.TCPListenOn,
+		c.GatewayId,
 		sessionstate.NewHandshakeManager(ctx.Repo),
-		sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF)))
+		sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF)),
+		ctx.Push)
 
 	return nil
 }
