@@ -99,27 +99,27 @@ func TestRawFakeMainScreenStartupMethods(t *testing.T) {
 		{
 			name: "messages.getTopReactions",
 			req:  &tg.TLMessagesGetTopReactions{Limit: 10, Hash: 0},
-			want: wantType[*tg.TLMessagesReactionsNotModified],
+			want: wantType[*tg.TLMessagesReactions],
 		},
 		{
 			name: "messages.getRecentReactions",
 			req:  &tg.TLMessagesGetRecentReactions{Limit: 10, Hash: 0},
-			want: wantType[*tg.TLMessagesReactionsNotModified],
+			want: wantType[*tg.TLMessagesReactions],
 		},
 		{
 			name: "messages.getSavedReactionTags",
 			req:  &tg.TLMessagesGetSavedReactionTags{Hash: 0},
-			want: wantType[*tg.TLMessagesSavedReactionTagsNotModified],
+			want: wantType[*tg.TLMessagesSavedReactionTags],
 		},
 		{
 			name: "messages.getDefaultTagReactions",
 			req:  &tg.TLMessagesGetDefaultTagReactions{Hash: 0},
-			want: wantType[*tg.TLMessagesReactionsNotModified],
+			want: wantType[*tg.TLMessagesReactions],
 		},
 		{
 			name: "messages.getAvailableEffects",
 			req:  &tg.TLMessagesGetAvailableEffects{Hash: 0},
-			want: wantType[*tg.TLMessagesAvailableEffectsNotModified],
+			want: wantType[*tg.TLMessagesAvailableEffects],
 		},
 		{
 			name: "messages.getStickerSet",
@@ -154,7 +154,22 @@ func TestRawFakeMainScreenStartupMethods(t *testing.T) {
 		{
 			name: "messages.getQuickReplies",
 			req:  &tg.TLMessagesGetQuickReplies{Hash: 0},
-			want: wantType[*tg.TLMessagesQuickRepliesNotModified],
+			want: wantType[*tg.TLMessagesQuickReplies],
+		},
+		{
+			name: "contacts.getContacts",
+			req:  &tg.TLContactsGetContacts{Hash: 0},
+			want: wantType[*tg.TLContactsContacts],
+		},
+		{
+			name: "contacts.getTopPeers",
+			req:  &tg.TLContactsGetTopPeers{Correspondents: true, Limit: 64, Hash: 0},
+			want: wantType[*tg.TLContactsTopPeers],
+		},
+		{
+			name: "payments.getStarGiftActiveAuctions",
+			req:  &tg.TLPaymentsGetStarGiftActiveAuctions{Hash: 0},
+			want: wantType[*tg.TLPaymentsStarGiftActiveAuctions],
 		},
 		{
 			name: "stories.getAllStories",

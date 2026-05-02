@@ -16,6 +16,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ConnInfo struct {
@@ -258,6 +259,7 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if keyInfo != nil && keyInfo.PermAuthKeyId != 0 {
 		md.PermAuthKeyId = keyInfo.PermAuthKeyId
 	}
+	method := rawRPCMethodName(inner)
 	result, err := p.dispatch.Invoke(ctx, md, inner)
 	if err != nil {
 		var rpcErr interface {
@@ -266,12 +268,44 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 		if errors.As(err, &rpcErr) {
 			e := rpcErr.RPCError()
 			if e != nil {
+				logx.WithContext(ctx).Errorf(
+					"gateway rpc request error: method=%s msg_id=%d auth_key_id=%d perm_auth_key_id=%d session_id=%d client_addr=%s error_code=%d error_message=%s",
+					method,
+					msg.MsgId,
+					msg.AuthKeyId,
+					md.PermAuthKeyId,
+					msg.SessionId,
+					conn.ClientAddr,
+					e.ErrorCode,
+					e.ErrorMessage,
+				)
 				return gmtproto.WrapRPCError(msg.MsgId, e.ErrorCode, e.ErrorMessage)
 			}
 		}
+		logx.WithContext(ctx).Errorf(
+			"gateway rpc request infrastructure error: method=%s msg_id=%d auth_key_id=%d perm_auth_key_id=%d session_id=%d client_addr=%s err=%v",
+			method,
+			msg.MsgId,
+			msg.AuthKeyId,
+			md.PermAuthKeyId,
+			msg.SessionId,
+			conn.ClientAddr,
+			err,
+		)
 		return nil, err
 	}
 	return gmtproto.WrapRPCResult(msg.MsgId, result)
+}
+
+func rawRPCMethodName(payload []byte) string {
+	constructorID, err := bin.NewDecoder(payload).PeekClazzID()
+	if err != nil {
+		return "unknown"
+	}
+	if name := iface.GetClazzNameByID(constructorID); name != "" {
+		return name
+	}
+	return fmt.Sprintf("unknown#%08x", constructorID)
 }
 
 func readAuthKeyID(payload []byte) (int64, error) {

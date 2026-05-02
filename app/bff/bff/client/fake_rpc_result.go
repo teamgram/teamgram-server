@@ -191,17 +191,12 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Hash:   0,
 			Colors: []tg.HelpPeerColorOptionClazz{},
 		}).ToHelpPeerColors(), nil
-	case "TLMessagesGetAvailableReactions":
-		return tg.MakeTLMessagesAvailableReactions(&tg.TLMessagesAvailableReactions{
-			Hash:      0,
-			Reactions: []tg.AvailableReactionClazz{},
-		}).ToMessagesAvailableReactions(), nil
-	case "TLMessagesGetTopReactions", "TLMessagesGetRecentReactions", "TLMessagesGetDefaultTagReactions":
-		return tg.MessagesReactionsNotModified, nil
-	case "TLMessagesGetSavedReactionTags":
-		return tg.MessagesSavedReactionTagsNotModified, nil
 	case "TLMessagesGetAvailableEffects":
-		return tg.MessagesAvailableEffectsNotModified, nil
+		return tg.MakeTLMessagesAvailableEffects(&tg.TLMessagesAvailableEffects{
+			Hash:      0,
+			Effects:   []tg.AvailableEffectClazz{},
+			Documents: []tg.DocumentClazz{},
+		}).ToMessagesAvailableEffects(), nil
 	case "TLAccountGetDefaultEmojiStatuses":
 		return tg.MakeTLAccountEmojiStatuses(&tg.TLAccountEmojiStatuses{
 			Hash:     0,
@@ -230,7 +225,12 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Users: []tg.UserClazz{},
 		}).ToAttachMenuBots(), nil
 	case "TLMessagesGetQuickReplies":
-		return tg.MessagesQuickRepliesNotModified, nil
+		return tg.MakeTLMessagesQuickReplies(&tg.TLMessagesQuickReplies{
+			QuickReplies: []tg.QuickReplyClazz{},
+			Messages:     []tg.MessageClazz{},
+			Chats:        []tg.ChatClazz{},
+			Users:        []tg.UserClazz{},
+		}).ToMessagesQuickReplies(), nil
 	case "TLStoriesGetAllStories":
 		return tg.MakeTLStoriesAllStories(&tg.TLStoriesAllStories{
 			Count:       0,
@@ -299,6 +299,60 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			PeriodOptions:  []tg.PremiumSubscriptionOptionClazz{},
 			Users:          []tg.UserClazz{},
 		}).ToHelpPremiumPromo(), nil
+
+	// reaction
+	//case "TLReactionGetTopReactions":
+	//	return tg.MakeTLMessagesReactions(&tg.TLMessagesReactions{
+	//		Hash:      0,
+	//		Reactions: []tg.ReactionClazz{},
+	//	}).ToMessagesReactions(), nil
+	//
+	//case "TLMessagesGetRecentReactions":
+	case "TLMessagesGetAvailableReactions":
+		return tg.MakeTLMessagesAvailableReactions(&tg.TLMessagesAvailableReactions{
+			Hash:      0,
+			Reactions: []tg.AvailableReactionClazz{},
+		}).ToMessagesAvailableReactions(), nil
+	case "TLMessagesGetTopReactions":
+		return tg.MakeTLMessagesReactions(&tg.TLMessagesReactions{
+			Hash:      0,
+			Reactions: []tg.ReactionClazz{},
+		}).ToMessagesReactions(), nil
+	case "TLMessagesGetRecentReactions":
+		return tg.MakeTLMessagesReactions(&tg.TLMessagesReactions{
+			Hash:      0,
+			Reactions: []tg.ReactionClazz{},
+		}).ToMessagesReactions(), nil
+	case "TLMessagesGetDefaultTagReactions":
+		return tg.MakeTLMessagesReactions(&tg.TLMessagesReactions{
+			Hash:      0,
+			Reactions: []tg.ReactionClazz{},
+		}).ToMessagesReactions(), nil
+	case "TLMessagesGetSavedReactionTags":
+		return tg.MakeTLMessagesSavedReactionTags(&tg.TLMessagesSavedReactionTags{
+			Tags: []tg.SavedReactionTagClazz{},
+			Hash: 0,
+		}).ToMessagesSavedReactionTags(), nil
+
+	case "TLContactsGetContacts":
+		return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
+			Contacts:   []tg.ContactClazz{},
+			SavedCount: 0,
+			Users:      []tg.UserClazz{},
+		}).ToContactsContacts(), nil
+	case "TLContactsGetTopPeers":
+		return tg.MakeTLContactsTopPeers(&tg.TLContactsTopPeers{
+			Categories: []tg.TopPeerCategoryPeersClazz{},
+			Chats:      []tg.ChatClazz{},
+			Users:      []tg.UserClazz{},
+		}).ToContactsTopPeers(), nil
+
+	case "TLPaymentsGetStarGiftActiveAuctions":
+		return tg.MakeTLPaymentsStarGiftActiveAuctions(&tg.TLPaymentsStarGiftActiveAuctions{
+			Auctions: []tg.StarGiftActiveAuctionStateClazz{},
+			Users:    []tg.UserClazz{},
+			Chats:    []tg.ChatClazz{},
+		}).ToPaymentsStarGiftActiveAuctions(), nil
 
 		//// gifs
 		//case "TLMessagesGetSavedGifs":
