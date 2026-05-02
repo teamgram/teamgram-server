@@ -35,3 +35,4 @@ BffClient:
         - RPCConfiguration
         - RPCAuthorization
         - RPCQrCode
+        - RPCDialogs

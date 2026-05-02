@@ -52,6 +52,26 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	if messages.MsgClient.ServiceName != "RPCMsg" {
 		t.Fatalf("expected msg client service name RPCMsg, got %#v", messages.MsgClient)
 	}
+
+	dialogs := buildDialogsConfig(src)
+	if dialogs.DialogClient.DestService != "service.biz_service" {
+		t.Fatalf("expected dialogs dialog client dest service to be forwarded, got %#v", dialogs.DialogClient)
+	}
+	if dialogs.DialogClient.ServiceName != "RPCDialog" {
+		t.Fatalf("expected dialogs dialog client service name RPCDialog, got %#v", dialogs.DialogClient)
+	}
+	if dialogs.UserClient.DestService != "service.biz_service" {
+		t.Fatalf("expected dialogs user client dest service to be forwarded, got %#v", dialogs.UserClient)
+	}
+	if dialogs.UserClient.ServiceName != "RPCUser" {
+		t.Fatalf("expected dialogs user client service name RPCUser, got %#v", dialogs.UserClient)
+	}
+	if dialogs.MessageClient.DestService != "service.biz_service" {
+		t.Fatalf("expected dialogs message client dest service to be forwarded, got %#v", dialogs.MessageClient)
+	}
+	if dialogs.MessageClient.ServiceName != "RPCMessage" {
+		t.Fatalf("expected dialogs message client service name RPCMessage, got %#v", dialogs.MessageClient)
+	}
 }
 
 func TestBuildAuthorizationConfigUsesUnifiedBFFDependencies(t *testing.T) {
