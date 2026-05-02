@@ -13,11 +13,14 @@ type fakeAuthsessionClient struct {
 	queryReq *authsession.TLAuthsessionQueryAuthKey
 	setReq   *authsession.TLAuthsessionSetAuthKey
 	saltsReq *authsession.TLAuthsessionGetFutureSalts
+	userReq  *authsession.TLAuthsessionGetUserId
 	queryErr error
 	setErr   error
 	saltsErr error
+	userErr  error
 	key      *tg.AuthKeyInfo
 	salts    *tg.FutureSalts
+	userID   int64
 }
 
 func (f *fakeAuthsessionClient) AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
@@ -35,6 +38,11 @@ func (f *fakeAuthsessionClient) AuthsessionGetFutureSalts(ctx context.Context, i
 	return f.salts, f.saltsErr
 }
 
+func (f *fakeAuthsessionClient) AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error) {
+	f.userReq = in
+	return tg.MakeInt64(f.userID), f.userErr
+}
+
 func TestRepositoryAuthKeyMethodsWrapAuthsessionClient(t *testing.T) {
 	key := tg.MakeTLAuthKeyInfo(&tg.AuthKeyInfo{
 		AuthKeyId: 123,
@@ -50,7 +58,7 @@ func TestRepositoryAuthKeyMethodsWrapAuthsessionClient(t *testing.T) {
 		Now:      8,
 		Salts:    []*tg.FutureSalt{salt},
 	}).ToFutureSalts()
-	fake := &fakeAuthsessionClient{key: key, salts: salts}
+	fake := &fakeAuthsessionClient{key: key, salts: salts, userID: 1001}
 	repo := &Repository{AuthsessionClient: fake}
 
 	gotKey, err := repo.QueryAuthKey(context.Background(), 123)
@@ -74,6 +82,14 @@ func TestRepositoryAuthKeyMethodsWrapAuthsessionClient(t *testing.T) {
 	}
 	if gotSalts != salts || fake.saltsReq == nil || fake.saltsReq.AuthKeyId != 123 || fake.saltsReq.Num != 4 {
 		t.Fatalf("GetFutureSalts() = %v, request = %v", gotSalts, fake.saltsReq)
+	}
+
+	gotUserID, err := repo.GetUserId(context.Background(), 123)
+	if err != nil {
+		t.Fatalf("GetUserId() error = %v", err)
+	}
+	if gotUserID != 1001 || fake.userReq == nil || fake.userReq.AuthKeyId != 123 {
+		t.Fatalf("GetUserId() = %d, request = %v", gotUserID, fake.userReq)
 	}
 }
 

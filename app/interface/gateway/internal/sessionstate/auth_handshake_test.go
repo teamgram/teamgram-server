@@ -21,6 +21,8 @@ import (
 
 type fakeAuthKeyStore struct {
 	key        *tg.AuthKeyInfo
+	userID     int64
+	userKeyID  int64
 	futureSalt *tg.FutureSalt
 	expiresIn  int32
 	setCalls   int
@@ -40,6 +42,11 @@ func (f *fakeAuthKeyStore) SetAuthKey(ctx context.Context, authKey *tg.AuthKeyIn
 
 func (f *fakeAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
 	return nil, nil
+}
+
+func (f *fakeAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
+	f.userKeyID = authKeyId
+	return f.userID, nil
 }
 
 func TestAuthHandshakeFullFlow(t *testing.T) {

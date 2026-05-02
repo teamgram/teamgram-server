@@ -259,6 +259,13 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if keyInfo != nil && keyInfo.PermAuthKeyId != 0 {
 		md.PermAuthKeyId = keyInfo.PermAuthKeyId
 	}
+	if p.store != nil && msg.AuthKeyId != 0 {
+		userID, err := p.store.GetUserId(ctx, msg.AuthKeyId)
+		if err != nil {
+			return nil, fmt.Errorf("session processor: get user id for auth key %d: %w", msg.AuthKeyId, err)
+		}
+		md.UserId = userID
+	}
 	method := rawRPCMethodName(inner)
 	result, err := p.dispatch.Invoke(ctx, md, inner)
 	if err != nil {

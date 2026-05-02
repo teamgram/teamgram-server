@@ -104,6 +104,22 @@ func (r *Repository) GetFutureSalts(ctx context.Context, authKeyId int64, num in
 	return salts, nil
 }
 
+func (r *Repository) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
+	if r.AuthsessionClient == nil {
+		return 0, fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	userID, err := r.AuthsessionClient.AuthsessionGetUserId(ctx, &authsession.TLAuthsessionGetUserId{
+		AuthKeyId: authKeyId,
+	})
+	if err != nil {
+		return 0, fmt.Errorf("gateway repository: get user id %d: %w", authKeyId, err)
+	}
+	if userID == nil {
+		return 0, fmt.Errorf("gateway repository: get user id %d returned nil", authKeyId)
+	}
+	return userID.V, nil
+}
+
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {
 	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }

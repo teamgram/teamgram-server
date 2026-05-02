@@ -148,27 +148,51 @@ func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	}
 }
 
-// --- Input validation (must NOT call msg) ---
-
-func TestMessagesSendMessage_InputPeerSelfRejected(t *testing.T) {
-	called := false
+func TestMessagesGetHistory_InputPeerSelfTargetsCurrentUser(t *testing.T) {
+	var got *msg.TLMsgGetHistory
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages()
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-			called = true
-			return nil, nil
+		getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+			got = in
+			return reply, nil
 		},
 	}, 100, 200)
 
-	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
+	if _, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:  inputPeerSelf(),
+		Limit: 30,
+	}); err != nil {
+		t.Fatalf("error = %v", err)
+	}
+	if got == nil || got.UserId != 100 || got.PeerId != 100 || got.Limit != 30 {
+		t.Fatalf("unexpected history request: %+v", got)
+	}
+}
+
+// --- Input validation (must NOT call msg) ---
+
+func TestMessagesSendMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	if _, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
 		Peer:     inputPeerSelf(),
 		Message:  "hello",
 		RandomId: 42,
-	})
-	if err != tg.Err400PeerIdInvalid {
-		t.Fatalf("error = %v, want %v", err, tg.Err400PeerIdInvalid)
+	}); err != nil {
+		t.Fatalf("error = %v", err)
 	}
-	if called {
-		t.Fatal("msg service was called but should not have been")
+	if got == nil || got.UserId != 100 || got.PeerId != 100 {
+		t.Fatalf("unexpected msg request: %+v", got)
 	}
 }
 

@@ -33,6 +33,10 @@ func (s transportAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int
 	return nil, nil
 }
 
+func (s transportAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
+	return 0, nil
+}
+
 type transportDispatcher struct{}
 
 func (d transportDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, error) {

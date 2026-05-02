@@ -33,7 +33,7 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUser, ok := in.Peer.(*tg.TLInputPeerUser)
+	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -43,7 +43,7 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 		UserId:     md.UserId,
 		AuthKeyId:  md.PermAuthKeyId,
 		PeerType:   payload.PeerTypeUser,
-		PeerId:     peerUser.UserId,
+		PeerId:     peerUserID,
 		OffsetId:   in.OffsetId,
 		OffsetDate: in.OffsetDate,
 		AddOffset:  in.AddOffset,
@@ -54,7 +54,7 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.getHistory - msg error: self_user_id: %d, peer_id: %d, offset_id: %d, limit: %d, err: %v",
-			md.UserId, peerUser.UserId, in.OffsetId, in.Limit, err)
+			md.UserId, peerUserID, in.OffsetId, in.Limit, err)
 		return nil, mapMsgSendError(err)
 	}
 	return r, nil

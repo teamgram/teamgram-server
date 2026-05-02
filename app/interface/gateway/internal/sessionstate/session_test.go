@@ -110,6 +110,26 @@ func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
 	}
 }
 
+func TestSessionDispatchesBoundUserMetadata(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo, userID: 1001}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 105, encodeTL(t, &mt.TLGetFutureSalts{Num: 1}))
+	if len(dispatch.md) != 1 {
+		t.Fatalf("dispatch count = %d, want 1", len(dispatch.md))
+	}
+	if got := dispatch.md[0].UserId; got != 1001 {
+		t.Fatalf("metadata UserId = %d, want 1001", got)
+	}
+	if got := store.userKeyID; got != serverKey.AuthKeyId() {
+		t.Fatalf("GetUserId auth key = %d, want current auth key %d", got, serverKey.AuthKeyId())
+	}
+}
+
 func TestSessionAuthKeyCacheConcurrent(t *testing.T) {
 	serverKey, _ := sessionTestKeys()
 	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
@@ -265,4 +285,8 @@ func (s *countingAuthKeyStore) SetAuthKey(ctx context.Context, authKey *tg.AuthK
 
 func (s *countingAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
 	return nil, nil
+}
+
+func (s *countingAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
+	return 0, nil
 }

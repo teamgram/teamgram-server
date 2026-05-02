@@ -28,12 +28,14 @@ type AuthsessionClient interface {
 	AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error)
 	AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error)
 	AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
+	AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error)
 }
 
 type AuthKeyStore interface {
 	QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error)
 	SetAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, futureSalt *tg.FutureSalt, expiresIn int32) error
 	GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error)
+	GetUserId(ctx context.Context, authKeyId int64) (int64, error)
 }
 
 type OnlineSessionStore interface {

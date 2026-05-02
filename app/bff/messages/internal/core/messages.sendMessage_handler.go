@@ -38,7 +38,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUser, ok := in.Peer.(*tg.TLInputPeerUser)
+	peerUserID, ok := resolveUserPeerID(in.Peer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -58,7 +58,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	outgoingMsg := tg.MakeTLMessage(&tg.TLMessage{
 		Out:     true,
 		FromId:  tg.MakePeerUser(selfUserID),
-		PeerId:  tg.MakePeerUser(peerUser.UserId),
+		PeerId:  tg.MakePeerUser(peerUserID),
 		Date:    int32(time.Now().Unix()),
 		Message: in.Message,
 	})
@@ -73,12 +73,12 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		UserId:    selfUserID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,
-		PeerId:    peerUser.UserId,
+		PeerId:    peerUserID,
 		Message:   []msg.OutboxMessageClazz{outbox},
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
-			selfUserID, peerUser.UserId, in.RandomId, err)
+			selfUserID, peerUserID, in.RandomId, err)
 		return nil, mapMsgSendError(err)
 	}
 
