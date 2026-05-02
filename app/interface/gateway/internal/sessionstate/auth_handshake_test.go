@@ -9,6 +9,7 @@ import (
 	"encoding/pem"
 	"math/big"
 	"testing"
+	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -140,6 +141,39 @@ func TestAuthHandshakeKeepsInterleavedClientState(t *testing.T) {
 	serverDH1 := decodeBodyAs[*mt.TLServerDHParamsOk](t, serverDHMsg1.Body)
 	if serverDH1.Nonce != nonce1 || serverDH1.ServerNonce != resPQ1.ServerNonce {
 		t.Fatalf("server_DH_params_ok = %#v", serverDH1)
+	}
+}
+
+func TestAuthHandshakeExpiresStaleState(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce := testInt128(1)
+
+	resPQMsg := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPqMulti{Nonce: nonce}))
+	resPQ := decodeBodyAs[*mt.TLResPQ](t, resPQMsg.Body)
+	manager.mu.Lock()
+	state := manager.states[resPQ.ServerNonce]
+	state.expiresAt = time.Now().Add(-time.Second)
+	manager.states[resPQ.ServerNonce] = state
+	manager.mu.Unlock()
+
+	reqDH := &mt.TLReqDHParams{
+		Nonce:                nonce,
+		ServerNonce:          resPQ.ServerNonce,
+		P:                    string(handshakeP),
+		Q:                    string(handshakeQ),
+		PublicKeyFingerprint: resPQ.ServerPublicKeyFingerprints[0],
+		EncryptedData:        string(encryptPQInnerForTest(t, manager, nonce, resPQ.ServerNonce, testInt256(2))),
+	}
+	if _, err := manager.HandlePlain(context.Background(), gmtproto.PlainMessage{MsgId: 200, Body: encodeTL(t, reqDH)}); err == nil {
+		t.Fatal("HandlePlain() error is nil")
+	}
+
+	manager.mu.Lock()
+	_, ok := manager.states[resPQ.ServerNonce]
+	manager.mu.Unlock()
+	if ok {
+		t.Fatal("expired handshake state was not pruned")
 	}
 }
 

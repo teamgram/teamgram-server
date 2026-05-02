@@ -48,7 +48,6 @@ type Processor struct {
 	authKeyInfos map[int64]*tg.AuthKeyInfo
 	seqMu        sync.Mutex
 	seq          map[sessionKey]int32
-	disconnectAt time.Time
 }
 
 type sessionKey struct {

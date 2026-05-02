@@ -2,8 +2,8 @@ package sessionstate
 
 import (
 	"context"
+	"sync"
 	"testing"
-	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/mt"
@@ -41,9 +41,25 @@ func TestServiceMessagePingDelayDisconnect(t *testing.T) {
 	if pong.PingId != 10 {
 		t.Fatalf("pong = %#v", pong)
 	}
-	if processor.disconnectAt.IsZero() || time.Until(processor.disconnectAt) <= 0 {
-		t.Fatalf("disconnectAt = %v", processor.disconnectAt)
+}
+
+func TestServiceMessagePingDelayDisconnectConcurrent(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	processor := NewProcessor(store, &fakeDispatcher{})
+
+	var wg sync.WaitGroup
+	for i := 0; i < 8; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			_ = handleEncryptedForTest(t, processor, clientKey, serverKey, int64(2000+i), encodeTL(t, &mt.TLPingDelayDisconnect{
+				PingId:          int64(i),
+				DisconnectDelay: 30,
+			}))
+		}(i)
 	}
+	wg.Wait()
 }
 
 func TestServiceMessageMsgsAckNoDispatch(t *testing.T) {

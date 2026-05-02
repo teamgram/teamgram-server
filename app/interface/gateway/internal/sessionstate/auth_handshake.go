@@ -51,6 +51,8 @@ var (
 	zeroIV = make([]byte, 32)
 )
 
+const handshakeStateTTL = 2 * time.Minute
+
 type HandshakeManager struct {
 	store       repository.AuthKeyStore
 	rsa         *crypto.RSACryptor
@@ -66,6 +68,7 @@ type handshakeState struct {
 	a           []byte
 	gA          []byte
 	expiresIn   int32
+	expiresAt   time.Time
 }
 
 func NewHandshakeManager(store repository.AuthKeyStore) *HandshakeManager {
@@ -119,8 +122,10 @@ func (m *HandshakeManager) handleReqPQ(req *mt.TLReqPqMulti) (iface.TLObject, er
 	}
 	var serverNonce bin.Int128
 	copy(serverNonce[:], crypto.GenerateNonce(16))
+	now := time.Now()
 	m.mu.Lock()
-	m.states[serverNonce] = handshakeState{nonce: req.Nonce, serverNonce: serverNonce}
+	m.pruneExpiredStatesLocked(now)
+	m.states[serverNonce] = handshakeState{nonce: req.Nonce, serverNonce: serverNonce, expiresAt: now.Add(handshakeStateTTL)}
 	m.mu.Unlock()
 	return mt.MakeTLResPQ(&mt.TLResPQ{
 		Nonce:                       req.Nonce,
@@ -239,12 +244,22 @@ func (m *HandshakeManager) handshakeState(serverNonce bin.Int128) (handshakeStat
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	state, ok := m.states[serverNonce]
+	if !ok {
+		return handshakeState{}, false
+	}
+	if time.Now().After(state.expiresAt) {
+		delete(m.states, serverNonce)
+		return handshakeState{}, false
+	}
 	return state, ok
 }
 
 func (m *HandshakeManager) setHandshakeState(state handshakeState) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if state.expiresAt.IsZero() {
+		state.expiresAt = time.Now().Add(handshakeStateTTL)
+	}
 	m.states[state.serverNonce] = state
 }
 
@@ -252,6 +267,14 @@ func (m *HandshakeManager) deleteHandshakeState(serverNonce bin.Int128) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	delete(m.states, serverNonce)
+}
+
+func (m *HandshakeManager) pruneExpiredStatesLocked(now time.Time) {
+	for serverNonce, state := range m.states {
+		if now.After(state.expiresAt) {
+			delete(m.states, serverNonce)
+		}
+	}
 }
 
 func (m *HandshakeManager) decryptPQInnerData(encrypted []byte) (*mt.TLPQInnerData, error) {
