@@ -1,0 +1,70 @@
+{
+  "data2": {
+    "predicate_name": "config",
+    "phonecalls_enabled": true,
+    "default_p2p_contacts": true,
+    "preload_featured_stickers": false,
+    "ignore_phone_entities": false,
+    "revoke_pm_inbox": true,
+    "blocked_mode": false,
+    "pfs_enabled": false,
+    "date": 1536119427,
+    "expires": 1536122938,
+    "test_mode": {
+      "predicate_name": "boolFalse"
+    },
+    "this_dc": 1,
+    "dc_options": [],
+    "dc_txt_domain_name": "apv2.stel.com",
+    "chat_size_max": 200,
+    "megagroup_size_max": 100000,
+    "forwarded_count_max": 100,
+    "online_update_period_ms": 210000,
+    "offline_blur_timeout_ms": 5000,
+    "offline_idle_timeout_ms": 30000,
+    "online_cloud_timeout_ms": 300000,
+    "notify_cloud_delay_ms": 30000,
+    "notify_default_delay_ms": 1500,
+    "push_chat_period_ms": 60000,
+    "push_chat_limit": 2,
+    "saved_gifs_limit": 200,
+    "edit_time_limit": 172800,
+    "revoke_time_limit": 2147483647,
+    "revoke_pm_time_limit": 2147483647,
+    "rating_e_decay": 2419200,
+    "stickers_recent_limit": 200,
+    "stickers_faved_limit": 5,
+    "channels_read_media_period": 604800,
+    "pinned_dialogs_count_max": 5,
+    "pinned_infolder_count_max": 100,
+    "call_receive_timeout_ms": 20000,
+    "call_ring_timeout_ms": 90000,
+    "call_connect_timeout_ms": 30000,
+    "call_packet_timeout_ms": 10000,
+    "me_url_prefix": "https://teamgram.io/",
+    "gif_search_username": {
+      "value": "gif"
+    },
+    "venue_search_username": {
+      "value": "foursquare"
+    },
+    "img_search_username": {
+      "value": "bing"
+    },
+    "static_maps_provider": {
+      "value": "telegram"
+    },
+    "caption_length_max": 200,
+    "message_length_max": 4096,
+    "webfile_dc_id": 4,
+    "suggested_lang_code": {
+      "value":"classic-zh-cn"
+    },
+    "lang_pack_version": {
+      "value":262834
+    },
+    "base_lang_pack_version": {
+      "value":0
+    }
+  }
+}

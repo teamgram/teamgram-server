@@ -1,0 +1,53 @@
+Name: messenger.sync
+ListenOn: 127.0.0.1:20420
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.sync
+Log:
+  Mode: file
+  Path: ../logs/sync
+  Level: debug
+
+SyncConsumer:
+  Topics:
+    - "Sync-T"
+  Brokers:
+    - 127.0.0.1:9092
+  Group: "Sync-MainCommunity-S"
+
+Routine:
+  Chan: 16
+  Size: 100
+
+Mysql:
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+Cache:
+  - Host: 127.0.0.1:6379
+KV:
+  - Host: 127.0.0.1:6379
+
+IdgenClient:
+  ServiceName: "service.idgen"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen
+StatusClient:
+  ServiceName: "service.status"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.status
+SessionClient:
+  ServiceName: "interface.session"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.session

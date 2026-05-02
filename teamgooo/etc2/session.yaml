@@ -1,0 +1,71 @@
+Name: interface.session
+ListenOn: 127.0.0.1:20120
+Etcd:
+  GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.session
+Log:
+  #Mode: file
+  #Path: ../logs/session
+  Level: debug
+Cache:
+  - Host: 127.0.0.1:6379
+
+AuthSession:
+  DestService: "service.authsession"
+  ServiceName: "RPCAuthsession"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+StatusClient:
+  DestService: "service.status"
+  ServiceName: "RPCStatus"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.status
+GatewayClient:
+  DestService: "interface.gateway"
+  ServiceName: "RPCGnetway"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.gateway
+
+BFFProxyClients:
+    - DestService: "bff.bff"
+      Codec: "zrpc"
+      Etcd:
+        Hosts:
+          - 127.0.0.1:2379
+        Key: bff.bff
+      ServiceNameList:
+        - "RPCAccount"
+        - "RPCAuthorization"
+        - "RPCAutoDownload"
+        - "RPCChatInvites"
+        - "RPCChats"
+        - "RPCConfiguration"
+        - "RPCContacts"
+        - "RPCDialogs"
+        - "RPCDrafts"
+        - "RPCFiles"
+        - "RPCMessages"
+        - "RPCMiscellaneous"
+        - "RPCNotification"
+        - "RPCNsfw"
+        - "RPCPassport"
+        - "RPCPremium"
+        - "RPCPrivacySettings"
+        - "RPCQrCode"
+        - "RPCSavedMessageDialogs"
+        - "RPCSponsoredMessages"
+        - "RPCTos"
+        - "RPCUpdates"
+        - "RPCUsernames"
+        - "RPCUsers"

@@ -1,0 +1,112 @@
+# 最小 Prometheus 配置，用于 docker-compose-env2
+# 抓取目标来自 teamgramd/etc2 各服务的 Prometheus 配置
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    scrape_interval: 5s  #global catch time
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: node-exporter
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # teamgram 服务 (etc2)
+  - job_name: service.authsession
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20451"]
+        labels:
+          job: service.authsession
+          app: service.authsession
+          env: dev
+  - job_name: bff.bff
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20011"]
+        labels:
+          job: bff.bff
+          app: bff.bff
+          env: dev
+  - job_name: service.biz_service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20021"]
+        labels:
+          job: service.biz_service
+          app: service.biz_service
+          env: dev
+  - job_name: service.dfs
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20641"]
+        labels:
+          job: service.dfs
+          app: service.dfs
+          env: dev
+  - job_name: interface.gateway
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20111"]
+        labels:
+          job: interface.gateway
+          app: interface.gateway
+          env: dev
+  # - job_name: interface.httpserver
+  #   metrics_path: /metrics
+  #   static_configs:
+  #     - targets: ["teamgram:20011"]
+  #       labels:
+  #         job: interface.httpserver
+  #         app: interface.httpserver
+  #         env: dev
+  - job_name: service.idgen
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20661"]
+        labels:
+          job: service.idgen
+          app: service.idgen
+          env: dev
+  - job_name: service.media
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20651"]
+        labels:
+          job: service.media
+          app: service.media
+          env: dev
+  - job_name: messenger.msg
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20031"]
+        labels:
+          job: messenger.msg
+          app: messenger.msg
+          env: dev
+  - job_name: interface.session
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20121"]
+        labels:
+          job: interface.session
+          app: interface.session
+          env: dev
+  - job_name: service.status
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20671"]
+        labels:
+          job: service.status
+          app: service.status
+          env: dev
+  - job_name: messenger.sync
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["teamgram:20421"]
+        labels:
+          job: messenger.sync
+          app: messenger.sync
+          env: dev

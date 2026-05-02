@@ -1,0 +1,25 @@
+# Filebeat 8.x - 收集 Docker 容器日志并输出到 Kafka
+# 与 docker-compose-env.yaml 中 volume /var/lib/docker/containers 配合使用
+
+filebeat.inputs:
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
+    stream: all
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: log
+
+output.kafka:
+  enabled: true
+  hosts: ["kafka:9092"]
+  topic: "teamgram-log"
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  compression: gzip
+  max_message_bytes: 1000000
+
+logging.level: info
+logging.to_stderr: true
+logging.to_files: false

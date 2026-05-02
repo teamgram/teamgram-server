@@ -1,0 +1,3 @@
+-- DELETE FROM `auth_users` WHERE `deleted` = 1 OR `date_created` = 0 OR `date_actived` = 0;
+-- ALTER TABLE `auth_users` DROP INDEX `auth_key_id`;
+-- ALTER TABLE `auth_users` ADD UNIQUE(`auth_key_id`);
