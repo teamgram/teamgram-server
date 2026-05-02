@@ -310,6 +310,27 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	}
 }
 
+func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}})
+
+	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		MaxId:     2,
+	})
+	if err != nil {
+		t.Fatalf("MsgReadHistoryV2() error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("MsgReadHistoryV2() returned nil")
+	}
+	if got.Pts != 0 || got.PtsCount != 0 {
+		t.Fatalf("affected messages = %+v, want zero-pts ack", got)
+	}
+}
+
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult

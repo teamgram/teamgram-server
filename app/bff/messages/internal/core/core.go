@@ -35,6 +35,10 @@ type getHistoryClient interface {
 	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 }
 
+type readHistoryClient interface {
+	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+}
+
 type MessagesCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

@@ -19,6 +19,8 @@ package core
 import (
 	"sort"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	messagepb "github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
@@ -61,6 +63,21 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 	dialogExts = limitDialogExts(offsetDialogExts(dialogExts, in, c.MD.UserId), in.Limit)
 
 	if len(dialogExts) == 0 {
+		if totalCount == 0 && c.canFallbackToCanonicalSelfDialog(in, folderID) {
+			fallback, err := c.fetchCanonicalUserDialog("messages.getDialogs", c.MD.UserId)
+			if err != nil {
+				return nil, err
+			}
+			if fallback != nil {
+				return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
+					Count:    1,
+					Dialogs:  []tg.DialogClazz{fallback.Dialog},
+					Messages: fallback.Messages,
+					Chats:    []tg.ChatClazz{},
+					Users:    fallback.Users,
+				}).ToMessagesDialogs(), nil
+			}
+		}
 		return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
 			Count:    totalCount,
 			Dialogs:  []tg.DialogClazz{},
@@ -206,6 +223,10 @@ func (c *DialogsCore) fetchDialogTopMessages(ids []int32) ([]tg.MessageClazz, er
 }
 
 func (c *DialogsCore) fetchDialogUsers(ids []int64) ([]tg.UserClazz, error) {
+	return c.fetchDialogUsersWithOperation("messages.getDialogs", ids)
+}
+
+func (c *DialogsCore) fetchDialogUsersWithOperation(operation string, ids []int64) ([]tg.UserClazz, error) {
 	ids = uniqueInt64s(ids)
 	if len(ids) == 0 {
 		return []tg.UserClazz{}, nil
@@ -218,7 +239,7 @@ func (c *DialogsCore) fetchDialogUsers(ids []int64) ([]tg.UserClazz, error) {
 		To:      []int64{c.MD.UserId},
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.getDialogs - user.getMutableUsersV2 failed: user_id: %d, id: %v, err: %v", c.MD.UserId, ids, err)
+		c.Logger.Errorf("%s - user.getMutableUsersV2 failed: user_id: %d, id: %v, err: %v", operation, c.MD.UserId, ids, err)
 		return nil, tg.ErrInternalServerError
 	}
 
@@ -241,6 +262,89 @@ func (c *DialogsCore) fetchDialogUsers(ids []int64) ([]tg.UserClazz, error) {
 		out = append(out, tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: id}))
 	}
 	return out, nil
+}
+
+type canonicalDialogResult struct {
+	Dialog   tg.DialogClazz
+	Messages []tg.MessageClazz
+	Users    []tg.UserClazz
+}
+
+func (c *DialogsCore) canFallbackToCanonicalSelfDialog(in *tg.TLMessagesGetDialogs, folderID int32) bool {
+	return in != nil &&
+		in.Limit > 0 &&
+		folderID == 0 &&
+		in.OffsetDate == 0 &&
+		in.OffsetId == 0 &&
+		isInputPeerEmpty(in.OffsetPeer)
+}
+
+func (c *DialogsCore) fetchCanonicalUserDialog(operation string, peerUserID int64) (*canonicalDialogResult, error) {
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.MsgClient == nil {
+		return nil, nil
+	}
+
+	r, err := c.svcCtx.Repo.MsgClient.MsgGetHistory(c.ctx, &msg.TLMsgGetHistory{
+		UserId:    c.MD.UserId,
+		AuthKeyId: c.MD.PermAuthKeyId,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerUserID,
+		Limit:     1,
+	})
+	if err != nil {
+		c.Logger.Errorf("%s - msg.getHistory failed: user_id: %d, peer_id: %d, err: %v", operation, c.MD.UserId, peerUserID, err)
+		return nil, tg.ErrInternalServerError
+	}
+
+	messages := messagesFromHistoryResult(r)
+	if len(messages) == 0 {
+		return nil, nil
+	}
+	topMessageID, ok := messageID(messages[0])
+	if !ok {
+		return nil, nil
+	}
+
+	users, err := c.fetchDialogUsersWithOperation(operation, []int64{peerUserID})
+	if err != nil {
+		return nil, err
+	}
+
+	return &canonicalDialogResult{
+		Dialog: tg.MakeTLDialog(&tg.TLDialog{
+			Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerUserID}),
+			TopMessage:      topMessageID,
+			ReadInboxMaxId:  topMessageID,
+			ReadOutboxMaxId: topMessageID,
+			NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+		}),
+		Messages: messages,
+		Users:    users,
+	}, nil
+}
+
+func messagesFromHistoryResult(r *tg.MessagesMessages) []tg.MessageClazz {
+	if r == nil {
+		return []tg.MessageClazz{}
+	}
+	if messages, ok := r.ToMessagesMessages(); ok {
+		return messages.Messages
+	}
+	if messages, ok := r.ToMessagesMessagesSlice(); ok {
+		return messages.Messages
+	}
+	return []tg.MessageClazz{}
+}
+
+func messageID(message tg.MessageClazz) (int32, bool) {
+	switch m := message.(type) {
+	case *tg.TLMessage:
+		return m.Id, m.Id > 0
+	case *tg.TLMessageService:
+		return m.Id, m.Id > 0
+	default:
+		return 0, false
+	}
 }
 
 func (c *DialogsCore) fetchDialogChats(ids []int64) ([]tg.ChatClazz, error) {

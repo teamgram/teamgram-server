@@ -25,8 +25,12 @@ import (
 // MsgReadHistoryV2
 // msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	c.Logger.Errorf("msg.readHistoryV2 - error: method MsgReadHistoryV2 not impl")
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      0,
+		PtsCount: 0,
+	}).ToMessagesAffectedMessages(), nil
 }

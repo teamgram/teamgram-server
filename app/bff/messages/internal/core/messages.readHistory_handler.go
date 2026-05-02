@@ -17,14 +17,39 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReadHistory
 // messages.readHistory#e306d3a peer:InputPeer max_id:int = messages.AffectedMessages;
 func (c *MessagesCore) MessagesReadHistory(in *tg.TLMessagesReadHistory) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.readHistory - error: method MessagesReadHistory not impl")
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+
+	var readClient readHistoryClient = c.svcCtx.Repo.MsgClient
+	r, err := readClient.MsgReadHistoryV2(c.ctx, &msg.TLMsgReadHistoryV2{
+		UserId:    md.UserId,
+		AuthKeyId: md.PermAuthKeyId,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerUserID,
+		MaxId:     in.MaxId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.readHistory - msg error: self_user_id: %d, peer_id: %d, max_id: %d, err: %v",
+			md.UserId, peerUserID, in.MaxId, err)
+		return nil, mapMsgSendError(err)
+	}
+	return r, nil
 }

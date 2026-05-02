@@ -7,6 +7,9 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
+	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
@@ -42,6 +45,15 @@ type dialogsFakeMessageClient struct {
 
 func (f *dialogsFakeMessageClient) MessageGetUserMessageList(ctx context.Context, in *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
 	return f.getUserMessageList(ctx, in)
+}
+
+type dialogsFakeMsgClient struct {
+	msgclient.MsgClient
+	getHistory func(context.Context, *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+}
+
+func (f *dialogsFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+	return f.getHistory(ctx, in)
 }
 
 func newDialogsGetDialogsCore(repo *repository.Repository, selfID int64) *DialogsCore {
@@ -83,6 +95,153 @@ func TestMessagesGetDialogsReturnsEmptySliceFromBizDialog(t *testing.T) {
 	}
 	if slice.Count != 0 || len(slice.Dialogs) != 0 || len(slice.Messages) != 0 || len(slice.Chats) != 0 || len(slice.Users) != 0 {
 		t.Fatalf("empty dialogs reply = %+v, want empty messages.dialogsSlice", slice)
+	}
+}
+
+func TestMessagesGetDialogsFallsBackToCanonicalSelfHistory(t *testing.T) {
+	const selfID int64 = 100
+	var gotHistory *msg.TLMsgGetHistory
+	var gotUsers *userpb.TLUserGetMutableUsersV2
+
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			getDialogs: func(context.Context, *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error) {
+				return &dialogpb.VectorDialogExt{}, nil
+			},
+		},
+		MsgClient: &dialogsFakeMsgClient{
+			getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+				gotHistory = in
+				return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+					Messages: []tg.MessageClazz{
+						tg.MakeTLMessage(&tg.TLMessage{
+							Out:     true,
+							Id:      2,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: selfID}),
+							Message: "self message",
+							Date:    123,
+						}),
+					},
+					Chats: []tg.ChatClazz{},
+					Users: []tg.UserClazz{},
+				}).ToMessagesMessages(), nil
+			},
+		},
+		UserClient: &dialogsFakeUserClient{
+			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+				gotUsers = in
+				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
+					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+						User: tg.MakeTLUserData(&tg.TLUserData{
+							Id:        selfID,
+							FirstName: "Self",
+						}),
+						KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
+					}),
+				}}).ToMutableUsers(), nil
+			},
+		},
+	}, selfID)
+
+	r, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetPeer: tg.MakeTLInputPeerEmpty(&tg.TLInputPeerEmpty{}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetDialogs error = %v", err)
+	}
+	if gotHistory == nil || gotHistory.UserId != selfID || gotHistory.PeerType != payload.PeerTypeUser || gotHistory.PeerId != selfID || gotHistory.Limit != 1 {
+		t.Fatalf("MsgGetHistory request = %+v, want canonical self history limit=1", gotHistory)
+	}
+	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != selfID {
+		t.Fatalf("UserGetMutableUsersV2 request = %+v, want self user", gotUsers)
+	}
+
+	slice, ok := r.ToMessagesDialogsSlice()
+	if !ok {
+		t.Fatalf("MessagesGetDialogs returned %s, want messages.dialogsSlice", r.ClazzName())
+	}
+	if slice.Count != 1 || len(slice.Dialogs) != 1 || len(slice.Messages) != 1 || len(slice.Users) != 1 {
+		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
+	}
+	dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog()
+	if !ok || dialog.TopMessage != 2 || dialog.ReadOutboxMaxId != 2 {
+		t.Fatalf("dialog = %+v, ok=%v, want top/read outbox message 2", dialog, ok)
+	}
+}
+
+func TestMessagesGetPeerDialogsSelfFromCanonicalHistory(t *testing.T) {
+	const selfID int64 = 100
+	var gotHistory *msg.TLMsgGetHistory
+
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		MsgClient: &dialogsFakeMsgClient{
+			getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+				gotHistory = in
+				return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+					Messages: []tg.MessageClazz{
+						tg.MakeTLMessage(&tg.TLMessage{
+							Out:     true,
+							Id:      2,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: selfID}),
+							Message: "self message",
+							Date:    123,
+						}),
+					},
+					Chats: []tg.ChatClazz{},
+					Users: []tg.UserClazz{},
+				}).ToMessagesMessages(), nil
+			},
+		},
+		UserClient: &dialogsFakeUserClient{
+			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
+					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+						User: tg.MakeTLUserData(&tg.TLUserData{
+							Id:        selfID,
+							FirstName: "Self",
+						}),
+						KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
+					}),
+				}}).ToMutableUsers(), nil
+			},
+		},
+	}, selfID)
+
+	r, err := c.MessagesGetPeerDialogs(&tg.TLMessagesGetPeerDialogs{
+		Peers: []tg.InputDialogPeerClazz{
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+				Peer: tg.MakeTLInputPeerSelf(&tg.TLInputPeerSelf{}),
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetPeerDialogs error = %v", err)
+	}
+	if gotHistory == nil || gotHistory.UserId != selfID || gotHistory.PeerId != selfID || gotHistory.Limit != 1 {
+		t.Fatalf("MsgGetHistory request = %+v, want canonical self history limit=1", gotHistory)
+	}
+	if len(r.Dialogs) != 1 || len(r.Messages) != 1 || len(r.Users) != 1 {
+		t.Fatalf("reply lens = dialogs:%d messages:%d users:%d", len(r.Dialogs), len(r.Messages), len(r.Users))
+	}
+	dialog, ok := (&tg.Dialog{Clazz: r.Dialogs[0]}).ToDialog()
+	if !ok || dialog.TopMessage != 2 {
+		t.Fatalf("dialog = %+v, ok=%v, want top_message=2", dialog, ok)
+	}
+}
+
+func TestMessagesGetPeerDialogsEmptyVectorReturnsEmptyPeerDialogs(t *testing.T) {
+	c := newDialogsGetDialogsCore(&repository.Repository{}, 100)
+
+	r, err := c.MessagesGetPeerDialogs(&tg.TLMessagesGetPeerDialogs{})
+	if err != nil {
+		t.Fatalf("MessagesGetPeerDialogs error = %v", err)
+	}
+	if r == nil {
+		t.Fatal("MessagesGetPeerDialogs returned nil")
+	}
+	if len(r.Dialogs) != 0 || len(r.Messages) != 0 || len(r.Chats) != 0 || len(r.Users) != 0 || r.State == nil {
+		t.Fatalf("empty peer dialogs reply = %+v, want empty vectors with state", r)
 	}
 }
 

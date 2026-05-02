@@ -18,6 +18,7 @@ type messagesFakeMsgClient struct {
 	msgclient.MsgClient
 	sendMessageV2 func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
 	getHistory    func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+	readHistoryV2 func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 }
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -26,6 +27,10 @@ func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TL
 
 func (f *messagesFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
 	return f.getHistory(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
+	return f.readHistoryV2(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
@@ -170,6 +175,55 @@ func TestMessagesGetHistory_InputPeerSelfTargetsCurrentUser(t *testing.T) {
 	}
 	if got == nil || got.UserId != 100 || got.PeerId != 100 || got.Limit != 30 {
 		t.Fatalf("unexpected history request: %+v", got)
+	}
+}
+
+func TestMessagesReadHistory_InputPeerSelfSuccess(t *testing.T) {
+	var got *msg.TLMsgReadHistoryV2
+	reply := tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
+		Pts:      3,
+		PtsCount: 0,
+	}).ToMessagesAffectedMessages()
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		readHistoryV2: func(_ context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
+			got = in
+			return reply, nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesReadHistory(&tg.TLMessagesReadHistory{
+		Peer:  inputPeerSelf(),
+		MaxId: 2,
+	})
+	if err != nil {
+		t.Fatalf("error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 100 || got.MaxId != 2 {
+		t.Fatalf("unexpected read history request: %+v", got)
+	}
+}
+
+func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		readHistoryV2: func(context.Context, *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
+			called = true
+			return nil, nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesReadHistory(&tg.TLMessagesReadHistory{
+		Peer:  inputPeerChat(300),
+		MaxId: 2,
+	})
+	if err != tg.Err400PeerIdInvalid {
+		t.Fatalf("error = %v, want %v", err, tg.Err400PeerIdInvalid)
+	}
+	if called {
+		t.Fatal("msg service was called but should not have been")
 	}
 }
 

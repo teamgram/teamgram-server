@@ -118,6 +118,7 @@ func buildDialogsConfig(c config.Config) dialogshelper.Config {
 		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
 		DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
 		MessageClient: withServiceName(c.BizServiceClient, "RPCMessage"),
+		MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
 		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
 	}
 }
