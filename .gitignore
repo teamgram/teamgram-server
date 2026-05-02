@@ -39,15 +39,17 @@ go.work.sum
 /app/interface/session/client/t/t
 /app/interface/session/cmd/session/session
 
-teamgoood/bin/*
-!teamgoood/bin/config.json
-!teamgoood/bin/killall.sh
-!teamgoood/bin/runall2.sh
-!teamgoood/bin/runall-docker.sh
-!teamgoood/bin/server_pkcs1.key
+teamgooo/bin/*
+!teamgooo/bin/config.json
+!teamgooo/bin/killall.sh
+!teamgooo/bin/r.sh
+!teamgooo/bin/runall2.sh
+!teamgooo/bin/runall-docker.sh
+!teamgooo/bin/server_pkcs1.key
 
-teamgoood/logs/*
-!teamgoood/logs/.gitkeeper
+teamgooo/logs/*
+!teamgooo/logs/.gitkeeper
+
 /pkg/net/kitex/codec/examples/echo/cmd/echo/echo
 /pkg/net/kitex/codec/examples/echo/client/t/t
 

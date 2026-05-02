@@ -1,9 +1,9 @@
-VERSION=v0.211.0-teamgooo-server
+VERSION=v0.224.0-teamgooo-server
 BUILD=`date +%F`
 SHELL := /bin/bash
 BASEDIR = $(shell pwd)
 ### "teamgoood"
-INSTALL="/opt/data/teamgooo"
+INSTALL="./teamgooo"
 
 # build with verison infos
 versionDir="github.com/teamgram/marmota/pkg/version"
@@ -15,7 +15,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: geoip idgen status dfs media authsession biz msg sync bff session gnetway gateway userupdates
+all: geoip idgen status dfs media authsession biz userupdates msg bff gateway
 
 lint: lint-tg-primitives
 
@@ -50,37 +50,21 @@ biz:
 	@echo "build biz..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/biz -tags=jsoniter app/service/biz/biz/cmd/biz/*.go
 
+userupdates:
+	@echo "build userupdates..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/userupdates -tags=jsoniter app/messenger/userupdates/cmd/userupdates/*.go
+
 msg:
 	@echo "build msg..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msg -tags=jsoniter app/messenger/msg/cmd/msg/*.go
-
-inbox:
-	@echo "build inbox..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/inbox -tags=jsoniter app/messenger/msg/inbox/cmd/inbox/*.go
-
-sync:
-	@echo "build sync..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/sync -tags=jsoniter app/messenger/sync/cmd/sync/*.go
 
 bff:
 	@echo "build bff..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/bff -tags=jsoniter app/bff/bff/cmd/bff/*.go
 
-session:
-	@echo "build session..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/session -tags=jsoniter app/interface/session/cmd/session/*.go
-
-gnetway:
-	@echo "build gnetway..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/gnetway -tags=jsoniter app/interface/gnetway/cmd/gnetway/*.go
-
 gateway:
 	@echo "build gateway..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/gateway -tags=jsoniter app/interface/gateway/cmd/gateway/*.go
-
-userupdates:
-	@echo "build userupdates..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/userupdates -tags=jsoniter app/messenger/userupdates/cmd/userupdates/*.go
 
 clean:
 	@rm -rf ${INSTALL}/bin/geoip
@@ -90,11 +74,7 @@ clean:
 	@rm -rf ${INSTALL}/bin/media
 	@rm -rf ${INSTALL}/bin/authsession
 	@rm -rf ${INSTALL}/bin/biz
-	@rm -rf ${INSTALL}/bin/msg
-	@rm -rf ${INSTALL}/bin/inbox
-	@rm -rf ${INSTALL}/bin/sync
-	@rm -rf ${INSTALL}/bin/bff
-	@rm -rf ${INSTALL}/bin/session
-	@rm -rf ${INSTALL}/bin/gnetway
-	@rm -rf ${INSTALL}/bin/gateway
 	@rm -rf ${INSTALL}/bin/userupdates
+	@rm -rf ${INSTALL}/bin/msg
+	@rm -rf ${INSTALL}/bin/bff
+	@rm -rf ${INSTALL}/bin/gateway
