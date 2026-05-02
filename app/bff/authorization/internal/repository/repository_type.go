@@ -23,7 +23,10 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-var ErrUserNotFound = errors.New("authorization repository: user not found")
+var (
+	ErrUserNotFound            = errors.New("authorization repository: user not found")
+	ErrEncryptedMessageInvalid = errors.New("authorization repository: encrypted message invalid")
+)
 
 type (
 	AuthorizationRepository interface {
@@ -34,6 +37,7 @@ type (
 	AuthsessionBinding interface {
 		BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error
 		UnbindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error
+		BindTempAuthKey(ctx context.Context, permAuthKeyId int64, nonce int64, expiresAt int32, encryptedMessage []byte) error
 	}
 
 	UserDirectory interface {

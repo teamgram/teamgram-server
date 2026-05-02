@@ -17,14 +17,21 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AuthBindTempAuthKey
 // auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 func (c *AuthorizationCore) AuthBindTempAuthKey(in *tg.TLAuthBindTempAuthKey) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("auth.bindTempAuthKey - error: method AuthBindTempAuthKey not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.BindTempAuthKey(c.ctx, in.PermAuthKeyId, in.Nonce, in.ExpiresAt, in.EncryptedMessage); err != nil {
+		if errors.Is(err, repository.ErrEncryptedMessageInvalid) || errors.Is(err, authsession.ErrEncryptedMessageInvalid) {
+			return nil, tg.ErrEncryptedMessageInvalid
+		}
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

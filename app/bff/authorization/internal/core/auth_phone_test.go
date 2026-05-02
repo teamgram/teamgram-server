@@ -186,6 +186,13 @@ type fakeAuthRepository struct {
 
 	boundAuthKeyID int64
 	boundUserID    int64
+
+	bindTempCalls            int
+	bindTempPermAuthKeyID    int64
+	bindTempNonce            int64
+	bindTempExpiresAt        int32
+	bindTempEncryptedMessage []byte
+	bindTempErr              error
 }
 
 func newFakeAuthRepository() *fakeAuthRepository {

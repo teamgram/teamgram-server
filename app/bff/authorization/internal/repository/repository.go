@@ -75,6 +75,24 @@ func (r *Repository) UnbindAuthKeyUser(ctx context.Context, authKeyId int64, use
 	return nil
 }
 
+func (r *Repository) BindTempAuthKey(ctx context.Context, permAuthKeyId int64, nonce int64, expiresAt int32, encryptedMessage []byte) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("authorization repository: authsession client is not configured")
+	}
+	if _, err := r.AuthsessionClient.AuthsessionBindTempAuthKey(ctx, &authsession.TLAuthsessionBindTempAuthKey{
+		PermAuthKeyId:    permAuthKeyId,
+		Nonce:            nonce,
+		ExpiresAt:        expiresAt,
+		EncryptedMessage: encryptedMessage,
+	}); err != nil {
+		if isEncryptedMessageInvalid(err) {
+			return ErrEncryptedMessageInvalid
+		}
+		return fmt.Errorf("authorization repository: bind temp auth key %d: %w", permAuthKeyId, err)
+	}
+	return nil
+}
+
 func (r *Repository) GetUserByPhone(ctx context.Context, phone string) (*tg.ImmutableUser, error) {
 	if r.UserClient == nil {
 		return nil, fmt.Errorf("authorization repository: user client is not configured")
@@ -114,6 +132,12 @@ func (r *Repository) CreateUser(ctx context.Context, secretKeyId int64, phone st
 
 func isUserNotFound(err error) bool {
 	return errors.Is(err, userpb.ErrUserNotFound) || errors.Is(err, ErrUserNotFound) || strings.Contains(err.Error(), userpb.ErrUserNotFound.Error())
+}
+
+func isEncryptedMessageInvalid(err error) bool {
+	return errors.Is(err, authsession.ErrEncryptedMessageInvalid) ||
+		errors.Is(err, ErrEncryptedMessageInvalid) ||
+		strings.Contains(err.Error(), authsession.ErrEncryptedMessageInvalid.Error())
 }
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {
