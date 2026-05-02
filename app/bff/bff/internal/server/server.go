@@ -23,6 +23,8 @@ import (
 
 	accounthelper "github.com/teamgram/teamgram-server/v2/app/bff/account"
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
+	authorizationhelper "github.com/teamgram/teamgram-server/v2/app/bff/authorization"
+	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/authorization/authorizationservice"
 	autodownloadhelper "github.com/teamgram/teamgram-server/v2/app/bff/autodownload"
 	"github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
 	"github.com/teamgram/teamgram-server/v2/app/bff/bff/internal/config"
@@ -125,22 +127,13 @@ func buildMessagesConfig(c config.Config) messageshelper.Config {
 	}
 }
 
-//func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
-//	return authorizationhelper.Config{
-//		RpcServerConf:             c.RpcServerConf,
-//		KV:                        c.KV,
-//		Code:                      c.Code,
-//		UserClient:                withServiceName(c.BizServiceClient, "RPCUser"),
-//		AuthsessionClient:         withServiceName(c.AuthSessionClient, "RPCAuthsession"),
-//		ChatClient:                withServiceName(c.BizServiceClient, "RPCChat"),
-//		StatusClient:              withServiceName(c.StatusClient, "RPCStatus"),
-//		UsernameClient:            withServiceName(c.BizServiceClient, "RPCUsername"),
-//		MsgClient:                 withServiceName(c.MsgClient, "RPCMsg"),
-//		SyncClient:                c.SyncClient,
-//		SignInServiceNotification: c.SignInServiceNotification,
-//		SignInMessage:             c.SignInMessage,
-//	}
-//}
+func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
+	return authorizationhelper.Config{
+		RpcServerConf:     c.RpcServerConf,
+		AuthsessionClient: withServiceName(c.AuthSessionClient, "RPCAuthsession"),
+		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
+	}
+}
 
 func New() *Server {
 	return new(Server)
@@ -190,10 +183,10 @@ func (s *Server) Initialize() error {
 					RpcServerConf: c.RpcServerConf,
 				}))
 
-			//// authorizationhelper
-			//_ = authorizationservice.RegisterService(
-			//	s,
-			//	authorizationhelper.New(buildAuthorizationConfig(c)))
+			// authorizationhelper
+			_ = authorizationservice.RegisterService(
+				s,
+				authorizationhelper.New(buildAuthorizationConfig(c)))
 
 			// premiumhelper
 			_ = premiumservice.RegisterService(

@@ -53,3 +53,30 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 		t.Fatalf("expected msg client service name RPCMsg, got %#v", messages.MsgClient)
 	}
 }
+
+func TestBuildAuthorizationConfigUsesUnifiedBFFDependencies(t *testing.T) {
+	c := bffconfig.Config{
+		RpcServerConf: kitex.RpcServerConf{
+			ListenOn: "127.0.0.1:0",
+		},
+		AuthSessionClient: kitex.RpcClientConf{
+			DestService: "service.authsession",
+			ServiceName: "RPCAuthsession",
+		},
+		BizServiceClient: kitex.RpcClientConf{
+			DestService: "service.biz_service",
+			ServiceName: "RPCBizservice",
+		},
+	}
+
+	got := buildAuthorizationConfig(c)
+	if got.AuthsessionClient.ServiceName != "RPCAuthsession" {
+		t.Fatalf("AuthsessionClient.ServiceName = %q, want RPCAuthsession", got.AuthsessionClient.ServiceName)
+	}
+	if got.UserClient.ServiceName != "RPCUser" {
+		t.Fatalf("UserClient.ServiceName = %q, want RPCUser", got.UserClient.ServiceName)
+	}
+	if got.UserClient.DestService != "service.biz_service" {
+		t.Fatalf("UserClient.DestService = %q, want service.biz_service", got.UserClient.DestService)
+	}
+}

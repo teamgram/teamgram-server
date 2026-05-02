@@ -25,30 +25,13 @@ AuthsessionClient:
 
 BffClient:
   Clients:
-    - DestService: bff.configuration
-      ServiceName: RPCConfiguration
+    - DestService: bff.bff
       Codec: zrpc
       Etcd:
         Hosts:
           - 127.0.0.1:2379
-        Key: bff.configuration
+        Key: bff.bff
       ServiceNameList:
         - RPCConfiguration
-    - DestService: bff.authorization
-      ServiceName: RPCAuthorization
-      Codec: zrpc
-      Etcd:
-        Hosts:
-          - 127.0.0.1:2379
-        Key: bff.authorization
-      ServiceNameList:
         - RPCAuthorization
-    - DestService: bff.qrcode
-      ServiceName: RPCQrCode
-      Codec: zrpc
-      Etcd:
-        Hosts:
-          - 127.0.0.1:2379
-        Key: bff.qrcode
-      ServiceNameList:
         - RPCQrCode
