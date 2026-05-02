@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/status.RPCStatus/status.setSessionOnline": kitex.NewMethodInfo(
@@ -198,7 +223,7 @@ type SetSessionOnlineArgs struct {
 
 func (p *SetSessionOnlineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetSessionOnlineArgs")
+		return out, fmt.Errorf("no req in SetSessionOnlineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -214,7 +239,7 @@ func (p *SetSessionOnlineArgs) Unmarshal(in []byte) error {
 
 func (p *SetSessionOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetSessionOnlineArgs")
+		return fmt.Errorf("no req in SetSessionOnlineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -254,7 +279,7 @@ var SetSessionOnlineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetSessionOnlineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetSessionOnlineResult")
+		return out, fmt.Errorf("no req in SetSessionOnlineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -270,7 +295,7 @@ func (p *SetSessionOnlineResult) Unmarshal(in []byte) error {
 
 func (p *SetSessionOnlineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetSessionOnlineResult")
+		return fmt.Errorf("no req in SetSessionOnlineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -278,6 +303,9 @@ func (p *SetSessionOnlineResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetSessionOnlineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -329,7 +357,7 @@ type SetSessionOfflineArgs struct {
 
 func (p *SetSessionOfflineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetSessionOfflineArgs")
+		return out, fmt.Errorf("no req in SetSessionOfflineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -345,7 +373,7 @@ func (p *SetSessionOfflineArgs) Unmarshal(in []byte) error {
 
 func (p *SetSessionOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetSessionOfflineArgs")
+		return fmt.Errorf("no req in SetSessionOfflineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -385,7 +413,7 @@ var SetSessionOfflineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetSessionOfflineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetSessionOfflineResult")
+		return out, fmt.Errorf("no req in SetSessionOfflineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -401,7 +429,7 @@ func (p *SetSessionOfflineResult) Unmarshal(in []byte) error {
 
 func (p *SetSessionOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetSessionOfflineResult")
+		return fmt.Errorf("no req in SetSessionOfflineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -409,6 +437,9 @@ func (p *SetSessionOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetSessionOfflineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -460,7 +491,7 @@ type GetUserOnlineSessionsArgs struct {
 
 func (p *GetUserOnlineSessionsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetUserOnlineSessionsArgs")
+		return out, fmt.Errorf("no req in GetUserOnlineSessionsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -476,7 +507,7 @@ func (p *GetUserOnlineSessionsArgs) Unmarshal(in []byte) error {
 
 func (p *GetUserOnlineSessionsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetUserOnlineSessionsArgs")
+		return fmt.Errorf("no req in GetUserOnlineSessionsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -516,7 +547,7 @@ var GetUserOnlineSessionsResult_Success_DEFAULT *status.UserSessionEntryList
 
 func (p *GetUserOnlineSessionsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetUserOnlineSessionsResult")
+		return out, fmt.Errorf("no req in GetUserOnlineSessionsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -532,7 +563,7 @@ func (p *GetUserOnlineSessionsResult) Unmarshal(in []byte) error {
 
 func (p *GetUserOnlineSessionsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetUserOnlineSessionsResult")
+		return fmt.Errorf("no req in GetUserOnlineSessionsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -540,6 +571,9 @@ func (p *GetUserOnlineSessionsResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetUserOnlineSessionsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.UserSessionEntryList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -591,7 +625,7 @@ type GetUsersOnlineSessionsListArgs struct {
 
 func (p *GetUsersOnlineSessionsListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetUsersOnlineSessionsListArgs")
+		return out, fmt.Errorf("no req in GetUsersOnlineSessionsListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -607,7 +641,7 @@ func (p *GetUsersOnlineSessionsListArgs) Unmarshal(in []byte) error {
 
 func (p *GetUsersOnlineSessionsListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetUsersOnlineSessionsListArgs")
+		return fmt.Errorf("no req in GetUsersOnlineSessionsListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -647,7 +681,7 @@ var GetUsersOnlineSessionsListResult_Success_DEFAULT *status.VectorUserSessionEn
 
 func (p *GetUsersOnlineSessionsListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetUsersOnlineSessionsListResult")
+		return out, fmt.Errorf("no req in GetUsersOnlineSessionsListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -663,7 +697,7 @@ func (p *GetUsersOnlineSessionsListResult) Unmarshal(in []byte) error {
 
 func (p *GetUsersOnlineSessionsListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetUsersOnlineSessionsListResult")
+		return fmt.Errorf("no req in GetUsersOnlineSessionsListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -671,6 +705,9 @@ func (p *GetUsersOnlineSessionsListResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *GetUsersOnlineSessionsListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.VectorUserSessionEntryList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -722,7 +759,7 @@ type GetChannelOnlineUsersArgs struct {
 
 func (p *GetChannelOnlineUsersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetChannelOnlineUsersArgs")
+		return out, fmt.Errorf("no req in GetChannelOnlineUsersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -738,7 +775,7 @@ func (p *GetChannelOnlineUsersArgs) Unmarshal(in []byte) error {
 
 func (p *GetChannelOnlineUsersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetChannelOnlineUsersArgs")
+		return fmt.Errorf("no req in GetChannelOnlineUsersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -778,7 +815,7 @@ var GetChannelOnlineUsersResult_Success_DEFAULT *status.VectorLong
 
 func (p *GetChannelOnlineUsersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetChannelOnlineUsersResult")
+		return out, fmt.Errorf("no req in GetChannelOnlineUsersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -794,7 +831,7 @@ func (p *GetChannelOnlineUsersResult) Unmarshal(in []byte) error {
 
 func (p *GetChannelOnlineUsersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetChannelOnlineUsersResult")
+		return fmt.Errorf("no req in GetChannelOnlineUsersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -802,6 +839,9 @@ func (p *GetChannelOnlineUsersResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetChannelOnlineUsersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(status.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -853,7 +893,7 @@ type SetUserChannelsOnlineArgs struct {
 
 func (p *SetUserChannelsOnlineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetUserChannelsOnlineArgs")
+		return out, fmt.Errorf("no req in SetUserChannelsOnlineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -869,7 +909,7 @@ func (p *SetUserChannelsOnlineArgs) Unmarshal(in []byte) error {
 
 func (p *SetUserChannelsOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetUserChannelsOnlineArgs")
+		return fmt.Errorf("no req in SetUserChannelsOnlineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -909,7 +949,7 @@ var SetUserChannelsOnlineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetUserChannelsOnlineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetUserChannelsOnlineResult")
+		return out, fmt.Errorf("no req in SetUserChannelsOnlineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -925,7 +965,7 @@ func (p *SetUserChannelsOnlineResult) Unmarshal(in []byte) error {
 
 func (p *SetUserChannelsOnlineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetUserChannelsOnlineResult")
+		return fmt.Errorf("no req in SetUserChannelsOnlineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -933,6 +973,9 @@ func (p *SetUserChannelsOnlineResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *SetUserChannelsOnlineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -984,7 +1027,7 @@ type SetUserChannelsOfflineArgs struct {
 
 func (p *SetUserChannelsOfflineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetUserChannelsOfflineArgs")
+		return out, fmt.Errorf("no req in SetUserChannelsOfflineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1000,7 +1043,7 @@ func (p *SetUserChannelsOfflineArgs) Unmarshal(in []byte) error {
 
 func (p *SetUserChannelsOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetUserChannelsOfflineArgs")
+		return fmt.Errorf("no req in SetUserChannelsOfflineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1040,7 +1083,7 @@ var SetUserChannelsOfflineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetUserChannelsOfflineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetUserChannelsOfflineResult")
+		return out, fmt.Errorf("no req in SetUserChannelsOfflineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1056,7 +1099,7 @@ func (p *SetUserChannelsOfflineResult) Unmarshal(in []byte) error {
 
 func (p *SetUserChannelsOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetUserChannelsOfflineResult")
+		return fmt.Errorf("no req in SetUserChannelsOfflineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1064,6 +1107,9 @@ func (p *SetUserChannelsOfflineResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *SetUserChannelsOfflineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1115,7 +1161,7 @@ type SetChannelUserOfflineArgs struct {
 
 func (p *SetChannelUserOfflineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetChannelUserOfflineArgs")
+		return out, fmt.Errorf("no req in SetChannelUserOfflineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1131,7 +1177,7 @@ func (p *SetChannelUserOfflineArgs) Unmarshal(in []byte) error {
 
 func (p *SetChannelUserOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetChannelUserOfflineArgs")
+		return fmt.Errorf("no req in SetChannelUserOfflineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1171,7 +1217,7 @@ var SetChannelUserOfflineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetChannelUserOfflineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetChannelUserOfflineResult")
+		return out, fmt.Errorf("no req in SetChannelUserOfflineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1187,7 +1233,7 @@ func (p *SetChannelUserOfflineResult) Unmarshal(in []byte) error {
 
 func (p *SetChannelUserOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetChannelUserOfflineResult")
+		return fmt.Errorf("no req in SetChannelUserOfflineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1195,6 +1241,9 @@ func (p *SetChannelUserOfflineResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *SetChannelUserOfflineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1246,7 +1295,7 @@ type SetChannelUsersOnlineArgs struct {
 
 func (p *SetChannelUsersOnlineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetChannelUsersOnlineArgs")
+		return out, fmt.Errorf("no req in SetChannelUsersOnlineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1262,7 +1311,7 @@ func (p *SetChannelUsersOnlineArgs) Unmarshal(in []byte) error {
 
 func (p *SetChannelUsersOnlineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetChannelUsersOnlineArgs")
+		return fmt.Errorf("no req in SetChannelUsersOnlineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1302,7 +1351,7 @@ var SetChannelUsersOnlineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetChannelUsersOnlineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetChannelUsersOnlineResult")
+		return out, fmt.Errorf("no req in SetChannelUsersOnlineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1318,7 +1367,7 @@ func (p *SetChannelUsersOnlineResult) Unmarshal(in []byte) error {
 
 func (p *SetChannelUsersOnlineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetChannelUsersOnlineResult")
+		return fmt.Errorf("no req in SetChannelUsersOnlineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1326,6 +1375,9 @@ func (p *SetChannelUsersOnlineResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *SetChannelUsersOnlineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1377,7 +1429,7 @@ type SetChannelOfflineArgs struct {
 
 func (p *SetChannelOfflineArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetChannelOfflineArgs")
+		return out, fmt.Errorf("no req in SetChannelOfflineArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1393,7 +1445,7 @@ func (p *SetChannelOfflineArgs) Unmarshal(in []byte) error {
 
 func (p *SetChannelOfflineArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetChannelOfflineArgs")
+		return fmt.Errorf("no req in SetChannelOfflineArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1433,7 +1485,7 @@ var SetChannelOfflineResult_Success_DEFAULT *tg.Bool
 
 func (p *SetChannelOfflineResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetChannelOfflineResult")
+		return out, fmt.Errorf("no req in SetChannelOfflineResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1449,7 +1501,7 @@ func (p *SetChannelOfflineResult) Unmarshal(in []byte) error {
 
 func (p *SetChannelOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetChannelOfflineResult")
+		return fmt.Errorf("no req in SetChannelOfflineResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1457,6 +1509,9 @@ func (p *SetChannelOfflineResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChannelOfflineResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1496,149 +1551,119 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) StatusSetSessionOnline(ctx context.Context, req *status.TLStatusSetSessionOnline) (r *tg.Bool, err error) {
 	// var _args SetSessionOnlineArgs
 	// _args.Req = req
-	// var _result SetSessionOnlineResult
+	var _result SetSessionOnlineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOnline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetSessionOffline(ctx context.Context, req *status.TLStatusSetSessionOffline) (r *tg.Bool, err error) {
 	// var _args SetSessionOfflineArgs
 	// _args.Req = req
-	// var _result SetSessionOfflineResult
+	var _result SetSessionOfflineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOffline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusGetUserOnlineSessions(ctx context.Context, req *status.TLStatusGetUserOnlineSessions) (r *status.UserSessionEntryList, err error) {
 	// var _args GetUserOnlineSessionsArgs
 	// _args.Req = req
-	// var _result GetUserOnlineSessionsResult
+	var _result GetUserOnlineSessionsResult
 
-	_result := new(status.UserSessionEntryList)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUserOnlineSessions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUserOnlineSessions", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusGetUsersOnlineSessionsList(ctx context.Context, req *status.TLStatusGetUsersOnlineSessionsList) (r *status.VectorUserSessionEntryList, err error) {
 	// var _args GetUsersOnlineSessionsListArgs
 	// _args.Req = req
-	// var _result GetUsersOnlineSessionsListResult
+	var _result GetUsersOnlineSessionsListResult
 
-	_result := new(status.VectorUserSessionEntryList)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUsersOnlineSessionsList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUsersOnlineSessionsList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusGetChannelOnlineUsers(ctx context.Context, req *status.TLStatusGetChannelOnlineUsers) (r *status.VectorLong, err error) {
 	// var _args GetChannelOnlineUsersArgs
 	// _args.Req = req
-	// var _result GetChannelOnlineUsersResult
+	var _result GetChannelOnlineUsersResult
 
-	_result := new(status.VectorLong)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.getChannelOnlineUsers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getChannelOnlineUsers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetUserChannelsOnline(ctx context.Context, req *status.TLStatusSetUserChannelsOnline) (r *tg.Bool, err error) {
 	// var _args SetUserChannelsOnlineArgs
 	// _args.Req = req
-	// var _result SetUserChannelsOnlineResult
+	var _result SetUserChannelsOnlineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOnline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetUserChannelsOffline(ctx context.Context, req *status.TLStatusSetUserChannelsOffline) (r *tg.Bool, err error) {
 	// var _args SetUserChannelsOfflineArgs
 	// _args.Req = req
-	// var _result SetUserChannelsOfflineResult
+	var _result SetUserChannelsOfflineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOffline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetChannelUserOffline(ctx context.Context, req *status.TLStatusSetChannelUserOffline) (r *tg.Bool, err error) {
 	// var _args SetChannelUserOfflineArgs
 	// _args.Req = req
-	// var _result SetChannelUserOfflineResult
+	var _result SetChannelUserOfflineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUserOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUserOffline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetChannelUsersOnline(ctx context.Context, req *status.TLStatusSetChannelUsersOnline) (r *tg.Bool, err error) {
 	// var _args SetChannelUsersOnlineArgs
 	// _args.Req = req
-	// var _result SetChannelUsersOnlineResult
+	var _result SetChannelUsersOnlineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUsersOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUsersOnline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) StatusSetChannelOffline(ctx context.Context, req *status.TLStatusSetChannelOffline) (r *tg.Bool, err error) {
 	// var _args SetChannelOfflineArgs
 	// _args.Req = req
-	// var _result SetChannelOfflineResult
+	var _result SetChannelOfflineResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelOffline", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

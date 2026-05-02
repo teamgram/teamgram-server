@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/msg.RPCMsg/msg.pushUserMessage": kitex.NewMethodInfo(
@@ -212,7 +237,7 @@ type PushUserMessageArgs struct {
 
 func (p *PushUserMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PushUserMessageArgs")
+		return out, fmt.Errorf("no req in PushUserMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -228,7 +253,7 @@ func (p *PushUserMessageArgs) Unmarshal(in []byte) error {
 
 func (p *PushUserMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PushUserMessageArgs")
+		return fmt.Errorf("no req in PushUserMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -268,7 +293,7 @@ var PushUserMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *PushUserMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PushUserMessageResult")
+		return out, fmt.Errorf("no req in PushUserMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -284,7 +309,7 @@ func (p *PushUserMessageResult) Unmarshal(in []byte) error {
 
 func (p *PushUserMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PushUserMessageResult")
+		return fmt.Errorf("no req in PushUserMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -292,6 +317,9 @@ func (p *PushUserMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushUserMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -343,7 +371,7 @@ type ReadMessageContentsArgs struct {
 
 func (p *ReadMessageContentsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ReadMessageContentsArgs")
+		return out, fmt.Errorf("no req in ReadMessageContentsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -359,7 +387,7 @@ func (p *ReadMessageContentsArgs) Unmarshal(in []byte) error {
 
 func (p *ReadMessageContentsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ReadMessageContentsArgs")
+		return fmt.Errorf("no req in ReadMessageContentsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -399,7 +427,7 @@ var ReadMessageContentsResult_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *ReadMessageContentsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ReadMessageContentsResult")
+		return out, fmt.Errorf("no req in ReadMessageContentsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -415,7 +443,7 @@ func (p *ReadMessageContentsResult) Unmarshal(in []byte) error {
 
 func (p *ReadMessageContentsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ReadMessageContentsResult")
+		return fmt.Errorf("no req in ReadMessageContentsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -423,6 +451,9 @@ func (p *ReadMessageContentsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReadMessageContentsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -474,7 +505,7 @@ type SendMessageV2Args struct {
 
 func (p *SendMessageV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SendMessageV2Args")
+		return out, fmt.Errorf("no req in SendMessageV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -490,7 +521,7 @@ func (p *SendMessageV2Args) Unmarshal(in []byte) error {
 
 func (p *SendMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SendMessageV2Args")
+		return fmt.Errorf("no req in SendMessageV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -530,7 +561,7 @@ var SendMessageV2Result_Success_DEFAULT *tg.Updates
 
 func (p *SendMessageV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SendMessageV2Result")
+		return out, fmt.Errorf("no req in SendMessageV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -546,7 +577,7 @@ func (p *SendMessageV2Result) Unmarshal(in []byte) error {
 
 func (p *SendMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SendMessageV2Result")
+		return fmt.Errorf("no req in SendMessageV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -554,6 +585,9 @@ func (p *SendMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SendMessageV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -605,7 +639,7 @@ type EditMessageV2Args struct {
 
 func (p *EditMessageV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in EditMessageV2Args")
+		return out, fmt.Errorf("no req in EditMessageV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -621,7 +655,7 @@ func (p *EditMessageV2Args) Unmarshal(in []byte) error {
 
 func (p *EditMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in EditMessageV2Args")
+		return fmt.Errorf("no req in EditMessageV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -661,7 +695,7 @@ var EditMessageV2Result_Success_DEFAULT *tg.Updates
 
 func (p *EditMessageV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in EditMessageV2Result")
+		return out, fmt.Errorf("no req in EditMessageV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -677,7 +711,7 @@ func (p *EditMessageV2Result) Unmarshal(in []byte) error {
 
 func (p *EditMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in EditMessageV2Result")
+		return fmt.Errorf("no req in EditMessageV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -685,6 +719,9 @@ func (p *EditMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditMessageV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -736,7 +773,7 @@ type DeleteMessagesArgs struct {
 
 func (p *DeleteMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeleteMessagesArgs")
+		return out, fmt.Errorf("no req in DeleteMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -752,7 +789,7 @@ func (p *DeleteMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *DeleteMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeleteMessagesArgs")
+		return fmt.Errorf("no req in DeleteMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -792,7 +829,7 @@ var DeleteMessagesResult_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *DeleteMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeleteMessagesResult")
+		return out, fmt.Errorf("no req in DeleteMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -808,7 +845,7 @@ func (p *DeleteMessagesResult) Unmarshal(in []byte) error {
 
 func (p *DeleteMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeleteMessagesResult")
+		return fmt.Errorf("no req in DeleteMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -816,6 +853,9 @@ func (p *DeleteMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteMessagesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -867,7 +907,7 @@ type DeleteHistoryArgs struct {
 
 func (p *DeleteHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeleteHistoryArgs")
+		return out, fmt.Errorf("no req in DeleteHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -883,7 +923,7 @@ func (p *DeleteHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *DeleteHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeleteHistoryArgs")
+		return fmt.Errorf("no req in DeleteHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -923,7 +963,7 @@ var DeleteHistoryResult_Success_DEFAULT *tg.MessagesAffectedHistory
 
 func (p *DeleteHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeleteHistoryResult")
+		return out, fmt.Errorf("no req in DeleteHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -939,7 +979,7 @@ func (p *DeleteHistoryResult) Unmarshal(in []byte) error {
 
 func (p *DeleteHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeleteHistoryResult")
+		return fmt.Errorf("no req in DeleteHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -947,6 +987,9 @@ func (p *DeleteHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteHistoryResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedHistory)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -998,7 +1041,7 @@ type DeletePhoneCallHistoryArgs struct {
 
 func (p *DeletePhoneCallHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeletePhoneCallHistoryArgs")
+		return out, fmt.Errorf("no req in DeletePhoneCallHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1014,7 +1057,7 @@ func (p *DeletePhoneCallHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *DeletePhoneCallHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeletePhoneCallHistoryArgs")
+		return fmt.Errorf("no req in DeletePhoneCallHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1054,7 +1097,7 @@ var DeletePhoneCallHistoryResult_Success_DEFAULT *tg.MessagesAffectedFoundMessag
 
 func (p *DeletePhoneCallHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeletePhoneCallHistoryResult")
+		return out, fmt.Errorf("no req in DeletePhoneCallHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1070,7 +1113,7 @@ func (p *DeletePhoneCallHistoryResult) Unmarshal(in []byte) error {
 
 func (p *DeletePhoneCallHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeletePhoneCallHistoryResult")
+		return fmt.Errorf("no req in DeletePhoneCallHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1078,6 +1121,9 @@ func (p *DeletePhoneCallHistoryResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *DeletePhoneCallHistoryResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedFoundMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1129,7 +1175,7 @@ type DeleteChatHistoryArgs struct {
 
 func (p *DeleteChatHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeleteChatHistoryArgs")
+		return out, fmt.Errorf("no req in DeleteChatHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1145,7 +1191,7 @@ func (p *DeleteChatHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *DeleteChatHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeleteChatHistoryArgs")
+		return fmt.Errorf("no req in DeleteChatHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1185,7 +1231,7 @@ var DeleteChatHistoryResult_Success_DEFAULT *tg.Bool
 
 func (p *DeleteChatHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeleteChatHistoryResult")
+		return out, fmt.Errorf("no req in DeleteChatHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1201,7 +1247,7 @@ func (p *DeleteChatHistoryResult) Unmarshal(in []byte) error {
 
 func (p *DeleteChatHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeleteChatHistoryResult")
+		return fmt.Errorf("no req in DeleteChatHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1209,6 +1255,9 @@ func (p *DeleteChatHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteChatHistoryResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1260,7 +1309,7 @@ type ReadHistoryArgs struct {
 
 func (p *ReadHistoryArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ReadHistoryArgs")
+		return out, fmt.Errorf("no req in ReadHistoryArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1276,7 +1325,7 @@ func (p *ReadHistoryArgs) Unmarshal(in []byte) error {
 
 func (p *ReadHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ReadHistoryArgs")
+		return fmt.Errorf("no req in ReadHistoryArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1316,7 +1365,7 @@ var ReadHistoryResult_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *ReadHistoryResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ReadHistoryResult")
+		return out, fmt.Errorf("no req in ReadHistoryResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1332,7 +1381,7 @@ func (p *ReadHistoryResult) Unmarshal(in []byte) error {
 
 func (p *ReadHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ReadHistoryResult")
+		return fmt.Errorf("no req in ReadHistoryResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1340,6 +1389,9 @@ func (p *ReadHistoryResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReadHistoryResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1391,7 +1443,7 @@ type ReadHistoryV2Args struct {
 
 func (p *ReadHistoryV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ReadHistoryV2Args")
+		return out, fmt.Errorf("no req in ReadHistoryV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1407,7 +1459,7 @@ func (p *ReadHistoryV2Args) Unmarshal(in []byte) error {
 
 func (p *ReadHistoryV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ReadHistoryV2Args")
+		return fmt.Errorf("no req in ReadHistoryV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1447,7 +1499,7 @@ var ReadHistoryV2Result_Success_DEFAULT *tg.MessagesAffectedMessages
 
 func (p *ReadHistoryV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ReadHistoryV2Result")
+		return out, fmt.Errorf("no req in ReadHistoryV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1463,7 +1515,7 @@ func (p *ReadHistoryV2Result) Unmarshal(in []byte) error {
 
 func (p *ReadHistoryV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ReadHistoryV2Result")
+		return fmt.Errorf("no req in ReadHistoryV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1471,6 +1523,9 @@ func (p *ReadHistoryV2Result) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReadHistoryV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1522,7 +1577,7 @@ type UpdatePinnedMessageArgs struct {
 
 func (p *UpdatePinnedMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdatePinnedMessageArgs")
+		return out, fmt.Errorf("no req in UpdatePinnedMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1538,7 +1593,7 @@ func (p *UpdatePinnedMessageArgs) Unmarshal(in []byte) error {
 
 func (p *UpdatePinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdatePinnedMessageArgs")
+		return fmt.Errorf("no req in UpdatePinnedMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1578,7 +1633,7 @@ var UpdatePinnedMessageResult_Success_DEFAULT *tg.Updates
 
 func (p *UpdatePinnedMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdatePinnedMessageResult")
+		return out, fmt.Errorf("no req in UpdatePinnedMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1594,7 +1649,7 @@ func (p *UpdatePinnedMessageResult) Unmarshal(in []byte) error {
 
 func (p *UpdatePinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdatePinnedMessageResult")
+		return fmt.Errorf("no req in UpdatePinnedMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1602,6 +1657,9 @@ func (p *UpdatePinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePinnedMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1653,7 +1711,7 @@ type UnpinAllMessagesArgs struct {
 
 func (p *UnpinAllMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UnpinAllMessagesArgs")
+		return out, fmt.Errorf("no req in UnpinAllMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1669,7 +1727,7 @@ func (p *UnpinAllMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *UnpinAllMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UnpinAllMessagesArgs")
+		return fmt.Errorf("no req in UnpinAllMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1709,7 +1767,7 @@ var UnpinAllMessagesResult_Success_DEFAULT *tg.MessagesAffectedHistory
 
 func (p *UnpinAllMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UnpinAllMessagesResult")
+		return out, fmt.Errorf("no req in UnpinAllMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1725,7 +1783,7 @@ func (p *UnpinAllMessagesResult) Unmarshal(in []byte) error {
 
 func (p *UnpinAllMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UnpinAllMessagesResult")
+		return fmt.Errorf("no req in UnpinAllMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1733,6 +1791,9 @@ func (p *UnpinAllMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UnpinAllMessagesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesAffectedHistory)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1772,179 +1833,143 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MsgPushUserMessage(ctx context.Context, req *msg.TLMsgPushUserMessage) (r *tg.Bool, err error) {
 	// var _args PushUserMessageArgs
 	// _args.Req = req
-	// var _result PushUserMessageResult
+	var _result PushUserMessageResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.pushUserMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.pushUserMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgReadMessageContents) (r *tg.MessagesAffectedMessages, err error) {
 	// var _args ReadMessageContentsArgs
 	// _args.Req = req
-	// var _result ReadMessageContentsResult
+	var _result ReadMessageContentsResult
 
-	_result := new(tg.MessagesAffectedMessages)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readMessageContents", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readMessageContents", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessageV2) (r *tg.Updates, err error) {
 	// var _args SendMessageV2Args
 	// _args.Req = req
-	// var _result SendMessageV2Result
+	var _result SendMessageV2Result
 
-	_result := new(tg.Updates)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessageV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessageV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessageV2) (r *tg.Updates, err error) {
 	// var _args EditMessageV2Args
 	// _args.Req = req
-	// var _result EditMessageV2Result
+	var _result EditMessageV2Result
 
-	_result := new(tg.Updates)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessageV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessageV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgDeleteMessages(ctx context.Context, req *msg.TLMsgDeleteMessages) (r *tg.MessagesAffectedMessages, err error) {
 	// var _args DeleteMessagesArgs
 	// _args.Req = req
-	// var _result DeleteMessagesResult
+	var _result DeleteMessagesResult
 
-	_result := new(tg.MessagesAffectedMessages)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteMessages", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgDeleteHistory(ctx context.Context, req *msg.TLMsgDeleteHistory) (r *tg.MessagesAffectedHistory, err error) {
 	// var _args DeleteHistoryArgs
 	// _args.Req = req
-	// var _result DeleteHistoryResult
+	var _result DeleteHistoryResult
 
-	_result := new(tg.MessagesAffectedHistory)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteHistory", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgDeletePhoneCallHistory(ctx context.Context, req *msg.TLMsgDeletePhoneCallHistory) (r *tg.MessagesAffectedFoundMessages, err error) {
 	// var _args DeletePhoneCallHistoryArgs
 	// _args.Req = req
-	// var _result DeletePhoneCallHistoryResult
+	var _result DeletePhoneCallHistoryResult
 
-	_result := new(tg.MessagesAffectedFoundMessages)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deletePhoneCallHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deletePhoneCallHistory", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgDeleteChatHistory(ctx context.Context, req *msg.TLMsgDeleteChatHistory) (r *tg.Bool, err error) {
 	// var _args DeleteChatHistoryArgs
 	// _args.Req = req
-	// var _result DeleteChatHistoryResult
+	var _result DeleteChatHistoryResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteChatHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteChatHistory", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHistory) (r *tg.MessagesAffectedMessages, err error) {
 	// var _args ReadHistoryArgs
 	// _args.Req = req
-	// var _result ReadHistoryResult
+	var _result ReadHistoryResult
 
-	_result := new(tg.MessagesAffectedMessages)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistory", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2) (r *tg.MessagesAffectedMessages, err error) {
 	// var _args ReadHistoryV2Args
 	// _args.Req = req
-	// var _result ReadHistoryV2Result
+	var _result ReadHistoryV2Result
 
-	_result := new(tg.MessagesAffectedMessages)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistoryV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistoryV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage) (r *tg.Updates, err error) {
 	// var _args UpdatePinnedMessageArgs
 	// _args.Req = req
-	// var _result UpdatePinnedMessageResult
+	var _result UpdatePinnedMessageResult
 
-	_result := new(tg.Updates)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.updatePinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.updatePinnedMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MsgUnpinAllMessages(ctx context.Context, req *msg.TLMsgUnpinAllMessages) (r *tg.MessagesAffectedHistory, err error) {
 	// var _args UnpinAllMessagesArgs
 	// _args.Req = req
-	// var _result UnpinAllMessagesResult
+	var _result UnpinAllMessagesResult
 
-	_result := new(tg.MessagesAffectedHistory)
-
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.unpinAllMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.unpinAllMessages", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

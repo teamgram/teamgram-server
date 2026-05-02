@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/idgen.RPCIdgen/idgen.nextId": kitex.NewMethodInfo(
@@ -184,7 +209,7 @@ type NextIdArgs struct {
 
 func (p *NextIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in NextIdArgs")
+		return out, fmt.Errorf("no req in NextIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -200,7 +225,7 @@ func (p *NextIdArgs) Unmarshal(in []byte) error {
 
 func (p *NextIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in NextIdArgs")
+		return fmt.Errorf("no req in NextIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -240,7 +265,7 @@ var NextIdResult_Success_DEFAULT *tg.Int64
 
 func (p *NextIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in NextIdResult")
+		return out, fmt.Errorf("no req in NextIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -256,7 +281,7 @@ func (p *NextIdResult) Unmarshal(in []byte) error {
 
 func (p *NextIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in NextIdResult")
+		return fmt.Errorf("no req in NextIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -264,6 +289,9 @@ func (p *NextIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *NextIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -315,7 +343,7 @@ type NextIdsArgs struct {
 
 func (p *NextIdsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in NextIdsArgs")
+		return out, fmt.Errorf("no req in NextIdsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -331,7 +359,7 @@ func (p *NextIdsArgs) Unmarshal(in []byte) error {
 
 func (p *NextIdsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in NextIdsArgs")
+		return fmt.Errorf("no req in NextIdsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -371,7 +399,7 @@ var NextIdsResult_Success_DEFAULT *idgen.VectorLong
 
 func (p *NextIdsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in NextIdsResult")
+		return out, fmt.Errorf("no req in NextIdsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -387,7 +415,7 @@ func (p *NextIdsResult) Unmarshal(in []byte) error {
 
 func (p *NextIdsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in NextIdsResult")
+		return fmt.Errorf("no req in NextIdsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -395,6 +423,9 @@ func (p *NextIdsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *NextIdsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -446,7 +477,7 @@ type GetCurrentSeqIdArgs struct {
 
 func (p *GetCurrentSeqIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetCurrentSeqIdArgs")
+		return out, fmt.Errorf("no req in GetCurrentSeqIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -462,7 +493,7 @@ func (p *GetCurrentSeqIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetCurrentSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetCurrentSeqIdArgs")
+		return fmt.Errorf("no req in GetCurrentSeqIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -502,7 +533,7 @@ var GetCurrentSeqIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetCurrentSeqIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetCurrentSeqIdResult")
+		return out, fmt.Errorf("no req in GetCurrentSeqIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -518,7 +549,7 @@ func (p *GetCurrentSeqIdResult) Unmarshal(in []byte) error {
 
 func (p *GetCurrentSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetCurrentSeqIdResult")
+		return fmt.Errorf("no req in GetCurrentSeqIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -526,6 +557,9 @@ func (p *GetCurrentSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetCurrentSeqIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -577,7 +611,7 @@ type SetCurrentSeqIdArgs struct {
 
 func (p *SetCurrentSeqIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetCurrentSeqIdArgs")
+		return out, fmt.Errorf("no req in SetCurrentSeqIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -593,7 +627,7 @@ func (p *SetCurrentSeqIdArgs) Unmarshal(in []byte) error {
 
 func (p *SetCurrentSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetCurrentSeqIdArgs")
+		return fmt.Errorf("no req in SetCurrentSeqIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -633,7 +667,7 @@ var SetCurrentSeqIdResult_Success_DEFAULT *tg.Bool
 
 func (p *SetCurrentSeqIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetCurrentSeqIdResult")
+		return out, fmt.Errorf("no req in SetCurrentSeqIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -649,7 +683,7 @@ func (p *SetCurrentSeqIdResult) Unmarshal(in []byte) error {
 
 func (p *SetCurrentSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetCurrentSeqIdResult")
+		return fmt.Errorf("no req in SetCurrentSeqIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -657,6 +691,9 @@ func (p *SetCurrentSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetCurrentSeqIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -708,7 +745,7 @@ type GetNextSeqIdArgs struct {
 
 func (p *GetNextSeqIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetNextSeqIdArgs")
+		return out, fmt.Errorf("no req in GetNextSeqIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -724,7 +761,7 @@ func (p *GetNextSeqIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetNextSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetNextSeqIdArgs")
+		return fmt.Errorf("no req in GetNextSeqIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -764,7 +801,7 @@ var GetNextSeqIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetNextSeqIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetNextSeqIdResult")
+		return out, fmt.Errorf("no req in GetNextSeqIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -780,7 +817,7 @@ func (p *GetNextSeqIdResult) Unmarshal(in []byte) error {
 
 func (p *GetNextSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetNextSeqIdResult")
+		return fmt.Errorf("no req in GetNextSeqIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -788,6 +825,9 @@ func (p *GetNextSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextSeqIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -839,7 +879,7 @@ type GetNextNSeqIdArgs struct {
 
 func (p *GetNextNSeqIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetNextNSeqIdArgs")
+		return out, fmt.Errorf("no req in GetNextNSeqIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -855,7 +895,7 @@ func (p *GetNextNSeqIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetNextNSeqIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetNextNSeqIdArgs")
+		return fmt.Errorf("no req in GetNextNSeqIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -895,7 +935,7 @@ var GetNextNSeqIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetNextNSeqIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetNextNSeqIdResult")
+		return out, fmt.Errorf("no req in GetNextNSeqIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -911,7 +951,7 @@ func (p *GetNextNSeqIdResult) Unmarshal(in []byte) error {
 
 func (p *GetNextNSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetNextNSeqIdResult")
+		return fmt.Errorf("no req in GetNextNSeqIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -919,6 +959,9 @@ func (p *GetNextNSeqIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextNSeqIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int64)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -970,7 +1013,7 @@ type GetNextIdValListArgs struct {
 
 func (p *GetNextIdValListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetNextIdValListArgs")
+		return out, fmt.Errorf("no req in GetNextIdValListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -986,7 +1029,7 @@ func (p *GetNextIdValListArgs) Unmarshal(in []byte) error {
 
 func (p *GetNextIdValListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetNextIdValListArgs")
+		return fmt.Errorf("no req in GetNextIdValListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1026,7 +1069,7 @@ var GetNextIdValListResult_Success_DEFAULT *idgen.VectorIdVal
 
 func (p *GetNextIdValListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetNextIdValListResult")
+		return out, fmt.Errorf("no req in GetNextIdValListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1042,7 +1085,7 @@ func (p *GetNextIdValListResult) Unmarshal(in []byte) error {
 
 func (p *GetNextIdValListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetNextIdValListResult")
+		return fmt.Errorf("no req in GetNextIdValListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1050,6 +1093,9 @@ func (p *GetNextIdValListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetNextIdValListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.VectorIdVal)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1101,7 +1147,7 @@ type GetCurrentSeqIdListArgs struct {
 
 func (p *GetCurrentSeqIdListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetCurrentSeqIdListArgs")
+		return out, fmt.Errorf("no req in GetCurrentSeqIdListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1117,7 +1163,7 @@ func (p *GetCurrentSeqIdListArgs) Unmarshal(in []byte) error {
 
 func (p *GetCurrentSeqIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetCurrentSeqIdListArgs")
+		return fmt.Errorf("no req in GetCurrentSeqIdListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1157,7 +1203,7 @@ var GetCurrentSeqIdListResult_Success_DEFAULT *idgen.VectorIdVal
 
 func (p *GetCurrentSeqIdListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetCurrentSeqIdListResult")
+		return out, fmt.Errorf("no req in GetCurrentSeqIdListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1173,7 +1219,7 @@ func (p *GetCurrentSeqIdListResult) Unmarshal(in []byte) error {
 
 func (p *GetCurrentSeqIdListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetCurrentSeqIdListResult")
+		return fmt.Errorf("no req in GetCurrentSeqIdListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1181,6 +1227,9 @@ func (p *GetCurrentSeqIdListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetCurrentSeqIdListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(idgen.VectorIdVal)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1220,119 +1269,95 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) IdgenNextId(ctx context.Context, req *idgen.TLIdgenNextId) (r *tg.Int64, err error) {
 	// var _args NextIdArgs
 	// _args.Req = req
-	// var _result NextIdResult
+	var _result NextIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenNextIds(ctx context.Context, req *idgen.TLIdgenNextIds) (r *idgen.VectorLong, err error) {
 	// var _args NextIdsArgs
 	// _args.Req = req
-	// var _result NextIdsResult
+	var _result NextIdsResult
 
-	_result := new(idgen.VectorLong)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextIds", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextIds", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenGetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenGetCurrentSeqId) (r *tg.Int64, err error) {
 	// var _args GetCurrentSeqIdArgs
 	// _args.Req = req
-	// var _result GetCurrentSeqIdResult
+	var _result GetCurrentSeqIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenSetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenSetCurrentSeqId) (r *tg.Bool, err error) {
 	// var _args SetCurrentSeqIdArgs
 	// _args.Req = req
-	// var _result SetCurrentSeqIdResult
+	var _result SetCurrentSeqIdResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.setCurrentSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.setCurrentSeqId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenGetNextSeqId(ctx context.Context, req *idgen.TLIdgenGetNextSeqId) (r *tg.Int64, err error) {
 	// var _args GetNextSeqIdArgs
 	// _args.Req = req
-	// var _result GetNextSeqIdResult
+	var _result GetNextSeqIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextSeqId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenGetNextNSeqId(ctx context.Context, req *idgen.TLIdgenGetNextNSeqId) (r *tg.Int64, err error) {
 	// var _args GetNextNSeqIdArgs
 	// _args.Req = req
-	// var _result GetNextNSeqIdResult
+	var _result GetNextNSeqIdResult
 
-	_result := new(tg.Int64)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextNSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextNSeqId", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenGetNextIdValList(ctx context.Context, req *idgen.TLIdgenGetNextIdValList) (r *idgen.VectorIdVal, err error) {
 	// var _args GetNextIdValListArgs
 	// _args.Req = req
-	// var _result GetNextIdValListResult
+	var _result GetNextIdValListResult
 
-	_result := new(idgen.VectorIdVal)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextIdValList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextIdValList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) IdgenGetCurrentSeqIdList(ctx context.Context, req *idgen.TLIdgenGetCurrentSeqIdList) (r *idgen.VectorIdVal, err error) {
 	// var _args GetCurrentSeqIdListArgs
 	// _args.Req = req
-	// var _result GetCurrentSeqIdListResult
+	var _result GetCurrentSeqIdListResult
 
-	_result := new(idgen.VectorIdVal)
-
-	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqIdList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

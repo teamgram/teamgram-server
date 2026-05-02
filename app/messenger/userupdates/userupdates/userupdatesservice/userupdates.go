@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/userupdates.RPCUserupdates/userupdates.processUserOperation": kitex.NewMethodInfo(
@@ -156,7 +181,7 @@ type ProcessUserOperationArgs struct {
 
 func (p *ProcessUserOperationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ProcessUserOperationArgs")
+		return out, fmt.Errorf("no req in ProcessUserOperationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -172,7 +197,7 @@ func (p *ProcessUserOperationArgs) Unmarshal(in []byte) error {
 
 func (p *ProcessUserOperationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ProcessUserOperationArgs")
+		return fmt.Errorf("no req in ProcessUserOperationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -212,7 +237,7 @@ var ProcessUserOperationResult_Success_DEFAULT *userupdates.UserOperationResult
 
 func (p *ProcessUserOperationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ProcessUserOperationResult")
+		return out, fmt.Errorf("no req in ProcessUserOperationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -228,7 +253,7 @@ func (p *ProcessUserOperationResult) Unmarshal(in []byte) error {
 
 func (p *ProcessUserOperationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ProcessUserOperationResult")
+		return fmt.Errorf("no req in ProcessUserOperationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -236,6 +261,9 @@ func (p *ProcessUserOperationResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ProcessUserOperationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(userupdates.UserOperationResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -287,7 +315,7 @@ type GetOperationResultArgs struct {
 
 func (p *GetOperationResultArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetOperationResultArgs")
+		return out, fmt.Errorf("no req in GetOperationResultArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -303,7 +331,7 @@ func (p *GetOperationResultArgs) Unmarshal(in []byte) error {
 
 func (p *GetOperationResultArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetOperationResultArgs")
+		return fmt.Errorf("no req in GetOperationResultArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -343,7 +371,7 @@ var GetOperationResultResult_Success_DEFAULT *userupdates.UserOperationResult
 
 func (p *GetOperationResultResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetOperationResultResult")
+		return out, fmt.Errorf("no req in GetOperationResultResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -359,7 +387,7 @@ func (p *GetOperationResultResult) Unmarshal(in []byte) error {
 
 func (p *GetOperationResultResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetOperationResultResult")
+		return fmt.Errorf("no req in GetOperationResultResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -367,6 +395,9 @@ func (p *GetOperationResultResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetOperationResultResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(userupdates.UserOperationResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -418,7 +449,7 @@ type GetStateArgs struct {
 
 func (p *GetStateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetStateArgs")
+		return out, fmt.Errorf("no req in GetStateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -434,7 +465,7 @@ func (p *GetStateArgs) Unmarshal(in []byte) error {
 
 func (p *GetStateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetStateArgs")
+		return fmt.Errorf("no req in GetStateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -474,7 +505,7 @@ var GetStateResult_Success_DEFAULT *userupdates.UserState
 
 func (p *GetStateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetStateResult")
+		return out, fmt.Errorf("no req in GetStateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -490,7 +521,7 @@ func (p *GetStateResult) Unmarshal(in []byte) error {
 
 func (p *GetStateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetStateResult")
+		return fmt.Errorf("no req in GetStateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -498,6 +529,9 @@ func (p *GetStateResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetStateResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(userupdates.UserState)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -549,7 +583,7 @@ type GetDifferenceArgs struct {
 
 func (p *GetDifferenceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDifferenceArgs")
+		return out, fmt.Errorf("no req in GetDifferenceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -565,7 +599,7 @@ func (p *GetDifferenceArgs) Unmarshal(in []byte) error {
 
 func (p *GetDifferenceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDifferenceArgs")
+		return fmt.Errorf("no req in GetDifferenceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -605,7 +639,7 @@ var GetDifferenceResult_Success_DEFAULT *userupdates.UserDifference
 
 func (p *GetDifferenceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDifferenceResult")
+		return out, fmt.Errorf("no req in GetDifferenceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -621,7 +655,7 @@ func (p *GetDifferenceResult) Unmarshal(in []byte) error {
 
 func (p *GetDifferenceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDifferenceResult")
+		return fmt.Errorf("no req in GetDifferenceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -629,6 +663,9 @@ func (p *GetDifferenceResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDifferenceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(userupdates.UserDifference)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -668,59 +705,47 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) UserupdatesProcessUserOperation(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperation) (r *userupdates.UserOperationResult, err error) {
 	// var _args ProcessUserOperationArgs
 	// _args.Req = req
-	// var _result ProcessUserOperationResult
+	var _result ProcessUserOperationResult
 
-	_result := new(userupdates.UserOperationResult)
-
-	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.processUserOperation", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.processUserOperation", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult) (r *userupdates.UserOperationResult, err error) {
 	// var _args GetOperationResultArgs
 	// _args.Req = req
-	// var _result GetOperationResultResult
+	var _result GetOperationResultResult
 
-	_result := new(userupdates.UserOperationResult)
-
-	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getOperationResult", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getOperationResult", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UserupdatesGetState(ctx context.Context, req *userupdates.TLUserupdatesGetState) (r *userupdates.UserState, err error) {
 	// var _args GetStateArgs
 	// _args.Req = req
-	// var _result GetStateResult
+	var _result GetStateResult
 
-	_result := new(userupdates.UserState)
-
-	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getState", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getState", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference) (r *userupdates.UserDifference, err error) {
 	// var _args GetDifferenceArgs
 	// _args.Req = req
-	// var _result GetDifferenceResult
+	var _result GetDifferenceResult
 
-	_result := new(userupdates.UserDifference)
-
-	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDifference", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDifference", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

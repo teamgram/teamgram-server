@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/gateway.RPCGateway/gateway.pushUpdatesData": kitex.NewMethodInfo(
@@ -149,7 +174,7 @@ type PushUpdatesDataArgs struct {
 
 func (p *PushUpdatesDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PushUpdatesDataArgs")
+		return out, fmt.Errorf("no req in PushUpdatesDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -165,7 +190,7 @@ func (p *PushUpdatesDataArgs) Unmarshal(in []byte) error {
 
 func (p *PushUpdatesDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PushUpdatesDataArgs")
+		return fmt.Errorf("no req in PushUpdatesDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -205,7 +230,7 @@ var PushUpdatesDataResult_Success_DEFAULT *tg.Bool
 
 func (p *PushUpdatesDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PushUpdatesDataResult")
+		return out, fmt.Errorf("no req in PushUpdatesDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -221,7 +246,7 @@ func (p *PushUpdatesDataResult) Unmarshal(in []byte) error {
 
 func (p *PushUpdatesDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PushUpdatesDataResult")
+		return fmt.Errorf("no req in PushUpdatesDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -229,6 +254,9 @@ func (p *PushUpdatesDataResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushUpdatesDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -280,7 +308,7 @@ type PushSessionUpdatesDataArgs struct {
 
 func (p *PushSessionUpdatesDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PushSessionUpdatesDataArgs")
+		return out, fmt.Errorf("no req in PushSessionUpdatesDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -296,7 +324,7 @@ func (p *PushSessionUpdatesDataArgs) Unmarshal(in []byte) error {
 
 func (p *PushSessionUpdatesDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PushSessionUpdatesDataArgs")
+		return fmt.Errorf("no req in PushSessionUpdatesDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -336,7 +364,7 @@ var PushSessionUpdatesDataResult_Success_DEFAULT *tg.Bool
 
 func (p *PushSessionUpdatesDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PushSessionUpdatesDataResult")
+		return out, fmt.Errorf("no req in PushSessionUpdatesDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -352,7 +380,7 @@ func (p *PushSessionUpdatesDataResult) Unmarshal(in []byte) error {
 
 func (p *PushSessionUpdatesDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PushSessionUpdatesDataResult")
+		return fmt.Errorf("no req in PushSessionUpdatesDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -360,6 +388,9 @@ func (p *PushSessionUpdatesDataResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *PushSessionUpdatesDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -411,7 +442,7 @@ type PushRpcResultDataArgs struct {
 
 func (p *PushRpcResultDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PushRpcResultDataArgs")
+		return out, fmt.Errorf("no req in PushRpcResultDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -427,7 +458,7 @@ func (p *PushRpcResultDataArgs) Unmarshal(in []byte) error {
 
 func (p *PushRpcResultDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PushRpcResultDataArgs")
+		return fmt.Errorf("no req in PushRpcResultDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -467,7 +498,7 @@ var PushRpcResultDataResult_Success_DEFAULT *tg.Bool
 
 func (p *PushRpcResultDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PushRpcResultDataResult")
+		return out, fmt.Errorf("no req in PushRpcResultDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -483,7 +514,7 @@ func (p *PushRpcResultDataResult) Unmarshal(in []byte) error {
 
 func (p *PushRpcResultDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PushRpcResultDataResult")
+		return fmt.Errorf("no req in PushRpcResultDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -491,6 +522,9 @@ func (p *PushRpcResultDataResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PushRpcResultDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -530,44 +564,35 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) GatewayPushUpdatesData(ctx context.Context, req *gateway.TLGatewayPushUpdatesData) (r *tg.Bool, err error) {
 	// var _args PushUpdatesDataArgs
 	// _args.Req = req
-	// var _result PushUpdatesDataResult
+	var _result PushUpdatesDataResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushUpdatesData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushUpdatesData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) GatewayPushSessionUpdatesData(ctx context.Context, req *gateway.TLGatewayPushSessionUpdatesData) (r *tg.Bool, err error) {
 	// var _args PushSessionUpdatesDataArgs
 	// _args.Req = req
-	// var _result PushSessionUpdatesDataResult
+	var _result PushSessionUpdatesDataResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushSessionUpdatesData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushSessionUpdatesData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) GatewayPushRpcResultData(ctx context.Context, req *gateway.TLGatewayPushRpcResultData) (r *tg.Bool, err error) {
 	// var _args PushRpcResultDataArgs
 	// _args.Req = req
-	// var _result PushRpcResultDataResult
+	var _result PushRpcResultDataResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushRpcResultData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/gateway.RPCGateway/gateway.pushRpcResultData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

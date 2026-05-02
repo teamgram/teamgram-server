@@ -300,7 +300,7 @@ type GetAuthorizationsArgs struct {
 
 func (p *GetAuthorizationsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetAuthorizationsArgs")
+		return out, fmt.Errorf("no req in GetAuthorizationsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -316,7 +316,7 @@ func (p *GetAuthorizationsArgs) Unmarshal(in []byte) error {
 
 func (p *GetAuthorizationsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetAuthorizationsArgs")
+		return fmt.Errorf("no req in GetAuthorizationsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -356,7 +356,7 @@ var GetAuthorizationsResult_Success_DEFAULT *tg.AccountAuthorizations
 
 func (p *GetAuthorizationsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetAuthorizationsResult")
+		return out, fmt.Errorf("no req in GetAuthorizationsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -372,7 +372,7 @@ func (p *GetAuthorizationsResult) Unmarshal(in []byte) error {
 
 func (p *GetAuthorizationsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetAuthorizationsResult")
+		return fmt.Errorf("no req in GetAuthorizationsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -434,7 +434,7 @@ type ResetAuthorizationArgs struct {
 
 func (p *ResetAuthorizationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ResetAuthorizationArgs")
+		return out, fmt.Errorf("no req in ResetAuthorizationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -450,7 +450,7 @@ func (p *ResetAuthorizationArgs) Unmarshal(in []byte) error {
 
 func (p *ResetAuthorizationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ResetAuthorizationArgs")
+		return fmt.Errorf("no req in ResetAuthorizationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -490,7 +490,7 @@ var ResetAuthorizationResult_Success_DEFAULT *authsession.VectorLong
 
 func (p *ResetAuthorizationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ResetAuthorizationResult")
+		return out, fmt.Errorf("no req in ResetAuthorizationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -506,7 +506,7 @@ func (p *ResetAuthorizationResult) Unmarshal(in []byte) error {
 
 func (p *ResetAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ResetAuthorizationResult")
+		return fmt.Errorf("no req in ResetAuthorizationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -568,7 +568,7 @@ type GetLayerArgs struct {
 
 func (p *GetLayerArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetLayerArgs")
+		return out, fmt.Errorf("no req in GetLayerArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -584,7 +584,7 @@ func (p *GetLayerArgs) Unmarshal(in []byte) error {
 
 func (p *GetLayerArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetLayerArgs")
+		return fmt.Errorf("no req in GetLayerArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -624,7 +624,7 @@ var GetLayerResult_Success_DEFAULT *tg.Int32
 
 func (p *GetLayerResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetLayerResult")
+		return out, fmt.Errorf("no req in GetLayerResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -640,7 +640,7 @@ func (p *GetLayerResult) Unmarshal(in []byte) error {
 
 func (p *GetLayerResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetLayerResult")
+		return fmt.Errorf("no req in GetLayerResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -702,7 +702,7 @@ type GetLangPackArgs struct {
 
 func (p *GetLangPackArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetLangPackArgs")
+		return out, fmt.Errorf("no req in GetLangPackArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -718,7 +718,7 @@ func (p *GetLangPackArgs) Unmarshal(in []byte) error {
 
 func (p *GetLangPackArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetLangPackArgs")
+		return fmt.Errorf("no req in GetLangPackArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -758,7 +758,7 @@ var GetLangPackResult_Success_DEFAULT *tg.String
 
 func (p *GetLangPackResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetLangPackResult")
+		return out, fmt.Errorf("no req in GetLangPackResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -774,7 +774,7 @@ func (p *GetLangPackResult) Unmarshal(in []byte) error {
 
 func (p *GetLangPackResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetLangPackResult")
+		return fmt.Errorf("no req in GetLangPackResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -836,7 +836,7 @@ type GetClientArgs struct {
 
 func (p *GetClientArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetClientArgs")
+		return out, fmt.Errorf("no req in GetClientArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -852,7 +852,7 @@ func (p *GetClientArgs) Unmarshal(in []byte) error {
 
 func (p *GetClientArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetClientArgs")
+		return fmt.Errorf("no req in GetClientArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -892,7 +892,7 @@ var GetClientResult_Success_DEFAULT *tg.String
 
 func (p *GetClientResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetClientResult")
+		return out, fmt.Errorf("no req in GetClientResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -908,7 +908,7 @@ func (p *GetClientResult) Unmarshal(in []byte) error {
 
 func (p *GetClientResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetClientResult")
+		return fmt.Errorf("no req in GetClientResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -970,7 +970,7 @@ type GetLangCodeArgs struct {
 
 func (p *GetLangCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetLangCodeArgs")
+		return out, fmt.Errorf("no req in GetLangCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -986,7 +986,7 @@ func (p *GetLangCodeArgs) Unmarshal(in []byte) error {
 
 func (p *GetLangCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetLangCodeArgs")
+		return fmt.Errorf("no req in GetLangCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1026,7 +1026,7 @@ var GetLangCodeResult_Success_DEFAULT *tg.String
 
 func (p *GetLangCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetLangCodeResult")
+		return out, fmt.Errorf("no req in GetLangCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1042,7 +1042,7 @@ func (p *GetLangCodeResult) Unmarshal(in []byte) error {
 
 func (p *GetLangCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetLangCodeResult")
+		return fmt.Errorf("no req in GetLangCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1104,7 +1104,7 @@ type GetUserIdArgs struct {
 
 func (p *GetUserIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetUserIdArgs")
+		return out, fmt.Errorf("no req in GetUserIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1120,7 +1120,7 @@ func (p *GetUserIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetUserIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetUserIdArgs")
+		return fmt.Errorf("no req in GetUserIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1160,7 +1160,7 @@ var GetUserIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetUserIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetUserIdResult")
+		return out, fmt.Errorf("no req in GetUserIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1176,7 +1176,7 @@ func (p *GetUserIdResult) Unmarshal(in []byte) error {
 
 func (p *GetUserIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetUserIdResult")
+		return fmt.Errorf("no req in GetUserIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1238,7 +1238,7 @@ type GetPushSessionIdArgs struct {
 
 func (p *GetPushSessionIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPushSessionIdArgs")
+		return out, fmt.Errorf("no req in GetPushSessionIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1254,7 +1254,7 @@ func (p *GetPushSessionIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetPushSessionIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPushSessionIdArgs")
+		return fmt.Errorf("no req in GetPushSessionIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1294,7 +1294,7 @@ var GetPushSessionIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetPushSessionIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPushSessionIdResult")
+		return out, fmt.Errorf("no req in GetPushSessionIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1310,7 +1310,7 @@ func (p *GetPushSessionIdResult) Unmarshal(in []byte) error {
 
 func (p *GetPushSessionIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPushSessionIdResult")
+		return fmt.Errorf("no req in GetPushSessionIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1372,7 +1372,7 @@ type GetFutureSaltsArgs struct {
 
 func (p *GetFutureSaltsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetFutureSaltsArgs")
+		return out, fmt.Errorf("no req in GetFutureSaltsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1388,7 +1388,7 @@ func (p *GetFutureSaltsArgs) Unmarshal(in []byte) error {
 
 func (p *GetFutureSaltsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetFutureSaltsArgs")
+		return fmt.Errorf("no req in GetFutureSaltsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1428,7 +1428,7 @@ var GetFutureSaltsResult_Success_DEFAULT *tg.FutureSalts
 
 func (p *GetFutureSaltsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetFutureSaltsResult")
+		return out, fmt.Errorf("no req in GetFutureSaltsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1444,7 +1444,7 @@ func (p *GetFutureSaltsResult) Unmarshal(in []byte) error {
 
 func (p *GetFutureSaltsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetFutureSaltsResult")
+		return fmt.Errorf("no req in GetFutureSaltsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1506,7 +1506,7 @@ type QueryAuthKeyArgs struct {
 
 func (p *QueryAuthKeyArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in QueryAuthKeyArgs")
+		return out, fmt.Errorf("no req in QueryAuthKeyArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1522,7 +1522,7 @@ func (p *QueryAuthKeyArgs) Unmarshal(in []byte) error {
 
 func (p *QueryAuthKeyArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in QueryAuthKeyArgs")
+		return fmt.Errorf("no req in QueryAuthKeyArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1562,7 +1562,7 @@ var QueryAuthKeyResult_Success_DEFAULT *tg.AuthKeyInfo
 
 func (p *QueryAuthKeyResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in QueryAuthKeyResult")
+		return out, fmt.Errorf("no req in QueryAuthKeyResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1578,7 +1578,7 @@ func (p *QueryAuthKeyResult) Unmarshal(in []byte) error {
 
 func (p *QueryAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in QueryAuthKeyResult")
+		return fmt.Errorf("no req in QueryAuthKeyResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1640,7 +1640,7 @@ type SetAuthKeyArgs struct {
 
 func (p *SetAuthKeyArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetAuthKeyArgs")
+		return out, fmt.Errorf("no req in SetAuthKeyArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1656,7 +1656,7 @@ func (p *SetAuthKeyArgs) Unmarshal(in []byte) error {
 
 func (p *SetAuthKeyArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetAuthKeyArgs")
+		return fmt.Errorf("no req in SetAuthKeyArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1696,7 +1696,7 @@ var SetAuthKeyResult_Success_DEFAULT *tg.Bool
 
 func (p *SetAuthKeyResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetAuthKeyResult")
+		return out, fmt.Errorf("no req in SetAuthKeyResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1712,7 +1712,7 @@ func (p *SetAuthKeyResult) Unmarshal(in []byte) error {
 
 func (p *SetAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetAuthKeyResult")
+		return fmt.Errorf("no req in SetAuthKeyResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1774,7 +1774,7 @@ type BindAuthKeyUserArgs struct {
 
 func (p *BindAuthKeyUserArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in BindAuthKeyUserArgs")
+		return out, fmt.Errorf("no req in BindAuthKeyUserArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1790,7 +1790,7 @@ func (p *BindAuthKeyUserArgs) Unmarshal(in []byte) error {
 
 func (p *BindAuthKeyUserArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in BindAuthKeyUserArgs")
+		return fmt.Errorf("no req in BindAuthKeyUserArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1830,7 +1830,7 @@ var BindAuthKeyUserResult_Success_DEFAULT *tg.Int64
 
 func (p *BindAuthKeyUserResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in BindAuthKeyUserResult")
+		return out, fmt.Errorf("no req in BindAuthKeyUserResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1846,7 +1846,7 @@ func (p *BindAuthKeyUserResult) Unmarshal(in []byte) error {
 
 func (p *BindAuthKeyUserResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in BindAuthKeyUserResult")
+		return fmt.Errorf("no req in BindAuthKeyUserResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1908,7 +1908,7 @@ type UnbindAuthKeyUserArgs struct {
 
 func (p *UnbindAuthKeyUserArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UnbindAuthKeyUserArgs")
+		return out, fmt.Errorf("no req in UnbindAuthKeyUserArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1924,7 +1924,7 @@ func (p *UnbindAuthKeyUserArgs) Unmarshal(in []byte) error {
 
 func (p *UnbindAuthKeyUserArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UnbindAuthKeyUserArgs")
+		return fmt.Errorf("no req in UnbindAuthKeyUserArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1964,7 +1964,7 @@ var UnbindAuthKeyUserResult_Success_DEFAULT *tg.Bool
 
 func (p *UnbindAuthKeyUserResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UnbindAuthKeyUserResult")
+		return out, fmt.Errorf("no req in UnbindAuthKeyUserResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1980,7 +1980,7 @@ func (p *UnbindAuthKeyUserResult) Unmarshal(in []byte) error {
 
 func (p *UnbindAuthKeyUserResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UnbindAuthKeyUserResult")
+		return fmt.Errorf("no req in UnbindAuthKeyUserResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2042,7 +2042,7 @@ type GetPermAuthKeyIdArgs struct {
 
 func (p *GetPermAuthKeyIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPermAuthKeyIdArgs")
+		return out, fmt.Errorf("no req in GetPermAuthKeyIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2058,7 +2058,7 @@ func (p *GetPermAuthKeyIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetPermAuthKeyIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPermAuthKeyIdArgs")
+		return fmt.Errorf("no req in GetPermAuthKeyIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2098,7 +2098,7 @@ var GetPermAuthKeyIdResult_Success_DEFAULT *tg.Int64
 
 func (p *GetPermAuthKeyIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPermAuthKeyIdResult")
+		return out, fmt.Errorf("no req in GetPermAuthKeyIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2114,7 +2114,7 @@ func (p *GetPermAuthKeyIdResult) Unmarshal(in []byte) error {
 
 func (p *GetPermAuthKeyIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPermAuthKeyIdResult")
+		return fmt.Errorf("no req in GetPermAuthKeyIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2176,7 +2176,7 @@ type BindTempAuthKeyArgs struct {
 
 func (p *BindTempAuthKeyArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in BindTempAuthKeyArgs")
+		return out, fmt.Errorf("no req in BindTempAuthKeyArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2192,7 +2192,7 @@ func (p *BindTempAuthKeyArgs) Unmarshal(in []byte) error {
 
 func (p *BindTempAuthKeyArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in BindTempAuthKeyArgs")
+		return fmt.Errorf("no req in BindTempAuthKeyArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2232,7 +2232,7 @@ var BindTempAuthKeyResult_Success_DEFAULT *tg.Bool
 
 func (p *BindTempAuthKeyResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in BindTempAuthKeyResult")
+		return out, fmt.Errorf("no req in BindTempAuthKeyResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2248,7 +2248,7 @@ func (p *BindTempAuthKeyResult) Unmarshal(in []byte) error {
 
 func (p *BindTempAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in BindTempAuthKeyResult")
+		return fmt.Errorf("no req in BindTempAuthKeyResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2310,7 +2310,7 @@ type SetClientSessionInfoArgs struct {
 
 func (p *SetClientSessionInfoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetClientSessionInfoArgs")
+		return out, fmt.Errorf("no req in SetClientSessionInfoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2326,7 +2326,7 @@ func (p *SetClientSessionInfoArgs) Unmarshal(in []byte) error {
 
 func (p *SetClientSessionInfoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetClientSessionInfoArgs")
+		return fmt.Errorf("no req in SetClientSessionInfoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2366,7 +2366,7 @@ var SetClientSessionInfoResult_Success_DEFAULT *tg.Bool
 
 func (p *SetClientSessionInfoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetClientSessionInfoResult")
+		return out, fmt.Errorf("no req in SetClientSessionInfoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2382,7 +2382,7 @@ func (p *SetClientSessionInfoResult) Unmarshal(in []byte) error {
 
 func (p *SetClientSessionInfoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetClientSessionInfoResult")
+		return fmt.Errorf("no req in SetClientSessionInfoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2444,7 +2444,7 @@ type GetAuthorizationArgs struct {
 
 func (p *GetAuthorizationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetAuthorizationArgs")
+		return out, fmt.Errorf("no req in GetAuthorizationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2460,7 +2460,7 @@ func (p *GetAuthorizationArgs) Unmarshal(in []byte) error {
 
 func (p *GetAuthorizationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetAuthorizationArgs")
+		return fmt.Errorf("no req in GetAuthorizationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2500,7 +2500,7 @@ var GetAuthorizationResult_Success_DEFAULT *tg.Authorization
 
 func (p *GetAuthorizationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetAuthorizationResult")
+		return out, fmt.Errorf("no req in GetAuthorizationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2516,7 +2516,7 @@ func (p *GetAuthorizationResult) Unmarshal(in []byte) error {
 
 func (p *GetAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetAuthorizationResult")
+		return fmt.Errorf("no req in GetAuthorizationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2578,7 +2578,7 @@ type GetAuthStateDataArgs struct {
 
 func (p *GetAuthStateDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetAuthStateDataArgs")
+		return out, fmt.Errorf("no req in GetAuthStateDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2594,7 +2594,7 @@ func (p *GetAuthStateDataArgs) Unmarshal(in []byte) error {
 
 func (p *GetAuthStateDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetAuthStateDataArgs")
+		return fmt.Errorf("no req in GetAuthStateDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2634,7 +2634,7 @@ var GetAuthStateDataResult_Success_DEFAULT *authsession.AuthKeyStateData
 
 func (p *GetAuthStateDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetAuthStateDataResult")
+		return out, fmt.Errorf("no req in GetAuthStateDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2650,7 +2650,7 @@ func (p *GetAuthStateDataResult) Unmarshal(in []byte) error {
 
 func (p *GetAuthStateDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetAuthStateDataResult")
+		return fmt.Errorf("no req in GetAuthStateDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2712,7 +2712,7 @@ type SetLayerArgs struct {
 
 func (p *SetLayerArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetLayerArgs")
+		return out, fmt.Errorf("no req in SetLayerArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2728,7 +2728,7 @@ func (p *SetLayerArgs) Unmarshal(in []byte) error {
 
 func (p *SetLayerArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetLayerArgs")
+		return fmt.Errorf("no req in SetLayerArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2768,7 +2768,7 @@ var SetLayerResult_Success_DEFAULT *tg.Bool
 
 func (p *SetLayerResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetLayerResult")
+		return out, fmt.Errorf("no req in SetLayerResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2784,7 +2784,7 @@ func (p *SetLayerResult) Unmarshal(in []byte) error {
 
 func (p *SetLayerResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetLayerResult")
+		return fmt.Errorf("no req in SetLayerResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2846,7 +2846,7 @@ type SetInitConnectionArgs struct {
 
 func (p *SetInitConnectionArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetInitConnectionArgs")
+		return out, fmt.Errorf("no req in SetInitConnectionArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2862,7 +2862,7 @@ func (p *SetInitConnectionArgs) Unmarshal(in []byte) error {
 
 func (p *SetInitConnectionArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetInitConnectionArgs")
+		return fmt.Errorf("no req in SetInitConnectionArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2902,7 +2902,7 @@ var SetInitConnectionResult_Success_DEFAULT *tg.Bool
 
 func (p *SetInitConnectionResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetInitConnectionResult")
+		return out, fmt.Errorf("no req in SetInitConnectionResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2918,7 +2918,7 @@ func (p *SetInitConnectionResult) Unmarshal(in []byte) error {
 
 func (p *SetInitConnectionResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetInitConnectionResult")
+		return fmt.Errorf("no req in SetInitConnectionResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2980,7 +2980,7 @@ type SetAndroidPushSessionIdArgs struct {
 
 func (p *SetAndroidPushSessionIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetAndroidPushSessionIdArgs")
+		return out, fmt.Errorf("no req in SetAndroidPushSessionIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2996,7 +2996,7 @@ func (p *SetAndroidPushSessionIdArgs) Unmarshal(in []byte) error {
 
 func (p *SetAndroidPushSessionIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetAndroidPushSessionIdArgs")
+		return fmt.Errorf("no req in SetAndroidPushSessionIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3036,7 +3036,7 @@ var SetAndroidPushSessionIdResult_Success_DEFAULT *tg.Bool
 
 func (p *SetAndroidPushSessionIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetAndroidPushSessionIdResult")
+		return out, fmt.Errorf("no req in SetAndroidPushSessionIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3052,7 +3052,7 @@ func (p *SetAndroidPushSessionIdResult) Unmarshal(in []byte) error {
 
 func (p *SetAndroidPushSessionIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetAndroidPushSessionIdResult")
+		return fmt.Errorf("no req in SetAndroidPushSessionIdResult")
 	}
 
 	return p.Success.Encode(x, layer)

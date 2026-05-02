@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/code.RPCCode/code.createPhoneCode": kitex.NewMethodInfo(
@@ -156,7 +181,7 @@ type CreatePhoneCodeArgs struct {
 
 func (p *CreatePhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in CreatePhoneCodeArgs")
+		return out, fmt.Errorf("no req in CreatePhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -172,7 +197,7 @@ func (p *CreatePhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *CreatePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in CreatePhoneCodeArgs")
+		return fmt.Errorf("no req in CreatePhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -212,7 +237,7 @@ var CreatePhoneCodeResult_Success_DEFAULT *code.PhoneCodeTransaction
 
 func (p *CreatePhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in CreatePhoneCodeResult")
+		return out, fmt.Errorf("no req in CreatePhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -228,7 +253,7 @@ func (p *CreatePhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *CreatePhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in CreatePhoneCodeResult")
+		return fmt.Errorf("no req in CreatePhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -236,6 +261,9 @@ func (p *CreatePhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreatePhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.PhoneCodeTransaction)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -287,7 +315,7 @@ type GetPhoneCodeArgs struct {
 
 func (p *GetPhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPhoneCodeArgs")
+		return out, fmt.Errorf("no req in GetPhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -303,7 +331,7 @@ func (p *GetPhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *GetPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPhoneCodeArgs")
+		return fmt.Errorf("no req in GetPhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -343,7 +371,7 @@ var GetPhoneCodeResult_Success_DEFAULT *code.PhoneCodeTransaction
 
 func (p *GetPhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPhoneCodeResult")
+		return out, fmt.Errorf("no req in GetPhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -359,7 +387,7 @@ func (p *GetPhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *GetPhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPhoneCodeResult")
+		return fmt.Errorf("no req in GetPhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -367,6 +395,9 @@ func (p *GetPhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(code.PhoneCodeTransaction)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -418,7 +449,7 @@ type DeletePhoneCodeArgs struct {
 
 func (p *DeletePhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeletePhoneCodeArgs")
+		return out, fmt.Errorf("no req in DeletePhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -434,7 +465,7 @@ func (p *DeletePhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *DeletePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeletePhoneCodeArgs")
+		return fmt.Errorf("no req in DeletePhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -474,7 +505,7 @@ var DeletePhoneCodeResult_Success_DEFAULT *tg.Bool
 
 func (p *DeletePhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeletePhoneCodeResult")
+		return out, fmt.Errorf("no req in DeletePhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -490,7 +521,7 @@ func (p *DeletePhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *DeletePhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeletePhoneCodeResult")
+		return fmt.Errorf("no req in DeletePhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -498,6 +529,9 @@ func (p *DeletePhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeletePhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -549,7 +583,7 @@ type UpdatePhoneCodeDataArgs struct {
 
 func (p *UpdatePhoneCodeDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdatePhoneCodeDataArgs")
+		return out, fmt.Errorf("no req in UpdatePhoneCodeDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -565,7 +599,7 @@ func (p *UpdatePhoneCodeDataArgs) Unmarshal(in []byte) error {
 
 func (p *UpdatePhoneCodeDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdatePhoneCodeDataArgs")
+		return fmt.Errorf("no req in UpdatePhoneCodeDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -605,7 +639,7 @@ var UpdatePhoneCodeDataResult_Success_DEFAULT *tg.Bool
 
 func (p *UpdatePhoneCodeDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdatePhoneCodeDataResult")
+		return out, fmt.Errorf("no req in UpdatePhoneCodeDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -621,7 +655,7 @@ func (p *UpdatePhoneCodeDataResult) Unmarshal(in []byte) error {
 
 func (p *UpdatePhoneCodeDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdatePhoneCodeDataResult")
+		return fmt.Errorf("no req in UpdatePhoneCodeDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -629,6 +663,9 @@ func (p *UpdatePhoneCodeDataResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatePhoneCodeDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -668,59 +705,47 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) CodeCreatePhoneCode(ctx context.Context, req *code.TLCodeCreatePhoneCode) (r *code.PhoneCodeTransaction, err error) {
 	// var _args CreatePhoneCodeArgs
 	// _args.Req = req
-	// var _result CreatePhoneCodeResult
+	var _result CreatePhoneCodeResult
 
-	_result := new(code.PhoneCodeTransaction)
-
-	if err = p.c.Call(ctx, "/code.RPCCode/code.createPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.createPhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) CodeGetPhoneCode(ctx context.Context, req *code.TLCodeGetPhoneCode) (r *code.PhoneCodeTransaction, err error) {
 	// var _args GetPhoneCodeArgs
 	// _args.Req = req
-	// var _result GetPhoneCodeResult
+	var _result GetPhoneCodeResult
 
-	_result := new(code.PhoneCodeTransaction)
-
-	if err = p.c.Call(ctx, "/code.RPCCode/code.getPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.getPhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) CodeDeletePhoneCode(ctx context.Context, req *code.TLCodeDeletePhoneCode) (r *tg.Bool, err error) {
 	// var _args DeletePhoneCodeArgs
 	// _args.Req = req
-	// var _result DeletePhoneCodeResult
+	var _result DeletePhoneCodeResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/code.RPCCode/code.deletePhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.deletePhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) CodeUpdatePhoneCodeData(ctx context.Context, req *code.TLCodeUpdatePhoneCodeData) (r *tg.Bool, err error) {
 	// var _args UpdatePhoneCodeDataArgs
 	// _args.Req = req
-	// var _result UpdatePhoneCodeDataResult
+	var _result UpdatePhoneCodeDataResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/code.RPCCode/code.updatePhoneCodeData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.updatePhoneCodeData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/updates.RPCUpdates/updates.getStateV2": kitex.NewMethodInfo(
@@ -149,7 +174,7 @@ type GetStateV2Args struct {
 
 func (p *GetStateV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetStateV2Args")
+		return out, fmt.Errorf("no req in GetStateV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -165,7 +190,7 @@ func (p *GetStateV2Args) Unmarshal(in []byte) error {
 
 func (p *GetStateV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetStateV2Args")
+		return fmt.Errorf("no req in GetStateV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -205,7 +230,7 @@ var GetStateV2Result_Success_DEFAULT *tg.UpdatesState
 
 func (p *GetStateV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetStateV2Result")
+		return out, fmt.Errorf("no req in GetStateV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -221,7 +246,7 @@ func (p *GetStateV2Result) Unmarshal(in []byte) error {
 
 func (p *GetStateV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetStateV2Result")
+		return fmt.Errorf("no req in GetStateV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -229,6 +254,9 @@ func (p *GetStateV2Result) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetStateV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UpdatesState)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -280,7 +308,7 @@ type GetDifferenceV2Args struct {
 
 func (p *GetDifferenceV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDifferenceV2Args")
+		return out, fmt.Errorf("no req in GetDifferenceV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -296,7 +324,7 @@ func (p *GetDifferenceV2Args) Unmarshal(in []byte) error {
 
 func (p *GetDifferenceV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDifferenceV2Args")
+		return fmt.Errorf("no req in GetDifferenceV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -336,7 +364,7 @@ var GetDifferenceV2Result_Success_DEFAULT *updates.Difference
 
 func (p *GetDifferenceV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDifferenceV2Result")
+		return out, fmt.Errorf("no req in GetDifferenceV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -352,7 +380,7 @@ func (p *GetDifferenceV2Result) Unmarshal(in []byte) error {
 
 func (p *GetDifferenceV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDifferenceV2Result")
+		return fmt.Errorf("no req in GetDifferenceV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -360,6 +388,9 @@ func (p *GetDifferenceV2Result) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDifferenceV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(updates.Difference)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -411,7 +442,7 @@ type GetChannelDifferenceV2Args struct {
 
 func (p *GetChannelDifferenceV2Args) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetChannelDifferenceV2Args")
+		return out, fmt.Errorf("no req in GetChannelDifferenceV2Args")
 	}
 	return json.Marshal(p.Req)
 }
@@ -427,7 +458,7 @@ func (p *GetChannelDifferenceV2Args) Unmarshal(in []byte) error {
 
 func (p *GetChannelDifferenceV2Args) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetChannelDifferenceV2Args")
+		return fmt.Errorf("no req in GetChannelDifferenceV2Args")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -467,7 +498,7 @@ var GetChannelDifferenceV2Result_Success_DEFAULT *updates.ChannelDifference
 
 func (p *GetChannelDifferenceV2Result) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetChannelDifferenceV2Result")
+		return out, fmt.Errorf("no req in GetChannelDifferenceV2Result")
 	}
 	return json.Marshal(p.Success)
 }
@@ -483,7 +514,7 @@ func (p *GetChannelDifferenceV2Result) Unmarshal(in []byte) error {
 
 func (p *GetChannelDifferenceV2Result) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetChannelDifferenceV2Result")
+		return fmt.Errorf("no req in GetChannelDifferenceV2Result")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -491,6 +522,9 @@ func (p *GetChannelDifferenceV2Result) Encode(x *bin.Encoder, layer int32) error
 
 func (p *GetChannelDifferenceV2Result) Decode(d *bin.Decoder) (err error) {
 	msg := new(updates.ChannelDifference)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -530,44 +564,35 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) UpdatesGetStateV2(ctx context.Context, req *updates.TLUpdatesGetStateV2) (r *tg.UpdatesState, err error) {
 	// var _args GetStateV2Args
 	// _args.Req = req
-	// var _result GetStateV2Result
+	var _result GetStateV2Result
 
-	_result := new(tg.UpdatesState)
-
-	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getStateV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getStateV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UpdatesGetDifferenceV2(ctx context.Context, req *updates.TLUpdatesGetDifferenceV2) (r *updates.Difference, err error) {
 	// var _args GetDifferenceV2Args
 	// _args.Req = req
-	// var _result GetDifferenceV2Result
+	var _result GetDifferenceV2Result
 
-	_result := new(updates.Difference)
-
-	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getDifferenceV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getDifferenceV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UpdatesGetChannelDifferenceV2(ctx context.Context, req *updates.TLUpdatesGetChannelDifferenceV2) (r *updates.ChannelDifference, err error) {
 	// var _args GetChannelDifferenceV2Args
 	// _args.Req = req
-	// var _result GetChannelDifferenceV2Result
+	var _result GetChannelDifferenceV2Result
 
-	_result := new(updates.ChannelDifference)
-
-	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getChannelDifferenceV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getChannelDifferenceV2", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

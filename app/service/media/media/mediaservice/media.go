@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/media.RPCMedia/media.uploadPhotoFile": kitex.NewMethodInfo(
@@ -240,7 +265,7 @@ type UploadPhotoFileArgs struct {
 
 func (p *UploadPhotoFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadPhotoFileArgs")
+		return out, fmt.Errorf("no req in UploadPhotoFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -256,7 +281,7 @@ func (p *UploadPhotoFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadPhotoFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadPhotoFileArgs")
+		return fmt.Errorf("no req in UploadPhotoFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -296,7 +321,7 @@ var UploadPhotoFileResult_Success_DEFAULT *tg.Photo
 
 func (p *UploadPhotoFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadPhotoFileResult")
+		return out, fmt.Errorf("no req in UploadPhotoFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -312,7 +337,7 @@ func (p *UploadPhotoFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadPhotoFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadPhotoFileResult")
+		return fmt.Errorf("no req in UploadPhotoFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -320,6 +345,9 @@ func (p *UploadPhotoFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadPhotoFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Photo)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -371,7 +399,7 @@ type UploadProfilePhotoFileArgs struct {
 
 func (p *UploadProfilePhotoFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadProfilePhotoFileArgs")
+		return out, fmt.Errorf("no req in UploadProfilePhotoFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -387,7 +415,7 @@ func (p *UploadProfilePhotoFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadProfilePhotoFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadProfilePhotoFileArgs")
+		return fmt.Errorf("no req in UploadProfilePhotoFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -427,7 +455,7 @@ var UploadProfilePhotoFileResult_Success_DEFAULT *tg.Photo
 
 func (p *UploadProfilePhotoFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadProfilePhotoFileResult")
+		return out, fmt.Errorf("no req in UploadProfilePhotoFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -443,7 +471,7 @@ func (p *UploadProfilePhotoFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadProfilePhotoFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadProfilePhotoFileResult")
+		return fmt.Errorf("no req in UploadProfilePhotoFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -451,6 +479,9 @@ func (p *UploadProfilePhotoFileResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *UploadProfilePhotoFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Photo)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -502,7 +533,7 @@ type GetPhotoArgs struct {
 
 func (p *GetPhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPhotoArgs")
+		return out, fmt.Errorf("no req in GetPhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -518,7 +549,7 @@ func (p *GetPhotoArgs) Unmarshal(in []byte) error {
 
 func (p *GetPhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPhotoArgs")
+		return fmt.Errorf("no req in GetPhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -558,7 +589,7 @@ var GetPhotoResult_Success_DEFAULT *tg.Photo
 
 func (p *GetPhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPhotoResult")
+		return out, fmt.Errorf("no req in GetPhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -574,7 +605,7 @@ func (p *GetPhotoResult) Unmarshal(in []byte) error {
 
 func (p *GetPhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPhotoResult")
+		return fmt.Errorf("no req in GetPhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -582,6 +613,9 @@ func (p *GetPhotoResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Photo)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -633,7 +667,7 @@ type GetPhotoSizeListArgs struct {
 
 func (p *GetPhotoSizeListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPhotoSizeListArgs")
+		return out, fmt.Errorf("no req in GetPhotoSizeListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -649,7 +683,7 @@ func (p *GetPhotoSizeListArgs) Unmarshal(in []byte) error {
 
 func (p *GetPhotoSizeListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPhotoSizeListArgs")
+		return fmt.Errorf("no req in GetPhotoSizeListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -689,7 +723,7 @@ var GetPhotoSizeListResult_Success_DEFAULT *media.PhotoSizeList
 
 func (p *GetPhotoSizeListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPhotoSizeListResult")
+		return out, fmt.Errorf("no req in GetPhotoSizeListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -705,7 +739,7 @@ func (p *GetPhotoSizeListResult) Unmarshal(in []byte) error {
 
 func (p *GetPhotoSizeListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPhotoSizeListResult")
+		return fmt.Errorf("no req in GetPhotoSizeListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -713,6 +747,9 @@ func (p *GetPhotoSizeListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoSizeListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.PhotoSizeList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -764,7 +801,7 @@ type GetPhotoSizeListListArgs struct {
 
 func (p *GetPhotoSizeListListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPhotoSizeListListArgs")
+		return out, fmt.Errorf("no req in GetPhotoSizeListListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -780,7 +817,7 @@ func (p *GetPhotoSizeListListArgs) Unmarshal(in []byte) error {
 
 func (p *GetPhotoSizeListListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPhotoSizeListListArgs")
+		return fmt.Errorf("no req in GetPhotoSizeListListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -820,7 +857,7 @@ var GetPhotoSizeListListResult_Success_DEFAULT *media.VectorPhotoSizeList
 
 func (p *GetPhotoSizeListListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPhotoSizeListListResult")
+		return out, fmt.Errorf("no req in GetPhotoSizeListListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -836,7 +873,7 @@ func (p *GetPhotoSizeListListResult) Unmarshal(in []byte) error {
 
 func (p *GetPhotoSizeListListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPhotoSizeListListResult")
+		return fmt.Errorf("no req in GetPhotoSizeListListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -844,6 +881,9 @@ func (p *GetPhotoSizeListListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPhotoSizeListListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.VectorPhotoSizeList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -895,7 +935,7 @@ type GetVideoSizeListArgs struct {
 
 func (p *GetVideoSizeListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetVideoSizeListArgs")
+		return out, fmt.Errorf("no req in GetVideoSizeListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -911,7 +951,7 @@ func (p *GetVideoSizeListArgs) Unmarshal(in []byte) error {
 
 func (p *GetVideoSizeListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetVideoSizeListArgs")
+		return fmt.Errorf("no req in GetVideoSizeListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -951,7 +991,7 @@ var GetVideoSizeListResult_Success_DEFAULT *media.VideoSizeList
 
 func (p *GetVideoSizeListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetVideoSizeListResult")
+		return out, fmt.Errorf("no req in GetVideoSizeListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -967,7 +1007,7 @@ func (p *GetVideoSizeListResult) Unmarshal(in []byte) error {
 
 func (p *GetVideoSizeListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetVideoSizeListResult")
+		return fmt.Errorf("no req in GetVideoSizeListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -975,6 +1015,9 @@ func (p *GetVideoSizeListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetVideoSizeListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.VideoSizeList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1026,7 +1069,7 @@ type UploadedDocumentMediaArgs struct {
 
 func (p *UploadedDocumentMediaArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadedDocumentMediaArgs")
+		return out, fmt.Errorf("no req in UploadedDocumentMediaArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1042,7 +1085,7 @@ func (p *UploadedDocumentMediaArgs) Unmarshal(in []byte) error {
 
 func (p *UploadedDocumentMediaArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadedDocumentMediaArgs")
+		return fmt.Errorf("no req in UploadedDocumentMediaArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1082,7 +1125,7 @@ var UploadedDocumentMediaResult_Success_DEFAULT *tg.MessageMedia
 
 func (p *UploadedDocumentMediaResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadedDocumentMediaResult")
+		return out, fmt.Errorf("no req in UploadedDocumentMediaResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1098,7 +1141,7 @@ func (p *UploadedDocumentMediaResult) Unmarshal(in []byte) error {
 
 func (p *UploadedDocumentMediaResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadedDocumentMediaResult")
+		return fmt.Errorf("no req in UploadedDocumentMediaResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1106,6 +1149,9 @@ func (p *UploadedDocumentMediaResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *UploadedDocumentMediaResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessageMedia)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1157,7 +1203,7 @@ type GetDocumentArgs struct {
 
 func (p *GetDocumentArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDocumentArgs")
+		return out, fmt.Errorf("no req in GetDocumentArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1173,7 +1219,7 @@ func (p *GetDocumentArgs) Unmarshal(in []byte) error {
 
 func (p *GetDocumentArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDocumentArgs")
+		return fmt.Errorf("no req in GetDocumentArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1213,7 +1259,7 @@ var GetDocumentResult_Success_DEFAULT *tg.Document
 
 func (p *GetDocumentResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDocumentResult")
+		return out, fmt.Errorf("no req in GetDocumentResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1229,7 +1275,7 @@ func (p *GetDocumentResult) Unmarshal(in []byte) error {
 
 func (p *GetDocumentResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDocumentResult")
+		return fmt.Errorf("no req in GetDocumentResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1237,6 +1283,9 @@ func (p *GetDocumentResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDocumentResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Document)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1288,7 +1337,7 @@ type GetDocumentListArgs struct {
 
 func (p *GetDocumentListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDocumentListArgs")
+		return out, fmt.Errorf("no req in GetDocumentListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1304,7 +1353,7 @@ func (p *GetDocumentListArgs) Unmarshal(in []byte) error {
 
 func (p *GetDocumentListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDocumentListArgs")
+		return fmt.Errorf("no req in GetDocumentListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1344,7 +1393,7 @@ var GetDocumentListResult_Success_DEFAULT *media.VectorDocument
 
 func (p *GetDocumentListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDocumentListResult")
+		return out, fmt.Errorf("no req in GetDocumentListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1360,7 +1409,7 @@ func (p *GetDocumentListResult) Unmarshal(in []byte) error {
 
 func (p *GetDocumentListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDocumentListResult")
+		return fmt.Errorf("no req in GetDocumentListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1368,6 +1417,9 @@ func (p *GetDocumentListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDocumentListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(media.VectorDocument)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1419,7 +1471,7 @@ type UploadEncryptedFileArgs struct {
 
 func (p *UploadEncryptedFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadEncryptedFileArgs")
+		return out, fmt.Errorf("no req in UploadEncryptedFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1435,7 +1487,7 @@ func (p *UploadEncryptedFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadEncryptedFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadEncryptedFileArgs")
+		return fmt.Errorf("no req in UploadEncryptedFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1475,7 +1527,7 @@ var UploadEncryptedFileResult_Success_DEFAULT *tg.EncryptedFile
 
 func (p *UploadEncryptedFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadEncryptedFileResult")
+		return out, fmt.Errorf("no req in UploadEncryptedFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1491,7 +1543,7 @@ func (p *UploadEncryptedFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadEncryptedFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadEncryptedFileResult")
+		return fmt.Errorf("no req in UploadEncryptedFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1499,6 +1551,9 @@ func (p *UploadEncryptedFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadEncryptedFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.EncryptedFile)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1550,7 +1605,7 @@ type GetEncryptedFileArgs struct {
 
 func (p *GetEncryptedFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetEncryptedFileArgs")
+		return out, fmt.Errorf("no req in GetEncryptedFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1566,7 +1621,7 @@ func (p *GetEncryptedFileArgs) Unmarshal(in []byte) error {
 
 func (p *GetEncryptedFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetEncryptedFileArgs")
+		return fmt.Errorf("no req in GetEncryptedFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1606,7 +1661,7 @@ var GetEncryptedFileResult_Success_DEFAULT *tg.EncryptedFile
 
 func (p *GetEncryptedFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetEncryptedFileResult")
+		return out, fmt.Errorf("no req in GetEncryptedFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1622,7 +1677,7 @@ func (p *GetEncryptedFileResult) Unmarshal(in []byte) error {
 
 func (p *GetEncryptedFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetEncryptedFileResult")
+		return fmt.Errorf("no req in GetEncryptedFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1630,6 +1685,9 @@ func (p *GetEncryptedFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetEncryptedFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.EncryptedFile)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1681,7 +1739,7 @@ type UploadWallPaperFileArgs struct {
 
 func (p *UploadWallPaperFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadWallPaperFileArgs")
+		return out, fmt.Errorf("no req in UploadWallPaperFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1697,7 +1755,7 @@ func (p *UploadWallPaperFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadWallPaperFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadWallPaperFileArgs")
+		return fmt.Errorf("no req in UploadWallPaperFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1737,7 +1795,7 @@ var UploadWallPaperFileResult_Success_DEFAULT *tg.Document
 
 func (p *UploadWallPaperFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadWallPaperFileResult")
+		return out, fmt.Errorf("no req in UploadWallPaperFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1753,7 +1811,7 @@ func (p *UploadWallPaperFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadWallPaperFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadWallPaperFileResult")
+		return fmt.Errorf("no req in UploadWallPaperFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1761,6 +1819,9 @@ func (p *UploadWallPaperFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadWallPaperFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Document)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1812,7 +1873,7 @@ type UploadThemeFileArgs struct {
 
 func (p *UploadThemeFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadThemeFileArgs")
+		return out, fmt.Errorf("no req in UploadThemeFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1828,7 +1889,7 @@ func (p *UploadThemeFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadThemeFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadThemeFileArgs")
+		return fmt.Errorf("no req in UploadThemeFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1868,7 +1929,7 @@ var UploadThemeFileResult_Success_DEFAULT *tg.Document
 
 func (p *UploadThemeFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadThemeFileResult")
+		return out, fmt.Errorf("no req in UploadThemeFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1884,7 +1945,7 @@ func (p *UploadThemeFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadThemeFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadThemeFileResult")
+		return fmt.Errorf("no req in UploadThemeFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1892,6 +1953,9 @@ func (p *UploadThemeFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadThemeFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Document)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1943,7 +2007,7 @@ type UploadStickerFileArgs struct {
 
 func (p *UploadStickerFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadStickerFileArgs")
+		return out, fmt.Errorf("no req in UploadStickerFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1959,7 +2023,7 @@ func (p *UploadStickerFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadStickerFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadStickerFileArgs")
+		return fmt.Errorf("no req in UploadStickerFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1999,7 +2063,7 @@ var UploadStickerFileResult_Success_DEFAULT *tg.Document
 
 func (p *UploadStickerFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadStickerFileResult")
+		return out, fmt.Errorf("no req in UploadStickerFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2015,7 +2079,7 @@ func (p *UploadStickerFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadStickerFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadStickerFileResult")
+		return fmt.Errorf("no req in UploadStickerFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2023,6 +2087,9 @@ func (p *UploadStickerFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadStickerFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Document)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2074,7 +2141,7 @@ type UploadRingtoneFileArgs struct {
 
 func (p *UploadRingtoneFileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadRingtoneFileArgs")
+		return out, fmt.Errorf("no req in UploadRingtoneFileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2090,7 +2157,7 @@ func (p *UploadRingtoneFileArgs) Unmarshal(in []byte) error {
 
 func (p *UploadRingtoneFileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadRingtoneFileArgs")
+		return fmt.Errorf("no req in UploadRingtoneFileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2130,7 +2197,7 @@ var UploadRingtoneFileResult_Success_DEFAULT *tg.Document
 
 func (p *UploadRingtoneFileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadRingtoneFileResult")
+		return out, fmt.Errorf("no req in UploadRingtoneFileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2146,7 +2213,7 @@ func (p *UploadRingtoneFileResult) Unmarshal(in []byte) error {
 
 func (p *UploadRingtoneFileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadRingtoneFileResult")
+		return fmt.Errorf("no req in UploadRingtoneFileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2154,6 +2221,9 @@ func (p *UploadRingtoneFileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadRingtoneFileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Document)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2205,7 +2275,7 @@ type UploadedProfilePhotoArgs struct {
 
 func (p *UploadedProfilePhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UploadedProfilePhotoArgs")
+		return out, fmt.Errorf("no req in UploadedProfilePhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2221,7 +2291,7 @@ func (p *UploadedProfilePhotoArgs) Unmarshal(in []byte) error {
 
 func (p *UploadedProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UploadedProfilePhotoArgs")
+		return fmt.Errorf("no req in UploadedProfilePhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2261,7 +2331,7 @@ var UploadedProfilePhotoResult_Success_DEFAULT *tg.Photo
 
 func (p *UploadedProfilePhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UploadedProfilePhotoResult")
+		return out, fmt.Errorf("no req in UploadedProfilePhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2277,7 +2347,7 @@ func (p *UploadedProfilePhotoResult) Unmarshal(in []byte) error {
 
 func (p *UploadedProfilePhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UploadedProfilePhotoResult")
+		return fmt.Errorf("no req in UploadedProfilePhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2285,6 +2355,9 @@ func (p *UploadedProfilePhotoResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UploadedProfilePhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Photo)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2324,239 +2397,191 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MediaUploadPhotoFile(ctx context.Context, req *media.TLMediaUploadPhotoFile) (r *tg.Photo, err error) {
 	// var _args UploadPhotoFileArgs
 	// _args.Req = req
-	// var _result UploadPhotoFileResult
+	var _result UploadPhotoFileResult
 
-	_result := new(tg.Photo)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadPhotoFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadPhotoFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadProfilePhotoFile(ctx context.Context, req *media.TLMediaUploadProfilePhotoFile) (r *tg.Photo, err error) {
 	// var _args UploadProfilePhotoFileArgs
 	// _args.Req = req
-	// var _result UploadProfilePhotoFileResult
+	var _result UploadProfilePhotoFileResult
 
-	_result := new(tg.Photo)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadProfilePhotoFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadProfilePhotoFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetPhoto(ctx context.Context, req *media.TLMediaGetPhoto) (r *tg.Photo, err error) {
 	// var _args GetPhotoArgs
 	// _args.Req = req
-	// var _result GetPhotoResult
+	var _result GetPhotoResult
 
-	_result := new(tg.Photo)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetPhotoSizeList(ctx context.Context, req *media.TLMediaGetPhotoSizeList) (r *media.PhotoSizeList, err error) {
 	// var _args GetPhotoSizeListArgs
 	// _args.Req = req
-	// var _result GetPhotoSizeListResult
+	var _result GetPhotoSizeListResult
 
-	_result := new(media.PhotoSizeList)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetPhotoSizeListList(ctx context.Context, req *media.TLMediaGetPhotoSizeListList) (r *media.VectorPhotoSizeList, err error) {
 	// var _args GetPhotoSizeListListArgs
 	// _args.Req = req
-	// var _result GetPhotoSizeListListResult
+	var _result GetPhotoSizeListListResult
 
-	_result := new(media.VectorPhotoSizeList)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeListList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeListList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetVideoSizeList(ctx context.Context, req *media.TLMediaGetVideoSizeList) (r *media.VideoSizeList, err error) {
 	// var _args GetVideoSizeListArgs
 	// _args.Req = req
-	// var _result GetVideoSizeListResult
+	var _result GetVideoSizeListResult
 
-	_result := new(media.VideoSizeList)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getVideoSizeList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getVideoSizeList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadedDocumentMedia(ctx context.Context, req *media.TLMediaUploadedDocumentMedia) (r *tg.MessageMedia, err error) {
 	// var _args UploadedDocumentMediaArgs
 	// _args.Req = req
-	// var _result UploadedDocumentMediaResult
+	var _result UploadedDocumentMediaResult
 
-	_result := new(tg.MessageMedia)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedDocumentMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedDocumentMedia", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetDocument(ctx context.Context, req *media.TLMediaGetDocument) (r *tg.Document, err error) {
 	// var _args GetDocumentArgs
 	// _args.Req = req
-	// var _result GetDocumentResult
+	var _result GetDocumentResult
 
-	_result := new(tg.Document)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocument", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocument", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetDocumentList(ctx context.Context, req *media.TLMediaGetDocumentList) (r *media.VectorDocument, err error) {
 	// var _args GetDocumentListArgs
 	// _args.Req = req
-	// var _result GetDocumentListResult
+	var _result GetDocumentListResult
 
-	_result := new(media.VectorDocument)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocumentList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocumentList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadEncryptedFile(ctx context.Context, req *media.TLMediaUploadEncryptedFile) (r *tg.EncryptedFile, err error) {
 	// var _args UploadEncryptedFileArgs
 	// _args.Req = req
-	// var _result UploadEncryptedFileResult
+	var _result UploadEncryptedFileResult
 
-	_result := new(tg.EncryptedFile)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadEncryptedFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadEncryptedFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaGetEncryptedFile(ctx context.Context, req *media.TLMediaGetEncryptedFile) (r *tg.EncryptedFile, err error) {
 	// var _args GetEncryptedFileArgs
 	// _args.Req = req
-	// var _result GetEncryptedFileResult
+	var _result GetEncryptedFileResult
 
-	_result := new(tg.EncryptedFile)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.getEncryptedFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getEncryptedFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadWallPaperFile(ctx context.Context, req *media.TLMediaUploadWallPaperFile) (r *tg.Document, err error) {
 	// var _args UploadWallPaperFileArgs
 	// _args.Req = req
-	// var _result UploadWallPaperFileResult
+	var _result UploadWallPaperFileResult
 
-	_result := new(tg.Document)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadWallPaperFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadWallPaperFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadThemeFile(ctx context.Context, req *media.TLMediaUploadThemeFile) (r *tg.Document, err error) {
 	// var _args UploadThemeFileArgs
 	// _args.Req = req
-	// var _result UploadThemeFileResult
+	var _result UploadThemeFileResult
 
-	_result := new(tg.Document)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadThemeFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadThemeFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadStickerFile(ctx context.Context, req *media.TLMediaUploadStickerFile) (r *tg.Document, err error) {
 	// var _args UploadStickerFileArgs
 	// _args.Req = req
-	// var _result UploadStickerFileResult
+	var _result UploadStickerFileResult
 
-	_result := new(tg.Document)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadStickerFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadStickerFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadRingtoneFile(ctx context.Context, req *media.TLMediaUploadRingtoneFile) (r *tg.Document, err error) {
 	// var _args UploadRingtoneFileArgs
 	// _args.Req = req
-	// var _result UploadRingtoneFileResult
+	var _result UploadRingtoneFileResult
 
-	_result := new(tg.Document)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadRingtoneFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadRingtoneFile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMediaUploadedProfilePhoto) (r *tg.Photo, err error) {
 	// var _args UploadedProfilePhotoArgs
 	// _args.Req = req
-	// var _result UploadedProfilePhotoResult
+	var _result UploadedProfilePhotoResult
 
-	_result := new(tg.Photo)
-
-	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedProfilePhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

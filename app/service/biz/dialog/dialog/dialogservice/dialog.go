@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -28,6 +29,30 @@ import (
 var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/dialog.RPCDialog/dialog.saveDraftMessage": kitex.NewMethodInfo(
@@ -408,7 +433,7 @@ type SaveDraftMessageArgs struct {
 
 func (p *SaveDraftMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SaveDraftMessageArgs")
+		return out, fmt.Errorf("no req in SaveDraftMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -424,7 +449,7 @@ func (p *SaveDraftMessageArgs) Unmarshal(in []byte) error {
 
 func (p *SaveDraftMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SaveDraftMessageArgs")
+		return fmt.Errorf("no req in SaveDraftMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -464,7 +489,7 @@ var SaveDraftMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *SaveDraftMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SaveDraftMessageResult")
+		return out, fmt.Errorf("no req in SaveDraftMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -480,7 +505,7 @@ func (p *SaveDraftMessageResult) Unmarshal(in []byte) error {
 
 func (p *SaveDraftMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SaveDraftMessageResult")
+		return fmt.Errorf("no req in SaveDraftMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -488,6 +513,9 @@ func (p *SaveDraftMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SaveDraftMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -539,7 +567,7 @@ type ClearDraftMessageArgs struct {
 
 func (p *ClearDraftMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ClearDraftMessageArgs")
+		return out, fmt.Errorf("no req in ClearDraftMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -555,7 +583,7 @@ func (p *ClearDraftMessageArgs) Unmarshal(in []byte) error {
 
 func (p *ClearDraftMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ClearDraftMessageArgs")
+		return fmt.Errorf("no req in ClearDraftMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -595,7 +623,7 @@ var ClearDraftMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *ClearDraftMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ClearDraftMessageResult")
+		return out, fmt.Errorf("no req in ClearDraftMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -611,7 +639,7 @@ func (p *ClearDraftMessageResult) Unmarshal(in []byte) error {
 
 func (p *ClearDraftMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ClearDraftMessageResult")
+		return fmt.Errorf("no req in ClearDraftMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -619,6 +647,9 @@ func (p *ClearDraftMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ClearDraftMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -670,7 +701,7 @@ type GetAllDraftsArgs struct {
 
 func (p *GetAllDraftsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetAllDraftsArgs")
+		return out, fmt.Errorf("no req in GetAllDraftsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -686,7 +717,7 @@ func (p *GetAllDraftsArgs) Unmarshal(in []byte) error {
 
 func (p *GetAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetAllDraftsArgs")
+		return fmt.Errorf("no req in GetAllDraftsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -726,7 +757,7 @@ var GetAllDraftsResult_Success_DEFAULT *dialog.VectorPeerWithDraftMessage
 
 func (p *GetAllDraftsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetAllDraftsResult")
+		return out, fmt.Errorf("no req in GetAllDraftsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -742,7 +773,7 @@ func (p *GetAllDraftsResult) Unmarshal(in []byte) error {
 
 func (p *GetAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetAllDraftsResult")
+		return fmt.Errorf("no req in GetAllDraftsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -750,6 +781,9 @@ func (p *GetAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetAllDraftsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorPeerWithDraftMessage)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -801,7 +835,7 @@ type ClearAllDraftsArgs struct {
 
 func (p *ClearAllDraftsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ClearAllDraftsArgs")
+		return out, fmt.Errorf("no req in ClearAllDraftsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -817,7 +851,7 @@ func (p *ClearAllDraftsArgs) Unmarshal(in []byte) error {
 
 func (p *ClearAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ClearAllDraftsArgs")
+		return fmt.Errorf("no req in ClearAllDraftsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -857,7 +891,7 @@ var ClearAllDraftsResult_Success_DEFAULT *dialog.VectorPeerWithDraftMessage
 
 func (p *ClearAllDraftsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ClearAllDraftsResult")
+		return out, fmt.Errorf("no req in ClearAllDraftsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -873,7 +907,7 @@ func (p *ClearAllDraftsResult) Unmarshal(in []byte) error {
 
 func (p *ClearAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ClearAllDraftsResult")
+		return fmt.Errorf("no req in ClearAllDraftsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -881,6 +915,9 @@ func (p *ClearAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ClearAllDraftsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorPeerWithDraftMessage)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -932,7 +969,7 @@ type MarkDialogUnreadArgs struct {
 
 func (p *MarkDialogUnreadArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MarkDialogUnreadArgs")
+		return out, fmt.Errorf("no req in MarkDialogUnreadArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -948,7 +985,7 @@ func (p *MarkDialogUnreadArgs) Unmarshal(in []byte) error {
 
 func (p *MarkDialogUnreadArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MarkDialogUnreadArgs")
+		return fmt.Errorf("no req in MarkDialogUnreadArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -988,7 +1025,7 @@ var MarkDialogUnreadResult_Success_DEFAULT *tg.Bool
 
 func (p *MarkDialogUnreadResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MarkDialogUnreadResult")
+		return out, fmt.Errorf("no req in MarkDialogUnreadResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1004,7 +1041,7 @@ func (p *MarkDialogUnreadResult) Unmarshal(in []byte) error {
 
 func (p *MarkDialogUnreadResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MarkDialogUnreadResult")
+		return fmt.Errorf("no req in MarkDialogUnreadResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1012,6 +1049,9 @@ func (p *MarkDialogUnreadResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MarkDialogUnreadResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1063,7 +1103,7 @@ type ToggleDialogPinArgs struct {
 
 func (p *ToggleDialogPinArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ToggleDialogPinArgs")
+		return out, fmt.Errorf("no req in ToggleDialogPinArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1079,7 +1119,7 @@ func (p *ToggleDialogPinArgs) Unmarshal(in []byte) error {
 
 func (p *ToggleDialogPinArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ToggleDialogPinArgs")
+		return fmt.Errorf("no req in ToggleDialogPinArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1119,7 +1159,7 @@ var ToggleDialogPinResult_Success_DEFAULT *tg.Int32
 
 func (p *ToggleDialogPinResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ToggleDialogPinResult")
+		return out, fmt.Errorf("no req in ToggleDialogPinResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1135,7 +1175,7 @@ func (p *ToggleDialogPinResult) Unmarshal(in []byte) error {
 
 func (p *ToggleDialogPinResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ToggleDialogPinResult")
+		return fmt.Errorf("no req in ToggleDialogPinResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1143,6 +1183,9 @@ func (p *ToggleDialogPinResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleDialogPinResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1194,7 +1237,7 @@ type GetDialogUnreadMarkListArgs struct {
 
 func (p *GetDialogUnreadMarkListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogUnreadMarkListArgs")
+		return out, fmt.Errorf("no req in GetDialogUnreadMarkListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1210,7 +1253,7 @@ func (p *GetDialogUnreadMarkListArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogUnreadMarkListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogUnreadMarkListArgs")
+		return fmt.Errorf("no req in GetDialogUnreadMarkListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1250,7 +1293,7 @@ var GetDialogUnreadMarkListResult_Success_DEFAULT *dialog.VectorDialogPeer
 
 func (p *GetDialogUnreadMarkListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogUnreadMarkListResult")
+		return out, fmt.Errorf("no req in GetDialogUnreadMarkListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1266,7 +1309,7 @@ func (p *GetDialogUnreadMarkListResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogUnreadMarkListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogUnreadMarkListResult")
+		return fmt.Errorf("no req in GetDialogUnreadMarkListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1274,6 +1317,9 @@ func (p *GetDialogUnreadMarkListResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *GetDialogUnreadMarkListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogPeer)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1325,7 +1371,7 @@ type GetDialogsByOffsetDateArgs struct {
 
 func (p *GetDialogsByOffsetDateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogsByOffsetDateArgs")
+		return out, fmt.Errorf("no req in GetDialogsByOffsetDateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1341,7 +1387,7 @@ func (p *GetDialogsByOffsetDateArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogsByOffsetDateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogsByOffsetDateArgs")
+		return fmt.Errorf("no req in GetDialogsByOffsetDateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1381,7 +1427,7 @@ var GetDialogsByOffsetDateResult_Success_DEFAULT *dialog.VectorDialogExt
 
 func (p *GetDialogsByOffsetDateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogsByOffsetDateResult")
+		return out, fmt.Errorf("no req in GetDialogsByOffsetDateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1397,7 +1443,7 @@ func (p *GetDialogsByOffsetDateResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogsByOffsetDateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogsByOffsetDateResult")
+		return fmt.Errorf("no req in GetDialogsByOffsetDateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1405,6 +1451,9 @@ func (p *GetDialogsByOffsetDateResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *GetDialogsByOffsetDateResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1456,7 +1505,7 @@ type GetDialogsArgs struct {
 
 func (p *GetDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogsArgs")
+		return out, fmt.Errorf("no req in GetDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1472,7 +1521,7 @@ func (p *GetDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogsArgs")
+		return fmt.Errorf("no req in GetDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1512,7 +1561,7 @@ var GetDialogsResult_Success_DEFAULT *dialog.VectorDialogExt
 
 func (p *GetDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogsResult")
+		return out, fmt.Errorf("no req in GetDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1528,7 +1577,7 @@ func (p *GetDialogsResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogsResult")
+		return fmt.Errorf("no req in GetDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1536,6 +1585,9 @@ func (p *GetDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1587,7 +1639,7 @@ type GetDialogsByIdListArgs struct {
 
 func (p *GetDialogsByIdListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogsByIdListArgs")
+		return out, fmt.Errorf("no req in GetDialogsByIdListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1603,7 +1655,7 @@ func (p *GetDialogsByIdListArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogsByIdListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogsByIdListArgs")
+		return fmt.Errorf("no req in GetDialogsByIdListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1643,7 +1695,7 @@ var GetDialogsByIdListResult_Success_DEFAULT *dialog.VectorDialogExt
 
 func (p *GetDialogsByIdListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogsByIdListResult")
+		return out, fmt.Errorf("no req in GetDialogsByIdListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1659,7 +1711,7 @@ func (p *GetDialogsByIdListResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogsByIdListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogsByIdListResult")
+		return fmt.Errorf("no req in GetDialogsByIdListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1667,6 +1719,9 @@ func (p *GetDialogsByIdListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsByIdListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1718,7 +1773,7 @@ type GetDialogsCountArgs struct {
 
 func (p *GetDialogsCountArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogsCountArgs")
+		return out, fmt.Errorf("no req in GetDialogsCountArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1734,7 +1789,7 @@ func (p *GetDialogsCountArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogsCountArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogsCountArgs")
+		return fmt.Errorf("no req in GetDialogsCountArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1774,7 +1829,7 @@ var GetDialogsCountResult_Success_DEFAULT *tg.Int32
 
 func (p *GetDialogsCountResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogsCountResult")
+		return out, fmt.Errorf("no req in GetDialogsCountResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1790,7 +1845,7 @@ func (p *GetDialogsCountResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogsCountResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogsCountResult")
+		return fmt.Errorf("no req in GetDialogsCountResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1798,6 +1853,9 @@ func (p *GetDialogsCountResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogsCountResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1849,7 +1907,7 @@ type GetPinnedDialogsArgs struct {
 
 func (p *GetPinnedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPinnedDialogsArgs")
+		return out, fmt.Errorf("no req in GetPinnedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1865,7 +1923,7 @@ func (p *GetPinnedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *GetPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPinnedDialogsArgs")
+		return fmt.Errorf("no req in GetPinnedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1905,7 +1963,7 @@ var GetPinnedDialogsResult_Success_DEFAULT *dialog.VectorDialogExt
 
 func (p *GetPinnedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPinnedDialogsResult")
+		return out, fmt.Errorf("no req in GetPinnedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1921,7 +1979,7 @@ func (p *GetPinnedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *GetPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPinnedDialogsResult")
+		return fmt.Errorf("no req in GetPinnedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1929,6 +1987,9 @@ func (p *GetPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetPinnedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1980,7 +2041,7 @@ type ReorderPinnedDialogsArgs struct {
 
 func (p *ReorderPinnedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ReorderPinnedDialogsArgs")
+		return out, fmt.Errorf("no req in ReorderPinnedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1996,7 +2057,7 @@ func (p *ReorderPinnedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *ReorderPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ReorderPinnedDialogsArgs")
+		return fmt.Errorf("no req in ReorderPinnedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2036,7 +2097,7 @@ var ReorderPinnedDialogsResult_Success_DEFAULT *tg.Bool
 
 func (p *ReorderPinnedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ReorderPinnedDialogsResult")
+		return out, fmt.Errorf("no req in ReorderPinnedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2052,7 +2113,7 @@ func (p *ReorderPinnedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *ReorderPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ReorderPinnedDialogsResult")
+		return fmt.Errorf("no req in ReorderPinnedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2060,6 +2121,9 @@ func (p *ReorderPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ReorderPinnedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2111,7 +2175,7 @@ type GetDialogByIdArgs struct {
 
 func (p *GetDialogByIdArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogByIdArgs")
+		return out, fmt.Errorf("no req in GetDialogByIdArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2127,7 +2191,7 @@ func (p *GetDialogByIdArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogByIdArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogByIdArgs")
+		return fmt.Errorf("no req in GetDialogByIdArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2167,7 +2231,7 @@ var GetDialogByIdResult_Success_DEFAULT *dialog.DialogExt
 
 func (p *GetDialogByIdResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogByIdResult")
+		return out, fmt.Errorf("no req in GetDialogByIdResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2183,7 +2247,7 @@ func (p *GetDialogByIdResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogByIdResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogByIdResult")
+		return fmt.Errorf("no req in GetDialogByIdResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2191,6 +2255,9 @@ func (p *GetDialogByIdResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogByIdResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.DialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2242,7 +2309,7 @@ type GetTopMessageArgs struct {
 
 func (p *GetTopMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetTopMessageArgs")
+		return out, fmt.Errorf("no req in GetTopMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2258,7 +2325,7 @@ func (p *GetTopMessageArgs) Unmarshal(in []byte) error {
 
 func (p *GetTopMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetTopMessageArgs")
+		return fmt.Errorf("no req in GetTopMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2298,7 +2365,7 @@ var GetTopMessageResult_Success_DEFAULT *tg.Int32
 
 func (p *GetTopMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetTopMessageResult")
+		return out, fmt.Errorf("no req in GetTopMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2314,7 +2381,7 @@ func (p *GetTopMessageResult) Unmarshal(in []byte) error {
 
 func (p *GetTopMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetTopMessageResult")
+		return fmt.Errorf("no req in GetTopMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2322,6 +2389,9 @@ func (p *GetTopMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetTopMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2373,7 +2443,7 @@ type InsertOrUpdateDialogArgs struct {
 
 func (p *InsertOrUpdateDialogArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in InsertOrUpdateDialogArgs")
+		return out, fmt.Errorf("no req in InsertOrUpdateDialogArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2389,7 +2459,7 @@ func (p *InsertOrUpdateDialogArgs) Unmarshal(in []byte) error {
 
 func (p *InsertOrUpdateDialogArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in InsertOrUpdateDialogArgs")
+		return fmt.Errorf("no req in InsertOrUpdateDialogArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2429,7 +2499,7 @@ var InsertOrUpdateDialogResult_Success_DEFAULT *tg.Bool
 
 func (p *InsertOrUpdateDialogResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in InsertOrUpdateDialogResult")
+		return out, fmt.Errorf("no req in InsertOrUpdateDialogResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2445,7 +2515,7 @@ func (p *InsertOrUpdateDialogResult) Unmarshal(in []byte) error {
 
 func (p *InsertOrUpdateDialogResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in InsertOrUpdateDialogResult")
+		return fmt.Errorf("no req in InsertOrUpdateDialogResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2453,6 +2523,9 @@ func (p *InsertOrUpdateDialogResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *InsertOrUpdateDialogResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2504,7 +2577,7 @@ type DeleteDialogArgs struct {
 
 func (p *DeleteDialogArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeleteDialogArgs")
+		return out, fmt.Errorf("no req in DeleteDialogArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2520,7 +2593,7 @@ func (p *DeleteDialogArgs) Unmarshal(in []byte) error {
 
 func (p *DeleteDialogArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeleteDialogArgs")
+		return fmt.Errorf("no req in DeleteDialogArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2560,7 +2633,7 @@ var DeleteDialogResult_Success_DEFAULT *tg.Bool
 
 func (p *DeleteDialogResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeleteDialogResult")
+		return out, fmt.Errorf("no req in DeleteDialogResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2576,7 +2649,7 @@ func (p *DeleteDialogResult) Unmarshal(in []byte) error {
 
 func (p *DeleteDialogResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeleteDialogResult")
+		return fmt.Errorf("no req in DeleteDialogResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2584,6 +2657,9 @@ func (p *DeleteDialogResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteDialogResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2635,7 +2711,7 @@ type GetUserPinnedMessageArgs struct {
 
 func (p *GetUserPinnedMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetUserPinnedMessageArgs")
+		return out, fmt.Errorf("no req in GetUserPinnedMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2651,7 +2727,7 @@ func (p *GetUserPinnedMessageArgs) Unmarshal(in []byte) error {
 
 func (p *GetUserPinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetUserPinnedMessageArgs")
+		return fmt.Errorf("no req in GetUserPinnedMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2691,7 +2767,7 @@ var GetUserPinnedMessageResult_Success_DEFAULT *tg.Int32
 
 func (p *GetUserPinnedMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetUserPinnedMessageResult")
+		return out, fmt.Errorf("no req in GetUserPinnedMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2707,7 +2783,7 @@ func (p *GetUserPinnedMessageResult) Unmarshal(in []byte) error {
 
 func (p *GetUserPinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetUserPinnedMessageResult")
+		return fmt.Errorf("no req in GetUserPinnedMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2715,6 +2791,9 @@ func (p *GetUserPinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserPinnedMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2766,7 +2845,7 @@ type UpdateUserPinnedMessageArgs struct {
 
 func (p *UpdateUserPinnedMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdateUserPinnedMessageArgs")
+		return out, fmt.Errorf("no req in UpdateUserPinnedMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2782,7 +2861,7 @@ func (p *UpdateUserPinnedMessageArgs) Unmarshal(in []byte) error {
 
 func (p *UpdateUserPinnedMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdateUserPinnedMessageArgs")
+		return fmt.Errorf("no req in UpdateUserPinnedMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2822,7 +2901,7 @@ var UpdateUserPinnedMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *UpdateUserPinnedMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdateUserPinnedMessageResult")
+		return out, fmt.Errorf("no req in UpdateUserPinnedMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2838,7 +2917,7 @@ func (p *UpdateUserPinnedMessageResult) Unmarshal(in []byte) error {
 
 func (p *UpdateUserPinnedMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdateUserPinnedMessageResult")
+		return fmt.Errorf("no req in UpdateUserPinnedMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2846,6 +2925,9 @@ func (p *UpdateUserPinnedMessageResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *UpdateUserPinnedMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2897,7 +2979,7 @@ type InsertOrUpdateDialogFilterArgs struct {
 
 func (p *InsertOrUpdateDialogFilterArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in InsertOrUpdateDialogFilterArgs")
+		return out, fmt.Errorf("no req in InsertOrUpdateDialogFilterArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2913,7 +2995,7 @@ func (p *InsertOrUpdateDialogFilterArgs) Unmarshal(in []byte) error {
 
 func (p *InsertOrUpdateDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in InsertOrUpdateDialogFilterArgs")
+		return fmt.Errorf("no req in InsertOrUpdateDialogFilterArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2953,7 +3035,7 @@ var InsertOrUpdateDialogFilterResult_Success_DEFAULT *tg.Bool
 
 func (p *InsertOrUpdateDialogFilterResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in InsertOrUpdateDialogFilterResult")
+		return out, fmt.Errorf("no req in InsertOrUpdateDialogFilterResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2969,7 +3051,7 @@ func (p *InsertOrUpdateDialogFilterResult) Unmarshal(in []byte) error {
 
 func (p *InsertOrUpdateDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in InsertOrUpdateDialogFilterResult")
+		return fmt.Errorf("no req in InsertOrUpdateDialogFilterResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2977,6 +3059,9 @@ func (p *InsertOrUpdateDialogFilterResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *InsertOrUpdateDialogFilterResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3028,7 +3113,7 @@ type DeleteDialogFilterArgs struct {
 
 func (p *DeleteDialogFilterArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in DeleteDialogFilterArgs")
+		return out, fmt.Errorf("no req in DeleteDialogFilterArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3044,7 +3129,7 @@ func (p *DeleteDialogFilterArgs) Unmarshal(in []byte) error {
 
 func (p *DeleteDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in DeleteDialogFilterArgs")
+		return fmt.Errorf("no req in DeleteDialogFilterArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3084,7 +3169,7 @@ var DeleteDialogFilterResult_Success_DEFAULT *tg.Bool
 
 func (p *DeleteDialogFilterResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in DeleteDialogFilterResult")
+		return out, fmt.Errorf("no req in DeleteDialogFilterResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3100,7 +3185,7 @@ func (p *DeleteDialogFilterResult) Unmarshal(in []byte) error {
 
 func (p *DeleteDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in DeleteDialogFilterResult")
+		return fmt.Errorf("no req in DeleteDialogFilterResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3108,6 +3193,9 @@ func (p *DeleteDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *DeleteDialogFilterResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3159,7 +3247,7 @@ type UpdateDialogFiltersOrderArgs struct {
 
 func (p *UpdateDialogFiltersOrderArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdateDialogFiltersOrderArgs")
+		return out, fmt.Errorf("no req in UpdateDialogFiltersOrderArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3175,7 +3263,7 @@ func (p *UpdateDialogFiltersOrderArgs) Unmarshal(in []byte) error {
 
 func (p *UpdateDialogFiltersOrderArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdateDialogFiltersOrderArgs")
+		return fmt.Errorf("no req in UpdateDialogFiltersOrderArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3215,7 +3303,7 @@ var UpdateDialogFiltersOrderResult_Success_DEFAULT *tg.Bool
 
 func (p *UpdateDialogFiltersOrderResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdateDialogFiltersOrderResult")
+		return out, fmt.Errorf("no req in UpdateDialogFiltersOrderResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3231,7 +3319,7 @@ func (p *UpdateDialogFiltersOrderResult) Unmarshal(in []byte) error {
 
 func (p *UpdateDialogFiltersOrderResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdateDialogFiltersOrderResult")
+		return fmt.Errorf("no req in UpdateDialogFiltersOrderResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3239,6 +3327,9 @@ func (p *UpdateDialogFiltersOrderResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *UpdateDialogFiltersOrderResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3290,7 +3381,7 @@ type GetDialogFiltersArgs struct {
 
 func (p *GetDialogFiltersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogFiltersArgs")
+		return out, fmt.Errorf("no req in GetDialogFiltersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3306,7 +3397,7 @@ func (p *GetDialogFiltersArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogFiltersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogFiltersArgs")
+		return fmt.Errorf("no req in GetDialogFiltersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3346,7 +3437,7 @@ var GetDialogFiltersResult_Success_DEFAULT *dialog.VectorDialogFilterExt
 
 func (p *GetDialogFiltersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogFiltersResult")
+		return out, fmt.Errorf("no req in GetDialogFiltersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3362,7 +3453,7 @@ func (p *GetDialogFiltersResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogFiltersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogFiltersResult")
+		return fmt.Errorf("no req in GetDialogFiltersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3370,6 +3461,9 @@ func (p *GetDialogFiltersResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFiltersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogFilterExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3421,7 +3515,7 @@ type GetDialogFolderArgs struct {
 
 func (p *GetDialogFolderArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogFolderArgs")
+		return out, fmt.Errorf("no req in GetDialogFolderArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3437,7 +3531,7 @@ func (p *GetDialogFolderArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogFolderArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogFolderArgs")
+		return fmt.Errorf("no req in GetDialogFolderArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3477,7 +3571,7 @@ var GetDialogFolderResult_Success_DEFAULT *dialog.VectorDialogExt
 
 func (p *GetDialogFolderResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogFolderResult")
+		return out, fmt.Errorf("no req in GetDialogFolderResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3493,7 +3587,7 @@ func (p *GetDialogFolderResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogFolderResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogFolderResult")
+		return fmt.Errorf("no req in GetDialogFolderResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3501,6 +3595,9 @@ func (p *GetDialogFolderResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFolderResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3552,7 +3649,7 @@ type EditPeerFoldersArgs struct {
 
 func (p *EditPeerFoldersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in EditPeerFoldersArgs")
+		return out, fmt.Errorf("no req in EditPeerFoldersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3568,7 +3665,7 @@ func (p *EditPeerFoldersArgs) Unmarshal(in []byte) error {
 
 func (p *EditPeerFoldersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in EditPeerFoldersArgs")
+		return fmt.Errorf("no req in EditPeerFoldersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3608,7 +3705,7 @@ var EditPeerFoldersResult_Success_DEFAULT *dialog.VectorDialogPinnedExt
 
 func (p *EditPeerFoldersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in EditPeerFoldersResult")
+		return out, fmt.Errorf("no req in EditPeerFoldersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3624,7 +3721,7 @@ func (p *EditPeerFoldersResult) Unmarshal(in []byte) error {
 
 func (p *EditPeerFoldersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in EditPeerFoldersResult")
+		return fmt.Errorf("no req in EditPeerFoldersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3632,6 +3729,9 @@ func (p *EditPeerFoldersResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *EditPeerFoldersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorDialogPinnedExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3683,7 +3783,7 @@ type GetChannelMessageReadParticipantsArgs struct {
 
 func (p *GetChannelMessageReadParticipantsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetChannelMessageReadParticipantsArgs")
+		return out, fmt.Errorf("no req in GetChannelMessageReadParticipantsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3699,7 +3799,7 @@ func (p *GetChannelMessageReadParticipantsArgs) Unmarshal(in []byte) error {
 
 func (p *GetChannelMessageReadParticipantsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetChannelMessageReadParticipantsArgs")
+		return fmt.Errorf("no req in GetChannelMessageReadParticipantsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3739,7 +3839,7 @@ var GetChannelMessageReadParticipantsResult_Success_DEFAULT *dialog.VectorLong
 
 func (p *GetChannelMessageReadParticipantsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetChannelMessageReadParticipantsResult")
+		return out, fmt.Errorf("no req in GetChannelMessageReadParticipantsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3755,7 +3855,7 @@ func (p *GetChannelMessageReadParticipantsResult) Unmarshal(in []byte) error {
 
 func (p *GetChannelMessageReadParticipantsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetChannelMessageReadParticipantsResult")
+		return fmt.Errorf("no req in GetChannelMessageReadParticipantsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3763,6 +3863,9 @@ func (p *GetChannelMessageReadParticipantsResult) Encode(x *bin.Encoder, layer i
 
 func (p *GetChannelMessageReadParticipantsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3814,7 +3917,7 @@ type SetChatThemeArgs struct {
 
 func (p *SetChatThemeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetChatThemeArgs")
+		return out, fmt.Errorf("no req in SetChatThemeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3830,7 +3933,7 @@ func (p *SetChatThemeArgs) Unmarshal(in []byte) error {
 
 func (p *SetChatThemeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetChatThemeArgs")
+		return fmt.Errorf("no req in SetChatThemeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3870,7 +3973,7 @@ var SetChatThemeResult_Success_DEFAULT *tg.Bool
 
 func (p *SetChatThemeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetChatThemeResult")
+		return out, fmt.Errorf("no req in SetChatThemeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3886,7 +3989,7 @@ func (p *SetChatThemeResult) Unmarshal(in []byte) error {
 
 func (p *SetChatThemeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetChatThemeResult")
+		return fmt.Errorf("no req in SetChatThemeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3894,6 +3997,9 @@ func (p *SetChatThemeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChatThemeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3945,7 +4051,7 @@ type SetHistoryTTLArgs struct {
 
 func (p *SetHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetHistoryTTLArgs")
+		return out, fmt.Errorf("no req in SetHistoryTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3961,7 +4067,7 @@ func (p *SetHistoryTTLArgs) Unmarshal(in []byte) error {
 
 func (p *SetHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetHistoryTTLArgs")
+		return fmt.Errorf("no req in SetHistoryTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4001,7 +4107,7 @@ var SetHistoryTTLResult_Success_DEFAULT *tg.Bool
 
 func (p *SetHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetHistoryTTLResult")
+		return out, fmt.Errorf("no req in SetHistoryTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4017,7 +4123,7 @@ func (p *SetHistoryTTLResult) Unmarshal(in []byte) error {
 
 func (p *SetHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetHistoryTTLResult")
+		return fmt.Errorf("no req in SetHistoryTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4025,6 +4131,9 @@ func (p *SetHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4076,7 +4185,7 @@ type GetMyDialogsDataArgs struct {
 
 func (p *GetMyDialogsDataArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetMyDialogsDataArgs")
+		return out, fmt.Errorf("no req in GetMyDialogsDataArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4092,7 +4201,7 @@ func (p *GetMyDialogsDataArgs) Unmarshal(in []byte) error {
 
 func (p *GetMyDialogsDataArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetMyDialogsDataArgs")
+		return fmt.Errorf("no req in GetMyDialogsDataArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4132,7 +4241,7 @@ var GetMyDialogsDataResult_Success_DEFAULT *dialog.DialogsData
 
 func (p *GetMyDialogsDataResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetMyDialogsDataResult")
+		return out, fmt.Errorf("no req in GetMyDialogsDataResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4148,7 +4257,7 @@ func (p *GetMyDialogsDataResult) Unmarshal(in []byte) error {
 
 func (p *GetMyDialogsDataResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetMyDialogsDataResult")
+		return fmt.Errorf("no req in GetMyDialogsDataResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4156,6 +4265,9 @@ func (p *GetMyDialogsDataResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetMyDialogsDataResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.DialogsData)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4207,7 +4319,7 @@ type GetSavedDialogsArgs struct {
 
 func (p *GetSavedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetSavedDialogsArgs")
+		return out, fmt.Errorf("no req in GetSavedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4223,7 +4335,7 @@ func (p *GetSavedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *GetSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetSavedDialogsArgs")
+		return fmt.Errorf("no req in GetSavedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4263,7 +4375,7 @@ var GetSavedDialogsResult_Success_DEFAULT *dialog.SavedDialogList
 
 func (p *GetSavedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetSavedDialogsResult")
+		return out, fmt.Errorf("no req in GetSavedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4279,7 +4391,7 @@ func (p *GetSavedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *GetSavedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetSavedDialogsResult")
+		return fmt.Errorf("no req in GetSavedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4287,6 +4399,9 @@ func (p *GetSavedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetSavedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.SavedDialogList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4338,7 +4453,7 @@ type GetPinnedSavedDialogsArgs struct {
 
 func (p *GetPinnedSavedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetPinnedSavedDialogsArgs")
+		return out, fmt.Errorf("no req in GetPinnedSavedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4354,7 +4469,7 @@ func (p *GetPinnedSavedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *GetPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetPinnedSavedDialogsArgs")
+		return fmt.Errorf("no req in GetPinnedSavedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4394,7 +4509,7 @@ var GetPinnedSavedDialogsResult_Success_DEFAULT *dialog.SavedDialogList
 
 func (p *GetPinnedSavedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetPinnedSavedDialogsResult")
+		return out, fmt.Errorf("no req in GetPinnedSavedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4410,7 +4525,7 @@ func (p *GetPinnedSavedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *GetPinnedSavedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetPinnedSavedDialogsResult")
+		return fmt.Errorf("no req in GetPinnedSavedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4418,6 +4533,9 @@ func (p *GetPinnedSavedDialogsResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetPinnedSavedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.SavedDialogList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4469,7 +4587,7 @@ type ToggleSavedDialogPinArgs struct {
 
 func (p *ToggleSavedDialogPinArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ToggleSavedDialogPinArgs")
+		return out, fmt.Errorf("no req in ToggleSavedDialogPinArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4485,7 +4603,7 @@ func (p *ToggleSavedDialogPinArgs) Unmarshal(in []byte) error {
 
 func (p *ToggleSavedDialogPinArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ToggleSavedDialogPinArgs")
+		return fmt.Errorf("no req in ToggleSavedDialogPinArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4525,7 +4643,7 @@ var ToggleSavedDialogPinResult_Success_DEFAULT *tg.Bool
 
 func (p *ToggleSavedDialogPinResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ToggleSavedDialogPinResult")
+		return out, fmt.Errorf("no req in ToggleSavedDialogPinResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4541,7 +4659,7 @@ func (p *ToggleSavedDialogPinResult) Unmarshal(in []byte) error {
 
 func (p *ToggleSavedDialogPinResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ToggleSavedDialogPinResult")
+		return fmt.Errorf("no req in ToggleSavedDialogPinResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4549,6 +4667,9 @@ func (p *ToggleSavedDialogPinResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ToggleSavedDialogPinResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4600,7 +4721,7 @@ type ReorderPinnedSavedDialogsArgs struct {
 
 func (p *ReorderPinnedSavedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ReorderPinnedSavedDialogsArgs")
+		return out, fmt.Errorf("no req in ReorderPinnedSavedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4616,7 +4737,7 @@ func (p *ReorderPinnedSavedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *ReorderPinnedSavedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ReorderPinnedSavedDialogsArgs")
+		return fmt.Errorf("no req in ReorderPinnedSavedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4656,7 +4777,7 @@ var ReorderPinnedSavedDialogsResult_Success_DEFAULT *tg.Bool
 
 func (p *ReorderPinnedSavedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ReorderPinnedSavedDialogsResult")
+		return out, fmt.Errorf("no req in ReorderPinnedSavedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4672,7 +4793,7 @@ func (p *ReorderPinnedSavedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *ReorderPinnedSavedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ReorderPinnedSavedDialogsResult")
+		return fmt.Errorf("no req in ReorderPinnedSavedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4680,6 +4801,9 @@ func (p *ReorderPinnedSavedDialogsResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *ReorderPinnedSavedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4731,7 +4855,7 @@ type GetDialogFilterArgs struct {
 
 func (p *GetDialogFilterArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogFilterArgs")
+		return out, fmt.Errorf("no req in GetDialogFilterArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4747,7 +4871,7 @@ func (p *GetDialogFilterArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogFilterArgs")
+		return fmt.Errorf("no req in GetDialogFilterArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4787,7 +4911,7 @@ var GetDialogFilterResult_Success_DEFAULT *dialog.DialogFilterExt
 
 func (p *GetDialogFilterResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogFilterResult")
+		return out, fmt.Errorf("no req in GetDialogFilterResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4803,7 +4927,7 @@ func (p *GetDialogFilterResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogFilterResult")
+		return fmt.Errorf("no req in GetDialogFilterResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4811,6 +4935,9 @@ func (p *GetDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFilterResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.DialogFilterExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4862,7 +4989,7 @@ type GetDialogFilterBySlugArgs struct {
 
 func (p *GetDialogFilterBySlugArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogFilterBySlugArgs")
+		return out, fmt.Errorf("no req in GetDialogFilterBySlugArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -4878,7 +5005,7 @@ func (p *GetDialogFilterBySlugArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterBySlugArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogFilterBySlugArgs")
+		return fmt.Errorf("no req in GetDialogFilterBySlugArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -4918,7 +5045,7 @@ var GetDialogFilterBySlugResult_Success_DEFAULT *dialog.DialogFilterExt
 
 func (p *GetDialogFilterBySlugResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogFilterBySlugResult")
+		return out, fmt.Errorf("no req in GetDialogFilterBySlugResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -4934,7 +5061,7 @@ func (p *GetDialogFilterBySlugResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterBySlugResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogFilterBySlugResult")
+		return fmt.Errorf("no req in GetDialogFilterBySlugResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -4942,6 +5069,9 @@ func (p *GetDialogFilterBySlugResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *GetDialogFilterBySlugResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.DialogFilterExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -4993,7 +5123,7 @@ type CreateDialogFilterArgs struct {
 
 func (p *CreateDialogFilterArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in CreateDialogFilterArgs")
+		return out, fmt.Errorf("no req in CreateDialogFilterArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -5009,7 +5139,7 @@ func (p *CreateDialogFilterArgs) Unmarshal(in []byte) error {
 
 func (p *CreateDialogFilterArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in CreateDialogFilterArgs")
+		return fmt.Errorf("no req in CreateDialogFilterArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -5049,7 +5179,7 @@ var CreateDialogFilterResult_Success_DEFAULT *dialog.DialogFilterExt
 
 func (p *CreateDialogFilterResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in CreateDialogFilterResult")
+		return out, fmt.Errorf("no req in CreateDialogFilterResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -5065,7 +5195,7 @@ func (p *CreateDialogFilterResult) Unmarshal(in []byte) error {
 
 func (p *CreateDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in CreateDialogFilterResult")
+		return fmt.Errorf("no req in CreateDialogFilterResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -5073,6 +5203,9 @@ func (p *CreateDialogFilterResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *CreateDialogFilterResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(dialog.DialogFilterExt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -5124,7 +5257,7 @@ type UpdateUnreadCountArgs struct {
 
 func (p *UpdateUnreadCountArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdateUnreadCountArgs")
+		return out, fmt.Errorf("no req in UpdateUnreadCountArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -5140,7 +5273,7 @@ func (p *UpdateUnreadCountArgs) Unmarshal(in []byte) error {
 
 func (p *UpdateUnreadCountArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdateUnreadCountArgs")
+		return fmt.Errorf("no req in UpdateUnreadCountArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -5180,7 +5313,7 @@ var UpdateUnreadCountResult_Success_DEFAULT *tg.Bool
 
 func (p *UpdateUnreadCountResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdateUnreadCountResult")
+		return out, fmt.Errorf("no req in UpdateUnreadCountResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -5196,7 +5329,7 @@ func (p *UpdateUnreadCountResult) Unmarshal(in []byte) error {
 
 func (p *UpdateUnreadCountResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdateUnreadCountResult")
+		return fmt.Errorf("no req in UpdateUnreadCountResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -5204,6 +5337,9 @@ func (p *UpdateUnreadCountResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdateUnreadCountResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -5255,7 +5391,7 @@ type ToggleDialogFilterTagsArgs struct {
 
 func (p *ToggleDialogFilterTagsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ToggleDialogFilterTagsArgs")
+		return out, fmt.Errorf("no req in ToggleDialogFilterTagsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -5271,7 +5407,7 @@ func (p *ToggleDialogFilterTagsArgs) Unmarshal(in []byte) error {
 
 func (p *ToggleDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ToggleDialogFilterTagsArgs")
+		return fmt.Errorf("no req in ToggleDialogFilterTagsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -5311,7 +5447,7 @@ var ToggleDialogFilterTagsResult_Success_DEFAULT *tg.Bool
 
 func (p *ToggleDialogFilterTagsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ToggleDialogFilterTagsResult")
+		return out, fmt.Errorf("no req in ToggleDialogFilterTagsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -5327,7 +5463,7 @@ func (p *ToggleDialogFilterTagsResult) Unmarshal(in []byte) error {
 
 func (p *ToggleDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ToggleDialogFilterTagsResult")
+		return fmt.Errorf("no req in ToggleDialogFilterTagsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -5335,6 +5471,9 @@ func (p *ToggleDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ToggleDialogFilterTagsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -5386,7 +5525,7 @@ type GetDialogFilterTagsArgs struct {
 
 func (p *GetDialogFilterTagsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in GetDialogFilterTagsArgs")
+		return out, fmt.Errorf("no req in GetDialogFilterTagsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -5402,7 +5541,7 @@ func (p *GetDialogFilterTagsArgs) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in GetDialogFilterTagsArgs")
+		return fmt.Errorf("no req in GetDialogFilterTagsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -5442,7 +5581,7 @@ var GetDialogFilterTagsResult_Success_DEFAULT *tg.Bool
 
 func (p *GetDialogFilterTagsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in GetDialogFilterTagsResult")
+		return out, fmt.Errorf("no req in GetDialogFilterTagsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -5458,7 +5597,7 @@ func (p *GetDialogFilterTagsResult) Unmarshal(in []byte) error {
 
 func (p *GetDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in GetDialogFilterTagsResult")
+		return fmt.Errorf("no req in GetDialogFilterTagsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -5466,6 +5605,9 @@ func (p *GetDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetDialogFilterTagsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -5517,7 +5659,7 @@ type SetChatWallpaperArgs struct {
 
 func (p *SetChatWallpaperArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in SetChatWallpaperArgs")
+		return out, fmt.Errorf("no req in SetChatWallpaperArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -5533,7 +5675,7 @@ func (p *SetChatWallpaperArgs) Unmarshal(in []byte) error {
 
 func (p *SetChatWallpaperArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in SetChatWallpaperArgs")
+		return fmt.Errorf("no req in SetChatWallpaperArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -5573,7 +5715,7 @@ var SetChatWallpaperResult_Success_DEFAULT *tg.Bool
 
 func (p *SetChatWallpaperResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in SetChatWallpaperResult")
+		return out, fmt.Errorf("no req in SetChatWallpaperResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -5589,7 +5731,7 @@ func (p *SetChatWallpaperResult) Unmarshal(in []byte) error {
 
 func (p *SetChatWallpaperResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in SetChatWallpaperResult")
+		return fmt.Errorf("no req in SetChatWallpaperResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -5597,6 +5739,9 @@ func (p *SetChatWallpaperResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *SetChatWallpaperResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -5636,599 +5781,479 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) DialogSaveDraftMessage(ctx context.Context, req *dialog.TLDialogSaveDraftMessage) (r *tg.Bool, err error) {
 	// var _args SaveDraftMessageArgs
 	// _args.Req = req
-	// var _result SaveDraftMessageResult
+	var _result SaveDraftMessageResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.saveDraftMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.saveDraftMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogClearDraftMessage(ctx context.Context, req *dialog.TLDialogClearDraftMessage) (r *tg.Bool, err error) {
 	// var _args ClearDraftMessageArgs
 	// _args.Req = req
-	// var _result ClearDraftMessageResult
+	var _result ClearDraftMessageResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearDraftMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearDraftMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetAllDrafts(ctx context.Context, req *dialog.TLDialogGetAllDrafts) (r *dialog.VectorPeerWithDraftMessage, err error) {
 	// var _args GetAllDraftsArgs
 	// _args.Req = req
-	// var _result GetAllDraftsResult
+	var _result GetAllDraftsResult
 
-	_result := new(dialog.VectorPeerWithDraftMessage)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getAllDrafts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogClearAllDrafts(ctx context.Context, req *dialog.TLDialogClearAllDrafts) (r *dialog.VectorPeerWithDraftMessage, err error) {
 	// var _args ClearAllDraftsArgs
 	// _args.Req = req
-	// var _result ClearAllDraftsResult
+	var _result ClearAllDraftsResult
 
-	_result := new(dialog.VectorPeerWithDraftMessage)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearAllDrafts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogMarkDialogUnread(ctx context.Context, req *dialog.TLDialogMarkDialogUnread) (r *tg.Bool, err error) {
 	// var _args MarkDialogUnreadArgs
 	// _args.Req = req
-	// var _result MarkDialogUnreadResult
+	var _result MarkDialogUnreadResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.markDialogUnread", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.markDialogUnread", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogToggleDialogPin(ctx context.Context, req *dialog.TLDialogToggleDialogPin) (r *tg.Int32, err error) {
 	// var _args ToggleDialogPinArgs
 	// _args.Req = req
-	// var _result ToggleDialogPinResult
+	var _result ToggleDialogPinResult
 
-	_result := new(tg.Int32)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogPin", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogUnreadMarkList(ctx context.Context, req *dialog.TLDialogGetDialogUnreadMarkList) (r *dialog.VectorDialogPeer, err error) {
 	// var _args GetDialogUnreadMarkListArgs
 	// _args.Req = req
-	// var _result GetDialogUnreadMarkListResult
+	var _result GetDialogUnreadMarkListResult
 
-	_result := new(dialog.VectorDialogPeer)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogUnreadMarkList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogUnreadMarkList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogsByOffsetDate(ctx context.Context, req *dialog.TLDialogGetDialogsByOffsetDate) (r *dialog.VectorDialogExt, err error) {
 	// var _args GetDialogsByOffsetDateArgs
 	// _args.Req = req
-	// var _result GetDialogsByOffsetDateResult
+	var _result GetDialogsByOffsetDateResult
 
-	_result := new(dialog.VectorDialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByOffsetDate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByOffsetDate", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogs(ctx context.Context, req *dialog.TLDialogGetDialogs) (r *dialog.VectorDialogExt, err error) {
 	// var _args GetDialogsArgs
 	// _args.Req = req
-	// var _result GetDialogsResult
+	var _result GetDialogsResult
 
-	_result := new(dialog.VectorDialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogsByIdList(ctx context.Context, req *dialog.TLDialogGetDialogsByIdList) (r *dialog.VectorDialogExt, err error) {
 	// var _args GetDialogsByIdListArgs
 	// _args.Req = req
-	// var _result GetDialogsByIdListResult
+	var _result GetDialogsByIdListResult
 
-	_result := new(dialog.VectorDialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByIdList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogsCount(ctx context.Context, req *dialog.TLDialogGetDialogsCount) (r *tg.Int32, err error) {
 	// var _args GetDialogsCountArgs
 	// _args.Req = req
-	// var _result GetDialogsCountResult
+	var _result GetDialogsCountResult
 
-	_result := new(tg.Int32)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsCount", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetPinnedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedDialogs) (r *dialog.VectorDialogExt, err error) {
 	// var _args GetPinnedDialogsArgs
 	// _args.Req = req
-	// var _result GetPinnedDialogsResult
+	var _result GetPinnedDialogsResult
 
-	_result := new(dialog.VectorDialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogReorderPinnedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedDialogs) (r *tg.Bool, err error) {
 	// var _args ReorderPinnedDialogsArgs
 	// _args.Req = req
-	// var _result ReorderPinnedDialogsResult
+	var _result ReorderPinnedDialogsResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogById(ctx context.Context, req *dialog.TLDialogGetDialogById) (r *dialog.DialogExt, err error) {
 	// var _args GetDialogByIdArgs
 	// _args.Req = req
-	// var _result GetDialogByIdResult
+	var _result GetDialogByIdResult
 
-	_result := new(dialog.DialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogById", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogById", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetTopMessage(ctx context.Context, req *dialog.TLDialogGetTopMessage) (r *tg.Int32, err error) {
 	// var _args GetTopMessageArgs
 	// _args.Req = req
-	// var _result GetTopMessageResult
+	var _result GetTopMessageResult
 
-	_result := new(tg.Int32)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getTopMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getTopMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogInsertOrUpdateDialog(ctx context.Context, req *dialog.TLDialogInsertOrUpdateDialog) (r *tg.Bool, err error) {
 	// var _args InsertOrUpdateDialogArgs
 	// _args.Req = req
-	// var _result InsertOrUpdateDialogResult
+	var _result InsertOrUpdateDialogResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialog", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogDeleteDialog(ctx context.Context, req *dialog.TLDialogDeleteDialog) (r *tg.Bool, err error) {
 	// var _args DeleteDialogArgs
 	// _args.Req = req
-	// var _result DeleteDialogResult
+	var _result DeleteDialogResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialog", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetUserPinnedMessage(ctx context.Context, req *dialog.TLDialogGetUserPinnedMessage) (r *tg.Int32, err error) {
 	// var _args GetUserPinnedMessageArgs
 	// _args.Req = req
-	// var _result GetUserPinnedMessageResult
+	var _result GetUserPinnedMessageResult
 
-	_result := new(tg.Int32)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getUserPinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getUserPinnedMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogUpdateUserPinnedMessage(ctx context.Context, req *dialog.TLDialogUpdateUserPinnedMessage) (r *tg.Bool, err error) {
 	// var _args UpdateUserPinnedMessageArgs
 	// _args.Req = req
-	// var _result UpdateUserPinnedMessageResult
+	var _result UpdateUserPinnedMessageResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUserPinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUserPinnedMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogInsertOrUpdateDialogFilter(ctx context.Context, req *dialog.TLDialogInsertOrUpdateDialogFilter) (r *tg.Bool, err error) {
 	// var _args InsertOrUpdateDialogFilterArgs
 	// _args.Req = req
-	// var _result InsertOrUpdateDialogFilterResult
+	var _result InsertOrUpdateDialogFilterResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialogFilter", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogDeleteDialogFilter(ctx context.Context, req *dialog.TLDialogDeleteDialogFilter) (r *tg.Bool, err error) {
 	// var _args DeleteDialogFilterArgs
 	// _args.Req = req
-	// var _result DeleteDialogFilterResult
+	var _result DeleteDialogFilterResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialogFilter", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogUpdateDialogFiltersOrder(ctx context.Context, req *dialog.TLDialogUpdateDialogFiltersOrder) (r *tg.Bool, err error) {
 	// var _args UpdateDialogFiltersOrderArgs
 	// _args.Req = req
-	// var _result UpdateDialogFiltersOrderResult
+	var _result UpdateDialogFiltersOrderResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateDialogFiltersOrder", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateDialogFiltersOrder", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogFilters(ctx context.Context, req *dialog.TLDialogGetDialogFilters) (r *dialog.VectorDialogFilterExt, err error) {
 	// var _args GetDialogFiltersArgs
 	// _args.Req = req
-	// var _result GetDialogFiltersResult
+	var _result GetDialogFiltersResult
 
-	_result := new(dialog.VectorDialogFilterExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilters", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogFolder(ctx context.Context, req *dialog.TLDialogGetDialogFolder) (r *dialog.VectorDialogExt, err error) {
 	// var _args GetDialogFolderArgs
 	// _args.Req = req
-	// var _result GetDialogFolderResult
+	var _result GetDialogFolderResult
 
-	_result := new(dialog.VectorDialogExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFolder", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFolder", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogEditPeerFolders(ctx context.Context, req *dialog.TLDialogEditPeerFolders) (r *dialog.VectorDialogPinnedExt, err error) {
 	// var _args EditPeerFoldersArgs
 	// _args.Req = req
-	// var _result EditPeerFoldersResult
+	var _result EditPeerFoldersResult
 
-	_result := new(dialog.VectorDialogPinnedExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.editPeerFolders", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.editPeerFolders", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetChannelMessageReadParticipants(ctx context.Context, req *dialog.TLDialogGetChannelMessageReadParticipants) (r *dialog.VectorLong, err error) {
 	// var _args GetChannelMessageReadParticipantsArgs
 	// _args.Req = req
-	// var _result GetChannelMessageReadParticipantsResult
+	var _result GetChannelMessageReadParticipantsResult
 
-	_result := new(dialog.VectorLong)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getChannelMessageReadParticipants", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getChannelMessageReadParticipants", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogSetChatTheme(ctx context.Context, req *dialog.TLDialogSetChatTheme) (r *tg.Bool, err error) {
 	// var _args SetChatThemeArgs
 	// _args.Req = req
-	// var _result SetChatThemeResult
+	var _result SetChatThemeResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatTheme", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatTheme", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogSetHistoryTTL) (r *tg.Bool, err error) {
 	// var _args SetHistoryTTLArgs
 	// _args.Req = req
-	// var _result SetHistoryTTLResult
+	var _result SetHistoryTTLResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setHistoryTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDialogGetMyDialogsData) (r *dialog.DialogsData, err error) {
 	// var _args GetMyDialogsDataArgs
 	// _args.Req = req
-	// var _result GetMyDialogsDataResult
+	var _result GetMyDialogsDataResult
 
-	_result := new(dialog.DialogsData)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getMyDialogsData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getMyDialogsData", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialogGetSavedDialogs) (r *dialog.SavedDialogList, err error) {
 	// var _args GetSavedDialogsArgs
 	// _args.Req = req
-	// var _result GetSavedDialogsResult
+	var _result GetSavedDialogsResult
 
-	_result := new(dialog.SavedDialogList)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getSavedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedSavedDialogs) (r *dialog.SavedDialogList, err error) {
 	// var _args GetPinnedSavedDialogsArgs
 	// _args.Req = req
-	// var _result GetPinnedSavedDialogsResult
+	var _result GetPinnedSavedDialogsResult
 
-	_result := new(dialog.SavedDialogList)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedSavedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogToggleSavedDialogPin(ctx context.Context, req *dialog.TLDialogToggleSavedDialogPin) (r *tg.Bool, err error) {
 	// var _args ToggleSavedDialogPinArgs
 	// _args.Req = req
-	// var _result ToggleSavedDialogPinResult
+	var _result ToggleSavedDialogPinResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleSavedDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleSavedDialogPin", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogReorderPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedSavedDialogs) (r *tg.Bool, err error) {
 	// var _args ReorderPinnedSavedDialogsArgs
 	// _args.Req = req
-	// var _result ReorderPinnedSavedDialogsResult
+	var _result ReorderPinnedSavedDialogsResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedSavedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogFilter(ctx context.Context, req *dialog.TLDialogGetDialogFilter) (r *dialog.DialogFilterExt, err error) {
 	// var _args GetDialogFilterArgs
 	// _args.Req = req
-	// var _result GetDialogFilterResult
+	var _result GetDialogFilterResult
 
-	_result := new(dialog.DialogFilterExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilter", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogFilterBySlug(ctx context.Context, req *dialog.TLDialogGetDialogFilterBySlug) (r *dialog.DialogFilterExt, err error) {
 	// var _args GetDialogFilterBySlugArgs
 	// _args.Req = req
-	// var _result GetDialogFilterBySlugResult
+	var _result GetDialogFilterBySlugResult
 
-	_result := new(dialog.DialogFilterExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterBySlug", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterBySlug", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogCreateDialogFilter(ctx context.Context, req *dialog.TLDialogCreateDialogFilter) (r *dialog.DialogFilterExt, err error) {
 	// var _args CreateDialogFilterArgs
 	// _args.Req = req
-	// var _result CreateDialogFilterResult
+	var _result CreateDialogFilterResult
 
-	_result := new(dialog.DialogFilterExt)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.createDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.createDialogFilter", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogUpdateUnreadCount(ctx context.Context, req *dialog.TLDialogUpdateUnreadCount) (r *tg.Bool, err error) {
 	// var _args UpdateUnreadCountArgs
 	// _args.Req = req
-	// var _result UpdateUnreadCountResult
+	var _result UpdateUnreadCountResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUnreadCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUnreadCount", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogToggleDialogFilterTags(ctx context.Context, req *dialog.TLDialogToggleDialogFilterTags) (r *tg.Bool, err error) {
 	// var _args ToggleDialogFilterTagsArgs
 	// _args.Req = req
-	// var _result ToggleDialogFilterTagsResult
+	var _result ToggleDialogFilterTagsResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogFilterTags", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogFilterTags", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogGetDialogFilterTags(ctx context.Context, req *dialog.TLDialogGetDialogFilterTags) (r *tg.Bool, err error) {
 	// var _args GetDialogFilterTagsArgs
 	// _args.Req = req
-	// var _result GetDialogFilterTagsResult
+	var _result GetDialogFilterTagsResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterTags", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterTags", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DialogSetChatWallpaper(ctx context.Context, req *dialog.TLDialogSetChatWallpaper) (r *tg.Bool, err error) {
 	// var _args SetChatWallpaperArgs
 	// _args.Req = req
-	// var _result SetChatWallpaperResult
+	var _result SetChatWallpaperResult
 
-	_result := new(tg.Bool)
-
-	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatWallpaper", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatWallpaper", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
