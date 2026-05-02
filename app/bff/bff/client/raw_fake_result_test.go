@@ -51,6 +51,141 @@ func TestRawFakeDecodesRequestFields(t *testing.T) {
 	}
 }
 
+func TestRawFakeMainScreenStartupMethods(t *testing.T) {
+	tests := []struct {
+		name string
+		req  interface {
+			Encode(*bin.Encoder, int32) error
+		}
+		want func(t *testing.T, obj iface.TLObject)
+	}{
+		{
+			name: "account.updateStatus",
+			req:  &tg.TLAccountUpdateStatus{Offline: tg.BoolTrueClazz},
+			want: wantType[*tg.TLBoolTrue],
+		},
+		{
+			name: "updates.getState",
+			req:  &tg.TLUpdatesGetState{},
+			want: wantType[*tg.TLUpdatesState],
+		},
+		{
+			name: "messages.getDialogs",
+			req: &tg.TLMessagesGetDialogs{
+				OffsetPeer: tg.InputPeerEmptyClazz,
+			},
+			want: wantType[*tg.TLMessagesDialogs],
+		},
+		{
+			name: "messages.getPinnedDialogs",
+			req:  &tg.TLMessagesGetPinnedDialogs{FolderId: 0},
+			want: wantType[*tg.TLMessagesPeerDialogs],
+		},
+		{
+			name: "messages.getDialogFilters",
+			req:  &tg.TLMessagesGetDialogFilters{},
+			want: wantType[*tg.TLMessagesDialogFilters],
+		},
+		{
+			name: "help.getPeerColors",
+			req:  &tg.TLHelpGetPeerColors{Hash: 0},
+			want: wantType[*tg.TLHelpPeerColors],
+		},
+		{
+			name: "messages.getAvailableReactions",
+			req:  &tg.TLMessagesGetAvailableReactions{Hash: 0},
+			want: wantType[*tg.TLMessagesAvailableReactions],
+		},
+		{
+			name: "messages.getTopReactions",
+			req:  &tg.TLMessagesGetTopReactions{Limit: 10, Hash: 0},
+			want: wantType[*tg.TLMessagesReactionsNotModified],
+		},
+		{
+			name: "messages.getRecentReactions",
+			req:  &tg.TLMessagesGetRecentReactions{Limit: 10, Hash: 0},
+			want: wantType[*tg.TLMessagesReactionsNotModified],
+		},
+		{
+			name: "messages.getSavedReactionTags",
+			req:  &tg.TLMessagesGetSavedReactionTags{Hash: 0},
+			want: wantType[*tg.TLMessagesSavedReactionTagsNotModified],
+		},
+		{
+			name: "messages.getDefaultTagReactions",
+			req:  &tg.TLMessagesGetDefaultTagReactions{Hash: 0},
+			want: wantType[*tg.TLMessagesReactionsNotModified],
+		},
+		{
+			name: "messages.getAvailableEffects",
+			req:  &tg.TLMessagesGetAvailableEffects{Hash: 0},
+			want: wantType[*tg.TLMessagesAvailableEffectsNotModified],
+		},
+		{
+			name: "messages.getStickerSet",
+			req:  &tg.TLMessagesGetStickerSet{Stickerset: tg.InputStickerSetEmptyClazz, Hash: 0},
+			want: wantType[*tg.TLMessagesStickerSetNotModified],
+		},
+		{
+			name: "account.getDefaultEmojiStatuses",
+			req:  &tg.TLAccountGetDefaultEmojiStatuses{Hash: 0},
+			want: wantType[*tg.TLAccountEmojiStatuses],
+		},
+		{
+			name: "users.getFullUser",
+			req:  &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz},
+			want: wantType[*tg.TLUsersUserFull],
+		},
+		{
+			name: "account.getNotifySettings",
+			req:  &tg.TLAccountGetNotifySettings{Peer: tg.InputNotifyUsersClazz},
+			want: wantType[*tg.TLPeerNotifySettings],
+		},
+		{
+			name: "messages.getEmojiGroups",
+			req:  &tg.TLMessagesGetEmojiGroups{Hash: 0},
+			want: wantType[*tg.TLMessagesEmojiGroups],
+		},
+		{
+			name: "messages.getAttachMenuBots",
+			req:  &tg.TLMessagesGetAttachMenuBots{Hash: 0},
+			want: wantType[*tg.TLAttachMenuBots],
+		},
+		{
+			name: "messages.getQuickReplies",
+			req:  &tg.TLMessagesGetQuickReplies{Hash: 0},
+			want: wantType[*tg.TLMessagesQuickRepliesNotModified],
+		},
+		{
+			name: "stories.getAllStories",
+			req:  &tg.TLStoriesGetAllStories{Next: false},
+			want: wantType[*tg.TLStoriesAllStories],
+		},
+		{
+			name: "stories.getStoriesArchive",
+			req:  &tg.TLStoriesGetStoriesArchive{Peer: tg.InputPeerSelfClazz, Limit: 100},
+			want: wantType[*tg.TLStoriesStories],
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			payload, ok, err := TryReturnRawFakeRpcResult(context.Background(), nil, encodeRawFakeTL(t, tt.req))
+			if err != nil {
+				t.Fatalf("TryReturnRawFakeRpcResult() error = %v", err)
+			}
+			if !ok {
+				t.Fatal("TryReturnRawFakeRpcResult() ok = false")
+			}
+			obj, err := iface.DecodeObject(bin.NewDecoder(payload))
+			if err != nil {
+				t.Fatalf("DecodeObject() error = %v", err)
+			}
+			tt.want(t, obj)
+		})
+	}
+}
+
 func TestRawFakeUnknownConstructor(t *testing.T) {
 	x := bin.NewEncoder()
 	x.PutClazzID(0xfeed9999)
@@ -61,6 +196,13 @@ func TestRawFakeUnknownConstructor(t *testing.T) {
 	}
 	if ok || payload != nil {
 		t.Fatalf("TryReturnRawFakeRpcResult() = %x, %v; want nil, false", payload, ok)
+	}
+}
+
+func wantType[T iface.TLObject](t *testing.T, obj iface.TLObject) {
+	t.Helper()
+	if _, ok := obj.(T); !ok {
+		t.Fatalf("DecodeObject() = %T, want %T", obj, *new(T))
 	}
 }
 

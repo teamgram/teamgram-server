@@ -45,6 +45,10 @@ func TestHelpGetConfigReturnsValidStartupConfig(t *testing.T) {
 	if len(got.DcOptions) == 0 {
 		t.Fatal("DcOptions is empty")
 	}
+	dc := got.DcOptions[0]
+	if dc.IpAddress != "127.0.0.1" || dc.Port != 10443 {
+		t.Fatalf("DcOptions[0] = %s:%d, want 127.0.0.1:10443", dc.IpAddress, dc.Port)
+	}
 	if got.Date <= 0 || got.Expires <= got.Date {
 		t.Fatalf("Date/Expires = %d/%d, want positive date and later expiry", got.Date, got.Expires)
 	}

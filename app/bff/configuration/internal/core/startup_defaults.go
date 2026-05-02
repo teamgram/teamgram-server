@@ -71,7 +71,7 @@ func makeStartupDcOptions() []tg.DcOptionClazz {
 		tg.MakeTLDcOption(&tg.TLDcOption{
 			Id:        startupThisDC,
 			IpAddress: "127.0.0.1",
-			Port:      443,
+			Port:      10443,
 			Static:    true,
 		}).ToDcOption(),
 	}

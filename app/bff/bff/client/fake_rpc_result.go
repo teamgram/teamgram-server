@@ -70,6 +70,12 @@ func init() {
 	})
 }
 
+func fakeUpdatesState() *tg.TLUpdatesState {
+	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+		Date: int32(time.Now().Unix()),
+	})
+}
+
 func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.TLObject, error) {
 	rt := reflect.TypeOf(object)
 	if rt.Kind() == reflect.Ptr {
@@ -156,78 +162,144 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Themes: []tg.ThemeClazz{},
 		}).ToAccountThemes(), nil
 
-		//// stickers
-		//case "TLMessagesGetAllStickers":
-		//	return mtproto.MakeTLMessagesAllStickers(&mtproto.Messages_AllStickers{
-		//		Hash: 0,
-		//		Sets: []*mtproto.StickerSet{},
-		//	}).To_Messages_AllStickers(), nil
-		//case "TLMessagesGetArchivedStickers":
-		//	return mtproto.MakeTLMessagesArchivedStickers(&mtproto.Messages_ArchivedStickers{
-		//		Count: 0,
-		//		Sets:  []*mtproto.StickerSetCovered{},
-		//	}).To_Messages_ArchivedStickers(), nil
-		//case "TLMessagesGetFavedStickers":
-		//	return mtproto.MakeTLMessagesFavedStickers(&mtproto.Messages_FavedStickers{
-		//		Hash:     0,
-		//		Packs:    []*mtproto.StickerPack{},
-		//		Stickers: []*mtproto.Document{},
-		//	}).To_Messages_FavedStickers(), nil
-		//case "TLMessagesGetMaskStickers":
-		//	return mtproto.MakeTLMessagesAllStickers(&mtproto.Messages_AllStickers{
-		//		Hash: 0,
-		//		Sets: []*mtproto.StickerSet{},
-		//	}).To_Messages_AllStickers(), nil
-		//case "TLMessagesGetOldFeaturedStickers":
-		//	return mtproto.MakeTLMessagesFeaturedStickers(&mtproto.Messages_FeaturedStickers{
-		//		Count:  0,
-		//		Hash:   0,
-		//		Sets:   []*mtproto.StickerSetCovered{},
-		//		Unread: []int64{},
-		//	}).To_Messages_FeaturedStickers(), nil
-		//case "TLMessagesGetRecentStickers":
-		//	return mtproto.MakeTLMessagesRecentStickers(&mtproto.Messages_RecentStickers{
-		//		Hash:     0,
-		//		Packs:    []*mtproto.StickerPack{},
-		//		Stickers: []*mtproto.Document{},
-		//		Dates:    []int32{},
-		//	}).To_Messages_RecentStickers(), nil
-		//case "TLMessagesGetStickers":
-		//	return mtproto.MakeTLMessagesStickers(&mtproto.Messages_Stickers{
-		//		Hash:     0,
-		//		Stickers: []*mtproto.Document{},
-		//	}).To_Messages_Stickers(), nil
-		//case "TLMessagesGetFeaturedStickers":
-		//	return mtproto.MakeTLMessagesFeaturedStickers(&mtproto.Messages_FeaturedStickers{
-		//		Count:  0,
-		//		Hash:   0,
-		//		Sets:   []*mtproto.StickerSetCovered{},
-		//		Unread: []int64{},
-		//	}).To_Messages_FeaturedStickers(), nil
-		//case "TLMessagesGetStickerSet":
-		//	return nil, mtproto.ErrStickerIdInvalid
-		//
-		//// 	scheduledmessages
-		//case "TLMessagesGetScheduledMessages":
-		//	return mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
-		//		Messages: []*mtproto.Message{},
-		//		Chats:    []*mtproto.Chat{},
-		//		Users:    []*mtproto.User{},
-		//	}).To_Messages_Messages(), nil
-		//
-		//// reactions
-		//case "TLMessagesGetAvailableReactions":
-		//	return mtproto.MakeTLMessagesAvailableReactions(&mtproto.Messages_AvailableReactions{
-		//		Hash:      0,
-		//		Reactions: []*mtproto.AvailableReaction{},
-		//	}).To_Messages_AvailableReactions(), nil
-		//
-		//// folders
-		//case "TLMessagesGetDialogFilters":
-		//	return &mtproto.Vector_DialogFilter{
-		//		Datas: []*mtproto.DialogFilter{},
-		//	}, nil
-		//
+	// tdesktop main screen startup placeholders
+	case "TLAccountUpdateStatus":
+		return tg.BoolTrue, nil
+	case "TLUpdatesGetState":
+		return fakeUpdatesState(), nil
+	case "TLMessagesGetDialogs":
+		return tg.MakeTLMessagesDialogs(&tg.TLMessagesDialogs{
+			Dialogs:  []tg.DialogClazz{},
+			Messages: []tg.MessageClazz{},
+			Chats:    []tg.ChatClazz{},
+			Users:    []tg.UserClazz{},
+		}).ToMessagesDialogs(), nil
+	case "TLMessagesGetPinnedDialogs":
+		return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+			Dialogs:  []tg.DialogClazz{},
+			Messages: []tg.MessageClazz{},
+			Chats:    []tg.ChatClazz{},
+			Users:    []tg.UserClazz{},
+			State:    fakeUpdatesState(),
+		}).ToMessagesPeerDialogs(), nil
+	case "TLMessagesGetDialogFilters":
+		return tg.MakeTLMessagesDialogFilters(&tg.TLMessagesDialogFilters{
+			Filters: []tg.DialogFilterClazz{},
+		}).ToMessagesDialogFilters(), nil
+	case "TLHelpGetPeerColors", "TLHelpGetPeerProfileColors":
+		return tg.MakeTLHelpPeerColors(&tg.TLHelpPeerColors{
+			Hash:   0,
+			Colors: []tg.HelpPeerColorOptionClazz{},
+		}).ToHelpPeerColors(), nil
+	case "TLMessagesGetAvailableReactions":
+		return tg.MakeTLMessagesAvailableReactions(&tg.TLMessagesAvailableReactions{
+			Hash:      0,
+			Reactions: []tg.AvailableReactionClazz{},
+		}).ToMessagesAvailableReactions(), nil
+	case "TLMessagesGetTopReactions", "TLMessagesGetRecentReactions", "TLMessagesGetDefaultTagReactions":
+		return tg.MessagesReactionsNotModified, nil
+	case "TLMessagesGetSavedReactionTags":
+		return tg.MessagesSavedReactionTagsNotModified, nil
+	case "TLMessagesGetAvailableEffects":
+		return tg.MessagesAvailableEffectsNotModified, nil
+	case "TLAccountGetDefaultEmojiStatuses":
+		return tg.MakeTLAccountEmojiStatuses(&tg.TLAccountEmojiStatuses{
+			Hash:     0,
+			Statuses: []tg.EmojiStatusClazz{},
+		}).ToAccountEmojiStatuses(), nil
+	case "TLUsersGetFullUser":
+		return tg.MakeTLUsersUserFull(&tg.TLUsersUserFull{
+			FullUser: tg.MakeTLUserFull(&tg.TLUserFull{
+				Settings:       tg.MakeTLPeerSettings(&tg.TLPeerSettings{}).ToPeerSettings(),
+				NotifySettings: tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}).ToPeerNotifySettings(),
+			}).ToUserFull(),
+			Chats: []tg.ChatClazz{},
+			Users: []tg.UserClazz{},
+		}).ToUsersUserFull(), nil
+	case "TLAccountGetNotifySettings":
+		return tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}).ToPeerNotifySettings(), nil
+	case "TLMessagesGetEmojiGroups", "TLMessagesGetEmojiStickerGroups":
+		return tg.MakeTLMessagesEmojiGroups(&tg.TLMessagesEmojiGroups{
+			Hash:   0,
+			Groups: []tg.EmojiGroupClazz{},
+		}).ToMessagesEmojiGroups(), nil
+	case "TLMessagesGetAttachMenuBots":
+		return tg.MakeTLAttachMenuBots(&tg.TLAttachMenuBots{
+			Hash:  0,
+			Bots:  []tg.AttachMenuBotClazz{},
+			Users: []tg.UserClazz{},
+		}).ToAttachMenuBots(), nil
+	case "TLMessagesGetQuickReplies":
+		return tg.MessagesQuickRepliesNotModified, nil
+	case "TLStoriesGetAllStories":
+		return tg.MakeTLStoriesAllStories(&tg.TLStoriesAllStories{
+			Count:       0,
+			State:       "",
+			PeerStories: []tg.PeerStoriesClazz{},
+			Chats:       []tg.ChatClazz{},
+			Users:       []tg.UserClazz{},
+			StealthMode: tg.MakeTLStoriesStealthMode(&tg.TLStoriesStealthMode{}).ToStoriesStealthMode(),
+		}).ToStoriesAllStories(), nil
+	case "TLStoriesGetStoriesArchive":
+		return tg.MakeTLStoriesStories(&tg.TLStoriesStories{
+			Count:       0,
+			Stories:     []tg.StoryItemClazz{},
+			PinnedToTop: []int32{},
+			Chats:       []tg.ChatClazz{},
+			Users:       []tg.UserClazz{},
+		}).ToStoriesStories(), nil
+
+	// stickers
+	case "TLMessagesGetAllStickers":
+		return tg.MakeTLMessagesAllStickers(&tg.TLMessagesAllStickers{
+			Hash: 0,
+			Sets: []tg.StickerSetClazz{},
+		}).ToMessagesAllStickers(), nil
+	case "TLMessagesGetStickerSet":
+		return tg.MakeTLMessagesStickerSetNotModified(&tg.TLMessagesStickerSetNotModified{}).ToMessagesStickerSet(), nil
+	case "TLMessagesGetFavedStickers":
+		return tg.MakeTLMessagesFavedStickers(&tg.TLMessagesFavedStickers{
+			Hash:     0,
+			Packs:    []tg.StickerPackClazz{},
+			Stickers: []tg.DocumentClazz{},
+		}).ToMessagesFavedStickers(), nil
+	case "TLMessagesGetRecentStickers":
+		return tg.MakeTLMessagesRecentStickers(&tg.TLMessagesRecentStickers{
+			Hash:     0,
+			Packs:    []tg.StickerPackClazz{},
+			Stickers: []tg.DocumentClazz{},
+			Dates:    []int32{},
+		}).ToMessagesRecentStickers(), nil
+	case "TLMessagesGetStickers":
+		return tg.MakeTLMessagesStickers(&tg.TLMessagesStickers{
+			Hash:     0,
+			Stickers: []tg.DocumentClazz{},
+		}).ToMessagesStickers(), nil
+	case "TLMessagesGetFeaturedStickers":
+		return tg.MakeTLMessagesFeaturedStickers(&tg.TLMessagesFeaturedStickers{
+			Hash:   0,
+			Count:  0,
+			Sets:   []tg.StickerSetCoveredClazz{},
+			Unread: []int64{},
+		}).ToMessagesFeaturedStickers(), nil
+
+	// promodata
+	case "TLHelpGetPromoData":
+		return tg.MakeTLHelpPromoDataEmpty(&tg.TLHelpPromoDataEmpty{
+			Expires: int32(time.Now().Unix() + 60*60),
+		}).ToHelpPromoData(), nil
+
+	// premium
+	case "TLHelpGetPremiumPromo":
+		return tg.MakeTLHelpPremiumPromo(&tg.TLHelpPremiumPromo{
+			StatusText:     "Premium",
+			StatusEntities: []tg.MessageEntityClazz{},
+			VideoSections:  []string{},
+			Videos:         []tg.DocumentClazz{},
+			PeriodOptions:  []tg.PremiumSubscriptionOptionClazz{},
+			Users:          []tg.UserClazz{},
+		}).ToHelpPremiumPromo(), nil
+
 		//// gifs
 		//case "TLMessagesGetSavedGifs":
 		//	return mtproto.MakeTLMessagesSavedGifs(&mtproto.Messages_SavedGifs{
@@ -238,10 +310,6 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 		//	return mtproto.BoolTrue, nil
 		//
 		//// promodata
-		//case "TLHelpGetPromoData":
-		//	return mtproto.MakeTLHelpPromoDataEmpty(&mtproto.Help_PromoData{
-		//		Expires: int32(time.Now().Unix() + 60*60),
-		//	}).To_Help_PromoData(), nil
 		//case "TLHelpHidePromoData":
 		//	return mtproto.BoolTrue, nil
 		//
