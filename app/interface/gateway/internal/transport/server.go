@@ -24,6 +24,7 @@ type Server struct {
 	wg        sync.WaitGroup
 	connsMu   sync.Mutex
 	conns     map[net.Conn]struct{}
+	stopping  bool
 }
 
 func NewServer(addr string, gatewayID string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter) *Server {
@@ -47,10 +48,15 @@ func (s *Server) Start(ctx context.Context) error {
 			if err != nil {
 				return
 			}
+			untrack, ok := s.trackConn(conn)
+			if !ok {
+				_ = conn.Close()
+				continue
+			}
 			s.wg.Add(1)
 			go func() {
 				defer s.wg.Done()
-				_ = s.ServeConn(ctx, conn)
+				_ = s.serveTrackedConn(ctx, conn, untrack)
 			}()
 		}
 	}()
@@ -62,6 +68,9 @@ func (s *Server) Stop() error {
 		return nil
 	}
 	var err error
+	s.connsMu.Lock()
+	s.stopping = true
+	s.connsMu.Unlock()
 	if s.listener != nil {
 		err = s.listener.Close()
 	}
@@ -71,7 +80,15 @@ func (s *Server) Stop() error {
 }
 
 func (s *Server) ServeConn(ctx context.Context, conn net.Conn) error {
-	untrack := s.trackConn(conn)
+	untrack, ok := s.trackConn(conn)
+	if !ok {
+		_ = conn.Close()
+		return nil
+	}
+	return s.serveTrackedConn(ctx, conn, untrack)
+}
+
+func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack func()) error {
 	defer untrack()
 	defer conn.Close()
 	reader := bufio.NewReader(conn)
@@ -153,8 +170,12 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 	})
 }
 
-func (s *Server) trackConn(conn net.Conn) func() {
+func (s *Server) trackConn(conn net.Conn) (func(), bool) {
 	s.connsMu.Lock()
+	if s.stopping {
+		s.connsMu.Unlock()
+		return func() {}, false
+	}
 	if s.conns == nil {
 		s.conns = make(map[net.Conn]struct{})
 	}
@@ -164,7 +185,7 @@ func (s *Server) trackConn(conn net.Conn) func() {
 		s.connsMu.Lock()
 		delete(s.conns, conn)
 		s.connsMu.Unlock()
-	}
+	}, true
 }
 
 func (s *Server) closeActiveConns() {

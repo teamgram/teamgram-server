@@ -144,6 +144,27 @@ func TestGatewayTransportStopClosesActiveConnections(t *testing.T) {
 	}
 }
 
+func TestGatewayTransportServeConnAfterStopClosesImmediately(t *testing.T) {
+	server := NewServer("", "gateway-test", nil, nil, nil)
+	if err := server.Stop(); err != nil {
+		t.Fatalf("Stop() error = %v", err)
+	}
+	clientConn, serverConn := net.Pipe()
+	defer clientConn.Close()
+	done := make(chan error, 1)
+	go func() {
+		done <- server.ServeConn(context.Background(), serverConn)
+	}()
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("ServeConn() error = %v", err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("ServeConn did not exit after Stop")
+	}
+}
+
 var errPushTargetMissing = &testError{"push target missing"}
 
 type testError struct {
