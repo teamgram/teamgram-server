@@ -33,5 +33,5 @@ type Config struct {
 type TransportConf struct {
 	TCPListenOn string
 	// Reserved for future HTTP/WebSocket MTProto transport. Phase 3 only serves TCP.
-	HTTPListenOn string
+	HTTPListenOn string `json:",optional"`
 }
