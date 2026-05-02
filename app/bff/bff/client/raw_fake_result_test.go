@@ -224,6 +224,44 @@ func TestRawFakeEncodesResponseWithClientLayer(t *testing.T) {
 	}
 }
 
+func TestRawFakeUsersGetFullUserUsesMetadataSelfUser(t *testing.T) {
+	const selfUserID int64 = 1571766986
+
+	payload, ok, err := TryReturnRawFakeRpcResult(
+		context.Background(),
+		&metadata.RpcMetadata{Layer: 223, UserId: selfUserID},
+		encodeRawFakeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}),
+	)
+	if err != nil {
+		t.Fatalf("TryReturnRawFakeRpcResult() error = %v", err)
+	}
+	if !ok {
+		t.Fatal("TryReturnRawFakeRpcResult() ok = false")
+	}
+
+	obj, err := iface.DecodeObject(bin.NewDecoder(payload))
+	if err != nil {
+		t.Fatalf("DecodeObject() error = %v", err)
+	}
+	userFull, ok := obj.(*tg.TLUsersUserFull)
+	if !ok {
+		t.Fatalf("DecodeObject() = %T, want *tg.TLUsersUserFull", obj)
+	}
+	if userFull.FullUser.Id != selfUserID {
+		t.Fatalf("FullUser.Id = %d, want %d", userFull.FullUser.Id, selfUserID)
+	}
+	if len(userFull.Users) != 1 {
+		t.Fatalf("len(Users) = %d, want 1", len(userFull.Users))
+	}
+	self, ok := userFull.Users[0].(*tg.TLUser)
+	if !ok {
+		t.Fatalf("Users[0] = %T, want *tg.TLUser", userFull.Users[0])
+	}
+	if self.Id != selfUserID || !self.Self {
+		t.Fatalf("Users[0] = {Id:%d Self:%t}, want {Id:%d Self:true}", self.Id, self.Self, selfUserID)
+	}
+}
+
 func TestRawFakeUnknownConstructor(t *testing.T) {
 	x := bin.NewEncoder()
 	x.PutClazzID(0xfeed9999)
