@@ -74,6 +74,28 @@ func TestRawDispatchMissingClientUsesFakeFallback(t *testing.T) {
 	}
 }
 
+func TestRawDispatchFakeFallbackErrorWrapsRPCError(t *testing.T) {
+	const reqClazzID = uint32(0xfeed3005)
+	iface.RegisterClazzName("raw_dispatch_fake_error", 0, reqClazzID)
+	iface.RegisterClazzIDName("raw_dispatch_fake_error", reqClazzID)
+	iface.RegisterClazzID(reqClazzID, func() iface.TLObject { return &TLRawDispatchFakeError{} })
+	iface.RegisterRPCContextTuple("TLRawDispatchFakeError", "/tg.RPCRawDispatchFake/raw.dispatchFake", func() interface{} {
+		return codec.NewRawTLObject(nil)
+	})
+	dispatcher := NewRawDispatcher(&bffclient.BFFProxyClient2{RawClients: map[string]kitex.Client{}})
+
+	_, err := dispatcher.Invoke(context.Background(), &metadata.RpcMetadata{}, []byte{0x05, 0x30, 0xed, 0xfe})
+	var rpcErr interface {
+		RPCError() *tg.TLRpcError
+	}
+	if !errors.As(err, &rpcErr) {
+		t.Fatalf("Invoke() error = %T %[1]v, want RPCError", err)
+	}
+	if got := rpcErr.RPCError(); got.ErrorCode != int32(tg.ErrEnterpriseIsBlocked.Code()) || got.ErrorMessage != tg.ErrEnterpriseIsBlocked.Msg() {
+		t.Fatalf("RPCError() = %#v", got)
+	}
+}
+
 func TestRawDispatchInfrastructureError(t *testing.T) {
 	const reqClazzID = uint32(0xfeed3002)
 	iface.RegisterClazzName("raw_dispatch_infra", 0, reqClazzID)
@@ -90,6 +112,19 @@ func TestRawDispatchInfrastructureError(t *testing.T) {
 	if !errors.Is(err, want) {
 		t.Fatalf("Invoke() error = %v, want %v", err, want)
 	}
+}
+
+type TLRawDispatchFakeError struct {
+	ClazzID uint32
+}
+
+func (m *TLRawDispatchFakeError) Encode(x *bin.Encoder, layer int32) error {
+	x.PutClazzID(0xfeed3005)
+	return nil
+}
+
+func (m *TLRawDispatchFakeError) Decode(d *bin.Decoder) error {
+	return nil
 }
 
 func TestRawDispatchWrapsTLRPCError(t *testing.T) {

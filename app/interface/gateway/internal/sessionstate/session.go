@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
@@ -37,6 +38,7 @@ type SessionObserver func(ActiveSession)
 type Processor struct {
 	store        repository.AuthKeyStore
 	dispatch     Dispatcher
+	authKeysMu   sync.RWMutex
 	authKeys     map[int64]*crypto.AuthKey
 	authKeyInfos map[int64]*tg.AuthKeyInfo
 	disconnectAt time.Time
@@ -93,6 +95,16 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 }
 
 func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthKey, *tg.AuthKeyInfo, error) {
+	p.authKeysMu.RLock()
+	if key, ok := p.authKeys[authKeyId]; ok {
+		keyInfo := p.authKeyInfos[authKeyId]
+		p.authKeysMu.RUnlock()
+		return key, keyInfo, nil
+	}
+	p.authKeysMu.RUnlock()
+
+	p.authKeysMu.Lock()
+	defer p.authKeysMu.Unlock()
 	if key, ok := p.authKeys[authKeyId]; ok {
 		return key, p.authKeyInfos[authKeyId], nil
 	}

@@ -73,6 +73,9 @@ func (d *RawDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadata, pa
 		return nil, fmt.Errorf("raw dispatcher: request constructor: %w", idErr)
 	}
 	if fake, ok, fakeErr := bffclient.TryReturnRawFakeRpcResult(ctx, md, constructorID); fakeErr != nil {
+		if isTLRPCError(fakeErr) {
+			return nil, NewRPCError(fakeErr)
+		}
 		return nil, fakeErr
 	} else if ok {
 		return fake, nil

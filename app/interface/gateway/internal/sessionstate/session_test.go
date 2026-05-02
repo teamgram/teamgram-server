@@ -3,6 +3,8 @@ package sessionstate
 import (
 	"bytes"
 	"context"
+	"sync"
+	"sync/atomic"
 	"testing"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
@@ -108,6 +110,34 @@ func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
 	}
 }
 
+func TestSessionAuthKeyCacheConcurrent(t *testing.T) {
+	serverKey, _ := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
+	keyInfo.PermAuthKeyId = 4242
+	store := &countingAuthKeyStore{key: keyInfo}
+	processor := NewProcessor(store, &fakeDispatcher{})
+
+	var wg sync.WaitGroup
+	for i := 0; i < 16; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			key, info, err := processor.authKey(context.Background(), serverKey.AuthKeyId())
+			if err != nil {
+				t.Errorf("authKey() error = %v", err)
+				return
+			}
+			if key.AuthKeyId() != serverKey.AuthKeyId() || info == nil || info.PermAuthKeyId != 4242 {
+				t.Errorf("authKey() = key %v info %#v", key.AuthKeyId(), info)
+			}
+		}()
+	}
+	wg.Wait()
+	if got := store.calls.Load(); got != 1 {
+		t.Fatalf("QueryAuthKey calls = %d, want 1", got)
+	}
+}
+
 func TestSessionWrapsDispatchRPCError(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
@@ -167,3 +197,21 @@ func sessionTestKeys() (*crypto.AuthKey, *crypto.AuthKey) {
 }
 
 var _ = bin.WordLen
+
+type countingAuthKeyStore struct {
+	key   *tg.AuthKeyInfo
+	calls atomic.Int32
+}
+
+func (s *countingAuthKeyStore) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
+	s.calls.Add(1)
+	return s.key, nil
+}
+
+func (s *countingAuthKeyStore) SetAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, futureSalt *tg.FutureSalt, expiresIn int32) error {
+	return nil
+}
+
+func (s *countingAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
+	return nil, nil
+}
