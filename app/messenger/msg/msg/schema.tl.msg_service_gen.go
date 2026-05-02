@@ -834,6 +834,111 @@ func (m *TLMsgReadHistoryV2) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLMsgGetHistory <--
+type TLMsgGetHistory struct {
+	ClazzID    uint32 `json:"_id"`
+	UserId     int64  `json:"user_id"`
+	AuthKeyId  int64  `json:"auth_key_id"`
+	PeerType   int32  `json:"peer_type"`
+	PeerId     int64  `json:"peer_id"`
+	OffsetId   int32  `json:"offset_id"`
+	OffsetDate int32  `json:"offset_date"`
+	AddOffset  int32  `json:"add_offset"`
+	Limit      int32  `json:"limit"`
+	MaxId      int32  `json:"max_id"`
+	MinId      int32  `json:"min_id"`
+	Hash       int64  `json:"hash"`
+}
+
+func (m *TLMsgGetHistory) String() string {
+	return iface.DebugStringWithName(ClazzName_msg_getHistory, m)
+}
+
+// Encode <--
+func (m *TLMsgGetHistory) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_getHistory, int(layer)); clazzId {
+	case 0x7f4083df:
+		x.PutClazzID(0x7f4083df)
+
+		x.PutInt64(m.UserId)
+		x.PutInt64(m.AuthKeyId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt32(m.OffsetId)
+		x.PutInt32(m.OffsetDate)
+		x.PutInt32(m.AddOffset)
+		x.PutInt32(m.Limit)
+		x.PutInt32(m.MaxId)
+		x.PutInt32(m.MinId)
+		x.PutInt64(m.Hash)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode msg_getHistory: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMsgGetHistory) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x7f4083df:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field user_id: %w", err)
+		}
+		m.AuthKeyId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field auth_key_id: %w", err)
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_id: %w", err)
+		}
+		m.OffsetId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_id: %w", err)
+		}
+		m.OffsetDate, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_date: %w", err)
+		}
+		m.AddOffset, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field add_offset: %w", err)
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field limit: %w", err)
+		}
+		m.MaxId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field max_id: %w", err)
+		}
+		m.MinId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field min_id: %w", err)
+		}
+		m.Hash, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field hash: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode msg_getHistory: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLMsgUpdatePinnedMessage <--
 type TLMsgUpdatePinnedMessage struct {
 	ClazzID   uint32 `json:"_id"`
@@ -1021,6 +1126,7 @@ type RPCMsg interface {
 	MsgDeleteChatHistory(ctx context.Context, in *TLMsgDeleteChatHistory) (*tg.Bool, error)
 	MsgReadHistory(ctx context.Context, in *TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	MsgGetHistory(ctx context.Context, in *TLMsgGetHistory) (*tg.MessagesMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 }

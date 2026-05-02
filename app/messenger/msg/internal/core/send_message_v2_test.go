@@ -145,9 +145,71 @@ func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T)
 	}
 }
 
+func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9001,
+				PeerSeq:            2,
+				FromUserID:         1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "second",
+				MessageDate:        1_772_000_020,
+			},
+			{
+				CanonicalMessageID: 9000,
+				PeerSeq:            1,
+				FromUserID:         1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "first",
+				MessageDate:        1_772_000_010,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		OffsetId:  3,
+		Limit:     20,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
+	}
+	if len(messages.Messages) != 2 {
+		t.Fatalf("messages len = %d, want 2", len(messages.Messages))
+	}
+	newest, ok := messages.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message[0] = %T, want *tg.TLMessage", messages.Messages[0])
+	}
+	if newest.Id != 2 || newest.Message != "second" || newest.Date != 1_772_000_020 || !newest.Out {
+		t.Fatalf("unexpected newest message: %+v", newest)
+	}
+	if repo.historyInput.PeerType != payload.PeerTypeUser ||
+		repo.historyInput.PeerID != 1002 ||
+		repo.historyInput.OffsetID != 3 ||
+		repo.historyInput.Limit != 20 {
+		t.Fatalf("unexpected history input: %+v", repo.historyInput)
+	}
+}
+
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult
+	history                []repository.HistoryMessage
+	historyInput           repository.ListHistoryMessagesInput
 	markSenderErrs         []error
 	markCanonicalCalls     int
 	markSenderCalls        int
@@ -162,6 +224,11 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
 	return f.canonical, nil
+}
+
+func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {
+	f.historyInput = in
+	return f.history, nil
 }
 
 func (f *fakeMsgRepository) MarkCanonicalCreated(context.Context, int64, int64, int64) error {

@@ -125,6 +125,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/msg.RPCMsg/msg.getHistory": kitex.NewMethodInfo(
+		getHistoryHandler,
+		newGetHistoryArgs,
+		newGetHistoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/msg.RPCMsg/msg.updatePinnedMessage": kitex.NewMethodInfo(
 		updatePinnedMessageHandler,
 		newUpdatePinnedMessageArgs,
@@ -1552,6 +1559,140 @@ func (p *ReadHistoryV2Result) GetResult() interface{} {
 	return p.Success
 }
 
+func getHistoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetHistoryArgs)
+	realResult := result.(*GetHistoryResult)
+	success, err := handler.(msg.RPCMsg).MsgGetHistory(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetHistoryArgs() interface{} {
+	return &GetHistoryArgs{}
+}
+
+func newGetHistoryResult() interface{} {
+	return &GetHistoryResult{}
+}
+
+type GetHistoryArgs struct {
+	Req *msg.TLMsgGetHistory
+}
+
+func (p *GetHistoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetHistoryArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetHistoryArgs) Unmarshal(in []byte) error {
+	msg := new(msg.TLMsgGetHistory)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetHistoryArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetHistoryArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.TLMsgGetHistory)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetHistoryArgs_Req_DEFAULT *msg.TLMsgGetHistory
+
+func (p *GetHistoryArgs) GetReq() *msg.TLMsgGetHistory {
+	if !p.IsSetReq() {
+		return GetHistoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetHistoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetHistoryResult struct {
+	Success *tg.MessagesMessages
+}
+
+var GetHistoryResult_Success_DEFAULT *tg.MessagesMessages
+
+func (p *GetHistoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetHistoryResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetHistoryResult) Unmarshal(in []byte) error {
+	msg := new(tg.MessagesMessages)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetHistoryResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetHistoryResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetHistoryResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.MessagesMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetHistoryResult) GetSuccess() *tg.MessagesMessages {
+	if !p.IsSetSuccess() {
+		return GetHistoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetHistoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.MessagesMessages)
+}
+
+func (p *GetHistoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetHistoryResult) GetResult() interface{} {
+	return p.Success
+}
+
 func updatePinnedMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*UpdatePinnedMessageArgs)
 	realResult := result.(*UpdatePinnedMessageResult)
@@ -1944,6 +2085,18 @@ func (p *kClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistor
 	var _result ReadHistoryV2Result
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistoryV2", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory) (r *tg.MessagesMessages, err error) {
+	// var _args GetHistoryArgs
+	// _args.Req = req
+	var _result GetHistoryResult
+
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getHistory", req, &_result); err != nil {
 		return
 	}
 

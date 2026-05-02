@@ -180,6 +180,22 @@ func (s *Service) MsgReadHistoryV2(ctx context.Context, request *msg.TLMsgReadHi
 	return r, err
 }
 
+// MsgGetHistory
+// msg.getHistory user_id:long auth_key_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+func (s *Service) MsgGetHistory(ctx context.Context, request *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.getHistory - request: %s", request)
+
+	r, err := c.MsgGetHistory(request)
+	if err != nil {
+		c.Logger.Errorf("msg.getHistory - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.getHistory - reply: %s", r)
+	return r, err
+}
+
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (s *Service) MsgUpdatePinnedMessage(ctx context.Context, request *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {

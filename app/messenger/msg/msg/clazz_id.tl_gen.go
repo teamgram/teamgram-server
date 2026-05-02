@@ -24,6 +24,7 @@ const (
 	ClazzID_msg_deleteChatHistory      = 0xef1f62db // ef1f62db
 	ClazzID_msg_readHistory            = 0x5a0f6e12 // 5a0f6e12
 	ClazzID_msg_readHistoryV2          = 0xfb9b206  // fb9b206
+	ClazzID_msg_getHistory             = 0x7f4083df // 7f4083df
 	ClazzID_msg_updatePinnedMessage    = 0xe5ae51a9 // e5ae51a9
 	ClazzID_msg_unpinAllMessages       = 0xb8865f25 // b8865f25
 )

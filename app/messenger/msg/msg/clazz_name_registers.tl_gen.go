@@ -28,6 +28,7 @@ const (
 	ClazzName_msg_deleteChatHistory      = "msg_deleteChatHistory"
 	ClazzName_msg_readHistory            = "msg_readHistory"
 	ClazzName_msg_readHistoryV2          = "msg_readHistoryV2"
+	ClazzName_msg_getHistory             = "msg_getHistory"
 	ClazzName_msg_updatePinnedMessage    = "msg_updatePinnedMessage"
 	ClazzName_msg_unpinAllMessages       = "msg_unpinAllMessages"
 )
@@ -47,6 +48,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_msg_deleteChatHistory, 0, 0xef1f62db)      // ef1f62db
 	iface.RegisterClazzName(ClazzName_msg_readHistory, 0, 0x5a0f6e12)            // 5a0f6e12
 	iface.RegisterClazzName(ClazzName_msg_readHistoryV2, 0, 0xfb9b206)           // fb9b206
+	iface.RegisterClazzName(ClazzName_msg_getHistory, 0, 0x7f4083df)             // 7f4083df
 	iface.RegisterClazzName(ClazzName_msg_updatePinnedMessage, 0, 0xe5ae51a9)    // e5ae51a9
 	iface.RegisterClazzName(ClazzName_msg_unpinAllMessages, 0, 0xb8865f25)       // b8865f25
 
@@ -64,6 +66,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_msg_deleteChatHistory, 0xef1f62db)      // ef1f62db
 	iface.RegisterClazzIDName(ClazzName_msg_readHistory, 0x5a0f6e12)            // 5a0f6e12
 	iface.RegisterClazzIDName(ClazzName_msg_readHistoryV2, 0xfb9b206)           // fb9b206
+	iface.RegisterClazzIDName(ClazzName_msg_getHistory, 0x7f4083df)             // 7f4083df
 	iface.RegisterClazzIDName(ClazzName_msg_updatePinnedMessage, 0xe5ae51a9)    // e5ae51a9
 	iface.RegisterClazzIDName(ClazzName_msg_unpinAllMessages, 0xb8865f25)       // b8865f25
 }

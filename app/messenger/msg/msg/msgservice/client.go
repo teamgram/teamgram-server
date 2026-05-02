@@ -35,6 +35,7 @@ type Client interface {
 	MsgDeleteChatHistory(ctx context.Context, req *msg.TLMsgDeleteChatHistory, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHistory, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
 	MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
+	MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
 	MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	MsgUnpinAllMessages(ctx context.Context, req *msg.TLMsgUnpinAllMessages, callOptions ...callopt.Option) (r *tg.MessagesAffectedHistory, err error)
 }
@@ -124,6 +125,11 @@ func (p *kMsgClient) MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHisto
 func (p *kMsgClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MsgReadHistoryV2(ctx, req)
+}
+
+func (p *kMsgClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MsgGetHistory(ctx, req)
 }
 
 func (p *kMsgClient) MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage, callOptions ...callopt.Option) (r *tg.Updates, err error) {

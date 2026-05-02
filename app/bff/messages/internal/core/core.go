@@ -31,6 +31,10 @@ type sendMessageClient interface {
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
 }
 
+type getHistoryClient interface {
+	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+}
+
 type MessagesCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

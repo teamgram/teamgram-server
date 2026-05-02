@@ -34,6 +34,7 @@ func init() {
 	iface.RegisterClazzID(0xef1f62db, func() iface.TLObject { return &TLMsgDeleteChatHistory{ClazzID: 0xef1f62db} })      // 0xef1f62db
 	iface.RegisterClazzID(0x5a0f6e12, func() iface.TLObject { return &TLMsgReadHistory{ClazzID: 0x5a0f6e12} })            // 0x5a0f6e12
 	iface.RegisterClazzID(0xfb9b206, func() iface.TLObject { return &TLMsgReadHistoryV2{ClazzID: 0xfb9b206} })            // 0xfb9b206
+	iface.RegisterClazzID(0x7f4083df, func() iface.TLObject { return &TLMsgGetHistory{ClazzID: 0x7f4083df} })             // 0x7f4083df
 	iface.RegisterClazzID(0xe5ae51a9, func() iface.TLObject { return &TLMsgUpdatePinnedMessage{ClazzID: 0xe5ae51a9} })    // 0xe5ae51a9
 	iface.RegisterClazzID(0xb8865f25, func() iface.TLObject { return &TLMsgUnpinAllMessages{ClazzID: 0xb8865f25} })       // 0xb8865f25
 }

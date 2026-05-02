@@ -155,6 +155,60 @@ func TestMessageRepositoryRandomIdConflict(t *testing.T) {
 	}
 }
 
+func TestMessageRepositoryListHistoryMessages(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 40_000})
+
+	senderID := base + 401
+	receiverID := base + 402
+	firstDate := int32(time.Now().Unix())
+	secondDate := firstDate + 1
+
+	first := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+403, "first", firstDate)
+	second := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+404, "second", secondDate)
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		PeerType: payload.PeerTypeUser,
+		PeerID:   receiverID,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) != 2 {
+		t.Fatalf("ListHistoryMessages() len = %d, want 2: %+v", len(history), history)
+	}
+	if history[0].CanonicalMessageID != second.CanonicalMessageID ||
+		history[0].PeerSeq != second.PeerSeq ||
+		history[0].FromUserID != senderID ||
+		history[0].MessageText != "second" ||
+		history[0].MessageDate != secondDate {
+		t.Fatalf("unexpected newest history row: %+v, canonical: %+v", history[0], second)
+	}
+	if history[1].CanonicalMessageID != first.CanonicalMessageID ||
+		history[1].PeerSeq != first.PeerSeq ||
+		history[1].FromUserID != senderID ||
+		history[1].MessageText != "first" ||
+		history[1].MessageDate != firstDate {
+		t.Fatalf("unexpected older history row: %+v, canonical: %+v", history[1], first)
+	}
+
+	beforeSecond, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		PeerType: payload.PeerTypeUser,
+		PeerID:   receiverID,
+		OffsetID: int32(second.PeerSeq),
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() offset error = %v", err)
+	}
+	if len(beforeSecond) != 1 || beforeSecond[0].CanonicalMessageID != first.CanonicalMessageID {
+		t.Fatalf("ListHistoryMessages() offset = %+v, want first canonical id %d", beforeSecond, first.CanonicalMessageID)
+	}
+}
+
 func TestMessageRepositoryMarkSenderCommittedRejectsOutOfRangePTS(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -185,6 +239,45 @@ func TestMessageRepositoryMarkSenderCommittedRejectsOutOfRangePTS(t *testing.T) 
 	if !errors.Is(err, msg.ErrSenderSyncFailed) {
 		t.Fatalf("MarkSenderCommitted() error = %v, want ErrSenderSyncFailed", err)
 	}
+}
+
+func createCanonicalMessageForTest(
+	t *testing.T,
+	ctx context.Context,
+	repo *Repository,
+	senderID int64,
+	receiverID int64,
+	randomID int64,
+	text string,
+	date int32,
+) *CanonicalMessageResult {
+	t.Helper()
+	requestHash := payload.HashBytes([]byte(text))
+	state, err := repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    payload.PeerTypeUser,
+		PeerID:                      receiverID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          requestHash,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrLoadSendState(%q) error = %v", text, err)
+	}
+	canonical, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:        state.SendStateID,
+		SenderUserID:       senderID,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             receiverID,
+		ClientRandomID:     randomID,
+		RequestPayloadHash: requestHash,
+		MessageText:        text,
+		MessageDate:        date,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrGetByClientRandom(%q) error = %v", text, err)
+	}
+	return canonical
 }
 
 func openIntegrationDB(t *testing.T) *sqlx.DB {

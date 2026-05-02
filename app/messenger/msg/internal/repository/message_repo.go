@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -83,6 +85,90 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		return nil, err
 	}
 	return out, nil
+}
+
+func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+
+	limit := in.Limit
+	if limit <= 0 {
+		limit = 50
+	} else if limit > 100 {
+		limit = 100
+	}
+
+	conditions := []string{
+		"`peer_type` = ?",
+		"`peer_id` = ?",
+		"`message_status` = ?",
+	}
+	args := []any{in.PeerType, in.PeerID, MessageStatusLive}
+	if in.OffsetID > 0 {
+		conditions = append(conditions, "`peer_seq` < ?")
+		args = append(args, int64(in.OffsetID))
+	}
+	if in.MaxID > 0 {
+		conditions = append(conditions, "`peer_seq` < ?")
+		args = append(args, int64(in.MaxID))
+	}
+	if in.MinID > 0 {
+		conditions = append(conditions, "`peer_seq` > ?")
+		args = append(args, int64(in.MinID))
+	}
+	args = append(args, limit)
+
+	query := fmt.Sprintf(`
+SELECT
+	`+"`canonical_message_id`"+`,
+	`+"`peer_seq`"+`,
+	`+"`from_user_id`"+`,
+	`+"`peer_type`"+`,
+	`+"`peer_id`"+`,
+	`+"`message_kind`"+`,
+	`+"`message_text`"+`,
+	`+"`date`"+`
+FROM `+"`canonical_messages`"+`
+WHERE %s
+ORDER BY `+"`peer_seq`"+` DESC
+LIMIT ?`, strings.Join(conditions, " AND "))
+
+	var rows []historyMessageRow
+	if err := db.QueryRowsPartial(ctx, &rows, query, args...); err != nil {
+		return nil, storageError("list history messages", err)
+	}
+	out := make([]HistoryMessage, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, historyMessageRowToMessage(row))
+	}
+	return out, nil
+}
+
+type historyMessageRow struct {
+	CanonicalMessageID int64     `db:"canonical_message_id"`
+	PeerSeq            int64     `db:"peer_seq"`
+	FromUserID         int64     `db:"from_user_id"`
+	PeerType           int32     `db:"peer_type"`
+	PeerID             int64     `db:"peer_id"`
+	MessageKind        int32     `db:"message_kind"`
+	MessageText        string    `db:"message_text"`
+	Date               time.Time `db:"date"`
+}
+
+func historyMessageRowToMessage(r historyMessageRow) HistoryMessage {
+	messageDate := time.Date(r.Date.Year(), r.Date.Month(), r.Date.Day(), r.Date.Hour(), r.Date.Minute(), r.Date.Second(), r.Date.Nanosecond(), time.UTC)
+	return HistoryMessage{
+		CanonicalMessageID: r.CanonicalMessageID,
+		PeerSeq:            r.PeerSeq,
+		FromUserID:         r.FromUserID,
+		PeerType:           r.PeerType,
+		PeerID:             r.PeerID,
+		MessageKind:        r.MessageKind,
+		MessageText:        r.MessageText,
+		MessageDate:        int32(messageDate.Unix()),
+	}
 }
 
 func selectCanonicalByRandomTx(txModels *model.TxModels, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*CanonicalMessageResult, bool, error) {

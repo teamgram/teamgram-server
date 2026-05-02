@@ -17,10 +17,15 @@ import (
 type messagesFakeMsgClient struct {
 	msgclient.MsgClient
 	sendMessageV2 func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	getHistory    func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 }
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
 	return f.sendMessageV2(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+	return f.getHistory(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
@@ -97,6 +102,49 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	}
 	if r == nil {
 		t.Fatal("result is nil")
+	}
+}
+
+func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
+	var got *msg.TLMsgGetHistory
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{Id: 5, Message: "hello"}),
+		},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+			got = in
+			return reply, nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:       inputPeerUser(300),
+		OffsetId:   7,
+		OffsetDate: 8,
+		AddOffset:  9,
+		Limit:      10,
+		MaxId:      11,
+		MinId:      12,
+		Hash:       13,
+	})
+	if err != nil {
+		t.Fatalf("error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil {
+		t.Fatal("msg service was not called")
+	}
+	if got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 {
+		t.Fatalf("unexpected service identity/peer: %+v", got)
+	}
+	if got.OffsetId != 7 || got.OffsetDate != 8 || got.AddOffset != 9 || got.Limit != 10 || got.MaxId != 11 || got.MinId != 12 || got.Hash != 13 {
+		t.Fatalf("unexpected paging input: %+v", got)
 	}
 }
 

@@ -17,14 +17,45 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetHistory
 // messages.getHistory#4423e6c5 peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.MessagesMessages, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getHistory - error: method MessagesGetHistory not impl")
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	peerUser, ok := in.Peer.(*tg.TLInputPeerUser)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+
+	var historyClient getHistoryClient = c.svcCtx.Repo.MsgClient
+	r, err := historyClient.MsgGetHistory(c.ctx, &msg.TLMsgGetHistory{
+		UserId:     md.UserId,
+		AuthKeyId:  md.PermAuthKeyId,
+		PeerType:   payload.PeerTypeUser,
+		PeerId:     peerUser.UserId,
+		OffsetId:   in.OffsetId,
+		OffsetDate: in.OffsetDate,
+		AddOffset:  in.AddOffset,
+		Limit:      in.Limit,
+		MaxId:      in.MaxId,
+		MinId:      in.MinId,
+		Hash:       in.Hash,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getHistory - msg error: self_user_id: %d, peer_id: %d, offset_id: %d, limit: %d, err: %v",
+			md.UserId, peerUser.UserId, in.OffsetId, in.Limit, err)
+		return nil, mapMsgSendError(err)
+	}
+	return r, nil
 }

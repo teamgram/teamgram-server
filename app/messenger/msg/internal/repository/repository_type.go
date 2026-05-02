@@ -87,6 +87,26 @@ type CanonicalMessageResult struct {
 	CreatedNew         bool
 }
 
+type ListHistoryMessagesInput struct {
+	PeerType int32
+	PeerID   int64
+	OffsetID int32
+	MaxID    int32
+	MinID    int32
+	Limit    int32
+}
+
+type HistoryMessage struct {
+	CanonicalMessageID int64
+	PeerSeq            int64
+	FromUserID         int64
+	PeerType           int32
+	PeerID             int64
+	MessageKind        int32
+	MessageText        string
+	MessageDate        int32
+}
+
 type MarkSenderCommittedInput struct {
 	SendStateID               int64
 	SenderOperationID         string
@@ -106,6 +126,7 @@ type MarkRetryableFailureInput struct {
 
 type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
+	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
 }
 
 type MessageSendStateRepository interface {

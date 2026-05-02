@@ -33,6 +33,7 @@ type MsgClient interface {
 	MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*tg.Bool, error)
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 }
@@ -107,6 +108,12 @@ func (m *defaultMsgClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgRead
 // msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
 	return m.rpc.MsgReadHistoryV2(ctx, in)
+}
+
+// MsgGetHistory
+// msg.getHistory user_id:long auth_key_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+func (m *defaultMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+	return m.rpc.MsgGetHistory(ctx, in)
 }
 
 // MsgUpdatePinnedMessage
