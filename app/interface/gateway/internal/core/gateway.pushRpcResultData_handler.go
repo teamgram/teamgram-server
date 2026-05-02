@@ -25,8 +25,16 @@ import (
 // GatewayPushRpcResultData
 // gateway.pushRpcResultData perm_auth_key_id:long auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 func (c *GatewayCore) GatewayPushRpcResultData(in *gateway.TLGatewayPushRpcResultData) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("gateway.pushRpcResultData - error: method GatewayPushRpcResultData not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.svcCtx.Push == nil {
+		c.Logger.Debugf("gateway.pushRpcResultData - no local writer")
+		return tg.BoolTrue, nil
+	}
+	ok, err := c.svcCtx.Push.WriteRPCResult(c.ctx, in.AuthKeyId, in.SessionId, in.ClientReqMsgId, in.RpcResultData)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		c.Logger.Debugf("gateway.pushRpcResultData - no local session: auth_key_id=%d session_id=%d", in.AuthKeyId, in.SessionId)
+	}
+	return tg.BoolTrue, nil
 }

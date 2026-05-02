@@ -1,2 +1,42 @@
 Name: interface.gateway
 ListenOn: 0.0.0.0:20110
+GatewayId: gateway-dev-1
+Transport:
+  TCPListenOn: 0.0.0.0:10443
+AuthsessionClient:
+  DestService: service.authsession
+  ServiceName: RPCAuthsession
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+BffClient:
+  Clients:
+    - DestService: bff.configuration
+      ServiceName: RPCConfiguration
+      Codec: zrpc
+      Etcd:
+        Hosts:
+          - 127.0.0.1:2379
+        Key: bff.configuration
+      ServiceNameList:
+        - RPCConfiguration
+    - DestService: bff.authorization
+      ServiceName: RPCAuthorization
+      Codec: zrpc
+      Etcd:
+        Hosts:
+          - 127.0.0.1:2379
+        Key: bff.authorization
+      ServiceNameList:
+        - RPCAuthorization
+    - DestService: bff.qrcode
+      ServiceName: RPCQrCode
+      Codec: zrpc
+      Etcd:
+        Hosts:
+          - 127.0.0.1:2379
+        Key: bff.qrcode
+      ServiceNameList:
+        - RPCQrCode
