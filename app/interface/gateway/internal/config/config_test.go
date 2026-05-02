@@ -37,7 +37,7 @@ func TestGatewayExampleConfigUsesUnifiedBFF(t *testing.T) {
 		t.Fatalf("BFF Etcd.Key = %q, want bff.bff", client.Etcd.Key)
 	}
 
-	for _, serviceName := range []string{"RPCConfiguration", "RPCAuthorization", "RPCQrCode", "RPCDialogs"} {
+	for _, serviceName := range []string{"RPCConfiguration", "RPCAuthorization", "RPCQrCode", "RPCDialogs", "RPCMessages"} {
 		if !slices.Contains(client.ServiceNameList, serviceName) {
 			t.Fatalf("ServiceNameList missing %s: %#v", serviceName, client.ServiceNameList)
 		}

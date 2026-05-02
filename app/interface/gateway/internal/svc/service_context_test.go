@@ -26,7 +26,7 @@ func TestNewServiceContextWiresGatewayDependencies(t *testing.T) {
 					ServiceName: "RPCConfiguration",
 					Endpoints:   []string{"127.0.0.1:2"},
 				},
-				ServiceNameList: []string{"RPCConfiguration", "RPCDialogs"},
+				ServiceNameList: []string{"RPCConfiguration", "RPCDialogs", "RPCMessages"},
 			}},
 		},
 	}
@@ -46,5 +46,8 @@ func TestNewServiceContextWiresGatewayDependencies(t *testing.T) {
 	}
 	if ctx.BFF.RawClients["RPCDialogs"] == nil {
 		t.Fatal("NewServiceContext().BFF.RawClients missing RPCDialogs")
+	}
+	if ctx.BFF.RawClients["RPCMessages"] == nil {
+		t.Fatal("NewServiceContext().BFF.RawClients missing RPCMessages")
 	}
 }
