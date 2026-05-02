@@ -88,6 +88,43 @@ func withServiceName(c kitex.RpcClientConf, serviceName string) kitex.RpcClientC
 	return c
 }
 
+func buildChatInvitesConfig(c config.Config) chatinviteshelper.Config {
+	return chatinviteshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+	}
+}
+
+func buildChatsConfig(c config.Config) chatshelper.Config {
+	return chatshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+	}
+}
+
+func buildContactsConfig(c config.Config) contactshelper.Config {
+	return contactshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+	}
+}
+
+func buildDialogsConfig(c config.Config) dialogshelper.Config {
+	return dialogshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+	}
+}
+
+func buildMessagesConfig(c config.Config) messageshelper.Config {
+	return messageshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+		MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
+	}
+}
+
 //func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
 //	return authorizationhelper.Config{
 //		RpcServerConf:             c.RpcServerConf,
@@ -168,29 +205,12 @@ func (s *Server) Initialize() error {
 			// chatinviteshelper
 			_ = chatinvitesservice.RegisterService(
 				s,
-				chatinviteshelper.New(chatinviteshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//UserClient:    c.BizServiceClient,
-					//ChatClient:    c.BizServiceClient,
-					//MsgClient:     c.MsgClient,
-					//SyncClient:    c.SyncClient,
-				}))
+				chatinviteshelper.New(buildChatInvitesConfig(c)))
 
 			// chatshelper
 			_ = chatsservice.RegisterService(
 				s,
-				chatshelper.New(chatshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//UserClient:        c.BizServiceClient,
-					//ChatClient:        c.BizServiceClient,
-					//MsgClient:         c.MsgClient,
-					//DialogClient:      c.BizServiceClient,
-					//SyncClient:        c.SyncClient,
-					//MediaClient:       c.MediaClient,
-					//AuthsessionClient: c.AuthSessionClient,
-					//IdgenClient:       c.IdgenClient,
-					//MessageClient:     c.BizServiceClient,
-				}))
+				chatshelper.New(buildChatsConfig(c)))
 
 			// fileshelper
 			_ = filesservice.RegisterService(
@@ -225,27 +245,12 @@ func (s *Server) Initialize() error {
 			// contactshelper
 			_ = contactsservice.RegisterService(
 				s,
-				contactshelper.New(
-					contactshelper.Config{
-						RpcServerConf: c.RpcServerConf,
-						//UserClient:     c.BizServiceClient,
-						//ChatClient:     c.BizServiceClient,
-						//UsernameClient: c.BizServiceClient,
-						//SyncClient:     c.SyncClient,
-					}))
+				contactshelper.New(buildContactsConfig(c)))
 
 			// dialogshelper
 			_ = dialogsservice.RegisterService(
 				s,
-				dialogshelper.New(dialogshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					// DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
-					//UpdatesClient: c.BizServiceClient,
-					//UserClient:    c.BizServiceClient,
-					//ChatClient:    c.BizServiceClient,
-					//SyncClient:    c.SyncClient,
-					//MessageClient: c.BizServiceClient,
-				}))
+				dialogshelper.New(buildDialogsConfig(c)))
 
 			// draftshelper
 			_ = draftsservice.RegisterService(
@@ -268,18 +273,7 @@ func (s *Server) Initialize() error {
 			// messageshelper
 			_ = messagesservice.RegisterService(
 				s,
-				messageshelper.New(messageshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					// MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
-					//UserClient:     c.BizServiceClient,
-					//ChatClient:     c.BizServiceClient,
-					//DialogClient:   c.BizServiceClient,
-					//IdgenClient:    c.IdgenClient,
-					//MessageClient:  c.BizServiceClient,
-					//MediaClient:    c.MediaClient,
-					//UsernameClient: c.BizServiceClient,
-					//SyncClient:     c.SyncClient,
-				}))
+				messageshelper.New(buildMessagesConfig(c)))
 
 			// notificationhelper
 			_ = notificationservice.RegisterService(
