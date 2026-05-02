@@ -76,8 +76,16 @@ func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 	if err := codec.WriteFrame(clientConn, payload); err != nil {
 		t.Fatalf("WriteFrame() error = %v", err)
 	}
-	if _, err := codec.ReadFrame(clientConn); err != nil {
+	syncFrame, err := codec.ReadFrame(clientConn)
+	if err != nil {
 		t.Fatalf("read encrypted response: %v", err)
+	}
+	syncResp, err := gmtproto.DecodeEncryptedMessage(syncFrame, clientKey)
+	if err != nil {
+		t.Fatalf("DecodeEncryptedMessage(sync) error = %v", err)
+	}
+	if syncResp.SeqNo != 1 {
+		t.Fatalf("sync seq_no = %d, want 1", syncResp.SeqNo)
 	}
 
 	body := encodeTransportTL(&mt.TLPong{MsgId: reqMsgID, PingId: 10})
@@ -103,12 +111,36 @@ func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 	if pushed.AuthKeyId != serverKey.AuthKeyId() || pushed.SessionId != 77 || pushed.Salt != 55 {
 		t.Fatalf("pushed envelope = %#v", pushed)
 	}
+	if pushed.SeqNo != 3 {
+		t.Fatalf("pushed seq_no = %d, want 3 after synchronous response seq_no 1", pushed.SeqNo)
+	}
 
 	_ = clientConn.Close()
 	select {
 	case <-errCh:
 	case <-time.After(time.Second):
 		t.Fatal("ServeConn did not exit after client close")
+	}
+}
+
+func TestGatewayTransportStopClosesActiveConnections(t *testing.T) {
+	server := NewServer("", "gateway-test", nil, nil, nil)
+	clientConn, serverConn := net.Pipe()
+	defer clientConn.Close()
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- server.ServeConn(context.Background(), serverConn)
+	}()
+	if _, err := clientConn.Write([]byte{abridgedFlag}); err != nil {
+		t.Fatalf("write transport flag: %v", err)
+	}
+	if err := server.Stop(); err != nil {
+		t.Fatalf("Stop() error = %v", err)
+	}
+	select {
+	case <-errCh:
+	case <-time.After(time.Second):
+		t.Fatal("ServeConn did not exit after Stop")
 	}
 }
 

@@ -8,7 +8,6 @@ import (
 	bffclient "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -68,11 +67,7 @@ func (d *RawDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadata, pa
 		return nil, err
 	}
 
-	constructorID, idErr := bin.NewDecoder(payload).PeekClazzID()
-	if idErr != nil {
-		return nil, fmt.Errorf("raw dispatcher: request constructor: %w", idErr)
-	}
-	if fake, ok, fakeErr := bffclient.TryReturnRawFakeRpcResult(ctx, md, constructorID); fakeErr != nil {
+	if fake, ok, fakeErr := bffclient.TryReturnRawFakeRpcResult(ctx, md, payload); fakeErr != nil {
 		if isTLRPCError(fakeErr) {
 			return nil, NewRPCError(fakeErr)
 		}

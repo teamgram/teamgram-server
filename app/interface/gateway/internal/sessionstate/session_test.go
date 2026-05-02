@@ -159,6 +159,33 @@ func TestSessionWrapsDispatchRPCError(t *testing.T) {
 	}
 }
 
+func TestSessionContainerReturnsAllRPCResponses(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	container := &mt.TLMsgContainer{Messages: []*mt.TLMessage2{
+		{MsgId: 201, Seqno: 1, Object: &mt.TLGetFutureSalts{Num: 1}},
+		{MsgId: 202, Seqno: 3, Object: &mt.TLGetFutureSalts{Num: 2}},
+	}}
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 200, encodeTL(t, container))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
+	if len(respContainer.Messages) != 2 {
+		t.Fatalf("response count = %d, want 2", len(respContainer.Messages))
+	}
+	for i, wantReqID := range []int64{201, 202} {
+		rpcResult, ok := respContainer.Messages[i].Object.(*mt.TLRpcResult)
+		if !ok {
+			t.Fatalf("response %d = %T, want *mt.TLRpcResult", i, respContainer.Messages[i].Object)
+		}
+		if rpcResult.ReqMsgId != wantReqID {
+			t.Fatalf("response %d req_msg_id = %d, want %d", i, rpcResult.ReqMsgId, wantReqID)
+		}
+	}
+}
+
 func handleEncryptedForTest(t *testing.T, processor *Processor, clientKey, serverKey *crypto.AuthKey, msgID int64, body []byte) []byte {
 	t.Helper()
 	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{

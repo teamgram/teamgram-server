@@ -9,6 +9,7 @@ import (
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
@@ -33,7 +34,11 @@ type ActiveSession struct {
 	AuthKey   *crypto.AuthKey
 }
 
-type SessionObserver func(ActiveSession)
+type SeqNoAllocator interface {
+	NextSeqNo(contentRelated bool) int32
+}
+
+type SessionObserver func(ActiveSession) SeqNoAllocator
 
 type Processor struct {
 	store        repository.AuthKeyStore
@@ -41,7 +46,14 @@ type Processor struct {
 	authKeysMu   sync.RWMutex
 	authKeys     map[int64]*crypto.AuthKey
 	authKeyInfos map[int64]*tg.AuthKeyInfo
+	seqMu        sync.Mutex
+	seq          map[sessionKey]int32
 	disconnectAt time.Time
+}
+
+type sessionKey struct {
+	authKeyId int64
+	sessionId int64
 }
 
 func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor {
@@ -50,6 +62,7 @@ func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor
 		dispatch:     dispatch,
 		authKeys:     make(map[int64]*crypto.AuthKey),
 		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
+		seq:          make(map[sessionKey]int32),
 	}
 }
 
@@ -71,8 +84,9 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	if err != nil {
 		return nil, err
 	}
+	var seq SeqNoAllocator
 	if observe != nil {
-		observe(ActiveSession{
+		seq = observe(ActiveSession{
 			AuthKeyId: msg.AuthKeyId,
 			SessionId: msg.SessionId,
 			Salt:      msg.Salt,
@@ -80,7 +94,7 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 		})
 	}
 
-	body, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg)
+	body, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, seq)
 	if err != nil || body == nil {
 		return nil, err
 	}
@@ -89,7 +103,7 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 		Salt:      msg.Salt,
 		SessionId: msg.SessionId,
 		MsgId:     gmtproto.NextServerMsgId(msg.MsgId),
-		SeqNo:     msg.SeqNo + 1,
+		SeqNo:     p.nextSeqNo(msg.AuthKeyId, msg.SessionId, true, seq),
 		Body:      body,
 	}, key)
 }
@@ -124,7 +138,7 @@ func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthK
 	return key, keyInfo, nil
 }
 
-func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage) ([]byte, error) {
+func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, seq SeqNoAllocator) ([]byte, error) {
 	obj, err := iface.DecodeObject(bin.NewDecoder(msg.Body))
 	if err != nil {
 		return nil, fmt.Errorf("session processor: decode body: %w", err)
@@ -134,13 +148,13 @@ func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *c
 		return body, err
 	}
 	if container, ok := obj.(*mt.TLMsgContainer); ok {
-		return p.handleContainer(ctx, conn, keyInfo, msg, container)
+		return p.handleContainer(ctx, conn, keyInfo, msg, container, seq)
 	}
 	return p.dispatchRPC(ctx, conn, keyInfo, msg, msg.Body)
 }
 
-func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer) ([]byte, error) {
-	var last []byte
+func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, seq SeqNoAllocator) ([]byte, error) {
+	var responses []*mt.TLMessage2
 	for _, child := range container.Messages {
 		childMsg := gmtproto.EncryptedMessage{
 			AuthKeyId: parent.AuthKeyId,
@@ -159,16 +173,34 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 		if body, handled, err := p.handleServiceMessage(child.Object, childMsg); err != nil {
 			return nil, err
 		} else if handled {
-			last = body
+			if body != nil {
+				responses = append(responses, &mt.TLMessage2{
+					MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
+					Seqno:  p.nextSeqNo(parent.AuthKeyId, parent.SessionId, true, seq),
+					Object: codec.NewRawTLObject(body),
+				})
+			}
 			continue
 		}
 		body, err := p.dispatchRPC(ctx, conn, keyInfo, childMsg, childMsg.Body)
 		if err != nil {
 			return nil, err
 		}
-		last = body
+		if body == nil {
+			continue
+		}
+		responses = append(responses, &mt.TLMessage2{
+			MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
+			Seqno:  p.nextSeqNo(parent.AuthKeyId, parent.SessionId, true, seq),
+			Object: codec.NewRawTLObject(body),
+		})
 	}
-	return last, nil
+	switch len(responses) {
+	case 0:
+		return nil, nil
+	default:
+		return encodeObject(&mt.TLMsgContainer{Messages: responses}), nil
+	}
 }
 
 func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte) ([]byte, error) {
@@ -220,4 +252,19 @@ func readAuthKeyID(payload []byte) (int64, error) {
 		return 0, err
 	}
 	return v, nil
+}
+
+func (p *Processor) nextSeqNo(authKeyId int64, sessionId int64, contentRelated bool, allocator SeqNoAllocator) int32 {
+	if allocator != nil {
+		return allocator.NextSeqNo(contentRelated)
+	}
+	p.seqMu.Lock()
+	defer p.seqMu.Unlock()
+	key := sessionKey{authKeyId: authKeyId, sessionId: sessionId}
+	seq := p.seq[key] * 2
+	if contentRelated {
+		seq++
+		p.seq[key]++
+	}
+	return seq
 }

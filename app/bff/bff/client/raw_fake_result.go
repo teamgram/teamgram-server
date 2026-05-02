@@ -9,13 +9,20 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 )
 
-func TryReturnRawFakeRpcResult(ctx context.Context, md *metadata.RpcMetadata, constructorID uint32) ([]byte, bool, error) {
+func TryReturnRawFakeRpcResult(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, bool, error) {
 	_ = ctx
 	_ = md
 
-	obj := iface.NewTLObjectByClazzID(constructorID)
-	if obj == nil {
+	constructorID, err := bin.NewDecoder(payload).PeekClazzID()
+	if err != nil {
+		return nil, false, fmt.Errorf("raw fake result constructor: %w", err)
+	}
+	if !iface.CheckClazzID(constructorID) {
 		return nil, false, nil
+	}
+	obj, err := iface.DecodeObject(bin.NewDecoder(payload))
+	if err != nil {
+		return nil, true, fmt.Errorf("decode raw fake request: %w", err)
 	}
 	result, err := new(BFFProxyClient2).TryReturnFakeRpcResult(obj)
 	if err != nil {

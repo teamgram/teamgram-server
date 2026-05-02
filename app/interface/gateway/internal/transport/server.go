@@ -22,10 +22,12 @@ type Server struct {
 	push      *push.LocalWriter
 	listener  net.Listener
 	wg        sync.WaitGroup
+	connsMu   sync.Mutex
+	conns     map[net.Conn]struct{}
 }
 
 func NewServer(addr string, gatewayID string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter) *Server {
-	return &Server{addr: addr, gatewayID: gatewayID, handshake: handshake, processor: processor, push: pushWriter}
+	return &Server{addr: addr, gatewayID: gatewayID, handshake: handshake, processor: processor, push: pushWriter, conns: make(map[net.Conn]struct{})}
 }
 
 func (s *Server) Start(ctx context.Context) error {
@@ -63,11 +65,14 @@ func (s *Server) Stop() error {
 	if s.listener != nil {
 		err = s.listener.Close()
 	}
+	s.closeActiveConns()
 	s.wg.Wait()
 	return err
 }
 
 func (s *Server) ServeConn(ctx context.Context, conn net.Conn) error {
+	untrack := s.trackConn(conn)
+	defer untrack()
 	defer conn.Close()
 	reader := bufio.NewReader(conn)
 	codec, err := DetectCodec(reader)
@@ -123,9 +128,9 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 	if s.processor == nil {
 		return nil, fmt.Errorf("gateway transport: session processor is nil")
 	}
-	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) {
+	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) sessionstate.SeqNoAllocator {
 		if s.push == nil || active.AuthKey == nil {
-			return
+			return nil
 		}
 		key := sessionKey{authKeyId: active.AuthKeyId, sessionId: active.SessionId}
 		writer := writers[key]
@@ -144,7 +149,34 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 			AuthKey:   active.AuthKey,
 			Writer:    writer,
 		})
+		return writer
 	})
+}
+
+func (s *Server) trackConn(conn net.Conn) func() {
+	s.connsMu.Lock()
+	if s.conns == nil {
+		s.conns = make(map[net.Conn]struct{})
+	}
+	s.conns[conn] = struct{}{}
+	s.connsMu.Unlock()
+	return func() {
+		s.connsMu.Lock()
+		delete(s.conns, conn)
+		s.connsMu.Unlock()
+	}
+}
+
+func (s *Server) closeActiveConns() {
+	s.connsMu.Lock()
+	conns := make([]net.Conn, 0, len(s.conns))
+	for conn := range s.conns {
+		conns = append(conns, conn)
+	}
+	s.connsMu.Unlock()
+	for _, conn := range conns {
+		_ = conn.Close()
+	}
 }
 
 type sessionKey struct {
