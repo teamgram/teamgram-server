@@ -148,28 +148,33 @@ func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *c
 		return body, err
 	}
 	if container, ok := obj.(*mt.TLMsgContainer); ok {
-		return p.handleContainer(ctx, conn, keyInfo, msg, container, seq)
+		rawContainer, err := decodeRawContainer(msg.Body)
+		if err != nil {
+			return nil, err
+		}
+		return p.handleContainer(ctx, conn, keyInfo, msg, container, rawContainer, seq)
 	}
 	return p.dispatchRPC(ctx, conn, keyInfo, msg, msg.Body)
 }
 
-func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, seq SeqNoAllocator) ([]byte, error) {
+func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, rawContainer *mt.TLMsgRawDataContainer, seq SeqNoAllocator) ([]byte, error) {
+	if len(container.Messages) != len(rawContainer.Messages) {
+		return nil, fmt.Errorf("session processor: container raw message count %d does not match decoded count %d", len(rawContainer.Messages), len(container.Messages))
+	}
 	var responses []*mt.TLMessage2
-	for _, child := range container.Messages {
+	for i, child := range container.Messages {
+		rawChild := rawContainer.Messages[i]
+		if child.MsgId != rawChild.MsgId || child.Seqno != rawChild.Seqno {
+			return nil, fmt.Errorf("session processor: container child %d raw metadata mismatch", i)
+		}
 		childMsg := gmtproto.EncryptedMessage{
 			AuthKeyId: parent.AuthKeyId,
 			Salt:      parent.Salt,
 			SessionId: parent.SessionId,
 			MsgId:     child.MsgId,
 			SeqNo:     child.Seqno,
+			Body:      rawMessageBody(rawChild),
 		}
-		x := bin.NewEncoder()
-		if err := child.Object.Encode(x, 0); err != nil {
-			x.End()
-			return nil, fmt.Errorf("session processor: encode container child: %w", err)
-		}
-		childMsg.Body = append([]byte(nil), x.Bytes()...)
-		x.End()
 		if body, handled, err := p.handleServiceMessage(child.Object, childMsg); err != nil {
 			return nil, err
 		} else if handled {
@@ -201,6 +206,33 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 	default:
 		return encodeObject(&mt.TLMsgContainer{Messages: responses}), nil
 	}
+}
+
+func decodeRawContainer(payload []byte) (*mt.TLMsgRawDataContainer, error) {
+	d := bin.NewDecoder(payload)
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("session processor: decode raw container constructor: %w", err)
+	}
+	if clazzID != mt.ClazzID_msg_container {
+		return nil, fmt.Errorf("session processor: decode raw container: unexpected constructor %#x", clazzID)
+	}
+	container := new(mt.TLMsgRawDataContainer)
+	if err := container.Decode(d); err != nil {
+		return nil, fmt.Errorf("session processor: decode raw container: %w", err)
+	}
+	if d.Remaining() != 0 {
+		return nil, fmt.Errorf("session processor: decode raw container: %d trailing bytes", d.Remaining())
+	}
+	return container, nil
+}
+
+func rawMessageBody(msg *mt.TLMessageRawData) []byte {
+	x := bin.NewEncoder()
+	defer x.End()
+	x.PutClazzID(msg.ClazzID)
+	x.PutRaw(msg.Body)
+	return append([]byte(nil), x.Bytes()...)
 }
 
 func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte) ([]byte, error) {

@@ -186,6 +186,30 @@ func TestSessionContainerReturnsAllRPCResponses(t *testing.T) {
 	}
 }
 
+func TestSessionContainerPreservesRawLayeredRPCPayload(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	container := &mt.TLMsgContainer{Messages: []*mt.TLMessage2{
+		{MsgId: 203, Seqno: 1, Object: &tg.TLHelpGetConfig{}},
+	}}
+	wantPayload := encodeTL(t, &tg.TLHelpGetConfig{})
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 200, encodeTL(t, container))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
+	if len(respContainer.Messages) != 1 {
+		t.Fatalf("response count = %d, want 1", len(respContainer.Messages))
+	}
+	if len(dispatch.payloads) != 1 || !bytes.Equal(dispatch.payloads[0], wantPayload) {
+		t.Fatalf("dispatch payloads = %x, want %x", dispatch.payloads, wantPayload)
+	}
+	if got := dispatch.md[0].ClientMsgId; got != 203 {
+		t.Fatalf("metadata ClientMsgId = %d, want 203", got)
+	}
+}
+
 func handleEncryptedForTest(t *testing.T, processor *Processor, clientKey, serverKey *crypto.AuthKey, msgID int64, body []byte) []byte {
 	t.Helper()
 	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
