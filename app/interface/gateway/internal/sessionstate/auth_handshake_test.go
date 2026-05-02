@@ -95,6 +95,50 @@ func TestAuthHandshakeFullFlow(t *testing.T) {
 	}
 }
 
+func TestAuthHandshakeAcceptsLegacyReqPq(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce := testInt128(3)
+
+	resPQMsg := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPq{Nonce: nonce}))
+	resPQ := decodeBodyAs[*mt.TLResPQ](t, resPQMsg.Body)
+	if resPQ.Nonce != nonce || len(resPQ.ServerPublicKeyFingerprints) == 0 {
+		t.Fatalf("resPQ = %#v", resPQ)
+	}
+}
+
+func TestAuthHandshakeAcceptsPQInnerDataDc(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce := testInt128(4)
+
+	resPQMsg := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPq{Nonce: nonce}))
+	resPQ := decodeBodyAs[*mt.TLResPQ](t, resPQMsg.Body)
+	newNonce := testInt256(5)
+	reqDH := &mt.TLReqDHParams{
+		Nonce:                nonce,
+		ServerNonce:          resPQ.ServerNonce,
+		P:                    string(handshakeP),
+		Q:                    string(handshakeQ),
+		PublicKeyFingerprint: resPQ.ServerPublicKeyFingerprints[0],
+		EncryptedData: string(encryptPQInnerObjectForTest(t, manager, &mt.TLPQInnerDataDc{
+			Pq:          string(handshakePQ),
+			P:           string(handshakeP),
+			Q:           string(handshakeQ),
+			Nonce:       nonce,
+			ServerNonce: resPQ.ServerNonce,
+			NewNonce:    newNonce,
+			Dc:          1,
+		})),
+	}
+
+	serverDHMsg := handlePlainForTest(t, manager, 200, encodeTL(t, reqDH))
+	serverDH := decodeBodyAs[*mt.TLServerDHParamsOk](t, serverDHMsg.Body)
+	if serverDH.Nonce != nonce || serverDH.ServerNonce != resPQ.ServerNonce {
+		t.Fatalf("server_DH_params_ok = %#v", serverDH)
+	}
+}
+
 func TestAuthHandshakeRejectsWrongNonce(t *testing.T) {
 	store := &fakeAuthKeyStore{}
 	manager := NewHandshakeManager(store)
@@ -192,7 +236,7 @@ func handlePlainForTest(t *testing.T, manager *HandshakeManager, msgID int64, bo
 
 func encryptPQInnerForTest(t *testing.T, manager *HandshakeManager, nonce, serverNonce bin.Int128, newNonce bin.Int256) []byte {
 	t.Helper()
-	inner := encodeTL(t, &mt.TLPQInnerData{
+	return encryptPQInnerObjectForTest(t, manager, &mt.TLPQInnerData{
 		Pq:          string(handshakePQ),
 		P:           string(handshakeP),
 		Q:           string(handshakeQ),
@@ -200,6 +244,11 @@ func encryptPQInnerForTest(t *testing.T, manager *HandshakeManager, nonce, serve
 		ServerNonce: serverNonce,
 		NewNonce:    newNonce,
 	})
+}
+
+func encryptPQInnerObjectForTest(t *testing.T, manager *HandshakeManager, obj iface.TLObject) []byte {
+	t.Helper()
+	inner := encodeTL(t, obj)
 	data := make([]byte, 192)
 	copy(data, inner)
 	for i, j := 0, len(data)-1; i < j; i, j = i+1, j-1 {

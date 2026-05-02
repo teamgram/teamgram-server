@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
+	"errors"
 	"fmt"
+	"io"
 	"net"
 	"sync"
 
@@ -12,6 +14,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Server struct {
@@ -25,10 +29,17 @@ type Server struct {
 	connsMu   sync.Mutex
 	conns     map[net.Conn]struct{}
 	stopping  bool
+	eventSink func(transportEvent)
 }
 
 func NewServer(addr string, gatewayID string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter) *Server {
 	return &Server{addr: addr, gatewayID: gatewayID, handshake: handshake, processor: processor, push: pushWriter, conns: make(map[net.Conn]struct{})}
+}
+
+type transportEvent struct {
+	Phase  string
+	Remote string
+	Err    error
 }
 
 func (s *Server) Start(ctx context.Context) error {
@@ -94,6 +105,7 @@ func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack fu
 	reader := bufio.NewReader(conn)
 	codec, err := DetectCodec(reader)
 	if err != nil {
+		s.reportConnError(conn, "detect_codec", err)
 		return fmt.Errorf("gateway transport detect codec: %w", err)
 	}
 	var writeMu sync.Mutex
@@ -109,10 +121,12 @@ func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack fu
 	for {
 		frame, err := codec.ReadFrame(reader)
 		if err != nil {
+			s.reportConnError(conn, "read_frame", err)
 			return err
 		}
 		resp, err := s.handleFrame(ctx, conn, codec, &writeMu, writers, frame)
 		if err != nil {
+			s.reportConnError(conn, "handle_frame", err)
 			return err
 		}
 		if resp == nil {
@@ -121,6 +135,7 @@ func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack fu
 		writeMu.Lock()
 		if err := codec.WriteFrame(conn, resp); err != nil {
 			writeMu.Unlock()
+			s.reportConnError(conn, "write_frame", err)
 			return err
 		}
 		writeMu.Unlock()
@@ -198,6 +213,25 @@ func (s *Server) closeActiveConns() {
 	for _, conn := range conns {
 		_ = conn.Close()
 	}
+}
+
+func (s *Server) reportConnError(conn net.Conn, phase string, err error) {
+	if err == nil {
+		return
+	}
+	remote := ""
+	if conn != nil && conn.RemoteAddr() != nil {
+		remote = conn.RemoteAddr().String()
+	}
+	event := transportEvent{Phase: phase, Remote: remote, Err: err}
+	if s != nil && s.eventSink != nil {
+		s.eventSink(event)
+	}
+	if errors.Is(err, io.EOF) || errors.Is(err, net.ErrClosed) {
+		logx.Debugf("gateway transport connection closed: phase=%s remote=%s err=%v", phase, remote, err)
+		return
+	}
+	logx.Errorf("gateway transport connection error: phase=%s remote=%s err=%v", phase, remote, err)
 }
 
 type sessionKey struct {

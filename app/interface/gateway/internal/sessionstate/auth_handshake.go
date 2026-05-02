@@ -71,6 +71,16 @@ type handshakeState struct {
 	expiresAt   time.Time
 }
 
+type pqInnerData struct {
+	pq          string
+	p           string
+	q           string
+	nonce       bin.Int128
+	serverNonce bin.Int128
+	newNonce    bin.Int256
+	expiresIn   int32
+}
+
 func NewHandshakeManager(store repository.AuthKeyStore) *HandshakeManager {
 	rsa, err := crypto.NewRSACryptorByKeyData(defaultRSAPrivateKey)
 	if err != nil {
@@ -92,8 +102,10 @@ func (m *HandshakeManager) HandlePlain(ctx context.Context, msg gmtproto.PlainMe
 
 	var response iface.TLObject
 	switch req := obj.(type) {
+	case *mt.TLReqPq:
+		response, err = m.handleReqPQNonce(req.Nonce, "req_pq")
 	case *mt.TLReqPqMulti:
-		response, err = m.handleReqPQ(req)
+		response, err = m.handleReqPQNonce(req.Nonce, "req_pq_multi")
 	case *mt.TLReqDHParams:
 		response, err = m.handleReqDHParams(req)
 	case *mt.TLSetClientDHParams:
@@ -116,19 +128,19 @@ func (m *HandshakeManager) HandlePlain(ctx context.Context, msg gmtproto.PlainMe
 	})
 }
 
-func (m *HandshakeManager) handleReqPQ(req *mt.TLReqPqMulti) (iface.TLObject, error) {
-	if req.Nonce.Zero() {
-		return nil, fmt.Errorf("auth handshake req_pq_multi: nonce is zero")
+func (m *HandshakeManager) handleReqPQNonce(nonce bin.Int128, op string) (iface.TLObject, error) {
+	if nonce.Zero() {
+		return nil, fmt.Errorf("auth handshake %s: nonce is zero", op)
 	}
 	var serverNonce bin.Int128
 	copy(serverNonce[:], crypto.GenerateNonce(16))
 	now := time.Now()
 	m.mu.Lock()
 	m.pruneExpiredStatesLocked(now)
-	m.states[serverNonce] = handshakeState{nonce: req.Nonce, serverNonce: serverNonce, expiresAt: now.Add(handshakeStateTTL)}
+	m.states[serverNonce] = handshakeState{nonce: nonce, serverNonce: serverNonce, expiresAt: now.Add(handshakeStateTTL)}
 	m.mu.Unlock()
 	return mt.MakeTLResPQ(&mt.TLResPQ{
-		Nonce:                       req.Nonce,
+		Nonce:                       nonce,
 		ServerNonce:                 serverNonce,
 		Pq:                          string(handshakePQ),
 		ServerPublicKeyFingerprints: []int64{m.fingerprint},
@@ -157,18 +169,19 @@ func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObj
 	if err != nil {
 		return nil, err
 	}
-	if pqInner.Nonce != req.Nonce || pqInner.ServerNonce != req.ServerNonce {
+	if pqInner.nonce != req.Nonce || pqInner.serverNonce != req.ServerNonce {
 		return nil, fmt.Errorf("auth handshake req_DH_params: inner nonce mismatch")
 	}
-	if !bytes.Equal([]byte(pqInner.Pq), handshakePQ) || !bytes.Equal([]byte(pqInner.P), handshakeP) || !bytes.Equal([]byte(pqInner.Q), handshakeQ) {
+	if !bytes.Equal([]byte(pqInner.pq), handshakePQ) || !bytes.Equal([]byte(pqInner.p), handshakeP) || !bytes.Equal([]byte(pqInner.q), handshakeQ) {
 		return nil, fmt.Errorf("auth handshake req_DH_params: invalid inner pq")
 	}
 
 	a := crypto.GenerateNonce(256)
 	gA := new(big.Int).Exp(big.NewInt(int64(handshakeG)), new(big.Int).SetBytes(a), new(big.Int).SetBytes(handshakeP2)).Bytes()
-	state.newNonce = pqInner.NewNonce
+	state.newNonce = pqInner.newNonce
 	state.a = a
 	state.gA = gA
+	state.expiresIn = pqInner.expiresIn
 	m.setHandshakeState(state)
 
 	inner := mt.MakeTLServerDHInnerData(&mt.TLServerDHInnerData{
@@ -277,7 +290,7 @@ func (m *HandshakeManager) pruneExpiredStatesLocked(now time.Time) {
 	}
 }
 
-func (m *HandshakeManager) decryptPQInnerData(encrypted []byte) (*mt.TLPQInnerData, error) {
+func (m *HandshakeManager) decryptPQInnerData(encrypted []byte) (*pqInnerData, error) {
 	innerData := m.rsa.Decrypt(encrypted)
 	if len(innerData) < 256 {
 		padded := make([]byte, 256)
@@ -303,11 +316,52 @@ func (m *HandshakeManager) decryptPQInnerData(encrypted []byte) (*mt.TLPQInnerDa
 	for i, j := 0, len(data)-1; i < j; i, j = i+1, j-1 {
 		data[i], data[j] = data[j], data[i]
 	}
-	inner, ok := mustDecodeObject(data).(*mt.TLPQInnerData)
-	if !ok {
-		return nil, fmt.Errorf("auth handshake req_DH_params: invalid pq inner object")
+	return normalizePQInnerData(mustDecodeObject(data))
+}
+
+func normalizePQInnerData(obj iface.TLObject) (*pqInnerData, error) {
+	switch inner := obj.(type) {
+	case *mt.TLPQInnerData:
+		return &pqInnerData{
+			pq:          inner.Pq,
+			p:           inner.P,
+			q:           inner.Q,
+			nonce:       inner.Nonce,
+			serverNonce: inner.ServerNonce,
+			newNonce:    inner.NewNonce,
+		}, nil
+	case *mt.TLPQInnerDataDc:
+		return &pqInnerData{
+			pq:          inner.Pq,
+			p:           inner.P,
+			q:           inner.Q,
+			nonce:       inner.Nonce,
+			serverNonce: inner.ServerNonce,
+			newNonce:    inner.NewNonce,
+		}, nil
+	case *mt.TLPQInnerDataTemp:
+		return &pqInnerData{
+			pq:          inner.Pq,
+			p:           inner.P,
+			q:           inner.Q,
+			nonce:       inner.Nonce,
+			serverNonce: inner.ServerNonce,
+			newNonce:    inner.NewNonce,
+			expiresIn:   inner.ExpiresIn,
+		}, nil
+	case *mt.TLPQInnerDataTempDc:
+		return &pqInnerData{
+			pq:          inner.Pq,
+			p:           inner.P,
+			q:           inner.Q,
+			nonce:       inner.Nonce,
+			serverNonce: inner.ServerNonce,
+			newNonce:    inner.NewNonce,
+			expiresIn:   inner.ExpiresIn,
+		}, nil
+	default:
+		return nil, fmt.Errorf("auth handshake req_DH_params: invalid pq inner object %T", obj)
 	}
-	return inner, nil
 }
 
 func encodeObject(obj iface.TLObject) []byte {

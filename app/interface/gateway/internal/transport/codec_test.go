@@ -8,6 +8,8 @@ import (
 	"hash/crc32"
 	"io"
 	"testing"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 )
 
 func TestCodecAbridgedRoundTrip(t *testing.T) {
@@ -150,6 +152,60 @@ func TestCodecFullInvalidCRC(t *testing.T) {
 	}
 }
 
+func TestCodecObfuscatedAbridgedRoundTrip(t *testing.T) {
+	payload := []byte("abcdefghijkl")
+	wire, serverToClient := obfuscatedClientWire(t, 0xefefefef, mustWriteFrame(t, AbridgedCodec{}, payload))
+
+	r := bufio.NewReader(bytes.NewReader(wire))
+	codec, err := DetectCodec(r)
+	if err != nil {
+		t.Fatalf("DetectCodec() error = %v", err)
+	}
+	got, err := codec.ReadFrame(r)
+	if err != nil {
+		t.Fatalf("ReadFrame() error = %v", err)
+	}
+	if !bytes.Equal(got, payload) {
+		t.Fatalf("ReadFrame() = %x, want %x", got, payload)
+	}
+
+	response := []byte("mnopqrstuvwx")
+	var encrypted bytes.Buffer
+	if err := codec.WriteFrame(&encrypted, response); err != nil {
+		t.Fatalf("WriteFrame() error = %v", err)
+	}
+	decrypted := append([]byte(nil), encrypted.Bytes()...)
+	serverToClient.Encrypt(decrypted)
+	gotResponse, err := AbridgedCodec{}.ReadFrame(bytes.NewReader(decrypted))
+	if err != nil {
+		t.Fatalf("client ReadFrame(response) error = %v", err)
+	}
+	if !bytes.Equal(gotResponse, response) {
+		t.Fatalf("response = %x, want %x", gotResponse, response)
+	}
+}
+
+func TestCodecObfuscatedAbridgedUsesForwardKeyForClientFrames(t *testing.T) {
+	payload := []byte{
+		0, 0, 0, 0, 0, 0, 0, 0,
+		'a', 'b', 'c', 'd',
+	}
+	wire, _ := obfuscatedClientWireWithMasterDirections(t, abridgedInt32Flag, mustWriteFrame(t, AbridgedCodec{}, payload))
+
+	r := bufio.NewReader(bytes.NewReader(wire))
+	codec, err := DetectCodec(r)
+	if err != nil {
+		t.Fatalf("DetectCodec() error = %v", err)
+	}
+	got, err := codec.ReadFrame(r)
+	if err != nil {
+		t.Fatalf("ReadFrame() error = %v", err)
+	}
+	if !bytes.Equal(got, payload) {
+		t.Fatalf("ReadFrame() = %x, want %x", got, payload)
+	}
+}
+
 func mustWriteFrame(t *testing.T, codec Codec, payload []byte) []byte {
 	t.Helper()
 	var buf bytes.Buffer
@@ -157,6 +213,43 @@ func mustWriteFrame(t *testing.T, codec Codec, payload []byte) []byte {
 		t.Fatalf("WriteFrame() error = %v", err)
 	}
 	return buf.Bytes()
+}
+
+func obfuscatedClientWire(t *testing.T, protocol uint32, encryptedPayload []byte) ([]byte, *crypto.AesCTR128Encrypt) {
+	t.Helper()
+	return obfuscatedClientWireWithMasterDirections(t, protocol, encryptedPayload)
+}
+
+func obfuscatedClientWireWithMasterDirections(t *testing.T, protocol uint32, framedPayload []byte) ([]byte, *crypto.AesCTR128Encrypt) {
+	t.Helper()
+	header := make([]byte, 64)
+	for i := range header {
+		header[i] = byte(i*5 + 11)
+	}
+	binary.BigEndian.PutUint32(header[56:60], protocol)
+	binary.BigEndian.PutUint16(header[60:62], 1)
+
+	clientToServer, err := crypto.NewAesCTR128Encrypt(header[8:40], header[40:56])
+	if err != nil {
+		t.Fatalf("client-to-server cipher: %v", err)
+	}
+	wireHeader := append([]byte(nil), header...)
+	clientToServer.Encrypt(wireHeader)
+	copy(wireHeader[:56], header[:56])
+
+	var tmp [48]byte
+	for i := 0; i < len(tmp); i++ {
+		tmp[i] = header[55-i]
+	}
+	serverToClient, err := crypto.NewAesCTR128Encrypt(tmp[:32], tmp[32:48])
+	if err != nil {
+		t.Fatalf("server-to-client cipher: %v", err)
+	}
+	wirePayload := append([]byte(nil), framedPayload...)
+	clientToServer.Encrypt(wirePayload)
+
+	wire := append(wireHeader, wirePayload...)
+	return wire, serverToClient
 }
 
 var _ io.Reader = (*bufio.Reader)(nil)

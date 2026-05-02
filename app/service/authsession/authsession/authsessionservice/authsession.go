@@ -1403,6 +1403,10 @@ func (p *GetFutureSaltsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetFutureSaltsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.FutureSalts)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1534,6 +1538,10 @@ func (p *QueryAuthKeyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *QueryAuthKeyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthKeyInfo)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3134,31 +3142,25 @@ func (p *kClient) AuthsessionGetPushSessionId(ctx context.Context, req *authsess
 func (p *kClient) AuthsessionGetFutureSalts(ctx context.Context, req *authsession.TLAuthsessionGetFutureSalts) (r *tg.FutureSalts, err error) {
 	// var _args GetFutureSaltsArgs
 	// _args.Req = req
-	// var _result GetFutureSaltsResult
+	var _result GetFutureSaltsResult
 
-	_result := new(tg.FutureSalts)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getFutureSalts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getFutureSalts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionQueryAuthKey(ctx context.Context, req *authsession.TLAuthsessionQueryAuthKey) (r *tg.AuthKeyInfo, err error) {
 	// var _args QueryAuthKeyArgs
 	// _args.Req = req
-	// var _result QueryAuthKeyResult
+	var _result QueryAuthKeyResult
 
-	_result := new(tg.AuthKeyInfo)
-
-	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.queryAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.queryAuthKey", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthsessionSetAuthKey(ctx context.Context, req *authsession.TLAuthsessionSetAuthKey) (r *tg.Bool, err error) {

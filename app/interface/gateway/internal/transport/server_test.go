@@ -2,6 +2,7 @@ package transport
 
 import (
 	"context"
+	"errors"
 	"net"
 	"testing"
 	"time"
@@ -162,6 +163,46 @@ func TestGatewayTransportServeConnAfterStopClosesImmediately(t *testing.T) {
 		}
 	case <-time.After(time.Second):
 		t.Fatal("ServeConn did not exit after Stop")
+	}
+}
+
+func TestGatewayTransportReportsDetectCodecFailure(t *testing.T) {
+	server := NewServer("", "gateway-test", nil, nil, nil)
+	events := make(chan transportEvent, 1)
+	server.eventSink = func(event transportEvent) {
+		events <- event
+	}
+
+	clientConn, serverConn := net.Pipe()
+	defer clientConn.Close()
+	done := make(chan error, 1)
+	go func() {
+		done <- server.ServeConn(context.Background(), serverConn)
+	}()
+	if _, err := clientConn.Write([]byte("GET / HTTP/1.1\r\n\r\n")); err != nil {
+		t.Fatalf("write http probe: %v", err)
+	}
+
+	var serveErr error
+	select {
+	case serveErr = <-done:
+	case <-time.After(time.Second):
+		t.Fatal("ServeConn did not exit after bad transport")
+	}
+	if !errors.Is(serveErr, ErrUnsupportedTransport) {
+		t.Fatalf("ServeConn() error = %v, want ErrUnsupportedTransport", serveErr)
+	}
+
+	select {
+	case event := <-events:
+		if event.Phase != "detect_codec" {
+			t.Fatalf("event phase = %q, want detect_codec", event.Phase)
+		}
+		if !errors.Is(event.Err, ErrUnsupportedTransport) {
+			t.Fatalf("event err = %v, want ErrUnsupportedTransport", event.Err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("missing transport event")
 	}
 }
 
