@@ -57,6 +57,33 @@ func TestEncryptedMessageRoundTrip(t *testing.T) {
 	}
 }
 
+func TestEncryptedMessageRoundTripNoArgRPC(t *testing.T) {
+	serverKey, clientKey := testAuthKeys()
+	body := encodeTL(t, &tg.TLHelpGetConfig{})
+	wire, err := EncodeEncryptedMessage(EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      11,
+		SessionId: 22,
+		MsgId:     33,
+		SeqNo:     1,
+		Body:      body,
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	if len(wire) != 72 {
+		t.Fatalf("encrypted payload length = %d, want 72", len(wire))
+	}
+
+	msg, err := DecodeEncryptedMessage(wire, serverKey)
+	if err != nil {
+		t.Fatalf("DecodeEncryptedMessage() error = %v", err)
+	}
+	if !bytes.Equal(msg.Body, body) {
+		t.Fatalf("DecodeEncryptedMessage().Body = %x, want %x", msg.Body, body)
+	}
+}
+
 func TestEncryptedMessageRejectsAuthKeyMismatch(t *testing.T) {
 	serverKey, clientKey := testAuthKeys()
 	wire, err := EncodeEncryptedMessage(EncryptedMessage{

@@ -118,6 +118,31 @@ func TestAuthHandshakeRejectsWrongNonce(t *testing.T) {
 	}
 }
 
+func TestAuthHandshakeKeepsInterleavedClientState(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce1 := testInt128(1)
+	nonce2 := testInt128(20)
+
+	resPQMsg1 := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPqMulti{Nonce: nonce1}))
+	resPQ1 := decodeBodyAs[*mt.TLResPQ](t, resPQMsg1.Body)
+	_ = handlePlainForTest(t, manager, 101, encodeTL(t, &mt.TLReqPqMulti{Nonce: nonce2}))
+
+	reqDH1 := &mt.TLReqDHParams{
+		Nonce:                nonce1,
+		ServerNonce:          resPQ1.ServerNonce,
+		P:                    string(handshakeP),
+		Q:                    string(handshakeQ),
+		PublicKeyFingerprint: resPQ1.ServerPublicKeyFingerprints[0],
+		EncryptedData:        string(encryptPQInnerForTest(t, manager, nonce1, resPQ1.ServerNonce, testInt256(2))),
+	}
+	serverDHMsg1 := handlePlainForTest(t, manager, 200, encodeTL(t, reqDH1))
+	serverDH1 := decodeBodyAs[*mt.TLServerDHParamsOk](t, serverDHMsg1.Body)
+	if serverDH1.Nonce != nonce1 || serverDH1.ServerNonce != resPQ1.ServerNonce {
+		t.Fatalf("server_DH_params_ok = %#v", serverDH1)
+	}
+}
+
 func handlePlainForTest(t *testing.T, manager *HandshakeManager, msgID int64, body []byte) gmtproto.PlainMessage {
 	t.Helper()
 	resp, err := manager.HandlePlain(context.Background(), gmtproto.PlainMessage{MsgId: msgID, Body: body})

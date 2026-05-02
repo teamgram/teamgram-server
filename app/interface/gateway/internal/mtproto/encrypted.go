@@ -11,6 +11,8 @@ import (
 
 var lastServerMsgId atomic.Int64
 
+const minEncryptedPayloadLen = 8 + 16 + 32
+
 type EncryptedMessage struct {
 	AuthKeyId int64
 	Salt      int64
@@ -24,7 +26,7 @@ func DecodeEncryptedMessage(payload []byte, key *crypto.AuthKey) (EncryptedMessa
 	if key == nil {
 		return EncryptedMessage{}, fmt.Errorf("decode encrypted message: auth key is nil")
 	}
-	if len(payload) < 8+16+64 {
+	if len(payload) < minEncryptedPayloadLen {
 		return EncryptedMessage{}, fmt.Errorf("decode encrypted message: payload too short %d", len(payload))
 	}
 

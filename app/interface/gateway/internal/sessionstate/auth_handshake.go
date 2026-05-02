@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math/big"
+	"sync"
 	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
@@ -54,7 +55,8 @@ type HandshakeManager struct {
 	store       repository.AuthKeyStore
 	rsa         *crypto.RSACryptor
 	fingerprint int64
-	state       handshakeState
+	mu          sync.Mutex
+	states      map[bin.Int128]handshakeState
 }
 
 type handshakeState struct {
@@ -75,6 +77,7 @@ func NewHandshakeManager(store repository.AuthKeyStore) *HandshakeManager {
 		store:       store,
 		rsa:         rsa,
 		fingerprint: int64(-6205835210776354611),
+		states:      make(map[bin.Int128]handshakeState),
 	}
 }
 
@@ -116,7 +119,9 @@ func (m *HandshakeManager) handleReqPQ(req *mt.TLReqPqMulti) (iface.TLObject, er
 	}
 	var serverNonce bin.Int128
 	copy(serverNonce[:], crypto.GenerateNonce(16))
-	m.state = handshakeState{nonce: req.Nonce, serverNonce: serverNonce}
+	m.mu.Lock()
+	m.states[serverNonce] = handshakeState{nonce: req.Nonce, serverNonce: serverNonce}
+	m.mu.Unlock()
 	return mt.MakeTLResPQ(&mt.TLResPQ{
 		Nonce:                       req.Nonce,
 		ServerNonce:                 serverNonce,
@@ -126,10 +131,14 @@ func (m *HandshakeManager) handleReqPQ(req *mt.TLReqPqMulti) (iface.TLObject, er
 }
 
 func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObject, error) {
-	if req.Nonce != m.state.nonce {
+	state, ok := m.handshakeState(req.ServerNonce)
+	if !ok {
+		return nil, fmt.Errorf("auth handshake req_DH_params: server_nonce mismatch")
+	}
+	if req.Nonce != state.nonce {
 		return nil, fmt.Errorf("auth handshake req_DH_params: nonce mismatch")
 	}
-	if req.ServerNonce != m.state.serverNonce {
+	if req.ServerNonce != state.serverNonce {
 		return nil, fmt.Errorf("auth handshake req_DH_params: server_nonce mismatch")
 	}
 	if !bytes.Equal([]byte(req.P), handshakeP) || !bytes.Equal([]byte(req.Q), handshakeQ) {
@@ -152,9 +161,10 @@ func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObj
 
 	a := crypto.GenerateNonce(256)
 	gA := new(big.Int).Exp(big.NewInt(int64(handshakeG)), new(big.Int).SetBytes(a), new(big.Int).SetBytes(handshakeP2)).Bytes()
-	m.state.newNonce = pqInner.NewNonce
-	m.state.a = a
-	m.state.gA = gA
+	state.newNonce = pqInner.NewNonce
+	state.a = a
+	state.gA = gA
+	m.setHandshakeState(state)
 
 	inner := mt.MakeTLServerDHInnerData(&mt.TLServerDHInnerData{
 		Nonce:       req.Nonce,
@@ -164,7 +174,7 @@ func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObj
 		GA:          string(gA),
 		ServerTime:  int32(time.Now().Unix()),
 	})
-	encrypted, err := encryptWithTempKey(m.state.newNonce, m.state.serverNonce, encodeObject(inner))
+	encrypted, err := encryptWithTempKey(state.newNonce, state.serverNonce, encodeObject(inner))
 	if err != nil {
 		return nil, fmt.Errorf("auth handshake req_DH_params: encrypt server dh: %w", err)
 	}
@@ -176,14 +186,18 @@ func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObj
 }
 
 func (m *HandshakeManager) handleSetClientDHParams(ctx context.Context, req *mt.TLSetClientDHParams) (iface.TLObject, error) {
-	if req.Nonce != m.state.nonce {
+	state, ok := m.handshakeState(req.ServerNonce)
+	if !ok {
+		return nil, fmt.Errorf("auth handshake set_client_DH_params: server_nonce mismatch")
+	}
+	if req.Nonce != state.nonce {
 		return nil, fmt.Errorf("auth handshake set_client_DH_params: nonce mismatch")
 	}
-	if req.ServerNonce != m.state.serverNonce {
+	if req.ServerNonce != state.serverNonce {
 		return nil, fmt.Errorf("auth handshake set_client_DH_params: server_nonce mismatch")
 	}
 
-	decrypted, err := decryptWithTempKey(m.state.newNonce, m.state.serverNonce, []byte(req.EncryptedData))
+	decrypted, err := decryptWithTempKey(state.newNonce, state.serverNonce, []byte(req.EncryptedData))
 	if err != nil {
 		return nil, fmt.Errorf("auth handshake set_client_DH_params: decrypt client dh: %w", err)
 	}
@@ -198,7 +212,7 @@ func (m *HandshakeManager) handleSetClientDHParams(ctx context.Context, req *mt.
 		return nil, fmt.Errorf("auth handshake set_client_DH_params: inner nonce mismatch")
 	}
 
-	authKeyNum := new(big.Int).Exp(new(big.Int).SetBytes([]byte(clientDH.GB)), new(big.Int).SetBytes(m.state.a), new(big.Int).SetBytes(handshakeP2))
+	authKeyNum := new(big.Int).Exp(new(big.Int).SetBytes([]byte(clientDH.GB)), new(big.Int).SetBytes(state.a), new(big.Int).SetBytes(handshakeP2))
 	authKey := make([]byte, 256)
 	copy(authKey[256-len(authKeyNum.Bytes()):], authKeyNum.Bytes())
 	authKeyID := calcAuthKeyID(authKey)
@@ -206,18 +220,38 @@ func (m *HandshakeManager) handleSetClientDHParams(ctx context.Context, req *mt.
 	futureSalt := tg.MakeTLFutureSalt(&tg.FutureSalt{
 		ValidSince: now,
 		ValidUntil: now + 30*60,
-		Salt:       calcServerSalt(m.state.newNonce, m.state.serverNonce),
+		Salt:       calcServerSalt(state.newNonce, state.serverNonce),
 	})
 	if m.store != nil {
-		if err := m.store.SetAuthKey(ctx, tg.NewAuthKeyInfo(authKeyID, authKey, tg.AuthKeyTypePerm), futureSalt, m.state.expiresIn); err != nil {
+		if err := m.store.SetAuthKey(ctx, tg.NewAuthKeyInfo(authKeyID, authKey, tg.AuthKeyTypePerm), futureSalt, state.expiresIn); err != nil {
 			return nil, fmt.Errorf("auth handshake set_client_DH_params: save auth key: %w", err)
 		}
 	}
+	m.deleteHandshakeState(req.ServerNonce)
 	return mt.MakeTLDhGenOk(&mt.TLDhGenOk{
 		Nonce:         req.Nonce,
 		ServerNonce:   req.ServerNonce,
-		NewNonceHash1: calcNewNonceHash(m.state.newNonce, authKey, 1),
+		NewNonceHash1: calcNewNonceHash(state.newNonce, authKey, 1),
 	}), nil
+}
+
+func (m *HandshakeManager) handshakeState(serverNonce bin.Int128) (handshakeState, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	state, ok := m.states[serverNonce]
+	return state, ok
+}
+
+func (m *HandshakeManager) setHandshakeState(state handshakeState) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.states[state.serverNonce] = state
+}
+
+func (m *HandshakeManager) deleteHandshakeState(serverNonce bin.Int128) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.states, serverNonce)
 }
 
 func (m *HandshakeManager) decryptPQInnerData(encrypted []byte) (*mt.TLPQInnerData, error) {
