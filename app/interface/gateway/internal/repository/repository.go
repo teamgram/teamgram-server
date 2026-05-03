@@ -120,6 +120,51 @@ func (r *Repository) GetUserId(ctx context.Context, authKeyId int64) (int64, err
 	return userID.V, nil
 }
 
+func (r *Repository) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	if session == nil {
+		return fmt.Errorf("gateway repository: set client session info: session is nil")
+	}
+	if _, err := r.AuthsessionClient.AuthsessionSetClientSessionInfo(ctx, &authsession.TLAuthsessionSetClientSessionInfo{
+		Data: session,
+	}); err != nil {
+		return fmt.Errorf("gateway repository: set client session info %d: %w", session.AuthKeyId, err)
+	}
+	return nil
+}
+
+func (r *Repository) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
+	if r.AuthsessionClient == nil {
+		return fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	if _, err := r.AuthsessionClient.AuthsessionSetLayer(ctx, &authsession.TLAuthsessionSetLayer{
+		AuthKeyId: authKeyId,
+		Ip:        ip,
+		Layer:     layer,
+	}); err != nil {
+		return fmt.Errorf("gateway repository: set layer %d: %w", authKeyId, err)
+	}
+	return nil
+}
+
+func (r *Repository) GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error) {
+	if r.AuthsessionClient == nil {
+		return nil, fmt.Errorf("gateway repository: authsession client is not configured")
+	}
+	state, err := r.AuthsessionClient.AuthsessionGetAuthStateData(ctx, &authsession.TLAuthsessionGetAuthStateData{
+		AuthKeyId: authKeyId,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("gateway repository: get client session %d: %w", authKeyId, err)
+	}
+	if state == nil || state.Client == nil {
+		return nil, nil
+	}
+	return state.Client, nil
+}
+
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {
 	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }

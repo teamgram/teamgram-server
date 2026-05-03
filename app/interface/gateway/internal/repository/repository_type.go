@@ -29,6 +29,9 @@ type AuthsessionClient interface {
 	AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error)
 	AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
 	AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error)
+	AuthsessionSetClientSessionInfo(ctx context.Context, in *authsession.TLAuthsessionSetClientSessionInfo) (*tg.Bool, error)
+	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*tg.Bool, error)
+	AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error)
 }
 
 type AuthKeyStore interface {
@@ -36,6 +39,9 @@ type AuthKeyStore interface {
 	SetAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, futureSalt *tg.FutureSalt, expiresIn int32) error
 	GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error)
 	GetUserId(ctx context.Context, authKeyId int64) (int64, error)
+	SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error
+	SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error
+	GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error)
 }
 
 type OnlineSessionStore interface {
