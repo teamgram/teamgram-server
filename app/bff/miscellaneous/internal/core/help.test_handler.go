@@ -24,7 +24,7 @@ import (
 // help.test#c0e202f7 = Bool;
 func (c *MiscellaneousCore) HelpTest(in *tg.TLHelpTest) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.test - error: method HelpTest not impl")
+	// c.Logger.Errorf("help.test - error: method HelpTest not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolFalse, nil
 }

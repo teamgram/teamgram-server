@@ -24,7 +24,7 @@ import (
 // help.saveAppLog#6f02f748 events:Vector<InputAppEvent> = Bool;
 func (c *MiscellaneousCore) HelpSaveAppLog(in *tg.TLHelpSaveAppLog) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.saveAppLog - error: method HelpSaveAppLog not impl")
+	// c.Logger.Errorf("help.saveAppLog - error: method HelpSaveAppLog not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }
