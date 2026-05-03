@@ -17,14 +17,33 @@
 package core
 
 import (
+	"fmt"
+
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UsersGetFullUser
 // users.getFullUser#b60f5918 id:InputUser = users.UserFull;
 func (c *UsersCore) UsersGetFullUser(in *tg.TLUsersGetFullUser) (*tg.UsersUserFull, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.getFullUser - error: method UsersGetFullUser not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.UserClient == nil {
+		return nil, fmt.Errorf("users.getFullUser: user client is nil")
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	peerID, err := userIDFromInputUser(selfID, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.svcCtx.Repo.UserClient.UserGetFullUser(c.ctx, &userpb.TLUserGetFullUser{
+		SelfUserId: selfID,
+		Id:         peerID,
+	})
 }
