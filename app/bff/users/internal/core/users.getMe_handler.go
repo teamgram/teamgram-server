@@ -17,14 +17,38 @@
 package core
 
 import (
+	"errors"
+	"fmt"
+
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UsersGetMe
 // users.getMe id:long token:string = User;
 func (c *UsersCore) UsersGetMe(in *tg.TLUsersGetMe) (*tg.User, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.getMe - error: method UsersGetMe not impl")
+	if in == nil || in.Token == "" || in.Id <= 0 {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.UserClient == nil {
+		return nil, fmt.Errorf("users.getMe: user client is nil")
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	immutableUser, err := c.svcCtx.Repo.UserClient.UserGetImmutableUserByToken(c.ctx, &userpb.TLUserGetImmutableUserByToken{
+		Token: in.Token,
+	})
+	if err != nil {
+		if errors.Is(err, userpb.ErrBotNotFound) {
+			return nil, tg.ErrTokenInvalid
+		}
+		return nil, err
+	}
+	if immutableUser == nil || immutableUser.User == nil {
+		return nil, tg.ErrTokenInvalid
+	}
+	if immutableUser.User.Id != in.Id {
+		return nil, tg.ErrTokenInvalid
+	}
+
+	return &tg.User{Clazz: projectSelfImmutableUser(immutableUser)}, nil
 }

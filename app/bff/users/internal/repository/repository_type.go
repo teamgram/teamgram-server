@@ -16,7 +16,17 @@
 
 package repository
 
+import (
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
 // Type aliases for convenience in the Logic layer.
 type (
-// TODO: Add type aliases per business requirements.
+	UserClient       = userclient.UserClient
+	UserServiceUser  = userpb.TLUserGetMutableUsersV2
+	MutableUsers     = tg.MutableUsers
+	ImmutableUser    = tg.ImmutableUser
+	ImmutableUserRef = tg.ImmutableUserClazz
 )
