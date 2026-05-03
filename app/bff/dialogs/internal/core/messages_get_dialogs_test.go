@@ -245,6 +245,41 @@ func TestMessagesGetPeerDialogsEmptyVectorReturnsEmptyPeerDialogs(t *testing.T) 
 	}
 }
 
+func TestMessagesGetPinnedDialogsReturnsEmptyPeerDialogs(t *testing.T) {
+	c := newDialogsGetDialogsCore(&repository.Repository{}, 100)
+
+	r, err := c.MessagesGetPinnedDialogs(&tg.TLMessagesGetPinnedDialogs{FolderId: 0})
+	if err != nil {
+		t.Fatalf("MessagesGetPinnedDialogs error = %v", err)
+	}
+	if r == nil {
+		t.Fatal("MessagesGetPinnedDialogs returned nil")
+	}
+	if len(r.Dialogs) != 0 || len(r.Messages) != 0 || len(r.Chats) != 0 || len(r.Users) != 0 {
+		t.Fatalf("MessagesGetPinnedDialogs reply = %+v, want empty peerDialogs", r)
+	}
+	if r.State == nil {
+		t.Fatal("MessagesGetPinnedDialogs state is nil")
+	}
+}
+
+func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
+	c := newDialogsGetDialogsCore(&repository.Repository{}, 100)
+
+	r, err := c.MessagesGetPeerSettings(&tg.TLMessagesGetPeerSettings{
+		Peer: tg.MakeTLInputPeerSelf(&tg.TLInputPeerSelf{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetPeerSettings error = %v", err)
+	}
+	if r == nil || r.Settings == nil {
+		t.Fatalf("MessagesGetPeerSettings reply = %+v, want default settings", r)
+	}
+	if len(r.Chats) != 0 || len(r.Users) != 0 {
+		t.Fatalf("MessagesGetPeerSettings reply = %+v, want empty peers", r)
+	}
+}
+
 func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	const selfID int64 = 100
 	var gotMessages *messagepb.TLMessageGetUserMessageList

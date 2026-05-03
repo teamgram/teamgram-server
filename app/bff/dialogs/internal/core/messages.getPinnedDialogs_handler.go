@@ -23,8 +23,31 @@ import (
 // MessagesGetPinnedDialogs
 // messages.getPinnedDialogs#d6b94df2 folder_id:int = messages.PeerDialogs;
 func (c *DialogsCore) MessagesGetPinnedDialogs(in *tg.TLMessagesGetPinnedDialogs) (*tg.MessagesPeerDialogs, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getPinnedDialogs - error: method MessagesGetPinnedDialogs not impl")
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if in.FolderId != 0 && in.FolderId != 1 {
+		return nil, tg.ErrFolderIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+		Dialogs:  []tg.DialogClazz{},
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+		State:    emptyUpdatesState(),
+	}).ToMessagesPeerDialogs(), nil
+}
+
+func emptyUpdatesState() tg.UpdatesStateClazz {
+	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+		Pts:         0,
+		Qts:         0,
+		Date:        0,
+		Seq:         0,
+		UnreadCount: 0,
+	})
 }

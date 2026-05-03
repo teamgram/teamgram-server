@@ -23,8 +23,19 @@ import (
 // MessagesGetPeerSettings
 // messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
 func (c *DialogsCore) MessagesGetPeerSettings(in *tg.TLMessagesGetPeerSettings) (*tg.MessagesPeerSettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getPeerSettings - error: method MessagesGetPeerSettings not impl")
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if _, ok := resolveDialogUserPeerID(in.Peer, c.MD.UserId); !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesPeerSettings(&tg.TLMessagesPeerSettings{
+		Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{}).ToPeerSettings(),
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesPeerSettings(), nil
 }

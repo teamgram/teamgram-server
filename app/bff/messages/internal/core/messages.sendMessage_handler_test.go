@@ -178,6 +178,39 @@ func TestMessagesGetHistory_InputPeerSelfTargetsCurrentUser(t *testing.T) {
 	}
 }
 
+func TestMessagesSearchPinnedReturnsEmptyMessages(t *testing.T) {
+	c := newSendMsgCore(&messagesFakeMsgClient{}, 100, 200)
+
+	r, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:   inputPeerSelf(),
+		Q:      "",
+		Limit:  100,
+		Filter: tg.MakeTLInputMessagesFilterPinned(&tg.TLInputMessagesFilterPinned{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSearch error = %v", err)
+	}
+	messages, ok := r.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("MessagesSearch returned %s, want messages.messages", r.ClazzName())
+	}
+	if len(messages.Messages) != 0 || len(messages.Chats) != 0 || len(messages.Users) != 0 {
+		t.Fatalf("MessagesSearch reply = %+v, want empty messages.messages", messages)
+	}
+}
+
+func TestMessagesSearchEmptyQueryRejectedForEmptyFilter(t *testing.T) {
+	c := newSendMsgCore(&messagesFakeMsgClient{}, 100, 200)
+
+	_, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:   inputPeerSelf(),
+		Filter: tg.MakeTLInputMessagesFilterEmpty(&tg.TLInputMessagesFilterEmpty{}),
+	})
+	if err != tg.ErrSearchQueryEmpty {
+		t.Fatalf("MessagesSearch error = %v, want %v", err, tg.ErrSearchQueryEmpty)
+	}
+}
+
 func TestMessagesReadHistory_InputPeerSelfSuccess(t *testing.T) {
 	var got *msg.TLMsgReadHistoryV2
 	reply := tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{
