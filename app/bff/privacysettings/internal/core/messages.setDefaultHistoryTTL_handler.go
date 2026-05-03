@@ -17,14 +17,22 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// MessagesSetDefaultHistoryTTL
-// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
 func (c *PrivacySettingsCore) MessagesSetDefaultHistoryTTL(in *tg.TLMessagesSetDefaultHistoryTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.setDefaultHistoryTTL - error: method MessagesSetDefaultHistoryTTL not impl")
+	period := in.Period
 
-	return nil, tg.ErrMethodNotImpl
+	if period < 0 || period > 366*86400 {
+		c.Logger.Errorf("messages.setDefaultHistoryTTL - error: invalid period %v", period)
+		return nil, tg.ErrTtlPeriodInvalid
+	}
+
+	_, _ = c.svcCtx.Repo.UserClient.UserSetDefaultHistoryTTL(c.ctx, &user.TLUserSetDefaultHistoryTTL{
+		UserId: c.MD.UserId,
+		Ttl:    period,
+	})
+
+	return tg.BoolTrue, nil
 }
