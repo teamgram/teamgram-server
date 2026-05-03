@@ -17,14 +17,43 @@
 package core
 
 import (
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UsersGetSavedMusicByID
 // users.getSavedMusicByID#7573a4e9 id:InputUser documents:Vector<InputDocument> = users.SavedMusic;
 func (c *UserChannelProfilesCore) UsersGetSavedMusicByID(in *tg.TLUsersGetSavedMusicByID) (*tg.UsersSavedMusic, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.getSavedMusicByID - error: method UsersGetSavedMusicByID not impl")
+	if _, err := requireSelfID(c); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireMediaClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	ids := make([]int64, 0, len(in.Documents))
+	for _, inputDocument := range in.Documents {
+		id, err := documentIDFromInputDocument(inputDocument)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	documents, err := c.svcCtx.Repo.MediaClient.MediaGetDocumentList(c.ctx, &mediapb.TLMediaGetDocumentList{
+		IdList: ids,
+	})
+	if err != nil {
+		return nil, err
+	}
+	datas := []tg.DocumentClazz{}
+	if documents != nil {
+		datas = documents.Datas
+	}
+	return tg.MakeTLUsersSavedMusic(&tg.TLUsersSavedMusic{
+		Count:     int32(len(datas)),
+		Documents: datas,
+	}).ToUsersSavedMusic(), nil
 }
