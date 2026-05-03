@@ -16,7 +16,22 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
+import (
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
 type (
-// TODO: Add type aliases per business requirements.
+	UserClient  = userclient.UserClient
+	MediaClient = mediaclient.MediaClient
+
+	UserVectorLong            = userpb.VectorLong
+	UserVectorContactBirthday = userpb.VectorContactBirthday
+	MediaVectorDocument       = mediapb.VectorDocument
+
+	ImmutableUser    = tg.ImmutableUser
+	ImmutableUserRef = tg.ImmutableUserClazz
 )

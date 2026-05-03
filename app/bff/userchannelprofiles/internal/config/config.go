@@ -22,4 +22,6 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	UserClient  kitex.RpcClientConf
+	MediaClient kitex.RpcClientConf
 }

@@ -23,8 +23,6 @@ import (
 // UsersSuggestBirthday
 // users.suggestBirthday#fc533372 id:InputUser birthday:Birthday = Updates;
 func (c *UserChannelProfilesCore) UsersSuggestBirthday(in *tg.TLUsersSuggestBirthday) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.suggestBirthday - error: method UsersSuggestBirthday not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	c.Logger.Errorf("users.suggestBirthday blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	return nil, tg.ErrEnterpriseIsBlocked
 }

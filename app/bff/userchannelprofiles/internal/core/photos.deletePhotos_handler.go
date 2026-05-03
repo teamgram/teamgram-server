@@ -17,14 +17,52 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // PhotosDeletePhotos
 // photos.deletePhotos#87cf7f2f id:Vector<InputPhoto> = Vector<long>;
 func (c *UserChannelProfilesCore) PhotosDeletePhotos(in *tg.TLPhotosDeletePhotos) (*tg.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("photos.deletePhotos - error: method PhotosDeletePhotos not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	deleteIDs := make([]int64, 0, len(in.Id))
+	for _, inputPhoto := range in.Id {
+		id, err := photoIDFromInputPhoto(inputPhoto)
+		if err != nil {
+			return nil, err
+		}
+		deleteIDs = append(deleteIDs, id)
+	}
+
+	mainID, err := c.svcCtx.Repo.UserClient.UserDeleteProfilePhotos(c.ctx, &userpb.TLUserDeleteProfilePhotos{
+		UserId: selfID,
+		Id:     deleteIDs,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if mainID != nil && mainID.V > 0 {
+		if err := requireMediaClient(c); err != nil {
+			return nil, err
+		}
+		if _, err = c.svcCtx.Repo.MediaClient.MediaGetPhoto(c.ctx, &mediapb.TLMediaGetPhoto{
+			PhotoId: mainID.V,
+		}); err != nil {
+			return nil, err
+		}
+	}
+	// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile photo updates through userupdates/gateway when the V2 delivery contract is defined.
+
+	return &tg.VectorLong{Datas: deleteIDs}, nil
 }

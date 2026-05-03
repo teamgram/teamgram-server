@@ -17,14 +17,37 @@
 package core
 
 import (
+	"time"
+
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateStatus
 // account.updateStatus#6628562c offline:Bool = Bool;
 func (c *UserChannelProfilesCore) AccountUpdateStatus(in *tg.TLAccountUpdateStatus) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updateStatus - error: method AccountUpdateStatus not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil || in.Offline == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	expires := int32(0)
+	if _, offline := in.Offline.(*tg.TLBoolTrue); !offline {
+		expires = 300
+	}
+	if _, err = c.svcCtx.Repo.UserClient.UserUpdateLastSeen(c.ctx, &userpb.TLUserUpdateLastSeen{
+		Id:         selfID,
+		LastSeenAt: time.Now().Unix(),
+		Expires:    expires,
+	}); err != nil {
+		return nil, err
+	}
+	// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route status updates through userupdates/gateway when the V2 delivery contract is defined.
+	return tg.BoolTrue, nil
 }

@@ -17,14 +17,73 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateProfile
 // account.updateProfile#78515775 flags:# first_name:flags.0?string last_name:flags.1?string about:flags.2?string = User;
 func (c *UserChannelProfilesCore) AccountUpdateProfile(in *tg.TLAccountUpdateProfile) (*tg.User, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updateProfile - error: method AccountUpdateProfile not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	me, err := c.svcCtx.Repo.UserClient.UserGetImmutableUser(c.ctx, &userpb.TLUserGetImmutableUser{
+		Id: selfID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if me == nil || me.User == nil {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	if in.About != nil {
+		if len(*in.About) > 128 {
+			return nil, tg.ErrAboutTooLong
+		}
+		currentAbout := ""
+		if me.User.About != nil {
+			currentAbout = *me.User.About
+		}
+		if *in.About != currentAbout {
+			if _, err = c.svcCtx.Repo.UserClient.UserUpdateAbout(c.ctx, &userpb.TLUserUpdateAbout{
+				UserId: selfID,
+				About:  *in.About,
+			}); err != nil {
+				return nil, err
+			}
+			me.User.About = in.About
+		}
+	}
+
+	firstName := ""
+	lastName := ""
+	if in.FirstName != nil {
+		firstName = *in.FirstName
+	}
+	if in.LastName != nil {
+		lastName = *in.LastName
+	}
+	if firstName != me.User.FirstName || lastName != me.User.LastName {
+		if _, err = c.svcCtx.Repo.UserClient.UserUpdateFirstAndLastName(c.ctx, &userpb.TLUserUpdateFirstAndLastName{
+			UserId:    selfID,
+			FirstName: firstName,
+			LastName:  lastName,
+		}); err != nil {
+			return nil, err
+		}
+		me.User.FirstName = firstName
+		me.User.LastName = lastName
+		// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile updates through userupdates/gateway when the V2 delivery contract is defined.
+	}
+
+	return &tg.User{Clazz: projectSelfImmutableUser(me)}, nil
 }

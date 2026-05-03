@@ -17,14 +17,29 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSetMainProfileTab
 // account.setMainProfileTab#5dee78b0 tab:ProfileTab = Bool;
 func (c *UserChannelProfilesCore) AccountSetMainProfileTab(in *tg.TLAccountSetMainProfileTab) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setMainProfileTab - error: method AccountSetMainProfileTab not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil || in.Tab == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if _, err = c.svcCtx.Repo.UserClient.UserSetMainProfileTab(c.ctx, &userpb.TLUserSetMainProfileTab{
+		UserId: selfID,
+		Tab:    in.Tab,
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

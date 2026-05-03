@@ -17,14 +17,66 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsGetBirthdays
 // contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
 func (c *UserChannelProfilesCore) ContactsGetBirthdays(in *tg.TLContactsGetBirthdays) (*tg.ContactsContactBirthdays, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getBirthdays - error: method ContactsGetBirthdays not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	birthdays, err := c.svcCtx.Repo.UserClient.UserGetBirthdays(c.ctx, &userpb.TLUserGetBirthdays{
+		UserId: selfID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	contacts := []tg.ContactBirthdayClazz{}
+	if birthdays != nil {
+		contacts = birthdays.Datas
+	}
+	ids := make([]int64, 0, len(contacts))
+	for _, birthday := range contacts {
+		if birthday != nil && birthday.ContactId > 0 {
+			ids = append(ids, birthday.ContactId)
+		}
+	}
+	if len(ids) == 0 {
+		return tg.MakeTLContactsContactBirthdays(&tg.TLContactsContactBirthdays{
+			Contacts: contacts,
+			Users:    []tg.UserClazz{},
+		}).ToContactsContactBirthdays(), nil
+	}
+
+	mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+		Id:      ids,
+		Privacy: true,
+		HasTo:   true,
+		To:      []int64{selfID},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	users := []tg.UserClazz{}
+	if mutableUsers != nil {
+		for _, immutableUser := range mutableUsers.Users {
+			users = append(users, projectImmutableUser(immutableUser))
+		}
+	}
+	return tg.MakeTLContactsContactBirthdays(&tg.TLContactsContactBirthdays{
+		Contacts: contacts,
+		Users:    users,
+	}).ToContactsContactBirthdays(), nil
 }

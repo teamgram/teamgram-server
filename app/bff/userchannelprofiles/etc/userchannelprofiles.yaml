@@ -1,2 +1,10 @@
 Name: bff.userchannelprofiles
 ListenOn: 0.0.0.0:27712
+
+UserClient:
+  Endpoints:
+    - 127.0.0.1:20610
+
+MediaClient:
+  Endpoints:
+    - 127.0.0.1:20650
