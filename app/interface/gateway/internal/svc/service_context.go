@@ -19,8 +19,8 @@ package svc
 
 import (
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
-	_ "github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/authorization/authorization/authorizationservice"
+	_ "github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
 	bffproxyclient "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/chatinvites/chatinvites/chatinvitesservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/chats/chats/chatsservice"
