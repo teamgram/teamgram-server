@@ -20,11 +20,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// UsersGetRequirementsToContact
-// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
 func (c *PrivacySettingsCore) UsersGetRequirementsToContact(in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.getRequirementsToContact - error: method UsersGetRequirementsToContact not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	c.Logger.Errorf("users.getRequirementsToContact blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	return nil, tg.ErrEnterpriseIsBlocked
 }
