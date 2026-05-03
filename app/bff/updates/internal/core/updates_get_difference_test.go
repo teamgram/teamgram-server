@@ -14,13 +14,20 @@ import (
 
 type fakeUserupdatesClient struct {
 	userupdatesclient.UserupdatesClient
-	got *userupdates.TLUserupdatesGetDifference
-	res *userupdates.UserDifference
+	gotState      *userupdates.TLUserupdatesGetState
+	state         *userupdates.UserState
+	gotDifference *userupdates.TLUserupdatesGetDifference
+	difference    *userupdates.UserDifference
+}
+
+func (f *fakeUserupdatesClient) UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
+	f.gotState = in
+	return f.state, nil
 }
 
 func (f *fakeUserupdatesClient) UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
-	f.got = in
-	return f.res, nil
+	f.gotDifference = in
+	return f.difference, nil
 }
 
 func newUpdatesCore(client userupdatesclient.UserupdatesClient) *UpdatesCore {
@@ -31,8 +38,30 @@ func newUpdatesCore(client userupdatesclient.UserupdatesClient) *UpdatesCore {
 	return c
 }
 
+func TestUpdatesGetStateReturnsUserupdatesState(t *testing.T) {
+	client := &fakeUserupdatesClient{state: userupdates.MakeTLUserState(&userupdates.TLUserState{
+		Pts:         88,
+		Qts:         -1,
+		Date:        123,
+		Seq:         2,
+		UnreadCount: 3,
+	}).ToUserState()}
+	core := newUpdatesCore(client)
+
+	got, err := core.UpdatesGetState(&tg.TLUpdatesGetState{})
+	if err != nil {
+		t.Fatalf("UpdatesGetState() error = %v", err)
+	}
+	if client.gotState == nil || client.gotState.UserId != 1001 || client.gotState.AuthKeyId != 2002 {
+		t.Fatalf("userupdates request = %#v", client.gotState)
+	}
+	if got.Pts != 88 || got.Qts != -1 || got.Date != 123 || got.Seq != 2 || got.UnreadCount != 3 {
+		t.Fatalf("updates state = %#v", got)
+	}
+}
+
 func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
-	client := &fakeUserupdatesClient{res: userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
 		NewMessages: []tg.MessageClazz{
 			tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello"}),
 		},
@@ -47,8 +76,8 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 	if err != nil {
 		t.Fatalf("UpdatesGetDifference() error = %v", err)
 	}
-	if client.got == nil || client.got.UserId != 1001 || client.got.AuthKeyId != 2002 || client.got.Pts != 17 {
-		t.Fatalf("userupdates request = %#v", client.got)
+	if client.gotDifference == nil || client.gotDifference.UserId != 1001 || client.gotDifference.AuthKeyId != 2002 || client.gotDifference.Pts != 17 {
+		t.Fatalf("userupdates request = %#v", client.gotDifference)
 	}
 	diff, ok := got.ToUpdatesDifference()
 	if !ok {
@@ -60,7 +89,7 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 }
 
 func TestUpdatesGetDifferenceReturnsEmptyDifference(t *testing.T) {
-	client := &fakeUserupdatesClient{res: userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 17, Qts: -1, Date: 123, Seq: 0}),
 	}).ToUserDifference()}
 	core := newUpdatesCore(client)

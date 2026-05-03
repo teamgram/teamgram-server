@@ -17,14 +17,32 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UpdatesGetState
 // updates.getState#edd4882a = updates.State;
 func (c *UpdatesCore) UpdatesGetState(in *tg.TLUpdatesGetState) (*tg.UpdatesState, error) {
-	// TODO: not impl
-	c.Logger.Errorf("updates.getState - error: method UpdatesGetState not impl")
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	client := c.svcCtx.Repo.UserupdatesClient
+	if client == nil {
+		return nil, fmt.Errorf("updates.getState: userupdates client is nil")
+	}
+	state, err := client.UserupdatesGetState(c.ctx, &userupdates.TLUserupdatesGetState{
+		UserId:    c.MD.UserId,
+		AuthKeyId: c.MD.PermAuthKeyId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return userStateToUpdatesState(state).ToUpdatesState(), nil
 }
