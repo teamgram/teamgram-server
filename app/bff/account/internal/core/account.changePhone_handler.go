@@ -17,14 +17,86 @@
 package core
 
 import (
+	codepb "github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountChangePhone
 // account.changePhone#70c32edb phone_number:string phone_code_hash:string phone_code:string = User;
 func (c *AccountCore) AccountChangePhone(in *tg.TLAccountChangePhone) (*tg.User, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.changePhone - error: method AccountChangePhone not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.Err406PhoneNumberInvalid
+	}
+	if in.PhoneCodeHash == "" || in.PhoneCode == "" {
+		return nil, tg.ErrPhoneCodeEmpty
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireCodeClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	phone, err := normalizeAccountPhone(in.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	existing, err := c.svcCtx.Repo.UserClient.UserGetImmutableUserByPhone(c.ctx, &userpb.TLUserGetImmutableUserByPhone{
+		Phone: phone,
+	})
+	if err != nil {
+		if !isUserNotFound(err) {
+			return nil, err
+		}
+	} else if existing != nil {
+		return nil, tg.ErrPhoneNumberOccupied
+	}
+
+	codeData, err := c.svcCtx.Repo.CodeClient.CodeGetPhoneCode(c.ctx, &codepb.TLCodeGetPhoneCode{
+		AuthKeyId:     accountAuthKeyID(c),
+		Phone:         phone,
+		PhoneCodeHash: in.PhoneCodeHash,
+	})
+	if err != nil {
+		return nil, mapPhoneCodeError(err)
+	}
+	if codeData == nil || codeData.PhoneCode != in.PhoneCode {
+		return nil, tg.ErrPhoneCodeInvalid
+	}
+
+	me, err := c.svcCtx.Repo.UserClient.UserGetImmutableUser(c.ctx, &userpb.TLUserGetImmutableUser{
+		Id: selfID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if me == nil || me.User == nil {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	if _, err = c.svcCtx.Repo.UserClient.UserChangePhone(c.ctx, &userpb.TLUserChangePhone{
+		UserId: selfID,
+		Phone:  phone,
+	}); err != nil {
+		return nil, err
+	}
+	me.User.Phone = phone
+
+	if _, err = c.svcCtx.Repo.CodeClient.CodeDeletePhoneCode(c.ctx, &codepb.TLCodeDeletePhoneCode{
+		AuthKeyId:     accountAuthKeyID(c),
+		Phone:         phone,
+		PhoneCodeHash: in.PhoneCodeHash,
+	}); err != nil {
+		c.Logger.Errorf("account.changePhone - delete phone code failed: auth_key_id: %d, phone: %s, phone_code_hash: %s, err: %v",
+			accountAuthKeyID(c), phone, in.PhoneCodeHash, err)
+	}
+
+	// TODO(v2 account): user/session update delivery is intentionally not migrated from master; route phone-change updates through userupdates/gateway when the v2 delivery contract is defined.
+	return &tg.User{Clazz: projectAccountSelfImmutableUser(me)}, nil
 }
