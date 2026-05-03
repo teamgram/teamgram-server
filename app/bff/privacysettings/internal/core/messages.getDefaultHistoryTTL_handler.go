@@ -17,14 +17,17 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// MessagesGetDefaultHistoryTTL
-// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
 func (c *PrivacySettingsCore) MessagesGetDefaultHistoryTTL(in *tg.TLMessagesGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getDefaultHistoryTTL - error: method MessagesGetDefaultHistoryTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	rV, err := c.svcCtx.Repo.UserClient.UserGetDefaultHistoryTTL(c.ctx, &user.TLUserGetDefaultHistoryTTL{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		c.Logger.Errorf("user.getDefaultHistoryTTL - error: %v", err)
+		return nil, err
+	}
+	return rV, nil
 }
