@@ -23,8 +23,5 @@ import (
 // ContactsResolveUsername
 // contacts.resolveUsername#725afbbc flags:# username:string referer:flags.0?string = contacts.ResolvedPeer;
 func (c *UsernamesCore) ContactsResolveUsername(in *tg.TLContactsResolveUsername) (*tg.ContactsResolvedPeer, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.resolveUsername - error: method ContactsResolveUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.ResolveUsername(c.ctx, c.MD.UserId, in.Username)
 }

@@ -17,14 +17,21 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountCheckUsername
 // account.checkUsername#2714d86c username:string = Bool;
 func (c *UsernamesCore) AccountCheckUsername(in *tg.TLAccountCheckUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.checkUsername - error: method AccountCheckUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	r, err := c.svcCtx.Repo.CheckAccountUsername(c.ctx, c.MD.UserId, in.Username)
+	if err != nil {
+		if errors.Is(err, repository.ErrUsernameInvalid) {
+			return nil, tg.ErrUsernameInvalid
+		}
+		return nil, err
+	}
+	return r, nil
 }

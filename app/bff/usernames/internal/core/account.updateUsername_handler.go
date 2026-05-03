@@ -17,14 +17,24 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateUsername
 // account.updateUsername#3e0bdd7c username:string = User;
 func (c *UsernamesCore) AccountUpdateUsername(in *tg.TLAccountUpdateUsername) (*tg.User, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updateUsername - error: method AccountUpdateUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	r, err := c.svcCtx.Repo.UpdateAccountUsername(c.ctx, c.MD.UserId, in.Username)
+	if err != nil {
+		if errors.Is(err, repository.ErrUsernameInvalid) {
+			return nil, tg.ErrUsernameInvalid
+		}
+		if errors.Is(err, repository.ErrUsernameOccupied) {
+			return nil, tg.ErrUsernameOccupied
+		}
+		return nil, err
+	}
+	return r, nil
 }
