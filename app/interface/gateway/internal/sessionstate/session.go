@@ -47,6 +47,8 @@ type Processor struct {
 	authKeysMu   sync.RWMutex
 	authKeys     map[int64]*crypto.AuthKey
 	authKeyInfos map[int64]*tg.AuthKeyInfo
+	metaMu       sync.RWMutex
+	sessionMeta  map[sessionKey]gmtproto.WrapperMetadata
 	seqMu        sync.Mutex
 	seq          map[sessionKey]int32
 }
@@ -62,6 +64,7 @@ func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor
 		dispatch:     dispatch,
 		authKeys:     make(map[int64]*crypto.AuthKey),
 		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
+		sessionMeta:  make(map[sessionKey]gmtproto.WrapperMetadata),
 		seq:          make(map[sessionKey]int32),
 	}
 }
@@ -243,6 +246,7 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if err != nil {
 		return nil, err
 	}
+	wrapperMD = p.mergeSessionMetadata(msg.AuthKeyId, msg.SessionId, wrapperMD)
 	md := &metadata.RpcMetadata{
 		ServerId:      conn.GatewayId,
 		ClientAddr:    conn.ClientAddr,
@@ -302,6 +306,34 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 		return nil, err
 	}
 	return gmtproto.WrapRPCResult(msg.MsgId, result)
+}
+
+func (p *Processor) mergeSessionMetadata(authKeyID, sessionID int64, md gmtproto.WrapperMetadata) gmtproto.WrapperMetadata {
+	key := sessionKey{authKeyId: authKeyID, sessionId: sessionID}
+	if md.Layer > 0 || md.Client != "" || md.Langpack != "" || md.LangCode != "" {
+		p.metaMu.Lock()
+		if old, ok := p.sessionMeta[key]; ok {
+			if md.Layer == 0 {
+				md.Layer = old.Layer
+			}
+			if md.Client == "" {
+				md.Client = old.Client
+			}
+			if md.Langpack == "" {
+				md.Langpack = old.Langpack
+			}
+			if md.LangCode == "" {
+				md.LangCode = old.LangCode
+			}
+		}
+		p.sessionMeta[key] = md
+		p.metaMu.Unlock()
+		return md
+	}
+
+	p.metaMu.RLock()
+	defer p.metaMu.RUnlock()
+	return p.sessionMeta[key]
 }
 
 func rawRPCMethodName(payload []byte) string {

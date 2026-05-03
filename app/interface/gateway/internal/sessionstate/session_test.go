@@ -91,6 +91,35 @@ func TestSessionUnwrapsInitConnectionMetadata(t *testing.T) {
 	}
 }
 
+func TestSessionReusesClientLayerAfterInitConnection(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	initConn := encodeTL(t, &tg.TLInitConnection{
+		ApiId:          1,
+		DeviceModel:    "tdesktop",
+		SystemVersion:  "macOS",
+		AppVersion:     "5.0",
+		SystemLangCode: "en",
+		LangPack:       "tdesktop",
+		LangCode:       "en",
+		Query:          inner,
+	})
+	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: initConn})
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 106, wrapped)
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 107, encodeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}))
+
+	if len(dispatch.md) != 2 {
+		t.Fatalf("dispatch count = %d, want 2", len(dispatch.md))
+	}
+	if got := dispatch.md[1]; got.Layer != 223 || got.Client != "tdesktop macOS 5.0" || got.Langpack != "tdesktop" || got.LangCode != "en" {
+		t.Fatalf("metadata = %#v", got)
+	}
+}
+
 func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
