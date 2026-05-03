@@ -20,6 +20,7 @@ const (
 	ClazzID_authsession_getClient               = 0x605855be // 605855be
 	ClazzID_authsession_getLangCode             = 0x5899b559 // 5899b559
 	ClazzID_authsession_getUserId               = 0x57491cac // 57491cac
+	ClazzID_authsession_getPermAuthKeyIds       = 0xb16db93f // b16db93f
 	ClazzID_authsession_getPushSessionId        = 0xb3c23141 // b3c23141
 	ClazzID_authsession_getFutureSalts          = 0xb8cf5815 // b8cf5815
 	ClazzID_authsession_queryAuthKey            = 0x54b73828 // 54b73828

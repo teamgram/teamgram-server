@@ -253,6 +253,18 @@ func (r *Repository) GetAndroidPushSessionIdByAuthKeyId(ctx context.Context, aut
 	return data.BindUser.AndroidPushSessionId, nil
 }
 
+func (r *Repository) GetPermAuthKeyIdsByUserId(ctx context.Context, userId int64) ([]int64, error) {
+	rows, err := r.model.AuthUsersModel.SelectListByUserId(ctx, userId)
+	if err != nil {
+		return nil, wrapStorage(err)
+	}
+	authKeyIds := make([]int64, 0, len(rows))
+	for i := range rows {
+		authKeyIds = append(authKeyIds, rows[i].AuthKeyId)
+	}
+	return authKeyIds, nil
+}
+
 // BindAuthKeyUserByAuthKeyId binds the caller's auth_key to a user and
 // returns the freshly minted access hash.
 func (r *Repository) BindAuthKeyUserByAuthKeyId(ctx context.Context, authKeyId int64, userId int64) (int64, error) {

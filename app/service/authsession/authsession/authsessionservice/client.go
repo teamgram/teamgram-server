@@ -32,6 +32,7 @@ type Client interface {
 	AuthsessionGetClient(ctx context.Context, req *authsession.TLAuthsessionGetClient, callOptions ...callopt.Option) (r *tg.String, err error)
 	AuthsessionGetLangCode(ctx context.Context, req *authsession.TLAuthsessionGetLangCode, callOptions ...callopt.Option) (r *tg.String, err error)
 	AuthsessionGetUserId(ctx context.Context, req *authsession.TLAuthsessionGetUserId, callOptions ...callopt.Option) (r *tg.Int64, err error)
+	AuthsessionGetPermAuthKeyIds(ctx context.Context, req *authsession.TLAuthsessionGetPermAuthKeyIds, callOptions ...callopt.Option) (r *authsession.VectorLong, err error)
 	AuthsessionGetPushSessionId(ctx context.Context, req *authsession.TLAuthsessionGetPushSessionId, callOptions ...callopt.Option) (r *tg.Int64, err error)
 	AuthsessionGetFutureSalts(ctx context.Context, req *authsession.TLAuthsessionGetFutureSalts, callOptions ...callopt.Option) (r *tg.FutureSalts, err error)
 	AuthsessionQueryAuthKey(ctx context.Context, req *authsession.TLAuthsessionQueryAuthKey, callOptions ...callopt.Option) (r *tg.AuthKeyInfo, err error)
@@ -118,6 +119,11 @@ func (p *kAuthsessionClient) AuthsessionGetLangCode(ctx context.Context, req *au
 func (p *kAuthsessionClient) AuthsessionGetUserId(ctx context.Context, req *authsession.TLAuthsessionGetUserId, callOptions ...callopt.Option) (r *tg.Int64, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.AuthsessionGetUserId(ctx, req)
+}
+
+func (p *kAuthsessionClient) AuthsessionGetPermAuthKeyIds(ctx context.Context, req *authsession.TLAuthsessionGetPermAuthKeyIds, callOptions ...callopt.Option) (r *authsession.VectorLong, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AuthsessionGetPermAuthKeyIds(ctx, req)
 }
 
 func (p *kAuthsessionClient) AuthsessionGetPushSessionId(ctx context.Context, req *authsession.TLAuthsessionGetPushSessionId, callOptions ...callopt.Option) (r *tg.Int64, err error) {

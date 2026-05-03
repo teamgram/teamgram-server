@@ -30,6 +30,7 @@ func init() {
 	iface.RegisterClazzID(0x605855be, func() iface.TLObject { return &TLAuthsessionGetClient{ClazzID: 0x605855be} })               // 0x605855be
 	iface.RegisterClazzID(0x5899b559, func() iface.TLObject { return &TLAuthsessionGetLangCode{ClazzID: 0x5899b559} })             // 0x5899b559
 	iface.RegisterClazzID(0x57491cac, func() iface.TLObject { return &TLAuthsessionGetUserId{ClazzID: 0x57491cac} })               // 0x57491cac
+	iface.RegisterClazzID(0xb16db93f, func() iface.TLObject { return &TLAuthsessionGetPermAuthKeyIds{ClazzID: 0xb16db93f} })       // 0xb16db93f
 	iface.RegisterClazzID(0xb3c23141, func() iface.TLObject { return &TLAuthsessionGetPushSessionId{ClazzID: 0xb3c23141} })        // 0xb3c23141
 	iface.RegisterClazzID(0xb8cf5815, func() iface.TLObject { return &TLAuthsessionGetFutureSalts{ClazzID: 0xb8cf5815} })          // 0xb8cf5815
 	iface.RegisterClazzID(0x54b73828, func() iface.TLObject { return &TLAuthsessionQueryAuthKey{ClazzID: 0x54b73828} })            // 0x54b73828

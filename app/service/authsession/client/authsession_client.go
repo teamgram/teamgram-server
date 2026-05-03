@@ -30,6 +30,7 @@ type AuthsessionClient interface {
 	AuthsessionGetClient(ctx context.Context, in *authsession.TLAuthsessionGetClient) (*tg.String, error)
 	AuthsessionGetLangCode(ctx context.Context, in *authsession.TLAuthsessionGetLangCode) (*tg.String, error)
 	AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error)
+	AuthsessionGetPermAuthKeyIds(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyIds) (*authsession.VectorLong, error)
 	AuthsessionGetPushSessionId(ctx context.Context, in *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error)
 	AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
 	AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error)
@@ -98,6 +99,12 @@ func (m *defaultAuthsessionClient) AuthsessionGetLangCode(ctx context.Context, i
 // authsession.getUserId auth_key_id:long = Int64;
 func (m *defaultAuthsessionClient) AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*tg.Int64, error) {
 	return m.rpc.AuthsessionGetUserId(ctx, in)
+}
+
+// AuthsessionGetPermAuthKeyIds
+// authsession.getPermAuthKeyIds user_id:long = Vector<long>;
+func (m *defaultAuthsessionClient) AuthsessionGetPermAuthKeyIds(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyIds) (*authsession.VectorLong, error) {
+	return m.rpc.AuthsessionGetPermAuthKeyIds(ctx, in)
 }
 
 // AuthsessionGetPushSessionId

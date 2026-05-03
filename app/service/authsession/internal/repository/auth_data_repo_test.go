@@ -70,10 +70,15 @@ var _ cache.BatchCache = noOpBatchCache{}
 type fakeAuthUsersPushModel struct {
 	model.AuthUsersModel
 	updateAndroidPushSessionId func(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error)
+	selectListByUserId         func(ctx context.Context, userId int64) ([]model.AuthUsers, error)
 }
 
 func (m fakeAuthUsersPushModel) UpdateAndroidPushSessionId(ctx context.Context, androidPushSessionId int64, authKeyId int64, userId int64) (int64, error) {
 	return m.updateAndroidPushSessionId(ctx, androidPushSessionId, authKeyId, userId)
+}
+
+func (m fakeAuthUsersPushModel) SelectListByUserId(ctx context.Context, userId int64) ([]model.AuthUsers, error) {
+	return m.selectListByUserId(ctx, userId)
 }
 
 func TestAuthDataStateMapping(t *testing.T) {
@@ -146,6 +151,32 @@ func TestClientKindAndLangPackMapping(t *testing.T) {
 	}
 	if got := normalizeLangPack("android", "Telegram TDLib"); got != "android" {
 		t.Fatalf("normalizeLangPack() = %q, want android", got)
+	}
+}
+
+func TestGetPermAuthKeyIdsByUserIdReturnsActiveBindings(t *testing.T) {
+	repo := &Repository{
+		model: &model.Models{
+			AuthUsersModel: fakeAuthUsersPushModel{
+				selectListByUserId: func(ctx context.Context, userId int64) ([]model.AuthUsers, error) {
+					if userId != 42 {
+						t.Fatalf("user_id = %d, want 42", userId)
+					}
+					return []model.AuthUsers{
+						{AuthKeyId: 1001, UserId: userId},
+						{AuthKeyId: 1002, UserId: userId},
+					}, nil
+				},
+			},
+		},
+	}
+
+	got, err := repo.GetPermAuthKeyIdsByUserId(context.Background(), 42)
+	if err != nil {
+		t.Fatalf("GetPermAuthKeyIdsByUserId() error = %v", err)
+	}
+	if len(got) != 2 || got[0] != 1001 || got[1] != 1002 {
+		t.Fatalf("GetPermAuthKeyIdsByUserId() = %#v", got)
 	}
 }
 

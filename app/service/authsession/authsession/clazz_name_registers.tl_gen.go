@@ -24,6 +24,7 @@ const (
 	ClazzName_authsession_getClient               = "authsession_getClient"
 	ClazzName_authsession_getLangCode             = "authsession_getLangCode"
 	ClazzName_authsession_getUserId               = "authsession_getUserId"
+	ClazzName_authsession_getPermAuthKeyIds       = "authsession_getPermAuthKeyIds"
 	ClazzName_authsession_getPushSessionId        = "authsession_getPushSessionId"
 	ClazzName_authsession_getFutureSalts          = "authsession_getFutureSalts"
 	ClazzName_authsession_queryAuthKey            = "authsession_queryAuthKey"
@@ -51,6 +52,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_authsession_getClient, 0, 0x605855be)               // 605855be
 	iface.RegisterClazzName(ClazzName_authsession_getLangCode, 0, 0x5899b559)             // 5899b559
 	iface.RegisterClazzName(ClazzName_authsession_getUserId, 0, 0x57491cac)               // 57491cac
+	iface.RegisterClazzName(ClazzName_authsession_getPermAuthKeyIds, 0, 0xb16db93f)       // b16db93f
 	iface.RegisterClazzName(ClazzName_authsession_getPushSessionId, 0, 0xb3c23141)        // b3c23141
 	iface.RegisterClazzName(ClazzName_authsession_getFutureSalts, 0, 0xb8cf5815)          // b8cf5815
 	iface.RegisterClazzName(ClazzName_authsession_queryAuthKey, 0, 0x54b73828)            // 54b73828
@@ -76,6 +78,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_authsession_getClient, 0x605855be)               // 605855be
 	iface.RegisterClazzIDName(ClazzName_authsession_getLangCode, 0x5899b559)             // 5899b559
 	iface.RegisterClazzIDName(ClazzName_authsession_getUserId, 0x57491cac)               // 57491cac
+	iface.RegisterClazzIDName(ClazzName_authsession_getPermAuthKeyIds, 0xb16db93f)       // b16db93f
 	iface.RegisterClazzIDName(ClazzName_authsession_getPushSessionId, 0xb3c23141)        // b3c23141
 	iface.RegisterClazzIDName(ClazzName_authsession_getFutureSalts, 0xb8cf5815)          // b8cf5815
 	iface.RegisterClazzIDName(ClazzName_authsession_queryAuthKey, 0x54b73828)            // 54b73828

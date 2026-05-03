@@ -132,6 +132,22 @@ func (s *Service) AuthsessionGetUserId(ctx context.Context, request *authsession
 	return r, err
 }
 
+// AuthsessionGetPermAuthKeyIds
+// authsession.getPermAuthKeyIds user_id:long = Vector<long>;
+func (s *Service) AuthsessionGetPermAuthKeyIds(ctx context.Context, request *authsession.TLAuthsessionGetPermAuthKeyIds) (*authsession.VectorLong, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("authsession.getPermAuthKeyIds - request: %s", request)
+
+	r, err := c.AuthsessionGetPermAuthKeyIds(request)
+	if err != nil {
+		c.Logger.Errorf("authsession.getPermAuthKeyIds - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("authsession.getPermAuthKeyIds - reply: %s", r)
+	return r, err
+}
+
 // AuthsessionGetPushSessionId
 // authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 func (s *Service) AuthsessionGetPushSessionId(ctx context.Context, request *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error) {

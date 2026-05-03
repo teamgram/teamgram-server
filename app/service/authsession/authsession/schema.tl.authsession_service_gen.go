@@ -361,6 +361,51 @@ func (m *TLAuthsessionGetUserId) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLAuthsessionGetPermAuthKeyIds <--
+type TLAuthsessionGetPermAuthKeyIds struct {
+	ClazzID uint32 `json:"_id"`
+	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLAuthsessionGetPermAuthKeyIds) String() string {
+	return iface.DebugStringWithName(ClazzName_authsession_getPermAuthKeyIds, m)
+}
+
+// Encode <--
+func (m *TLAuthsessionGetPermAuthKeyIds) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_authsession_getPermAuthKeyIds, int(layer)); clazzId {
+	case 0xb16db93f:
+		x.PutClazzID(0xb16db93f)
+
+		x.PutInt64(m.UserId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode authsession_getPermAuthKeyIds: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLAuthsessionGetPermAuthKeyIds) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode authsession_getPermAuthKeyIds: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xb16db93f:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode authsession_getPermAuthKeyIds#0xb16db93f: field user_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode authsession_getPermAuthKeyIds: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLAuthsessionGetPushSessionId <--
 type TLAuthsessionGetPushSessionId struct {
 	ClazzID   uint32 `json:"_id"`
@@ -1193,6 +1238,7 @@ type RPCAuthsession interface {
 	AuthsessionGetClient(ctx context.Context, in *TLAuthsessionGetClient) (*tg.String, error)
 	AuthsessionGetLangCode(ctx context.Context, in *TLAuthsessionGetLangCode) (*tg.String, error)
 	AuthsessionGetUserId(ctx context.Context, in *TLAuthsessionGetUserId) (*tg.Int64, error)
+	AuthsessionGetPermAuthKeyIds(ctx context.Context, in *TLAuthsessionGetPermAuthKeyIds) (*VectorLong, error)
 	AuthsessionGetPushSessionId(ctx context.Context, in *TLAuthsessionGetPushSessionId) (*tg.Int64, error)
 	AuthsessionGetFutureSalts(ctx context.Context, in *TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
 	AuthsessionQueryAuthKey(ctx context.Context, in *TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error)

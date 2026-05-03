@@ -104,6 +104,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/authsession.RPCAuthsession/authsession.getPermAuthKeyIds": kitex.NewMethodInfo(
+		getPermAuthKeyIdsHandler,
+		newGetPermAuthKeyIdsArgs,
+		newGetPermAuthKeyIdsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/authsession.RPCAuthsession/authsession.getPushSessionId": kitex.NewMethodInfo(
 		getPushSessionIdHandler,
 		newGetPushSessionIdArgs,
@@ -1210,6 +1217,140 @@ func (p *GetUserIdResult) IsSetSuccess() bool {
 }
 
 func (p *GetUserIdResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getPermAuthKeyIdsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetPermAuthKeyIdsArgs)
+	realResult := result.(*GetPermAuthKeyIdsResult)
+	success, err := handler.(authsession.RPCAuthsession).AuthsessionGetPermAuthKeyIds(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetPermAuthKeyIdsArgs() interface{} {
+	return &GetPermAuthKeyIdsArgs{}
+}
+
+func newGetPermAuthKeyIdsResult() interface{} {
+	return &GetPermAuthKeyIdsResult{}
+}
+
+type GetPermAuthKeyIdsArgs struct {
+	Req *authsession.TLAuthsessionGetPermAuthKeyIds
+}
+
+func (p *GetPermAuthKeyIdsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetPermAuthKeyIdsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetPermAuthKeyIdsArgs) Unmarshal(in []byte) error {
+	msg := new(authsession.TLAuthsessionGetPermAuthKeyIds)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetPermAuthKeyIdsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetPermAuthKeyIdsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetPermAuthKeyIdsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(authsession.TLAuthsessionGetPermAuthKeyIds)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetPermAuthKeyIdsArgs_Req_DEFAULT *authsession.TLAuthsessionGetPermAuthKeyIds
+
+func (p *GetPermAuthKeyIdsArgs) GetReq() *authsession.TLAuthsessionGetPermAuthKeyIds {
+	if !p.IsSetReq() {
+		return GetPermAuthKeyIdsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetPermAuthKeyIdsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetPermAuthKeyIdsResult struct {
+	Success *authsession.VectorLong
+}
+
+var GetPermAuthKeyIdsResult_Success_DEFAULT *authsession.VectorLong
+
+func (p *GetPermAuthKeyIdsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetPermAuthKeyIdsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetPermAuthKeyIdsResult) Unmarshal(in []byte) error {
+	msg := new(authsession.VectorLong)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetPermAuthKeyIdsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetPermAuthKeyIdsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetPermAuthKeyIdsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(authsession.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetPermAuthKeyIdsResult) GetSuccess() *authsession.VectorLong {
+	if !p.IsSetSuccess() {
+		return GetPermAuthKeyIdsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetPermAuthKeyIdsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*authsession.VectorLong)
+}
+
+func (p *GetPermAuthKeyIdsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetPermAuthKeyIdsResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -3177,6 +3318,18 @@ func (p *kClient) AuthsessionGetUserId(ctx context.Context, req *authsession.TLA
 	var _result GetUserIdResult
 
 	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getUserId", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AuthsessionGetPermAuthKeyIds(ctx context.Context, req *authsession.TLAuthsessionGetPermAuthKeyIds) (r *authsession.VectorLong, err error) {
+	// var _args GetPermAuthKeyIdsArgs
+	// _args.Req = req
+	var _result GetPermAuthKeyIdsResult
+
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPermAuthKeyIds", req, &_result); err != nil {
 		return
 	}
 
