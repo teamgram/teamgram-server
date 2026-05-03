@@ -113,6 +113,11 @@ func TestRawFakeMainScreenStartupMethods(t *testing.T) {
 			want: wantType[*tg.TLMessagesSavedReactionTags],
 		},
 		{
+			name: "messages.getScheduledHistory",
+			req:  &tg.TLMessagesGetScheduledHistory{Peer: tg.InputPeerSelfClazz, Hash: 0},
+			want: wantType[*tg.TLMessagesMessages],
+		},
+		{
 			name: "messages.getDefaultTagReactions",
 			req:  &tg.TLMessagesGetDefaultTagReactions{Hash: 0},
 			want: wantType[*tg.TLMessagesReactions],
@@ -199,6 +204,24 @@ func TestRawFakeMainScreenStartupMethods(t *testing.T) {
 			}
 			tt.want(t, obj)
 		})
+	}
+}
+
+func TestRawFakeReturnsEmptyEmojiKeywordsLanguages(t *testing.T) {
+	payload, ok, err := TryReturnRawFakeRpcResult(context.Background(), nil, encodeRawFakeTL(t, &tg.TLMessagesGetEmojiKeywordsLanguages{}))
+	if err != nil {
+		t.Fatalf("TryReturnRawFakeRpcResult() error = %v", err)
+	}
+	if !ok {
+		t.Fatal("TryReturnRawFakeRpcResult() ok = false")
+	}
+
+	var got tg.VectorEmojiLanguage
+	if err := got.Decode(bin.NewDecoder(payload)); err != nil {
+		t.Fatalf("VectorEmojiLanguage.Decode() error = %v", err)
+	}
+	if len(got.Datas) != 0 {
+		t.Fatalf("len(VectorEmojiLanguage.Datas) = %d, want 0", len(got.Datas))
 	}
 }
 

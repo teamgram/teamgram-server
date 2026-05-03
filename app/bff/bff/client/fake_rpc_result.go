@@ -333,6 +333,17 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Tags: []tg.SavedReactionTagClazz{},
 			Hash: 0,
 		}).ToMessagesSavedReactionTags(), nil
+	case "TLMessagesGetScheduledHistory":
+		return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+			Messages: []tg.MessageClazz{},
+			Topics:   []tg.ForumTopicClazz{},
+			Chats:    []tg.ChatClazz{},
+			Users:    []tg.UserClazz{},
+		}).ToMessagesMessages(), nil
+	case "TLMessagesGetEmojiKeywordsLanguages":
+		return &tg.VectorEmojiLanguage{
+			Datas: []tg.EmojiLanguageClazz{},
+		}, nil
 
 	case "TLContactsGetContacts":
 		return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
