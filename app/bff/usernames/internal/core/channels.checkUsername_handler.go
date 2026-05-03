@@ -23,8 +23,6 @@ import (
 // ChannelsCheckUsername
 // channels.checkUsername#10e6bd2c channel:InputChannel username:string = Bool;
 func (c *UsernamesCore) ChannelsCheckUsername(in *tg.TLChannelsCheckUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("channels.checkUsername - error: method ChannelsCheckUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	// TODO: enterprise feature
+	return nil, tg.ErrEnterpriseIsBlocked
 }

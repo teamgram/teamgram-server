@@ -23,8 +23,6 @@ import (
 // ChannelsUpdateUsername
 // channels.updateUsername#3514b3de channel:InputChannel username:string = Bool;
 func (c *UsernamesCore) ChannelsUpdateUsername(in *tg.TLChannelsUpdateUsername) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("channels.updateUsername - error: method ChannelsUpdateUsername not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	// TODO: enterprise feature
+	return nil, tg.ErrEnterpriseIsBlocked
 }

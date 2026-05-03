@@ -234,20 +234,12 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 	case *tg.TLPeerChannel:
 		if r.Plugin != nil {
 			resolvedPeer.Chats = r.Plugin.GetChannelListByIdList(ctx, selfId, p.ChannelId)
+		} else {
+			return nil, tg.ErrEnterpriseIsBlocked
 		}
 	}
 
 	return resolvedPeer, nil
-}
-
-// CheckChannelUsername is an enterprise feature.
-func (r *Repository) CheckChannelUsername(ctx context.Context, channelId int64, username string) (*tg.Bool, error) {
-	return nil, tg.ErrEnterpriseIsBlocked
-}
-
-// UpdateChannelUsername is an enterprise feature.
-func (r *Repository) UpdateChannelUsername(ctx context.Context, channelId int64, username string) (*tg.Bool, error) {
-	return nil, tg.ErrEnterpriseIsBlocked
 }
 
 // --- helpers ---
