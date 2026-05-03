@@ -55,7 +55,7 @@ const (
 	DISALLOW_CHAT_PARTICIPANTS = 8
 	ALLOW_CLOSE_FRIENDS        = 9
 	ALLOW_PREMIUM              = 10
-	ALOW_BOTS                  = 11
+	ALLOW_BOTS                 = 11
 	DISALLOW_BOTS              = 12
 )
 
@@ -135,9 +135,8 @@ func FromInputPrivacyKeyType(k *InputPrivacyKey) int {
 	case ClazzName_inputPrivacyKeyNoPaidMessages:
 		return NO_PAID_MESSAGES
 	default:
-		panic("type is invalid")
+		return KEY_TYPE_INVALID
 	}
-	return KEY_TYPE_INVALID
 }
 
 var (
