@@ -190,55 +190,64 @@ func ToPrivacyKey(keyType int) (key PrivacyKeyClazz) {
 	return
 }
 
-/*
-func ToPrivacyRuleByInput(userSelfId int64, inputRule *InputPrivacyRule) *PrivacyRule {
+func wrapInputUserSlice(users []InputUserClazz) []*InputUser {
+	wrapped := make([]*InputUser, len(users))
+	for i, u := range users {
+		wrapped[i] = &InputUser{Clazz: u}
+	}
+	return wrapped
+}
+
+func ToPrivacyRuleByInput(userSelfId int64, inputRule InputPrivacyRuleClazz) PrivacyRuleClazz {
 	switch inputRule.InputPrivacyRuleClazzName() {
 	case ClazzName_inputPrivacyValueAllowAll:
-		return MakePrivacyRule(&TLPrivacyValueAllowAll{})
+		return MakeTLPrivacyValueAllowAll(&TLPrivacyValueAllowAll{})
 	case ClazzName_inputPrivacyValueAllowContacts:
-		return MakePrivacyRule(&TLPrivacyValueAllowContacts{})
+		return MakeTLPrivacyValueAllowContacts(&TLPrivacyValueAllowContacts{})
 	case ClazzName_inputPrivacyValueAllowUsers:
-		return MakePrivacyRule(&TLPrivacyValueAllowUsers{
-			Users: ToUserIdListByInput(userSelfId, inputRule.GetUsers()),
+		inputUsers := inputRule.(*TLInputPrivacyValueAllowUsers).Users
+		return MakeTLPrivacyValueAllowUsers(&TLPrivacyValueAllowUsers{
+			Users: ToUserIdListByInput(userSelfId, wrapInputUserSlice(inputUsers)),
 		})
 	case ClazzName_inputPrivacyValueDisallowAll:
-		return MakePrivacyRule(&TLPrivacyValueDisallowAll{})
+		return MakeTLPrivacyValueDisallowAll(&TLPrivacyValueDisallowAll{})
 	case ClazzName_inputPrivacyValueDisallowContacts:
-		return MakePrivacyRule(&TLPrivacyValueDisallowContacts{})
+		return MakeTLPrivacyValueDisallowContacts(&TLPrivacyValueDisallowContacts{})
 	case ClazzName_inputPrivacyValueDisallowUsers:
-		return MakePrivacyRule(&TLPrivacyValueDisallowUsers{
-			Users: ToUserIdListByInput(userSelfId, inputRule.GetUsers()),
+		inputUsers := inputRule.(*TLInputPrivacyValueDisallowUsers).Users
+		return MakeTLPrivacyValueDisallowUsers(&TLPrivacyValueDisallowUsers{
+			Users: ToUserIdListByInput(userSelfId, wrapInputUserSlice(inputUsers)),
 		})
 	case ClazzName_inputPrivacyValueAllowChatParticipants:
-		return MakePrivacyRule(&TLPrivacyValueAllowChatParticipants{
-			Chats: inputRule.GetChats(),
+		return MakeTLPrivacyValueAllowChatParticipants(&TLPrivacyValueAllowChatParticipants{
+			Chats: inputRule.(*TLInputPrivacyValueAllowChatParticipants).Chats,
 		})
 	case ClazzName_inputPrivacyValueDisallowChatParticipants:
-		return MakePrivacyRule(&TLPrivacyValueDisallowChatParticipants{
-			Chats: inputRule.GetChats(),
+		return MakeTLPrivacyValueDisallowChatParticipants(&TLPrivacyValueDisallowChatParticipants{
+			Chats: inputRule.(*TLInputPrivacyValueDisallowChatParticipants).Chats,
 		})
 	case ClazzName_inputPrivacyValueAllowCloseFriends:
-		return MakePrivacyRule(&TLPrivacyValueAllowCloseFriends{})
+		return MakeTLPrivacyValueAllowCloseFriends(&TLPrivacyValueAllowCloseFriends{})
 	case ClazzName_inputPrivacyValueAllowPremium:
-		return MakePrivacyRule(&TLPrivacyValueAllowPremium{})
+		return MakeTLPrivacyValueAllowPremium(&TLPrivacyValueAllowPremium{})
 	case ClazzName_inputPrivacyValueAllowBots:
-		return MakePrivacyRule(&TLPrivacyValueAllowBots{})
+		return MakeTLPrivacyValueAllowBots(&TLPrivacyValueAllowBots{})
 	case ClazzName_inputPrivacyValueDisallowBots:
-		return MakePrivacyRule(&TLPrivacyValueDisallowBots{})
+		return MakeTLPrivacyValueDisallowBots(&TLPrivacyValueDisallowBots{})
 	default:
 		panic("type is invalid")
 	}
-	return nil
 }
 
-func ToPrivacyRuleListByInput(userSelfId int64, inputRules []*InputPrivacyRule) (rules []*PrivacyRule) {
-	rules = make([]*PrivacyRule, 0, len(inputRules))
+func ToPrivacyRuleListByInput(userSelfId int64, inputRules []InputPrivacyRuleClazz) (rules []PrivacyRuleClazz) {
+	rules = make([]PrivacyRuleClazz, 0, len(inputRules))
 	for _, inputRule := range inputRules {
 		rules = append(rules, ToPrivacyRuleByInput(userSelfId, inputRule))
 	}
 	return
 }
 
+/*
 // PickAllIdListByRules
 // TODO(@benqi): pick chat and channel
 func PickAllIdListByRules(rules []*PrivacyRule) (userIdList, chatIdList, channelIdList []int64) {

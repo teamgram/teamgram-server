@@ -17,14 +17,71 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSetPrivacy
 // account.setPrivacy#c9f81ce8 key:InputPrivacyKey rules:Vector<InputPrivacyRule> = account.PrivacyRules;
 func (c *PrivacySettingsCore) AccountSetPrivacy(in *tg.TLAccountSetPrivacy) (*tg.AccountPrivacyRules, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setPrivacy - error: method AccountSetPrivacy not impl")
+	key := tg.FromInputPrivacyKeyType(&tg.InputPrivacyKey{Clazz: in.Key})
 
-	return nil, tg.ErrMethodNotImpl
+	if key == tg.KEY_TYPE_INVALID {
+		c.Logger.Errorf("account.setPrivacy - error: invalid privacy key")
+		return nil, tg.ErrPrivacyKeyInvalid
+	}
+
+	ruleList := tg.ToPrivacyRuleListByInput(c.MD.UserId, in.Rules)
+
+	if _, err := c.svcCtx.Repo.UserClient.UserSetPrivacy(c.ctx, &user.TLUserSetPrivacy{
+		UserId:  c.MD.UserId,
+		KeyType: int32(key),
+		Rules:   ruleList,
+	}); err != nil {
+		c.Logger.Errorf("account.setPrivacy - error: %v", err)
+		return nil, err
+	}
+
+	rVal := tg.MakeTLAccountPrivacyRules(&tg.TLAccountPrivacyRules{
+		Rules: ruleList,
+		Users: []tg.UserClazz{},
+		Chats: []tg.ChatClazz{},
+	}).ToAccountPrivacyRules()
+
+	// TODO: syncUpdatesNotMe
+	// syncUpdates := tg.MakeUpdatesByUpdates(tg.MakeTLUpdatePrivacy(&tg.TLUpdate{
+	//     Key:   tg.ToPrivacyKey(key),
+	//     Rules: ruleList,
+	// }).ToUpdate())
+	//
+	// idHelper := tg.NewIDListHelper(c.MD.UserId)
+	// idHelper.PickByRules(ruleList)
+	// idHelper.Visit(
+	//     func(userIdList []int64) {
+	//         users, _ := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
+	//             &user.TLUserGetMutableUsers{
+	//                 Id: userIdList,
+	//             })
+	//         rVal.Users = users.GetUserListByIdList(c.MD.UserId, userIdList...)
+	//         syncUpdates.PushUser(rVal.Users...)
+	//     },
+	//     func(chatIdList []int64) {
+	//         chats, _ := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
+	//             &chat.TLChatGetChatListByIdList{
+	//                 IdList: chatIdList,
+	//             })
+	//         rVal.Chats = chats.GetChatListByIdList(c.MD.UserId, chatIdList...)
+	//         syncUpdates.PushChat(rVal.Chats...)
+	//     },
+	//     func(channelIdList []int64) {
+	//         // TODO
+	//     })
+	//
+	// c.svcCtx.Repo.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+	//     UserId:        c.MD.UserId,
+	//     PermAuthKeyId: c.MD.PermAuthKeyId,
+	//     Updates:       syncUpdates,
+	// })
+
+	return rVal, nil
 }
