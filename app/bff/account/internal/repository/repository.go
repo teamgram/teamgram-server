@@ -19,22 +19,39 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/internal/config"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	codeclient "github.com/teamgram/teamgram-server/v2/app/service/biz/code/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
-// Repository is the dependency container for repository instances.
+// Repository is the dependency container for BFF account logic.
 type Repository struct {
+	UserClient        userclient.UserClient
+	AuthsessionClient authsessionclient.AuthsessionClient
+	CodeClient        codeclient.CodeClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.UserClient) {
+		r.UserClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+	}
+	if hasRPCClientConfig(c.AuthsessionClient) {
+		r.AuthsessionClient = authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthsessionClient))
+	}
+	if hasRPCClientConfig(c.CodeClient) {
+		r.CodeClient = codeclient.NewCodeClient(codeclient.MustNewKitexClient(c.CodeClient))
+	}
+	return r
 }
 
 // Close releases repository-owned clients.
 func (r *Repository) Close() error {
-	if r == nil {
-		return nil
-	}
-
 	return nil
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }
