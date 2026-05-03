@@ -87127,7 +87127,8 @@ func (m *VectorSecureValue) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorSecureValueAlias VectorSecureValue
+	return json.Marshal((*vectorSecureValueAlias)(m))
 }
 
 func (m *VectorSecureValue) CalcSize(layer int32) int {
@@ -87171,7 +87172,8 @@ func (m *VectorWallPaper) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorWallPaperAlias VectorWallPaper
+	return json.Marshal((*vectorWallPaperAlias)(m))
 }
 
 func (m *VectorWallPaper) CalcSize(layer int32) int {
@@ -87260,7 +87262,8 @@ func (m *VectorRequirementToContact) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorRequirementToContactAlias VectorRequirementToContact
+	return json.Marshal((*vectorRequirementToContactAlias)(m))
 }
 
 func (m *VectorRequirementToContact) CalcSize(layer int32) int {
@@ -87304,7 +87307,8 @@ func (m *VectorInt) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorIntAlias VectorInt
+	return json.Marshal((*vectorIntAlias)(m))
 }
 
 func (m *VectorInt) CalcSize(layer int32) int {
@@ -87348,7 +87352,8 @@ func (m *VectorContactStatus) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorContactStatusAlias VectorContactStatus
+	return json.Marshal((*vectorContactStatusAlias)(m))
 }
 
 func (m *VectorContactStatus) CalcSize(layer int32) int {
@@ -87392,7 +87397,8 @@ func (m *VectorSavedContact) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorSavedContactAlias VectorSavedContact
+	return json.Marshal((*vectorSavedContactAlias)(m))
 }
 
 func (m *VectorSavedContact) CalcSize(layer int32) int {
@@ -87436,7 +87442,8 @@ func (m *VectorReceivedNotifyMessage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorReceivedNotifyMessageAlias VectorReceivedNotifyMessage
+	return json.Marshal((*vectorReceivedNotifyMessageAlias)(m))
 }
 
 func (m *VectorReceivedNotifyMessage) CalcSize(layer int32) int {
@@ -87480,7 +87487,8 @@ func (m *VectorLong) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorLongAlias VectorLong
+	return json.Marshal((*vectorLongAlias)(m))
 }
 
 func (m *VectorLong) CalcSize(layer int32) int {
@@ -87524,7 +87532,8 @@ func (m *VectorStickerSetCovered) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorStickerSetCoveredAlias VectorStickerSetCovered
+	return json.Marshal((*vectorStickerSetCoveredAlias)(m))
 }
 
 func (m *VectorStickerSetCovered) CalcSize(layer int32) int {
@@ -87568,7 +87577,8 @@ func (m *VectorMessageRange) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorMessageRangeAlias VectorMessageRange
+	return json.Marshal((*vectorMessageRangeAlias)(m))
 }
 
 func (m *VectorMessageRange) CalcSize(layer int32) int {
@@ -87612,7 +87622,8 @@ func (m *VectorDialogPeer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorDialogPeerAlias VectorDialogPeer
+	return json.Marshal((*vectorDialogPeerAlias)(m))
 }
 
 func (m *VectorDialogPeer) CalcSize(layer int32) int {
@@ -87656,7 +87667,8 @@ func (m *VectorEmojiLanguage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorEmojiLanguageAlias VectorEmojiLanguage
+	return json.Marshal((*vectorEmojiLanguageAlias)(m))
 }
 
 func (m *VectorEmojiLanguage) CalcSize(layer int32) int {
@@ -87700,7 +87712,8 @@ func (m *VectorMessagesSearchCounter) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorMessagesSearchCounterAlias VectorMessagesSearchCounter
+	return json.Marshal((*vectorMessagesSearchCounterAlias)(m))
 }
 
 func (m *VectorMessagesSearchCounter) CalcSize(layer int32) int {
@@ -87744,7 +87757,8 @@ func (m *VectorDialogFilterSuggested) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorDialogFilterSuggestedAlias VectorDialogFilterSuggested
+	return json.Marshal((*vectorDialogFilterSuggestedAlias)(m))
 }
 
 func (m *VectorDialogFilterSuggested) CalcSize(layer int32) int {
@@ -87788,7 +87802,8 @@ func (m *VectorReadParticipantDate) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorReadParticipantDateAlias VectorReadParticipantDate
+	return json.Marshal((*vectorReadParticipantDateAlias)(m))
 }
 
 func (m *VectorReadParticipantDate) CalcSize(layer int32) int {
@@ -87832,7 +87847,8 @@ func (m *VectorDocument) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorDocumentAlias VectorDocument
+	return json.Marshal((*vectorDocumentAlias)(m))
 }
 
 func (m *VectorDocument) CalcSize(layer int32) int {
@@ -87876,7 +87892,8 @@ func (m *VectorFactCheck) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorFactCheckAlias VectorFactCheck
+	return json.Marshal((*vectorFactCheckAlias)(m))
 }
 
 func (m *VectorFactCheck) CalcSize(layer int32) int {
@@ -87920,7 +87937,8 @@ func (m *VectorFileHash) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorFileHashAlias VectorFileHash
+	return json.Marshal((*vectorFileHashAlias)(m))
 }
 
 func (m *VectorFileHash) CalcSize(layer int32) int {
@@ -87964,7 +87982,8 @@ func (m *VectorBotCommand) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorBotCommandAlias VectorBotCommand
+	return json.Marshal((*vectorBotCommandAlias)(m))
 }
 
 func (m *VectorBotCommand) CalcSize(layer int32) int {
@@ -88008,7 +88027,8 @@ func (m *VectorBotPreviewMedia) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorBotPreviewMediaAlias VectorBotPreviewMedia
+	return json.Marshal((*vectorBotPreviewMediaAlias)(m))
 }
 
 func (m *VectorBotPreviewMedia) CalcSize(layer int32) int {
@@ -88052,7 +88072,8 @@ func (m *VectorPremiumGiftCodeOption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorPremiumGiftCodeOptionAlias VectorPremiumGiftCodeOption
+	return json.Marshal((*vectorPremiumGiftCodeOptionAlias)(m))
 }
 
 func (m *VectorPremiumGiftCodeOption) CalcSize(layer int32) int {
@@ -88096,7 +88117,8 @@ func (m *VectorStarsTopupOption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorStarsTopupOptionAlias VectorStarsTopupOption
+	return json.Marshal((*vectorStarsTopupOptionAlias)(m))
 }
 
 func (m *VectorStarsTopupOption) CalcSize(layer int32) int {
@@ -88140,7 +88162,8 @@ func (m *VectorStarsGiftOption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorStarsGiftOptionAlias VectorStarsGiftOption
+	return json.Marshal((*vectorStarsGiftOptionAlias)(m))
 }
 
 func (m *VectorStarsGiftOption) CalcSize(layer int32) int {
@@ -88184,7 +88207,8 @@ func (m *VectorStarsGiveawayOption) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorStarsGiveawayOptionAlias VectorStarsGiveawayOption
+	return json.Marshal((*vectorStarsGiveawayOptionAlias)(m))
 }
 
 func (m *VectorStarsGiveawayOption) CalcSize(layer int32) int {
@@ -88228,7 +88252,8 @@ func (m *VectorLangPackString) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorLangPackStringAlias VectorLangPackString
+	return json.Marshal((*vectorLangPackStringAlias)(m))
 }
 
 func (m *VectorLangPackString) CalcSize(layer int32) int {
@@ -88272,7 +88297,8 @@ func (m *VectorLangPackLanguage) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorLangPackLanguageAlias VectorLangPackLanguage
+	return json.Marshal((*vectorLangPackLanguageAlias)(m))
 }
 
 func (m *VectorLangPackLanguage) CalcSize(layer int32) int {
@@ -88316,7 +88342,8 @@ func (m *VectorPeer) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorPeerAlias VectorPeer
+	return json.Marshal((*vectorPeerAlias)(m))
 }
 
 func (m *VectorPeer) CalcSize(layer int32) int {
@@ -88360,7 +88387,8 @@ func (m *VectorRecentStory) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorRecentStoryAlias VectorRecentStory
+	return json.Marshal((*vectorRecentStoryAlias)(m))
 }
 
 func (m *VectorRecentStory) CalcSize(layer int32) int {
@@ -88404,7 +88432,8 @@ func (m *VectorPredefinedUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorPredefinedUserAlias VectorPredefinedUser
+	return json.Marshal((*vectorPredefinedUserAlias)(m))
 }
 
 func (m *VectorPredefinedUser) CalcSize(layer int32) int {
