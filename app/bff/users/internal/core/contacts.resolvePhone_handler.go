@@ -17,14 +17,67 @@
 package core
 
 import (
+	"errors"
+	"fmt"
+
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsResolvePhone
 // contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
 func (c *UsersCore) ContactsResolvePhone(in *tg.TLContactsResolvePhone) (*tg.ContactsResolvedPeer, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.resolvePhone - error: method ContactsResolvePhone not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil || in.Phone == "" {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.UserClient == nil {
+		return nil, fmt.Errorf("contacts.resolvePhone: user client is nil")
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	resolvedID, err := c.svcCtx.Repo.UserClient.UserGetUserIdByPhone(c.ctx, &userpb.TLUserGetUserIdByPhone{
+		Phone: in.Phone,
+	})
+	if err != nil {
+		if errors.Is(err, userpb.ErrUserNotFound) {
+			return nil, tg.ErrPhoneNotOccupied
+		}
+		return nil, err
+	}
+	if resolvedID == nil || resolvedID.V <= 0 {
+		return nil, tg.ErrPhoneNotOccupied
+	}
+
+	mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+		Id:      []int64{resolvedID.V, selfID},
+		Privacy: true,
+		HasTo:   true,
+		To:      []int64{selfID},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var resolvedUser tg.UserClazz
+	if mutableUsers != nil {
+		for _, immutableUser := range mutableUsers.Users {
+			user := projectImmutableUser(immutableUser)
+			if id, ok := userID(user); ok && id == resolvedID.V {
+				resolvedUser = user
+				break
+			}
+		}
+	}
+	if resolvedUser == nil {
+		return nil, tg.ErrPhoneNotOccupied
+	}
+
+	return tg.MakeTLContactsResolvedPeer(&tg.TLContactsResolvedPeer{
+		Peer:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: resolvedID.V}),
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{resolvedUser},
+	}).ToContactsResolvedPeer(), nil
 }
