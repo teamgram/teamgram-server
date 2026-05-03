@@ -24,7 +24,7 @@ import (
 // messages.viewSponsoredMessage#269e3643 random_id:bytes = Bool;
 func (c *SponsoredMessagesCore) MessagesViewSponsoredMessage(in *tg.TLMessagesViewSponsoredMessage) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.viewSponsoredMessage - error: method MessagesViewSponsoredMessage not impl")
+	// c.Logger.Errorf("messages.viewSponsoredMessage - error: method MessagesViewSponsoredMessage not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

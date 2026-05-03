@@ -24,7 +24,14 @@ import (
 // messages.getSponsoredMessages#3d6ce850 flags:# peer:InputPeer msg_id:flags.0?int = messages.SponsoredMessages;
 func (c *SponsoredMessagesCore) MessagesGetSponsoredMessages(in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSponsoredMessages - error: method MessagesGetSponsoredMessages not impl")
+	// c.Logger.Errorf("messages.getSponsoredMessages - error: method MessagesGetSponsoredMessages not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesSponsoredMessages(&tg.TLMessagesSponsoredMessages{
+		PostsBetween: nil,
+		StartDelay:   nil,
+		BetweenDelay: nil,
+		Messages:     []tg.SponsoredMessageClazz{},
+		Chats:        []tg.ChatClazz{},
+		Users:        []tg.UserClazz{},
+	}).ToMessagesSponsoredMessages(), nil
 }

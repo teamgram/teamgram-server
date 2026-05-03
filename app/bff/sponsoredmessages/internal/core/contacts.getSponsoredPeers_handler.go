@@ -24,7 +24,7 @@ import (
 // contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
 func (c *SponsoredMessagesCore) ContactsGetSponsoredPeers(in *tg.TLContactsGetSponsoredPeers) (*tg.ContactsSponsoredPeers, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.getSponsoredPeers - error: method ContactsGetSponsoredPeers not impl")
+	// c.Logger.Errorf("contacts.getSponsoredPeers - error: method ContactsGetSponsoredPeers not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.ContactsSponsoredPeersEmpty, nil
 }

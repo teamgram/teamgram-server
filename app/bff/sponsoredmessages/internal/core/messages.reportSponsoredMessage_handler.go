@@ -24,7 +24,7 @@ import (
 // messages.reportSponsoredMessage#12cbf0c4 random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
 func (c *SponsoredMessagesCore) MessagesReportSponsoredMessage(in *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.reportSponsoredMessage - error: method MessagesReportSponsoredMessage not impl")
+	// c.Logger.Errorf("messages.reportSponsoredMessage - error: method MessagesReportSponsoredMessage not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.ChannelsSponsoredMessageReportResultReported, nil
 }

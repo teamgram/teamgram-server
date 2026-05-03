@@ -24,7 +24,7 @@ import (
 // messages.clickSponsoredMessage#8235057e flags:# media:flags.0?true fullscreen:flags.1?true random_id:bytes = Bool;
 func (c *SponsoredMessagesCore) MessagesClickSponsoredMessage(in *tg.TLMessagesClickSponsoredMessage) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.clickSponsoredMessage - error: method MessagesClickSponsoredMessage not impl")
+	// c.Logger.Errorf("messages.clickSponsoredMessage - error: method MessagesClickSponsoredMessage not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

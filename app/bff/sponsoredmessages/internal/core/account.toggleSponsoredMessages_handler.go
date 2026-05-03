@@ -24,7 +24,7 @@ import (
 // account.toggleSponsoredMessages#b9d9a38d enabled:Bool = Bool;
 func (c *SponsoredMessagesCore) AccountToggleSponsoredMessages(in *tg.TLAccountToggleSponsoredMessages) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("account.toggleSponsoredMessages - error: method AccountToggleSponsoredMessages not impl")
+	// c.Logger.Errorf("account.toggleSponsoredMessages - error: method AccountToggleSponsoredMessages not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }
