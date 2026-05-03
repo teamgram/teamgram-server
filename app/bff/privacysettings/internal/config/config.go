@@ -22,4 +22,7 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	UserClient        kitex.RpcClientConf
+	ChatClient        kitex.RpcClientConf
+	AuthsessionClient kitex.RpcClientConf
 }

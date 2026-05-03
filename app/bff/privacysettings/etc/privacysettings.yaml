@@ -1,2 +1,30 @@
 Name: bff.privacysettings
 ListenOn: 0.0.0.0:27716
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: bff.privacysettings
+
+UserClient:
+  DestService: service.biz.user
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz.user
+
+ChatClient:
+  DestService: service.biz.chat
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz.chat
+
+AuthsessionClient:
+  DestService: service.authsession
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
