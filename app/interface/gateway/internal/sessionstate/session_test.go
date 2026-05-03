@@ -125,6 +125,45 @@ func TestSessionReusesClientLayerAfterInitConnection(t *testing.T) {
 	}
 }
 
+func TestSessionObserverReceivesPermAuthKeyAndLayer(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
+		ApiId:       2040,
+		DeviceModel: "tdesktop",
+		Query:       inner,
+	})})
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 108, wrapped)
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: 77,
+		MsgId:     109,
+		SeqNo:     1,
+		Body:      encodeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}),
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	var active ActiveSession
+	_, err = processor.HandleEncryptedWithSession(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "127.0.0.1:1"}, payload, func(session ActiveSession) SeqNoAllocator {
+		active = session
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("HandleEncryptedWithSession() error = %v", err)
+	}
+	if active.PermAuthKeyId != 4242 || active.Layer != 223 {
+		t.Fatalf("active session = %#v", active)
+	}
+}
+
 func TestSessionPersistsClientMetadataFromInitConnection(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)

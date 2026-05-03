@@ -176,11 +176,13 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 		}
 		writer.Update(active.AuthKey, active.Salt)
 		s.push.Register(push.LocalTarget{
-			AuthKeyId:   active.AuthKeyId,
-			AuthKeyType: active.AuthKeyType,
-			SessionId:   active.SessionId,
-			AuthKey:     active.AuthKey,
-			Writer:      writer,
+			PermAuthKeyId: active.PermAuthKeyId,
+			AuthKeyId:     active.AuthKeyId,
+			AuthKeyType:   active.AuthKeyType,
+			SessionId:     active.SessionId,
+			Layer:         active.Layer,
+			AuthKey:       active.AuthKey,
+			Writer:        writer,
 		})
 		return writer
 	})

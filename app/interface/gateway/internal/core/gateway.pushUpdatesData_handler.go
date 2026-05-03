@@ -25,6 +25,16 @@ import (
 // GatewayPushUpdatesData
 // gateway.pushUpdatesData flags:# perm_auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 func (c *GatewayCore) GatewayPushUpdatesData(in *gateway.TLGatewayPushUpdatesData) (*tg.Bool, error) {
-	c.Logger.Debugf("gateway.pushUpdatesData - phase3 local no-op")
+	if c.svcCtx.Push == nil {
+		c.Logger.Debugf("gateway.pushUpdatesData - no local writer")
+		return tg.BoolTrue, nil
+	}
+	count, err := c.svcCtx.Push.WriteUpdates(c.ctx, in.PermAuthKeyId, in.Updates)
+	if err != nil {
+		return nil, err
+	}
+	if count == 0 {
+		c.Logger.Debugf("gateway.pushUpdatesData - no local session: perm_auth_key_id=%d", in.PermAuthKeyId)
+	}
 	return tg.BoolTrue, nil
 }

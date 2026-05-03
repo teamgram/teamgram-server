@@ -32,11 +32,13 @@ type Dispatcher interface {
 }
 
 type ActiveSession struct {
-	AuthKeyId   int64
-	AuthKeyType int32
-	SessionId   int64
-	Salt        int64
-	AuthKey     *crypto.AuthKey
+	PermAuthKeyId int64
+	AuthKeyId     int64
+	AuthKeyType   int32
+	SessionId     int64
+	Layer         int32
+	Salt          int64
+	AuthKey       *crypto.AuthKey
 }
 
 type SeqNoAllocator interface {
@@ -103,12 +105,18 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	}
 	var seq SeqNoAllocator
 	if observe != nil {
+		permAuthKeyId, layer, err := p.activeSessionMetadata(ctx, keyInfo, msg.AuthKeyId)
+		if err != nil {
+			return nil, err
+		}
 		seq = observe(ActiveSession{
-			AuthKeyId:   msg.AuthKeyId,
-			AuthKeyType: authKeyType(keyInfo),
-			SessionId:   msg.SessionId,
-			Salt:        msg.Salt,
-			AuthKey:     key,
+			PermAuthKeyId: permAuthKeyId,
+			AuthKeyId:     msg.AuthKeyId,
+			AuthKeyType:   authKeyType(keyInfo),
+			SessionId:     msg.SessionId,
+			Layer:         layer,
+			Salt:          msg.Salt,
+			AuthKey:       key,
 		})
 	}
 
@@ -401,6 +409,25 @@ func authKeyType(keyInfo *tg.AuthKeyInfo) int32 {
 		return tg.AuthKeyTypeUnknown
 	}
 	return keyInfo.AuthKeyType
+}
+
+func (p *Processor) activeSessionMetadata(ctx context.Context, keyInfo *tg.AuthKeyInfo, authKeyId int64) (int64, int32, error) {
+	cacheID := metadataCacheID(keyInfo, authKeyId)
+	if md, ok := p.cachedClientMetadata(cacheID); ok {
+		return cacheID, md.Layer, nil
+	}
+	if p.store == nil {
+		return cacheID, 0, nil
+	}
+	client, err := p.store.GetClientSession(ctx, authKeyId)
+	if err != nil {
+		return 0, 0, fmt.Errorf("session processor: get client session for auth key %d: %w", authKeyId, err)
+	}
+	if client == nil {
+		return cacheID, 0, nil
+	}
+	md, _ := p.mergeClientMetadata(cacheID, clientSessionToWrapperMetadata(client))
+	return cacheID, md.Layer, nil
 }
 
 func (p *Processor) mergeClientMetadata(cacheID int64, md gmtproto.WrapperMetadata) (gmtproto.WrapperMetadata, bool) {
