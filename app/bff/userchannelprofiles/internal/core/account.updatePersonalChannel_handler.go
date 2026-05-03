@@ -17,14 +17,30 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdatePersonalChannel
 // account.updatePersonalChannel#d94305e0 channel:InputChannel = Bool;
 func (c *UserChannelProfilesCore) AccountUpdatePersonalChannel(in *tg.TLAccountUpdatePersonalChannel) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updatePersonalChannel - error: method AccountUpdatePersonalChannel not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	channelID, err := channelIDFromInputChannel(in.Channel)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UserClient.UserUpdatePersonalChannel(c.ctx, &userpb.TLUserUpdatePersonalChannel{
+		UserId:    selfID,
+		ChannelId: channelID,
+	})
 }

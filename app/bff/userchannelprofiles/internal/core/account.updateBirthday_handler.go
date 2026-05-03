@@ -17,14 +17,26 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateBirthday
 // account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
 func (c *UserChannelProfilesCore) AccountUpdateBirthday(in *tg.TLAccountUpdateBirthday) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updateBirthday - error: method AccountUpdateBirthday not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UserClient.UserUpdateBirthday(c.ctx, &userpb.TLUserUpdateBirthday{
+		UserId:   selfID,
+		Birthday: in.Birthday,
+	})
 }

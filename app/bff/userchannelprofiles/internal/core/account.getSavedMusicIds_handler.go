@@ -17,14 +17,35 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetSavedMusicIds
 // account.getSavedMusicIds#e09d5faf hash:long = account.SavedMusicIds;
 func (c *UserChannelProfilesCore) AccountGetSavedMusicIds(in *tg.TLAccountGetSavedMusicIds) (*tg.AccountSavedMusicIds, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getSavedMusicIds - error: method AccountGetSavedMusicIds not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	idList, err := c.svcCtx.Repo.UserClient.UserGetSavedMusicIdList(c.ctx, &userpb.TLUserGetSavedMusicIdList{
+		UserId: selfID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	ids := []int64{}
+	if idList != nil {
+		ids = idList.Datas
+	}
+	return tg.MakeTLAccountSavedMusicIds(&tg.TLAccountSavedMusicIds{
+		Ids: ids,
+	}).ToAccountSavedMusicIds(), nil
 }

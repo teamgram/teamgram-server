@@ -17,14 +17,37 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSaveMusic
 // account.saveMusic#b26732a9 flags:# unsave:flags.0?true id:InputDocument after_id:flags.1?InputDocument = Bool;
 func (c *UserChannelProfilesCore) AccountSaveMusic(in *tg.TLAccountSaveMusic) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.saveMusic - error: method AccountSaveMusic not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	documentID, err := documentIDFromInputDocument(in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if _, err = c.svcCtx.Repo.UserClient.UserSaveMusic(c.ctx, &userpb.TLUserSaveMusic{
+		Unsave:  in.Unsave,
+		UserId:  selfID,
+		Id:      documentID,
+		AfterId: optionalDocumentID(in.AfterId),
+	}); err != nil {
+		c.Logger.Errorf("account.saveMusic - save failed: user_id: %d, document_id: %d, err: %v", selfID, documentID, err)
+		return tg.BoolFalse, nil
+	}
+
+	return tg.BoolTrue, nil
 }
