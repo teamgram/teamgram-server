@@ -23,8 +23,5 @@ import (
 // AccountSendConfirmPhoneCode
 // account.sendConfirmPhoneCode#1b3faa88 hash:string settings:CodeSettings = auth.SentCode;
 func (c *AccountCore) AccountSendConfirmPhoneCode(in *tg.TLAccountSendConfirmPhoneCode) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.sendConfirmPhoneCode - error: method AccountSendConfirmPhoneCode not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }

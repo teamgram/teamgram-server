@@ -23,8 +23,5 @@ import (
 // AccountConfirmPhone
 // account.confirmPhone#5f2178c3 phone_code_hash:string phone_code:string = Bool;
 func (c *AccountCore) AccountConfirmPhone(in *tg.TLAccountConfirmPhone) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.confirmPhone - error: method AccountConfirmPhone not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, tg.ErrEnterpriseIsBlocked
 }
