@@ -26,7 +26,6 @@ func (c *PrivacySettingsCore) AccountGetGlobalPrivacySettings(in *tg.TLAccountGe
 		UserId: c.MD.UserId,
 	})
 	if err != nil {
-		c.Logger.Errorf("account.getGlobalPrivacySettings - error: %v", err)
 		return nil, err
 	}
 	return globalPrivacySettings, nil

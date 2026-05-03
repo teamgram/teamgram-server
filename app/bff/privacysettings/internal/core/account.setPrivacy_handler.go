@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -38,7 +39,6 @@ func (c *PrivacySettingsCore) AccountSetPrivacy(in *tg.TLAccountSetPrivacy) (*tg
 		KeyType: int32(key),
 		Rules:   ruleList,
 	}); err != nil {
-		c.Logger.Errorf("account.setPrivacy - error: %v", err)
 		return nil, err
 	}
 
@@ -48,34 +48,80 @@ func (c *PrivacySettingsCore) AccountSetPrivacy(in *tg.TLAccountSetPrivacy) (*tg
 		Chats: []tg.ChatClazz{},
 	}).ToAccountPrivacyRules()
 
+	var (
+		userIds    []int64
+		chatIds    []int64
+		channelIds []int64
+	)
+
+	for _, r := range ruleList {
+		switch rv := r.(type) {
+		case *tg.TLPrivacyValueAllowUsers:
+			userIds = append(userIds, rv.Users...)
+		case *tg.TLPrivacyValueDisallowUsers:
+			userIds = append(userIds, rv.Users...)
+		case *tg.TLPrivacyValueAllowChatParticipants:
+			for _, id := range rv.Chats {
+				if id >= tg.MinNebulaChatChannelID {
+					channelIds = append(channelIds, id)
+				} else {
+					chatIds = append(chatIds, id)
+				}
+			}
+		case *tg.TLPrivacyValueDisallowChatParticipants:
+			for _, id := range rv.Chats {
+				if id >= tg.MinNebulaChatChannelID {
+					channelIds = append(channelIds, id)
+				} else {
+					chatIds = append(chatIds, id)
+				}
+			}
+		}
+	}
+
+	if len(userIds) > 0 {
+		users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
+			&user.TLUserGetMutableUsers{
+				Id: userIds,
+			})
+		if err != nil {
+			c.Logger.Errorf("account.setPrivacy - resolve users error: %v", err)
+		} else {
+			for _, u := range users.Datas {
+				rVal.Users = append(rVal.Users, projectImmutableUser(u))
+			}
+		}
+	}
+
+	if len(chatIds) > 0 {
+		chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
+			&chat.TLChatGetChatListByIdList{
+				SelfId: c.MD.UserId,
+				IdList: chatIds,
+			})
+		if err != nil {
+			c.Logger.Errorf("account.setPrivacy - resolve chats error: %v", err)
+		} else {
+			for _, ch := range chats.Datas {
+				rVal.Chats = append(rVal.Chats, projectMutableChat(ch, c.MD.UserId))
+			}
+		}
+	}
+
+	_ = channelIds // TODO: handle channels
+
 	// TODO: syncUpdatesNotMe
 	// syncUpdates := tg.MakeUpdatesByUpdates(tg.MakeTLUpdatePrivacy(&tg.TLUpdate{
 	//     Key:   tg.ToPrivacyKey(key),
 	//     Rules: ruleList,
 	// }).ToUpdate())
 	//
-	// idHelper := tg.NewIDListHelper(c.MD.UserId)
-	// idHelper.PickByRules(ruleList)
-	// idHelper.Visit(
-	//     func(userIdList []int64) {
-	//         users, _ := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
-	//             &user.TLUserGetMutableUsers{
-	//                 Id: userIdList,
-	//             })
-	//         rVal.Users = users.GetUserListByIdList(c.MD.UserId, userIdList...)
-	//         syncUpdates.PushUser(rVal.Users...)
-	//     },
-	//     func(chatIdList []int64) {
-	//         chats, _ := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
-	//             &chat.TLChatGetChatListByIdList{
-	//                 IdList: chatIdList,
-	//             })
-	//         rVal.Chats = chats.GetChatListByIdList(c.MD.UserId, chatIdList...)
-	//         syncUpdates.PushChat(rVal.Chats...)
-	//     },
-	//     func(channelIdList []int64) {
-	//         // TODO
-	//     })
+	// for _, u := range rVal.Users {
+	//     syncUpdates.PushUser(u)
+	// }
+	// for _, ch := range rVal.Chats {
+	//     syncUpdates.PushChat(ch)
+	// }
 	//
 	// c.svcCtx.Repo.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 	//     UserId:        c.MD.UserId,

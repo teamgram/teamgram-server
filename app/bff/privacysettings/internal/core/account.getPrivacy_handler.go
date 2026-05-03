@@ -32,10 +32,14 @@ func (c *PrivacySettingsCore) AccountGetPrivacy(in *tg.TLAccountGetPrivacy) (*tg
 		return nil, tg.ErrPrivacyKeyInvalid
 	}
 
-	ruleList, _ := c.svcCtx.Repo.UserClient.UserGetPrivacy(c.ctx, &user.TLUserGetPrivacy{
+	ruleList, err := c.svcCtx.Repo.UserClient.UserGetPrivacy(c.ctx, &user.TLUserGetPrivacy{
 		UserId:  c.MD.UserId,
 		KeyType: int32(key),
 	})
+	if err != nil {
+		c.Logger.Errorf("account.getPrivacy - UserGetPrivacy error: %v", err)
+		return nil, err
+	}
 
 	var rVal *tg.AccountPrivacyRules
 
@@ -98,23 +102,31 @@ func (c *PrivacySettingsCore) AccountGetPrivacy(in *tg.TLAccountGetPrivacy) (*tg
 		}
 
 		if len(userIds) > 0 {
-			users, _ := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
+			users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
 				&user.TLUserGetMutableUsers{
 					Id: userIds,
 				})
-			for _, u := range users.Datas {
-				rVal.Users = append(rVal.Users, projectImmutableUser(u))
+			if err != nil {
+				c.Logger.Errorf("account.getPrivacy - get users error: %v", err)
+			} else {
+				for _, u := range users.Datas {
+					rVal.Users = append(rVal.Users, projectImmutableUser(u))
+				}
 			}
 		}
 
 		if len(chatIds) > 0 {
-			chats, _ := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
+			chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
 				&chat.TLChatGetChatListByIdList{
 					SelfId: c.MD.UserId,
 					IdList: chatIds,
 				})
-			for _, ch := range chats.Datas {
-				rVal.Chats = append(rVal.Chats, projectMutableChat(ch, c.MD.UserId))
+			if err != nil {
+				c.Logger.Errorf("account.getPrivacy - get chats error: %v", err)
+			} else {
+				for _, ch := range chats.Datas {
+					rVal.Chats = append(rVal.Chats, projectMutableChat(ch, c.MD.UserId))
+				}
 			}
 		}
 

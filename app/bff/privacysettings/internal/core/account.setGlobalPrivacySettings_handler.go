@@ -29,7 +29,6 @@ func (c *PrivacySettingsCore) AccountSetGlobalPrivacySettings(in *tg.TLAccountSe
 		Settings: rSettings,
 	})
 	if err != nil {
-		c.Logger.Errorf("account.setGlobalPrivacySettings - error: %v", err)
 		return nil, err
 	}
 

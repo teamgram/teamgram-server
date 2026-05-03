@@ -26,7 +26,6 @@ func (c *PrivacySettingsCore) MessagesGetDefaultHistoryTTL(in *tg.TLMessagesGetD
 		UserId: c.MD.UserId,
 	})
 	if err != nil {
-		c.Logger.Errorf("user.getDefaultHistoryTTL - error: %v", err)
 		return nil, err
 	}
 	return rV, nil
