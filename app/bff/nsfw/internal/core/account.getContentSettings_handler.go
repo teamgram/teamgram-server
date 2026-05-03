@@ -17,14 +17,22 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetContentSettings
 // account.getContentSettings#8b9b4dae = account.ContentSettings;
 func (c *NsfwCore) AccountGetContentSettings(in *tg.TLAccountGetContentSettings) (*tg.AccountContentSettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getContentSettings - error: method AccountGetContentSettings not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UserClient.UserGetContentSettings(c.ctx, &userpb.TLUserGetContentSettings{
+		UserId: selfID,
+	})
 }

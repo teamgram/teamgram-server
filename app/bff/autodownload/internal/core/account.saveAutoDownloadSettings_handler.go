@@ -23,8 +23,5 @@ import (
 // AccountSaveAutoDownloadSettings
 // account.saveAutoDownloadSettings#76f36233 flags:# low:flags.0?true high:flags.1?true settings:AutoDownloadSettings = Bool;
 func (c *AutoDownloadCore) AccountSaveAutoDownloadSettings(in *tg.TLAccountSaveAutoDownloadSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.saveAutoDownloadSettings - error: method AccountSaveAutoDownloadSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

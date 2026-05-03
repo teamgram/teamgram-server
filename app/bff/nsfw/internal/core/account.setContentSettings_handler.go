@@ -17,14 +17,26 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSetContentSettings
 // account.setContentSettings#b574b16b flags:# sensitive_enabled:flags.0?true = Bool;
 func (c *NsfwCore) AccountSetContentSettings(in *tg.TLAccountSetContentSettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setContentSettings - error: method AccountSetContentSettings not impl")
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return c.svcCtx.Repo.UserClient.UserSetContentSettings(c.ctx, &userpb.TLUserSetContentSettings{
+		UserId:           selfID,
+		SensitiveEnabled: in.SensitiveEnabled,
+	})
 }
