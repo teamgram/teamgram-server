@@ -17,14 +17,109 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetPrivacy
 // account.getPrivacy#dadbc950 key:InputPrivacyKey = account.PrivacyRules;
 func (c *PrivacySettingsCore) AccountGetPrivacy(in *tg.TLAccountGetPrivacy) (*tg.AccountPrivacyRules, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getPrivacy - error: method AccountGetPrivacy not impl")
+	key := tg.FromInputPrivacyKeyType(&tg.InputPrivacyKey{Clazz: in.Key})
 
-	return nil, tg.ErrMethodNotImpl
+	if key == tg.KEY_TYPE_INVALID {
+		c.Logger.Errorf("account.getPrivacy - error: invalid privacy key")
+		return nil, tg.ErrPrivacyKeyInvalid
+	}
+
+	ruleList, _ := c.svcCtx.Repo.UserClient.UserGetPrivacy(c.ctx, &user.TLUserGetPrivacy{
+		UserId:  c.MD.UserId,
+		KeyType: int32(key),
+	})
+
+	var rVal *tg.AccountPrivacyRules
+
+	if len(ruleList.Datas) == 0 {
+		if key == tg.PHONE_NUMBER {
+			rVal = tg.MakeTLAccountPrivacyRules(&tg.TLAccountPrivacyRules{
+				Rules: []tg.PrivacyRuleClazz{&tg.TLPrivacyValueDisallowAll{}},
+				Users: []tg.UserClazz{},
+				Chats: []tg.ChatClazz{},
+			}).ToAccountPrivacyRules()
+		} else if key == tg.BIRTHDAY {
+			rVal = tg.MakeTLAccountPrivacyRules(&tg.TLAccountPrivacyRules{
+				Rules: []tg.PrivacyRuleClazz{&tg.TLPrivacyValueAllowContacts{}},
+				Users: []tg.UserClazz{},
+				Chats: []tg.ChatClazz{},
+			}).ToAccountPrivacyRules()
+		} else {
+			rVal = tg.MakeTLAccountPrivacyRules(&tg.TLAccountPrivacyRules{
+				Rules: []tg.PrivacyRuleClazz{&tg.TLPrivacyValueAllowAll{}},
+				Users: []tg.UserClazz{},
+				Chats: []tg.ChatClazz{},
+			}).ToAccountPrivacyRules()
+		}
+	} else {
+		rVal = tg.MakeTLAccountPrivacyRules(&tg.TLAccountPrivacyRules{
+			Rules: ruleList.Datas,
+			Users: []tg.UserClazz{},
+			Chats: []tg.ChatClazz{},
+		}).ToAccountPrivacyRules()
+
+		var (
+			userIds    []int64
+			chatIds    []int64
+			channelIds []int64
+		)
+
+		for _, r := range ruleList.Datas {
+			switch rv := r.(type) {
+			case *tg.TLPrivacyValueAllowUsers:
+				userIds = append(userIds, rv.Users...)
+			case *tg.TLPrivacyValueDisallowUsers:
+				userIds = append(userIds, rv.Users...)
+			case *tg.TLPrivacyValueAllowChatParticipants:
+				for _, id := range rv.Chats {
+					if id >= tg.MinNebulaChatChannelID {
+						channelIds = append(channelIds, id)
+					} else {
+						chatIds = append(chatIds, id)
+					}
+				}
+			case *tg.TLPrivacyValueDisallowChatParticipants:
+				for _, id := range rv.Chats {
+					if id >= tg.MinNebulaChatChannelID {
+						channelIds = append(channelIds, id)
+					} else {
+						chatIds = append(chatIds, id)
+					}
+				}
+			}
+		}
+
+		if len(userIds) > 0 {
+			users, _ := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
+				&user.TLUserGetMutableUsers{
+					Id: userIds,
+				})
+			for _, u := range users.Datas {
+				rVal.Users = append(rVal.Users, projectImmutableUser(u))
+			}
+		}
+
+		if len(chatIds) > 0 {
+			chats, _ := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
+				&chat.TLChatGetChatListByIdList{
+					SelfId: c.MD.UserId,
+					IdList: chatIds,
+				})
+			for _, ch := range chats.Datas {
+				rVal.Chats = append(rVal.Chats, projectMutableChat(ch, c.MD.UserId))
+			}
+		}
+
+		_ = channelIds // TODO: handle channels
+	}
+
+	return rVal, nil
 }
