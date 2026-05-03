@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCPrivacySettings/account.getPrivacy": kitex.NewMethodInfo(
@@ -174,7 +199,7 @@ type AccountGetPrivacyArgs struct {
 
 func (p *AccountGetPrivacyArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetPrivacyArgs")
+		return out, fmt.Errorf("no req in AccountGetPrivacyArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -190,7 +215,7 @@ func (p *AccountGetPrivacyArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetPrivacyArgs")
+		return fmt.Errorf("no req in AccountGetPrivacyArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -230,7 +255,7 @@ var AccountGetPrivacyResult_Success_DEFAULT *tg.AccountPrivacyRules
 
 func (p *AccountGetPrivacyResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetPrivacyResult")
+		return out, fmt.Errorf("no req in AccountGetPrivacyResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -246,7 +271,7 @@ func (p *AccountGetPrivacyResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetPrivacyResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetPrivacyResult")
+		return fmt.Errorf("no req in AccountGetPrivacyResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -254,6 +279,9 @@ func (p *AccountGetPrivacyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountGetPrivacyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountPrivacyRules)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -305,7 +333,7 @@ type AccountSetPrivacyArgs struct {
 
 func (p *AccountSetPrivacyArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetPrivacyArgs")
+		return out, fmt.Errorf("no req in AccountSetPrivacyArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -321,7 +349,7 @@ func (p *AccountSetPrivacyArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetPrivacyArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetPrivacyArgs")
+		return fmt.Errorf("no req in AccountSetPrivacyArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -361,7 +389,7 @@ var AccountSetPrivacyResult_Success_DEFAULT *tg.AccountPrivacyRules
 
 func (p *AccountSetPrivacyResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetPrivacyResult")
+		return out, fmt.Errorf("no req in AccountSetPrivacyResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -377,7 +405,7 @@ func (p *AccountSetPrivacyResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetPrivacyResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetPrivacyResult")
+		return fmt.Errorf("no req in AccountSetPrivacyResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -385,6 +413,9 @@ func (p *AccountSetPrivacyResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSetPrivacyResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountPrivacyRules)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -436,7 +467,7 @@ type AccountGetGlobalPrivacySettingsArgs struct {
 
 func (p *AccountGetGlobalPrivacySettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetGlobalPrivacySettingsArgs")
+		return out, fmt.Errorf("no req in AccountGetGlobalPrivacySettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -452,7 +483,7 @@ func (p *AccountGetGlobalPrivacySettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetGlobalPrivacySettingsArgs")
+		return fmt.Errorf("no req in AccountGetGlobalPrivacySettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -492,7 +523,7 @@ var AccountGetGlobalPrivacySettingsResult_Success_DEFAULT *tg.GlobalPrivacySetti
 
 func (p *AccountGetGlobalPrivacySettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetGlobalPrivacySettingsResult")
+		return out, fmt.Errorf("no req in AccountGetGlobalPrivacySettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -508,7 +539,7 @@ func (p *AccountGetGlobalPrivacySettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetGlobalPrivacySettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetGlobalPrivacySettingsResult")
+		return fmt.Errorf("no req in AccountGetGlobalPrivacySettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -516,6 +547,9 @@ func (p *AccountGetGlobalPrivacySettingsResult) Encode(x *bin.Encoder, layer int
 
 func (p *AccountGetGlobalPrivacySettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.GlobalPrivacySettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -567,7 +601,7 @@ type AccountSetGlobalPrivacySettingsArgs struct {
 
 func (p *AccountSetGlobalPrivacySettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetGlobalPrivacySettingsArgs")
+		return out, fmt.Errorf("no req in AccountSetGlobalPrivacySettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -583,7 +617,7 @@ func (p *AccountSetGlobalPrivacySettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetGlobalPrivacySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetGlobalPrivacySettingsArgs")
+		return fmt.Errorf("no req in AccountSetGlobalPrivacySettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -623,7 +657,7 @@ var AccountSetGlobalPrivacySettingsResult_Success_DEFAULT *tg.GlobalPrivacySetti
 
 func (p *AccountSetGlobalPrivacySettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetGlobalPrivacySettingsResult")
+		return out, fmt.Errorf("no req in AccountSetGlobalPrivacySettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -639,7 +673,7 @@ func (p *AccountSetGlobalPrivacySettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetGlobalPrivacySettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetGlobalPrivacySettingsResult")
+		return fmt.Errorf("no req in AccountSetGlobalPrivacySettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -647,6 +681,9 @@ func (p *AccountSetGlobalPrivacySettingsResult) Encode(x *bin.Encoder, layer int
 
 func (p *AccountSetGlobalPrivacySettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.GlobalPrivacySettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -698,7 +735,7 @@ type UsersGetRequirementsToContactArgs struct {
 
 func (p *UsersGetRequirementsToContactArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetRequirementsToContactArgs")
+		return out, fmt.Errorf("no req in UsersGetRequirementsToContactArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -714,7 +751,7 @@ func (p *UsersGetRequirementsToContactArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetRequirementsToContactArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetRequirementsToContactArgs")
+		return fmt.Errorf("no req in UsersGetRequirementsToContactArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -754,7 +791,7 @@ var UsersGetRequirementsToContactResult_Success_DEFAULT *tg.VectorRequirementToC
 
 func (p *UsersGetRequirementsToContactResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetRequirementsToContactResult")
+		return out, fmt.Errorf("no req in UsersGetRequirementsToContactResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -770,7 +807,7 @@ func (p *UsersGetRequirementsToContactResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetRequirementsToContactResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetRequirementsToContactResult")
+		return fmt.Errorf("no req in UsersGetRequirementsToContactResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -778,6 +815,9 @@ func (p *UsersGetRequirementsToContactResult) Encode(x *bin.Encoder, layer int32
 
 func (p *UsersGetRequirementsToContactResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorRequirementToContact)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -829,7 +869,7 @@ type MessagesSetDefaultHistoryTTLArgs struct {
 
 func (p *MessagesSetDefaultHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSetDefaultHistoryTTLArgs")
+		return out, fmt.Errorf("no req in MessagesSetDefaultHistoryTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -845,7 +885,7 @@ func (p *MessagesSetDefaultHistoryTTLArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSetDefaultHistoryTTLArgs")
+		return fmt.Errorf("no req in MessagesSetDefaultHistoryTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -885,7 +925,7 @@ var MessagesSetDefaultHistoryTTLResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesSetDefaultHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSetDefaultHistoryTTLResult")
+		return out, fmt.Errorf("no req in MessagesSetDefaultHistoryTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -901,7 +941,7 @@ func (p *MessagesSetDefaultHistoryTTLResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSetDefaultHistoryTTLResult")
+		return fmt.Errorf("no req in MessagesSetDefaultHistoryTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -909,6 +949,9 @@ func (p *MessagesSetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesSetDefaultHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -960,7 +1003,7 @@ type MessagesGetDefaultHistoryTTLArgs struct {
 
 func (p *MessagesGetDefaultHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetDefaultHistoryTTLArgs")
+		return out, fmt.Errorf("no req in MessagesGetDefaultHistoryTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -976,7 +1019,7 @@ func (p *MessagesGetDefaultHistoryTTLArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDefaultHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetDefaultHistoryTTLArgs")
+		return fmt.Errorf("no req in MessagesGetDefaultHistoryTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1016,7 +1059,7 @@ var MessagesGetDefaultHistoryTTLResult_Success_DEFAULT *tg.DefaultHistoryTTL
 
 func (p *MessagesGetDefaultHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetDefaultHistoryTTLResult")
+		return out, fmt.Errorf("no req in MessagesGetDefaultHistoryTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1032,7 +1075,7 @@ func (p *MessagesGetDefaultHistoryTTLResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetDefaultHistoryTTLResult")
+		return fmt.Errorf("no req in MessagesGetDefaultHistoryTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1040,6 +1083,9 @@ func (p *MessagesGetDefaultHistoryTTLResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetDefaultHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.DefaultHistoryTTL)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1079,97 +1125,83 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountGetPrivacy(ctx context.Context, req *tg.TLAccountGetPrivacy) (r *tg.AccountPrivacyRules, err error) {
 	// var _args AccountGetPrivacyArgs
 	// _args.Req = req
-	// var _result AccountGetPrivacyResult
+	var _result AccountGetPrivacyResult
 
-	_result := new(tg.AccountPrivacyRules)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getPrivacy", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSetPrivacy(ctx context.Context, req *tg.TLAccountSetPrivacy) (r *tg.AccountPrivacyRules, err error) {
 	// var _args AccountSetPrivacyArgs
 	// _args.Req = req
-	// var _result AccountSetPrivacyResult
+	var _result AccountSetPrivacyResult
 
-	_result := new(tg.AccountPrivacyRules)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setPrivacy", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetGlobalPrivacySettings(ctx context.Context, req *tg.TLAccountGetGlobalPrivacySettings) (r *tg.GlobalPrivacySettings, err error) {
 	// var _args AccountGetGlobalPrivacySettingsArgs
 	// _args.Req = req
-	// var _result AccountGetGlobalPrivacySettingsResult
+	var _result AccountGetGlobalPrivacySettingsResult
 
-	_result := new(tg.GlobalPrivacySettings)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getGlobalPrivacySettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSetGlobalPrivacySettings(ctx context.Context, req *tg.TLAccountSetGlobalPrivacySettings) (r *tg.GlobalPrivacySettings, err error) {
 	// var _args AccountSetGlobalPrivacySettingsArgs
 	// _args.Req = req
-	// var _result AccountSetGlobalPrivacySettingsResult
+	var _result AccountSetGlobalPrivacySettingsResult
 
-	_result := new(tg.GlobalPrivacySettings)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setGlobalPrivacySettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersGetRequirementsToContact(ctx context.Context, req *tg.TLUsersGetRequirementsToContact) (r *tg.VectorRequirementToContact, err error) {
 	// var _args UsersGetRequirementsToContactArgs
 	// _args.Req = req
-	// var _result UsersGetRequirementsToContactResult
+	var _result UsersGetRequirementsToContactResult
 
-	_result := new(tg.VectorRequirementToContact)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/users.getRequirementsToContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/users.getRequirementsToContact", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesSetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesSetDefaultHistoryTTL) (r *tg.Bool, err error) {
 	// var _args MessagesSetDefaultHistoryTTLArgs
 	// _args.Req = req
-	// var _result MessagesSetDefaultHistoryTTLResult
+	var _result MessagesSetDefaultHistoryTTLResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.setDefaultHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.setDefaultHistoryTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesGetDefaultHistoryTTL) (r *tg.DefaultHistoryTTL, err error) {
 	// var _args MessagesGetDefaultHistoryTTLArgs
 	// _args.Req = req
-	// var _result MessagesGetDefaultHistoryTTLResult
+	var _result MessagesGetDefaultHistoryTTLResult
 
-	_result := new(tg.DefaultHistoryTTL)
-	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.getDefaultHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.getDefaultHistoryTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

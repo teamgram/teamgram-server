@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +21,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+// UsersGetRequirementsToContact
+// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
 func (c *PrivacySettingsCore) UsersGetRequirementsToContact(in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error) {
-	c.Logger.Errorf("users.getRequirementsToContact blocked, License key from https://teamgram.net required to unlock enterprise features.")
-	return nil, tg.ErrEnterpriseIsBlocked
+	// TODO: not impl
+	// c.Logger.Errorf("users.getRequirementsToContact - error: method UsersGetRequirementsToContact not impl")
+
+	return &tg.VectorRequirementToContact{Datas: []tg.RequirementToContactClazz{}}, nil
 }
