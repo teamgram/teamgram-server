@@ -18,13 +18,31 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/privacysettings/internal/config"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	UserClient        userclient.UserClient
+	ChatClient        chatclient.ChatClient
+	AuthsessionClient authsessionclient.AuthsessionClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	return &Repository{
+		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
+		ChatClient:        chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
+		AuthsessionClient: authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthsessionClient)),
+	}
+}
+
+// Close closes the Repository and its associated resources.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
+	}
+	return nil
 }
