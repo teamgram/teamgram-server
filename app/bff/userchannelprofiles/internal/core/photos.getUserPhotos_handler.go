@@ -17,14 +17,54 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // PhotosGetUserPhotos
 // photos.getUserPhotos#91cd32a8 user_id:InputUser offset:int max_id:long limit:int = photos.Photos;
 func (c *UserChannelProfilesCore) PhotosGetUserPhotos(in *tg.TLPhotosGetUserPhotos) (*tg.PhotosPhotos, error) {
-	// TODO: not impl
-	c.Logger.Errorf("photos.getUserPhotos - error: method PhotosGetUserPhotos not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	targetID, err := userIDFromInputUser(selfID, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireMediaClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	idList, err := c.svcCtx.Repo.UserClient.UserGetProfilePhotos(c.ctx, &userpb.TLUserGetProfilePhotos{
+		UserId: targetID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	photos := []tg.PhotoClazz{}
+	if idList != nil {
+		for _, id := range idList.Datas {
+			photo, err := c.svcCtx.Repo.MediaClient.MediaGetPhoto(c.ctx, &mediapb.TLMediaGetPhoto{
+				PhotoId: id,
+			})
+			if err != nil || photo == nil || photo.Clazz == nil {
+				continue
+			}
+			photos = append(photos, photo.Clazz)
+		}
+	}
+
+	return tg.MakeTLPhotosPhotos(&tg.TLPhotosPhotos{
+		Photos: photos,
+		Users:  []tg.UserClazz{},
+	}).ToPhotosPhotos(), nil
 }

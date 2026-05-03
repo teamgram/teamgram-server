@@ -17,14 +17,59 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // PhotosUpdateProfilePhoto
 // photos.updateProfilePhoto#9e82039 flags:# fallback:flags.0?true bot:flags.1?InputUser id:InputPhoto = photos.Photo;
 func (c *UserChannelProfilesCore) PhotosUpdateProfilePhoto(in *tg.TLPhotosUpdateProfilePhoto) (*tg.PhotosPhoto, error) {
-	// TODO: not impl
-	c.Logger.Errorf("photos.updateProfilePhoto - error: method PhotosUpdateProfilePhoto not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	photoID, err := photoIDFromInputPhoto(in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireMediaClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	updatedPhotoID, err := c.svcCtx.Repo.UserClient.UserUpdateProfilePhoto(c.ctx, &userpb.TLUserUpdateProfilePhoto{
+		UserId: selfID,
+		Id:     photoID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var photo tg.PhotoClazz
+	if updatedPhotoID != nil && updatedPhotoID.V > 0 {
+		gotPhoto, err := c.svcCtx.Repo.MediaClient.MediaGetPhoto(c.ctx, &mediapb.TLMediaGetPhoto{
+			PhotoId: updatedPhotoID.V,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if gotPhoto != nil {
+			photo = gotPhoto.Clazz
+		}
+	}
+	if photo == nil {
+		photo = tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: photoID})
+	}
+	// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile photo updates through userupdates/gateway when the V2 delivery contract is defined.
+
+	return tg.MakeTLPhotosPhoto(&tg.TLPhotosPhoto{
+		Photo: photo,
+		Users: []tg.UserClazz{},
+	}).ToPhotosPhoto(), nil
 }

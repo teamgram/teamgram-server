@@ -17,14 +17,56 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // PhotosUploadProfilePhoto
 // photos.uploadProfilePhoto#388a3b5 flags:# fallback:flags.3?true bot:flags.5?InputUser file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = photos.Photo;
 func (c *UserChannelProfilesCore) PhotosUploadProfilePhoto(in *tg.TLPhotosUploadProfilePhoto) (*tg.PhotosPhoto, error) {
-	// TODO: not impl
-	c.Logger.Errorf("photos.uploadProfilePhoto - error: method PhotosUploadProfilePhoto not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil || (in.File == nil && in.Video == nil) {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireMediaClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	photo, err := c.svcCtx.Repo.MediaClient.MediaUploadProfilePhotoFile(c.ctx, &mediapb.TLMediaUploadProfilePhotoFile{
+		OwnerId:          c.MD.PermAuthKeyId,
+		File:             in.File,
+		Video:            in.Video,
+		VideoStartTs:     in.VideoStartTs,
+		VideoEmojiMarkup: in.VideoEmojiMarkup,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if photo == nil || photo.Clazz == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	uploaded, ok := photo.Clazz.(*tg.TLPhoto)
+	if !ok || uploaded.Id <= 0 {
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	if _, err = c.svcCtx.Repo.UserClient.UserUpdateProfilePhoto(c.ctx, &userpb.TLUserUpdateProfilePhoto{
+		UserId: selfID,
+		Id:     uploaded.Id,
+	}); err != nil {
+		return nil, err
+	}
+	// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile photo updates through userupdates/gateway when the V2 delivery contract is defined.
+
+	return tg.MakeTLPhotosPhoto(&tg.TLPhotosPhoto{
+		Photo: photo.Clazz,
+		Users: []tg.UserClazz{},
+	}).ToPhotosPhoto(), nil
 }
