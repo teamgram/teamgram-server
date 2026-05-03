@@ -19,6 +19,7 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/plugin"
 )
 
 type ServiceContext struct {
@@ -26,9 +27,11 @@ type ServiceContext struct {
 	Repo   *repository.Repository
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, p plugin.UsernamesPlugin) *ServiceContext {
+	repo := repository.NewRepository(c)
+	repo.SetPlugin(p)
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repo,
 	}
 }

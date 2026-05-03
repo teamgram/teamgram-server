@@ -1,2 +1,26 @@
 Name: bff.usernames
 ListenOn: 0.0.0.0:21700
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user
+ChatClient:
+  DestService: service.biz_service.chat
+  ServiceName: RPCChat
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.chat
+SyncClient:
+  DestService: messenger.sync
+  ServiceName: RPCSync
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.sync
