@@ -139,6 +139,13 @@ func buildAuthorizationConfig(c config.Config) authorizationhelper.Config {
 	}
 }
 
+func buildUpdatesConfig(c config.Config) updateshelper.Config {
+	return updateshelper.Config{
+		RpcServerConf:     c.RpcServerConf,
+		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -231,13 +238,7 @@ func (s *Server) Initialize() error {
 			// updateshelper
 			_ = updatesservice.RegisterService(
 				s,
-				updateshelper.New(updateshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					// UpdatesClient: withServiceName(c.BizServiceClient, "RPCUpdates"),
-					//UserClient:        c.BizServiceClient,
-					//ChatClient:        c.BizServiceClient,
-					//AuthsessionClient: c.AuthSessionClient,
-				}))
+				updateshelper.New(buildUpdatesConfig(c)))
 			//
 			// contactshelper
 			_ = contactsservice.RegisterService(

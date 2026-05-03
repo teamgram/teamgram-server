@@ -37,3 +37,4 @@ BffClient:
         - RPCQrCode
         - RPCDialogs
         - RPCMessages
+        - RPCUpdates

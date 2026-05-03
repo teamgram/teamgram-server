@@ -33,6 +33,7 @@ type Config struct {
 	MediaClient               kitex.RpcClientConf
 	IdgenClient               kitex.RpcClientConf
 	MsgClient                 kitex.RpcClientConf
+	UserupdatesClient         kitex.RpcClientConf
 	DfsClient                 kitex.RpcClientConf
 	StatusClient              kitex.RpcClientConf
 	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`

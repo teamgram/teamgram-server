@@ -18,13 +18,17 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/config"
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	UserupdatesClient userupdatesclient.UserupdatesClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	return &Repository{
+		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
+	}
 }

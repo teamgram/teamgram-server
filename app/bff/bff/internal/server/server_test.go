@@ -106,3 +106,23 @@ func TestBuildAuthorizationConfigUsesUnifiedBFFDependencies(t *testing.T) {
 		t.Fatalf("UserClient.DestService = %q, want service.biz_service", got.UserClient.DestService)
 	}
 }
+
+func TestBuildUpdatesConfigUsesUserupdatesClient(t *testing.T) {
+	c := bffconfig.Config{
+		RpcServerConf: kitex.RpcServerConf{
+			ListenOn: "127.0.0.1:0",
+		},
+		UserupdatesClient: kitex.RpcClientConf{
+			DestService: "messenger.userupdates",
+			ServiceName: "RPCUserupdates",
+		},
+	}
+
+	got := buildUpdatesConfig(c)
+	if got.UserupdatesClient.ServiceName != "RPCUserupdates" {
+		t.Fatalf("UserupdatesClient.ServiceName = %q, want RPCUserupdates", got.UserupdatesClient.ServiceName)
+	}
+	if got.UserupdatesClient.DestService != "messenger.userupdates" {
+		t.Fatalf("UserupdatesClient.DestService = %q, want messenger.userupdates", got.UserupdatesClient.DestService)
+	}
+}

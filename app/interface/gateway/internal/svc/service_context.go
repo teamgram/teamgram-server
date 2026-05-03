@@ -24,6 +24,7 @@ import (
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/dialogs/dialogs/dialogsservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/messages/messages/messagesservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/qrcode/qrcode/qrcodeservice"
+	_ "github.com/teamgram/teamgram-server/v2/app/bff/updates/updates/updatesservice"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"

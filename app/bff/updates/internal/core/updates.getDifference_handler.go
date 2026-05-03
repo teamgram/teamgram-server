@@ -17,14 +17,88 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UpdatesGetDifference
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
-	// TODO: not impl
-	c.Logger.Errorf("updates.getDifference - error: method UpdatesGetDifference not impl")
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	client := c.svcCtx.Repo.UserupdatesClient
+	if client == nil {
+		return nil, fmt.Errorf("updates.getDifference: userupdates client is nil")
+	}
+	diff, err := client.UserupdatesGetDifference(c.ctx, &userupdates.TLUserupdatesGetDifference{
+		UserId:        c.MD.UserId,
+		AuthKeyId:     c.MD.PermAuthKeyId,
+		Pts:           int64(in.Pts),
+		PtsTotalLimit: in.PtsTotalLimit,
+		Date:          int64Ptr(int64(in.Date)),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return userDifferenceToUpdatesDifference(diff)
+}
 
-	return nil, tg.ErrMethodNotImpl
+func userDifferenceToUpdatesDifference(diff *userupdates.UserDifference) (*tg.UpdatesDifference, error) {
+	if diff == nil {
+		return nil, fmt.Errorf("updates.getDifference: user difference is nil")
+	}
+	if empty, ok := diff.ToUserDifferenceEmpty(); ok {
+		return tg.MakeTLUpdatesDifferenceEmpty(&tg.TLUpdatesDifferenceEmpty{
+			Date: userStateDate(empty.State),
+			Seq:  userStateSeq(empty.State),
+		}).ToUpdatesDifference(), nil
+	}
+	if full, ok := diff.ToUserDifference(); ok {
+		return tg.MakeTLUpdatesDifference(&tg.TLUpdatesDifference{
+			NewMessages:          full.NewMessages,
+			NewEncryptedMessages: []tg.EncryptedMessageClazz{},
+			OtherUpdates:         full.OtherUpdates,
+			Chats:                []tg.ChatClazz{},
+			Users:                []tg.UserClazz{},
+			State:                userStateToUpdatesState(full.State),
+		}).ToUpdatesDifference(), nil
+	}
+	return nil, fmt.Errorf("updates.getDifference: unsupported user difference %s", diff.ClazzName())
+}
+
+func userStateToUpdatesState(state userupdates.UserStateClazz) tg.UpdatesStateClazz {
+	if state == nil {
+		return tg.MakeTLUpdatesState(&tg.TLUpdatesState{})
+	}
+	return tg.MakeTLUpdatesState(&tg.TLUpdatesState{
+		Pts:         int32(state.Pts),
+		Qts:         state.Qts,
+		Date:        state.Date,
+		Seq:         state.Seq,
+		UnreadCount: state.UnreadCount,
+	})
+}
+
+func userStateDate(state userupdates.UserStateClazz) int32 {
+	if state == nil {
+		return 0
+	}
+	return state.Date
+}
+
+func userStateSeq(state userupdates.UserStateClazz) int32 {
+	if state == nil {
+		return 0
+	}
+	return state.Seq
+}
+
+func int64Ptr(v int64) *int64 {
+	return &v
 }
