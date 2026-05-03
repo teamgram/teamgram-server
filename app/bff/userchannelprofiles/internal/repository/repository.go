@@ -18,13 +18,29 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/userchannelprofiles/internal/config"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
-// Repository is the dependency container for repository instances.
+// Repository is the dependency container for BFF user channel profile logic.
 type Repository struct {
+	UserClient  userclient.UserClient
+	MediaClient mediaclient.MediaClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.UserClient) {
+		r.UserClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+	}
+	if hasRPCClientConfig(c.MediaClient) {
+		r.MediaClient = mediaclient.NewMediaClient(mediaclient.MustNewKitexClient(c.MediaClient))
+	}
+	return r
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }
