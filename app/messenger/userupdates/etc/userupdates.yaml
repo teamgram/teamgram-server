@@ -26,6 +26,22 @@ Idgen:
       - 127.0.0.1:2379
     Key: service.idgen
 
+Authsession:
+  DestService: service.authsession
+  ServiceName: RPCAuthsession
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+
+Gateway:
+  DestService: interface.gateway
+  ServiceName: RPCGateway
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.gateway
+
 ReceiverOperations:
   Brokers:
     - 127.0.0.1:9094
@@ -38,6 +54,13 @@ PushTasks:
     - 127.0.0.1:9094
   Topic: userupdates.push_tasks.v1
   ProducerAck: wait_for_all
+
+PushTaskConsumer:
+  Brokers:
+    - 127.0.0.1:9094
+  Topics:
+    - userupdates.push_tasks.v1
+  Group: userupdates.push_tasks.v1
 
 PushOutboxWorker:
   Enabled: true

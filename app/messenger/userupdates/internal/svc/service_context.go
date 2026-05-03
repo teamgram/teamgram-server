@@ -21,9 +21,11 @@ import (
 	"context"
 	"time"
 
+	gatewayclient "github.com/teamgram/teamgram-server/v2/app/interface/gateway/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
 )
 
 type UserUpdatesRepository interface {
@@ -81,6 +83,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		})
 		sc.workers = append(sc.workers, worker)
 		sc.closers = append(sc.closers, publisher)
+	}
+
+	if c.PushTaskConsumer != nil {
+		authsessionClient := authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
+		gatewayClient := gatewayclient.NewGatewayClient(gatewayclient.MustNewKitexClient(c.Gateway))
+		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient))
+		if err != nil {
+			panic(err)
+		}
+		sc.workers = append(sc.workers, consumer)
+		sc.closers = append(sc.closers, consumer)
 	}
 
 	return sc
