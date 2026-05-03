@@ -17,14 +17,56 @@
 package core
 
 import (
+	codepb "github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSendChangePhoneCode
 // account.sendChangePhoneCode#82574ae5 phone_number:string settings:CodeSettings = auth.SentCode;
 func (c *AccountCore) AccountSendChangePhoneCode(in *tg.TLAccountSendChangePhoneCode) (*tg.AuthSentCode, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.sendChangePhoneCode - error: method AccountSendChangePhoneCode not impl")
+	if _, err := requireSelfID(c); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, tg.Err406PhoneNumberInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireCodeClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	phone, err := normalizeAccountPhone(in.PhoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := c.svcCtx.Repo.UserClient.UserGetImmutableUserByPhone(c.ctx, &userpb.TLUserGetImmutableUserByPhone{
+		Phone: phone,
+	})
+	if err != nil {
+		if !isUserNotFound(err) {
+			return nil, err
+		}
+	} else if user != nil {
+		return nil, tg.ErrPhoneNumberOccupied
+	}
+
+	codeData, err := c.svcCtx.Repo.CodeClient.CodeCreatePhoneCode(c.ctx, &codepb.TLCodeCreatePhoneCode{
+		AuthKeyId:             accountAuthKeyID(c),
+		SessionId:             accountSessionID(c),
+		Phone:                 phone,
+		PhoneNumberRegistered: false,
+		SentCodeType:          1,
+		NextCodeType:          1,
+		State:                 1,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO(v2 account): real SMS/app delivery is intentionally not migrated from master; route through the v2 verification delivery contract when it is defined.
+	return makeAccountSentCode(codeData)
 }
