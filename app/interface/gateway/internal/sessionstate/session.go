@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"strings"
 	"sync"
 	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
@@ -48,7 +51,7 @@ type Processor struct {
 	authKeys     map[int64]*crypto.AuthKey
 	authKeyInfos map[int64]*tg.AuthKeyInfo
 	metaMu       sync.RWMutex
-	sessionMeta  map[sessionKey]gmtproto.WrapperMetadata
+	clientMeta   map[clientMetadataKey]gmtproto.WrapperMetadata
 	seqMu        sync.Mutex
 	seq          map[sessionKey]int32
 }
@@ -58,13 +61,17 @@ type sessionKey struct {
 	sessionId int64
 }
 
+type clientMetadataKey struct {
+	permAuthKeyId int64
+}
+
 func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor {
 	return &Processor{
 		store:        store,
 		dispatch:     dispatch,
 		authKeys:     make(map[int64]*crypto.AuthKey),
 		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
-		sessionMeta:  make(map[sessionKey]gmtproto.WrapperMetadata),
+		clientMeta:   make(map[clientMetadataKey]gmtproto.WrapperMetadata),
 		seq:          make(map[sessionKey]int32),
 	}
 }
@@ -246,7 +253,36 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if err != nil {
 		return nil, err
 	}
-	wrapperMD = p.mergeSessionMetadata(msg.AuthKeyId, msg.SessionId, wrapperMD)
+	cacheID := metadataCacheID(keyInfo, msg.AuthKeyId)
+	incomingMD := wrapperMD
+	if hasWrapperMetadata(incomingMD) {
+		incomingMD.Ip = clientIP(conn.ClientAddr)
+	}
+	wrapperMD, changed := p.mergeClientMetadata(cacheID, incomingMD)
+	if hasWrapperMetadata(incomingMD) && changed {
+		if hasInitConnectionMetadata(wrapperMD) {
+			if err := p.store.SetClientSessionInfo(ctx, wrapperMetadataToClientSession(msg.AuthKeyId, wrapperMD)); err != nil {
+				return nil, fmt.Errorf("session processor: set client session info for auth key %d: %w", msg.AuthKeyId, err)
+			}
+		} else if wrapperMD.Layer != 0 {
+			if err := p.store.SetLayer(ctx, msg.AuthKeyId, clientIP(conn.ClientAddr), wrapperMD.Layer); err != nil {
+				return nil, fmt.Errorf("session processor: set client layer for auth key %d: %w", msg.AuthKeyId, err)
+			}
+		}
+	}
+	if !hasClientMetadata(wrapperMD) {
+		if cached, ok := p.cachedClientMetadata(cacheID); ok {
+			wrapperMD = cached
+		} else if p.store != nil {
+			client, err := p.store.GetClientSession(ctx, msg.AuthKeyId)
+			if err != nil {
+				return nil, fmt.Errorf("session processor: get client session for auth key %d: %w", msg.AuthKeyId, err)
+			}
+			if client != nil {
+				wrapperMD, _ = p.mergeClientMetadata(cacheID, clientSessionToWrapperMetadata(client))
+			}
+		}
+	}
 	md := &metadata.RpcMetadata{
 		ServerId:      conn.GatewayId,
 		ClientAddr:    conn.ClientAddr,
@@ -308,32 +344,148 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	return gmtproto.WrapRPCResult(msg.MsgId, result)
 }
 
-func (p *Processor) mergeSessionMetadata(authKeyID, sessionID int64, md gmtproto.WrapperMetadata) gmtproto.WrapperMetadata {
-	key := sessionKey{authKeyId: authKeyID, sessionId: sessionID}
-	if md.Layer > 0 || md.Client != "" || md.LangPack != "" || md.LangCode != "" {
-		p.metaMu.Lock()
-		if old, ok := p.sessionMeta[key]; ok {
-			if md.Layer == 0 {
-				md.Layer = old.Layer
-			}
-			if md.Client == "" {
-				md.Client = old.Client
-			}
-			if md.LangPack == "" {
-				md.LangPack = old.LangPack
-			}
-			if md.LangCode == "" {
-				md.LangCode = old.LangCode
-			}
-		}
-		p.sessionMeta[key] = md
-		p.metaMu.Unlock()
-		return md
+func metadataCacheID(keyInfo *tg.AuthKeyInfo, authKeyId int64) int64 {
+	if keyInfo != nil && keyInfo.PermAuthKeyId != 0 {
+		return keyInfo.PermAuthKeyId
 	}
+	return authKeyId
+}
 
+func (p *Processor) mergeClientMetadata(cacheID int64, md gmtproto.WrapperMetadata) (gmtproto.WrapperMetadata, bool) {
+	key := clientMetadataKey{permAuthKeyId: cacheID}
+	p.metaMu.Lock()
+	defer p.metaMu.Unlock()
+	old := p.clientMeta[key]
+	merged := mergeWrapperMetadata(old, md)
+	changed := persistedMetadataChanged(old, merged)
+	if hasClientMetadata(merged) {
+		p.clientMeta[key] = merged
+	}
+	return merged, changed
+}
+
+func (p *Processor) cachedClientMetadata(cacheID int64) (gmtproto.WrapperMetadata, bool) {
 	p.metaMu.RLock()
 	defer p.metaMu.RUnlock()
-	return p.sessionMeta[key]
+	md, ok := p.clientMeta[clientMetadataKey{permAuthKeyId: cacheID}]
+	return md, ok
+}
+
+func mergeWrapperMetadata(old, next gmtproto.WrapperMetadata) gmtproto.WrapperMetadata {
+	if next.Layer == 0 {
+		next.Layer = old.Layer
+	}
+	if next.Client == "" {
+		next.Client = old.Client
+	}
+	if next.Ip == "" {
+		next.Ip = old.Ip
+	}
+	if next.ApiId == 0 {
+		next.ApiId = old.ApiId
+	}
+	if next.DeviceModel == "" {
+		next.DeviceModel = old.DeviceModel
+	}
+	if next.SystemVersion == "" {
+		next.SystemVersion = old.SystemVersion
+	}
+	if next.AppVersion == "" {
+		next.AppVersion = old.AppVersion
+	}
+	if next.SystemLangCode == "" {
+		next.SystemLangCode = old.SystemLangCode
+	}
+	if next.LangPack == "" {
+		next.LangPack = old.LangPack
+	}
+	if next.LangCode == "" {
+		next.LangCode = old.LangCode
+	}
+	if next.Proxy == "" {
+		next.Proxy = old.Proxy
+	}
+	if next.Params == "" {
+		next.Params = old.Params
+	}
+	return next
+}
+
+func persistedMetadataChanged(old, next gmtproto.WrapperMetadata) bool {
+	return old.Layer != next.Layer ||
+		old.Ip != next.Ip ||
+		old.ApiId != next.ApiId ||
+		old.DeviceModel != next.DeviceModel ||
+		old.SystemVersion != next.SystemVersion ||
+		old.AppVersion != next.AppVersion ||
+		old.SystemLangCode != next.SystemLangCode ||
+		old.LangPack != next.LangPack ||
+		old.LangCode != next.LangCode ||
+		old.Proxy != next.Proxy ||
+		old.Params != next.Params
+}
+
+func hasWrapperMetadata(md gmtproto.WrapperMetadata) bool {
+	return md.Layer != 0 || hasInitConnectionMetadata(md)
+}
+
+func hasClientMetadata(md gmtproto.WrapperMetadata) bool {
+	return md.Layer != 0 || md.Client != "" || md.LangPack != "" || md.LangCode != "" || hasInitConnectionMetadata(md)
+}
+
+func hasInitConnectionMetadata(md gmtproto.WrapperMetadata) bool {
+	return md.ApiId != 0 ||
+		md.DeviceModel != "" ||
+		md.SystemVersion != "" ||
+		md.AppVersion != "" ||
+		md.SystemLangCode != "" ||
+		md.Proxy != "" ||
+		md.Params != ""
+}
+
+func wrapperMetadataToClientSession(authKeyId int64, md gmtproto.WrapperMetadata) *authsession.ClientSession {
+	return authsession.MakeTLClientSession(&authsession.TLClientSession{
+		AuthKeyId:      authKeyId,
+		Ip:             md.Ip,
+		Layer:          md.Layer,
+		ApiId:          md.ApiId,
+		DeviceModel:    md.DeviceModel,
+		SystemVersion:  md.SystemVersion,
+		AppVersion:     md.AppVersion,
+		SystemLangCode: md.SystemLangCode,
+		LangPack:       md.LangPack,
+		LangCode:       md.LangCode,
+		Proxy:          md.Proxy,
+		Params:         md.Params,
+	}).ToClientSession()
+}
+
+func clientSessionToWrapperMetadata(client *authsession.ClientSession) gmtproto.WrapperMetadata {
+	if client == nil {
+		return gmtproto.WrapperMetadata{}
+	}
+	return gmtproto.WrapperMetadata{
+		Layer:          client.Layer,
+		Client:         strings.TrimSpace(client.DeviceModel + " " + client.SystemVersion + " " + client.AppVersion),
+		Ip:             client.Ip,
+		ApiId:          client.ApiId,
+		DeviceModel:    client.DeviceModel,
+		SystemVersion:  client.SystemVersion,
+		AppVersion:     client.AppVersion,
+		SystemLangCode: client.SystemLangCode,
+		LangPack:       client.LangPack,
+		LangCode:       client.LangCode,
+		Proxy:          client.Proxy,
+		Params:         client.Params,
+	}
+}
+
+func clientIP(clientAddr string) string {
+	host, _, err := net.SplitHostPort(clientAddr)
+	if err != nil || host == "" {
+		return clientAddr
+	}
+	return host
 }
 
 func rawRPCMethodName(payload []byte) string {

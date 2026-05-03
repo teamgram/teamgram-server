@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
@@ -117,6 +118,122 @@ func TestSessionReusesClientLayerAfterInitConnection(t *testing.T) {
 	}
 	if got := dispatch.md[1]; got.Layer != 223 || got.Client != "tdesktop macOS 5.0" || got.Langpack != "tdesktop" || got.LangCode != "en" {
 		t.Fatalf("metadata = %#v", got)
+	}
+}
+
+func TestSessionPersistsClientMetadataFromInitConnection(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
+		ApiId:          2040,
+		DeviceModel:    "tdesktop",
+		SystemVersion:  "macOS",
+		AppVersion:     "5.13",
+		SystemLangCode: "en-US",
+		LangPack:       "tdesktop",
+		LangCode:       "en",
+		Query:          inner,
+	})})
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 301, wrapped)
+	if len(store.setClientSessions) != 1 {
+		t.Fatalf("SetClientSessionInfo calls = %d, want 1", len(store.setClientSessions))
+	}
+	got := store.setClientSessions[0]
+	if got.AuthKeyId != serverKey.AuthKeyId() || got.Layer != 223 || got.ApiId != 2040 ||
+		got.DeviceModel != "tdesktop" || got.SystemVersion != "macOS" ||
+		got.AppVersion != "5.13" || got.SystemLangCode != "en-US" ||
+		got.LangPack != "tdesktop" || got.LangCode != "en" {
+		t.Fatalf("persisted client session = %#v", got)
+	}
+}
+
+func TestSessionRestoresClientMetadataForBareRPC(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{
+		key: keyInfo,
+		clientSession: authsession.MakeTLClientSession(&authsession.TLClientSession{
+			AuthKeyId:   serverKey.AuthKeyId(),
+			Layer:       223,
+			DeviceModel: "tdesktop",
+			LangPack:    "tdesktop",
+			LangCode:    "en",
+		}).ToClientSession(),
+	}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 302, encodeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}))
+	if got := dispatch.md[0]; got.Layer != 223 || got.Langpack != "tdesktop" || got.LangCode != "en" {
+		t.Fatalf("metadata = %#v", got)
+	}
+	if len(store.setClientSessions) != 0 {
+		t.Fatalf("bare RPC persisted client sessions = %d, want 0", len(store.setClientSessions))
+	}
+}
+
+func TestSessionSkipsDuplicateClientMetadataWrites(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
+		ApiId:       2040,
+		DeviceModel: "tdesktop",
+		LangPack:    "tdesktop",
+		LangCode:    "en",
+		Query:       inner,
+	})})
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 303, wrapped)
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 304, wrapped)
+	if len(store.setClientSessions) != 1 {
+		t.Fatalf("SetClientSessionInfo calls = %d, want 1", len(store.setClientSessions))
+	}
+}
+
+func TestSessionBareRPCDoesNotPersistOnlyForIPChange(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)
+	store := &fakeAuthKeyStore{
+		key: keyInfo,
+		clientSession: authsession.MakeTLClientSession(&authsession.TLClientSession{
+			AuthKeyId: serverKey.AuthKeyId(),
+			Ip:        "127.0.0.1",
+			Layer:     223,
+			LangPack:  "tdesktop",
+			LangCode:  "en",
+		}).ToClientSession(),
+	}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	body := encodeTL(t, &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz})
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: 77,
+		MsgId:     305,
+		SeqNo:     1,
+		Body:      body,
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	_, err = processor.HandleEncrypted(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "10.0.0.2:44321"}, payload)
+	if err != nil {
+		t.Fatalf("HandleEncrypted() error = %v", err)
+	}
+	if len(store.setClientSessions) != 0 {
+		t.Fatalf("SetClientSessionInfo calls = %d, want 0", len(store.setClientSessions))
 	}
 }
 
@@ -318,4 +435,16 @@ func (s *countingAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int
 
 func (s *countingAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
 	return 0, nil
+}
+
+func (s *countingAuthKeyStore) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
+	return nil
+}
+
+func (s *countingAuthKeyStore) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
+	return nil
+}
+
+func (s *countingAuthKeyStore) GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error) {
+	return nil, nil
 }

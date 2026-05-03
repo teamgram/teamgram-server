@@ -12,6 +12,7 @@ import (
 	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -20,12 +21,18 @@ import (
 )
 
 type fakeAuthKeyStore struct {
-	key        *tg.AuthKeyInfo
-	userID     int64
-	userKeyID  int64
-	futureSalt *tg.FutureSalt
-	expiresIn  int32
-	setCalls   int
+	key               *tg.AuthKeyInfo
+	userID            int64
+	userKeyID         int64
+	futureSalt        *tg.FutureSalt
+	expiresIn         int32
+	setCalls          int
+	clientSession     *authsession.ClientSession
+	setClientSessions []*authsession.ClientSession
+	setLayerAuthKeyId int64
+	setLayerIP        string
+	setLayerValue     int32
+	setLayerCalls     int
 }
 
 func (f *fakeAuthKeyStore) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
@@ -47,6 +54,24 @@ func (f *fakeAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int64, 
 func (f *fakeAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
 	f.userKeyID = authKeyId
 	return f.userID, nil
+}
+
+func (f *fakeAuthKeyStore) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
+	f.clientSession = session
+	f.setClientSessions = append(f.setClientSessions, session)
+	return nil
+}
+
+func (f *fakeAuthKeyStore) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
+	f.setLayerAuthKeyId = authKeyId
+	f.setLayerIP = ip
+	f.setLayerValue = layer
+	f.setLayerCalls++
+	return nil
+}
+
+func (f *fakeAuthKeyStore) GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error) {
+	return f.clientSession, nil
 }
 
 func TestAuthHandshakeFullFlow(t *testing.T) {

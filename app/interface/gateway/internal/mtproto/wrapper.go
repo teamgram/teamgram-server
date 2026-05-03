@@ -12,6 +12,7 @@ import (
 type WrapperMetadata struct {
 	Layer          int32
 	Client         string
+	Ip             string
 	ApiId          int32
 	DeviceModel    string
 	SystemVersion  string
