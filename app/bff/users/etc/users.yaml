@@ -1,2 +1,6 @@
 Name: bff.users
 ListenOn: 0.0.0.0:21590
+
+UserClient:
+  Endpoints:
+    - 127.0.0.1:20610

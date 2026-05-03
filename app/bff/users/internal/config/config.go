@@ -22,4 +22,5 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	UserClient kitex.RpcClientConf
 }
