@@ -17,14 +17,21 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetAccountTTL
 // account.getAccountTTL#8fc711d = AccountDaysTTL;
 func (c *AccountCore) AccountGetAccountTTL(in *tg.TLAccountGetAccountTTL) (*tg.AccountDaysTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getAccountTTL - error: method AccountGetAccountTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	return c.svcCtx.Repo.UserClient.UserGetAccountDaysTTL(c.ctx, &userpb.TLUserGetAccountDaysTTL{
+		UserId: selfID,
+	})
 }
