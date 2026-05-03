@@ -17,14 +17,21 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// AccountSetGlobalPrivacySettings
-// account.setGlobalPrivacySettings#1edaaac2 settings:GlobalPrivacySettings = GlobalPrivacySettings;
 func (c *PrivacySettingsCore) AccountSetGlobalPrivacySettings(in *tg.TLAccountSetGlobalPrivacySettings) (*tg.GlobalPrivacySettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setGlobalPrivacySettings - error: method AccountSetGlobalPrivacySettings not impl")
+	rSettings := in.Settings
 
-	return nil, tg.ErrMethodNotImpl
+	_, err := c.svcCtx.Repo.UserClient.UserSetGlobalPrivacySettings(c.ctx, &user.TLUserSetGlobalPrivacySettings{
+		UserId:   c.MD.UserId,
+		Settings: rSettings,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.setGlobalPrivacySettings - error: %v", err)
+		return nil, err
+	}
+
+	return rSettings, nil
 }
