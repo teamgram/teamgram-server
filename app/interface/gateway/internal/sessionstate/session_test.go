@@ -21,11 +21,15 @@ type fakeDispatcher struct {
 	md       []*metadata.RpcMetadata
 	result   []byte
 	err      error
+	onInvoke func(md *metadata.RpcMetadata, payload []byte)
 }
 
 func (f *fakeDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadata, payload []byte) ([]byte, error) {
 	f.md = append(f.md, md)
 	f.payloads = append(f.payloads, append([]byte(nil), payload...))
+	if f.onInvoke != nil {
+		f.onInvoke(md, payload)
+	}
 	if f.err != nil {
 		return nil, f.err
 	}
@@ -253,6 +257,45 @@ func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
 	}
 	if got := dispatch.md[1].PermAuthKeyId; got != 4242 {
 		t.Fatalf("cached PermAuthKeyId = %d, want 4242", got)
+	}
+}
+
+func TestSessionRefreshesAuthKeyInfoAfterBindTempAuthKey(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	tempAuthKeyID := serverKey.AuthKeyId()
+	permAuthKeyID := int64(4242)
+	staleKeyInfo := tg.NewAuthKeyInfo(tempAuthKeyID, serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	staleKeyInfo.PermAuthKeyId = tempAuthKeyID
+	refreshedKeyInfo := tg.NewAuthKeyInfo(tempAuthKeyID, serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	refreshedKeyInfo.PermAuthKeyId = permAuthKeyID
+	store := &fakeAuthKeyStore{key: staleKeyInfo}
+	dispatch := &fakeDispatcher{
+		result: encodeTL(t, tg.BoolTrueClazz),
+		onInvoke: func(md *metadata.RpcMetadata, payload []byte) {
+			if rawRPCMethodName(payload) == tg.ClazzName_auth_bindTempAuthKey {
+				store.key = refreshedKeyInfo
+			}
+		},
+	}
+	processor := NewProcessor(store, dispatch)
+
+	bind := encodeTL(t, &tg.TLAuthBindTempAuthKey{
+		PermAuthKeyId:    permAuthKeyID,
+		Nonce:            1,
+		ExpiresAt:        2,
+		EncryptedMessage: []byte("bind"),
+	})
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 108, bind)
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 109, encodeTL(t, &tg.TLHelpGetConfig{}))
+
+	if len(dispatch.md) != 2 {
+		t.Fatalf("dispatch count = %d, want 2", len(dispatch.md))
+	}
+	if got := dispatch.md[0].PermAuthKeyId; got != tempAuthKeyID {
+		t.Fatalf("bind PermAuthKeyId = %d, want initial temp auth key %d", got, tempAuthKeyID)
+	}
+	if got := dispatch.md[1].PermAuthKeyId; got != permAuthKeyID {
+		t.Fatalf("post-bind PermAuthKeyId = %d, want refreshed perm auth key %d", got, permAuthKeyID)
 	}
 }
 

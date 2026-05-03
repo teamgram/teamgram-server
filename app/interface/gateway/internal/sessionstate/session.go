@@ -156,6 +156,38 @@ func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthK
 	return key, keyInfo, nil
 }
 
+func (p *Processor) refreshAuthKeyInfo(ctx context.Context, authKeyId int64, current *tg.AuthKeyInfo) (*tg.AuthKeyInfo, error) {
+	if p.store == nil {
+		return nil, fmt.Errorf("session processor: auth key store is nil")
+	}
+	keyInfo, err := p.store.QueryAuthKey(ctx, authKeyId)
+	if err != nil {
+		return nil, fmt.Errorf("session processor: refresh auth key %d: %w", authKeyId, err)
+	}
+	if keyInfo == nil || len(keyInfo.AuthKey) == 0 {
+		return nil, fmt.Errorf("session processor: auth key %d not found", authKeyId)
+	}
+
+	p.authKeysMu.Lock()
+	defer p.authKeysMu.Unlock()
+	cached := p.authKeyInfos[authKeyId]
+	switch {
+	case cached != nil:
+		*cached = *keyInfo
+		keyInfo = cached
+	case current != nil:
+		*current = *keyInfo
+		p.authKeyInfos[authKeyId] = current
+		keyInfo = current
+	default:
+		p.authKeyInfos[authKeyId] = keyInfo
+	}
+	if _, ok := p.authKeys[authKeyId]; !ok {
+		p.authKeys[authKeyId] = crypto.NewAuthKey(keyInfo.AuthKeyId, keyInfo.AuthKey)
+	}
+	return keyInfo, nil
+}
+
 func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, seq SeqNoAllocator) ([]byte, error) {
 	obj, err := iface.DecodeObject(bin.NewDecoder(msg.Body))
 	if err != nil {
@@ -348,6 +380,11 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 			err,
 		)
 		return nil, err
+	}
+	if method == tg.ClazzName_auth_bindTempAuthKey {
+		if _, err := p.refreshAuthKeyInfo(ctx, msg.AuthKeyId, keyInfo); err != nil {
+			return nil, err
+		}
 	}
 	return gmtproto.WrapRPCResult(msg.MsgId, result)
 }
