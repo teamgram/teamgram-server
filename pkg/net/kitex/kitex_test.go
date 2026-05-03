@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/discovery"
+	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/serviceinfo"
 	kitexserver "github.com/cloudwego/kitex/server"
@@ -14,6 +15,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/service"
+	"go.opentelemetry.io/otel"
+	oteltrace "go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/trace/noop"
 )
 
 type closableClient struct {
@@ -61,6 +65,36 @@ func TestNewClientReturnsResolverError(t *testing.T) {
 	})
 	if err == nil {
 		t.Fatal("expected resolver error")
+	}
+}
+
+func TestNewServerInitializesTelemetryForTracingLogs(t *testing.T) {
+	orig := otel.GetTracerProvider()
+	otel.SetTracerProvider(noop.NewTracerProvider())
+	t.Cleanup(func() {
+		otel.SetTracerProvider(orig)
+	})
+
+	_, err := NewServer(RpcServerConf{
+		ServiceConf: service.ServiceConf{Name: "svc.test.trace"},
+		ListenOn:    "127.0.0.1:0",
+	}, func(server kitexserver.Server) error {
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("NewServer returned error: %v", err)
+	}
+
+	var spanCtx oteltrace.SpanContext
+	next := func(ctx context.Context, req, resp interface{}) error {
+		spanCtx = oteltrace.SpanContextFromContext(ctx)
+		return nil
+	}
+	if err := serverTracingMiddleware(endpoint.Endpoint(next))(context.Background(), nil, nil); err != nil {
+		t.Fatalf("server tracing middleware returned error: %v", err)
+	}
+	if !spanCtx.IsValid() {
+		t.Fatal("expected NewServer to initialize telemetry so request logs can include trace fields")
 	}
 }
 

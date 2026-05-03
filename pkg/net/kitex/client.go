@@ -51,6 +51,7 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 	var options []client.Option
 
 	options = append(options, client.WithDestService(c.DestService))
+	options = append(options, client.WithMiddleware(clientTracingMiddleware))
 	if c.Codec == "zrpc" {
 		options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 	}

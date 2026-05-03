@@ -53,6 +53,9 @@ func NewServer(c RpcServerConf, register RegisterFn) (*RpcServer, error) {
 	if err = c.Validate(); err != nil {
 		return nil, err
 	}
+	if err = c.ServiceConf.SetUp(); err != nil {
+		return nil, err
+	}
 
 	var (
 		options []server.Option
@@ -62,6 +65,7 @@ func NewServer(c RpcServerConf, register RegisterFn) (*RpcServer, error) {
 	options = append(options, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 		ServiceName: c.ServiceConf.Name,
 	}))
+	options = append(options, server.WithMiddleware(serverTracingMiddleware))
 
 	// codec
 	if c.Codec == "zrpc" {
