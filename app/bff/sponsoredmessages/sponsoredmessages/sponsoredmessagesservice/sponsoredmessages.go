@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCSponsoredMessages/account.toggleSponsoredMessages": kitex.NewMethodInfo(
@@ -174,7 +199,7 @@ type AccountToggleSponsoredMessagesArgs struct {
 
 func (p *AccountToggleSponsoredMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountToggleSponsoredMessagesArgs")
+		return out, fmt.Errorf("no req in AccountToggleSponsoredMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -190,7 +215,7 @@ func (p *AccountToggleSponsoredMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *AccountToggleSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountToggleSponsoredMessagesArgs")
+		return fmt.Errorf("no req in AccountToggleSponsoredMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -230,7 +255,7 @@ var AccountToggleSponsoredMessagesResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountToggleSponsoredMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountToggleSponsoredMessagesResult")
+		return out, fmt.Errorf("no req in AccountToggleSponsoredMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -246,7 +271,7 @@ func (p *AccountToggleSponsoredMessagesResult) Unmarshal(in []byte) error {
 
 func (p *AccountToggleSponsoredMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountToggleSponsoredMessagesResult")
+		return fmt.Errorf("no req in AccountToggleSponsoredMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -254,6 +279,9 @@ func (p *AccountToggleSponsoredMessagesResult) Encode(x *bin.Encoder, layer int3
 
 func (p *AccountToggleSponsoredMessagesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -305,7 +333,7 @@ type ContactsGetSponsoredPeersArgs struct {
 
 func (p *ContactsGetSponsoredPeersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetSponsoredPeersArgs")
+		return out, fmt.Errorf("no req in ContactsGetSponsoredPeersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -321,7 +349,7 @@ func (p *ContactsGetSponsoredPeersArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetSponsoredPeersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetSponsoredPeersArgs")
+		return fmt.Errorf("no req in ContactsGetSponsoredPeersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -361,7 +389,7 @@ var ContactsGetSponsoredPeersResult_Success_DEFAULT *tg.ContactsSponsoredPeers
 
 func (p *ContactsGetSponsoredPeersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetSponsoredPeersResult")
+		return out, fmt.Errorf("no req in ContactsGetSponsoredPeersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -377,7 +405,7 @@ func (p *ContactsGetSponsoredPeersResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetSponsoredPeersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetSponsoredPeersResult")
+		return fmt.Errorf("no req in ContactsGetSponsoredPeersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -385,6 +413,9 @@ func (p *ContactsGetSponsoredPeersResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *ContactsGetSponsoredPeersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsSponsoredPeers)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -436,7 +467,7 @@ type MessagesViewSponsoredMessageArgs struct {
 
 func (p *MessagesViewSponsoredMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesViewSponsoredMessageArgs")
+		return out, fmt.Errorf("no req in MessagesViewSponsoredMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -452,7 +483,7 @@ func (p *MessagesViewSponsoredMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesViewSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesViewSponsoredMessageArgs")
+		return fmt.Errorf("no req in MessagesViewSponsoredMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -492,7 +523,7 @@ var MessagesViewSponsoredMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesViewSponsoredMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesViewSponsoredMessageResult")
+		return out, fmt.Errorf("no req in MessagesViewSponsoredMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -508,7 +539,7 @@ func (p *MessagesViewSponsoredMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesViewSponsoredMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesViewSponsoredMessageResult")
+		return fmt.Errorf("no req in MessagesViewSponsoredMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -516,6 +547,9 @@ func (p *MessagesViewSponsoredMessageResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesViewSponsoredMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -567,7 +601,7 @@ type MessagesClickSponsoredMessageArgs struct {
 
 func (p *MessagesClickSponsoredMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesClickSponsoredMessageArgs")
+		return out, fmt.Errorf("no req in MessagesClickSponsoredMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -583,7 +617,7 @@ func (p *MessagesClickSponsoredMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesClickSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesClickSponsoredMessageArgs")
+		return fmt.Errorf("no req in MessagesClickSponsoredMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -623,7 +657,7 @@ var MessagesClickSponsoredMessageResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesClickSponsoredMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesClickSponsoredMessageResult")
+		return out, fmt.Errorf("no req in MessagesClickSponsoredMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -639,7 +673,7 @@ func (p *MessagesClickSponsoredMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesClickSponsoredMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesClickSponsoredMessageResult")
+		return fmt.Errorf("no req in MessagesClickSponsoredMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -647,6 +681,9 @@ func (p *MessagesClickSponsoredMessageResult) Encode(x *bin.Encoder, layer int32
 
 func (p *MessagesClickSponsoredMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -698,7 +735,7 @@ type MessagesReportSponsoredMessageArgs struct {
 
 func (p *MessagesReportSponsoredMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReportSponsoredMessageArgs")
+		return out, fmt.Errorf("no req in MessagesReportSponsoredMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -714,7 +751,7 @@ func (p *MessagesReportSponsoredMessageArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReportSponsoredMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReportSponsoredMessageArgs")
+		return fmt.Errorf("no req in MessagesReportSponsoredMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -754,7 +791,7 @@ var MessagesReportSponsoredMessageResult_Success_DEFAULT *tg.ChannelsSponsoredMe
 
 func (p *MessagesReportSponsoredMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReportSponsoredMessageResult")
+		return out, fmt.Errorf("no req in MessagesReportSponsoredMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -770,7 +807,7 @@ func (p *MessagesReportSponsoredMessageResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReportSponsoredMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReportSponsoredMessageResult")
+		return fmt.Errorf("no req in MessagesReportSponsoredMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -778,6 +815,9 @@ func (p *MessagesReportSponsoredMessageResult) Encode(x *bin.Encoder, layer int3
 
 func (p *MessagesReportSponsoredMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ChannelsSponsoredMessageReportResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -829,7 +869,7 @@ type MessagesGetSponsoredMessagesArgs struct {
 
 func (p *MessagesGetSponsoredMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetSponsoredMessagesArgs")
+		return out, fmt.Errorf("no req in MessagesGetSponsoredMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -845,7 +885,7 @@ func (p *MessagesGetSponsoredMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetSponsoredMessagesArgs")
+		return fmt.Errorf("no req in MessagesGetSponsoredMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -885,7 +925,7 @@ var MessagesGetSponsoredMessagesResult_Success_DEFAULT *tg.MessagesSponsoredMess
 
 func (p *MessagesGetSponsoredMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetSponsoredMessagesResult")
+		return out, fmt.Errorf("no req in MessagesGetSponsoredMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -901,7 +941,7 @@ func (p *MessagesGetSponsoredMessagesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetSponsoredMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetSponsoredMessagesResult")
+		return fmt.Errorf("no req in MessagesGetSponsoredMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -909,6 +949,9 @@ func (p *MessagesGetSponsoredMessagesResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetSponsoredMessagesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesSponsoredMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -960,7 +1003,7 @@ type ChannelsRestrictSponsoredMessagesArgs struct {
 
 func (p *ChannelsRestrictSponsoredMessagesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsRestrictSponsoredMessagesArgs")
+		return out, fmt.Errorf("no req in ChannelsRestrictSponsoredMessagesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -976,7 +1019,7 @@ func (p *ChannelsRestrictSponsoredMessagesArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsRestrictSponsoredMessagesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsRestrictSponsoredMessagesArgs")
+		return fmt.Errorf("no req in ChannelsRestrictSponsoredMessagesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1016,7 +1059,7 @@ var ChannelsRestrictSponsoredMessagesResult_Success_DEFAULT *tg.Updates
 
 func (p *ChannelsRestrictSponsoredMessagesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsRestrictSponsoredMessagesResult")
+		return out, fmt.Errorf("no req in ChannelsRestrictSponsoredMessagesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1032,7 +1075,7 @@ func (p *ChannelsRestrictSponsoredMessagesResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsRestrictSponsoredMessagesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsRestrictSponsoredMessagesResult")
+		return fmt.Errorf("no req in ChannelsRestrictSponsoredMessagesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1040,6 +1083,9 @@ func (p *ChannelsRestrictSponsoredMessagesResult) Encode(x *bin.Encoder, layer i
 
 func (p *ChannelsRestrictSponsoredMessagesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1079,97 +1125,83 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountToggleSponsoredMessages(ctx context.Context, req *tg.TLAccountToggleSponsoredMessages) (r *tg.Bool, err error) {
 	// var _args AccountToggleSponsoredMessagesArgs
 	// _args.Req = req
-	// var _result AccountToggleSponsoredMessagesResult
+	var _result AccountToggleSponsoredMessagesResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/account.toggleSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/account.toggleSponsoredMessages", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetSponsoredPeers(ctx context.Context, req *tg.TLContactsGetSponsoredPeers) (r *tg.ContactsSponsoredPeers, err error) {
 	// var _args ContactsGetSponsoredPeersArgs
 	// _args.Req = req
-	// var _result ContactsGetSponsoredPeersResult
+	var _result ContactsGetSponsoredPeersResult
 
-	_result := new(tg.ContactsSponsoredPeers)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/contacts.getSponsoredPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/contacts.getSponsoredPeers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesViewSponsoredMessage(ctx context.Context, req *tg.TLMessagesViewSponsoredMessage) (r *tg.Bool, err error) {
 	// var _args MessagesViewSponsoredMessageArgs
 	// _args.Req = req
-	// var _result MessagesViewSponsoredMessageResult
+	var _result MessagesViewSponsoredMessageResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.viewSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.viewSponsoredMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesClickSponsoredMessage(ctx context.Context, req *tg.TLMessagesClickSponsoredMessage) (r *tg.Bool, err error) {
 	// var _args MessagesClickSponsoredMessageArgs
 	// _args.Req = req
-	// var _result MessagesClickSponsoredMessageResult
+	var _result MessagesClickSponsoredMessageResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.clickSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.clickSponsoredMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesReportSponsoredMessage(ctx context.Context, req *tg.TLMessagesReportSponsoredMessage) (r *tg.ChannelsSponsoredMessageReportResult, err error) {
 	// var _args MessagesReportSponsoredMessageArgs
 	// _args.Req = req
-	// var _result MessagesReportSponsoredMessageResult
+	var _result MessagesReportSponsoredMessageResult
 
-	_result := new(tg.ChannelsSponsoredMessageReportResult)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.reportSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.reportSponsoredMessage", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetSponsoredMessages(ctx context.Context, req *tg.TLMessagesGetSponsoredMessages) (r *tg.MessagesSponsoredMessages, err error) {
 	// var _args MessagesGetSponsoredMessagesArgs
 	// _args.Req = req
-	// var _result MessagesGetSponsoredMessagesResult
+	var _result MessagesGetSponsoredMessagesResult
 
-	_result := new(tg.MessagesSponsoredMessages)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.getSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.getSponsoredMessages", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsRestrictSponsoredMessages(ctx context.Context, req *tg.TLChannelsRestrictSponsoredMessages) (r *tg.Updates, err error) {
 	// var _args ChannelsRestrictSponsoredMessagesArgs
 	// _args.Req = req
-	// var _result ChannelsRestrictSponsoredMessagesResult
+	var _result ChannelsRestrictSponsoredMessagesResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/channels.restrictSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/channels.restrictSponsoredMessages", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

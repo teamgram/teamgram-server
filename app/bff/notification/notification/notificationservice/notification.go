@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCNotification/account.registerDevice": kitex.NewMethodInfo(
@@ -174,7 +199,7 @@ type AccountRegisterDeviceArgs struct {
 
 func (p *AccountRegisterDeviceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountRegisterDeviceArgs")
+		return out, fmt.Errorf("no req in AccountRegisterDeviceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -190,7 +215,7 @@ func (p *AccountRegisterDeviceArgs) Unmarshal(in []byte) error {
 
 func (p *AccountRegisterDeviceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountRegisterDeviceArgs")
+		return fmt.Errorf("no req in AccountRegisterDeviceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -230,7 +255,7 @@ var AccountRegisterDeviceResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountRegisterDeviceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountRegisterDeviceResult")
+		return out, fmt.Errorf("no req in AccountRegisterDeviceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -246,7 +271,7 @@ func (p *AccountRegisterDeviceResult) Unmarshal(in []byte) error {
 
 func (p *AccountRegisterDeviceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountRegisterDeviceResult")
+		return fmt.Errorf("no req in AccountRegisterDeviceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -254,6 +279,9 @@ func (p *AccountRegisterDeviceResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountRegisterDeviceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -305,7 +333,7 @@ type AccountUnregisterDeviceArgs struct {
 
 func (p *AccountUnregisterDeviceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUnregisterDeviceArgs")
+		return out, fmt.Errorf("no req in AccountUnregisterDeviceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -321,7 +349,7 @@ func (p *AccountUnregisterDeviceArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUnregisterDeviceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUnregisterDeviceArgs")
+		return fmt.Errorf("no req in AccountUnregisterDeviceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -361,7 +389,7 @@ var AccountUnregisterDeviceResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUnregisterDeviceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUnregisterDeviceResult")
+		return out, fmt.Errorf("no req in AccountUnregisterDeviceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -377,7 +405,7 @@ func (p *AccountUnregisterDeviceResult) Unmarshal(in []byte) error {
 
 func (p *AccountUnregisterDeviceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUnregisterDeviceResult")
+		return fmt.Errorf("no req in AccountUnregisterDeviceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -385,6 +413,9 @@ func (p *AccountUnregisterDeviceResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *AccountUnregisterDeviceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -436,7 +467,7 @@ type AccountUpdateNotifySettingsArgs struct {
 
 func (p *AccountUpdateNotifySettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateNotifySettingsArgs")
+		return out, fmt.Errorf("no req in AccountUpdateNotifySettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -452,7 +483,7 @@ func (p *AccountUpdateNotifySettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateNotifySettingsArgs")
+		return fmt.Errorf("no req in AccountUpdateNotifySettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -492,7 +523,7 @@ var AccountUpdateNotifySettingsResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUpdateNotifySettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateNotifySettingsResult")
+		return out, fmt.Errorf("no req in AccountUpdateNotifySettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -508,7 +539,7 @@ func (p *AccountUpdateNotifySettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateNotifySettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateNotifySettingsResult")
+		return fmt.Errorf("no req in AccountUpdateNotifySettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -516,6 +547,9 @@ func (p *AccountUpdateNotifySettingsResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *AccountUpdateNotifySettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -567,7 +601,7 @@ type AccountGetNotifySettingsArgs struct {
 
 func (p *AccountGetNotifySettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetNotifySettingsArgs")
+		return out, fmt.Errorf("no req in AccountGetNotifySettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -583,7 +617,7 @@ func (p *AccountGetNotifySettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetNotifySettingsArgs")
+		return fmt.Errorf("no req in AccountGetNotifySettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -623,7 +657,7 @@ var AccountGetNotifySettingsResult_Success_DEFAULT *tg.PeerNotifySettings
 
 func (p *AccountGetNotifySettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetNotifySettingsResult")
+		return out, fmt.Errorf("no req in AccountGetNotifySettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -639,7 +673,7 @@ func (p *AccountGetNotifySettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetNotifySettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetNotifySettingsResult")
+		return fmt.Errorf("no req in AccountGetNotifySettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -647,6 +681,9 @@ func (p *AccountGetNotifySettingsResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountGetNotifySettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.PeerNotifySettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -698,7 +735,7 @@ type AccountResetNotifySettingsArgs struct {
 
 func (p *AccountResetNotifySettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountResetNotifySettingsArgs")
+		return out, fmt.Errorf("no req in AccountResetNotifySettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -714,7 +751,7 @@ func (p *AccountResetNotifySettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountResetNotifySettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountResetNotifySettingsArgs")
+		return fmt.Errorf("no req in AccountResetNotifySettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -754,7 +791,7 @@ var AccountResetNotifySettingsResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountResetNotifySettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountResetNotifySettingsResult")
+		return out, fmt.Errorf("no req in AccountResetNotifySettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -770,7 +807,7 @@ func (p *AccountResetNotifySettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountResetNotifySettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountResetNotifySettingsResult")
+		return fmt.Errorf("no req in AccountResetNotifySettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -778,6 +815,9 @@ func (p *AccountResetNotifySettingsResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountResetNotifySettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -829,7 +869,7 @@ type AccountUpdateDeviceLockedArgs struct {
 
 func (p *AccountUpdateDeviceLockedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateDeviceLockedArgs")
+		return out, fmt.Errorf("no req in AccountUpdateDeviceLockedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -845,7 +885,7 @@ func (p *AccountUpdateDeviceLockedArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateDeviceLockedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateDeviceLockedArgs")
+		return fmt.Errorf("no req in AccountUpdateDeviceLockedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -885,7 +925,7 @@ var AccountUpdateDeviceLockedResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUpdateDeviceLockedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateDeviceLockedResult")
+		return out, fmt.Errorf("no req in AccountUpdateDeviceLockedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -901,7 +941,7 @@ func (p *AccountUpdateDeviceLockedResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateDeviceLockedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateDeviceLockedResult")
+		return fmt.Errorf("no req in AccountUpdateDeviceLockedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -909,6 +949,9 @@ func (p *AccountUpdateDeviceLockedResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountUpdateDeviceLockedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -960,7 +1003,7 @@ type AccountGetNotifyExceptionsArgs struct {
 
 func (p *AccountGetNotifyExceptionsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetNotifyExceptionsArgs")
+		return out, fmt.Errorf("no req in AccountGetNotifyExceptionsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -976,7 +1019,7 @@ func (p *AccountGetNotifyExceptionsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetNotifyExceptionsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetNotifyExceptionsArgs")
+		return fmt.Errorf("no req in AccountGetNotifyExceptionsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1016,7 +1059,7 @@ var AccountGetNotifyExceptionsResult_Success_DEFAULT *tg.Updates
 
 func (p *AccountGetNotifyExceptionsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetNotifyExceptionsResult")
+		return out, fmt.Errorf("no req in AccountGetNotifyExceptionsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1032,7 +1075,7 @@ func (p *AccountGetNotifyExceptionsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetNotifyExceptionsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetNotifyExceptionsResult")
+		return fmt.Errorf("no req in AccountGetNotifyExceptionsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1040,6 +1083,9 @@ func (p *AccountGetNotifyExceptionsResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountGetNotifyExceptionsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1079,97 +1125,83 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountRegisterDevice(ctx context.Context, req *tg.TLAccountRegisterDevice) (r *tg.Bool, err error) {
 	// var _args AccountRegisterDeviceArgs
 	// _args.Req = req
-	// var _result AccountRegisterDeviceResult
+	var _result AccountRegisterDeviceResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.registerDevice", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.registerDevice", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUnregisterDevice(ctx context.Context, req *tg.TLAccountUnregisterDevice) (r *tg.Bool, err error) {
 	// var _args AccountUnregisterDeviceArgs
 	// _args.Req = req
-	// var _result AccountUnregisterDeviceResult
+	var _result AccountUnregisterDeviceResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.unregisterDevice", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.unregisterDevice", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdateNotifySettings(ctx context.Context, req *tg.TLAccountUpdateNotifySettings) (r *tg.Bool, err error) {
 	// var _args AccountUpdateNotifySettingsArgs
 	// _args.Req = req
-	// var _result AccountUpdateNotifySettingsResult
+	var _result AccountUpdateNotifySettingsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateNotifySettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetNotifySettings(ctx context.Context, req *tg.TLAccountGetNotifySettings) (r *tg.PeerNotifySettings, err error) {
 	// var _args AccountGetNotifySettingsArgs
 	// _args.Req = req
-	// var _result AccountGetNotifySettingsResult
+	var _result AccountGetNotifySettingsResult
 
-	_result := new(tg.PeerNotifySettings)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifySettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountResetNotifySettings(ctx context.Context, req *tg.TLAccountResetNotifySettings) (r *tg.Bool, err error) {
 	// var _args AccountResetNotifySettingsArgs
 	// _args.Req = req
-	// var _result AccountResetNotifySettingsResult
+	var _result AccountResetNotifySettingsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.resetNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.resetNotifySettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdateDeviceLocked(ctx context.Context, req *tg.TLAccountUpdateDeviceLocked) (r *tg.Bool, err error) {
 	// var _args AccountUpdateDeviceLockedArgs
 	// _args.Req = req
-	// var _result AccountUpdateDeviceLockedResult
+	var _result AccountUpdateDeviceLockedResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateDeviceLocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateDeviceLocked", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetNotifyExceptions(ctx context.Context, req *tg.TLAccountGetNotifyExceptions) (r *tg.Updates, err error) {
 	// var _args AccountGetNotifyExceptionsArgs
 	// _args.Req = req
-	// var _result AccountGetNotifyExceptionsResult
+	var _result AccountGetNotifyExceptionsResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifyExceptions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifyExceptions", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

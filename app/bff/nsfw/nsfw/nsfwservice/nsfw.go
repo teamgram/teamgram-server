@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCNsfw/account.setContentSettings": kitex.NewMethodInfo(
@@ -139,7 +164,7 @@ type AccountSetContentSettingsArgs struct {
 
 func (p *AccountSetContentSettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetContentSettingsArgs")
+		return out, fmt.Errorf("no req in AccountSetContentSettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -155,7 +180,7 @@ func (p *AccountSetContentSettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetContentSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetContentSettingsArgs")
+		return fmt.Errorf("no req in AccountSetContentSettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -195,7 +220,7 @@ var AccountSetContentSettingsResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSetContentSettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetContentSettingsResult")
+		return out, fmt.Errorf("no req in AccountSetContentSettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -211,7 +236,7 @@ func (p *AccountSetContentSettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetContentSettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetContentSettingsResult")
+		return fmt.Errorf("no req in AccountSetContentSettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -219,6 +244,9 @@ func (p *AccountSetContentSettingsResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountSetContentSettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -270,7 +298,7 @@ type AccountGetContentSettingsArgs struct {
 
 func (p *AccountGetContentSettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetContentSettingsArgs")
+		return out, fmt.Errorf("no req in AccountGetContentSettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -286,7 +314,7 @@ func (p *AccountGetContentSettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetContentSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetContentSettingsArgs")
+		return fmt.Errorf("no req in AccountGetContentSettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -326,7 +354,7 @@ var AccountGetContentSettingsResult_Success_DEFAULT *tg.AccountContentSettings
 
 func (p *AccountGetContentSettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetContentSettingsResult")
+		return out, fmt.Errorf("no req in AccountGetContentSettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -342,7 +370,7 @@ func (p *AccountGetContentSettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetContentSettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetContentSettingsResult")
+		return fmt.Errorf("no req in AccountGetContentSettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -350,6 +378,9 @@ func (p *AccountGetContentSettingsResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountGetContentSettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountContentSettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -389,27 +420,23 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountSetContentSettings(ctx context.Context, req *tg.TLAccountSetContentSettings) (r *tg.Bool, err error) {
 	// var _args AccountSetContentSettingsArgs
 	// _args.Req = req
-	// var _result AccountSetContentSettingsResult
+	var _result AccountSetContentSettingsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.setContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.setContentSettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetContentSettings(ctx context.Context, req *tg.TLAccountGetContentSettings) (r *tg.AccountContentSettings, err error) {
 	// var _args AccountGetContentSettingsArgs
 	// _args.Req = req
-	// var _result AccountGetContentSettingsResult
+	var _result AccountGetContentSettingsResult
 
-	_result := new(tg.AccountContentSettings)
-	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.getContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.getContentSettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

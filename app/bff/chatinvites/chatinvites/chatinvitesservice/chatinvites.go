@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCChatInvites/messages.exportChatInvite": kitex.NewMethodInfo(
@@ -223,7 +248,7 @@ type MessagesExportChatInviteArgs struct {
 
 func (p *MessagesExportChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesExportChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesExportChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -239,7 +264,7 @@ func (p *MessagesExportChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesExportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesExportChatInviteArgs")
+		return fmt.Errorf("no req in MessagesExportChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -279,7 +304,7 @@ var MessagesExportChatInviteResult_Success_DEFAULT *tg.ExportedChatInvite
 
 func (p *MessagesExportChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesExportChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesExportChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -295,7 +320,7 @@ func (p *MessagesExportChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesExportChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesExportChatInviteResult")
+		return fmt.Errorf("no req in MessagesExportChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -303,6 +328,9 @@ func (p *MessagesExportChatInviteResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *MessagesExportChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ExportedChatInvite)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -354,7 +382,7 @@ type MessagesCheckChatInviteArgs struct {
 
 func (p *MessagesCheckChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesCheckChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesCheckChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -370,7 +398,7 @@ func (p *MessagesCheckChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesCheckChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesCheckChatInviteArgs")
+		return fmt.Errorf("no req in MessagesCheckChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -410,7 +438,7 @@ var MessagesCheckChatInviteResult_Success_DEFAULT *tg.ChatInvite
 
 func (p *MessagesCheckChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesCheckChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesCheckChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -426,7 +454,7 @@ func (p *MessagesCheckChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesCheckChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesCheckChatInviteResult")
+		return fmt.Errorf("no req in MessagesCheckChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -434,6 +462,9 @@ func (p *MessagesCheckChatInviteResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *MessagesCheckChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ChatInvite)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -485,7 +516,7 @@ type MessagesImportChatInviteArgs struct {
 
 func (p *MessagesImportChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesImportChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesImportChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -501,7 +532,7 @@ func (p *MessagesImportChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesImportChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesImportChatInviteArgs")
+		return fmt.Errorf("no req in MessagesImportChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -541,7 +572,7 @@ var MessagesImportChatInviteResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesImportChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesImportChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesImportChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -557,7 +588,7 @@ func (p *MessagesImportChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesImportChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesImportChatInviteResult")
+		return fmt.Errorf("no req in MessagesImportChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -565,6 +596,9 @@ func (p *MessagesImportChatInviteResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *MessagesImportChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -616,7 +650,7 @@ type MessagesGetExportedChatInvitesArgs struct {
 
 func (p *MessagesGetExportedChatInvitesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetExportedChatInvitesArgs")
+		return out, fmt.Errorf("no req in MessagesGetExportedChatInvitesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -632,7 +666,7 @@ func (p *MessagesGetExportedChatInvitesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetExportedChatInvitesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetExportedChatInvitesArgs")
+		return fmt.Errorf("no req in MessagesGetExportedChatInvitesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -672,7 +706,7 @@ var MessagesGetExportedChatInvitesResult_Success_DEFAULT *tg.MessagesExportedCha
 
 func (p *MessagesGetExportedChatInvitesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetExportedChatInvitesResult")
+		return out, fmt.Errorf("no req in MessagesGetExportedChatInvitesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -688,7 +722,7 @@ func (p *MessagesGetExportedChatInvitesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetExportedChatInvitesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetExportedChatInvitesResult")
+		return fmt.Errorf("no req in MessagesGetExportedChatInvitesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -696,6 +730,9 @@ func (p *MessagesGetExportedChatInvitesResult) Encode(x *bin.Encoder, layer int3
 
 func (p *MessagesGetExportedChatInvitesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesExportedChatInvites)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -747,7 +784,7 @@ type MessagesGetExportedChatInviteArgs struct {
 
 func (p *MessagesGetExportedChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetExportedChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesGetExportedChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -763,7 +800,7 @@ func (p *MessagesGetExportedChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetExportedChatInviteArgs")
+		return fmt.Errorf("no req in MessagesGetExportedChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -803,7 +840,7 @@ var MessagesGetExportedChatInviteResult_Success_DEFAULT *tg.MessagesExportedChat
 
 func (p *MessagesGetExportedChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetExportedChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesGetExportedChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -819,7 +856,7 @@ func (p *MessagesGetExportedChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetExportedChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetExportedChatInviteResult")
+		return fmt.Errorf("no req in MessagesGetExportedChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -827,6 +864,9 @@ func (p *MessagesGetExportedChatInviteResult) Encode(x *bin.Encoder, layer int32
 
 func (p *MessagesGetExportedChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesExportedChatInvite)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -878,7 +918,7 @@ type MessagesEditExportedChatInviteArgs struct {
 
 func (p *MessagesEditExportedChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditExportedChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesEditExportedChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -894,7 +934,7 @@ func (p *MessagesEditExportedChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditExportedChatInviteArgs")
+		return fmt.Errorf("no req in MessagesEditExportedChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -934,7 +974,7 @@ var MessagesEditExportedChatInviteResult_Success_DEFAULT *tg.MessagesExportedCha
 
 func (p *MessagesEditExportedChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditExportedChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesEditExportedChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -950,7 +990,7 @@ func (p *MessagesEditExportedChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditExportedChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditExportedChatInviteResult")
+		return fmt.Errorf("no req in MessagesEditExportedChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -958,6 +998,9 @@ func (p *MessagesEditExportedChatInviteResult) Encode(x *bin.Encoder, layer int3
 
 func (p *MessagesEditExportedChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesExportedChatInvite)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1009,7 +1052,7 @@ type MessagesDeleteRevokedExportedChatInvitesArgs struct {
 
 func (p *MessagesDeleteRevokedExportedChatInvitesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteRevokedExportedChatInvitesArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteRevokedExportedChatInvitesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1025,7 +1068,7 @@ func (p *MessagesDeleteRevokedExportedChatInvitesArgs) Unmarshal(in []byte) erro
 
 func (p *MessagesDeleteRevokedExportedChatInvitesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteRevokedExportedChatInvitesArgs")
+		return fmt.Errorf("no req in MessagesDeleteRevokedExportedChatInvitesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1065,7 +1108,7 @@ var MessagesDeleteRevokedExportedChatInvitesResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesDeleteRevokedExportedChatInvitesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteRevokedExportedChatInvitesResult")
+		return out, fmt.Errorf("no req in MessagesDeleteRevokedExportedChatInvitesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1081,7 +1124,7 @@ func (p *MessagesDeleteRevokedExportedChatInvitesResult) Unmarshal(in []byte) er
 
 func (p *MessagesDeleteRevokedExportedChatInvitesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteRevokedExportedChatInvitesResult")
+		return fmt.Errorf("no req in MessagesDeleteRevokedExportedChatInvitesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1089,6 +1132,9 @@ func (p *MessagesDeleteRevokedExportedChatInvitesResult) Encode(x *bin.Encoder, 
 
 func (p *MessagesDeleteRevokedExportedChatInvitesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1140,7 +1186,7 @@ type MessagesDeleteExportedChatInviteArgs struct {
 
 func (p *MessagesDeleteExportedChatInviteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteExportedChatInviteArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteExportedChatInviteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1156,7 +1202,7 @@ func (p *MessagesDeleteExportedChatInviteArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteExportedChatInviteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteExportedChatInviteArgs")
+		return fmt.Errorf("no req in MessagesDeleteExportedChatInviteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1196,7 +1242,7 @@ var MessagesDeleteExportedChatInviteResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesDeleteExportedChatInviteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteExportedChatInviteResult")
+		return out, fmt.Errorf("no req in MessagesDeleteExportedChatInviteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1212,7 +1258,7 @@ func (p *MessagesDeleteExportedChatInviteResult) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteExportedChatInviteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteExportedChatInviteResult")
+		return fmt.Errorf("no req in MessagesDeleteExportedChatInviteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1220,6 +1266,9 @@ func (p *MessagesDeleteExportedChatInviteResult) Encode(x *bin.Encoder, layer in
 
 func (p *MessagesDeleteExportedChatInviteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1271,7 +1320,7 @@ type MessagesGetAdminsWithInvitesArgs struct {
 
 func (p *MessagesGetAdminsWithInvitesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetAdminsWithInvitesArgs")
+		return out, fmt.Errorf("no req in MessagesGetAdminsWithInvitesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1287,7 +1336,7 @@ func (p *MessagesGetAdminsWithInvitesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetAdminsWithInvitesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetAdminsWithInvitesArgs")
+		return fmt.Errorf("no req in MessagesGetAdminsWithInvitesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1327,7 +1376,7 @@ var MessagesGetAdminsWithInvitesResult_Success_DEFAULT *tg.MessagesChatAdminsWit
 
 func (p *MessagesGetAdminsWithInvitesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetAdminsWithInvitesResult")
+		return out, fmt.Errorf("no req in MessagesGetAdminsWithInvitesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1343,7 +1392,7 @@ func (p *MessagesGetAdminsWithInvitesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetAdminsWithInvitesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetAdminsWithInvitesResult")
+		return fmt.Errorf("no req in MessagesGetAdminsWithInvitesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1351,6 +1400,9 @@ func (p *MessagesGetAdminsWithInvitesResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetAdminsWithInvitesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesChatAdminsWithInvites)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1402,7 +1454,7 @@ type MessagesGetChatInviteImportersArgs struct {
 
 func (p *MessagesGetChatInviteImportersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetChatInviteImportersArgs")
+		return out, fmt.Errorf("no req in MessagesGetChatInviteImportersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1418,7 +1470,7 @@ func (p *MessagesGetChatInviteImportersArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetChatInviteImportersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetChatInviteImportersArgs")
+		return fmt.Errorf("no req in MessagesGetChatInviteImportersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1458,7 +1510,7 @@ var MessagesGetChatInviteImportersResult_Success_DEFAULT *tg.MessagesChatInviteI
 
 func (p *MessagesGetChatInviteImportersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetChatInviteImportersResult")
+		return out, fmt.Errorf("no req in MessagesGetChatInviteImportersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1474,7 +1526,7 @@ func (p *MessagesGetChatInviteImportersResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetChatInviteImportersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetChatInviteImportersResult")
+		return fmt.Errorf("no req in MessagesGetChatInviteImportersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1482,6 +1534,9 @@ func (p *MessagesGetChatInviteImportersResult) Encode(x *bin.Encoder, layer int3
 
 func (p *MessagesGetChatInviteImportersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesChatInviteImporters)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1533,7 +1588,7 @@ type MessagesHideChatJoinRequestArgs struct {
 
 func (p *MessagesHideChatJoinRequestArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesHideChatJoinRequestArgs")
+		return out, fmt.Errorf("no req in MessagesHideChatJoinRequestArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1549,7 +1604,7 @@ func (p *MessagesHideChatJoinRequestArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesHideChatJoinRequestArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesHideChatJoinRequestArgs")
+		return fmt.Errorf("no req in MessagesHideChatJoinRequestArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1589,7 +1644,7 @@ var MessagesHideChatJoinRequestResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesHideChatJoinRequestResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesHideChatJoinRequestResult")
+		return out, fmt.Errorf("no req in MessagesHideChatJoinRequestResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1605,7 +1660,7 @@ func (p *MessagesHideChatJoinRequestResult) Unmarshal(in []byte) error {
 
 func (p *MessagesHideChatJoinRequestResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesHideChatJoinRequestResult")
+		return fmt.Errorf("no req in MessagesHideChatJoinRequestResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1613,6 +1668,9 @@ func (p *MessagesHideChatJoinRequestResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *MessagesHideChatJoinRequestResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1664,7 +1722,7 @@ type MessagesHideAllChatJoinRequestsArgs struct {
 
 func (p *MessagesHideAllChatJoinRequestsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesHideAllChatJoinRequestsArgs")
+		return out, fmt.Errorf("no req in MessagesHideAllChatJoinRequestsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1680,7 +1738,7 @@ func (p *MessagesHideAllChatJoinRequestsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesHideAllChatJoinRequestsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesHideAllChatJoinRequestsArgs")
+		return fmt.Errorf("no req in MessagesHideAllChatJoinRequestsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1720,7 +1778,7 @@ var MessagesHideAllChatJoinRequestsResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesHideAllChatJoinRequestsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesHideAllChatJoinRequestsResult")
+		return out, fmt.Errorf("no req in MessagesHideAllChatJoinRequestsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1736,7 +1794,7 @@ func (p *MessagesHideAllChatJoinRequestsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesHideAllChatJoinRequestsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesHideAllChatJoinRequestsResult")
+		return fmt.Errorf("no req in MessagesHideAllChatJoinRequestsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1744,6 +1802,9 @@ func (p *MessagesHideAllChatJoinRequestsResult) Encode(x *bin.Encoder, layer int
 
 func (p *MessagesHideAllChatJoinRequestsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1795,7 +1856,7 @@ type ChannelsToggleJoinToSendArgs struct {
 
 func (p *ChannelsToggleJoinToSendArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsToggleJoinToSendArgs")
+		return out, fmt.Errorf("no req in ChannelsToggleJoinToSendArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1811,7 +1872,7 @@ func (p *ChannelsToggleJoinToSendArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsToggleJoinToSendArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsToggleJoinToSendArgs")
+		return fmt.Errorf("no req in ChannelsToggleJoinToSendArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1851,7 +1912,7 @@ var ChannelsToggleJoinToSendResult_Success_DEFAULT *tg.Updates
 
 func (p *ChannelsToggleJoinToSendResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsToggleJoinToSendResult")
+		return out, fmt.Errorf("no req in ChannelsToggleJoinToSendResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1867,7 +1928,7 @@ func (p *ChannelsToggleJoinToSendResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsToggleJoinToSendResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsToggleJoinToSendResult")
+		return fmt.Errorf("no req in ChannelsToggleJoinToSendResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1875,6 +1936,9 @@ func (p *ChannelsToggleJoinToSendResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ChannelsToggleJoinToSendResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1926,7 +1990,7 @@ type ChannelsToggleJoinRequestArgs struct {
 
 func (p *ChannelsToggleJoinRequestArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsToggleJoinRequestArgs")
+		return out, fmt.Errorf("no req in ChannelsToggleJoinRequestArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1942,7 +2006,7 @@ func (p *ChannelsToggleJoinRequestArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsToggleJoinRequestArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsToggleJoinRequestArgs")
+		return fmt.Errorf("no req in ChannelsToggleJoinRequestArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1982,7 +2046,7 @@ var ChannelsToggleJoinRequestResult_Success_DEFAULT *tg.Updates
 
 func (p *ChannelsToggleJoinRequestResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsToggleJoinRequestResult")
+		return out, fmt.Errorf("no req in ChannelsToggleJoinRequestResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1998,7 +2062,7 @@ func (p *ChannelsToggleJoinRequestResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsToggleJoinRequestResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsToggleJoinRequestResult")
+		return fmt.Errorf("no req in ChannelsToggleJoinRequestResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2006,6 +2070,9 @@ func (p *ChannelsToggleJoinRequestResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *ChannelsToggleJoinRequestResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2045,195 +2112,167 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MessagesExportChatInvite(ctx context.Context, req *tg.TLMessagesExportChatInvite) (r *tg.ExportedChatInvite, err error) {
 	// var _args MessagesExportChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesExportChatInviteResult
+	var _result MessagesExportChatInviteResult
 
-	_result := new(tg.ExportedChatInvite)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.exportChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.exportChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesCheckChatInvite(ctx context.Context, req *tg.TLMessagesCheckChatInvite) (r *tg.ChatInvite, err error) {
 	// var _args MessagesCheckChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesCheckChatInviteResult
+	var _result MessagesCheckChatInviteResult
 
-	_result := new(tg.ChatInvite)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.checkChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.checkChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesImportChatInvite(ctx context.Context, req *tg.TLMessagesImportChatInvite) (r *tg.Updates, err error) {
 	// var _args MessagesImportChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesImportChatInviteResult
+	var _result MessagesImportChatInviteResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.importChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.importChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetExportedChatInvites(ctx context.Context, req *tg.TLMessagesGetExportedChatInvites) (r *tg.MessagesExportedChatInvites, err error) {
 	// var _args MessagesGetExportedChatInvitesArgs
 	// _args.Req = req
-	// var _result MessagesGetExportedChatInvitesResult
+	var _result MessagesGetExportedChatInvitesResult
 
-	_result := new(tg.MessagesExportedChatInvites)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvites", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetExportedChatInvite(ctx context.Context, req *tg.TLMessagesGetExportedChatInvite) (r *tg.MessagesExportedChatInvite, err error) {
 	// var _args MessagesGetExportedChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesGetExportedChatInviteResult
+	var _result MessagesGetExportedChatInviteResult
 
-	_result := new(tg.MessagesExportedChatInvite)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditExportedChatInvite(ctx context.Context, req *tg.TLMessagesEditExportedChatInvite) (r *tg.MessagesExportedChatInvite, err error) {
 	// var _args MessagesEditExportedChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesEditExportedChatInviteResult
+	var _result MessagesEditExportedChatInviteResult
 
-	_result := new(tg.MessagesExportedChatInvite)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.editExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.editExportedChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesDeleteRevokedExportedChatInvites(ctx context.Context, req *tg.TLMessagesDeleteRevokedExportedChatInvites) (r *tg.Bool, err error) {
 	// var _args MessagesDeleteRevokedExportedChatInvitesArgs
 	// _args.Req = req
-	// var _result MessagesDeleteRevokedExportedChatInvitesResult
+	var _result MessagesDeleteRevokedExportedChatInvitesResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteRevokedExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteRevokedExportedChatInvites", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesDeleteExportedChatInvite(ctx context.Context, req *tg.TLMessagesDeleteExportedChatInvite) (r *tg.Bool, err error) {
 	// var _args MessagesDeleteExportedChatInviteArgs
 	// _args.Req = req
-	// var _result MessagesDeleteExportedChatInviteResult
+	var _result MessagesDeleteExportedChatInviteResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteExportedChatInvite", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetAdminsWithInvites(ctx context.Context, req *tg.TLMessagesGetAdminsWithInvites) (r *tg.MessagesChatAdminsWithInvites, err error) {
 	// var _args MessagesGetAdminsWithInvitesArgs
 	// _args.Req = req
-	// var _result MessagesGetAdminsWithInvitesResult
+	var _result MessagesGetAdminsWithInvitesResult
 
-	_result := new(tg.MessagesChatAdminsWithInvites)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getAdminsWithInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getAdminsWithInvites", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetChatInviteImporters(ctx context.Context, req *tg.TLMessagesGetChatInviteImporters) (r *tg.MessagesChatInviteImporters, err error) {
 	// var _args MessagesGetChatInviteImportersArgs
 	// _args.Req = req
-	// var _result MessagesGetChatInviteImportersResult
+	var _result MessagesGetChatInviteImportersResult
 
-	_result := new(tg.MessagesChatInviteImporters)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getChatInviteImporters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getChatInviteImporters", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesHideChatJoinRequest(ctx context.Context, req *tg.TLMessagesHideChatJoinRequest) (r *tg.Updates, err error) {
 	// var _args MessagesHideChatJoinRequestArgs
 	// _args.Req = req
-	// var _result MessagesHideChatJoinRequestResult
+	var _result MessagesHideChatJoinRequestResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideChatJoinRequest", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideChatJoinRequest", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesHideAllChatJoinRequests(ctx context.Context, req *tg.TLMessagesHideAllChatJoinRequests) (r *tg.Updates, err error) {
 	// var _args MessagesHideAllChatJoinRequestsArgs
 	// _args.Req = req
-	// var _result MessagesHideAllChatJoinRequestsResult
+	var _result MessagesHideAllChatJoinRequestsResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideAllChatJoinRequests", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideAllChatJoinRequests", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsToggleJoinToSend(ctx context.Context, req *tg.TLChannelsToggleJoinToSend) (r *tg.Updates, err error) {
 	// var _args ChannelsToggleJoinToSendArgs
 	// _args.Req = req
-	// var _result ChannelsToggleJoinToSendResult
+	var _result ChannelsToggleJoinToSendResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinToSend", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinToSend", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsToggleJoinRequest(ctx context.Context, req *tg.TLChannelsToggleJoinRequest) (r *tg.Updates, err error) {
 	// var _args ChannelsToggleJoinRequestArgs
 	// _args.Req = req
-	// var _result ChannelsToggleJoinRequestResult
+	var _result ChannelsToggleJoinRequestResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinRequest", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinRequest", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

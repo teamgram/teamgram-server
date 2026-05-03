@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCPassport/account.getAuthorizations": kitex.NewMethodInfo(
@@ -202,7 +227,7 @@ type AccountGetAuthorizationsArgs struct {
 
 func (p *AccountGetAuthorizationsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetAuthorizationsArgs")
+		return out, fmt.Errorf("no req in AccountGetAuthorizationsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -218,7 +243,7 @@ func (p *AccountGetAuthorizationsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetAuthorizationsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetAuthorizationsArgs")
+		return fmt.Errorf("no req in AccountGetAuthorizationsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -258,7 +283,7 @@ var AccountGetAuthorizationsResult_Success_DEFAULT *tg.AccountAuthorizations
 
 func (p *AccountGetAuthorizationsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetAuthorizationsResult")
+		return out, fmt.Errorf("no req in AccountGetAuthorizationsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -274,7 +299,7 @@ func (p *AccountGetAuthorizationsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetAuthorizationsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetAuthorizationsResult")
+		return fmt.Errorf("no req in AccountGetAuthorizationsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -282,6 +307,9 @@ func (p *AccountGetAuthorizationsResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountGetAuthorizationsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountAuthorizations)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -333,7 +361,7 @@ type AccountGetAllSecureValuesArgs struct {
 
 func (p *AccountGetAllSecureValuesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetAllSecureValuesArgs")
+		return out, fmt.Errorf("no req in AccountGetAllSecureValuesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -349,7 +377,7 @@ func (p *AccountGetAllSecureValuesArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetAllSecureValuesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetAllSecureValuesArgs")
+		return fmt.Errorf("no req in AccountGetAllSecureValuesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -389,7 +417,7 @@ var AccountGetAllSecureValuesResult_Success_DEFAULT *tg.VectorSecureValue
 
 func (p *AccountGetAllSecureValuesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetAllSecureValuesResult")
+		return out, fmt.Errorf("no req in AccountGetAllSecureValuesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -405,7 +433,7 @@ func (p *AccountGetAllSecureValuesResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetAllSecureValuesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetAllSecureValuesResult")
+		return fmt.Errorf("no req in AccountGetAllSecureValuesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -413,6 +441,9 @@ func (p *AccountGetAllSecureValuesResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountGetAllSecureValuesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorSecureValue)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -464,7 +495,7 @@ type AccountGetSecureValueArgs struct {
 
 func (p *AccountGetSecureValueArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetSecureValueArgs")
+		return out, fmt.Errorf("no req in AccountGetSecureValueArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -480,7 +511,7 @@ func (p *AccountGetSecureValueArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetSecureValueArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetSecureValueArgs")
+		return fmt.Errorf("no req in AccountGetSecureValueArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -520,7 +551,7 @@ var AccountGetSecureValueResult_Success_DEFAULT *tg.VectorSecureValue
 
 func (p *AccountGetSecureValueResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetSecureValueResult")
+		return out, fmt.Errorf("no req in AccountGetSecureValueResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -536,7 +567,7 @@ func (p *AccountGetSecureValueResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetSecureValueResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetSecureValueResult")
+		return fmt.Errorf("no req in AccountGetSecureValueResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -544,6 +575,9 @@ func (p *AccountGetSecureValueResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountGetSecureValueResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorSecureValue)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -595,7 +629,7 @@ type AccountSaveSecureValueArgs struct {
 
 func (p *AccountSaveSecureValueArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSaveSecureValueArgs")
+		return out, fmt.Errorf("no req in AccountSaveSecureValueArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -611,7 +645,7 @@ func (p *AccountSaveSecureValueArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSaveSecureValueArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSaveSecureValueArgs")
+		return fmt.Errorf("no req in AccountSaveSecureValueArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -651,7 +685,7 @@ var AccountSaveSecureValueResult_Success_DEFAULT *tg.SecureValue
 
 func (p *AccountSaveSecureValueResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSaveSecureValueResult")
+		return out, fmt.Errorf("no req in AccountSaveSecureValueResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -667,7 +701,7 @@ func (p *AccountSaveSecureValueResult) Unmarshal(in []byte) error {
 
 func (p *AccountSaveSecureValueResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSaveSecureValueResult")
+		return fmt.Errorf("no req in AccountSaveSecureValueResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -675,6 +709,9 @@ func (p *AccountSaveSecureValueResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *AccountSaveSecureValueResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.SecureValue)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -726,7 +763,7 @@ type AccountDeleteSecureValueArgs struct {
 
 func (p *AccountDeleteSecureValueArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountDeleteSecureValueArgs")
+		return out, fmt.Errorf("no req in AccountDeleteSecureValueArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -742,7 +779,7 @@ func (p *AccountDeleteSecureValueArgs) Unmarshal(in []byte) error {
 
 func (p *AccountDeleteSecureValueArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountDeleteSecureValueArgs")
+		return fmt.Errorf("no req in AccountDeleteSecureValueArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -782,7 +819,7 @@ var AccountDeleteSecureValueResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountDeleteSecureValueResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountDeleteSecureValueResult")
+		return out, fmt.Errorf("no req in AccountDeleteSecureValueResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -798,7 +835,7 @@ func (p *AccountDeleteSecureValueResult) Unmarshal(in []byte) error {
 
 func (p *AccountDeleteSecureValueResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountDeleteSecureValueResult")
+		return fmt.Errorf("no req in AccountDeleteSecureValueResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -806,6 +843,9 @@ func (p *AccountDeleteSecureValueResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountDeleteSecureValueResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -857,7 +897,7 @@ type AccountGetAuthorizationFormArgs struct {
 
 func (p *AccountGetAuthorizationFormArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetAuthorizationFormArgs")
+		return out, fmt.Errorf("no req in AccountGetAuthorizationFormArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -873,7 +913,7 @@ func (p *AccountGetAuthorizationFormArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetAuthorizationFormArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetAuthorizationFormArgs")
+		return fmt.Errorf("no req in AccountGetAuthorizationFormArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -913,7 +953,7 @@ var AccountGetAuthorizationFormResult_Success_DEFAULT *tg.AccountAuthorizationFo
 
 func (p *AccountGetAuthorizationFormResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetAuthorizationFormResult")
+		return out, fmt.Errorf("no req in AccountGetAuthorizationFormResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -929,7 +969,7 @@ func (p *AccountGetAuthorizationFormResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetAuthorizationFormResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetAuthorizationFormResult")
+		return fmt.Errorf("no req in AccountGetAuthorizationFormResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -937,6 +977,9 @@ func (p *AccountGetAuthorizationFormResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *AccountGetAuthorizationFormResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountAuthorizationForm)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -988,7 +1031,7 @@ type AccountAcceptAuthorizationArgs struct {
 
 func (p *AccountAcceptAuthorizationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountAcceptAuthorizationArgs")
+		return out, fmt.Errorf("no req in AccountAcceptAuthorizationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1004,7 +1047,7 @@ func (p *AccountAcceptAuthorizationArgs) Unmarshal(in []byte) error {
 
 func (p *AccountAcceptAuthorizationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountAcceptAuthorizationArgs")
+		return fmt.Errorf("no req in AccountAcceptAuthorizationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1044,7 +1087,7 @@ var AccountAcceptAuthorizationResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountAcceptAuthorizationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountAcceptAuthorizationResult")
+		return out, fmt.Errorf("no req in AccountAcceptAuthorizationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1060,7 +1103,7 @@ func (p *AccountAcceptAuthorizationResult) Unmarshal(in []byte) error {
 
 func (p *AccountAcceptAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountAcceptAuthorizationResult")
+		return fmt.Errorf("no req in AccountAcceptAuthorizationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1068,6 +1111,9 @@ func (p *AccountAcceptAuthorizationResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountAcceptAuthorizationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1119,7 +1165,7 @@ type AccountSendVerifyPhoneCodeArgs struct {
 
 func (p *AccountSendVerifyPhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSendVerifyPhoneCodeArgs")
+		return out, fmt.Errorf("no req in AccountSendVerifyPhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1135,7 +1181,7 @@ func (p *AccountSendVerifyPhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSendVerifyPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSendVerifyPhoneCodeArgs")
+		return fmt.Errorf("no req in AccountSendVerifyPhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1175,7 +1221,7 @@ var AccountSendVerifyPhoneCodeResult_Success_DEFAULT *tg.AuthSentCode
 
 func (p *AccountSendVerifyPhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSendVerifyPhoneCodeResult")
+		return out, fmt.Errorf("no req in AccountSendVerifyPhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1191,7 +1237,7 @@ func (p *AccountSendVerifyPhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *AccountSendVerifyPhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSendVerifyPhoneCodeResult")
+		return fmt.Errorf("no req in AccountSendVerifyPhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1199,6 +1245,9 @@ func (p *AccountSendVerifyPhoneCodeResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountSendVerifyPhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthSentCode)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1250,7 +1299,7 @@ type AccountVerifyPhoneArgs struct {
 
 func (p *AccountVerifyPhoneArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountVerifyPhoneArgs")
+		return out, fmt.Errorf("no req in AccountVerifyPhoneArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1266,7 +1315,7 @@ func (p *AccountVerifyPhoneArgs) Unmarshal(in []byte) error {
 
 func (p *AccountVerifyPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountVerifyPhoneArgs")
+		return fmt.Errorf("no req in AccountVerifyPhoneArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1306,7 +1355,7 @@ var AccountVerifyPhoneResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountVerifyPhoneResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountVerifyPhoneResult")
+		return out, fmt.Errorf("no req in AccountVerifyPhoneResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1322,7 +1371,7 @@ func (p *AccountVerifyPhoneResult) Unmarshal(in []byte) error {
 
 func (p *AccountVerifyPhoneResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountVerifyPhoneResult")
+		return fmt.Errorf("no req in AccountVerifyPhoneResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1330,6 +1379,9 @@ func (p *AccountVerifyPhoneResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountVerifyPhoneResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1381,7 +1433,7 @@ type UsersSetSecureValueErrorsArgs struct {
 
 func (p *UsersSetSecureValueErrorsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersSetSecureValueErrorsArgs")
+		return out, fmt.Errorf("no req in UsersSetSecureValueErrorsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1397,7 +1449,7 @@ func (p *UsersSetSecureValueErrorsArgs) Unmarshal(in []byte) error {
 
 func (p *UsersSetSecureValueErrorsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersSetSecureValueErrorsArgs")
+		return fmt.Errorf("no req in UsersSetSecureValueErrorsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1437,7 +1489,7 @@ var UsersSetSecureValueErrorsResult_Success_DEFAULT *tg.Bool
 
 func (p *UsersSetSecureValueErrorsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersSetSecureValueErrorsResult")
+		return out, fmt.Errorf("no req in UsersSetSecureValueErrorsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1453,7 +1505,7 @@ func (p *UsersSetSecureValueErrorsResult) Unmarshal(in []byte) error {
 
 func (p *UsersSetSecureValueErrorsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersSetSecureValueErrorsResult")
+		return fmt.Errorf("no req in UsersSetSecureValueErrorsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1461,6 +1513,9 @@ func (p *UsersSetSecureValueErrorsResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *UsersSetSecureValueErrorsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1512,7 +1567,7 @@ type HelpGetPassportConfigArgs struct {
 
 func (p *HelpGetPassportConfigArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetPassportConfigArgs")
+		return out, fmt.Errorf("no req in HelpGetPassportConfigArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1528,7 +1583,7 @@ func (p *HelpGetPassportConfigArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetPassportConfigArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetPassportConfigArgs")
+		return fmt.Errorf("no req in HelpGetPassportConfigArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1568,7 +1623,7 @@ var HelpGetPassportConfigResult_Success_DEFAULT *tg.HelpPassportConfig
 
 func (p *HelpGetPassportConfigResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetPassportConfigResult")
+		return out, fmt.Errorf("no req in HelpGetPassportConfigResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1584,7 +1639,7 @@ func (p *HelpGetPassportConfigResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetPassportConfigResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetPassportConfigResult")
+		return fmt.Errorf("no req in HelpGetPassportConfigResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1592,6 +1647,9 @@ func (p *HelpGetPassportConfigResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *HelpGetPassportConfigResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpPassportConfig)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1631,153 +1689,131 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountGetAuthorizations(ctx context.Context, req *tg.TLAccountGetAuthorizations) (r *tg.AccountAuthorizations, err error) {
 	// var _args AccountGetAuthorizationsArgs
 	// _args.Req = req
-	// var _result AccountGetAuthorizationsResult
+	var _result AccountGetAuthorizationsResult
 
-	_result := new(tg.AccountAuthorizations)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizations", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetAllSecureValues(ctx context.Context, req *tg.TLAccountGetAllSecureValues) (r *tg.VectorSecureValue, err error) {
 	// var _args AccountGetAllSecureValuesArgs
 	// _args.Req = req
-	// var _result AccountGetAllSecureValuesResult
+	var _result AccountGetAllSecureValuesResult
 
-	_result := new(tg.VectorSecureValue)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAllSecureValues", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAllSecureValues", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetSecureValue(ctx context.Context, req *tg.TLAccountGetSecureValue) (r *tg.VectorSecureValue, err error) {
 	// var _args AccountGetSecureValueArgs
 	// _args.Req = req
-	// var _result AccountGetSecureValueResult
+	var _result AccountGetSecureValueResult
 
-	_result := new(tg.VectorSecureValue)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getSecureValue", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSaveSecureValue(ctx context.Context, req *tg.TLAccountSaveSecureValue) (r *tg.SecureValue, err error) {
 	// var _args AccountSaveSecureValueArgs
 	// _args.Req = req
-	// var _result AccountSaveSecureValueResult
+	var _result AccountSaveSecureValueResult
 
-	_result := new(tg.SecureValue)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.saveSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.saveSecureValue", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountDeleteSecureValue(ctx context.Context, req *tg.TLAccountDeleteSecureValue) (r *tg.Bool, err error) {
 	// var _args AccountDeleteSecureValueArgs
 	// _args.Req = req
-	// var _result AccountDeleteSecureValueResult
+	var _result AccountDeleteSecureValueResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.deleteSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.deleteSecureValue", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetAuthorizationForm(ctx context.Context, req *tg.TLAccountGetAuthorizationForm) (r *tg.AccountAuthorizationForm, err error) {
 	// var _args AccountGetAuthorizationFormArgs
 	// _args.Req = req
-	// var _result AccountGetAuthorizationFormResult
+	var _result AccountGetAuthorizationFormResult
 
-	_result := new(tg.AccountAuthorizationForm)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizationForm", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizationForm", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountAcceptAuthorization(ctx context.Context, req *tg.TLAccountAcceptAuthorization) (r *tg.Bool, err error) {
 	// var _args AccountAcceptAuthorizationArgs
 	// _args.Req = req
-	// var _result AccountAcceptAuthorizationResult
+	var _result AccountAcceptAuthorizationResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.acceptAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.acceptAuthorization", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSendVerifyPhoneCode(ctx context.Context, req *tg.TLAccountSendVerifyPhoneCode) (r *tg.AuthSentCode, err error) {
 	// var _args AccountSendVerifyPhoneCodeArgs
 	// _args.Req = req
-	// var _result AccountSendVerifyPhoneCodeResult
+	var _result AccountSendVerifyPhoneCodeResult
 
-	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.sendVerifyPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.sendVerifyPhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountVerifyPhone(ctx context.Context, req *tg.TLAccountVerifyPhone) (r *tg.Bool, err error) {
 	// var _args AccountVerifyPhoneArgs
 	// _args.Req = req
-	// var _result AccountVerifyPhoneResult
+	var _result AccountVerifyPhoneResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/account.verifyPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.verifyPhone", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersSetSecureValueErrors(ctx context.Context, req *tg.TLUsersSetSecureValueErrors) (r *tg.Bool, err error) {
 	// var _args UsersSetSecureValueErrorsArgs
 	// _args.Req = req
-	// var _result UsersSetSecureValueErrorsResult
+	var _result UsersSetSecureValueErrorsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/users.setSecureValueErrors", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/users.setSecureValueErrors", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetPassportConfig(ctx context.Context, req *tg.TLHelpGetPassportConfig) (r *tg.HelpPassportConfig, err error) {
 	// var _args HelpGetPassportConfigArgs
 	// _args.Req = req
-	// var _result HelpGetPassportConfigResult
+	var _result HelpGetPassportConfigResult
 
-	_result := new(tg.HelpPassportConfig)
-	if err = p.c.Call(ctx, "/tg.RPCPassport/help.getPassportConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/help.getPassportConfig", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

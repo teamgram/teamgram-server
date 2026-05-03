@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCDrafts/messages.saveDraft": kitex.NewMethodInfo(
@@ -146,7 +171,7 @@ type MessagesSaveDraftArgs struct {
 
 func (p *MessagesSaveDraftArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSaveDraftArgs")
+		return out, fmt.Errorf("no req in MessagesSaveDraftArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -162,7 +187,7 @@ func (p *MessagesSaveDraftArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSaveDraftArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSaveDraftArgs")
+		return fmt.Errorf("no req in MessagesSaveDraftArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -202,7 +227,7 @@ var MessagesSaveDraftResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesSaveDraftResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSaveDraftResult")
+		return out, fmt.Errorf("no req in MessagesSaveDraftResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -218,7 +243,7 @@ func (p *MessagesSaveDraftResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSaveDraftResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSaveDraftResult")
+		return fmt.Errorf("no req in MessagesSaveDraftResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -226,6 +251,9 @@ func (p *MessagesSaveDraftResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesSaveDraftResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -277,7 +305,7 @@ type MessagesGetAllDraftsArgs struct {
 
 func (p *MessagesGetAllDraftsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetAllDraftsArgs")
+		return out, fmt.Errorf("no req in MessagesGetAllDraftsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -293,7 +321,7 @@ func (p *MessagesGetAllDraftsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetAllDraftsArgs")
+		return fmt.Errorf("no req in MessagesGetAllDraftsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -333,7 +361,7 @@ var MessagesGetAllDraftsResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesGetAllDraftsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetAllDraftsResult")
+		return out, fmt.Errorf("no req in MessagesGetAllDraftsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -349,7 +377,7 @@ func (p *MessagesGetAllDraftsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetAllDraftsResult")
+		return fmt.Errorf("no req in MessagesGetAllDraftsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -357,6 +385,9 @@ func (p *MessagesGetAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetAllDraftsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -408,7 +439,7 @@ type MessagesClearAllDraftsArgs struct {
 
 func (p *MessagesClearAllDraftsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesClearAllDraftsArgs")
+		return out, fmt.Errorf("no req in MessagesClearAllDraftsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -424,7 +455,7 @@ func (p *MessagesClearAllDraftsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesClearAllDraftsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesClearAllDraftsArgs")
+		return fmt.Errorf("no req in MessagesClearAllDraftsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -464,7 +495,7 @@ var MessagesClearAllDraftsResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesClearAllDraftsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesClearAllDraftsResult")
+		return out, fmt.Errorf("no req in MessagesClearAllDraftsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -480,7 +511,7 @@ func (p *MessagesClearAllDraftsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesClearAllDraftsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesClearAllDraftsResult")
+		return fmt.Errorf("no req in MessagesClearAllDraftsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -488,6 +519,9 @@ func (p *MessagesClearAllDraftsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesClearAllDraftsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -527,41 +561,35 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MessagesSaveDraft(ctx context.Context, req *tg.TLMessagesSaveDraft) (r *tg.Bool, err error) {
 	// var _args MessagesSaveDraftArgs
 	// _args.Req = req
-	// var _result MessagesSaveDraftResult
+	var _result MessagesSaveDraftResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.saveDraft", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.saveDraft", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetAllDrafts(ctx context.Context, req *tg.TLMessagesGetAllDrafts) (r *tg.Updates, err error) {
 	// var _args MessagesGetAllDraftsArgs
 	// _args.Req = req
-	// var _result MessagesGetAllDraftsResult
+	var _result MessagesGetAllDraftsResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.getAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.getAllDrafts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesClearAllDrafts(ctx context.Context, req *tg.TLMessagesClearAllDrafts) (r *tg.Bool, err error) {
 	// var _args MessagesClearAllDraftsArgs
 	// _args.Req = req
-	// var _result MessagesClearAllDraftsResult
+	var _result MessagesClearAllDraftsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.clearAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.clearAllDrafts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

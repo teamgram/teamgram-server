@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCAccount/account.deleteAccount": kitex.NewMethodInfo(
@@ -181,7 +206,7 @@ type AccountDeleteAccountArgs struct {
 
 func (p *AccountDeleteAccountArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountDeleteAccountArgs")
+		return out, fmt.Errorf("no req in AccountDeleteAccountArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -197,7 +222,7 @@ func (p *AccountDeleteAccountArgs) Unmarshal(in []byte) error {
 
 func (p *AccountDeleteAccountArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountDeleteAccountArgs")
+		return fmt.Errorf("no req in AccountDeleteAccountArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -237,7 +262,7 @@ var AccountDeleteAccountResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountDeleteAccountResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountDeleteAccountResult")
+		return out, fmt.Errorf("no req in AccountDeleteAccountResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -253,7 +278,7 @@ func (p *AccountDeleteAccountResult) Unmarshal(in []byte) error {
 
 func (p *AccountDeleteAccountResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountDeleteAccountResult")
+		return fmt.Errorf("no req in AccountDeleteAccountResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -261,6 +286,9 @@ func (p *AccountDeleteAccountResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountDeleteAccountResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -312,7 +340,7 @@ type AccountGetAccountTTLArgs struct {
 
 func (p *AccountGetAccountTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetAccountTTLArgs")
+		return out, fmt.Errorf("no req in AccountGetAccountTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -328,7 +356,7 @@ func (p *AccountGetAccountTTLArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetAccountTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetAccountTTLArgs")
+		return fmt.Errorf("no req in AccountGetAccountTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -368,7 +396,7 @@ var AccountGetAccountTTLResult_Success_DEFAULT *tg.AccountDaysTTL
 
 func (p *AccountGetAccountTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetAccountTTLResult")
+		return out, fmt.Errorf("no req in AccountGetAccountTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -384,7 +412,7 @@ func (p *AccountGetAccountTTLResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetAccountTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetAccountTTLResult")
+		return fmt.Errorf("no req in AccountGetAccountTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -392,6 +420,9 @@ func (p *AccountGetAccountTTLResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountGetAccountTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountDaysTTL)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -443,7 +474,7 @@ type AccountSetAccountTTLArgs struct {
 
 func (p *AccountSetAccountTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetAccountTTLArgs")
+		return out, fmt.Errorf("no req in AccountSetAccountTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -459,7 +490,7 @@ func (p *AccountSetAccountTTLArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetAccountTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetAccountTTLArgs")
+		return fmt.Errorf("no req in AccountSetAccountTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -499,7 +530,7 @@ var AccountSetAccountTTLResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSetAccountTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetAccountTTLResult")
+		return out, fmt.Errorf("no req in AccountSetAccountTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -515,7 +546,7 @@ func (p *AccountSetAccountTTLResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetAccountTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetAccountTTLResult")
+		return fmt.Errorf("no req in AccountSetAccountTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -523,6 +554,9 @@ func (p *AccountSetAccountTTLResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSetAccountTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -574,7 +608,7 @@ type AccountSendChangePhoneCodeArgs struct {
 
 func (p *AccountSendChangePhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSendChangePhoneCodeArgs")
+		return out, fmt.Errorf("no req in AccountSendChangePhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -590,7 +624,7 @@ func (p *AccountSendChangePhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSendChangePhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSendChangePhoneCodeArgs")
+		return fmt.Errorf("no req in AccountSendChangePhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -630,7 +664,7 @@ var AccountSendChangePhoneCodeResult_Success_DEFAULT *tg.AuthSentCode
 
 func (p *AccountSendChangePhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSendChangePhoneCodeResult")
+		return out, fmt.Errorf("no req in AccountSendChangePhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -646,7 +680,7 @@ func (p *AccountSendChangePhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *AccountSendChangePhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSendChangePhoneCodeResult")
+		return fmt.Errorf("no req in AccountSendChangePhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -654,6 +688,9 @@ func (p *AccountSendChangePhoneCodeResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *AccountSendChangePhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthSentCode)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -705,7 +742,7 @@ type AccountChangePhoneArgs struct {
 
 func (p *AccountChangePhoneArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountChangePhoneArgs")
+		return out, fmt.Errorf("no req in AccountChangePhoneArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -721,7 +758,7 @@ func (p *AccountChangePhoneArgs) Unmarshal(in []byte) error {
 
 func (p *AccountChangePhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountChangePhoneArgs")
+		return fmt.Errorf("no req in AccountChangePhoneArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -761,7 +798,7 @@ var AccountChangePhoneResult_Success_DEFAULT *tg.User
 
 func (p *AccountChangePhoneResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountChangePhoneResult")
+		return out, fmt.Errorf("no req in AccountChangePhoneResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -777,7 +814,7 @@ func (p *AccountChangePhoneResult) Unmarshal(in []byte) error {
 
 func (p *AccountChangePhoneResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountChangePhoneResult")
+		return fmt.Errorf("no req in AccountChangePhoneResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -785,6 +822,9 @@ func (p *AccountChangePhoneResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountChangePhoneResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.User)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -836,7 +876,7 @@ type AccountResetAuthorizationArgs struct {
 
 func (p *AccountResetAuthorizationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountResetAuthorizationArgs")
+		return out, fmt.Errorf("no req in AccountResetAuthorizationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -852,7 +892,7 @@ func (p *AccountResetAuthorizationArgs) Unmarshal(in []byte) error {
 
 func (p *AccountResetAuthorizationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountResetAuthorizationArgs")
+		return fmt.Errorf("no req in AccountResetAuthorizationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -892,7 +932,7 @@ var AccountResetAuthorizationResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountResetAuthorizationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountResetAuthorizationResult")
+		return out, fmt.Errorf("no req in AccountResetAuthorizationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -908,7 +948,7 @@ func (p *AccountResetAuthorizationResult) Unmarshal(in []byte) error {
 
 func (p *AccountResetAuthorizationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountResetAuthorizationResult")
+		return fmt.Errorf("no req in AccountResetAuthorizationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -916,6 +956,9 @@ func (p *AccountResetAuthorizationResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *AccountResetAuthorizationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -967,7 +1010,7 @@ type AccountSendConfirmPhoneCodeArgs struct {
 
 func (p *AccountSendConfirmPhoneCodeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSendConfirmPhoneCodeArgs")
+		return out, fmt.Errorf("no req in AccountSendConfirmPhoneCodeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -983,7 +1026,7 @@ func (p *AccountSendConfirmPhoneCodeArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSendConfirmPhoneCodeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSendConfirmPhoneCodeArgs")
+		return fmt.Errorf("no req in AccountSendConfirmPhoneCodeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1023,7 +1066,7 @@ var AccountSendConfirmPhoneCodeResult_Success_DEFAULT *tg.AuthSentCode
 
 func (p *AccountSendConfirmPhoneCodeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSendConfirmPhoneCodeResult")
+		return out, fmt.Errorf("no req in AccountSendConfirmPhoneCodeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1039,7 +1082,7 @@ func (p *AccountSendConfirmPhoneCodeResult) Unmarshal(in []byte) error {
 
 func (p *AccountSendConfirmPhoneCodeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSendConfirmPhoneCodeResult")
+		return fmt.Errorf("no req in AccountSendConfirmPhoneCodeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1047,6 +1090,9 @@ func (p *AccountSendConfirmPhoneCodeResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *AccountSendConfirmPhoneCodeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthSentCode)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1098,7 +1144,7 @@ type AccountConfirmPhoneArgs struct {
 
 func (p *AccountConfirmPhoneArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountConfirmPhoneArgs")
+		return out, fmt.Errorf("no req in AccountConfirmPhoneArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1114,7 +1160,7 @@ func (p *AccountConfirmPhoneArgs) Unmarshal(in []byte) error {
 
 func (p *AccountConfirmPhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountConfirmPhoneArgs")
+		return fmt.Errorf("no req in AccountConfirmPhoneArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1154,7 +1200,7 @@ var AccountConfirmPhoneResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountConfirmPhoneResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountConfirmPhoneResult")
+		return out, fmt.Errorf("no req in AccountConfirmPhoneResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1170,7 +1216,7 @@ func (p *AccountConfirmPhoneResult) Unmarshal(in []byte) error {
 
 func (p *AccountConfirmPhoneResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountConfirmPhoneResult")
+		return fmt.Errorf("no req in AccountConfirmPhoneResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1178,6 +1224,9 @@ func (p *AccountConfirmPhoneResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountConfirmPhoneResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1217,111 +1266,95 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountDeleteAccount(ctx context.Context, req *tg.TLAccountDeleteAccount) (r *tg.Bool, err error) {
 	// var _args AccountDeleteAccountArgs
 	// _args.Req = req
-	// var _result AccountDeleteAccountResult
+	var _result AccountDeleteAccountResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.deleteAccount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.deleteAccount", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetAccountTTL(ctx context.Context, req *tg.TLAccountGetAccountTTL) (r *tg.AccountDaysTTL, err error) {
 	// var _args AccountGetAccountTTLArgs
 	// _args.Req = req
-	// var _result AccountGetAccountTTLResult
+	var _result AccountGetAccountTTLResult
 
-	_result := new(tg.AccountDaysTTL)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.getAccountTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.getAccountTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSetAccountTTL(ctx context.Context, req *tg.TLAccountSetAccountTTL) (r *tg.Bool, err error) {
 	// var _args AccountSetAccountTTLArgs
 	// _args.Req = req
-	// var _result AccountSetAccountTTLResult
+	var _result AccountSetAccountTTLResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.setAccountTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.setAccountTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSendChangePhoneCode(ctx context.Context, req *tg.TLAccountSendChangePhoneCode) (r *tg.AuthSentCode, err error) {
 	// var _args AccountSendChangePhoneCodeArgs
 	// _args.Req = req
-	// var _result AccountSendChangePhoneCodeResult
+	var _result AccountSendChangePhoneCodeResult
 
-	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendChangePhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendChangePhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountChangePhone(ctx context.Context, req *tg.TLAccountChangePhone) (r *tg.User, err error) {
 	// var _args AccountChangePhoneArgs
 	// _args.Req = req
-	// var _result AccountChangePhoneResult
+	var _result AccountChangePhoneResult
 
-	_result := new(tg.User)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.changePhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.changePhone", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountResetAuthorization(ctx context.Context, req *tg.TLAccountResetAuthorization) (r *tg.Bool, err error) {
 	// var _args AccountResetAuthorizationArgs
 	// _args.Req = req
-	// var _result AccountResetAuthorizationResult
+	var _result AccountResetAuthorizationResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.resetAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.resetAuthorization", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSendConfirmPhoneCode(ctx context.Context, req *tg.TLAccountSendConfirmPhoneCode) (r *tg.AuthSentCode, err error) {
 	// var _args AccountSendConfirmPhoneCodeArgs
 	// _args.Req = req
-	// var _result AccountSendConfirmPhoneCodeResult
+	var _result AccountSendConfirmPhoneCodeResult
 
-	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendConfirmPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendConfirmPhoneCode", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountConfirmPhone(ctx context.Context, req *tg.TLAccountConfirmPhone) (r *tg.Bool, err error) {
 	// var _args AccountConfirmPhoneArgs
 	// _args.Req = req
-	// var _result AccountConfirmPhoneResult
+	var _result AccountConfirmPhoneResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCAccount/account.confirmPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.confirmPhone", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

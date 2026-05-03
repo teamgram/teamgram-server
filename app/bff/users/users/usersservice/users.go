@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCUsers/users.getUsers": kitex.NewMethodInfo(
@@ -153,7 +178,7 @@ type UsersGetUsersArgs struct {
 
 func (p *UsersGetUsersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetUsersArgs")
+		return out, fmt.Errorf("no req in UsersGetUsersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -169,7 +194,7 @@ func (p *UsersGetUsersArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetUsersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetUsersArgs")
+		return fmt.Errorf("no req in UsersGetUsersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -209,7 +234,7 @@ var UsersGetUsersResult_Success_DEFAULT *tg.VectorUser
 
 func (p *UsersGetUsersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetUsersResult")
+		return out, fmt.Errorf("no req in UsersGetUsersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -225,7 +250,7 @@ func (p *UsersGetUsersResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetUsersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetUsersResult")
+		return fmt.Errorf("no req in UsersGetUsersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -233,6 +258,9 @@ func (p *UsersGetUsersResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetUsersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorUser)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -284,7 +312,7 @@ type UsersGetFullUserArgs struct {
 
 func (p *UsersGetFullUserArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetFullUserArgs")
+		return out, fmt.Errorf("no req in UsersGetFullUserArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -300,7 +328,7 @@ func (p *UsersGetFullUserArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetFullUserArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetFullUserArgs")
+		return fmt.Errorf("no req in UsersGetFullUserArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -340,7 +368,7 @@ var UsersGetFullUserResult_Success_DEFAULT *tg.UsersUserFull
 
 func (p *UsersGetFullUserResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetFullUserResult")
+		return out, fmt.Errorf("no req in UsersGetFullUserResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -356,7 +384,7 @@ func (p *UsersGetFullUserResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetFullUserResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetFullUserResult")
+		return fmt.Errorf("no req in UsersGetFullUserResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -364,6 +392,9 @@ func (p *UsersGetFullUserResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetFullUserResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UsersUserFull)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -415,7 +446,7 @@ type ContactsResolvePhoneArgs struct {
 
 func (p *ContactsResolvePhoneArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsResolvePhoneArgs")
+		return out, fmt.Errorf("no req in ContactsResolvePhoneArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -431,7 +462,7 @@ func (p *ContactsResolvePhoneArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsResolvePhoneArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsResolvePhoneArgs")
+		return fmt.Errorf("no req in ContactsResolvePhoneArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -471,7 +502,7 @@ var ContactsResolvePhoneResult_Success_DEFAULT *tg.ContactsResolvedPeer
 
 func (p *ContactsResolvePhoneResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsResolvePhoneResult")
+		return out, fmt.Errorf("no req in ContactsResolvePhoneResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -487,7 +518,7 @@ func (p *ContactsResolvePhoneResult) Unmarshal(in []byte) error {
 
 func (p *ContactsResolvePhoneResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsResolvePhoneResult")
+		return fmt.Errorf("no req in ContactsResolvePhoneResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -495,6 +526,9 @@ func (p *ContactsResolvePhoneResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsResolvePhoneResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsResolvedPeer)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -546,7 +580,7 @@ type UsersGetMeArgs struct {
 
 func (p *UsersGetMeArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetMeArgs")
+		return out, fmt.Errorf("no req in UsersGetMeArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -562,7 +596,7 @@ func (p *UsersGetMeArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetMeArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetMeArgs")
+		return fmt.Errorf("no req in UsersGetMeArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -602,7 +636,7 @@ var UsersGetMeResult_Success_DEFAULT *tg.User
 
 func (p *UsersGetMeResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetMeResult")
+		return out, fmt.Errorf("no req in UsersGetMeResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -618,7 +652,7 @@ func (p *UsersGetMeResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetMeResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetMeResult")
+		return fmt.Errorf("no req in UsersGetMeResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -626,6 +660,9 @@ func (p *UsersGetMeResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetMeResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.User)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -665,55 +702,47 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) UsersGetUsers(ctx context.Context, req *tg.TLUsersGetUsers) (r *tg.VectorUser, err error) {
 	// var _args UsersGetUsersArgs
 	// _args.Req = req
-	// var _result UsersGetUsersResult
+	var _result UsersGetUsersResult
 
-	_result := new(tg.VectorUser)
-	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getUsers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getUsers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersGetFullUser(ctx context.Context, req *tg.TLUsersGetFullUser) (r *tg.UsersUserFull, err error) {
 	// var _args UsersGetFullUserArgs
 	// _args.Req = req
-	// var _result UsersGetFullUserResult
+	var _result UsersGetFullUserResult
 
-	_result := new(tg.UsersUserFull)
-	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getFullUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getFullUser", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsResolvePhone(ctx context.Context, req *tg.TLContactsResolvePhone) (r *tg.ContactsResolvedPeer, err error) {
 	// var _args ContactsResolvePhoneArgs
 	// _args.Req = req
-	// var _result ContactsResolvePhoneResult
+	var _result ContactsResolvePhoneResult
 
-	_result := new(tg.ContactsResolvedPeer)
-	if err = p.c.Call(ctx, "/tg.RPCUsers/contacts.resolvePhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/contacts.resolvePhone", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersGetMe(ctx context.Context, req *tg.TLUsersGetMe) (r *tg.User, err error) {
 	// var _args UsersGetMeArgs
 	// _args.Req = req
-	// var _result UsersGetMeResult
+	var _result UsersGetMeResult
 
-	_result := new(tg.User)
-	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getMe", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getMe", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

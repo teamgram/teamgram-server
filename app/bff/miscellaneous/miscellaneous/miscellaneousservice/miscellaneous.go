@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCMiscellaneous/help.saveAppLog": kitex.NewMethodInfo(
@@ -139,7 +164,7 @@ type HelpSaveAppLogArgs struct {
 
 func (p *HelpSaveAppLogArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpSaveAppLogArgs")
+		return out, fmt.Errorf("no req in HelpSaveAppLogArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -155,7 +180,7 @@ func (p *HelpSaveAppLogArgs) Unmarshal(in []byte) error {
 
 func (p *HelpSaveAppLogArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpSaveAppLogArgs")
+		return fmt.Errorf("no req in HelpSaveAppLogArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -195,7 +220,7 @@ var HelpSaveAppLogResult_Success_DEFAULT *tg.Bool
 
 func (p *HelpSaveAppLogResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpSaveAppLogResult")
+		return out, fmt.Errorf("no req in HelpSaveAppLogResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -211,7 +236,7 @@ func (p *HelpSaveAppLogResult) Unmarshal(in []byte) error {
 
 func (p *HelpSaveAppLogResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpSaveAppLogResult")
+		return fmt.Errorf("no req in HelpSaveAppLogResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -219,6 +244,9 @@ func (p *HelpSaveAppLogResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpSaveAppLogResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -270,7 +298,7 @@ type HelpTestArgs struct {
 
 func (p *HelpTestArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpTestArgs")
+		return out, fmt.Errorf("no req in HelpTestArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -286,7 +314,7 @@ func (p *HelpTestArgs) Unmarshal(in []byte) error {
 
 func (p *HelpTestArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpTestArgs")
+		return fmt.Errorf("no req in HelpTestArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -326,7 +354,7 @@ var HelpTestResult_Success_DEFAULT *tg.Bool
 
 func (p *HelpTestResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpTestResult")
+		return out, fmt.Errorf("no req in HelpTestResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -342,7 +370,7 @@ func (p *HelpTestResult) Unmarshal(in []byte) error {
 
 func (p *HelpTestResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpTestResult")
+		return fmt.Errorf("no req in HelpTestResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -350,6 +378,9 @@ func (p *HelpTestResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpTestResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -389,27 +420,23 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) HelpSaveAppLog(ctx context.Context, req *tg.TLHelpSaveAppLog) (r *tg.Bool, err error) {
 	// var _args HelpSaveAppLogArgs
 	// _args.Req = req
-	// var _result HelpSaveAppLogResult
+	var _result HelpSaveAppLogResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCMiscellaneous/help.saveAppLog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMiscellaneous/help.saveAppLog", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpTest(ctx context.Context, req *tg.TLHelpTest) (r *tg.Bool, err error) {
 	// var _args HelpTestArgs
 	// _args.Req = req
-	// var _result HelpTestResult
+	var _result HelpTestResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCMiscellaneous/help.test", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMiscellaneous/help.test", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

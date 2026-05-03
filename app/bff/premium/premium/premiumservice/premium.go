@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCPremium/help.getPremiumPromo": kitex.NewMethodInfo(
@@ -153,7 +178,7 @@ type HelpGetPremiumPromoArgs struct {
 
 func (p *HelpGetPremiumPromoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetPremiumPromoArgs")
+		return out, fmt.Errorf("no req in HelpGetPremiumPromoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -169,7 +194,7 @@ func (p *HelpGetPremiumPromoArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetPremiumPromoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetPremiumPromoArgs")
+		return fmt.Errorf("no req in HelpGetPremiumPromoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -209,7 +234,7 @@ var HelpGetPremiumPromoResult_Success_DEFAULT *tg.HelpPremiumPromo
 
 func (p *HelpGetPremiumPromoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetPremiumPromoResult")
+		return out, fmt.Errorf("no req in HelpGetPremiumPromoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -225,7 +250,7 @@ func (p *HelpGetPremiumPromoResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetPremiumPromoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetPremiumPromoResult")
+		return fmt.Errorf("no req in HelpGetPremiumPromoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -233,6 +258,9 @@ func (p *HelpGetPremiumPromoResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetPremiumPromoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpPremiumPromo)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -284,7 +312,7 @@ type PaymentsAssignAppStoreTransactionArgs struct {
 
 func (p *PaymentsAssignAppStoreTransactionArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PaymentsAssignAppStoreTransactionArgs")
+		return out, fmt.Errorf("no req in PaymentsAssignAppStoreTransactionArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -300,7 +328,7 @@ func (p *PaymentsAssignAppStoreTransactionArgs) Unmarshal(in []byte) error {
 
 func (p *PaymentsAssignAppStoreTransactionArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PaymentsAssignAppStoreTransactionArgs")
+		return fmt.Errorf("no req in PaymentsAssignAppStoreTransactionArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -340,7 +368,7 @@ var PaymentsAssignAppStoreTransactionResult_Success_DEFAULT *tg.Updates
 
 func (p *PaymentsAssignAppStoreTransactionResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PaymentsAssignAppStoreTransactionResult")
+		return out, fmt.Errorf("no req in PaymentsAssignAppStoreTransactionResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -356,7 +384,7 @@ func (p *PaymentsAssignAppStoreTransactionResult) Unmarshal(in []byte) error {
 
 func (p *PaymentsAssignAppStoreTransactionResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PaymentsAssignAppStoreTransactionResult")
+		return fmt.Errorf("no req in PaymentsAssignAppStoreTransactionResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -364,6 +392,9 @@ func (p *PaymentsAssignAppStoreTransactionResult) Encode(x *bin.Encoder, layer i
 
 func (p *PaymentsAssignAppStoreTransactionResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -415,7 +446,7 @@ type PaymentsAssignPlayMarketTransactionArgs struct {
 
 func (p *PaymentsAssignPlayMarketTransactionArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PaymentsAssignPlayMarketTransactionArgs")
+		return out, fmt.Errorf("no req in PaymentsAssignPlayMarketTransactionArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -431,7 +462,7 @@ func (p *PaymentsAssignPlayMarketTransactionArgs) Unmarshal(in []byte) error {
 
 func (p *PaymentsAssignPlayMarketTransactionArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PaymentsAssignPlayMarketTransactionArgs")
+		return fmt.Errorf("no req in PaymentsAssignPlayMarketTransactionArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -471,7 +502,7 @@ var PaymentsAssignPlayMarketTransactionResult_Success_DEFAULT *tg.Updates
 
 func (p *PaymentsAssignPlayMarketTransactionResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PaymentsAssignPlayMarketTransactionResult")
+		return out, fmt.Errorf("no req in PaymentsAssignPlayMarketTransactionResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -487,7 +518,7 @@ func (p *PaymentsAssignPlayMarketTransactionResult) Unmarshal(in []byte) error {
 
 func (p *PaymentsAssignPlayMarketTransactionResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PaymentsAssignPlayMarketTransactionResult")
+		return fmt.Errorf("no req in PaymentsAssignPlayMarketTransactionResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -495,6 +526,9 @@ func (p *PaymentsAssignPlayMarketTransactionResult) Encode(x *bin.Encoder, layer
 
 func (p *PaymentsAssignPlayMarketTransactionResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -546,7 +580,7 @@ type PaymentsCanPurchaseStoreArgs struct {
 
 func (p *PaymentsCanPurchaseStoreArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PaymentsCanPurchaseStoreArgs")
+		return out, fmt.Errorf("no req in PaymentsCanPurchaseStoreArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -562,7 +596,7 @@ func (p *PaymentsCanPurchaseStoreArgs) Unmarshal(in []byte) error {
 
 func (p *PaymentsCanPurchaseStoreArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PaymentsCanPurchaseStoreArgs")
+		return fmt.Errorf("no req in PaymentsCanPurchaseStoreArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -602,7 +636,7 @@ var PaymentsCanPurchaseStoreResult_Success_DEFAULT *tg.Bool
 
 func (p *PaymentsCanPurchaseStoreResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PaymentsCanPurchaseStoreResult")
+		return out, fmt.Errorf("no req in PaymentsCanPurchaseStoreResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -618,7 +652,7 @@ func (p *PaymentsCanPurchaseStoreResult) Unmarshal(in []byte) error {
 
 func (p *PaymentsCanPurchaseStoreResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PaymentsCanPurchaseStoreResult")
+		return fmt.Errorf("no req in PaymentsCanPurchaseStoreResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -626,6 +660,9 @@ func (p *PaymentsCanPurchaseStoreResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *PaymentsCanPurchaseStoreResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -665,55 +702,47 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) HelpGetPremiumPromo(ctx context.Context, req *tg.TLHelpGetPremiumPromo) (r *tg.HelpPremiumPromo, err error) {
 	// var _args HelpGetPremiumPromoArgs
 	// _args.Req = req
-	// var _result HelpGetPremiumPromoResult
+	var _result HelpGetPremiumPromoResult
 
-	_result := new(tg.HelpPremiumPromo)
-	if err = p.c.Call(ctx, "/tg.RPCPremium/help.getPremiumPromo", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/help.getPremiumPromo", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PaymentsAssignAppStoreTransaction(ctx context.Context, req *tg.TLPaymentsAssignAppStoreTransaction) (r *tg.Updates, err error) {
 	// var _args PaymentsAssignAppStoreTransactionArgs
 	// _args.Req = req
-	// var _result PaymentsAssignAppStoreTransactionResult
+	var _result PaymentsAssignAppStoreTransactionResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignAppStoreTransaction", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignAppStoreTransaction", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PaymentsAssignPlayMarketTransaction(ctx context.Context, req *tg.TLPaymentsAssignPlayMarketTransaction) (r *tg.Updates, err error) {
 	// var _args PaymentsAssignPlayMarketTransactionArgs
 	// _args.Req = req
-	// var _result PaymentsAssignPlayMarketTransactionResult
+	var _result PaymentsAssignPlayMarketTransactionResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignPlayMarketTransaction", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignPlayMarketTransaction", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymentsCanPurchaseStore) (r *tg.Bool, err error) {
 	// var _args PaymentsCanPurchaseStoreArgs
 	// _args.Req = req
-	// var _result PaymentsCanPurchaseStoreResult
+	var _result PaymentsCanPurchaseStoreResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchaseStore", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchaseStore", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

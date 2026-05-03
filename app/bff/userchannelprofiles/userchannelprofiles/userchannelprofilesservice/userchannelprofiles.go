@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCUserChannelProfiles/account.updateProfile": kitex.NewMethodInfo(
@@ -251,7 +276,7 @@ type AccountUpdateProfileArgs struct {
 
 func (p *AccountUpdateProfileArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateProfileArgs")
+		return out, fmt.Errorf("no req in AccountUpdateProfileArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -267,7 +292,7 @@ func (p *AccountUpdateProfileArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateProfileArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateProfileArgs")
+		return fmt.Errorf("no req in AccountUpdateProfileArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -307,7 +332,7 @@ var AccountUpdateProfileResult_Success_DEFAULT *tg.User
 
 func (p *AccountUpdateProfileResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateProfileResult")
+		return out, fmt.Errorf("no req in AccountUpdateProfileResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -323,7 +348,7 @@ func (p *AccountUpdateProfileResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateProfileResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateProfileResult")
+		return fmt.Errorf("no req in AccountUpdateProfileResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -331,6 +356,9 @@ func (p *AccountUpdateProfileResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateProfileResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.User)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -382,7 +410,7 @@ type AccountUpdateStatusArgs struct {
 
 func (p *AccountUpdateStatusArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateStatusArgs")
+		return out, fmt.Errorf("no req in AccountUpdateStatusArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -398,7 +426,7 @@ func (p *AccountUpdateStatusArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateStatusArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateStatusArgs")
+		return fmt.Errorf("no req in AccountUpdateStatusArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -438,7 +466,7 @@ var AccountUpdateStatusResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUpdateStatusResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateStatusResult")
+		return out, fmt.Errorf("no req in AccountUpdateStatusResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -454,7 +482,7 @@ func (p *AccountUpdateStatusResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateStatusResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateStatusResult")
+		return fmt.Errorf("no req in AccountUpdateStatusResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -462,6 +490,9 @@ func (p *AccountUpdateStatusResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountUpdateStatusResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -513,7 +544,7 @@ type AccountUpdateBirthdayArgs struct {
 
 func (p *AccountUpdateBirthdayArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateBirthdayArgs")
+		return out, fmt.Errorf("no req in AccountUpdateBirthdayArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -529,7 +560,7 @@ func (p *AccountUpdateBirthdayArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateBirthdayArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateBirthdayArgs")
+		return fmt.Errorf("no req in AccountUpdateBirthdayArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -569,7 +600,7 @@ var AccountUpdateBirthdayResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUpdateBirthdayResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateBirthdayResult")
+		return out, fmt.Errorf("no req in AccountUpdateBirthdayResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -585,7 +616,7 @@ func (p *AccountUpdateBirthdayResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateBirthdayResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateBirthdayResult")
+		return fmt.Errorf("no req in AccountUpdateBirthdayResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -593,6 +624,9 @@ func (p *AccountUpdateBirthdayResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountUpdateBirthdayResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -644,7 +678,7 @@ type AccountUpdatePersonalChannelArgs struct {
 
 func (p *AccountUpdatePersonalChannelArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdatePersonalChannelArgs")
+		return out, fmt.Errorf("no req in AccountUpdatePersonalChannelArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -660,7 +694,7 @@ func (p *AccountUpdatePersonalChannelArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdatePersonalChannelArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdatePersonalChannelArgs")
+		return fmt.Errorf("no req in AccountUpdatePersonalChannelArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -700,7 +734,7 @@ var AccountUpdatePersonalChannelResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountUpdatePersonalChannelResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdatePersonalChannelResult")
+		return out, fmt.Errorf("no req in AccountUpdatePersonalChannelResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -716,7 +750,7 @@ func (p *AccountUpdatePersonalChannelResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdatePersonalChannelResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdatePersonalChannelResult")
+		return fmt.Errorf("no req in AccountUpdatePersonalChannelResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -724,6 +758,9 @@ func (p *AccountUpdatePersonalChannelResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *AccountUpdatePersonalChannelResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -775,7 +812,7 @@ type AccountSetMainProfileTabArgs struct {
 
 func (p *AccountSetMainProfileTabArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetMainProfileTabArgs")
+		return out, fmt.Errorf("no req in AccountSetMainProfileTabArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -791,7 +828,7 @@ func (p *AccountSetMainProfileTabArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetMainProfileTabArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetMainProfileTabArgs")
+		return fmt.Errorf("no req in AccountSetMainProfileTabArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -831,7 +868,7 @@ var AccountSetMainProfileTabResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSetMainProfileTabResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetMainProfileTabResult")
+		return out, fmt.Errorf("no req in AccountSetMainProfileTabResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -847,7 +884,7 @@ func (p *AccountSetMainProfileTabResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetMainProfileTabResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetMainProfileTabResult")
+		return fmt.Errorf("no req in AccountSetMainProfileTabResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -855,6 +892,9 @@ func (p *AccountSetMainProfileTabResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *AccountSetMainProfileTabResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -906,7 +946,7 @@ type AccountSaveMusicArgs struct {
 
 func (p *AccountSaveMusicArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSaveMusicArgs")
+		return out, fmt.Errorf("no req in AccountSaveMusicArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -922,7 +962,7 @@ func (p *AccountSaveMusicArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSaveMusicArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSaveMusicArgs")
+		return fmt.Errorf("no req in AccountSaveMusicArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -962,7 +1002,7 @@ var AccountSaveMusicResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSaveMusicResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSaveMusicResult")
+		return out, fmt.Errorf("no req in AccountSaveMusicResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -978,7 +1018,7 @@ func (p *AccountSaveMusicResult) Unmarshal(in []byte) error {
 
 func (p *AccountSaveMusicResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSaveMusicResult")
+		return fmt.Errorf("no req in AccountSaveMusicResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -986,6 +1026,9 @@ func (p *AccountSaveMusicResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AccountSaveMusicResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1037,7 +1080,7 @@ type AccountGetSavedMusicIdsArgs struct {
 
 func (p *AccountGetSavedMusicIdsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetSavedMusicIdsArgs")
+		return out, fmt.Errorf("no req in AccountGetSavedMusicIdsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1053,7 +1096,7 @@ func (p *AccountGetSavedMusicIdsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetSavedMusicIdsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetSavedMusicIdsArgs")
+		return fmt.Errorf("no req in AccountGetSavedMusicIdsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1093,7 +1136,7 @@ var AccountGetSavedMusicIdsResult_Success_DEFAULT *tg.AccountSavedMusicIds
 
 func (p *AccountGetSavedMusicIdsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetSavedMusicIdsResult")
+		return out, fmt.Errorf("no req in AccountGetSavedMusicIdsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1109,7 +1152,7 @@ func (p *AccountGetSavedMusicIdsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetSavedMusicIdsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetSavedMusicIdsResult")
+		return fmt.Errorf("no req in AccountGetSavedMusicIdsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1117,6 +1160,9 @@ func (p *AccountGetSavedMusicIdsResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *AccountGetSavedMusicIdsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountSavedMusicIds)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1168,7 +1214,7 @@ type UsersGetSavedMusicArgs struct {
 
 func (p *UsersGetSavedMusicArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetSavedMusicArgs")
+		return out, fmt.Errorf("no req in UsersGetSavedMusicArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1184,7 +1230,7 @@ func (p *UsersGetSavedMusicArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetSavedMusicArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetSavedMusicArgs")
+		return fmt.Errorf("no req in UsersGetSavedMusicArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1224,7 +1270,7 @@ var UsersGetSavedMusicResult_Success_DEFAULT *tg.UsersSavedMusic
 
 func (p *UsersGetSavedMusicResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetSavedMusicResult")
+		return out, fmt.Errorf("no req in UsersGetSavedMusicResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1240,7 +1286,7 @@ func (p *UsersGetSavedMusicResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetSavedMusicResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetSavedMusicResult")
+		return fmt.Errorf("no req in UsersGetSavedMusicResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1248,6 +1294,9 @@ func (p *UsersGetSavedMusicResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersGetSavedMusicResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UsersSavedMusic)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1299,7 +1348,7 @@ type UsersGetSavedMusicByIDArgs struct {
 
 func (p *UsersGetSavedMusicByIDArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetSavedMusicByIDArgs")
+		return out, fmt.Errorf("no req in UsersGetSavedMusicByIDArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1315,7 +1364,7 @@ func (p *UsersGetSavedMusicByIDArgs) Unmarshal(in []byte) error {
 
 func (p *UsersGetSavedMusicByIDArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetSavedMusicByIDArgs")
+		return fmt.Errorf("no req in UsersGetSavedMusicByIDArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1355,7 +1404,7 @@ var UsersGetSavedMusicByIDResult_Success_DEFAULT *tg.UsersSavedMusic
 
 func (p *UsersGetSavedMusicByIDResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetSavedMusicByIDResult")
+		return out, fmt.Errorf("no req in UsersGetSavedMusicByIDResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1371,7 +1420,7 @@ func (p *UsersGetSavedMusicByIDResult) Unmarshal(in []byte) error {
 
 func (p *UsersGetSavedMusicByIDResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetSavedMusicByIDResult")
+		return fmt.Errorf("no req in UsersGetSavedMusicByIDResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1379,6 +1428,9 @@ func (p *UsersGetSavedMusicByIDResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *UsersGetSavedMusicByIDResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UsersSavedMusic)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1430,7 +1482,7 @@ type UsersSuggestBirthdayArgs struct {
 
 func (p *UsersSuggestBirthdayArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersSuggestBirthdayArgs")
+		return out, fmt.Errorf("no req in UsersSuggestBirthdayArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1446,7 +1498,7 @@ func (p *UsersSuggestBirthdayArgs) Unmarshal(in []byte) error {
 
 func (p *UsersSuggestBirthdayArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersSuggestBirthdayArgs")
+		return fmt.Errorf("no req in UsersSuggestBirthdayArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1486,7 +1538,7 @@ var UsersSuggestBirthdayResult_Success_DEFAULT *tg.Updates
 
 func (p *UsersSuggestBirthdayResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersSuggestBirthdayResult")
+		return out, fmt.Errorf("no req in UsersSuggestBirthdayResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1502,7 +1554,7 @@ func (p *UsersSuggestBirthdayResult) Unmarshal(in []byte) error {
 
 func (p *UsersSuggestBirthdayResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersSuggestBirthdayResult")
+		return fmt.Errorf("no req in UsersSuggestBirthdayResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1510,6 +1562,9 @@ func (p *UsersSuggestBirthdayResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UsersSuggestBirthdayResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1561,7 +1616,7 @@ type ContactsGetBirthdaysArgs struct {
 
 func (p *ContactsGetBirthdaysArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetBirthdaysArgs")
+		return out, fmt.Errorf("no req in ContactsGetBirthdaysArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1577,7 +1632,7 @@ func (p *ContactsGetBirthdaysArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetBirthdaysArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetBirthdaysArgs")
+		return fmt.Errorf("no req in ContactsGetBirthdaysArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1617,7 +1672,7 @@ var ContactsGetBirthdaysResult_Success_DEFAULT *tg.ContactsContactBirthdays
 
 func (p *ContactsGetBirthdaysResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetBirthdaysResult")
+		return out, fmt.Errorf("no req in ContactsGetBirthdaysResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1633,7 +1688,7 @@ func (p *ContactsGetBirthdaysResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetBirthdaysResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetBirthdaysResult")
+		return fmt.Errorf("no req in ContactsGetBirthdaysResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1641,6 +1696,9 @@ func (p *ContactsGetBirthdaysResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetBirthdaysResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsContactBirthdays)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1692,7 +1750,7 @@ type PhotosUpdateProfilePhotoArgs struct {
 
 func (p *PhotosUpdateProfilePhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PhotosUpdateProfilePhotoArgs")
+		return out, fmt.Errorf("no req in PhotosUpdateProfilePhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1708,7 +1766,7 @@ func (p *PhotosUpdateProfilePhotoArgs) Unmarshal(in []byte) error {
 
 func (p *PhotosUpdateProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PhotosUpdateProfilePhotoArgs")
+		return fmt.Errorf("no req in PhotosUpdateProfilePhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1748,7 +1806,7 @@ var PhotosUpdateProfilePhotoResult_Success_DEFAULT *tg.PhotosPhoto
 
 func (p *PhotosUpdateProfilePhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PhotosUpdateProfilePhotoResult")
+		return out, fmt.Errorf("no req in PhotosUpdateProfilePhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1764,7 +1822,7 @@ func (p *PhotosUpdateProfilePhotoResult) Unmarshal(in []byte) error {
 
 func (p *PhotosUpdateProfilePhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PhotosUpdateProfilePhotoResult")
+		return fmt.Errorf("no req in PhotosUpdateProfilePhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1772,6 +1830,9 @@ func (p *PhotosUpdateProfilePhotoResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *PhotosUpdateProfilePhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.PhotosPhoto)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1823,7 +1884,7 @@ type PhotosUploadProfilePhotoArgs struct {
 
 func (p *PhotosUploadProfilePhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PhotosUploadProfilePhotoArgs")
+		return out, fmt.Errorf("no req in PhotosUploadProfilePhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1839,7 +1900,7 @@ func (p *PhotosUploadProfilePhotoArgs) Unmarshal(in []byte) error {
 
 func (p *PhotosUploadProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PhotosUploadProfilePhotoArgs")
+		return fmt.Errorf("no req in PhotosUploadProfilePhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1879,7 +1940,7 @@ var PhotosUploadProfilePhotoResult_Success_DEFAULT *tg.PhotosPhoto
 
 func (p *PhotosUploadProfilePhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PhotosUploadProfilePhotoResult")
+		return out, fmt.Errorf("no req in PhotosUploadProfilePhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1895,7 +1956,7 @@ func (p *PhotosUploadProfilePhotoResult) Unmarshal(in []byte) error {
 
 func (p *PhotosUploadProfilePhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PhotosUploadProfilePhotoResult")
+		return fmt.Errorf("no req in PhotosUploadProfilePhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1903,6 +1964,9 @@ func (p *PhotosUploadProfilePhotoResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *PhotosUploadProfilePhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.PhotosPhoto)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1954,7 +2018,7 @@ type PhotosDeletePhotosArgs struct {
 
 func (p *PhotosDeletePhotosArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PhotosDeletePhotosArgs")
+		return out, fmt.Errorf("no req in PhotosDeletePhotosArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1970,7 +2034,7 @@ func (p *PhotosDeletePhotosArgs) Unmarshal(in []byte) error {
 
 func (p *PhotosDeletePhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PhotosDeletePhotosArgs")
+		return fmt.Errorf("no req in PhotosDeletePhotosArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2010,7 +2074,7 @@ var PhotosDeletePhotosResult_Success_DEFAULT *tg.VectorLong
 
 func (p *PhotosDeletePhotosResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PhotosDeletePhotosResult")
+		return out, fmt.Errorf("no req in PhotosDeletePhotosResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2026,7 +2090,7 @@ func (p *PhotosDeletePhotosResult) Unmarshal(in []byte) error {
 
 func (p *PhotosDeletePhotosResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PhotosDeletePhotosResult")
+		return fmt.Errorf("no req in PhotosDeletePhotosResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2034,6 +2098,9 @@ func (p *PhotosDeletePhotosResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PhotosDeletePhotosResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorLong)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2085,7 +2152,7 @@ type PhotosGetUserPhotosArgs struct {
 
 func (p *PhotosGetUserPhotosArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PhotosGetUserPhotosArgs")
+		return out, fmt.Errorf("no req in PhotosGetUserPhotosArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2101,7 +2168,7 @@ func (p *PhotosGetUserPhotosArgs) Unmarshal(in []byte) error {
 
 func (p *PhotosGetUserPhotosArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PhotosGetUserPhotosArgs")
+		return fmt.Errorf("no req in PhotosGetUserPhotosArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2141,7 +2208,7 @@ var PhotosGetUserPhotosResult_Success_DEFAULT *tg.PhotosPhotos
 
 func (p *PhotosGetUserPhotosResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PhotosGetUserPhotosResult")
+		return out, fmt.Errorf("no req in PhotosGetUserPhotosResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2157,7 +2224,7 @@ func (p *PhotosGetUserPhotosResult) Unmarshal(in []byte) error {
 
 func (p *PhotosGetUserPhotosResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PhotosGetUserPhotosResult")
+		return fmt.Errorf("no req in PhotosGetUserPhotosResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2165,6 +2232,9 @@ func (p *PhotosGetUserPhotosResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *PhotosGetUserPhotosResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.PhotosPhotos)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2216,7 +2286,7 @@ type PhotosUploadContactProfilePhotoArgs struct {
 
 func (p *PhotosUploadContactProfilePhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PhotosUploadContactProfilePhotoArgs")
+		return out, fmt.Errorf("no req in PhotosUploadContactProfilePhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2232,7 +2302,7 @@ func (p *PhotosUploadContactProfilePhotoArgs) Unmarshal(in []byte) error {
 
 func (p *PhotosUploadContactProfilePhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PhotosUploadContactProfilePhotoArgs")
+		return fmt.Errorf("no req in PhotosUploadContactProfilePhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2272,7 +2342,7 @@ var PhotosUploadContactProfilePhotoResult_Success_DEFAULT *tg.PhotosPhoto
 
 func (p *PhotosUploadContactProfilePhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PhotosUploadContactProfilePhotoResult")
+		return out, fmt.Errorf("no req in PhotosUploadContactProfilePhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2288,7 +2358,7 @@ func (p *PhotosUploadContactProfilePhotoResult) Unmarshal(in []byte) error {
 
 func (p *PhotosUploadContactProfilePhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PhotosUploadContactProfilePhotoResult")
+		return fmt.Errorf("no req in PhotosUploadContactProfilePhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2296,6 +2366,9 @@ func (p *PhotosUploadContactProfilePhotoResult) Encode(x *bin.Encoder, layer int
 
 func (p *PhotosUploadContactProfilePhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.PhotosPhoto)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2347,7 +2420,7 @@ type ChannelsSetMainProfileTabArgs struct {
 
 func (p *ChannelsSetMainProfileTabArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsSetMainProfileTabArgs")
+		return out, fmt.Errorf("no req in ChannelsSetMainProfileTabArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2363,7 +2436,7 @@ func (p *ChannelsSetMainProfileTabArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsSetMainProfileTabArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsSetMainProfileTabArgs")
+		return fmt.Errorf("no req in ChannelsSetMainProfileTabArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2403,7 +2476,7 @@ var ChannelsSetMainProfileTabResult_Success_DEFAULT *tg.Bool
 
 func (p *ChannelsSetMainProfileTabResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsSetMainProfileTabResult")
+		return out, fmt.Errorf("no req in ChannelsSetMainProfileTabResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2419,7 +2492,7 @@ func (p *ChannelsSetMainProfileTabResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsSetMainProfileTabResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsSetMainProfileTabResult")
+		return fmt.Errorf("no req in ChannelsSetMainProfileTabResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2427,6 +2500,9 @@ func (p *ChannelsSetMainProfileTabResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *ChannelsSetMainProfileTabResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2478,7 +2554,7 @@ type AccountUpdateVerifiedArgs struct {
 
 func (p *AccountUpdateVerifiedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountUpdateVerifiedArgs")
+		return out, fmt.Errorf("no req in AccountUpdateVerifiedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2494,7 +2570,7 @@ func (p *AccountUpdateVerifiedArgs) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateVerifiedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountUpdateVerifiedArgs")
+		return fmt.Errorf("no req in AccountUpdateVerifiedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2534,7 +2610,7 @@ var AccountUpdateVerifiedResult_Success_DEFAULT *tg.User
 
 func (p *AccountUpdateVerifiedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountUpdateVerifiedResult")
+		return out, fmt.Errorf("no req in AccountUpdateVerifiedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2550,7 +2626,7 @@ func (p *AccountUpdateVerifiedResult) Unmarshal(in []byte) error {
 
 func (p *AccountUpdateVerifiedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountUpdateVerifiedResult")
+		return fmt.Errorf("no req in AccountUpdateVerifiedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2558,6 +2634,9 @@ func (p *AccountUpdateVerifiedResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *AccountUpdateVerifiedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.User)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2597,251 +2676,215 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountUpdateProfile(ctx context.Context, req *tg.TLAccountUpdateProfile) (r *tg.User, err error) {
 	// var _args AccountUpdateProfileArgs
 	// _args.Req = req
-	// var _result AccountUpdateProfileResult
+	var _result AccountUpdateProfileResult
 
-	_result := new(tg.User)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateProfile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateProfile", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdateStatus(ctx context.Context, req *tg.TLAccountUpdateStatus) (r *tg.Bool, err error) {
 	// var _args AccountUpdateStatusArgs
 	// _args.Req = req
-	// var _result AccountUpdateStatusResult
+	var _result AccountUpdateStatusResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateStatus", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateStatus", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdateBirthday(ctx context.Context, req *tg.TLAccountUpdateBirthday) (r *tg.Bool, err error) {
 	// var _args AccountUpdateBirthdayArgs
 	// _args.Req = req
-	// var _result AccountUpdateBirthdayResult
+	var _result AccountUpdateBirthdayResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateBirthday", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateBirthday", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdatePersonalChannel(ctx context.Context, req *tg.TLAccountUpdatePersonalChannel) (r *tg.Bool, err error) {
 	// var _args AccountUpdatePersonalChannelArgs
 	// _args.Req = req
-	// var _result AccountUpdatePersonalChannelResult
+	var _result AccountUpdatePersonalChannelResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updatePersonalChannel", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updatePersonalChannel", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSetMainProfileTab(ctx context.Context, req *tg.TLAccountSetMainProfileTab) (r *tg.Bool, err error) {
 	// var _args AccountSetMainProfileTabArgs
 	// _args.Req = req
-	// var _result AccountSetMainProfileTabResult
+	var _result AccountSetMainProfileTabResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.setMainProfileTab", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.setMainProfileTab", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSaveMusic(ctx context.Context, req *tg.TLAccountSaveMusic) (r *tg.Bool, err error) {
 	// var _args AccountSaveMusicArgs
 	// _args.Req = req
-	// var _result AccountSaveMusicResult
+	var _result AccountSaveMusicResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.saveMusic", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.saveMusic", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountGetSavedMusicIds(ctx context.Context, req *tg.TLAccountGetSavedMusicIds) (r *tg.AccountSavedMusicIds, err error) {
 	// var _args AccountGetSavedMusicIdsArgs
 	// _args.Req = req
-	// var _result AccountGetSavedMusicIdsResult
+	var _result AccountGetSavedMusicIdsResult
 
-	_result := new(tg.AccountSavedMusicIds)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.getSavedMusicIds", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.getSavedMusicIds", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersGetSavedMusic(ctx context.Context, req *tg.TLUsersGetSavedMusic) (r *tg.UsersSavedMusic, err error) {
 	// var _args UsersGetSavedMusicArgs
 	// _args.Req = req
-	// var _result UsersGetSavedMusicResult
+	var _result UsersGetSavedMusicResult
 
-	_result := new(tg.UsersSavedMusic)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.getSavedMusic", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.getSavedMusic", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersGetSavedMusicByID(ctx context.Context, req *tg.TLUsersGetSavedMusicByID) (r *tg.UsersSavedMusic, err error) {
 	// var _args UsersGetSavedMusicByIDArgs
 	// _args.Req = req
-	// var _result UsersGetSavedMusicByIDResult
+	var _result UsersGetSavedMusicByIDResult
 
-	_result := new(tg.UsersSavedMusic)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.getSavedMusicByID", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.getSavedMusicByID", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UsersSuggestBirthday(ctx context.Context, req *tg.TLUsersSuggestBirthday) (r *tg.Updates, err error) {
 	// var _args UsersSuggestBirthdayArgs
 	// _args.Req = req
-	// var _result UsersSuggestBirthdayResult
+	var _result UsersSuggestBirthdayResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.suggestBirthday", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/users.suggestBirthday", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetBirthdays(ctx context.Context, req *tg.TLContactsGetBirthdays) (r *tg.ContactsContactBirthdays, err error) {
 	// var _args ContactsGetBirthdaysArgs
 	// _args.Req = req
-	// var _result ContactsGetBirthdaysResult
+	var _result ContactsGetBirthdaysResult
 
-	_result := new(tg.ContactsContactBirthdays)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/contacts.getBirthdays", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/contacts.getBirthdays", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PhotosUpdateProfilePhoto(ctx context.Context, req *tg.TLPhotosUpdateProfilePhoto) (r *tg.PhotosPhoto, err error) {
 	// var _args PhotosUpdateProfilePhotoArgs
 	// _args.Req = req
-	// var _result PhotosUpdateProfilePhotoResult
+	var _result PhotosUpdateProfilePhotoResult
 
-	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.updateProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.updateProfilePhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PhotosUploadProfilePhoto(ctx context.Context, req *tg.TLPhotosUploadProfilePhoto) (r *tg.PhotosPhoto, err error) {
 	// var _args PhotosUploadProfilePhotoArgs
 	// _args.Req = req
-	// var _result PhotosUploadProfilePhotoResult
+	var _result PhotosUploadProfilePhotoResult
 
-	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.uploadProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.uploadProfilePhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PhotosDeletePhotos(ctx context.Context, req *tg.TLPhotosDeletePhotos) (r *tg.VectorLong, err error) {
 	// var _args PhotosDeletePhotosArgs
 	// _args.Req = req
-	// var _result PhotosDeletePhotosResult
+	var _result PhotosDeletePhotosResult
 
-	_result := new(tg.VectorLong)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.deletePhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.deletePhotos", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PhotosGetUserPhotos(ctx context.Context, req *tg.TLPhotosGetUserPhotos) (r *tg.PhotosPhotos, err error) {
 	// var _args PhotosGetUserPhotosArgs
 	// _args.Req = req
-	// var _result PhotosGetUserPhotosResult
+	var _result PhotosGetUserPhotosResult
 
-	_result := new(tg.PhotosPhotos)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.getUserPhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.getUserPhotos", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) PhotosUploadContactProfilePhoto(ctx context.Context, req *tg.TLPhotosUploadContactProfilePhoto) (r *tg.PhotosPhoto, err error) {
 	// var _args PhotosUploadContactProfilePhotoArgs
 	// _args.Req = req
-	// var _result PhotosUploadContactProfilePhotoResult
+	var _result PhotosUploadContactProfilePhotoResult
 
-	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.uploadContactProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/photos.uploadContactProfilePhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsSetMainProfileTab(ctx context.Context, req *tg.TLChannelsSetMainProfileTab) (r *tg.Bool, err error) {
 	// var _args ChannelsSetMainProfileTabArgs
 	// _args.Req = req
-	// var _result ChannelsSetMainProfileTabResult
+	var _result ChannelsSetMainProfileTabResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/channels.setMainProfileTab", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/channels.setMainProfileTab", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountUpdateVerified(ctx context.Context, req *tg.TLAccountUpdateVerified) (r *tg.User, err error) {
 	// var _args AccountUpdateVerifiedArgs
 	// _args.Req = req
-	// var _result AccountUpdateVerifiedResult
+	var _result AccountUpdateVerifiedResult
 
-	_result := new(tg.User)
-	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateVerified", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserChannelProfiles/account.updateVerified", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

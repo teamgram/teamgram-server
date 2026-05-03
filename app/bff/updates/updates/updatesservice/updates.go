@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCUpdates/updates.getState": kitex.NewMethodInfo(
@@ -146,7 +171,7 @@ type UpdatesGetStateArgs struct {
 
 func (p *UpdatesGetStateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdatesGetStateArgs")
+		return out, fmt.Errorf("no req in UpdatesGetStateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -162,7 +187,7 @@ func (p *UpdatesGetStateArgs) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetStateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdatesGetStateArgs")
+		return fmt.Errorf("no req in UpdatesGetStateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -202,7 +227,7 @@ var UpdatesGetStateResult_Success_DEFAULT *tg.UpdatesState
 
 func (p *UpdatesGetStateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdatesGetStateResult")
+		return out, fmt.Errorf("no req in UpdatesGetStateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -218,7 +243,7 @@ func (p *UpdatesGetStateResult) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetStateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdatesGetStateResult")
+		return fmt.Errorf("no req in UpdatesGetStateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -226,6 +251,9 @@ func (p *UpdatesGetStateResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesGetStateResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UpdatesState)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -277,7 +305,7 @@ type UpdatesGetDifferenceArgs struct {
 
 func (p *UpdatesGetDifferenceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdatesGetDifferenceArgs")
+		return out, fmt.Errorf("no req in UpdatesGetDifferenceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -293,7 +321,7 @@ func (p *UpdatesGetDifferenceArgs) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetDifferenceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdatesGetDifferenceArgs")
+		return fmt.Errorf("no req in UpdatesGetDifferenceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -333,7 +361,7 @@ var UpdatesGetDifferenceResult_Success_DEFAULT *tg.UpdatesDifference
 
 func (p *UpdatesGetDifferenceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdatesGetDifferenceResult")
+		return out, fmt.Errorf("no req in UpdatesGetDifferenceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -349,7 +377,7 @@ func (p *UpdatesGetDifferenceResult) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetDifferenceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdatesGetDifferenceResult")
+		return fmt.Errorf("no req in UpdatesGetDifferenceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -357,6 +385,9 @@ func (p *UpdatesGetDifferenceResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *UpdatesGetDifferenceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UpdatesDifference)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -408,7 +439,7 @@ type UpdatesGetChannelDifferenceArgs struct {
 
 func (p *UpdatesGetChannelDifferenceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UpdatesGetChannelDifferenceArgs")
+		return out, fmt.Errorf("no req in UpdatesGetChannelDifferenceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -424,7 +455,7 @@ func (p *UpdatesGetChannelDifferenceArgs) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetChannelDifferenceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UpdatesGetChannelDifferenceArgs")
+		return fmt.Errorf("no req in UpdatesGetChannelDifferenceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -464,7 +495,7 @@ var UpdatesGetChannelDifferenceResult_Success_DEFAULT *tg.UpdatesChannelDifferen
 
 func (p *UpdatesGetChannelDifferenceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UpdatesGetChannelDifferenceResult")
+		return out, fmt.Errorf("no req in UpdatesGetChannelDifferenceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -480,7 +511,7 @@ func (p *UpdatesGetChannelDifferenceResult) Unmarshal(in []byte) error {
 
 func (p *UpdatesGetChannelDifferenceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UpdatesGetChannelDifferenceResult")
+		return fmt.Errorf("no req in UpdatesGetChannelDifferenceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -488,6 +519,9 @@ func (p *UpdatesGetChannelDifferenceResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *UpdatesGetChannelDifferenceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.UpdatesChannelDifference)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -527,41 +561,35 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) UpdatesGetState(ctx context.Context, req *tg.TLUpdatesGetState) (r *tg.UpdatesState, err error) {
 	// var _args UpdatesGetStateArgs
 	// _args.Req = req
-	// var _result UpdatesGetStateResult
+	var _result UpdatesGetStateResult
 
-	_result := new(tg.UpdatesState)
-	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getState", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getState", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UpdatesGetDifference(ctx context.Context, req *tg.TLUpdatesGetDifference) (r *tg.UpdatesDifference, err error) {
 	// var _args UpdatesGetDifferenceArgs
 	// _args.Req = req
-	// var _result UpdatesGetDifferenceResult
+	var _result UpdatesGetDifferenceResult
 
-	_result := new(tg.UpdatesDifference)
-	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getDifference", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getDifference", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) UpdatesGetChannelDifference(ctx context.Context, req *tg.TLUpdatesGetChannelDifference) (r *tg.UpdatesChannelDifference, err error) {
 	// var _args UpdatesGetChannelDifferenceArgs
 	// _args.Req = req
-	// var _result UpdatesGetChannelDifferenceResult
+	var _result UpdatesGetChannelDifferenceResult
 
-	_result := new(tg.UpdatesChannelDifference)
-	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getChannelDifference", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getChannelDifference", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

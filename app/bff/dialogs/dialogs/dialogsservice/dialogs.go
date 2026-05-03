@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCDialogs/messages.getDialogs": kitex.NewMethodInfo(
@@ -216,7 +241,7 @@ type MessagesGetDialogsArgs struct {
 
 func (p *MessagesGetDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetDialogsArgs")
+		return out, fmt.Errorf("no req in MessagesGetDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -232,7 +257,7 @@ func (p *MessagesGetDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetDialogsArgs")
+		return fmt.Errorf("no req in MessagesGetDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -272,7 +297,7 @@ var MessagesGetDialogsResult_Success_DEFAULT *tg.MessagesDialogs
 
 func (p *MessagesGetDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetDialogsResult")
+		return out, fmt.Errorf("no req in MessagesGetDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -288,7 +313,7 @@ func (p *MessagesGetDialogsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetDialogsResult")
+		return fmt.Errorf("no req in MessagesGetDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -296,6 +321,9 @@ func (p *MessagesGetDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesDialogs)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -347,7 +375,7 @@ type MessagesSetTypingArgs struct {
 
 func (p *MessagesSetTypingArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSetTypingArgs")
+		return out, fmt.Errorf("no req in MessagesSetTypingArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -363,7 +391,7 @@ func (p *MessagesSetTypingArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSetTypingArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSetTypingArgs")
+		return fmt.Errorf("no req in MessagesSetTypingArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -403,7 +431,7 @@ var MessagesSetTypingResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesSetTypingResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSetTypingResult")
+		return out, fmt.Errorf("no req in MessagesSetTypingResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -419,7 +447,7 @@ func (p *MessagesSetTypingResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSetTypingResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSetTypingResult")
+		return fmt.Errorf("no req in MessagesSetTypingResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -427,6 +455,9 @@ func (p *MessagesSetTypingResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesSetTypingResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -478,7 +509,7 @@ type MessagesGetPeerSettingsArgs struct {
 
 func (p *MessagesGetPeerSettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetPeerSettingsArgs")
+		return out, fmt.Errorf("no req in MessagesGetPeerSettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -494,7 +525,7 @@ func (p *MessagesGetPeerSettingsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPeerSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetPeerSettingsArgs")
+		return fmt.Errorf("no req in MessagesGetPeerSettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -534,7 +565,7 @@ var MessagesGetPeerSettingsResult_Success_DEFAULT *tg.MessagesPeerSettings
 
 func (p *MessagesGetPeerSettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetPeerSettingsResult")
+		return out, fmt.Errorf("no req in MessagesGetPeerSettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -550,7 +581,7 @@ func (p *MessagesGetPeerSettingsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPeerSettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetPeerSettingsResult")
+		return fmt.Errorf("no req in MessagesGetPeerSettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -558,6 +589,9 @@ func (p *MessagesGetPeerSettingsResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *MessagesGetPeerSettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesPeerSettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -609,7 +643,7 @@ type MessagesGetPeerDialogsArgs struct {
 
 func (p *MessagesGetPeerDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetPeerDialogsArgs")
+		return out, fmt.Errorf("no req in MessagesGetPeerDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -625,7 +659,7 @@ func (p *MessagesGetPeerDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPeerDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetPeerDialogsArgs")
+		return fmt.Errorf("no req in MessagesGetPeerDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -665,7 +699,7 @@ var MessagesGetPeerDialogsResult_Success_DEFAULT *tg.MessagesPeerDialogs
 
 func (p *MessagesGetPeerDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetPeerDialogsResult")
+		return out, fmt.Errorf("no req in MessagesGetPeerDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -681,7 +715,7 @@ func (p *MessagesGetPeerDialogsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPeerDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetPeerDialogsResult")
+		return fmt.Errorf("no req in MessagesGetPeerDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -689,6 +723,9 @@ func (p *MessagesGetPeerDialogsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesGetPeerDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesPeerDialogs)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -740,7 +777,7 @@ type MessagesToggleDialogPinArgs struct {
 
 func (p *MessagesToggleDialogPinArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesToggleDialogPinArgs")
+		return out, fmt.Errorf("no req in MessagesToggleDialogPinArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -756,7 +793,7 @@ func (p *MessagesToggleDialogPinArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesToggleDialogPinArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesToggleDialogPinArgs")
+		return fmt.Errorf("no req in MessagesToggleDialogPinArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -796,7 +833,7 @@ var MessagesToggleDialogPinResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesToggleDialogPinResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesToggleDialogPinResult")
+		return out, fmt.Errorf("no req in MessagesToggleDialogPinResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -812,7 +849,7 @@ func (p *MessagesToggleDialogPinResult) Unmarshal(in []byte) error {
 
 func (p *MessagesToggleDialogPinResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesToggleDialogPinResult")
+		return fmt.Errorf("no req in MessagesToggleDialogPinResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -820,6 +857,9 @@ func (p *MessagesToggleDialogPinResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *MessagesToggleDialogPinResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -871,7 +911,7 @@ type MessagesReorderPinnedDialogsArgs struct {
 
 func (p *MessagesReorderPinnedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReorderPinnedDialogsArgs")
+		return out, fmt.Errorf("no req in MessagesReorderPinnedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -887,7 +927,7 @@ func (p *MessagesReorderPinnedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesReorderPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReorderPinnedDialogsArgs")
+		return fmt.Errorf("no req in MessagesReorderPinnedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -927,7 +967,7 @@ var MessagesReorderPinnedDialogsResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesReorderPinnedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReorderPinnedDialogsResult")
+		return out, fmt.Errorf("no req in MessagesReorderPinnedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -943,7 +983,7 @@ func (p *MessagesReorderPinnedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesReorderPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReorderPinnedDialogsResult")
+		return fmt.Errorf("no req in MessagesReorderPinnedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -951,6 +991,9 @@ func (p *MessagesReorderPinnedDialogsResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesReorderPinnedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1002,7 +1045,7 @@ type MessagesGetPinnedDialogsArgs struct {
 
 func (p *MessagesGetPinnedDialogsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetPinnedDialogsArgs")
+		return out, fmt.Errorf("no req in MessagesGetPinnedDialogsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1018,7 +1061,7 @@ func (p *MessagesGetPinnedDialogsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPinnedDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetPinnedDialogsArgs")
+		return fmt.Errorf("no req in MessagesGetPinnedDialogsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1058,7 +1101,7 @@ var MessagesGetPinnedDialogsResult_Success_DEFAULT *tg.MessagesPeerDialogs
 
 func (p *MessagesGetPinnedDialogsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetPinnedDialogsResult")
+		return out, fmt.Errorf("no req in MessagesGetPinnedDialogsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1074,7 +1117,7 @@ func (p *MessagesGetPinnedDialogsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetPinnedDialogsResult")
+		return fmt.Errorf("no req in MessagesGetPinnedDialogsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1082,6 +1125,9 @@ func (p *MessagesGetPinnedDialogsResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *MessagesGetPinnedDialogsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesPeerDialogs)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1133,7 +1179,7 @@ type MessagesSendScreenshotNotificationArgs struct {
 
 func (p *MessagesSendScreenshotNotificationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSendScreenshotNotificationArgs")
+		return out, fmt.Errorf("no req in MessagesSendScreenshotNotificationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1149,7 +1195,7 @@ func (p *MessagesSendScreenshotNotificationArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSendScreenshotNotificationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSendScreenshotNotificationArgs")
+		return fmt.Errorf("no req in MessagesSendScreenshotNotificationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1189,7 +1235,7 @@ var MessagesSendScreenshotNotificationResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesSendScreenshotNotificationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSendScreenshotNotificationResult")
+		return out, fmt.Errorf("no req in MessagesSendScreenshotNotificationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1205,7 +1251,7 @@ func (p *MessagesSendScreenshotNotificationResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSendScreenshotNotificationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSendScreenshotNotificationResult")
+		return fmt.Errorf("no req in MessagesSendScreenshotNotificationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1213,6 +1259,9 @@ func (p *MessagesSendScreenshotNotificationResult) Encode(x *bin.Encoder, layer 
 
 func (p *MessagesSendScreenshotNotificationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1264,7 +1313,7 @@ type MessagesMarkDialogUnreadArgs struct {
 
 func (p *MessagesMarkDialogUnreadArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesMarkDialogUnreadArgs")
+		return out, fmt.Errorf("no req in MessagesMarkDialogUnreadArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1280,7 +1329,7 @@ func (p *MessagesMarkDialogUnreadArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesMarkDialogUnreadArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesMarkDialogUnreadArgs")
+		return fmt.Errorf("no req in MessagesMarkDialogUnreadArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1320,7 +1369,7 @@ var MessagesMarkDialogUnreadResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesMarkDialogUnreadResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesMarkDialogUnreadResult")
+		return out, fmt.Errorf("no req in MessagesMarkDialogUnreadResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1336,7 +1385,7 @@ func (p *MessagesMarkDialogUnreadResult) Unmarshal(in []byte) error {
 
 func (p *MessagesMarkDialogUnreadResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesMarkDialogUnreadResult")
+		return fmt.Errorf("no req in MessagesMarkDialogUnreadResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1344,6 +1393,9 @@ func (p *MessagesMarkDialogUnreadResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *MessagesMarkDialogUnreadResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1395,7 +1447,7 @@ type MessagesGetDialogUnreadMarksArgs struct {
 
 func (p *MessagesGetDialogUnreadMarksArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetDialogUnreadMarksArgs")
+		return out, fmt.Errorf("no req in MessagesGetDialogUnreadMarksArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1411,7 +1463,7 @@ func (p *MessagesGetDialogUnreadMarksArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDialogUnreadMarksArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetDialogUnreadMarksArgs")
+		return fmt.Errorf("no req in MessagesGetDialogUnreadMarksArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1451,7 +1503,7 @@ var MessagesGetDialogUnreadMarksResult_Success_DEFAULT *tg.VectorDialogPeer
 
 func (p *MessagesGetDialogUnreadMarksResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetDialogUnreadMarksResult")
+		return out, fmt.Errorf("no req in MessagesGetDialogUnreadMarksResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1467,7 +1519,7 @@ func (p *MessagesGetDialogUnreadMarksResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetDialogUnreadMarksResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetDialogUnreadMarksResult")
+		return fmt.Errorf("no req in MessagesGetDialogUnreadMarksResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1475,6 +1527,9 @@ func (p *MessagesGetDialogUnreadMarksResult) Encode(x *bin.Encoder, layer int32)
 
 func (p *MessagesGetDialogUnreadMarksResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorDialogPeer)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1526,7 +1581,7 @@ type MessagesGetOnlinesArgs struct {
 
 func (p *MessagesGetOnlinesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetOnlinesArgs")
+		return out, fmt.Errorf("no req in MessagesGetOnlinesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1542,7 +1597,7 @@ func (p *MessagesGetOnlinesArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetOnlinesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetOnlinesArgs")
+		return fmt.Errorf("no req in MessagesGetOnlinesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1582,7 +1637,7 @@ var MessagesGetOnlinesResult_Success_DEFAULT *tg.ChatOnlines
 
 func (p *MessagesGetOnlinesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetOnlinesResult")
+		return out, fmt.Errorf("no req in MessagesGetOnlinesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1598,7 +1653,7 @@ func (p *MessagesGetOnlinesResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetOnlinesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetOnlinesResult")
+		return fmt.Errorf("no req in MessagesGetOnlinesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1606,6 +1661,9 @@ func (p *MessagesGetOnlinesResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetOnlinesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ChatOnlines)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1657,7 +1715,7 @@ type MessagesHidePeerSettingsBarArgs struct {
 
 func (p *MessagesHidePeerSettingsBarArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesHidePeerSettingsBarArgs")
+		return out, fmt.Errorf("no req in MessagesHidePeerSettingsBarArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1673,7 +1731,7 @@ func (p *MessagesHidePeerSettingsBarArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesHidePeerSettingsBarArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesHidePeerSettingsBarArgs")
+		return fmt.Errorf("no req in MessagesHidePeerSettingsBarArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1713,7 +1771,7 @@ var MessagesHidePeerSettingsBarResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesHidePeerSettingsBarResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesHidePeerSettingsBarResult")
+		return out, fmt.Errorf("no req in MessagesHidePeerSettingsBarResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1729,7 +1787,7 @@ func (p *MessagesHidePeerSettingsBarResult) Unmarshal(in []byte) error {
 
 func (p *MessagesHidePeerSettingsBarResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesHidePeerSettingsBarResult")
+		return fmt.Errorf("no req in MessagesHidePeerSettingsBarResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1737,6 +1795,9 @@ func (p *MessagesHidePeerSettingsBarResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *MessagesHidePeerSettingsBarResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1788,7 +1849,7 @@ type MessagesSetHistoryTTLArgs struct {
 
 func (p *MessagesSetHistoryTTLArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesSetHistoryTTLArgs")
+		return out, fmt.Errorf("no req in MessagesSetHistoryTTLArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1804,7 +1865,7 @@ func (p *MessagesSetHistoryTTLArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesSetHistoryTTLArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesSetHistoryTTLArgs")
+		return fmt.Errorf("no req in MessagesSetHistoryTTLArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1844,7 +1905,7 @@ var MessagesSetHistoryTTLResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesSetHistoryTTLResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesSetHistoryTTLResult")
+		return out, fmt.Errorf("no req in MessagesSetHistoryTTLResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1860,7 +1921,7 @@ func (p *MessagesSetHistoryTTLResult) Unmarshal(in []byte) error {
 
 func (p *MessagesSetHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesSetHistoryTTLResult")
+		return fmt.Errorf("no req in MessagesSetHistoryTTLResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1868,6 +1929,9 @@ func (p *MessagesSetHistoryTTLResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesSetHistoryTTLResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1907,181 +1971,155 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MessagesGetDialogs(ctx context.Context, req *tg.TLMessagesGetDialogs) (r *tg.MessagesDialogs, err error) {
 	// var _args MessagesGetDialogsArgs
 	// _args.Req = req
-	// var _result MessagesGetDialogsResult
+	var _result MessagesGetDialogsResult
 
-	_result := new(tg.MessagesDialogs)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesSetTyping(ctx context.Context, req *tg.TLMessagesSetTyping) (r *tg.Bool, err error) {
 	// var _args MessagesSetTypingArgs
 	// _args.Req = req
-	// var _result MessagesSetTypingResult
+	var _result MessagesSetTypingResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setTyping", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setTyping", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetPeerSettings(ctx context.Context, req *tg.TLMessagesGetPeerSettings) (r *tg.MessagesPeerSettings, err error) {
 	// var _args MessagesGetPeerSettingsArgs
 	// _args.Req = req
-	// var _result MessagesGetPeerSettingsResult
+	var _result MessagesGetPeerSettingsResult
 
-	_result := new(tg.MessagesPeerSettings)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerSettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetPeerDialogs(ctx context.Context, req *tg.TLMessagesGetPeerDialogs) (r *tg.MessagesPeerDialogs, err error) {
 	// var _args MessagesGetPeerDialogsArgs
 	// _args.Req = req
-	// var _result MessagesGetPeerDialogsResult
+	var _result MessagesGetPeerDialogsResult
 
-	_result := new(tg.MessagesPeerDialogs)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesToggleDialogPin(ctx context.Context, req *tg.TLMessagesToggleDialogPin) (r *tg.Bool, err error) {
 	// var _args MessagesToggleDialogPinArgs
 	// _args.Req = req
-	// var _result MessagesToggleDialogPinResult
+	var _result MessagesToggleDialogPinResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.toggleDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.toggleDialogPin", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesReorderPinnedDialogs(ctx context.Context, req *tg.TLMessagesReorderPinnedDialogs) (r *tg.Bool, err error) {
 	// var _args MessagesReorderPinnedDialogsArgs
 	// _args.Req = req
-	// var _result MessagesReorderPinnedDialogsResult
+	var _result MessagesReorderPinnedDialogsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.reorderPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.reorderPinnedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetPinnedDialogs(ctx context.Context, req *tg.TLMessagesGetPinnedDialogs) (r *tg.MessagesPeerDialogs, err error) {
 	// var _args MessagesGetPinnedDialogsArgs
 	// _args.Req = req
-	// var _result MessagesGetPinnedDialogsResult
+	var _result MessagesGetPinnedDialogsResult
 
-	_result := new(tg.MessagesPeerDialogs)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPinnedDialogs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesSendScreenshotNotification(ctx context.Context, req *tg.TLMessagesSendScreenshotNotification) (r *tg.Updates, err error) {
 	// var _args MessagesSendScreenshotNotificationArgs
 	// _args.Req = req
-	// var _result MessagesSendScreenshotNotificationResult
+	var _result MessagesSendScreenshotNotificationResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.sendScreenshotNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.sendScreenshotNotification", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesMarkDialogUnread(ctx context.Context, req *tg.TLMessagesMarkDialogUnread) (r *tg.Bool, err error) {
 	// var _args MessagesMarkDialogUnreadArgs
 	// _args.Req = req
-	// var _result MessagesMarkDialogUnreadResult
+	var _result MessagesMarkDialogUnreadResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.markDialogUnread", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.markDialogUnread", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetDialogUnreadMarks(ctx context.Context, req *tg.TLMessagesGetDialogUnreadMarks) (r *tg.VectorDialogPeer, err error) {
 	// var _args MessagesGetDialogUnreadMarksArgs
 	// _args.Req = req
-	// var _result MessagesGetDialogUnreadMarksResult
+	var _result MessagesGetDialogUnreadMarksResult
 
-	_result := new(tg.VectorDialogPeer)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogUnreadMarks", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogUnreadMarks", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetOnlines(ctx context.Context, req *tg.TLMessagesGetOnlines) (r *tg.ChatOnlines, err error) {
 	// var _args MessagesGetOnlinesArgs
 	// _args.Req = req
-	// var _result MessagesGetOnlinesResult
+	var _result MessagesGetOnlinesResult
 
-	_result := new(tg.ChatOnlines)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getOnlines", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getOnlines", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesHidePeerSettingsBar(ctx context.Context, req *tg.TLMessagesHidePeerSettingsBar) (r *tg.Bool, err error) {
 	// var _args MessagesHidePeerSettingsBarArgs
 	// _args.Req = req
-	// var _result MessagesHidePeerSettingsBarResult
+	var _result MessagesHidePeerSettingsBarResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.hidePeerSettingsBar", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.hidePeerSettingsBar", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesSetHistoryTTL(ctx context.Context, req *tg.TLMessagesSetHistoryTTL) (r *tg.Updates, err error) {
 	// var _args MessagesSetHistoryTTLArgs
 	// _args.Req = req
-	// var _result MessagesSetHistoryTTLResult
+	var _result MessagesSetHistoryTTLResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setHistoryTTL", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCAutoDownload/account.getAutoDownloadSettings": kitex.NewMethodInfo(
@@ -139,7 +164,7 @@ type AccountGetAutoDownloadSettingsArgs struct {
 
 func (p *AccountGetAutoDownloadSettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetAutoDownloadSettingsArgs")
+		return out, fmt.Errorf("no req in AccountGetAutoDownloadSettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -155,7 +180,7 @@ func (p *AccountGetAutoDownloadSettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetAutoDownloadSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetAutoDownloadSettingsArgs")
+		return fmt.Errorf("no req in AccountGetAutoDownloadSettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -195,7 +220,7 @@ var AccountGetAutoDownloadSettingsResult_Success_DEFAULT *tg.AccountAutoDownload
 
 func (p *AccountGetAutoDownloadSettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetAutoDownloadSettingsResult")
+		return out, fmt.Errorf("no req in AccountGetAutoDownloadSettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -211,7 +236,7 @@ func (p *AccountGetAutoDownloadSettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetAutoDownloadSettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetAutoDownloadSettingsResult")
+		return fmt.Errorf("no req in AccountGetAutoDownloadSettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -219,6 +244,9 @@ func (p *AccountGetAutoDownloadSettingsResult) Encode(x *bin.Encoder, layer int3
 
 func (p *AccountGetAutoDownloadSettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AccountAutoDownloadSettings)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -270,7 +298,7 @@ type AccountSaveAutoDownloadSettingsArgs struct {
 
 func (p *AccountSaveAutoDownloadSettingsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSaveAutoDownloadSettingsArgs")
+		return out, fmt.Errorf("no req in AccountSaveAutoDownloadSettingsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -286,7 +314,7 @@ func (p *AccountSaveAutoDownloadSettingsArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSaveAutoDownloadSettingsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSaveAutoDownloadSettingsArgs")
+		return fmt.Errorf("no req in AccountSaveAutoDownloadSettingsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -326,7 +354,7 @@ var AccountSaveAutoDownloadSettingsResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSaveAutoDownloadSettingsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSaveAutoDownloadSettingsResult")
+		return out, fmt.Errorf("no req in AccountSaveAutoDownloadSettingsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -342,7 +370,7 @@ func (p *AccountSaveAutoDownloadSettingsResult) Unmarshal(in []byte) error {
 
 func (p *AccountSaveAutoDownloadSettingsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSaveAutoDownloadSettingsResult")
+		return fmt.Errorf("no req in AccountSaveAutoDownloadSettingsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -350,6 +378,9 @@ func (p *AccountSaveAutoDownloadSettingsResult) Encode(x *bin.Encoder, layer int
 
 func (p *AccountSaveAutoDownloadSettingsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -389,27 +420,23 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountGetAutoDownloadSettings(ctx context.Context, req *tg.TLAccountGetAutoDownloadSettings) (r *tg.AccountAutoDownloadSettings, err error) {
 	// var _args AccountGetAutoDownloadSettingsArgs
 	// _args.Req = req
-	// var _result AccountGetAutoDownloadSettingsResult
+	var _result AccountGetAutoDownloadSettingsResult
 
-	_result := new(tg.AccountAutoDownloadSettings)
-	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.getAutoDownloadSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.getAutoDownloadSettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSaveAutoDownloadSettings(ctx context.Context, req *tg.TLAccountSaveAutoDownloadSettings) (r *tg.Bool, err error) {
 	// var _args AccountSaveAutoDownloadSettingsArgs
 	// _args.Req = req
-	// var _result AccountSaveAutoDownloadSettingsResult
+	var _result AccountSaveAutoDownloadSettingsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.saveAutoDownloadSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.saveAutoDownloadSettings", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCChats/messages.getChats": kitex.NewMethodInfo(
@@ -258,7 +283,7 @@ type MessagesGetChatsArgs struct {
 
 func (p *MessagesGetChatsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetChatsArgs")
+		return out, fmt.Errorf("no req in MessagesGetChatsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -274,7 +299,7 @@ func (p *MessagesGetChatsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetChatsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetChatsArgs")
+		return fmt.Errorf("no req in MessagesGetChatsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -314,7 +339,7 @@ var MessagesGetChatsResult_Success_DEFAULT *tg.MessagesChats
 
 func (p *MessagesGetChatsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetChatsResult")
+		return out, fmt.Errorf("no req in MessagesGetChatsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -330,7 +355,7 @@ func (p *MessagesGetChatsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetChatsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetChatsResult")
+		return fmt.Errorf("no req in MessagesGetChatsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -338,6 +363,9 @@ func (p *MessagesGetChatsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetChatsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesChats)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -389,7 +417,7 @@ type MessagesGetFullChatArgs struct {
 
 func (p *MessagesGetFullChatArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetFullChatArgs")
+		return out, fmt.Errorf("no req in MessagesGetFullChatArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -405,7 +433,7 @@ func (p *MessagesGetFullChatArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetFullChatArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetFullChatArgs")
+		return fmt.Errorf("no req in MessagesGetFullChatArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -445,7 +473,7 @@ var MessagesGetFullChatResult_Success_DEFAULT *tg.MessagesChatFull
 
 func (p *MessagesGetFullChatResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetFullChatResult")
+		return out, fmt.Errorf("no req in MessagesGetFullChatResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -461,7 +489,7 @@ func (p *MessagesGetFullChatResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetFullChatResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetFullChatResult")
+		return fmt.Errorf("no req in MessagesGetFullChatResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -469,6 +497,9 @@ func (p *MessagesGetFullChatResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesGetFullChatResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesChatFull)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -520,7 +551,7 @@ type MessagesEditChatTitleArgs struct {
 
 func (p *MessagesEditChatTitleArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatTitleArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatTitleArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -536,7 +567,7 @@ func (p *MessagesEditChatTitleArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatTitleArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatTitleArgs")
+		return fmt.Errorf("no req in MessagesEditChatTitleArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -576,7 +607,7 @@ var MessagesEditChatTitleResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditChatTitleResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatTitleResult")
+		return out, fmt.Errorf("no req in MessagesEditChatTitleResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -592,7 +623,7 @@ func (p *MessagesEditChatTitleResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatTitleResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatTitleResult")
+		return fmt.Errorf("no req in MessagesEditChatTitleResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -600,6 +631,9 @@ func (p *MessagesEditChatTitleResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesEditChatTitleResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -651,7 +685,7 @@ type MessagesEditChatPhotoArgs struct {
 
 func (p *MessagesEditChatPhotoArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatPhotoArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatPhotoArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -667,7 +701,7 @@ func (p *MessagesEditChatPhotoArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatPhotoArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatPhotoArgs")
+		return fmt.Errorf("no req in MessagesEditChatPhotoArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -707,7 +741,7 @@ var MessagesEditChatPhotoResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditChatPhotoResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatPhotoResult")
+		return out, fmt.Errorf("no req in MessagesEditChatPhotoResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -723,7 +757,7 @@ func (p *MessagesEditChatPhotoResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatPhotoResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatPhotoResult")
+		return fmt.Errorf("no req in MessagesEditChatPhotoResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -731,6 +765,9 @@ func (p *MessagesEditChatPhotoResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesEditChatPhotoResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -782,7 +819,7 @@ type MessagesAddChatUserArgs struct {
 
 func (p *MessagesAddChatUserArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesAddChatUserArgs")
+		return out, fmt.Errorf("no req in MessagesAddChatUserArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -798,7 +835,7 @@ func (p *MessagesAddChatUserArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesAddChatUserArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesAddChatUserArgs")
+		return fmt.Errorf("no req in MessagesAddChatUserArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -838,7 +875,7 @@ var MessagesAddChatUserResult_Success_DEFAULT *tg.MessagesInvitedUsers
 
 func (p *MessagesAddChatUserResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesAddChatUserResult")
+		return out, fmt.Errorf("no req in MessagesAddChatUserResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -854,7 +891,7 @@ func (p *MessagesAddChatUserResult) Unmarshal(in []byte) error {
 
 func (p *MessagesAddChatUserResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesAddChatUserResult")
+		return fmt.Errorf("no req in MessagesAddChatUserResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -862,6 +899,9 @@ func (p *MessagesAddChatUserResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesAddChatUserResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesInvitedUsers)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -913,7 +953,7 @@ type MessagesDeleteChatUserArgs struct {
 
 func (p *MessagesDeleteChatUserArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteChatUserArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteChatUserArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -929,7 +969,7 @@ func (p *MessagesDeleteChatUserArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteChatUserArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteChatUserArgs")
+		return fmt.Errorf("no req in MessagesDeleteChatUserArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -969,7 +1009,7 @@ var MessagesDeleteChatUserResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesDeleteChatUserResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteChatUserResult")
+		return out, fmt.Errorf("no req in MessagesDeleteChatUserResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -985,7 +1025,7 @@ func (p *MessagesDeleteChatUserResult) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteChatUserResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteChatUserResult")
+		return fmt.Errorf("no req in MessagesDeleteChatUserResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -993,6 +1033,9 @@ func (p *MessagesDeleteChatUserResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesDeleteChatUserResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1044,7 +1087,7 @@ type MessagesCreateChatArgs struct {
 
 func (p *MessagesCreateChatArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesCreateChatArgs")
+		return out, fmt.Errorf("no req in MessagesCreateChatArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1060,7 +1103,7 @@ func (p *MessagesCreateChatArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesCreateChatArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesCreateChatArgs")
+		return fmt.Errorf("no req in MessagesCreateChatArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1100,7 +1143,7 @@ var MessagesCreateChatResult_Success_DEFAULT *tg.MessagesInvitedUsers
 
 func (p *MessagesCreateChatResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesCreateChatResult")
+		return out, fmt.Errorf("no req in MessagesCreateChatResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1116,7 +1159,7 @@ func (p *MessagesCreateChatResult) Unmarshal(in []byte) error {
 
 func (p *MessagesCreateChatResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesCreateChatResult")
+		return fmt.Errorf("no req in MessagesCreateChatResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1124,6 +1167,9 @@ func (p *MessagesCreateChatResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesCreateChatResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesInvitedUsers)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1175,7 +1221,7 @@ type MessagesEditChatAdminArgs struct {
 
 func (p *MessagesEditChatAdminArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatAdminArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatAdminArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1191,7 +1237,7 @@ func (p *MessagesEditChatAdminArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatAdminArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatAdminArgs")
+		return fmt.Errorf("no req in MessagesEditChatAdminArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1231,7 +1277,7 @@ var MessagesEditChatAdminResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesEditChatAdminResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatAdminResult")
+		return out, fmt.Errorf("no req in MessagesEditChatAdminResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1247,7 +1293,7 @@ func (p *MessagesEditChatAdminResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatAdminResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatAdminResult")
+		return fmt.Errorf("no req in MessagesEditChatAdminResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1255,6 +1301,9 @@ func (p *MessagesEditChatAdminResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesEditChatAdminResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1306,7 +1355,7 @@ type MessagesMigrateChatArgs struct {
 
 func (p *MessagesMigrateChatArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesMigrateChatArgs")
+		return out, fmt.Errorf("no req in MessagesMigrateChatArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1322,7 +1371,7 @@ func (p *MessagesMigrateChatArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesMigrateChatArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesMigrateChatArgs")
+		return fmt.Errorf("no req in MessagesMigrateChatArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1362,7 +1411,7 @@ var MessagesMigrateChatResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesMigrateChatResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesMigrateChatResult")
+		return out, fmt.Errorf("no req in MessagesMigrateChatResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1378,7 +1427,7 @@ func (p *MessagesMigrateChatResult) Unmarshal(in []byte) error {
 
 func (p *MessagesMigrateChatResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesMigrateChatResult")
+		return fmt.Errorf("no req in MessagesMigrateChatResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1386,6 +1435,9 @@ func (p *MessagesMigrateChatResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesMigrateChatResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1437,7 +1489,7 @@ type MessagesGetCommonChatsArgs struct {
 
 func (p *MessagesGetCommonChatsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetCommonChatsArgs")
+		return out, fmt.Errorf("no req in MessagesGetCommonChatsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1453,7 +1505,7 @@ func (p *MessagesGetCommonChatsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetCommonChatsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetCommonChatsArgs")
+		return fmt.Errorf("no req in MessagesGetCommonChatsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1493,7 +1545,7 @@ var MessagesGetCommonChatsResult_Success_DEFAULT *tg.MessagesChats
 
 func (p *MessagesGetCommonChatsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetCommonChatsResult")
+		return out, fmt.Errorf("no req in MessagesGetCommonChatsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1509,7 +1561,7 @@ func (p *MessagesGetCommonChatsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetCommonChatsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetCommonChatsResult")
+		return fmt.Errorf("no req in MessagesGetCommonChatsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1517,6 +1569,9 @@ func (p *MessagesGetCommonChatsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *MessagesGetCommonChatsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.MessagesChats)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1568,7 +1623,7 @@ type MessagesEditChatAboutArgs struct {
 
 func (p *MessagesEditChatAboutArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatAboutArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatAboutArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1584,7 +1639,7 @@ func (p *MessagesEditChatAboutArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatAboutArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatAboutArgs")
+		return fmt.Errorf("no req in MessagesEditChatAboutArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1624,7 +1679,7 @@ var MessagesEditChatAboutResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesEditChatAboutResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatAboutResult")
+		return out, fmt.Errorf("no req in MessagesEditChatAboutResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1640,7 +1695,7 @@ func (p *MessagesEditChatAboutResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatAboutResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatAboutResult")
+		return fmt.Errorf("no req in MessagesEditChatAboutResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1648,6 +1703,9 @@ func (p *MessagesEditChatAboutResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *MessagesEditChatAboutResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1699,7 +1757,7 @@ type MessagesEditChatDefaultBannedRightsArgs struct {
 
 func (p *MessagesEditChatDefaultBannedRightsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatDefaultBannedRightsArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatDefaultBannedRightsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1715,7 +1773,7 @@ func (p *MessagesEditChatDefaultBannedRightsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatDefaultBannedRightsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatDefaultBannedRightsArgs")
+		return fmt.Errorf("no req in MessagesEditChatDefaultBannedRightsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1755,7 +1813,7 @@ var MessagesEditChatDefaultBannedRightsResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditChatDefaultBannedRightsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatDefaultBannedRightsResult")
+		return out, fmt.Errorf("no req in MessagesEditChatDefaultBannedRightsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1771,7 +1829,7 @@ func (p *MessagesEditChatDefaultBannedRightsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatDefaultBannedRightsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatDefaultBannedRightsResult")
+		return fmt.Errorf("no req in MessagesEditChatDefaultBannedRightsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1779,6 +1837,9 @@ func (p *MessagesEditChatDefaultBannedRightsResult) Encode(x *bin.Encoder, layer
 
 func (p *MessagesEditChatDefaultBannedRightsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1830,7 +1891,7 @@ type MessagesDeleteChatArgs struct {
 
 func (p *MessagesDeleteChatArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesDeleteChatArgs")
+		return out, fmt.Errorf("no req in MessagesDeleteChatArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1846,7 +1907,7 @@ func (p *MessagesDeleteChatArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteChatArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesDeleteChatArgs")
+		return fmt.Errorf("no req in MessagesDeleteChatArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1886,7 +1947,7 @@ var MessagesDeleteChatResult_Success_DEFAULT *tg.Bool
 
 func (p *MessagesDeleteChatResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesDeleteChatResult")
+		return out, fmt.Errorf("no req in MessagesDeleteChatResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1902,7 +1963,7 @@ func (p *MessagesDeleteChatResult) Unmarshal(in []byte) error {
 
 func (p *MessagesDeleteChatResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesDeleteChatResult")
+		return fmt.Errorf("no req in MessagesDeleteChatResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1910,6 +1971,9 @@ func (p *MessagesDeleteChatResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *MessagesDeleteChatResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1961,7 +2025,7 @@ type MessagesGetMessageReadParticipantsArgs struct {
 
 func (p *MessagesGetMessageReadParticipantsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetMessageReadParticipantsArgs")
+		return out, fmt.Errorf("no req in MessagesGetMessageReadParticipantsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1977,7 +2041,7 @@ func (p *MessagesGetMessageReadParticipantsArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessageReadParticipantsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetMessageReadParticipantsArgs")
+		return fmt.Errorf("no req in MessagesGetMessageReadParticipantsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2017,7 +2081,7 @@ var MessagesGetMessageReadParticipantsResult_Success_DEFAULT *tg.VectorReadParti
 
 func (p *MessagesGetMessageReadParticipantsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetMessageReadParticipantsResult")
+		return out, fmt.Errorf("no req in MessagesGetMessageReadParticipantsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2033,7 +2097,7 @@ func (p *MessagesGetMessageReadParticipantsResult) Unmarshal(in []byte) error {
 
 func (p *MessagesGetMessageReadParticipantsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetMessageReadParticipantsResult")
+		return fmt.Errorf("no req in MessagesGetMessageReadParticipantsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2041,6 +2105,9 @@ func (p *MessagesGetMessageReadParticipantsResult) Encode(x *bin.Encoder, layer 
 
 func (p *MessagesGetMessageReadParticipantsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorReadParticipantDate)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2092,7 +2159,7 @@ type MessagesEditChatCreatorArgs struct {
 
 func (p *MessagesEditChatCreatorArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatCreatorArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatCreatorArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2108,7 +2175,7 @@ func (p *MessagesEditChatCreatorArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatCreatorArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatCreatorArgs")
+		return fmt.Errorf("no req in MessagesEditChatCreatorArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2148,7 +2215,7 @@ var MessagesEditChatCreatorResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditChatCreatorResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatCreatorResult")
+		return out, fmt.Errorf("no req in MessagesEditChatCreatorResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2164,7 +2231,7 @@ func (p *MessagesEditChatCreatorResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatCreatorResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatCreatorResult")
+		return fmt.Errorf("no req in MessagesEditChatCreatorResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2172,6 +2239,9 @@ func (p *MessagesEditChatCreatorResult) Encode(x *bin.Encoder, layer int32) erro
 
 func (p *MessagesEditChatCreatorResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2223,7 +2293,7 @@ type MessagesGetFutureChatCreatorAfterLeaveArgs struct {
 
 func (p *MessagesGetFutureChatCreatorAfterLeaveArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesGetFutureChatCreatorAfterLeaveArgs")
+		return out, fmt.Errorf("no req in MessagesGetFutureChatCreatorAfterLeaveArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2239,7 +2309,7 @@ func (p *MessagesGetFutureChatCreatorAfterLeaveArgs) Unmarshal(in []byte) error 
 
 func (p *MessagesGetFutureChatCreatorAfterLeaveArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesGetFutureChatCreatorAfterLeaveArgs")
+		return fmt.Errorf("no req in MessagesGetFutureChatCreatorAfterLeaveArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2279,7 +2349,7 @@ var MessagesGetFutureChatCreatorAfterLeaveResult_Success_DEFAULT *tg.User
 
 func (p *MessagesGetFutureChatCreatorAfterLeaveResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesGetFutureChatCreatorAfterLeaveResult")
+		return out, fmt.Errorf("no req in MessagesGetFutureChatCreatorAfterLeaveResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2295,7 +2365,7 @@ func (p *MessagesGetFutureChatCreatorAfterLeaveResult) Unmarshal(in []byte) erro
 
 func (p *MessagesGetFutureChatCreatorAfterLeaveResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesGetFutureChatCreatorAfterLeaveResult")
+		return fmt.Errorf("no req in MessagesGetFutureChatCreatorAfterLeaveResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2303,6 +2373,9 @@ func (p *MessagesGetFutureChatCreatorAfterLeaveResult) Encode(x *bin.Encoder, la
 
 func (p *MessagesGetFutureChatCreatorAfterLeaveResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.User)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2354,7 +2427,7 @@ type MessagesEditChatParticipantRankArgs struct {
 
 func (p *MessagesEditChatParticipantRankArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesEditChatParticipantRankArgs")
+		return out, fmt.Errorf("no req in MessagesEditChatParticipantRankArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2370,7 +2443,7 @@ func (p *MessagesEditChatParticipantRankArgs) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatParticipantRankArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesEditChatParticipantRankArgs")
+		return fmt.Errorf("no req in MessagesEditChatParticipantRankArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2410,7 +2483,7 @@ var MessagesEditChatParticipantRankResult_Success_DEFAULT *tg.Updates
 
 func (p *MessagesEditChatParticipantRankResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesEditChatParticipantRankResult")
+		return out, fmt.Errorf("no req in MessagesEditChatParticipantRankResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2426,7 +2499,7 @@ func (p *MessagesEditChatParticipantRankResult) Unmarshal(in []byte) error {
 
 func (p *MessagesEditChatParticipantRankResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesEditChatParticipantRankResult")
+		return fmt.Errorf("no req in MessagesEditChatParticipantRankResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2434,6 +2507,9 @@ func (p *MessagesEditChatParticipantRankResult) Encode(x *bin.Encoder, layer int
 
 func (p *MessagesEditChatParticipantRankResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2485,7 +2561,7 @@ type ChannelsConvertToGigagroupArgs struct {
 
 func (p *ChannelsConvertToGigagroupArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsConvertToGigagroupArgs")
+		return out, fmt.Errorf("no req in ChannelsConvertToGigagroupArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2501,7 +2577,7 @@ func (p *ChannelsConvertToGigagroupArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsConvertToGigagroupArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsConvertToGigagroupArgs")
+		return fmt.Errorf("no req in ChannelsConvertToGigagroupArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2541,7 +2617,7 @@ var ChannelsConvertToGigagroupResult_Success_DEFAULT *tg.Updates
 
 func (p *ChannelsConvertToGigagroupResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsConvertToGigagroupResult")
+		return out, fmt.Errorf("no req in ChannelsConvertToGigagroupResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2557,7 +2633,7 @@ func (p *ChannelsConvertToGigagroupResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsConvertToGigagroupResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsConvertToGigagroupResult")
+		return fmt.Errorf("no req in ChannelsConvertToGigagroupResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2565,6 +2641,9 @@ func (p *ChannelsConvertToGigagroupResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *ChannelsConvertToGigagroupResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2616,7 +2695,7 @@ type ChannelsSetEmojiStickersArgs struct {
 
 func (p *ChannelsSetEmojiStickersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ChannelsSetEmojiStickersArgs")
+		return out, fmt.Errorf("no req in ChannelsSetEmojiStickersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2632,7 +2711,7 @@ func (p *ChannelsSetEmojiStickersArgs) Unmarshal(in []byte) error {
 
 func (p *ChannelsSetEmojiStickersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ChannelsSetEmojiStickersArgs")
+		return fmt.Errorf("no req in ChannelsSetEmojiStickersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2672,7 +2751,7 @@ var ChannelsSetEmojiStickersResult_Success_DEFAULT *tg.Bool
 
 func (p *ChannelsSetEmojiStickersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ChannelsSetEmojiStickersResult")
+		return out, fmt.Errorf("no req in ChannelsSetEmojiStickersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2688,7 +2767,7 @@ func (p *ChannelsSetEmojiStickersResult) Unmarshal(in []byte) error {
 
 func (p *ChannelsSetEmojiStickersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ChannelsSetEmojiStickersResult")
+		return fmt.Errorf("no req in ChannelsSetEmojiStickersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2696,6 +2775,9 @@ func (p *ChannelsSetEmojiStickersResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ChannelsSetEmojiStickersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2735,265 +2817,227 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) MessagesGetChats(ctx context.Context, req *tg.TLMessagesGetChats) (r *tg.MessagesChats, err error) {
 	// var _args MessagesGetChatsArgs
 	// _args.Req = req
-	// var _result MessagesGetChatsResult
+	var _result MessagesGetChatsResult
 
-	_result := new(tg.MessagesChats)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getChats", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getChats", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetFullChat(ctx context.Context, req *tg.TLMessagesGetFullChat) (r *tg.MessagesChatFull, err error) {
 	// var _args MessagesGetFullChatArgs
 	// _args.Req = req
-	// var _result MessagesGetFullChatResult
+	var _result MessagesGetFullChatResult
 
-	_result := new(tg.MessagesChatFull)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getFullChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getFullChat", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatTitle(ctx context.Context, req *tg.TLMessagesEditChatTitle) (r *tg.Updates, err error) {
 	// var _args MessagesEditChatTitleArgs
 	// _args.Req = req
-	// var _result MessagesEditChatTitleResult
+	var _result MessagesEditChatTitleResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatTitle", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatTitle", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatPhoto(ctx context.Context, req *tg.TLMessagesEditChatPhoto) (r *tg.Updates, err error) {
 	// var _args MessagesEditChatPhotoArgs
 	// _args.Req = req
-	// var _result MessagesEditChatPhotoResult
+	var _result MessagesEditChatPhotoResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatPhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatPhoto", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesAddChatUser(ctx context.Context, req *tg.TLMessagesAddChatUser) (r *tg.MessagesInvitedUsers, err error) {
 	// var _args MessagesAddChatUserArgs
 	// _args.Req = req
-	// var _result MessagesAddChatUserResult
+	var _result MessagesAddChatUserResult
 
-	_result := new(tg.MessagesInvitedUsers)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.addChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.addChatUser", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesDeleteChatUser(ctx context.Context, req *tg.TLMessagesDeleteChatUser) (r *tg.Updates, err error) {
 	// var _args MessagesDeleteChatUserArgs
 	// _args.Req = req
-	// var _result MessagesDeleteChatUserResult
+	var _result MessagesDeleteChatUserResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChatUser", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesCreateChat(ctx context.Context, req *tg.TLMessagesCreateChat) (r *tg.MessagesInvitedUsers, err error) {
 	// var _args MessagesCreateChatArgs
 	// _args.Req = req
-	// var _result MessagesCreateChatResult
+	var _result MessagesCreateChatResult
 
-	_result := new(tg.MessagesInvitedUsers)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.createChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.createChat", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatAdmin(ctx context.Context, req *tg.TLMessagesEditChatAdmin) (r *tg.Bool, err error) {
 	// var _args MessagesEditChatAdminArgs
 	// _args.Req = req
-	// var _result MessagesEditChatAdminResult
+	var _result MessagesEditChatAdminResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAdmin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAdmin", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesMigrateChat(ctx context.Context, req *tg.TLMessagesMigrateChat) (r *tg.Updates, err error) {
 	// var _args MessagesMigrateChatArgs
 	// _args.Req = req
-	// var _result MessagesMigrateChatResult
+	var _result MessagesMigrateChatResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.migrateChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.migrateChat", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetCommonChats(ctx context.Context, req *tg.TLMessagesGetCommonChats) (r *tg.MessagesChats, err error) {
 	// var _args MessagesGetCommonChatsArgs
 	// _args.Req = req
-	// var _result MessagesGetCommonChatsResult
+	var _result MessagesGetCommonChatsResult
 
-	_result := new(tg.MessagesChats)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getCommonChats", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getCommonChats", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatAbout(ctx context.Context, req *tg.TLMessagesEditChatAbout) (r *tg.Bool, err error) {
 	// var _args MessagesEditChatAboutArgs
 	// _args.Req = req
-	// var _result MessagesEditChatAboutResult
+	var _result MessagesEditChatAboutResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAbout", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAbout", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatDefaultBannedRights(ctx context.Context, req *tg.TLMessagesEditChatDefaultBannedRights) (r *tg.Updates, err error) {
 	// var _args MessagesEditChatDefaultBannedRightsArgs
 	// _args.Req = req
-	// var _result MessagesEditChatDefaultBannedRightsResult
+	var _result MessagesEditChatDefaultBannedRightsResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatDefaultBannedRights", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatDefaultBannedRights", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesDeleteChat(ctx context.Context, req *tg.TLMessagesDeleteChat) (r *tg.Bool, err error) {
 	// var _args MessagesDeleteChatArgs
 	// _args.Req = req
-	// var _result MessagesDeleteChatResult
+	var _result MessagesDeleteChatResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChat", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetMessageReadParticipants(ctx context.Context, req *tg.TLMessagesGetMessageReadParticipants) (r *tg.VectorReadParticipantDate, err error) {
 	// var _args MessagesGetMessageReadParticipantsArgs
 	// _args.Req = req
-	// var _result MessagesGetMessageReadParticipantsResult
+	var _result MessagesGetMessageReadParticipantsResult
 
-	_result := new(tg.VectorReadParticipantDate)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getMessageReadParticipants", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getMessageReadParticipants", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatCreator(ctx context.Context, req *tg.TLMessagesEditChatCreator) (r *tg.Updates, err error) {
 	// var _args MessagesEditChatCreatorArgs
 	// _args.Req = req
-	// var _result MessagesEditChatCreatorResult
+	var _result MessagesEditChatCreatorResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatCreator", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatCreator", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesGetFutureChatCreatorAfterLeave(ctx context.Context, req *tg.TLMessagesGetFutureChatCreatorAfterLeave) (r *tg.User, err error) {
 	// var _args MessagesGetFutureChatCreatorAfterLeaveArgs
 	// _args.Req = req
-	// var _result MessagesGetFutureChatCreatorAfterLeaveResult
+	var _result MessagesGetFutureChatCreatorAfterLeaveResult
 
-	_result := new(tg.User)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getFutureChatCreatorAfterLeave", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getFutureChatCreatorAfterLeave", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) MessagesEditChatParticipantRank(ctx context.Context, req *tg.TLMessagesEditChatParticipantRank) (r *tg.Updates, err error) {
 	// var _args MessagesEditChatParticipantRankArgs
 	// _args.Req = req
-	// var _result MessagesEditChatParticipantRankResult
+	var _result MessagesEditChatParticipantRankResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatParticipantRank", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatParticipantRank", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsConvertToGigagroup(ctx context.Context, req *tg.TLChannelsConvertToGigagroup) (r *tg.Updates, err error) {
 	// var _args ChannelsConvertToGigagroupArgs
 	// _args.Req = req
-	// var _result ChannelsConvertToGigagroupResult
+	var _result ChannelsConvertToGigagroupResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCChats/channels.convertToGigagroup", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/channels.convertToGigagroup", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ChannelsSetEmojiStickers(ctx context.Context, req *tg.TLChannelsSetEmojiStickers) (r *tg.Bool, err error) {
 	// var _args ChannelsSetEmojiStickersArgs
 	// _args.Req = req
-	// var _result ChannelsSetEmojiStickersResult
+	var _result ChannelsSetEmojiStickersResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCChats/channels.setEmojiStickers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/channels.setEmojiStickers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

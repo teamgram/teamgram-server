@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCQrCode/auth.exportLoginToken": kitex.NewMethodInfo(
@@ -146,7 +171,7 @@ type AuthExportLoginTokenArgs struct {
 
 func (p *AuthExportLoginTokenArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AuthExportLoginTokenArgs")
+		return out, fmt.Errorf("no req in AuthExportLoginTokenArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -162,7 +187,7 @@ func (p *AuthExportLoginTokenArgs) Unmarshal(in []byte) error {
 
 func (p *AuthExportLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AuthExportLoginTokenArgs")
+		return fmt.Errorf("no req in AuthExportLoginTokenArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -202,7 +227,7 @@ var AuthExportLoginTokenResult_Success_DEFAULT *tg.AuthLoginToken
 
 func (p *AuthExportLoginTokenResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AuthExportLoginTokenResult")
+		return out, fmt.Errorf("no req in AuthExportLoginTokenResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -218,7 +243,7 @@ func (p *AuthExportLoginTokenResult) Unmarshal(in []byte) error {
 
 func (p *AuthExportLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AuthExportLoginTokenResult")
+		return fmt.Errorf("no req in AuthExportLoginTokenResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -226,6 +251,9 @@ func (p *AuthExportLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthExportLoginTokenResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthLoginToken)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -277,7 +305,7 @@ type AuthImportLoginTokenArgs struct {
 
 func (p *AuthImportLoginTokenArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AuthImportLoginTokenArgs")
+		return out, fmt.Errorf("no req in AuthImportLoginTokenArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -293,7 +321,7 @@ func (p *AuthImportLoginTokenArgs) Unmarshal(in []byte) error {
 
 func (p *AuthImportLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AuthImportLoginTokenArgs")
+		return fmt.Errorf("no req in AuthImportLoginTokenArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -333,7 +361,7 @@ var AuthImportLoginTokenResult_Success_DEFAULT *tg.AuthLoginToken
 
 func (p *AuthImportLoginTokenResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AuthImportLoginTokenResult")
+		return out, fmt.Errorf("no req in AuthImportLoginTokenResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -349,7 +377,7 @@ func (p *AuthImportLoginTokenResult) Unmarshal(in []byte) error {
 
 func (p *AuthImportLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AuthImportLoginTokenResult")
+		return fmt.Errorf("no req in AuthImportLoginTokenResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -357,6 +385,9 @@ func (p *AuthImportLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthImportLoginTokenResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.AuthLoginToken)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -408,7 +439,7 @@ type AuthAcceptLoginTokenArgs struct {
 
 func (p *AuthAcceptLoginTokenArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AuthAcceptLoginTokenArgs")
+		return out, fmt.Errorf("no req in AuthAcceptLoginTokenArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -424,7 +455,7 @@ func (p *AuthAcceptLoginTokenArgs) Unmarshal(in []byte) error {
 
 func (p *AuthAcceptLoginTokenArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AuthAcceptLoginTokenArgs")
+		return fmt.Errorf("no req in AuthAcceptLoginTokenArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -464,7 +495,7 @@ var AuthAcceptLoginTokenResult_Success_DEFAULT *tg.Authorization
 
 func (p *AuthAcceptLoginTokenResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AuthAcceptLoginTokenResult")
+		return out, fmt.Errorf("no req in AuthAcceptLoginTokenResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -480,7 +511,7 @@ func (p *AuthAcceptLoginTokenResult) Unmarshal(in []byte) error {
 
 func (p *AuthAcceptLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AuthAcceptLoginTokenResult")
+		return fmt.Errorf("no req in AuthAcceptLoginTokenResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -488,6 +519,9 @@ func (p *AuthAcceptLoginTokenResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *AuthAcceptLoginTokenResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Authorization)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -527,41 +561,35 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AuthExportLoginToken(ctx context.Context, req *tg.TLAuthExportLoginToken) (r *tg.AuthLoginToken, err error) {
 	// var _args AuthExportLoginTokenArgs
 	// _args.Req = req
-	// var _result AuthExportLoginTokenResult
+	var _result AuthExportLoginTokenResult
 
-	_result := new(tg.AuthLoginToken)
-	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.exportLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.exportLoginToken", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthImportLoginToken(ctx context.Context, req *tg.TLAuthImportLoginToken) (r *tg.AuthLoginToken, err error) {
 	// var _args AuthImportLoginTokenArgs
 	// _args.Req = req
-	// var _result AuthImportLoginTokenResult
+	var _result AuthImportLoginTokenResult
 
-	_result := new(tg.AuthLoginToken)
-	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.importLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.importLoginToken", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AuthAcceptLoginToken(ctx context.Context, req *tg.TLAuthAcceptLoginToken) (r *tg.Authorization, err error) {
 	// var _args AuthAcceptLoginTokenArgs
 	// _args.Req = req
-	// var _result AuthAcceptLoginTokenResult
+	var _result AuthAcceptLoginTokenResult
 
-	_result := new(tg.Authorization)
-	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.acceptLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.acceptLoginToken", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCConfiguration/help.getConfig": kitex.NewMethodInfo(
@@ -188,7 +213,7 @@ type HelpGetConfigArgs struct {
 
 func (p *HelpGetConfigArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetConfigArgs")
+		return out, fmt.Errorf("no req in HelpGetConfigArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -204,7 +229,7 @@ func (p *HelpGetConfigArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetConfigArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetConfigArgs")
+		return fmt.Errorf("no req in HelpGetConfigArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -244,7 +269,7 @@ var HelpGetConfigResult_Success_DEFAULT *tg.Config
 
 func (p *HelpGetConfigResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetConfigResult")
+		return out, fmt.Errorf("no req in HelpGetConfigResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -260,7 +285,7 @@ func (p *HelpGetConfigResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetConfigResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetConfigResult")
+		return fmt.Errorf("no req in HelpGetConfigResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -268,6 +293,9 @@ func (p *HelpGetConfigResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetConfigResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Config)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -319,7 +347,7 @@ type HelpGetNearestDcArgs struct {
 
 func (p *HelpGetNearestDcArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetNearestDcArgs")
+		return out, fmt.Errorf("no req in HelpGetNearestDcArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -335,7 +363,7 @@ func (p *HelpGetNearestDcArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetNearestDcArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetNearestDcArgs")
+		return fmt.Errorf("no req in HelpGetNearestDcArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -375,7 +403,7 @@ var HelpGetNearestDcResult_Success_DEFAULT *tg.NearestDc
 
 func (p *HelpGetNearestDcResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetNearestDcResult")
+		return out, fmt.Errorf("no req in HelpGetNearestDcResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -391,7 +419,7 @@ func (p *HelpGetNearestDcResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetNearestDcResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetNearestDcResult")
+		return fmt.Errorf("no req in HelpGetNearestDcResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -399,6 +427,9 @@ func (p *HelpGetNearestDcResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetNearestDcResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.NearestDc)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -450,7 +481,7 @@ type HelpGetAppUpdateArgs struct {
 
 func (p *HelpGetAppUpdateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetAppUpdateArgs")
+		return out, fmt.Errorf("no req in HelpGetAppUpdateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -466,7 +497,7 @@ func (p *HelpGetAppUpdateArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetAppUpdateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetAppUpdateArgs")
+		return fmt.Errorf("no req in HelpGetAppUpdateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -506,7 +537,7 @@ var HelpGetAppUpdateResult_Success_DEFAULT *tg.HelpAppUpdate
 
 func (p *HelpGetAppUpdateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetAppUpdateResult")
+		return out, fmt.Errorf("no req in HelpGetAppUpdateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -522,7 +553,7 @@ func (p *HelpGetAppUpdateResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetAppUpdateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetAppUpdateResult")
+		return fmt.Errorf("no req in HelpGetAppUpdateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -530,6 +561,9 @@ func (p *HelpGetAppUpdateResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetAppUpdateResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpAppUpdate)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -581,7 +615,7 @@ type HelpGetInviteTextArgs struct {
 
 func (p *HelpGetInviteTextArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetInviteTextArgs")
+		return out, fmt.Errorf("no req in HelpGetInviteTextArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -597,7 +631,7 @@ func (p *HelpGetInviteTextArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetInviteTextArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetInviteTextArgs")
+		return fmt.Errorf("no req in HelpGetInviteTextArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -637,7 +671,7 @@ var HelpGetInviteTextResult_Success_DEFAULT *tg.HelpInviteText
 
 func (p *HelpGetInviteTextResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetInviteTextResult")
+		return out, fmt.Errorf("no req in HelpGetInviteTextResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -653,7 +687,7 @@ func (p *HelpGetInviteTextResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetInviteTextResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetInviteTextResult")
+		return fmt.Errorf("no req in HelpGetInviteTextResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -661,6 +695,9 @@ func (p *HelpGetInviteTextResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetInviteTextResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpInviteText)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -712,7 +749,7 @@ type HelpGetSupportArgs struct {
 
 func (p *HelpGetSupportArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetSupportArgs")
+		return out, fmt.Errorf("no req in HelpGetSupportArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -728,7 +765,7 @@ func (p *HelpGetSupportArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetSupportArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetSupportArgs")
+		return fmt.Errorf("no req in HelpGetSupportArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -768,7 +805,7 @@ var HelpGetSupportResult_Success_DEFAULT *tg.HelpSupport
 
 func (p *HelpGetSupportResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetSupportResult")
+		return out, fmt.Errorf("no req in HelpGetSupportResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -784,7 +821,7 @@ func (p *HelpGetSupportResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetSupportResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetSupportResult")
+		return fmt.Errorf("no req in HelpGetSupportResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -792,6 +829,9 @@ func (p *HelpGetSupportResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetSupportResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpSupport)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -843,7 +883,7 @@ type HelpGetAppConfigArgs struct {
 
 func (p *HelpGetAppConfigArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetAppConfigArgs")
+		return out, fmt.Errorf("no req in HelpGetAppConfigArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -859,7 +899,7 @@ func (p *HelpGetAppConfigArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetAppConfigArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetAppConfigArgs")
+		return fmt.Errorf("no req in HelpGetAppConfigArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -899,7 +939,7 @@ var HelpGetAppConfigResult_Success_DEFAULT *tg.HelpAppConfig
 
 func (p *HelpGetAppConfigResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetAppConfigResult")
+		return out, fmt.Errorf("no req in HelpGetAppConfigResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -915,7 +955,7 @@ func (p *HelpGetAppConfigResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetAppConfigResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetAppConfigResult")
+		return fmt.Errorf("no req in HelpGetAppConfigResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -923,6 +963,9 @@ func (p *HelpGetAppConfigResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetAppConfigResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpAppConfig)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -974,7 +1017,7 @@ type HelpGetSupportNameArgs struct {
 
 func (p *HelpGetSupportNameArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetSupportNameArgs")
+		return out, fmt.Errorf("no req in HelpGetSupportNameArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -990,7 +1033,7 @@ func (p *HelpGetSupportNameArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetSupportNameArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetSupportNameArgs")
+		return fmt.Errorf("no req in HelpGetSupportNameArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1030,7 +1073,7 @@ var HelpGetSupportNameResult_Success_DEFAULT *tg.HelpSupportName
 
 func (p *HelpGetSupportNameResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetSupportNameResult")
+		return out, fmt.Errorf("no req in HelpGetSupportNameResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1046,7 +1089,7 @@ func (p *HelpGetSupportNameResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetSupportNameResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetSupportNameResult")
+		return fmt.Errorf("no req in HelpGetSupportNameResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1054,6 +1097,9 @@ func (p *HelpGetSupportNameResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetSupportNameResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpSupportName)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1105,7 +1151,7 @@ type HelpDismissSuggestionArgs struct {
 
 func (p *HelpDismissSuggestionArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpDismissSuggestionArgs")
+		return out, fmt.Errorf("no req in HelpDismissSuggestionArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1121,7 +1167,7 @@ func (p *HelpDismissSuggestionArgs) Unmarshal(in []byte) error {
 
 func (p *HelpDismissSuggestionArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpDismissSuggestionArgs")
+		return fmt.Errorf("no req in HelpDismissSuggestionArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1161,7 +1207,7 @@ var HelpDismissSuggestionResult_Success_DEFAULT *tg.Bool
 
 func (p *HelpDismissSuggestionResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpDismissSuggestionResult")
+		return out, fmt.Errorf("no req in HelpDismissSuggestionResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1177,7 +1223,7 @@ func (p *HelpDismissSuggestionResult) Unmarshal(in []byte) error {
 
 func (p *HelpDismissSuggestionResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpDismissSuggestionResult")
+		return fmt.Errorf("no req in HelpDismissSuggestionResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1185,6 +1231,9 @@ func (p *HelpDismissSuggestionResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *HelpDismissSuggestionResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1236,7 +1285,7 @@ type HelpGetCountriesListArgs struct {
 
 func (p *HelpGetCountriesListArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetCountriesListArgs")
+		return out, fmt.Errorf("no req in HelpGetCountriesListArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1252,7 +1301,7 @@ func (p *HelpGetCountriesListArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetCountriesListArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetCountriesListArgs")
+		return fmt.Errorf("no req in HelpGetCountriesListArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1292,7 +1341,7 @@ var HelpGetCountriesListResult_Success_DEFAULT *tg.HelpCountriesList
 
 func (p *HelpGetCountriesListResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetCountriesListResult")
+		return out, fmt.Errorf("no req in HelpGetCountriesListResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1308,7 +1357,7 @@ func (p *HelpGetCountriesListResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetCountriesListResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetCountriesListResult")
+		return fmt.Errorf("no req in HelpGetCountriesListResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1316,6 +1365,9 @@ func (p *HelpGetCountriesListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *HelpGetCountriesListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpCountriesList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1355,125 +1407,107 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) HelpGetConfig(ctx context.Context, req *tg.TLHelpGetConfig) (r *tg.Config, err error) {
 	// var _args HelpGetConfigArgs
 	// _args.Req = req
-	// var _result HelpGetConfigResult
+	var _result HelpGetConfigResult
 
-	_result := new(tg.Config)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getConfig", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetNearestDc(ctx context.Context, req *tg.TLHelpGetNearestDc) (r *tg.NearestDc, err error) {
 	// var _args HelpGetNearestDcArgs
 	// _args.Req = req
-	// var _result HelpGetNearestDcResult
+	var _result HelpGetNearestDcResult
 
-	_result := new(tg.NearestDc)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getNearestDc", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getNearestDc", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetAppUpdate(ctx context.Context, req *tg.TLHelpGetAppUpdate) (r *tg.HelpAppUpdate, err error) {
 	// var _args HelpGetAppUpdateArgs
 	// _args.Req = req
-	// var _result HelpGetAppUpdateResult
+	var _result HelpGetAppUpdateResult
 
-	_result := new(tg.HelpAppUpdate)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppUpdate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppUpdate", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetInviteText(ctx context.Context, req *tg.TLHelpGetInviteText) (r *tg.HelpInviteText, err error) {
 	// var _args HelpGetInviteTextArgs
 	// _args.Req = req
-	// var _result HelpGetInviteTextResult
+	var _result HelpGetInviteTextResult
 
-	_result := new(tg.HelpInviteText)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getInviteText", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getInviteText", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetSupport(ctx context.Context, req *tg.TLHelpGetSupport) (r *tg.HelpSupport, err error) {
 	// var _args HelpGetSupportArgs
 	// _args.Req = req
-	// var _result HelpGetSupportResult
+	var _result HelpGetSupportResult
 
-	_result := new(tg.HelpSupport)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupport", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupport", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetAppConfig(ctx context.Context, req *tg.TLHelpGetAppConfig) (r *tg.HelpAppConfig, err error) {
 	// var _args HelpGetAppConfigArgs
 	// _args.Req = req
-	// var _result HelpGetAppConfigResult
+	var _result HelpGetAppConfigResult
 
-	_result := new(tg.HelpAppConfig)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppConfig", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetSupportName(ctx context.Context, req *tg.TLHelpGetSupportName) (r *tg.HelpSupportName, err error) {
 	// var _args HelpGetSupportNameArgs
 	// _args.Req = req
-	// var _result HelpGetSupportNameResult
+	var _result HelpGetSupportNameResult
 
-	_result := new(tg.HelpSupportName)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupportName", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupportName", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpDismissSuggestion(ctx context.Context, req *tg.TLHelpDismissSuggestion) (r *tg.Bool, err error) {
 	// var _args HelpDismissSuggestionArgs
 	// _args.Req = req
-	// var _result HelpDismissSuggestionResult
+	var _result HelpDismissSuggestionResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.dismissSuggestion", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.dismissSuggestion", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpGetCountriesList(ctx context.Context, req *tg.TLHelpGetCountriesList) (r *tg.HelpCountriesList, err error) {
 	// var _args HelpGetCountriesListArgs
 	// _args.Req = req
-	// var _result HelpGetCountriesListResult
+	var _result HelpGetCountriesListResult
 
-	_result := new(tg.HelpCountriesList)
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getCountriesList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getCountriesList", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

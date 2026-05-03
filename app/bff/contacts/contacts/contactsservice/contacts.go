@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCContacts/account.getContactSignUpNotification": kitex.NewMethodInfo(
@@ -286,7 +311,7 @@ type AccountGetContactSignUpNotificationArgs struct {
 
 func (p *AccountGetContactSignUpNotificationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountGetContactSignUpNotificationArgs")
+		return out, fmt.Errorf("no req in AccountGetContactSignUpNotificationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -302,7 +327,7 @@ func (p *AccountGetContactSignUpNotificationArgs) Unmarshal(in []byte) error {
 
 func (p *AccountGetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountGetContactSignUpNotificationArgs")
+		return fmt.Errorf("no req in AccountGetContactSignUpNotificationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -342,7 +367,7 @@ var AccountGetContactSignUpNotificationResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountGetContactSignUpNotificationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountGetContactSignUpNotificationResult")
+		return out, fmt.Errorf("no req in AccountGetContactSignUpNotificationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -358,7 +383,7 @@ func (p *AccountGetContactSignUpNotificationResult) Unmarshal(in []byte) error {
 
 func (p *AccountGetContactSignUpNotificationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountGetContactSignUpNotificationResult")
+		return fmt.Errorf("no req in AccountGetContactSignUpNotificationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -366,6 +391,9 @@ func (p *AccountGetContactSignUpNotificationResult) Encode(x *bin.Encoder, layer
 
 func (p *AccountGetContactSignUpNotificationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -417,7 +445,7 @@ type AccountSetContactSignUpNotificationArgs struct {
 
 func (p *AccountSetContactSignUpNotificationArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in AccountSetContactSignUpNotificationArgs")
+		return out, fmt.Errorf("no req in AccountSetContactSignUpNotificationArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -433,7 +461,7 @@ func (p *AccountSetContactSignUpNotificationArgs) Unmarshal(in []byte) error {
 
 func (p *AccountSetContactSignUpNotificationArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in AccountSetContactSignUpNotificationArgs")
+		return fmt.Errorf("no req in AccountSetContactSignUpNotificationArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -473,7 +501,7 @@ var AccountSetContactSignUpNotificationResult_Success_DEFAULT *tg.Bool
 
 func (p *AccountSetContactSignUpNotificationResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in AccountSetContactSignUpNotificationResult")
+		return out, fmt.Errorf("no req in AccountSetContactSignUpNotificationResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -489,7 +517,7 @@ func (p *AccountSetContactSignUpNotificationResult) Unmarshal(in []byte) error {
 
 func (p *AccountSetContactSignUpNotificationResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in AccountSetContactSignUpNotificationResult")
+		return fmt.Errorf("no req in AccountSetContactSignUpNotificationResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -497,6 +525,9 @@ func (p *AccountSetContactSignUpNotificationResult) Encode(x *bin.Encoder, layer
 
 func (p *AccountSetContactSignUpNotificationResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -548,7 +579,7 @@ type ContactsGetContactIDsArgs struct {
 
 func (p *ContactsGetContactIDsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetContactIDsArgs")
+		return out, fmt.Errorf("no req in ContactsGetContactIDsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -564,7 +595,7 @@ func (p *ContactsGetContactIDsArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetContactIDsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetContactIDsArgs")
+		return fmt.Errorf("no req in ContactsGetContactIDsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -604,7 +635,7 @@ var ContactsGetContactIDsResult_Success_DEFAULT *tg.VectorInt
 
 func (p *ContactsGetContactIDsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetContactIDsResult")
+		return out, fmt.Errorf("no req in ContactsGetContactIDsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -620,7 +651,7 @@ func (p *ContactsGetContactIDsResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetContactIDsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetContactIDsResult")
+		return fmt.Errorf("no req in ContactsGetContactIDsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -628,6 +659,9 @@ func (p *ContactsGetContactIDsResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *ContactsGetContactIDsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorInt)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -679,7 +713,7 @@ type ContactsGetStatusesArgs struct {
 
 func (p *ContactsGetStatusesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetStatusesArgs")
+		return out, fmt.Errorf("no req in ContactsGetStatusesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -695,7 +729,7 @@ func (p *ContactsGetStatusesArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetStatusesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetStatusesArgs")
+		return fmt.Errorf("no req in ContactsGetStatusesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -735,7 +769,7 @@ var ContactsGetStatusesResult_Success_DEFAULT *tg.VectorContactStatus
 
 func (p *ContactsGetStatusesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetStatusesResult")
+		return out, fmt.Errorf("no req in ContactsGetStatusesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -751,7 +785,7 @@ func (p *ContactsGetStatusesResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetStatusesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetStatusesResult")
+		return fmt.Errorf("no req in ContactsGetStatusesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -759,6 +793,9 @@ func (p *ContactsGetStatusesResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetStatusesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorContactStatus)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -810,7 +847,7 @@ type ContactsGetContactsArgs struct {
 
 func (p *ContactsGetContactsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetContactsArgs")
+		return out, fmt.Errorf("no req in ContactsGetContactsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -826,7 +863,7 @@ func (p *ContactsGetContactsArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetContactsArgs")
+		return fmt.Errorf("no req in ContactsGetContactsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -866,7 +903,7 @@ var ContactsGetContactsResult_Success_DEFAULT *tg.ContactsContacts
 
 func (p *ContactsGetContactsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetContactsResult")
+		return out, fmt.Errorf("no req in ContactsGetContactsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -882,7 +919,7 @@ func (p *ContactsGetContactsResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetContactsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetContactsResult")
+		return fmt.Errorf("no req in ContactsGetContactsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -890,6 +927,9 @@ func (p *ContactsGetContactsResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetContactsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsContacts)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -941,7 +981,7 @@ type ContactsImportContactsArgs struct {
 
 func (p *ContactsImportContactsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsImportContactsArgs")
+		return out, fmt.Errorf("no req in ContactsImportContactsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -957,7 +997,7 @@ func (p *ContactsImportContactsArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsImportContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsImportContactsArgs")
+		return fmt.Errorf("no req in ContactsImportContactsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -997,7 +1037,7 @@ var ContactsImportContactsResult_Success_DEFAULT *tg.ContactsImportedContacts
 
 func (p *ContactsImportContactsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsImportContactsResult")
+		return out, fmt.Errorf("no req in ContactsImportContactsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1013,7 +1053,7 @@ func (p *ContactsImportContactsResult) Unmarshal(in []byte) error {
 
 func (p *ContactsImportContactsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsImportContactsResult")
+		return fmt.Errorf("no req in ContactsImportContactsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1021,6 +1061,9 @@ func (p *ContactsImportContactsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ContactsImportContactsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsImportedContacts)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1072,7 +1115,7 @@ type ContactsDeleteContactsArgs struct {
 
 func (p *ContactsDeleteContactsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsDeleteContactsArgs")
+		return out, fmt.Errorf("no req in ContactsDeleteContactsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1088,7 +1131,7 @@ func (p *ContactsDeleteContactsArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsDeleteContactsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsDeleteContactsArgs")
+		return fmt.Errorf("no req in ContactsDeleteContactsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1128,7 +1171,7 @@ var ContactsDeleteContactsResult_Success_DEFAULT *tg.Updates
 
 func (p *ContactsDeleteContactsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsDeleteContactsResult")
+		return out, fmt.Errorf("no req in ContactsDeleteContactsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1144,7 +1187,7 @@ func (p *ContactsDeleteContactsResult) Unmarshal(in []byte) error {
 
 func (p *ContactsDeleteContactsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsDeleteContactsResult")
+		return fmt.Errorf("no req in ContactsDeleteContactsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1152,6 +1195,9 @@ func (p *ContactsDeleteContactsResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ContactsDeleteContactsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1203,7 +1249,7 @@ type ContactsDeleteByPhonesArgs struct {
 
 func (p *ContactsDeleteByPhonesArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsDeleteByPhonesArgs")
+		return out, fmt.Errorf("no req in ContactsDeleteByPhonesArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1219,7 +1265,7 @@ func (p *ContactsDeleteByPhonesArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsDeleteByPhonesArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsDeleteByPhonesArgs")
+		return fmt.Errorf("no req in ContactsDeleteByPhonesArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1259,7 +1305,7 @@ var ContactsDeleteByPhonesResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsDeleteByPhonesResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsDeleteByPhonesResult")
+		return out, fmt.Errorf("no req in ContactsDeleteByPhonesResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1275,7 +1321,7 @@ func (p *ContactsDeleteByPhonesResult) Unmarshal(in []byte) error {
 
 func (p *ContactsDeleteByPhonesResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsDeleteByPhonesResult")
+		return fmt.Errorf("no req in ContactsDeleteByPhonesResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1283,6 +1329,9 @@ func (p *ContactsDeleteByPhonesResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ContactsDeleteByPhonesResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1334,7 +1383,7 @@ type ContactsBlockArgs struct {
 
 func (p *ContactsBlockArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsBlockArgs")
+		return out, fmt.Errorf("no req in ContactsBlockArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1350,7 +1399,7 @@ func (p *ContactsBlockArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsBlockArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsBlockArgs")
+		return fmt.Errorf("no req in ContactsBlockArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1390,7 +1439,7 @@ var ContactsBlockResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsBlockResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsBlockResult")
+		return out, fmt.Errorf("no req in ContactsBlockResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1406,7 +1455,7 @@ func (p *ContactsBlockResult) Unmarshal(in []byte) error {
 
 func (p *ContactsBlockResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsBlockResult")
+		return fmt.Errorf("no req in ContactsBlockResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1414,6 +1463,9 @@ func (p *ContactsBlockResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsBlockResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1465,7 +1517,7 @@ type ContactsUnblockArgs struct {
 
 func (p *ContactsUnblockArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsUnblockArgs")
+		return out, fmt.Errorf("no req in ContactsUnblockArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1481,7 +1533,7 @@ func (p *ContactsUnblockArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsUnblockArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsUnblockArgs")
+		return fmt.Errorf("no req in ContactsUnblockArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1521,7 +1573,7 @@ var ContactsUnblockResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsUnblockResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsUnblockResult")
+		return out, fmt.Errorf("no req in ContactsUnblockResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1537,7 +1589,7 @@ func (p *ContactsUnblockResult) Unmarshal(in []byte) error {
 
 func (p *ContactsUnblockResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsUnblockResult")
+		return fmt.Errorf("no req in ContactsUnblockResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1545,6 +1597,9 @@ func (p *ContactsUnblockResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsUnblockResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1596,7 +1651,7 @@ type ContactsGetBlockedArgs struct {
 
 func (p *ContactsGetBlockedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetBlockedArgs")
+		return out, fmt.Errorf("no req in ContactsGetBlockedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1612,7 +1667,7 @@ func (p *ContactsGetBlockedArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetBlockedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetBlockedArgs")
+		return fmt.Errorf("no req in ContactsGetBlockedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1652,7 +1707,7 @@ var ContactsGetBlockedResult_Success_DEFAULT *tg.ContactsBlocked
 
 func (p *ContactsGetBlockedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetBlockedResult")
+		return out, fmt.Errorf("no req in ContactsGetBlockedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1668,7 +1723,7 @@ func (p *ContactsGetBlockedResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetBlockedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetBlockedResult")
+		return fmt.Errorf("no req in ContactsGetBlockedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1676,6 +1731,9 @@ func (p *ContactsGetBlockedResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetBlockedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsBlocked)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1727,7 +1785,7 @@ type ContactsSearchArgs struct {
 
 func (p *ContactsSearchArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsSearchArgs")
+		return out, fmt.Errorf("no req in ContactsSearchArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1743,7 +1801,7 @@ func (p *ContactsSearchArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsSearchArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsSearchArgs")
+		return fmt.Errorf("no req in ContactsSearchArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1783,7 +1841,7 @@ var ContactsSearchResult_Success_DEFAULT *tg.ContactsFound
 
 func (p *ContactsSearchResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsSearchResult")
+		return out, fmt.Errorf("no req in ContactsSearchResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1799,7 +1857,7 @@ func (p *ContactsSearchResult) Unmarshal(in []byte) error {
 
 func (p *ContactsSearchResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsSearchResult")
+		return fmt.Errorf("no req in ContactsSearchResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1807,6 +1865,9 @@ func (p *ContactsSearchResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsSearchResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsFound)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1858,7 +1919,7 @@ type ContactsGetTopPeersArgs struct {
 
 func (p *ContactsGetTopPeersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetTopPeersArgs")
+		return out, fmt.Errorf("no req in ContactsGetTopPeersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -1874,7 +1935,7 @@ func (p *ContactsGetTopPeersArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetTopPeersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetTopPeersArgs")
+		return fmt.Errorf("no req in ContactsGetTopPeersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -1914,7 +1975,7 @@ var ContactsGetTopPeersResult_Success_DEFAULT *tg.ContactsTopPeers
 
 func (p *ContactsGetTopPeersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetTopPeersResult")
+		return out, fmt.Errorf("no req in ContactsGetTopPeersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -1930,7 +1991,7 @@ func (p *ContactsGetTopPeersResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetTopPeersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetTopPeersResult")
+		return fmt.Errorf("no req in ContactsGetTopPeersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -1938,6 +1999,9 @@ func (p *ContactsGetTopPeersResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetTopPeersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.ContactsTopPeers)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -1989,7 +2053,7 @@ type ContactsResetTopPeerRatingArgs struct {
 
 func (p *ContactsResetTopPeerRatingArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsResetTopPeerRatingArgs")
+		return out, fmt.Errorf("no req in ContactsResetTopPeerRatingArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2005,7 +2069,7 @@ func (p *ContactsResetTopPeerRatingArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsResetTopPeerRatingArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsResetTopPeerRatingArgs")
+		return fmt.Errorf("no req in ContactsResetTopPeerRatingArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2045,7 +2109,7 @@ var ContactsResetTopPeerRatingResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsResetTopPeerRatingResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsResetTopPeerRatingResult")
+		return out, fmt.Errorf("no req in ContactsResetTopPeerRatingResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2061,7 +2125,7 @@ func (p *ContactsResetTopPeerRatingResult) Unmarshal(in []byte) error {
 
 func (p *ContactsResetTopPeerRatingResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsResetTopPeerRatingResult")
+		return fmt.Errorf("no req in ContactsResetTopPeerRatingResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2069,6 +2133,9 @@ func (p *ContactsResetTopPeerRatingResult) Encode(x *bin.Encoder, layer int32) e
 
 func (p *ContactsResetTopPeerRatingResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2120,7 +2187,7 @@ type ContactsResetSavedArgs struct {
 
 func (p *ContactsResetSavedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsResetSavedArgs")
+		return out, fmt.Errorf("no req in ContactsResetSavedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2136,7 +2203,7 @@ func (p *ContactsResetSavedArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsResetSavedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsResetSavedArgs")
+		return fmt.Errorf("no req in ContactsResetSavedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2176,7 +2243,7 @@ var ContactsResetSavedResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsResetSavedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsResetSavedResult")
+		return out, fmt.Errorf("no req in ContactsResetSavedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2192,7 +2259,7 @@ func (p *ContactsResetSavedResult) Unmarshal(in []byte) error {
 
 func (p *ContactsResetSavedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsResetSavedResult")
+		return fmt.Errorf("no req in ContactsResetSavedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2200,6 +2267,9 @@ func (p *ContactsResetSavedResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsResetSavedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2251,7 +2321,7 @@ type ContactsGetSavedArgs struct {
 
 func (p *ContactsGetSavedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetSavedArgs")
+		return out, fmt.Errorf("no req in ContactsGetSavedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2267,7 +2337,7 @@ func (p *ContactsGetSavedArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetSavedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetSavedArgs")
+		return fmt.Errorf("no req in ContactsGetSavedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2307,7 +2377,7 @@ var ContactsGetSavedResult_Success_DEFAULT *tg.VectorSavedContact
 
 func (p *ContactsGetSavedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetSavedResult")
+		return out, fmt.Errorf("no req in ContactsGetSavedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2323,7 +2393,7 @@ func (p *ContactsGetSavedResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetSavedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetSavedResult")
+		return fmt.Errorf("no req in ContactsGetSavedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2331,6 +2401,9 @@ func (p *ContactsGetSavedResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetSavedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.VectorSavedContact)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2382,7 +2455,7 @@ type ContactsToggleTopPeersArgs struct {
 
 func (p *ContactsToggleTopPeersArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsToggleTopPeersArgs")
+		return out, fmt.Errorf("no req in ContactsToggleTopPeersArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2398,7 +2471,7 @@ func (p *ContactsToggleTopPeersArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsToggleTopPeersArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsToggleTopPeersArgs")
+		return fmt.Errorf("no req in ContactsToggleTopPeersArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2438,7 +2511,7 @@ var ContactsToggleTopPeersResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsToggleTopPeersResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsToggleTopPeersResult")
+		return out, fmt.Errorf("no req in ContactsToggleTopPeersResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2454,7 +2527,7 @@ func (p *ContactsToggleTopPeersResult) Unmarshal(in []byte) error {
 
 func (p *ContactsToggleTopPeersResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsToggleTopPeersResult")
+		return fmt.Errorf("no req in ContactsToggleTopPeersResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2462,6 +2535,9 @@ func (p *ContactsToggleTopPeersResult) Encode(x *bin.Encoder, layer int32) error
 
 func (p *ContactsToggleTopPeersResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2513,7 +2589,7 @@ type ContactsAddContactArgs struct {
 
 func (p *ContactsAddContactArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsAddContactArgs")
+		return out, fmt.Errorf("no req in ContactsAddContactArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2529,7 +2605,7 @@ func (p *ContactsAddContactArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsAddContactArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsAddContactArgs")
+		return fmt.Errorf("no req in ContactsAddContactArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2569,7 +2645,7 @@ var ContactsAddContactResult_Success_DEFAULT *tg.Updates
 
 func (p *ContactsAddContactResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsAddContactResult")
+		return out, fmt.Errorf("no req in ContactsAddContactResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2585,7 +2661,7 @@ func (p *ContactsAddContactResult) Unmarshal(in []byte) error {
 
 func (p *ContactsAddContactResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsAddContactResult")
+		return fmt.Errorf("no req in ContactsAddContactResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2593,6 +2669,9 @@ func (p *ContactsAddContactResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsAddContactResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2644,7 +2723,7 @@ type ContactsAcceptContactArgs struct {
 
 func (p *ContactsAcceptContactArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsAcceptContactArgs")
+		return out, fmt.Errorf("no req in ContactsAcceptContactArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2660,7 +2739,7 @@ func (p *ContactsAcceptContactArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsAcceptContactArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsAcceptContactArgs")
+		return fmt.Errorf("no req in ContactsAcceptContactArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2700,7 +2779,7 @@ var ContactsAcceptContactResult_Success_DEFAULT *tg.Updates
 
 func (p *ContactsAcceptContactResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsAcceptContactResult")
+		return out, fmt.Errorf("no req in ContactsAcceptContactResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2716,7 +2795,7 @@ func (p *ContactsAcceptContactResult) Unmarshal(in []byte) error {
 
 func (p *ContactsAcceptContactResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsAcceptContactResult")
+		return fmt.Errorf("no req in ContactsAcceptContactResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2724,6 +2803,9 @@ func (p *ContactsAcceptContactResult) Encode(x *bin.Encoder, layer int32) error 
 
 func (p *ContactsAcceptContactResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2775,7 +2857,7 @@ type ContactsGetLocatedArgs struct {
 
 func (p *ContactsGetLocatedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsGetLocatedArgs")
+		return out, fmt.Errorf("no req in ContactsGetLocatedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2791,7 +2873,7 @@ func (p *ContactsGetLocatedArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsGetLocatedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsGetLocatedArgs")
+		return fmt.Errorf("no req in ContactsGetLocatedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2831,7 +2913,7 @@ var ContactsGetLocatedResult_Success_DEFAULT *tg.Updates
 
 func (p *ContactsGetLocatedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsGetLocatedResult")
+		return out, fmt.Errorf("no req in ContactsGetLocatedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2847,7 +2929,7 @@ func (p *ContactsGetLocatedResult) Unmarshal(in []byte) error {
 
 func (p *ContactsGetLocatedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsGetLocatedResult")
+		return fmt.Errorf("no req in ContactsGetLocatedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2855,6 +2937,9 @@ func (p *ContactsGetLocatedResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsGetLocatedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2906,7 +2991,7 @@ type ContactsEditCloseFriendsArgs struct {
 
 func (p *ContactsEditCloseFriendsArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsEditCloseFriendsArgs")
+		return out, fmt.Errorf("no req in ContactsEditCloseFriendsArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -2922,7 +3007,7 @@ func (p *ContactsEditCloseFriendsArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsEditCloseFriendsArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsEditCloseFriendsArgs")
+		return fmt.Errorf("no req in ContactsEditCloseFriendsArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -2962,7 +3047,7 @@ var ContactsEditCloseFriendsResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsEditCloseFriendsResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsEditCloseFriendsResult")
+		return out, fmt.Errorf("no req in ContactsEditCloseFriendsResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -2978,7 +3063,7 @@ func (p *ContactsEditCloseFriendsResult) Unmarshal(in []byte) error {
 
 func (p *ContactsEditCloseFriendsResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsEditCloseFriendsResult")
+		return fmt.Errorf("no req in ContactsEditCloseFriendsResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -2986,6 +3071,9 @@ func (p *ContactsEditCloseFriendsResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *ContactsEditCloseFriendsResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3037,7 +3125,7 @@ type ContactsSetBlockedArgs struct {
 
 func (p *ContactsSetBlockedArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsSetBlockedArgs")
+		return out, fmt.Errorf("no req in ContactsSetBlockedArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3053,7 +3141,7 @@ func (p *ContactsSetBlockedArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsSetBlockedArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsSetBlockedArgs")
+		return fmt.Errorf("no req in ContactsSetBlockedArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3093,7 +3181,7 @@ var ContactsSetBlockedResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsSetBlockedResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsSetBlockedResult")
+		return out, fmt.Errorf("no req in ContactsSetBlockedResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3109,7 +3197,7 @@ func (p *ContactsSetBlockedResult) Unmarshal(in []byte) error {
 
 func (p *ContactsSetBlockedResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsSetBlockedResult")
+		return fmt.Errorf("no req in ContactsSetBlockedResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3117,6 +3205,9 @@ func (p *ContactsSetBlockedResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *ContactsSetBlockedResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3168,7 +3259,7 @@ type ContactsUpdateContactNoteArgs struct {
 
 func (p *ContactsUpdateContactNoteArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in ContactsUpdateContactNoteArgs")
+		return out, fmt.Errorf("no req in ContactsUpdateContactNoteArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -3184,7 +3275,7 @@ func (p *ContactsUpdateContactNoteArgs) Unmarshal(in []byte) error {
 
 func (p *ContactsUpdateContactNoteArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in ContactsUpdateContactNoteArgs")
+		return fmt.Errorf("no req in ContactsUpdateContactNoteArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -3224,7 +3315,7 @@ var ContactsUpdateContactNoteResult_Success_DEFAULT *tg.Bool
 
 func (p *ContactsUpdateContactNoteResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in ContactsUpdateContactNoteResult")
+		return out, fmt.Errorf("no req in ContactsUpdateContactNoteResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -3240,7 +3331,7 @@ func (p *ContactsUpdateContactNoteResult) Unmarshal(in []byte) error {
 
 func (p *ContactsUpdateContactNoteResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in ContactsUpdateContactNoteResult")
+		return fmt.Errorf("no req in ContactsUpdateContactNoteResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -3248,6 +3339,9 @@ func (p *ContactsUpdateContactNoteResult) Encode(x *bin.Encoder, layer int32) er
 
 func (p *ContactsUpdateContactNoteResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3287,321 +3381,275 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) AccountGetContactSignUpNotification(ctx context.Context, req *tg.TLAccountGetContactSignUpNotification) (r *tg.Bool, err error) {
 	// var _args AccountGetContactSignUpNotificationArgs
 	// _args.Req = req
-	// var _result AccountGetContactSignUpNotificationResult
+	var _result AccountGetContactSignUpNotificationResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/account.getContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/account.getContactSignUpNotification", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) AccountSetContactSignUpNotification(ctx context.Context, req *tg.TLAccountSetContactSignUpNotification) (r *tg.Bool, err error) {
 	// var _args AccountSetContactSignUpNotificationArgs
 	// _args.Req = req
-	// var _result AccountSetContactSignUpNotificationResult
+	var _result AccountSetContactSignUpNotificationResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/account.setContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/account.setContactSignUpNotification", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetContactIDs(ctx context.Context, req *tg.TLContactsGetContactIDs) (r *tg.VectorInt, err error) {
 	// var _args ContactsGetContactIDsArgs
 	// _args.Req = req
-	// var _result ContactsGetContactIDsResult
+	var _result ContactsGetContactIDsResult
 
-	_result := new(tg.VectorInt)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContactIDs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContactIDs", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetStatuses(ctx context.Context, req *tg.TLContactsGetStatuses) (r *tg.VectorContactStatus, err error) {
 	// var _args ContactsGetStatusesArgs
 	// _args.Req = req
-	// var _result ContactsGetStatusesResult
+	var _result ContactsGetStatusesResult
 
-	_result := new(tg.VectorContactStatus)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getStatuses", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getStatuses", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetContacts(ctx context.Context, req *tg.TLContactsGetContacts) (r *tg.ContactsContacts, err error) {
 	// var _args ContactsGetContactsArgs
 	// _args.Req = req
-	// var _result ContactsGetContactsResult
+	var _result ContactsGetContactsResult
 
-	_result := new(tg.ContactsContacts)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContacts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsImportContacts(ctx context.Context, req *tg.TLContactsImportContacts) (r *tg.ContactsImportedContacts, err error) {
 	// var _args ContactsImportContactsArgs
 	// _args.Req = req
-	// var _result ContactsImportContactsResult
+	var _result ContactsImportContactsResult
 
-	_result := new(tg.ContactsImportedContacts)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.importContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.importContacts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsDeleteContacts(ctx context.Context, req *tg.TLContactsDeleteContacts) (r *tg.Updates, err error) {
 	// var _args ContactsDeleteContactsArgs
 	// _args.Req = req
-	// var _result ContactsDeleteContactsResult
+	var _result ContactsDeleteContactsResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteContacts", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsDeleteByPhones(ctx context.Context, req *tg.TLContactsDeleteByPhones) (r *tg.Bool, err error) {
 	// var _args ContactsDeleteByPhonesArgs
 	// _args.Req = req
-	// var _result ContactsDeleteByPhonesResult
+	var _result ContactsDeleteByPhonesResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteByPhones", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteByPhones", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsBlock(ctx context.Context, req *tg.TLContactsBlock) (r *tg.Bool, err error) {
 	// var _args ContactsBlockArgs
 	// _args.Req = req
-	// var _result ContactsBlockResult
+	var _result ContactsBlockResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.block", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.block", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsUnblock(ctx context.Context, req *tg.TLContactsUnblock) (r *tg.Bool, err error) {
 	// var _args ContactsUnblockArgs
 	// _args.Req = req
-	// var _result ContactsUnblockResult
+	var _result ContactsUnblockResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.unblock", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.unblock", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetBlocked(ctx context.Context, req *tg.TLContactsGetBlocked) (r *tg.ContactsBlocked, err error) {
 	// var _args ContactsGetBlockedArgs
 	// _args.Req = req
-	// var _result ContactsGetBlockedResult
+	var _result ContactsGetBlockedResult
 
-	_result := new(tg.ContactsBlocked)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getBlocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getBlocked", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsSearch(ctx context.Context, req *tg.TLContactsSearch) (r *tg.ContactsFound, err error) {
 	// var _args ContactsSearchArgs
 	// _args.Req = req
-	// var _result ContactsSearchResult
+	var _result ContactsSearchResult
 
-	_result := new(tg.ContactsFound)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.search", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetTopPeers(ctx context.Context, req *tg.TLContactsGetTopPeers) (r *tg.ContactsTopPeers, err error) {
 	// var _args ContactsGetTopPeersArgs
 	// _args.Req = req
-	// var _result ContactsGetTopPeersResult
+	var _result ContactsGetTopPeersResult
 
-	_result := new(tg.ContactsTopPeers)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getTopPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getTopPeers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsResetTopPeerRating(ctx context.Context, req *tg.TLContactsResetTopPeerRating) (r *tg.Bool, err error) {
 	// var _args ContactsResetTopPeerRatingArgs
 	// _args.Req = req
-	// var _result ContactsResetTopPeerRatingResult
+	var _result ContactsResetTopPeerRatingResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetTopPeerRating", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetTopPeerRating", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsResetSaved(ctx context.Context, req *tg.TLContactsResetSaved) (r *tg.Bool, err error) {
 	// var _args ContactsResetSavedArgs
 	// _args.Req = req
-	// var _result ContactsResetSavedResult
+	var _result ContactsResetSavedResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetSaved", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetSaved", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetSaved(ctx context.Context, req *tg.TLContactsGetSaved) (r *tg.VectorSavedContact, err error) {
 	// var _args ContactsGetSavedArgs
 	// _args.Req = req
-	// var _result ContactsGetSavedResult
+	var _result ContactsGetSavedResult
 
-	_result := new(tg.VectorSavedContact)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getSaved", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getSaved", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsToggleTopPeers(ctx context.Context, req *tg.TLContactsToggleTopPeers) (r *tg.Bool, err error) {
 	// var _args ContactsToggleTopPeersArgs
 	// _args.Req = req
-	// var _result ContactsToggleTopPeersResult
+	var _result ContactsToggleTopPeersResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.toggleTopPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.toggleTopPeers", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsAddContact(ctx context.Context, req *tg.TLContactsAddContact) (r *tg.Updates, err error) {
 	// var _args ContactsAddContactArgs
 	// _args.Req = req
-	// var _result ContactsAddContactResult
+	var _result ContactsAddContactResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.addContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.addContact", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsAcceptContact(ctx context.Context, req *tg.TLContactsAcceptContact) (r *tg.Updates, err error) {
 	// var _args ContactsAcceptContactArgs
 	// _args.Req = req
-	// var _result ContactsAcceptContactResult
+	var _result ContactsAcceptContactResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.acceptContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.acceptContact", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsGetLocated(ctx context.Context, req *tg.TLContactsGetLocated) (r *tg.Updates, err error) {
 	// var _args ContactsGetLocatedArgs
 	// _args.Req = req
-	// var _result ContactsGetLocatedResult
+	var _result ContactsGetLocatedResult
 
-	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getLocated", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getLocated", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsEditCloseFriends(ctx context.Context, req *tg.TLContactsEditCloseFriends) (r *tg.Bool, err error) {
 	// var _args ContactsEditCloseFriendsArgs
 	// _args.Req = req
-	// var _result ContactsEditCloseFriendsResult
+	var _result ContactsEditCloseFriendsResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.editCloseFriends", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.editCloseFriends", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetBlocked) (r *tg.Bool, err error) {
 	// var _args ContactsSetBlockedArgs
 	// _args.Req = req
-	// var _result ContactsSetBlockedResult
+	var _result ContactsSetBlockedResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.setBlocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.setBlocked", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) ContactsUpdateContactNote(ctx context.Context, req *tg.TLContactsUpdateContactNote) (r *tg.Bool, err error) {
 	// var _args ContactsUpdateContactNoteArgs
 	// _args.Req = req
-	// var _result ContactsUpdateContactNoteResult
+	var _result ContactsUpdateContactNoteResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.updateContactNote", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.updateContactNote", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }

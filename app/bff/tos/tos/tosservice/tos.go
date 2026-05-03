@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -25,6 +26,30 @@ import (
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
+
+func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
+	v := reflect.ValueOf(msg)
+	if v.Kind() != reflect.Ptr || v.IsNil() {
+		return nil
+	}
+
+	v = v.Elem()
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	f := v.FieldByName("ClazzID")
+	if !f.IsValid() || !f.CanSet() || f.Kind() != reflect.Uint32 {
+		return nil
+	}
+
+	clazzID, err := d.ClazzID()
+	if err != nil {
+		return err
+	}
+	f.SetUint(uint64(clazzID))
+	return nil
+}
 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"/tg.RPCTos/help.getTermsOfServiceUpdate": kitex.NewMethodInfo(
@@ -139,7 +164,7 @@ type HelpGetTermsOfServiceUpdateArgs struct {
 
 func (p *HelpGetTermsOfServiceUpdateArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpGetTermsOfServiceUpdateArgs")
+		return out, fmt.Errorf("no req in HelpGetTermsOfServiceUpdateArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -155,7 +180,7 @@ func (p *HelpGetTermsOfServiceUpdateArgs) Unmarshal(in []byte) error {
 
 func (p *HelpGetTermsOfServiceUpdateArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpGetTermsOfServiceUpdateArgs")
+		return fmt.Errorf("no req in HelpGetTermsOfServiceUpdateArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -195,7 +220,7 @@ var HelpGetTermsOfServiceUpdateResult_Success_DEFAULT *tg.HelpTermsOfServiceUpda
 
 func (p *HelpGetTermsOfServiceUpdateResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpGetTermsOfServiceUpdateResult")
+		return out, fmt.Errorf("no req in HelpGetTermsOfServiceUpdateResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -211,7 +236,7 @@ func (p *HelpGetTermsOfServiceUpdateResult) Unmarshal(in []byte) error {
 
 func (p *HelpGetTermsOfServiceUpdateResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpGetTermsOfServiceUpdateResult")
+		return fmt.Errorf("no req in HelpGetTermsOfServiceUpdateResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -219,6 +244,9 @@ func (p *HelpGetTermsOfServiceUpdateResult) Encode(x *bin.Encoder, layer int32) 
 
 func (p *HelpGetTermsOfServiceUpdateResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.HelpTermsOfServiceUpdate)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -270,7 +298,7 @@ type HelpAcceptTermsOfServiceArgs struct {
 
 func (p *HelpAcceptTermsOfServiceArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in HelpAcceptTermsOfServiceArgs")
+		return out, fmt.Errorf("no req in HelpAcceptTermsOfServiceArgs")
 	}
 	return json.Marshal(p.Req)
 }
@@ -286,7 +314,7 @@ func (p *HelpAcceptTermsOfServiceArgs) Unmarshal(in []byte) error {
 
 func (p *HelpAcceptTermsOfServiceArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in HelpAcceptTermsOfServiceArgs")
+		return fmt.Errorf("no req in HelpAcceptTermsOfServiceArgs")
 	}
 
 	return p.Req.Encode(x, layer)
@@ -326,7 +354,7 @@ var HelpAcceptTermsOfServiceResult_Success_DEFAULT *tg.Bool
 
 func (p *HelpAcceptTermsOfServiceResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in HelpAcceptTermsOfServiceResult")
+		return out, fmt.Errorf("no req in HelpAcceptTermsOfServiceResult")
 	}
 	return json.Marshal(p.Success)
 }
@@ -342,7 +370,7 @@ func (p *HelpAcceptTermsOfServiceResult) Unmarshal(in []byte) error {
 
 func (p *HelpAcceptTermsOfServiceResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in HelpAcceptTermsOfServiceResult")
+		return fmt.Errorf("no req in HelpAcceptTermsOfServiceResult")
 	}
 
 	return p.Success.Encode(x, layer)
@@ -350,6 +378,9 @@ func (p *HelpAcceptTermsOfServiceResult) Encode(x *bin.Encoder, layer int32) err
 
 func (p *HelpAcceptTermsOfServiceResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -389,27 +420,23 @@ func newServiceClient(c client.Client) *kClient {
 func (p *kClient) HelpGetTermsOfServiceUpdate(ctx context.Context, req *tg.TLHelpGetTermsOfServiceUpdate) (r *tg.HelpTermsOfServiceUpdate, err error) {
 	// var _args HelpGetTermsOfServiceUpdateArgs
 	// _args.Req = req
-	// var _result HelpGetTermsOfServiceUpdateResult
+	var _result HelpGetTermsOfServiceUpdateResult
 
-	_result := new(tg.HelpTermsOfServiceUpdate)
-	if err = p.c.Call(ctx, "/tg.RPCTos/help.getTermsOfServiceUpdate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCTos/help.getTermsOfServiceUpdate", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) HelpAcceptTermsOfService(ctx context.Context, req *tg.TLHelpAcceptTermsOfService) (r *tg.Bool, err error) {
 	// var _args HelpAcceptTermsOfServiceArgs
 	// _args.Req = req
-	// var _result HelpAcceptTermsOfServiceResult
+	var _result HelpAcceptTermsOfServiceResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCTos/help.acceptTermsOfService", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCTos/help.acceptTermsOfService", req, &_result); err != nil {
 		return
 	}
 
-	// return _result.GetSuccess(), nil
-	return _result, nil
+	return _result.GetSuccess(), nil
 }
