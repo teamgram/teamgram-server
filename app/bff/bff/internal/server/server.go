@@ -327,9 +327,8 @@ func (s *Server) Initialize() error {
 				s,
 				usernameshelper.New(usernameshelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					//UserClient:     c.BizServiceClient,
-					//UsernameClient: c.BizServiceClient,
-					//ChatClient:     c.BizServiceClient,
+					UserClient:    c.BizServiceClient,
+					ChatClient:    c.BizServiceClient,
 					//SyncClient:     c.SyncClient,
 				}))
 

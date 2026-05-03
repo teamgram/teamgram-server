@@ -32,9 +32,28 @@ BffClient:
           - 127.0.0.1:2379
         Key: bff.bff
       ServiceNameList:
-        - RPCConfiguration
+        - RPCAccount
         - RPCAuthorization
-        - RPCQrCode
+        - RPCAutoDownload
+        - RPCChatInvites
+        - RPCChats
+        - RPCConfiguration
+        - RPCContacts
         - RPCDialogs
+        - RPCDrafts
+        - RPCFiles
         - RPCMessages
+        - RPCMiscellaneous
+        - RPCNotification
+        - RPCNsfw
+        - RPCPassport
+        - RPCPremium
+        - RPCPrivacySettings
+        - RPCQrCode
+        - RPCSavedMessageDialogs
+        - RPCSponsoredMessages
+        - RPCTos
         - RPCUpdates
+        - RPCUserChannelProfiles
+        - RPCUsernames
+        - RPCUsers
