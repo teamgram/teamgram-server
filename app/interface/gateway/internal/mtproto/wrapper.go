@@ -1,6 +1,7 @@
 package mtproto
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -9,10 +10,17 @@ import (
 )
 
 type WrapperMetadata struct {
-	Layer    int32
-	Client   string
-	Langpack string
-	LangCode string
+	Layer          int32
+	Client         string
+	ApiId          int32
+	DeviceModel    string
+	SystemVersion  string
+	AppVersion     string
+	SystemLangCode string
+	LangPack       string
+	LangCode       string
+	Proxy          string
+	Params         string
 }
 
 func UnwrapClientRPC(payload []byte) (inner []byte, md WrapperMetadata, err error) {
@@ -40,11 +48,29 @@ func UnwrapClientRPC(payload []byte) (inner []byte, md WrapperMetadata, err erro
 			return nil, WrapperMetadata{}, fmt.Errorf("unwrap initConnection: %w", err)
 		}
 		return initConn.Query, WrapperMetadata{
-			Client:   strings.TrimSpace(initConn.DeviceModel + " " + initConn.SystemVersion + " " + initConn.AppVersion),
-			Langpack: initConn.LangPack,
-			LangCode: initConn.LangCode,
+			Client:         strings.TrimSpace(initConn.DeviceModel + " " + initConn.SystemVersion + " " + initConn.AppVersion),
+			ApiId:          initConn.ApiId,
+			DeviceModel:    initConn.DeviceModel,
+			SystemVersion:  initConn.SystemVersion,
+			AppVersion:     initConn.AppVersion,
+			SystemLangCode: initConn.SystemLangCode,
+			LangPack:       initConn.LangPack,
+			LangCode:       initConn.LangCode,
+			Proxy:          encodeWrapperJSON(initConn.Proxy),
+			Params:         encodeWrapperJSON(initConn.Params),
 		}, nil
 	default:
 		return payload, WrapperMetadata{}, nil
 	}
+}
+
+func encodeWrapperJSON(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }

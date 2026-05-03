@@ -196,7 +196,43 @@ func TestUnwrapClientRPCInvokeWithLayerAndInitConnection(t *testing.T) {
 	if !bytes.Equal(gotInner, inner) {
 		t.Fatalf("inner = %x, want %x", gotInner, inner)
 	}
-	if md.Layer != 224 || md.Client != "tdesktop macOS 5.0" || md.Langpack != "tdesktop" || md.LangCode != "en" {
+	if md.Layer != 224 || md.Client != "tdesktop macOS 5.0" || md.LangPack != "tdesktop" || md.LangCode != "en" {
+		t.Fatalf("metadata = %#v", md)
+	}
+}
+
+func TestUnwrapClientRPCReturnsFullInitConnectionMetadata(t *testing.T) {
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
+	initConn := encodeTL(t, &tg.TLInitConnection{
+		ApiId:          2040,
+		DeviceModel:    "tdesktop",
+		SystemVersion:  "macOS 15",
+		AppVersion:     "5.13",
+		SystemLangCode: "en-US",
+		LangPack:       "tdesktop",
+		LangCode:       "en",
+		Proxy:          nil,
+		Params:         nil,
+		Query:          inner,
+	})
+	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: initConn})
+
+	gotInner, md, err := UnwrapClientRPC(wrapped)
+	if err != nil {
+		t.Fatalf("UnwrapClientRPC() error = %v", err)
+	}
+	if !bytes.Equal(gotInner, inner) {
+		t.Fatalf("inner payload changed: got %x want %x", gotInner, inner)
+	}
+	if md.Layer != 223 ||
+		md.ApiId != 2040 ||
+		md.DeviceModel != "tdesktop" ||
+		md.SystemVersion != "macOS 15" ||
+		md.AppVersion != "5.13" ||
+		md.SystemLangCode != "en-US" ||
+		md.LangPack != "tdesktop" ||
+		md.LangCode != "en" ||
+		md.Client != "tdesktop macOS 15 5.13" {
 		t.Fatalf("metadata = %#v", md)
 	}
 }

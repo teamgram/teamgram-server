@@ -256,7 +256,7 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 		ClientMsgId:   msg.MsgId,
 		Layer:         wrapperMD.Layer,
 		Client:        wrapperMD.Client,
-		Langpack:      wrapperMD.Langpack,
+		Langpack:      wrapperMD.LangPack,
 		LangCode:      wrapperMD.LangCode,
 		PermAuthKeyId: msg.AuthKeyId,
 	}
@@ -310,7 +310,7 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 
 func (p *Processor) mergeSessionMetadata(authKeyID, sessionID int64, md gmtproto.WrapperMetadata) gmtproto.WrapperMetadata {
 	key := sessionKey{authKeyId: authKeyID, sessionId: sessionID}
-	if md.Layer > 0 || md.Client != "" || md.Langpack != "" || md.LangCode != "" {
+	if md.Layer > 0 || md.Client != "" || md.LangPack != "" || md.LangCode != "" {
 		p.metaMu.Lock()
 		if old, ok := p.sessionMeta[key]; ok {
 			if md.Layer == 0 {
@@ -319,8 +319,8 @@ func (p *Processor) mergeSessionMetadata(authKeyID, sessionID int64, md gmtproto
 			if md.Client == "" {
 				md.Client = old.Client
 			}
-			if md.Langpack == "" {
-				md.Langpack = old.Langpack
+			if md.LangPack == "" {
+				md.LangPack = old.LangPack
 			}
 			if md.LangCode == "" {
 				md.LangCode = old.LangCode
