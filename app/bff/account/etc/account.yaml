@@ -1,2 +1,14 @@
 Name: bff.account
 ListenOn: 0.0.0.0:21680
+
+UserClient:
+  Endpoints:
+    - 127.0.0.1:20610
+
+AuthsessionClient:
+  Endpoints:
+    - 127.0.0.1:20330
+
+CodeClient:
+  Endpoints:
+    - 127.0.0.1:20620

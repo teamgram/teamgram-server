@@ -17,14 +17,36 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSetAccountTTL
 // account.setAccountTTL#2442485e ttl:AccountDaysTTL = Bool;
 func (c *AccountCore) AccountSetAccountTTL(in *tg.TLAccountSetAccountTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setAccountTTL - error: method AccountSetAccountTTL not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if in == nil || in.Ttl == nil {
+		return nil, tg.ErrTtlDaysInvalid
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	ttl := in.Ttl.Days
+	switch ttl {
+	case 30, 90, 180, 182, 183, 365, 548, 730:
+	default:
+		return nil, tg.ErrTtlDaysInvalid
+	}
+
+	if _, err = c.svcCtx.Repo.UserClient.UserSetAccountDaysTTL(c.ctx, &userpb.TLUserSetAccountDaysTTL{
+		UserId: selfID,
+		Ttl:    ttl,
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

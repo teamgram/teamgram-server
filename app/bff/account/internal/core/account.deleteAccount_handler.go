@@ -17,14 +17,71 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountDeleteAccount
-// account.deleteAccount#a2c0cf74 flags:# reason:string password:flags.0?InputCheckPasswordSRP = Bool;
+// account.deleteAccount#418d4e0b reason:string = Bool;
 func (c *AccountCore) AccountDeleteAccount(in *tg.TLAccountDeleteAccount) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.deleteAccount - error: method AccountDeleteAccount not impl")
+	selfID, err := requireSelfID(c)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireUserClient(c); err != nil {
+		return nil, err
+	}
+	if err := requireAuthsessionClient(c); err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	reason := ""
+	if in != nil {
+		reason = in.Reason
+	}
+
+	me, err := c.svcCtx.Repo.UserClient.UserGetUserDataById(c.ctx, &userpb.TLUserGetUserDataById{
+		UserId: selfID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if me == nil {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	if me.Username != "" {
+		if _, err = c.svcCtx.Repo.UserClient.UserDeleteUsername(c.ctx, &userpb.TLUserDeleteUsername{
+			Username: me.Username,
+		}); err != nil {
+			return nil, err
+		}
+	}
+
+	if _, err = c.svcCtx.Repo.UserClient.UserDeleteUser(c.ctx, &userpb.TLUserDeleteUser{
+		UserId: selfID,
+		Reason: reason,
+		Phone:  me.Phone,
+	}); err != nil {
+		return nil, err
+	}
+
+	if _, err = c.svcCtx.Repo.AuthsessionClient.AuthsessionResetAuthorization(c.ctx, &authsession.TLAuthsessionResetAuthorization{
+		UserId:    selfID,
+		AuthKeyId: 0,
+		Hash:      0,
+	}); err != nil {
+		return nil, err
+	}
+
+	// TODO(v2 account): master notified killed sessions through sync; do not migrate sync calls until v2 userupdates/gateway delivery is defined.
+	if _, err = c.svcCtx.Repo.AuthsessionClient.AuthsessionUnbindAuthKeyUser(c.ctx, &authsession.TLAuthsessionUnbindAuthKeyUser{
+		AuthKeyId: 0,
+		UserId:    selfID,
+	}); err != nil {
+		c.Logger.Errorf("account.deleteAccount - unbind auth key user failed: user_id: %d, err: %v", selfID, err)
+	}
+
+	return tg.BoolTrue, nil
 }
