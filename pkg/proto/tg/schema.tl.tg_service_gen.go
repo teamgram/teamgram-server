@@ -87215,7 +87215,8 @@ func (m *VectorUser) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(m)
+	type vectorUserAlias VectorUser
+	return json.Marshal((*vectorUserAlias)(m))
 }
 
 func (m *VectorUser) CalcSize(layer int32) int {
