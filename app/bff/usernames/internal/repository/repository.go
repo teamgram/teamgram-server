@@ -33,6 +33,8 @@ import (
 	syncpb "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -74,7 +76,7 @@ func (r *Repository) CheckAccountUsername(ctx context.Context, userId int64, use
 	if len(username) < MinUsernameLen ||
 		!strings2.IsAlNumString(username) ||
 		isFirstCharNumber(username) {
-		return nil, tg.ErrUsernameInvalid
+		return nil, ErrUsernameInvalid
 	}
 
 	existed, err := r.UserClient.UserCheckAccountUsername(ctx, &userpb.TLUserCheckAccountUsername{
@@ -82,7 +84,7 @@ func (r *Repository) CheckAccountUsername(ctx context.Context, userId int64, use
 		Username: username,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("check account username: %w", err)
+		return nil, fmt.Errorf("usernames repository: check account username: %w", err)
 	}
 
 	if _, ok := existed.Clazz.(*userpb.TLUsernameExistedNotMe); ok {
@@ -98,7 +100,11 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 		Id: userId,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("get immutable user: %w", err)
+		return nil, fmt.Errorf("usernames repository: get immutable user: %w", err)
+	}
+
+	if me == nil || me.User == nil {
+		return nil, fmt.Errorf("usernames repository: get immutable user: returned nil user data")
 	}
 
 	oldUsername := userDataUsername(me.User)
@@ -110,7 +116,7 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 		if len(newUsername) < MinUsernameLen ||
 			!strings2.IsAlNumString(newUsername) ||
 			isFirstCharNumber(newUsername) {
-			return nil, tg.ErrUsernameInvalid
+			return nil, ErrUsernameInvalid
 		}
 
 		ok, err := r.UserClient.UserUpdateUsernameByUsername(ctx, &userpb.TLUserUpdateUsernameByUsername{
@@ -119,10 +125,10 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 			Username: newUsername,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("update username by username: %w", err)
+			return nil, fmt.Errorf("usernames repository: update username by username: %w", err)
 		}
 		if !tg.FromBool(ok) {
-			return nil, tg.ErrUsernameOccupied
+			return nil, ErrUsernameOccupied
 		}
 	}
 
@@ -130,7 +136,7 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 		if _, err := r.UserClient.UserDeleteUsername(ctx, &userpb.TLUserDeleteUsername{
 			Username: oldUsername,
 		}); err != nil {
-			return nil, fmt.Errorf("delete old username: %w", err)
+			return nil, fmt.Errorf("usernames repository: delete old username: %w", err)
 		}
 	}
 
@@ -138,7 +144,7 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 		UserId:   userId,
 		Username: newUsername,
 	}); err != nil {
-		return nil, fmt.Errorf("update username: %w", err)
+		return nil, fmt.Errorf("usernames repository: update username: %w", err)
 	}
 
 	// Update the in-memory copy for the sync push.
@@ -167,14 +173,16 @@ func (r *Repository) pushUpdateUserName(ctx context.Context, userId int64, me *t
 		},
 	})
 
-	_, _ = r.SyncClient.SyncUpdatesNotMe(ctx, &syncpb.TLSyncUpdatesNotMe{
+	if _, err := r.SyncClient.SyncUpdatesNotMe(ctx, &syncpb.TLSyncUpdatesNotMe{
 		UserId:  userId,
 		Updates: tg.MakeTLUpdates(&tg.TLUpdates{
 			Updates: []tg.UpdateClazz{update},
 			Users:   []tg.UserClazz{buildSelfUser(me).Clazz},
 			Date:    int32(time.Now().Unix()),
 		}),
-	})
+	}); err != nil {
+		logx.Errorf("pushUpdateUserName sync failed for userId=%d: %v", userId, err)
+	}
 }
 
 // ResolveUsername resolves a username to a peer with full details.
@@ -183,7 +191,7 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 		Username: username,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("resolve username: %w", err)
+		return nil, fmt.Errorf("usernames repository: resolve username: %w", err)
 	}
 
 	resolvedPeer := tg.MakeTLContactsResolvedPeer(&tg.TLContactsResolvedPeer{
@@ -194,12 +202,15 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 
 	switch p := rName.Clazz.(type) {
 	case *tg.TLPeerUser:
-		mUsers, _ := r.UserClient.UserGetMutableUsersV2(ctx, &userpb.TLUserGetMutableUsersV2{
+		mUsers, err := r.UserClient.UserGetMutableUsersV2(ctx, &userpb.TLUserGetMutableUsersV2{
 			Id:      []int64{selfId, p.UserId},
 			Privacy: true,
 			HasTo:   true,
 			To:      []int64{selfId},
 		})
+		if err != nil {
+			return nil, fmt.Errorf("usernames repository: resolve username: get mutable users: %w", err)
+		}
 		if mUsers != nil {
 			for _, u := range mUsers.Users {
 				if u != nil {
@@ -208,10 +219,13 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 			}
 		}
 	case *tg.TLPeerChat:
-		chat, _ := r.ChatClient.ChatGetChatBySelfId(ctx, &chatpb.TLChatGetChatBySelfId{
+		chat, err := r.ChatClient.ChatGetChatBySelfId(ctx, &chatpb.TLChatGetChatBySelfId{
 			SelfId: selfId,
 			ChatId: p.ChatId,
 		})
+		if err != nil {
+			return nil, fmt.Errorf("usernames repository: resolve username: get chat: %w", err)
+		}
 		if chat != nil && chat.Chat != nil {
 			resolvedPeer.Chats = []tg.ChatClazz{
 				projectMutableChat(chat, selfId),

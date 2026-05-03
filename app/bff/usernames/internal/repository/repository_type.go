@@ -17,7 +17,14 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
+var (
+	ErrUsernameInvalid  = errors.New("usernames repository: username invalid")
+	ErrUsernameOccupied = errors.New("usernames repository: username occupied")
 )
 
 // Type aliases for convenience in the Logic layer.

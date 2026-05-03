@@ -43,7 +43,7 @@ func TestCheckAccountUsername_InvalidFormat(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := repo.CheckAccountUsername(context.Background(), 1, tt.username)
-			if !errors.Is(err, tg.ErrUsernameInvalid) {
+			if !errors.Is(err, ErrUsernameInvalid) {
 				t.Errorf("expected ErrUsernameInvalid, got %v", err)
 			}
 		})
@@ -111,6 +111,7 @@ func TestCheckAccountUsername_AvailableIsMe(t *testing.T) {
 type stubUserClient struct {
 	userclient.UserClient
 	checkAccountUsernameFn func(ctx context.Context, in *userpb.TLUserCheckAccountUsername) (*userpb.UsernameExist, error)
+	getImmutableUserFn     func(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error)
 }
 
 func (s *stubUserClient) UserCheckAccountUsername(ctx context.Context, in *userpb.TLUserCheckAccountUsername) (*userpb.UsernameExist, error) {
@@ -118,4 +119,68 @@ func (s *stubUserClient) UserCheckAccountUsername(ctx context.Context, in *userp
 		return s.checkAccountUsernameFn(ctx, in)
 	}
 	return userpb.MakeTLUsernameExistedNotMe(&userpb.TLUsernameExistedNotMe{}).ToUsernameExist(), nil
+}
+
+func (s *stubUserClient) UserGetImmutableUser(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
+	if s.getImmutableUserFn != nil {
+		return s.getImmutableUserFn(ctx, in)
+	}
+	return nil, nil
+}
+
+func TestUpdateAccountUsername_NoChange(t *testing.T) {
+	repo := &Repository{
+		UserClient: &stubUserClient{
+			getImmutableUserFn: func(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
+				return &tg.ImmutableUser{
+					User: &tg.TLUserData{
+						Id:        1,
+						Username:  "already_set",
+						FirstName: "Test",
+					},
+				}, nil
+			},
+		},
+	}
+	// newUsername equals oldUsername; no RPC should be called.
+	user, err := repo.UpdateAccountUsername(context.Background(), 1, "already_set")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if user == nil {
+		t.Fatal("expected non-nil user for no-change update")
+	}
+}
+
+func TestUpdateAccountUsername_InvalidFormat(t *testing.T) {
+	repo := &Repository{
+		UserClient: &stubUserClient{
+			getImmutableUserFn: func(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
+				return &tg.ImmutableUser{
+					User: &tg.TLUserData{
+						Id:        1,
+						Username:  "original",
+						FirstName: "Test",
+					},
+				}, nil
+			},
+		},
+	}
+
+	tests := []struct {
+		name     string
+		username string
+	}{
+		{"too short", "ab"},
+		{"starts with number", "1abcde"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := repo.UpdateAccountUsername(context.Background(), 1, tt.username)
+			if !errors.Is(err, ErrUsernameInvalid) {
+				t.Errorf("expected ErrUsernameInvalid, got %v", err)
+			}
+		})
+	}
 }
