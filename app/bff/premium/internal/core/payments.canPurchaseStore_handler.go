@@ -24,7 +24,7 @@ import (
 // payments.canPurchaseStore#4fdc5ea7 purpose:InputStorePaymentPurpose = Bool;
 func (c *PremiumCore) PaymentsCanPurchaseStore(in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("payments.canPurchaseStore - error: method PaymentsCanPurchaseStore not impl")
+	// c.Logger.Errorf("payments.canPurchaseStore - error: method PaymentsCanPurchaseStore not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolFalse, nil
 }

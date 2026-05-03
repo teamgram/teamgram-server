@@ -24,7 +24,7 @@ import (
 // account.registerDevice#ec86017a flags:# no_muted:flags.0?true token_type:int token:string app_sandbox:Bool secret:bytes other_uids:Vector<long> = Bool;
 func (c *NotificationCore) AccountRegisterDevice(in *tg.TLAccountRegisterDevice) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("account.registerDevice - error: method AccountRegisterDevice not impl")
+	// c.Logger.Errorf("account.registerDevice - error: method AccountRegisterDevice not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

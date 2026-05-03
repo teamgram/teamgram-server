@@ -26,5 +26,5 @@ func (c *PassportCore) UsersSetSecureValueErrors(in *tg.TLUsersSetSecureValueErr
 	// TODO: not impl
 	c.Logger.Errorf("users.setSecureValueErrors - error: method UsersSetSecureValueErrors not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolFalse, nil
 }
