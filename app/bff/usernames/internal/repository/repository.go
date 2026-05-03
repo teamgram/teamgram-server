@@ -19,22 +19,17 @@ package repository
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"github.com/teamgram/marmota/pkg/strings2"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/plugin"
-	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
-	syncpb "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -46,8 +41,8 @@ const (
 type Repository struct {
 	UserClient userclient.UserClient
 	ChatClient chatclient.ChatClient
-	SyncClient syncclient.SyncClient
 	Plugin     plugin.UsernamesPlugin
+	// SyncClient syncclient.SyncClient
 }
 
 // NewRepository creates a new Repository. Clients are created only
@@ -60,9 +55,9 @@ func NewRepository(c config.Config) *Repository {
 	if hasRPCClientConfig(c.ChatClient) {
 		r.ChatClient = chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient))
 	}
-	if hasRPCClientConfig(c.SyncClient) {
-		r.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
-	}
+	// if hasRPCClientConfig(c.SyncClient) {
+	//	r.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
+	// }
 	return r
 }
 
@@ -156,9 +151,9 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 }
 
 func (r *Repository) pushUpdateUserName(ctx context.Context, userId int64, me *tg.ImmutableUser) {
-	if r.SyncClient == nil {
-		return
-	}
+	//if r.SyncClient == nil {
+	//	return
+	//}
 
 	update := tg.MakeTLUpdateUserName(&tg.TLUpdateUserName{
 		UserId:    userId,
@@ -173,16 +168,18 @@ func (r *Repository) pushUpdateUserName(ctx context.Context, userId int64, me *t
 		},
 	})
 
-	if _, err := r.SyncClient.SyncUpdatesNotMe(ctx, &syncpb.TLSyncUpdatesNotMe{
-		UserId:  userId,
-		Updates: tg.MakeTLUpdates(&tg.TLUpdates{
-			Updates: []tg.UpdateClazz{update},
-			Users:   []tg.UserClazz{buildSelfUser(me).Clazz},
-			Date:    int32(time.Now().Unix()),
-		}),
-	}); err != nil {
-		logx.Errorf("pushUpdateUserName sync failed for userId=%d: %v", userId, err)
-	}
+	logx.WithContext(ctx).Errorf("pushUpdateUserName sync not impl for userId=%d: %s", userId, update)
+
+	//if _, err := r.SyncClient.SyncUpdatesNotMe(ctx, &syncpb.TLSyncUpdatesNotMe{
+	//	UserId: userId,
+	//	Updates: tg.MakeTLUpdates(&tg.TLUpdates{
+	//		Updates: []tg.UpdateClazz{update},
+	//		Users:   []tg.UserClazz{buildSelfUser(me).Clazz},
+	//		Date:    int32(time.Now().Unix()),
+	//	}),
+	//}); err != nil {
+	//	logx.Errorf("pushUpdateUserName sync failed for userId=%d: %v", userId, err)
+	//}
 }
 
 // ResolveUsername resolves a username to a peer with full details.

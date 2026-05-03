@@ -24,5 +24,5 @@ type Config struct {
 	kitex.RpcServerConf
 	UserClient kitex.RpcClientConf
 	ChatClient kitex.RpcClientConf
-	SyncClient kitex.RpcClientConf
+	// SyncClient kitex.RpcClientConf
 }
