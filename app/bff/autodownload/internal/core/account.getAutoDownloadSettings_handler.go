@@ -23,8 +23,5 @@ import (
 // AccountGetAutoDownloadSettings
 // account.getAutoDownloadSettings#56da0b3f = account.AutoDownloadSettings;
 func (c *AutoDownloadCore) AccountGetAutoDownloadSettings(in *tg.TLAccountGetAutoDownloadSettings) (*tg.AccountAutoDownloadSettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getAutoDownloadSettings - error: method AccountGetAutoDownloadSettings not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return makeDefaultAutoDownloadSettings(), nil
 }
