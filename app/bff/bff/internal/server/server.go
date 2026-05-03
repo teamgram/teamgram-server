@@ -146,6 +146,54 @@ func buildUpdatesConfig(c config.Config) updateshelper.Config {
 	}
 }
 
+func buildUsersConfig(c config.Config) usershelper.Config {
+	return usershelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+	}
+}
+
+func buildNsfwConfig(c config.Config) nsfwhelper.Config {
+	return nsfwhelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+	}
+}
+
+func buildAccountConfig(c config.Config) accounthelper.Config {
+	return accounthelper.Config{
+		RpcServerConf:     c.RpcServerConf,
+		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
+		AuthsessionClient: withServiceName(c.AuthSessionClient, "RPCAuthsession"),
+		CodeClient:        withServiceName(c.BizServiceClient, "RPCCode"),
+	}
+}
+
+func buildUsernamesConfig(c config.Config) usernameshelper.Config {
+	return usernameshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+	}
+}
+
+func buildPrivacySettingsConfig(c config.Config) privacysettingshelper.Config {
+	return privacysettingshelper.Config{
+		RpcServerConf:     c.RpcServerConf,
+		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
+		ChatClient:        withServiceName(c.BizServiceClient, "RPCChat"),
+		AuthsessionClient: withServiceName(c.AuthSessionClient, "RPCAuthsession"),
+	}
+}
+
+func buildUserChannelProfilesConfig(c config.Config) userchannelprofileshelper.Config {
+	return userchannelprofileshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -286,21 +334,12 @@ func (s *Server) Initialize() error {
 			// usershelper
 			_ = usersservice.RegisterService(
 				s,
-				usershelper.New(
-					usershelper.Config{
-						RpcServerConf: c.RpcServerConf,
-						//UserClient:    c.BizServiceClient,
-						//ChatClient:    c.BizServiceClient,
-						//DialogClient:  c.BizServiceClient,
-					}))
+				usershelper.New(buildUsersConfig(c)))
 
 			// nsfwhelper
 			_ = nsfwservice.RegisterService(
 				s,
-				nsfwhelper.New(nsfwhelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//UserClient:    c.BizServiceClient,
-				}))
+				nsfwhelper.New(buildNsfwConfig(c)))
 
 			// sponsoredmessageshelper
 			_ = sponsoredmessagesservice.RegisterService(
@@ -312,36 +351,17 @@ func (s *Server) Initialize() error {
 			// accounthelper
 			_ = accountservice.RegisterService(
 				s,
-				accounthelper.New(
-					accounthelper.Config{
-						RpcServerConf: c.RpcServerConf,
-						//KV:                c.KV,
-						//UserClient:        c.BizServiceClient,
-						//AuthsessionClient: c.AuthSessionClient,
-						//ChatClient:        c.BizServiceClient,
-						//SyncClient:        c.SyncClient,
-					}))
+				accounthelper.New(buildAccountConfig(c)))
 
 			// usernameshelper
 			_ = usernamesservice.RegisterService(
 				s,
-				usernameshelper.New(usernameshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					UserClient:    c.BizServiceClient,
-					ChatClient:    c.BizServiceClient,
-					//SyncClient:     c.SyncClient,
-				}))
+				usernameshelper.New(buildUsernamesConfig(c)))
 
 			// privacysettingshelper
 			_ = privacysettingsservice.RegisterService(
 				s,
-				privacysettingshelper.New(privacysettingshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//UserClient:        c.BizServiceClient,
-					//AuthsessionClient: c.AuthSessionClient,
-					//ChatClient:        c.BizServiceClient,
-					//SyncClient:        c.SyncClient,
-				}))
+				privacysettingshelper.New(buildPrivacySettingsConfig(c)))
 
 			// savedmessagedialogshelper
 			_ = savedmessagedialogsservice.RegisterService(
@@ -359,12 +379,7 @@ func (s *Server) Initialize() error {
 			// userchannelprofilehelper
 			_ = userchannelprofilesservice.RegisterService(
 				s,
-				userchannelprofileshelper.New(userchannelprofileshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//MediaClient:   c.MediaClient,
-					//UserClient:    c.BizServiceClient,
-					//SyncClient:    c.SyncClient,
-				}))
+				userchannelprofileshelper.New(buildUserChannelProfilesConfig(c)))
 
 			return nil
 		})
