@@ -24,7 +24,7 @@ import (
 // help.acceptTermsOfService#ee72f79a id:DataJSON = Bool;
 func (c *TosCore) HelpAcceptTermsOfService(in *tg.TLHelpAcceptTermsOfService) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.acceptTermsOfService - error: method HelpAcceptTermsOfService not impl")
+	// c.Logger.Errorf("help.acceptTermsOfService - error: method HelpAcceptTermsOfService not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

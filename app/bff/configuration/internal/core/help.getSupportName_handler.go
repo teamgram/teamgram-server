@@ -23,8 +23,10 @@ import (
 // HelpGetSupportName
 // help.getSupportName#d360e72c = help.SupportName;
 func (c *ConfigurationCore) HelpGetSupportName(in *tg.TLHelpGetSupportName) (*tg.HelpSupportName, error) {
-	// TODO: not impl
-	c.Logger.Errorf("help.getSupportName - error: method HelpGetSupportName not impl")
+	// Get localized name of the telegram support user
+	// TODO: translate...
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpSupportName(&tg.TLHelpSupportName{
+		Name: supportName,
+	}).ToHelpSupportName(), nil
 }

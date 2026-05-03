@@ -24,7 +24,9 @@ import (
 // help.getInviteText#4d392343 = help.InviteText;
 func (c *ConfigurationCore) HelpGetInviteText(in *tg.TLHelpGetInviteText) (*tg.HelpInviteText, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.getInviteText - error: method HelpGetInviteText not impl")
+	// c.Logger.Errorf("help.getInviteText - error: method HelpGetInviteText not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpInviteText(&tg.TLHelpInviteText{
+		Message: "https://teamgram.net/dl",
+	}), nil
 }

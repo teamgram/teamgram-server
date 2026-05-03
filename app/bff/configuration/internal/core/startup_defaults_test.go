@@ -137,3 +137,55 @@ func TestHelpGetCountriesListReturnsEmptyListThenNotModified(t *testing.T) {
 		t.Fatalf("HelpGetCountriesList(hash=startupCountriesHash) returned %s, want help.countriesListNotModified", got.ClazzName())
 	}
 }
+
+func TestHelpGetSupportReturnsStaticSupportUser(t *testing.T) {
+	c := newStartupConfigurationCore()
+
+	got, err := c.HelpGetSupport(&tg.TLHelpGetSupport{})
+	if err != nil {
+		t.Fatalf("HelpGetSupport error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("HelpGetSupport returned nil")
+	}
+	if got.PhoneNumber != supportPhoneNumber {
+		t.Fatalf("PhoneNumber = %q, want %q", got.PhoneNumber, supportPhoneNumber)
+	}
+	user, ok := got.User.(*tg.TLUser)
+	if !ok {
+		t.Fatalf("User = %T, want *tg.TLUser", got.User)
+	}
+	if user.Id != supportUserID {
+		t.Fatalf("support user id = %d, want %d", user.Id, supportUserID)
+	}
+	if user.FirstName == nil || *user.FirstName != supportName {
+		t.Fatalf("support user first_name = %v, want %q", user.FirstName, supportName)
+	}
+	if user.AccessHash == nil || *user.AccessHash != supportUserAccessHash {
+		t.Fatalf("support user access_hash = %v, want %d", user.AccessHash, supportUserAccessHash)
+	}
+	if !user.Support {
+		t.Fatal("support user Support flag is false")
+	}
+	if err := got.Validate(223); err != nil {
+		t.Fatalf("HelpSupport Validate(223) error = %v", err)
+	}
+}
+
+func TestHelpGetSupportNameReturnsStaticName(t *testing.T) {
+	c := newStartupConfigurationCore()
+
+	got, err := c.HelpGetSupportName(&tg.TLHelpGetSupportName{})
+	if err != nil {
+		t.Fatalf("HelpGetSupportName error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("HelpGetSupportName returned nil")
+	}
+	if got.Name != supportName {
+		t.Fatalf("Name = %q, want %q", got.Name, supportName)
+	}
+	if err := got.Validate(223); err != nil {
+		t.Fatalf("HelpSupportName Validate(223) error = %v", err)
+	}
+}

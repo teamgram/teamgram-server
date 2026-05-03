@@ -24,7 +24,7 @@ import (
 // help.dismissSuggestion#f50dbaa1 peer:InputPeer suggestion:string = Bool;
 func (c *ConfigurationCore) HelpDismissSuggestion(in *tg.TLHelpDismissSuggestion) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.dismissSuggestion - error: method HelpDismissSuggestion not impl")
+	// c.Logger.Errorf("help.dismissSuggestion - error: method HelpDismissSuggestion not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

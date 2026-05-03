@@ -17,6 +17,8 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -24,7 +26,9 @@ import (
 // help.getTermsOfServiceUpdate#2ca51fd1 = help.TermsOfServiceUpdate;
 func (c *TosCore) HelpGetTermsOfServiceUpdate(in *tg.TLHelpGetTermsOfServiceUpdate) (*tg.HelpTermsOfServiceUpdate, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.getTermsOfServiceUpdate - error: method HelpGetTermsOfServiceUpdate not impl")
+	// c.Logger.Errorf("help.getTermsOfServiceUpdate - error: method HelpGetTermsOfServiceUpdate not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpTermsOfServiceUpdateEmpty(&tg.TLHelpTermsOfServiceUpdateEmpty{
+		Expires: int32(time.Now().Unix() + 3600),
+	}).ToHelpTermsOfServiceUpdate(), nil
 }

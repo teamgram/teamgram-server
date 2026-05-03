@@ -24,7 +24,7 @@ import (
 // help.getAppUpdate#522d5a7d source:string = help.AppUpdate;
 func (c *ConfigurationCore) HelpGetAppUpdate(in *tg.TLHelpGetAppUpdate) (*tg.HelpAppUpdate, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.getAppUpdate - error: method HelpGetAppUpdate not impl")
+	// c.Logger.Errorf("help.getAppUpdate - error: method HelpGetAppUpdate not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.HelpNoAppUpdate, nil
 }
