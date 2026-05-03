@@ -115,7 +115,7 @@ func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack fu
 			return
 		}
 		for key := range writers {
-			s.push.Unregister(key.authKeyId, key.sessionId)
+			s.push.Unregister(key.authKeyId, key.authKeyType, key.sessionId)
 		}
 	}()
 	for {
@@ -164,7 +164,7 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 		if s.push == nil || active.AuthKey == nil {
 			return nil
 		}
-		key := sessionKey{authKeyId: active.AuthKeyId, sessionId: active.SessionId}
+		key := sessionKey{authKeyId: active.AuthKeyId, authKeyType: active.AuthKeyType, sessionId: active.SessionId}
 		writer := writers[key]
 		if writer == nil {
 			writer = &connSessionWriter{
@@ -176,10 +176,11 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 		}
 		writer.Update(active.AuthKey, active.Salt)
 		s.push.Register(push.LocalTarget{
-			AuthKeyId: active.AuthKeyId,
-			SessionId: active.SessionId,
-			AuthKey:   active.AuthKey,
-			Writer:    writer,
+			AuthKeyId:   active.AuthKeyId,
+			AuthKeyType: active.AuthKeyType,
+			SessionId:   active.SessionId,
+			AuthKey:     active.AuthKey,
+			Writer:      writer,
 		})
 		return writer
 	})
@@ -235,8 +236,9 @@ func (s *Server) reportConnError(conn net.Conn, phase string, err error) {
 }
 
 type sessionKey struct {
-	authKeyId int64
-	sessionId int64
+	authKeyId   int64
+	authKeyType int32
+	sessionId   int64
 }
 
 type connSessionWriter struct {

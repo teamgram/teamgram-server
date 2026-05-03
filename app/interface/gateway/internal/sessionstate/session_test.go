@@ -304,6 +304,22 @@ func TestSessionAuthKeyCacheConcurrent(t *testing.T) {
 	}
 }
 
+func TestSessionSeqNoSeparatesAuthKeyType(t *testing.T) {
+	processor := NewProcessor(&fakeAuthKeyStore{}, &fakeDispatcher{})
+	authKeyID := int64(1001)
+	sessionID := int64(77)
+
+	if got := processor.nextSeqNo(authKeyID, tg.AuthKeyTypeTemp, sessionID, true, nil); got != 1 {
+		t.Fatalf("temp first seq = %d, want 1", got)
+	}
+	if got := processor.nextSeqNo(authKeyID, tg.AuthKeyTypeMediaTemp, sessionID, true, nil); got != 1 {
+		t.Fatalf("media first seq = %d, want 1", got)
+	}
+	if got := processor.nextSeqNo(authKeyID, tg.AuthKeyTypeTemp, sessionID, true, nil); got != 3 {
+		t.Fatalf("temp second seq = %d, want 3", got)
+	}
+}
+
 func TestSessionWrapsDispatchRPCError(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}

@@ -14,10 +14,11 @@ type SessionWriter interface {
 }
 
 type LocalTarget struct {
-	AuthKeyId int64
-	SessionId int64
-	AuthKey   *crypto.AuthKey
-	Writer    SessionWriter
+	AuthKeyId   int64
+	AuthKeyType int32
+	SessionId   int64
+	AuthKey     *crypto.AuthKey
+	Writer      SessionWriter
 }
 
 type LocalWriter struct {
@@ -26,8 +27,9 @@ type LocalWriter struct {
 }
 
 type sessionKey struct {
-	authKeyId int64
-	sessionId int64
+	authKeyId   int64
+	authKeyType int32
+	sessionId   int64
 }
 
 func NewLocalWriter() *LocalWriter {
@@ -43,16 +45,16 @@ func (w *LocalWriter) Register(target LocalTarget) {
 	if w.targets == nil {
 		w.targets = make(map[sessionKey]LocalTarget)
 	}
-	w.targets[sessionKey{authKeyId: target.AuthKeyId, sessionId: target.SessionId}] = target
+	w.targets[sessionKey{authKeyId: target.AuthKeyId, authKeyType: target.AuthKeyType, sessionId: target.SessionId}] = target
 }
 
-func (w *LocalWriter) Unregister(authKeyId int64, sessionId int64) {
+func (w *LocalWriter) Unregister(authKeyId int64, authKeyType int32, sessionId int64) {
 	if w == nil {
 		return
 	}
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	delete(w.targets, sessionKey{authKeyId: authKeyId, sessionId: sessionId})
+	delete(w.targets, sessionKey{authKeyId: authKeyId, authKeyType: authKeyType, sessionId: sessionId})
 }
 
 func (w *LocalWriter) WriteRPCResult(ctx context.Context, authKeyId int64, sessionId int64, reqMsgId int64, rpcResultData []byte) (bool, error) {
@@ -60,9 +62,18 @@ func (w *LocalWriter) WriteRPCResult(ctx context.Context, authKeyId int64, sessi
 		return false, nil
 	}
 	w.mu.RLock()
-	target, ok := w.targets[sessionKey{authKeyId: authKeyId, sessionId: sessionId}]
+	var (
+		target  LocalTarget
+		matches int
+	)
+	for key, candidate := range w.targets {
+		if key.authKeyId == authKeyId && key.sessionId == sessionId {
+			target = candidate
+			matches++
+		}
+	}
 	w.mu.RUnlock()
-	if !ok {
+	if matches != 1 {
 		return false, nil
 	}
 	return true, target.Writer.WriteEncrypted(ctx, gmtproto.EncryptedMessage{

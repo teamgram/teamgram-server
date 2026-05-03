@@ -7,6 +7,7 @@ import (
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type fakeSessionWriter struct {
@@ -47,7 +48,7 @@ func TestGatewayPushLocalWriterUnregister(t *testing.T) {
 	writer := NewLocalWriter()
 	key := crypto.CreateAuthKey()
 	writer.Register(LocalTarget{AuthKeyId: key.AuthKeyId(), SessionId: 22, AuthKey: key, Writer: &fakeSessionWriter{}})
-	writer.Unregister(key.AuthKeyId(), 22)
+	writer.Unregister(key.AuthKeyId(), 0, 22)
 
 	ok, err := writer.WriteRPCResult(context.Background(), key.AuthKeyId(), 22, 100, []byte{1})
 	if err != nil {
@@ -55,5 +56,33 @@ func TestGatewayPushLocalWriterUnregister(t *testing.T) {
 	}
 	if ok {
 		t.Fatal("WriteRPCResult() ok = true, want false")
+	}
+}
+
+func TestGatewayPushLocalWriterSeparatesAuthKeyType(t *testing.T) {
+	writer := NewLocalWriter()
+	key := crypto.CreateAuthKey()
+	normal := &fakeSessionWriter{}
+	media := &fakeSessionWriter{}
+	writer.Register(LocalTarget{AuthKeyId: key.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 22, AuthKey: key, Writer: normal})
+	writer.Register(LocalTarget{AuthKeyId: key.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeMediaTemp, SessionId: 22, AuthKey: key, Writer: media})
+
+	ok, err := writer.WriteRPCResult(context.Background(), key.AuthKeyId(), 22, 100, []byte{9})
+	if err != nil {
+		t.Fatalf("WriteRPCResult() error = %v", err)
+	}
+	if ok {
+		t.Fatal("ambiguous WriteRPCResult() ok = true, want false")
+	}
+	writer.Unregister(key.AuthKeyId(), tg.AuthKeyTypeMediaTemp, 22)
+	ok, err = writer.WriteRPCResult(context.Background(), key.AuthKeyId(), 22, 102, []byte{8})
+	if err != nil {
+		t.Fatalf("normal WriteRPCResult() error = %v", err)
+	}
+	if !ok {
+		t.Fatal("normal WriteRPCResult() ok = false after media unregister")
+	}
+	if normal.seq != 1 || media.seq != 0 {
+		t.Fatalf("normal seq=%d media seq=%d", normal.seq, media.seq)
 	}
 }

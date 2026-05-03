@@ -32,10 +32,11 @@ type Dispatcher interface {
 }
 
 type ActiveSession struct {
-	AuthKeyId int64
-	SessionId int64
-	Salt      int64
-	AuthKey   *crypto.AuthKey
+	AuthKeyId   int64
+	AuthKeyType int32
+	SessionId   int64
+	Salt        int64
+	AuthKey     *crypto.AuthKey
 }
 
 type SeqNoAllocator interface {
@@ -53,12 +54,18 @@ type Processor struct {
 	metaMu       sync.RWMutex
 	clientMeta   map[clientMetadataKey]gmtproto.WrapperMetadata
 	seqMu        sync.Mutex
-	seq          map[sessionKey]int32
+	seq          map[activeSessionKey]int32
 }
 
 type sessionKey struct {
 	authKeyId int64
 	sessionId int64
+}
+
+type activeSessionKey struct {
+	authKeyId   int64
+	authKeyType int32
+	sessionId   int64
 }
 
 type clientMetadataKey struct {
@@ -72,7 +79,7 @@ func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor
 		authKeys:     make(map[int64]*crypto.AuthKey),
 		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
 		clientMeta:   make(map[clientMetadataKey]gmtproto.WrapperMetadata),
-		seq:          make(map[sessionKey]int32),
+		seq:          make(map[activeSessionKey]int32),
 	}
 }
 
@@ -97,10 +104,11 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	var seq SeqNoAllocator
 	if observe != nil {
 		seq = observe(ActiveSession{
-			AuthKeyId: msg.AuthKeyId,
-			SessionId: msg.SessionId,
-			Salt:      msg.Salt,
-			AuthKey:   key,
+			AuthKeyId:   msg.AuthKeyId,
+			AuthKeyType: authKeyType(keyInfo),
+			SessionId:   msg.SessionId,
+			Salt:        msg.Salt,
+			AuthKey:     key,
 		})
 	}
 
@@ -113,7 +121,7 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 		Salt:      msg.Salt,
 		SessionId: msg.SessionId,
 		MsgId:     gmtproto.NextServerMsgId(msg.MsgId),
-		SeqNo:     p.nextSeqNo(msg.AuthKeyId, msg.SessionId, true, seq),
+		SeqNo:     p.nextSeqNo(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId, true, seq),
 		Body:      body,
 	}, key)
 }
@@ -191,7 +199,7 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 			if body != nil {
 				responses = append(responses, &mt.TLMessage2{
 					MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
-					Seqno:  p.nextSeqNo(parent.AuthKeyId, parent.SessionId, true, seq),
+					Seqno:  p.nextSeqNo(parent.AuthKeyId, authKeyType(keyInfo), parent.SessionId, true, seq),
 					Object: codec.NewRawTLObject(body),
 				})
 			}
@@ -206,7 +214,7 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 		}
 		responses = append(responses, &mt.TLMessage2{
 			MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
-			Seqno:  p.nextSeqNo(parent.AuthKeyId, parent.SessionId, true, seq),
+			Seqno:  p.nextSeqNo(parent.AuthKeyId, authKeyType(keyInfo), parent.SessionId, true, seq),
 			Object: codec.NewRawTLObject(body),
 		})
 	}
@@ -349,6 +357,13 @@ func metadataCacheID(keyInfo *tg.AuthKeyInfo, authKeyId int64) int64 {
 		return keyInfo.PermAuthKeyId
 	}
 	return authKeyId
+}
+
+func authKeyType(keyInfo *tg.AuthKeyInfo) int32 {
+	if keyInfo == nil {
+		return tg.AuthKeyTypeUnknown
+	}
+	return keyInfo.AuthKeyType
 }
 
 func (p *Processor) mergeClientMetadata(cacheID int64, md gmtproto.WrapperMetadata) (gmtproto.WrapperMetadata, bool) {
@@ -510,13 +525,13 @@ func readAuthKeyID(payload []byte) (int64, error) {
 	return v, nil
 }
 
-func (p *Processor) nextSeqNo(authKeyId int64, sessionId int64, contentRelated bool, allocator SeqNoAllocator) int32 {
+func (p *Processor) nextSeqNo(authKeyId int64, authKeyType int32, sessionId int64, contentRelated bool, allocator SeqNoAllocator) int32 {
 	if allocator != nil {
 		return allocator.NextSeqNo(contentRelated)
 	}
 	p.seqMu.Lock()
 	defer p.seqMu.Unlock()
-	key := sessionKey{authKeyId: authKeyId, sessionId: sessionId}
+	key := activeSessionKey{authKeyId: authKeyId, authKeyType: authKeyType, sessionId: sessionId}
 	seq := p.seq[key] * 2
 	if contentRelated {
 		seq++

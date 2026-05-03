@@ -10,6 +10,7 @@ import (
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
@@ -35,6 +36,18 @@ func (s transportAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int
 
 func (s transportAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
 	return 0, nil
+}
+
+func (s transportAuthKeyStore) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
+	return nil
+}
+
+func (s transportAuthKeyStore) SetLayer(ctx context.Context, authKeyId int64, ip string, layer int32) error {
+	return nil
+}
+
+func (s transportAuthKeyStore) GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error) {
+	return nil, nil
 }
 
 type transportDispatcher struct{}
