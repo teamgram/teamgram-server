@@ -132,6 +132,19 @@ func TestRepositoryAuthKeyMethodsWrapErrors(t *testing.T) {
 	}
 }
 
+func TestRepositoryGetUserIdIgnoresUnboundTempAuthKey(t *testing.T) {
+	repo := &Repository{AuthsessionClient: &fakeAuthsessionClient{
+		userErr: authsession.ErrPermAuthKeyEmpty,
+	}}
+	got, err := repo.GetUserId(context.Background(), 1001)
+	if err != nil {
+		t.Fatalf("GetUserId() error = %v", err)
+	}
+	if got != 0 {
+		t.Fatalf("GetUserId() = %d, want 0", got)
+	}
+}
+
 func TestRepositoryClientSessionMethodsWrapAuthsessionClient(t *testing.T) {
 	client := authsession.MakeTLClientSession(&authsession.TLClientSession{
 		AuthKeyId:      1001,

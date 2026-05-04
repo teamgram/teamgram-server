@@ -114,6 +114,9 @@ func (r *Repository) GetUserId(ctx context.Context, authKeyId int64) (int64, err
 		AuthKeyId: authKeyId,
 	})
 	if err != nil {
+		if isPermAuthKeyEmpty(err) {
+			return 0, nil
+		}
 		return 0, fmt.Errorf("gateway repository: get user id %d: %w", authKeyId, err)
 	}
 	if userID == nil {
