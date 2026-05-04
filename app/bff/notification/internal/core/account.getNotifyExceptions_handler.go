@@ -17,14 +17,108 @@
 package core
 
 import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetNotifyExceptions
 // account.getNotifyExceptions#53577479 flags:# compare_sound:flags.1?true compare_stories:flags.2?true peer:flags.0?InputNotifyPeer = Updates;
 func (c *NotificationCore) AccountGetNotifyExceptions(in *tg.TLAccountGetNotifyExceptions) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getNotifyExceptions - error: method AccountGetNotifyExceptions not impl")
+	settingsList, err := c.svcCtx.Repo.UserClient.UserGetNotifySettingsList(c.ctx, &repository.GetNotifySettingsList{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.getNotifyExceptions - error: %v", err)
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	var (
+		userIdList []int64
+		chatIdList []int64
+		updates    []tg.UpdateClazz
+	)
+
+	for _, settings := range settingsList.Datas {
+		notifyPeer := makeNotifyPeer(settings.PeerType, settings.PeerId)
+		update := tg.MakeTLUpdateNotifySettings(&tg.TLUpdateNotifySettings{
+			Peer:           notifyPeer,
+			NotifySettings: settings.Settings,
+		})
+		updates = append(updates, update)
+
+		switch settings.PeerType {
+		case tg.PEER_USER:
+			userIdList = append(userIdList, settings.PeerId)
+		case tg.PEER_CHAT:
+			chatIdList = append(chatIdList, settings.PeerId)
+		case tg.PEER_CHANNEL:
+			// TODO: handle channels via plugin
+		}
+	}
+
+	// Fetch users
+	var users []tg.UserClazz
+	if len(userIdList) > 0 {
+		mUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+			Id: userIdList,
+		})
+		if err != nil {
+			c.Logger.Errorf("account.getNotifyExceptions - error fetching users: %v", err)
+			return nil, err
+		}
+		for _, u := range mUsers.Users {
+			users = append(users, projectImmutableUser(u))
+		}
+	}
+
+	// Fetch chats
+	var chats []tg.ChatClazz
+	if len(chatIdList) > 0 {
+		mChats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx, &repository.GetChatListByIdList{
+			SelfId: c.MD.UserId,
+			IdList: chatIdList,
+		})
+		if err != nil {
+			c.Logger.Errorf("account.getNotifyExceptions - error fetching chats: %v", err)
+			return nil, err
+		}
+		for _, ch := range mChats.Datas {
+			chat := projectMutableChat(ch, c.MD.UserId)
+			if chat != nil {
+				chats = append(chats, chat)
+			}
+		}
+	}
+
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: updates,
+		Users:   users,
+		Chats:   chats,
+		Date:    int32(time.Now().Unix()),
+		Seq:     0,
+	}).ToUpdates(), nil
+}
+
+func makeNotifyPeer(peerType int32, peerId int64) tg.NotifyPeerClazz {
+	switch peerType {
+	case tg.PEER_USER, tg.PEER_CHAT, tg.PEER_CHANNEL, tg.PEER_SELF:
+		pu := tg.MakePeerUtilHelper(peerType, peerId).ToPeerUtil()
+		return tg.MakeTLNotifyPeer(&tg.TLNotifyPeer{
+			Peer: pu.ToPeer(),
+		})
+	case tg.PEER_USERS:
+		return tg.MakeTLNotifyUsers(&tg.TLNotifyUsers{})
+	case tg.PEER_CHATS:
+		return tg.MakeTLNotifyChats(&tg.TLNotifyChats{})
+	case tg.PEER_BROADCASTS:
+		return tg.MakeTLNotifyBroadcasts(&tg.TLNotifyBroadcasts{})
+	default:
+		pu := tg.MakePeerUtilHelper(peerType, peerId).ToPeerUtil()
+		return tg.MakeTLNotifyPeer(&tg.TLNotifyPeer{
+			Peer: pu.ToPeer(),
+		})
+	}
 }

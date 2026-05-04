@@ -327,10 +327,9 @@ func (s *Server) Initialize() error {
 				s,
 				notificationhelper.New(notificationhelper.Config{
 					RpcServerConf: c.RpcServerConf,
-					//UserClient:    c.BizServiceClient,
-					//ChatClient:    c.BizServiceClient,
-					//SyncClient:    c.SyncClient,
-				}))
+					UserClient:    c.BizServiceClient,
+					ChatClient:    c.BizServiceClient,
+				}, nil))
 
 			// usershelper
 			_ = usersservice.RegisterService(

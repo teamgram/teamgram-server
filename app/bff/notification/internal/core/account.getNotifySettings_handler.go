@@ -17,14 +17,54 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetNotifySettings
 // account.getNotifySettings#12b3ad31 peer:InputNotifyPeer = PeerNotifySettings;
 func (c *NotificationCore) AccountGetNotifySettings(in *tg.TLAccountGetNotifySettings) (*tg.PeerNotifySettings, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getNotifySettings - error: method AccountGetNotifySettings not impl")
+	peerUtil := fromInputNotifyPeer(c.MD.UserId, in.Peer)
 
-	return nil, tg.ErrMethodNotImpl
+	rValues, err := c.svcCtx.Repo.UserClient.UserGetNotifySettings(c.ctx, &repository.GetNotifySettings{
+		UserId:   c.MD.UserId,
+		PeerType: peerUtil.PeerType,
+		PeerId:   peerUtil.PeerId,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.getNotifySettings - error: %v", err)
+		return nil, err
+	}
+
+	return rValues, nil
+}
+
+func fromInputNotifyPeer(selfId int64, peer tg.InputNotifyPeerClazz) *tg.TLPeerUtil {
+	p := &tg.TLPeerUtil{
+		PeerType: tg.PEER_UNKNOWN,
+	}
+
+	if peer == nil {
+		return p
+	}
+
+	switch c := peer.(type) {
+	case *tg.TLInputNotifyPeer:
+		p2 := tg.FromInputPeer2(selfId, c.Peer)
+		return p2.ToPeerUtil()
+	case *tg.TLInputNotifyUsers:
+		p.PeerType = tg.PEER_USERS
+		p.PeerId = 0
+		p.AccessHash = 0
+	case *tg.TLInputNotifyChats:
+		p.PeerType = tg.PEER_CHATS
+		p.PeerId = 0
+		p.AccessHash = 0
+	case *tg.TLInputNotifyBroadcasts:
+		p.PeerType = tg.PEER_BROADCASTS
+		p.PeerId = 0
+		p.AccessHash = 0
+	}
+
+	return p
 }

@@ -17,14 +17,68 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountUpdateNotifySettings
 // account.updateNotifySettings#84be5b93 peer:InputNotifyPeer settings:InputPeerNotifySettings = Bool;
 func (c *NotificationCore) AccountUpdateNotifySettings(in *tg.TLAccountUpdateNotifySettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updateNotifySettings - error: method AccountUpdateNotifySettings not impl")
+	peerUtil := fromInputNotifyPeer(c.MD.UserId, in.Peer)
 
-	return nil, tg.ErrMethodNotImpl
+	// Validate peer existence for specific peer types
+	switch peerUtil.PeerType {
+	case tg.PEER_CHAT:
+		_, err := c.svcCtx.Repo.ChatClient.ChatGetMutableChat(c.ctx, &repository.GetMutableChat{
+			ChatId: peerUtil.PeerId,
+		})
+		if err != nil {
+			c.Logger.Errorf("account.updateNotifySettings - error: chat %d not found: %v", peerUtil.PeerId, err)
+			return nil, err
+		}
+	case tg.PEER_CHANNEL:
+		if c.svcCtx.Plugin != nil {
+			_, err := c.svcCtx.Plugin.GetChannelById(c.ctx, c.MD.UserId, peerUtil.PeerId)
+			if err != nil {
+				c.Logger.Errorf("account.updateNotifySettings - error: channel %d not found: %v", peerUtil.PeerId, err)
+				return nil, err
+			}
+		}
+	}
+
+	// Convert InputPeerNotifySettings to PeerNotifySettings
+	// InputPeerNotifySettingsClazz is *TLInputPeerNotifySettings, so we use it directly.
+	inputSettings := in.Settings
+	if inputSettings == nil {
+		inputSettings = &tg.TLInputPeerNotifySettings{}
+	}
+
+	peerSettings := tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{
+		ShowPreviews:        inputSettings.ShowPreviews,
+		Silent:              inputSettings.Silent,
+		MuteUntil:           inputSettings.MuteUntil,
+		IosSound:            inputSettings.Sound,
+		AndroidSound:        inputSettings.Sound,
+		OtherSound:          inputSettings.Sound,
+		StoriesMuted:        inputSettings.StoriesMuted,
+		StoriesHideSender:   inputSettings.StoriesHideSender,
+		StoriesIosSound:     inputSettings.StoriesSound,
+		StoriesAndroidSound: inputSettings.StoriesSound,
+		StoriesOtherSound:   inputSettings.StoriesSound,
+	})
+
+	_, err := c.svcCtx.Repo.UserClient.UserSetNotifySettings(c.ctx, &repository.SetNotifySettings{
+		UserId:   c.MD.UserId,
+		PeerType: peerUtil.PeerType,
+		PeerId:   peerUtil.PeerId,
+		Settings: peerSettings,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
+		return nil, err
+	}
+
+	// TODO: sync.SyncUpdatesNotMe
+
+	return tg.BoolTrue, nil
 }

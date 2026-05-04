@@ -17,14 +17,22 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountResetNotifySettings
 // account.resetNotifySettings#db7e1747 = Bool;
 func (c *NotificationCore) AccountResetNotifySettings(in *tg.TLAccountResetNotifySettings) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.resetNotifySettings - error: method AccountResetNotifySettings not impl")
+	_, err := c.svcCtx.Repo.UserClient.UserResetNotifySettings(c.ctx, &repository.ResetNotifySettings{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.resetNotifySettings - error: %v", err)
+		return tg.BoolFalse, nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	// TODO: 3x sync.SyncUpdatesNotMe for PEER_USERS, PEER_CHATS, PEER_BROADCASTS
+
+	return tg.BoolTrue, nil
 }

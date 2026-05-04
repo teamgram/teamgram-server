@@ -20,12 +20,13 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/server/tg/service"
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/plugin"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+func New(c Config, p plugin.NotificationPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, p))
 }

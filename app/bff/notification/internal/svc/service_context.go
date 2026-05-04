@@ -19,16 +19,19 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/bff/notification/plugin"
 )
 
 type ServiceContext struct {
 	Config config.Config
 	Repo   *repository.Repository
+	Plugin plugin.NotificationPlugin
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, p plugin.NotificationPlugin) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		Repo:   repository.NewRepository(c),
+		Plugin: p,
 	}
 }

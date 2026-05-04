@@ -14,17 +14,19 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+// Package plugin defines the NotificationPlugin interface for
+// enterprise features.
+package plugin
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// AccountUpdateDeviceLocked
-// account.updateDeviceLocked#38df3532 period:int = Bool;
-func (c *NotificationCore) AccountUpdateDeviceLocked(in *tg.TLAccountUpdateDeviceLocked) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("account.updateDeviceLocked - error: method AccountUpdateDeviceLocked not impl")
-
-	return tg.BoolTrue, nil
+// NotificationPlugin is an extension point for enterprise channel
+// notification features.
+type NotificationPlugin interface {
+	GetChannelListByIdList(ctx context.Context, selfId int64, id ...int64) []tg.ChatClazz
+	GetChannelById(ctx context.Context, selfId int64, id int64) (tg.ChatClazz, error)
 }
