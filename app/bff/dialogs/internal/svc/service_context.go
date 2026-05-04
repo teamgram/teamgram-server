@@ -17,18 +17,22 @@
 package svc
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/repository"
 )
 
 type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
+	Config        config.Config
+	Repo          *repository.Repository
+	TypingLimiter TypingLimiter
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c),
+		Config:        c,
+		Repo:          repository.NewRepository(c),
+		TypingLimiter: NewTypingLimiter(time.Duration(c.TypingMinIntervalSeconds) * time.Second),
 	}
 }

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-killall geoip idgen status dfs media authsession biz userupdates msg bff gateway
+killall geoip idgen status presence dfs media authsession biz userupdates msg sync bff gateway

@@ -17,15 +17,52 @@
 package core
 
 import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // SyncPushRpcResult
-// sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
-func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.pushRpcResult - error: method SyncPushRpcResult not impl")
-
-	return nil, tg.ErrMethodNotImpl
+// sync.pushRpcResult user_id:long perm_auth_key_id:long auth_key_id:long gateway_id:string gateway_generation:string gateway_rpc_addr:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
+func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*sync.Void, error) {
+	const method = "sync.pushRpcResult"
+	if in == nil {
+		return nil, sync.ErrSyncInvalidArgument
+	}
+	if err := c.requireCaller(method); err != nil {
+		return nil, err
+	}
+	for field, value := range map[string]int64{
+		"user_id":           in.UserId,
+		"perm_auth_key_id":  in.PermAuthKeyId,
+		"auth_key_id":       in.AuthKeyId,
+		"session_id":        in.SessionId,
+		"client_req_msg_id": in.ClientReqMsgId,
+	} {
+		if err := validatePositiveID(method, field, value); err != nil {
+			return nil, err
+		}
+	}
+	if in.GatewayId == "" || in.GatewayGeneration == "" || in.GatewayRpcAddr == "" {
+		return nil, fmt.Errorf("%w: %s gateway route is incomplete", sync.ErrSyncInvalidArgument, method)
+	}
+	if len(in.RpcResult) == 0 {
+		return nil, fmt.Errorf("%w: %s rpc_result is empty", sync.ErrSyncInvalidArgument, method)
+	}
+	if err := c.svcCtx.Repo.PushRpcResult(c.ctx, repository.RpcResultRoute{
+		UserID:            in.UserId,
+		PermAuthKeyID:     in.PermAuthKeyId,
+		AuthKeyID:         in.AuthKeyId,
+		SessionID:         in.SessionId,
+		ClientReqMsgID:    in.ClientReqMsgId,
+		GatewayID:         in.GatewayId,
+		GatewayGeneration: in.GatewayGeneration,
+		GatewayRPCAddr:    in.GatewayRpcAddr,
+		RPCResult:         in.RpcResult,
+	}); err != nil {
+		return nil, err
+	}
+	return tg.VoidValue, nil
 }

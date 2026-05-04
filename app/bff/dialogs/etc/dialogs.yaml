@@ -16,3 +16,12 @@ UserupdatesClient:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.userupdates
+SyncClient:
+  DestService: messenger.sync
+  ServiceName: RPCSync
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.sync
+
+TypingMinIntervalSeconds: 5

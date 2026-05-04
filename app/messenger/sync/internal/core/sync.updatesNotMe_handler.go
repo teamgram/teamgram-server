@@ -23,9 +23,25 @@ import (
 
 // SyncUpdatesNotMe
 // sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
-func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.updatesNotMe - error: method SyncUpdatesNotMe not impl")
-
-	return nil, tg.ErrMethodNotImpl
+func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*sync.Void, error) {
+	const method = "sync.updatesNotMe"
+	if in == nil {
+		return nil, sync.ErrSyncInvalidArgument
+	}
+	if err := c.requireCaller(method); err != nil {
+		return nil, err
+	}
+	if err := validateUserID(method, in.UserId); err != nil {
+		return nil, err
+	}
+	if err := validatePositiveID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+	if err := validateUpdates(method, in.Updates); err != nil {
+		return nil, err
+	}
+	if err := c.svcCtx.Repo.UpdatesNotMe(c.ctx, in.UserId, in.PermAuthKeyId, in.Updates); err != nil {
+		return nil, err
+	}
+	return tg.VoidValue, nil
 }

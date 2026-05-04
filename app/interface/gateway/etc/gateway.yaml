@@ -23,6 +23,21 @@ AuthsessionClient:
       - 127.0.0.1:2379
     Key: service.authsession
 
+PresenceClient:
+  DestService: service.presence
+  ServiceName: RPCPresence
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.presence
+
+AdvertiseRpcAddr: 127.0.0.1:20110
+PresenceRefreshMinIntervalSeconds: 20
+PresenceRefreshScanIntervalSeconds: 10
+PresenceRefreshRetryMinIntervalSeconds: 5
+GatewayShutdownPresenceOfflineDeadlineSeconds: 5
+GatewayShutdownPresenceOfflineMaxSessions: 10000
+
 BffClient:
   Clients:
     - DestService: bff.bff

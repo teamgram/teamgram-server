@@ -23,9 +23,22 @@ import (
 
 // SyncPushUpdates
 // sync.pushUpdates user_id:long updates:Updates = Void;
-func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.pushUpdates - error: method SyncPushUpdates not impl")
-
-	return nil, tg.ErrMethodNotImpl
+func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*sync.Void, error) {
+	const method = "sync.pushUpdates"
+	if in == nil {
+		return nil, sync.ErrSyncInvalidArgument
+	}
+	if err := c.requireCaller(method); err != nil {
+		return nil, err
+	}
+	if err := validateUserID(method, in.UserId); err != nil {
+		return nil, err
+	}
+	if err := validateUpdates(method, in.Updates); err != nil {
+		return nil, err
+	}
+	if err := c.svcCtx.Repo.PushUpdates(c.ctx, in.UserId, in.Updates); err != nil {
+		return nil, err
+	}
+	return tg.VoidValue, nil
 }

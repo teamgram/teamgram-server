@@ -50,6 +50,9 @@ func New() *Server {
 func (s *Server) Initialize() error {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	if err := c.Validate(); err != nil {
+		return err
+	}
 
 	logx.Infov(c)
 
@@ -65,14 +68,20 @@ func (s *Server) Initialize() error {
 	s.tcpSrv = gttransport.NewServer(
 		c.Transport.TCPListenOn,
 		c.GatewayId,
+		c.AdvertiseRpcAddr,
+		ctx.GatewayGeneration,
 		sessionstate.NewHandshakeManager(ctx.Repo),
 		sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF)),
-		ctx.Push)
+		ctx.Push,
+		ctx.Presence)
 
 	return nil
 }
 
 func (s *Server) RunLoop() {
+	if s.ctx != nil && s.ctx.Presence != nil {
+		s.ctx.Presence.Start(context.Background())
+	}
 	if s.tcpSrv != nil {
 		if err := s.tcpSrv.Start(context.Background()); err != nil {
 			logx.Errorf("gateway tcp server start failed: %v", err)
@@ -89,11 +98,18 @@ func (s *Server) Destroy() {
 			logx.Errorf("gateway tcp server stop failed: %v", err)
 		}
 	}
+	if s.ctx != nil && s.ctx.Presence != nil {
+		if err := s.ctx.Presence.Stop(context.Background()); err != nil {
+			logx.Errorf("gateway presence registrar stop failed: %v", err)
+		}
+	}
 	if err := s.kitexSrv.Stop(); err != nil {
 		logx.Errorf("server stop failed: %v", err)
 	}
 
-	if err := s.ctx.Close(); err != nil {
-		logx.Errorf("service context close failed: %v", err)
+	if s.ctx != nil {
+		if err := s.ctx.Close(); err != nil {
+			logx.Errorf("service context close failed: %v", err)
+		}
 	}
 }

@@ -22,4 +22,15 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
+	PresenceClient                  kitex.RpcClientConf
+	GatewayClientBase               kitex.RpcClientConf
+	GatewayAllowedCIDRs             []string
+	GatewayAllowedIPv6CIDRs         []string
+	GatewayAllowedPorts             []int
+	AllowGatewayLoopback            bool `json:",default=false"`
+	GatewayClientCacheMaxEntries    int  `json:",default=1000"`
+	GatewayClientCacheTTLSeconds    int  `json:",default=300"`
+	GatewayClientIdleTimeoutSeconds int  `json:",default=60"`
+	RequireCallerIdentity           bool `json:",default=false"`
+	AllowedCallers                  []string
 }

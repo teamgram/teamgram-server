@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
+	gatewaypresence "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/presence"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
@@ -19,21 +20,24 @@ import (
 )
 
 type Server struct {
-	addr      string
-	gatewayID string
-	handshake *sessionstate.HandshakeManager
-	processor *sessionstate.Processor
-	push      *push.LocalWriter
-	listener  net.Listener
-	wg        sync.WaitGroup
-	connsMu   sync.Mutex
-	conns     map[net.Conn]struct{}
-	stopping  bool
-	eventSink func(transportEvent)
+	addr              string
+	gatewayID         string
+	gatewayRPCAddr    string
+	gatewayGeneration string
+	handshake         *sessionstate.HandshakeManager
+	processor         *sessionstate.Processor
+	push              *push.LocalWriter
+	presence          *gatewaypresence.Registrar
+	listener          net.Listener
+	wg                sync.WaitGroup
+	connsMu           sync.Mutex
+	conns             map[net.Conn]struct{}
+	stopping          bool
+	eventSink         func(transportEvent)
 }
 
-func NewServer(addr string, gatewayID string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter) *Server {
-	return &Server{addr: addr, gatewayID: gatewayID, handshake: handshake, processor: processor, push: pushWriter, conns: make(map[net.Conn]struct{})}
+func NewServer(addr string, gatewayID string, gatewayRPCAddr string, gatewayGeneration string, handshake *sessionstate.HandshakeManager, processor *sessionstate.Processor, pushWriter *push.LocalWriter, registrar *gatewaypresence.Registrar) *Server {
+	return &Server{addr: addr, gatewayID: gatewayID, gatewayRPCAddr: gatewayRPCAddr, gatewayGeneration: gatewayGeneration, handshake: handshake, processor: processor, push: pushWriter, presence: registrar, conns: make(map[net.Conn]struct{})}
 }
 
 type transportEvent struct {
@@ -111,11 +115,13 @@ func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack fu
 	var writeMu sync.Mutex
 	writers := make(map[sessionKey]*connSessionWriter)
 	defer func() {
-		if s.push == nil {
-			return
-		}
 		for key := range writers {
-			s.push.Unregister(key.authKeyId, key.authKeyType, key.sessionId)
+			if s.push != nil {
+				s.push.Unregister(key.authKeyId, key.authKeyType, key.sessionId)
+			}
+			if s.presence != nil {
+				s.presence.Unregister(context.Background(), key.authKeyId, key.sessionId)
+			}
 		}
 	}()
 	for {
@@ -160,30 +166,48 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 	if s.processor == nil {
 		return nil, fmt.Errorf("gateway transport: session processor is nil")
 	}
-	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) sessionstate.SeqNoAllocator {
-		if s.push == nil || active.AuthKey == nil {
+	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, GatewayRpcAddr: s.gatewayRPCAddr, GatewayGeneration: s.gatewayGeneration, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) sessionstate.SeqNoAllocator {
+		if active.AuthKey == nil {
 			return nil
 		}
 		key := sessionKey{authKeyId: active.AuthKeyId, authKeyType: active.AuthKeyType, sessionId: active.SessionId}
 		writer := writers[key]
-		if writer == nil {
+		if s.push != nil && writer == nil {
 			writer = &connSessionWriter{
 				conn:    conn,
 				codec:   codec,
 				writeMu: writeMu,
 			}
+		}
+		if _, ok := writers[key]; !ok {
 			writers[key] = writer
 		}
-		writer.Update(active.AuthKey, active.Salt)
-		s.push.Register(push.LocalTarget{
-			PermAuthKeyId: active.PermAuthKeyId,
-			AuthKeyId:     active.AuthKeyId,
-			AuthKeyType:   active.AuthKeyType,
-			SessionId:     active.SessionId,
-			Layer:         active.Layer,
-			AuthKey:       active.AuthKey,
-			Writer:        writer,
-		})
+		if s.push != nil && writer != nil {
+			writer.Update(active.AuthKey, active.Salt)
+			s.push.Register(push.LocalTarget{
+				PermAuthKeyId: active.PermAuthKeyId,
+				AuthKeyId:     active.AuthKeyId,
+				AuthKeyType:   active.AuthKeyType,
+				SessionId:     active.SessionId,
+				Layer:         active.Layer,
+				AuthKey:       active.AuthKey,
+				Writer:        writer,
+			})
+		}
+		if s.presence != nil && active.UserId > 0 {
+			s.presence.Register(ctx, gatewaypresence.ActiveSession{
+				UserID:        active.UserId,
+				PermAuthKeyID: active.PermAuthKeyId,
+				AuthKeyID:     active.AuthKeyId,
+				AuthKeyType:   active.AuthKeyType,
+				SessionID:     active.SessionId,
+				Layer:         active.Layer,
+				Client:        active.Client,
+			})
+		}
+		if s.push == nil {
+			return nil
+		}
 		return writer
 	})
 }

@@ -8,6 +8,10 @@ echo "run status ..."
 nohup ./status -f=../../app/service/status/etc/status.yaml >> ../logs/status.log  2>&1 &
 sleep 1
 
+echo "run presence ..."
+nohup ./presence -f=../../app/service/presence/etc/presence.yaml >> ../logs/presence.log  2>&1 &
+sleep 1
+
 echo "run authsession ..."
 nohup ./authsession -f=../../app/service/authsession/etc/authsession.yaml >> ../logs/authsession.log  2>&1 &
 sleep 1
@@ -30,6 +34,10 @@ sleep 1
 
 echo "run msg ..."
 nohup ./msg -f=../../app/messenger/msg/etc/msg.yaml >> ../logs/msg.log  2>&1 &
+sleep 1
+
+echo "run sync ..."
+nohup ./sync -f=../../app/messenger/sync/etc/sync.yaml >> ../logs/sync.log  2>&1 &
 sleep 1
 
 echo "run bff ..."

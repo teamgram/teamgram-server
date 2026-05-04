@@ -22,10 +22,12 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	ChatClient        kitex.RpcClientConf
-	DialogClient      kitex.RpcClientConf
-	MessageClient     kitex.RpcClientConf
-	MsgClient         kitex.RpcClientConf
-	UserupdatesClient kitex.RpcClientConf
-	UserClient        kitex.RpcClientConf
+	ChatClient               kitex.RpcClientConf
+	DialogClient             kitex.RpcClientConf
+	MessageClient            kitex.RpcClientConf
+	MsgClient                kitex.RpcClientConf
+	SyncClient               kitex.RpcClientConf
+	UserupdatesClient        kitex.RpcClientConf
+	UserClient               kitex.RpcClientConf
+	TypingMinIntervalSeconds int `json:",default=5"`
 }

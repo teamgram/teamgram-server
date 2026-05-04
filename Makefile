@@ -15,7 +15,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: geoip idgen status dfs media authsession biz userupdates msg bff gateway
+all: geoip idgen status presence dfs media authsession biz userupdates msg sync bff gateway
 
 lint: lint-tg-primitives
 
@@ -33,6 +33,10 @@ idgen:
 status:
 	@echo "build status..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/status -tags=jsoniter app/service/status/cmd/status/*.go
+
+presence:
+	@echo "build presence..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/presence -tags=jsoniter app/service/presence/cmd/presence/*.go
 
 dfs:
 	@echo "build dfs..."
@@ -58,6 +62,10 @@ msg:
 	@echo "build msg..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msg -tags=jsoniter app/messenger/msg/cmd/msg/*.go
 
+sync:
+	@echo "build sync..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/sync -tags=jsoniter app/messenger/sync/cmd/sync/*.go
+
 bff:
 	@echo "build bff..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/bff -tags=jsoniter app/bff/bff/cmd/bff/*.go
@@ -70,11 +78,13 @@ clean:
 	@rm -rf ${INSTALL}/bin/geoip
 	@rm -rf ${INSTALL}/bin/idgen
 	@rm -rf ${INSTALL}/bin/status
+	@rm -rf ${INSTALL}/bin/presence
 	@rm -rf ${INSTALL}/bin/dfs
 	@rm -rf ${INSTALL}/bin/media
 	@rm -rf ${INSTALL}/bin/authsession
 	@rm -rf ${INSTALL}/bin/biz
 	@rm -rf ${INSTALL}/bin/userupdates
 	@rm -rf ${INSTALL}/bin/msg
+	@rm -rf ${INSTALL}/bin/sync
 	@rm -rf ${INSTALL}/bin/bff
 	@rm -rf ${INSTALL}/bin/gateway

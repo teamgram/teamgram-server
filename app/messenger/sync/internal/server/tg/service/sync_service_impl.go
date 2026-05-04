@@ -21,7 +21,7 @@ import (
 var _ *tg.Bool
 
 // SyncUpdatesMe
-// sync.updatesMe flags:# user_id:long perm_auth_key_id:long server_id:flags.0?string auth_key_id:flags.1?long session_id:flags.1?long updates:Updates = Void;
+// sync.updatesMe flags:# user_id:long perm_auth_key_id:long auth_key_id:flags.0?long session_id:flags.1?long updates:Updates = Void;
 func (s *Service) SyncUpdatesMe(ctx context.Context, request *sync.TLSyncUpdatesMe) (*tg.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("sync.updatesMe - request: %s", request)
@@ -84,24 +84,8 @@ func (s *Service) SyncPushUpdatesIfNot(ctx context.Context, request *sync.TLSync
 	return r, err
 }
 
-// SyncPushBotUpdates
-// sync.pushBotUpdates user_id:long updates:Updates = Void;
-func (s *Service) SyncPushBotUpdates(ctx context.Context, request *sync.TLSyncPushBotUpdates) (*tg.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("sync.pushBotUpdates - request: %s", request)
-
-	r, err := c.SyncPushBotUpdates(request)
-	if err != nil {
-		c.Logger.Errorf("sync.pushBotUpdates - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("sync.pushBotUpdates - reply: %s", r)
-	return r, err
-}
-
 // SyncPushRpcResult
-// sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
+// sync.pushRpcResult user_id:long perm_auth_key_id:long auth_key_id:long gateway_id:string gateway_generation:string gateway_rpc_addr:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 func (s *Service) SyncPushRpcResult(ctx context.Context, request *sync.TLSyncPushRpcResult) (*tg.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("sync.pushRpcResult - request: %s", request)
@@ -113,21 +97,5 @@ func (s *Service) SyncPushRpcResult(ctx context.Context, request *sync.TLSyncPus
 	}
 
 	c.Logger.Debugf("sync.pushRpcResult - reply: %s", r)
-	return r, err
-}
-
-// SyncBroadcastUpdates
-// sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
-func (s *Service) SyncBroadcastUpdates(ctx context.Context, request *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("sync.broadcastUpdates - request: %s", request)
-
-	r, err := c.SyncBroadcastUpdates(request)
-	if err != nil {
-		c.Logger.Errorf("sync.broadcastUpdates - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("sync.broadcastUpdates - reply: %s", r)
 	return r, err
 }

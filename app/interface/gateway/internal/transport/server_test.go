@@ -4,13 +4,16 @@ import (
 	"context"
 	"errors"
 	"net"
+	"sync"
 	"testing"
 	"time"
 
 	gmtproto "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/mtproto"
+	gatewaypresence "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/presence"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/sessionstate"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	presencepb "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/crypto"
@@ -19,7 +22,9 @@ import (
 )
 
 type transportAuthKeyStore struct {
-	key *tg.AuthKeyInfo
+	key           *tg.AuthKeyInfo
+	userID        int64
+	clientSession *authsession.ClientSession
 }
 
 func (s transportAuthKeyStore) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.AuthKeyInfo, error) {
@@ -35,7 +40,7 @@ func (s transportAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int
 }
 
 func (s transportAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {
-	return 0, nil
+	return s.userID, nil
 }
 
 func (s transportAuthKeyStore) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
@@ -47,7 +52,7 @@ func (s transportAuthKeyStore) SetLayer(ctx context.Context, authKeyId int64, ip
 }
 
 func (s transportAuthKeyStore) GetClientSession(ctx context.Context, authKeyId int64) (*authsession.ClientSession, error) {
-	return nil, nil
+	return s.clientSession, nil
 }
 
 type transportDispatcher struct{}
@@ -56,15 +61,90 @@ func (d transportDispatcher) Invoke(ctx context.Context, md *metadata.RpcMetadat
 	return encodeTransportTL(&mt.TLPong{MsgId: md.ClientMsgId, PingId: 1}), nil
 }
 
+type transportPresenceClient struct {
+	mu      sync.Mutex
+	online  []*presencepb.OnlineSession
+	offline []offlineCall
+}
+
+type offlineCall struct {
+	userID    int64
+	authKeyID int64
+	sessionID int64
+}
+
+func (c *transportPresenceClient) SetSessionOnline(ctx context.Context, session *presencepb.OnlineSession) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.online = append(c.online, session)
+	return nil
+}
+
+func (c *transportPresenceClient) SetSessionOffline(ctx context.Context, userID, authKeyID, sessionID int64) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.offline = append(c.offline, offlineCall{userID: userID, authKeyID: authKeyID, sessionID: sessionID})
+	return nil
+}
+
+func (c *transportPresenceClient) onlineCount() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return len(c.online)
+}
+
+func (c *transportPresenceClient) offlineCount() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return len(c.offline)
+}
+
+func (c *transportPresenceClient) waitOnline(t *testing.T, want int) {
+	t.Helper()
+	deadline := time.After(time.Second)
+	for {
+		if c.onlineCount() >= want {
+			return
+		}
+		select {
+		case <-deadline:
+			t.Fatalf("presence online calls = %d, want at least %d", c.onlineCount(), want)
+		case <-time.After(time.Millisecond):
+		}
+	}
+}
+
 func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 	serverKey, clientKey := transportTestKeys()
 	writer := push.NewLocalWriter()
+	presenceClient := &transportPresenceClient{}
+	registrar := gatewaypresence.NewRegistrar(gatewaypresence.Config{
+		GatewayID:                  "gateway-test",
+		GatewayGeneration:          "generation-test",
+		GatewayRPCAddr:             "127.0.0.1:20110",
+		RefreshMinInterval:         time.Second,
+		RefreshRetryMinInterval:    time.Second,
+		RefreshScanInterval:        time.Second,
+		ShutdownOfflineDeadline:    time.Second,
+		ShutdownOfflineMaxSessions: 100,
+	}, presenceClient, time.Now)
 	server := NewServer(
 		"",
 		"gateway-test",
+		"127.0.0.1:20110",
+		"generation-test",
 		nil,
-		sessionstate.NewProcessor(transportAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}, transportDispatcher{}),
+		sessionstate.NewProcessor(transportAuthKeyStore{
+			key:    tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+			userID: 12345,
+			clientSession: authsession.MakeTLClientSession(&authsession.TLClientSession{
+				AuthKeyId:   serverKey.AuthKeyId(),
+				Layer:       224,
+				DeviceModel: "tdesktop",
+			}).ToClientSession(),
+		}, transportDispatcher{}),
 		writer,
+		registrar,
 	)
 
 	clientConn, serverConn := net.Pipe()
@@ -79,7 +159,7 @@ func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 
 	codec := AbridgedCodec{}
 	reqMsgID := int64(100)
-	request := encodeTransportTL(&mt.TLPing{PingId: 9})
+	request := encodeTransportTL(&mt.TLGetFutureSalts{Num: 1})
 	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
 		AuthKeyId: clientKey.AuthKeyId(),
 		Salt:      55,
@@ -105,6 +185,16 @@ func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 	if syncResp.SeqNo != 1 {
 		t.Fatalf("sync seq_no = %d, want 1", syncResp.SeqNo)
 	}
+	presenceClient.waitOnline(t, 1)
+	if presenceClient.onlineCount() != 1 {
+		t.Fatalf("presence online calls = %d, want 1", presenceClient.onlineCount())
+	}
+	presenceClient.mu.Lock()
+	if got := presenceClient.online[0]; got.UserId != 12345 || got.AuthKeyId != serverKey.AuthKeyId() || got.SessionId != 77 || got.GatewayRpcAddr != "127.0.0.1:20110" || got.GatewayGeneration != "generation-test" {
+		presenceClient.mu.Unlock()
+		t.Fatalf("presence session = %#v", got)
+	}
+	presenceClient.mu.Unlock()
 
 	body := encodeTransportTL(&mt.TLPong{MsgId: reqMsgID, PingId: 10})
 	pushErr := make(chan error, 1)
@@ -141,8 +231,80 @@ func TestGatewayTransportServerRegistersPushWriter(t *testing.T) {
 	}
 }
 
+func TestGatewayTransportUnregistersPresenceWhenPushWriterNil(t *testing.T) {
+	serverKey, clientKey := transportTestKeys()
+	presenceClient := &transportPresenceClient{}
+	registrar := gatewaypresence.NewRegistrar(gatewaypresence.Config{
+		GatewayID:                  "gateway-test",
+		GatewayGeneration:          "generation-test",
+		GatewayRPCAddr:             "127.0.0.1:20110",
+		RefreshMinInterval:         time.Second,
+		RefreshRetryMinInterval:    time.Second,
+		RefreshScanInterval:        time.Second,
+		ShutdownOfflineDeadline:    time.Second,
+		ShutdownOfflineMaxSessions: 100,
+	}, presenceClient, time.Now)
+	server := NewServer(
+		"",
+		"gateway-test",
+		"127.0.0.1:20110",
+		"generation-test",
+		nil,
+		sessionstate.NewProcessor(transportAuthKeyStore{
+			key:    tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+			userID: 12345,
+			clientSession: authsession.MakeTLClientSession(&authsession.TLClientSession{
+				AuthKeyId:   serverKey.AuthKeyId(),
+				Layer:       224,
+				DeviceModel: "tdesktop",
+			}).ToClientSession(),
+		}, transportDispatcher{}),
+		nil,
+		registrar,
+	)
+
+	clientConn, serverConn := net.Pipe()
+	defer clientConn.Close()
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- server.ServeConn(context.Background(), serverConn)
+	}()
+	if _, err := clientConn.Write([]byte{abridgedFlag}); err != nil {
+		t.Fatalf("write transport flag: %v", err)
+	}
+	codec := AbridgedCodec{}
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: 77,
+		MsgId:     100,
+		SeqNo:     1,
+		Body:      encodeTransportTL(&mt.TLGetFutureSalts{Num: 1}),
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	if err := codec.WriteFrame(clientConn, payload); err != nil {
+		t.Fatalf("WriteFrame() error = %v", err)
+	}
+	if _, err := codec.ReadFrame(clientConn); err != nil {
+		t.Fatalf("read encrypted response: %v", err)
+	}
+	presenceClient.waitOnline(t, 1)
+
+	_ = clientConn.Close()
+	select {
+	case <-errCh:
+	case <-time.After(time.Second):
+		t.Fatal("ServeConn did not exit after client close")
+	}
+	if presenceClient.offlineCount() != 1 {
+		t.Fatalf("presence offline calls = %d, want 1", presenceClient.offlineCount())
+	}
+}
+
 func TestGatewayTransportStopClosesActiveConnections(t *testing.T) {
-	server := NewServer("", "gateway-test", nil, nil, nil)
+	server := NewServer("", "gateway-test", "127.0.0.1:20110", "generation-test", nil, nil, nil, nil)
 	clientConn, serverConn := net.Pipe()
 	defer clientConn.Close()
 	errCh := make(chan error, 1)
@@ -163,7 +325,7 @@ func TestGatewayTransportStopClosesActiveConnections(t *testing.T) {
 }
 
 func TestGatewayTransportServeConnAfterStopClosesImmediately(t *testing.T) {
-	server := NewServer("", "gateway-test", nil, nil, nil)
+	server := NewServer("", "gateway-test", "127.0.0.1:20110", "generation-test", nil, nil, nil, nil)
 	if err := server.Stop(); err != nil {
 		t.Fatalf("Stop() error = %v", err)
 	}
@@ -184,7 +346,7 @@ func TestGatewayTransportServeConnAfterStopClosesImmediately(t *testing.T) {
 }
 
 func TestGatewayTransportReportsDetectCodecFailure(t *testing.T) {
-	server := NewServer("", "gateway-test", nil, nil, nil)
+	server := NewServer("", "gateway-test", "127.0.0.1:20110", "generation-test", nil, nil, nil, nil)
 	events := make(chan transportEvent, 1)
 	server.eventSink = func(event transportEvent) {
 		events <- event
