@@ -282,6 +282,16 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Sets:   []tg.StickerSetCoveredClazz{},
 			Unread: []int64{},
 		}).ToMessagesFeaturedStickers(), nil
+	case "TLMessagesGetEmojiStickers":
+		return tg.MakeTLMessagesAllStickers(&tg.TLMessagesAllStickers{
+			Hash: 0,
+			Sets: []tg.StickerSetClazz{},
+		}).ToMessagesAllStickers(), nil
+	case "TLMessagesGetFeaturedEmojiStickers":
+		return tg.MakeTLMessagesAllStickers(&tg.TLMessagesAllStickers{
+			Hash: 0,
+			Sets: []tg.StickerSetClazz{},
+		}).ToMessagesAllStickers(), nil
 
 	// promodata
 	case "TLHelpGetPromoData":
@@ -301,13 +311,6 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 		}).ToHelpPremiumPromo(), nil
 
 	// reaction
-	//case "TLReactionGetTopReactions":
-	//	return tg.MakeTLMessagesReactions(&tg.TLMessagesReactions{
-	//		Hash:      0,
-	//		Reactions: []tg.ReactionClazz{},
-	//	}).ToMessagesReactions(), nil
-	//
-	//case "TLMessagesGetRecentReactions":
 	case "TLMessagesGetAvailableReactions":
 		return tg.MakeTLMessagesAvailableReactions(&tg.TLMessagesAvailableReactions{
 			Hash:      0,
@@ -340,10 +343,6 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Chats:    []tg.ChatClazz{},
 			Users:    []tg.UserClazz{},
 		}).ToMessagesMessages(), nil
-	case "TLMessagesGetEmojiKeywordsLanguages":
-		return &tg.VectorEmojiLanguage{
-			Datas: []tg.EmojiLanguageClazz{},
-		}, nil
 
 	case "TLContactsGetContacts":
 		return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
@@ -365,72 +364,101 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Chats:    []tg.ChatClazz{},
 		}).ToPaymentsStarGiftActiveAuctions(), nil
 
-		//// gifs
-		//case "TLMessagesGetSavedGifs":
-		//	return mtproto.MakeTLMessagesSavedGifs(&mtproto.Messages_SavedGifs{
-		//		Hash: 0,
-		//		Gifs: []*mtproto.Document{},
-		//	}).To_Messages_SavedGifs(), nil
-		//case "TLMessagesSaveGif":
-		//	return mtproto.BoolTrue, nil
-		//
-		//// promodata
-		//case "TLHelpHidePromoData":
-		//	return mtproto.BoolTrue, nil
-		//
-		//// emoji
-		//case "TLMessagesGetEmojiKeywords":
-		//	in := object.(*mtproto.TLMessagesGetEmojiKeywords)
-		//	return mtproto.MakeTLEmojiKeywordsDifference(&mtproto.EmojiKeywordsDifference{
-		//		LangCode:    in.LangCode,
-		//		FromVersion: 0,
-		//		Version:     0,
-		//		Keywords:    []*mtproto.EmojiKeyword{},
-		//	}).To_EmojiKeywordsDifference(), nil
-		//case "TLMessagesGetEmojiKeywordsDifference":
-		//	in := object.(*mtproto.TLMessagesGetEmojiKeywordsDifference)
-		//	return mtproto.MakeTLEmojiKeywordsDifference(&mtproto.EmojiKeywordsDifference{
-		//		LangCode:    in.LangCode,
-		//		FromVersion: in.FromVersion,
-		//		Version:     in.FromVersion,
-		//		Keywords:    []*mtproto.EmojiKeyword{},
-		//	}).To_EmojiKeywordsDifference(), nil
-		//case "TLMessagesGetEmojiKeywordsLanguages":
-		//	return &mtproto.Vector_EmojiLanguage{
-		//		Datas: []*mtproto.EmojiLanguage{},
-		//	}, nil
-		//
-		//// reports
-		//case "TLAccountReportPeer":
-		//	return mtproto.BoolTrue, nil
-		//case "TLAccountReportProfilePhoto":
-		//	return mtproto.BoolTrue, nil
-		//case "TLChannelsReportSpam":
-		//	return mtproto.BoolTrue, nil
-		//case "TLMessagesReport":
-		//	return mtproto.BoolTrue, nil
-		//case "TLMessagesReportSpam":
-		//	return mtproto.BoolTrue, nil
-		//
-		//// phone
-		//case "TLPhoneGetCallConfig":
-		//	return mtproto.MakeTLDataJSON(&mtproto.DataJSON{
-		//		Data: "{}",
-		//	}).To_DataJSON(), nil
-		//
-		//case "TLAccountGetAuthorizations":
-		//	return mtproto.MakeTLAccountAuthorizations(&mtproto.Account_Authorizations{
-		//		AuthorizationTtlDays: 0,
-		//		Authorizations:       []*mtproto.Authorization{},
-		//	}).To_Account_Authorizations(), nil
-		//
-		//case "TLAccountGetWebAuthorizations":
-		//	return mtproto.MakeTLAccountWebAuthorizations(&mtproto.Account_WebAuthorizations{
-		//		Authorizations: []*mtproto.WebAuthorization{},
-		//		Users:          []*mtproto.User{},
-		//	}).To_Account_WebAuthorizations(), nil
-	}
+	case "TLPaymentsGetSavedStarGifts":
+		return tg.MakeTLPaymentsSavedStarGifts(&tg.TLPaymentsSavedStarGifts{
+			Count:                    0,
+			ChatNotificationsEnabled: nil,
+			Gifts:                    []tg.SavedStarGiftClazz{},
+			NextOffset:               nil,
+			Chats:                    []tg.ChatClazz{},
+			Users:                    []tg.UserClazz{},
+		}).ToPaymentsSavedStarGifts(), nil
+	case "TLStoriesGetAlbums":
+		return tg.MakeTLStoriesAlbums(&tg.TLStoriesAlbums{
+			Hash:   0,
+			Albums: []tg.StoryAlbumClazz{},
+		}).ToStoriesAlbums(), nil
+	case "TLHelpGetTimezonesList":
+		return tg.MakeTLHelpTimezonesList(&tg.TLHelpTimezonesList{
+			Timezones: []tg.TimezoneClazz{},
+			Hash:      0,
+		}).ToHelpTimezonesList(), nil
+	case "TLStoriesGetPinnedStories":
+		return tg.MakeTLStoriesStories(&tg.TLStoriesStories{
+			Count:       0,
+			Stories:     []tg.StoryItemClazz{},
+			PinnedToTop: nil,
+			Chats:       []tg.ChatClazz{},
+			Users:       []tg.UserClazz{},
+		}).ToStoriesStories(), nil
 
-	logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
-	return nil, tg.ErrEnterpriseIsBlocked
+	//// gifs
+	case "TLMessagesGetSavedGifs":
+		return tg.MakeTLMessagesSavedGifs(&tg.TLMessagesSavedGifs{
+			Hash: 0,
+			Gifs: []tg.DocumentClazz{},
+		}).ToMessagesSavedGifs(), nil
+	case "TLMessagesSaveGif":
+		return tg.BoolTrue, nil
+
+	// promodata
+	case "TLHelpHidePromoData":
+		return tg.BoolTrue, nil
+
+	// emoji
+	case "TLMessagesGetEmojiKeywords":
+		in := object.(*tg.TLMessagesGetEmojiKeywords)
+		return tg.MakeTLEmojiKeywordsDifference(&tg.TLEmojiKeywordsDifference{
+			LangCode:    in.LangCode,
+			FromVersion: 0,
+			Version:     0,
+			Keywords:    []tg.EmojiKeywordClazz{},
+		}).ToEmojiKeywordsDifference(), nil
+	case "TLMessagesGetEmojiKeywordsDifference":
+		in := object.(*tg.TLMessagesGetEmojiKeywordsDifference)
+		return tg.MakeTLEmojiKeywordsDifference(&tg.TLEmojiKeywordsDifference{
+			LangCode:    in.LangCode,
+			FromVersion: in.FromVersion,
+			Version:     in.FromVersion,
+			Keywords:    []tg.EmojiKeywordClazz{},
+		}).ToEmojiKeywordsDifference(), nil
+	case "TLMessagesGetEmojiKeywordsLanguages":
+		return &tg.VectorEmojiLanguage{
+			Datas: []tg.EmojiLanguageClazz{},
+		}, nil
+
+	// reports
+	case "TLAccountReportPeer":
+		return tg.BoolTrue, nil
+	case "TLAccountReportProfilePhoto":
+		return tg.BoolTrue, nil
+	case "TLChannelsReportSpam":
+		return tg.BoolTrue, nil
+	case "TLMessagesReport":
+		return tg.BoolTrue, nil
+	case "TLMessagesReportSpam":
+		return tg.BoolTrue, nil
+
+	// phone
+	case "TLPhoneGetCallConfig":
+		return tg.MakeTLDataJSON(&tg.TLDataJSON{
+			Data: "{}",
+		}).ToDataJSON(), nil
+
+	case "TLAccountGetAuthorizations":
+		return tg.MakeTLAccountAuthorizations(&tg.TLAccountAuthorizations{
+			AuthorizationTtlDays: 0,
+			Authorizations:       []tg.AuthorizationClazz{},
+		}).ToAccountAuthorizations(), nil
+
+	case "TLAccountGetWebAuthorizations":
+		return tg.MakeTLAccountWebAuthorizations(&tg.TLAccountWebAuthorizations{
+			Authorizations: []tg.WebAuthorizationClazz{},
+			Users:          []tg.UserClazz{},
+		}).ToAccountWebAuthorizations(), nil
+
+	default:
+		logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
+		return nil, tg.ErrEnterpriseIsBlocked
+	}
 }
