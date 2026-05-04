@@ -17,10 +17,29 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+import (
+	"fmt"
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+)
 
 // PresenceGetUserOnlineSessions
 // presence.getUserOnlineSessions user_id:long = UserOnlineSessions;
 func (c *PresenceCore) PresenceGetUserOnlineSessions(in *presence.TLPresenceGetUserOnlineSessions) (*presence.UserOnlineSessions, error) {
-	return nil, presence.ErrPresenceMethodNotImplemented
+	const method = "presence.getUserOnlineSessions"
+	caller, err := c.authorizedCaller(method, allowedQueryCallers(c.svcCtx.Config.SyncCallers, c.svcCtx.Config.AdminCallers, c.svcCtx.Config.DebugCallers))
+	if err != nil {
+		return nil, err
+	}
+	if err := c.requireQuota(method, caller, c.svcCtx.Config.PresenceQueryDefaultQPSPerCaller); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, fmt.Errorf("%w: %s request is nil", presence.ErrPresenceInvalidArgument, method)
+	}
+	if in.UserId <= 0 {
+		return nil, fmt.Errorf("%w: %s invalid user_id %d", presence.ErrPresenceInvalidArgument, method, in.UserId)
+	}
+	return c.svcCtx.Repo.GetUserOnlineSessions(c.ctx, in.UserId, time.Now().Unix())
 }

@@ -19,6 +19,7 @@ package server
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/presence/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/presence/internal/server/tg/service"
@@ -45,6 +46,9 @@ func New() *Server {
 func (s *Server) Initialize() error {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
+	if err := c.Validate(); err != nil {
+		return fmt.Errorf("config validation failed: %w", err)
+	}
 
 	logx.Infov(c)
 

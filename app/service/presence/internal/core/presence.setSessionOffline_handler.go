@@ -17,10 +17,34 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // PresenceSetSessionOffline
 // presence.setSessionOffline user_id:long auth_key_id:long session_id:long = Bool;
 func (c *PresenceCore) PresenceSetSessionOffline(in *presence.TLPresenceSetSessionOffline) (*presence.Bool, error) {
-	return nil, presence.ErrPresenceMethodNotImplemented
+	const method = "presence.setSessionOffline"
+	if err := c.requireCaller(method, c.svcCtx.Config.GatewayCallers); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, fmt.Errorf("%w: %s request is nil", presence.ErrPresenceInvalidArgument, method)
+	}
+	if in.UserId <= 0 {
+		return nil, fmt.Errorf("%w: %s invalid user_id %d", presence.ErrPresenceInvalidArgument, method, in.UserId)
+	}
+	if in.AuthKeyId <= 0 {
+		return nil, fmt.Errorf("%w: %s invalid auth_key_id %d", presence.ErrPresenceInvalidArgument, method, in.AuthKeyId)
+	}
+	if in.SessionId == 0 {
+		return nil, fmt.Errorf("%w: %s invalid session_id", presence.ErrPresenceInvalidArgument, method)
+	}
+	if err := c.svcCtx.Repo.SetSessionOffline(c.ctx, in.UserId, in.AuthKeyId, in.SessionId); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

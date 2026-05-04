@@ -17,10 +17,28 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+import (
+	"fmt"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+)
 
 // PresenceGetGatewaySessions
 // presence.getGatewaySessions gateway_id:string = Vector<OnlineSession>;
 func (c *PresenceCore) PresenceGetGatewaySessions(in *presence.TLPresenceGetGatewaySessions) (*presence.VectorOnlineSession, error) {
-	return nil, presence.ErrPresenceMethodNotImplemented
+	const method = "presence.getGatewaySessions"
+	caller, err := c.authorizedCaller(method, allowedAdminDebugCallers(c.svcCtx.Config.AdminCallers, c.svcCtx.Config.DebugCallers))
+	if err != nil {
+		return nil, err
+	}
+	if err := c.requireQuota(method, caller, c.svcCtx.Config.PresenceGatewayDiagnosticsQPSPerCaller); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, fmt.Errorf("%w: %s request is nil", presence.ErrPresenceInvalidArgument, method)
+	}
+	if in.GatewayId == "" {
+		return nil, fmt.Errorf("%w: %s gateway_id is empty", presence.ErrPresenceInvalidArgument, method)
+	}
+	return &presence.VectorOnlineSession{}, nil
 }

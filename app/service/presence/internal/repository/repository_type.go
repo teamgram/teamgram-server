@@ -17,7 +17,31 @@
 
 package repository
 
-// Type aliases for convenience in the Logic layer.
-type (
-// TODO: Add type aliases per business requirements.
+import (
+	"fmt"
+	"strconv"
 )
+
+const (
+	userKeyPrefix    = "presence:user"
+	cleanupKeyPrefix = "presence:cleanup"
+	MaxBatchUsers    = 200
+)
+
+const hsetAndExpireScript = `
+redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
+redis.call('EXPIRE', KEYS[1], ARGV[3])
+return 1
+`
+
+func userKey(userID int64) string {
+	return fmt.Sprintf("%s:%d", userKeyPrefix, userID)
+}
+
+func cleanupKey(userID int64) string {
+	return fmt.Sprintf("%s:%d", cleanupKeyPrefix, userID)
+}
+
+func sessionField(authKeyID, sessionID int64) string {
+	return strconv.FormatInt(authKeyID, 10) + ":" + strconv.FormatInt(sessionID, 10)
+}

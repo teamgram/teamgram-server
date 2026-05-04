@@ -1,2 +1,22 @@
 Name: service.presence
-ListenOn: 0.0.0.0:20680
+ListenOn: 127.0.0.1:20680
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.presence
+
+KV:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass:
+
+SessionExpiresSeconds: 60
+HashKeyTTLSeconds: 600
+CleanupOnWriteIntervalSeconds: 60
+PresenceQueryDefaultQPSPerCaller: 50
+PresenceGatewayDiagnosticsQPSPerCaller: 1
+RequireCallerIdentity: false
+GatewayCallers: [gateway]
+SyncCallers: [sync]
+AdminCallers: [admin]
+DebugCallers: [debug]

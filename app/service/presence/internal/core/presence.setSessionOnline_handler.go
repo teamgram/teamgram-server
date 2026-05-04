@@ -17,10 +17,28 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // PresenceSetSessionOnline
 // presence.setSessionOnline session:OnlineSession = Bool;
 func (c *PresenceCore) PresenceSetSessionOnline(in *presence.TLPresenceSetSessionOnline) (*presence.Bool, error) {
-	return nil, presence.ErrPresenceMethodNotImplemented
+	const method = "presence.setSessionOnline"
+	if err := c.requireCaller(method, c.svcCtx.Config.GatewayCallers); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, presence.ErrPresenceInvalidArgument
+	}
+	if err := validateOnlineSession(method, in.Session); err != nil {
+		return nil, err
+	}
+	if err := c.svcCtx.Repo.SetSessionOnline(c.ctx, in.Session, time.Now().Unix(), c.svcCtx.Config.SessionExpiresSeconds, c.svcCtx.Config.HashKeyTTLSeconds, c.svcCtx.Config.CleanupOnWriteIntervalSeconds); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

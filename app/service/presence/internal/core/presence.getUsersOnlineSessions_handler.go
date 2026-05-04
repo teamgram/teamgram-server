@@ -17,10 +17,35 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+import (
+	"fmt"
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+)
 
 // PresenceGetUsersOnlineSessions
 // presence.getUsersOnlineSessions users:Vector<long> = Vector<UserOnlineSessions>;
 func (c *PresenceCore) PresenceGetUsersOnlineSessions(in *presence.TLPresenceGetUsersOnlineSessions) (*presence.VectorUserOnlineSessions, error) {
-	return nil, presence.ErrPresenceMethodNotImplemented
+	const method = "presence.getUsersOnlineSessions"
+	caller, err := c.authorizedCaller(method, allowedQueryCallers(c.svcCtx.Config.SyncCallers, c.svcCtx.Config.AdminCallers, c.svcCtx.Config.DebugCallers))
+	if err != nil {
+		return nil, err
+	}
+	if err := c.requireQuota(method, caller, c.svcCtx.Config.PresenceQueryDefaultQPSPerCaller); err != nil {
+		return nil, err
+	}
+	if in == nil {
+		return nil, fmt.Errorf("%w: %s request is nil", presence.ErrPresenceInvalidArgument, method)
+	}
+	if len(in.Users) > repository.MaxBatchUsers {
+		return nil, fmt.Errorf("%w: %s too many users %d, max %d", presence.ErrPresenceInvalidArgument, method, len(in.Users), repository.MaxBatchUsers)
+	}
+	for _, userID := range in.Users {
+		if userID <= 0 {
+			return nil, fmt.Errorf("%w: %s invalid user_id %d", presence.ErrPresenceInvalidArgument, method, userID)
+		}
+	}
+	return c.svcCtx.Repo.GetUsersOnlineSessions(c.ctx, in.Users, time.Now().Unix())
 }
