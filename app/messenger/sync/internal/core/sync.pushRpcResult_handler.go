@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 
 // SyncPushRpcResult
-// sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
-func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.pushRpcResult - error: method SyncPushRpcResult not impl")
-
-	return nil, tg.ErrMethodNotImpl
+// sync.pushRpcResult user_id:long perm_auth_key_id:long auth_key_id:long gateway_id:string gateway_generation:string gateway_rpc_addr:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
+func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*sync.Void, error) {
+	return nil, sync.ErrSyncMethodNotImplemented
 }

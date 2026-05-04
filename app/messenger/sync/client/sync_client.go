@@ -27,9 +27,7 @@ type SyncClient interface {
 	SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*tg.Void, error)
 	SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*tg.Void, error)
 	SyncPushUpdatesIfNot(ctx context.Context, in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error)
-	SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*tg.Void, error)
 	SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*tg.Void, error)
-	SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*tg.Void, error)
 }
 
 type defaultSyncClient struct {
@@ -45,7 +43,7 @@ func NewSyncClient(cli client.Client) SyncClient {
 }
 
 // SyncUpdatesMe
-// sync.updatesMe flags:# user_id:long perm_auth_key_id:long server_id:flags.0?string auth_key_id:flags.1?long session_id:flags.1?long updates:Updates = Void;
+// sync.updatesMe flags:# user_id:long perm_auth_key_id:long auth_key_id:flags.0?long session_id:flags.1?long updates:Updates = Void;
 func (m *defaultSyncClient) SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*tg.Void, error) {
 	return m.rpc.SyncUpdatesMe(ctx, in)
 }
@@ -68,20 +66,8 @@ func (m *defaultSyncClient) SyncPushUpdatesIfNot(ctx context.Context, in *sync.T
 	return m.rpc.SyncPushUpdatesIfNot(ctx, in)
 }
 
-// SyncPushBotUpdates
-// sync.pushBotUpdates user_id:long updates:Updates = Void;
-func (m *defaultSyncClient) SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*tg.Void, error) {
-	return m.rpc.SyncPushBotUpdates(ctx, in)
-}
-
 // SyncPushRpcResult
-// sync.pushRpcResult user_id:long auth_key_id:long perm_auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
+// sync.pushRpcResult user_id:long perm_auth_key_id:long auth_key_id:long gateway_id:string gateway_generation:string gateway_rpc_addr:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 func (m *defaultSyncClient) SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*tg.Void, error) {
 	return m.rpc.SyncPushRpcResult(ctx, in)
-}
-
-// SyncBroadcastUpdates
-// sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
-func (m *defaultSyncClient) SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	return m.rpc.SyncBroadcastUpdates(ctx, in)
 }

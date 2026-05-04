@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +15,9 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package repository
 
-import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-
-// SyncUpdatesNotMe
-// sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
-func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*sync.Void, error) {
-	return nil, sync.ErrSyncMethodNotImplemented
-}
+// Type aliases for convenience in the Logic layer.
+type (
+// TODO: Add type aliases per business requirements.
+)

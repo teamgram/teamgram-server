@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +17,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
 
-// SyncBroadcastUpdates
-// sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
-func (c *SyncCore) SyncBroadcastUpdates(in *sync.TLSyncBroadcastUpdates) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.broadcastUpdates - error: method SyncBroadcastUpdates not impl")
-
-	return nil, tg.ErrMethodNotImpl
+// PresenceSetSessionOffline
+// presence.setSessionOffline user_id:long auth_key_id:long session_id:long = Bool;
+func (c *PresenceCore) PresenceSetSessionOffline(in *presence.TLPresenceSetSessionOffline) (*presence.Bool, error) {
+	return nil, presence.ErrPresenceMethodNotImplemented
 }

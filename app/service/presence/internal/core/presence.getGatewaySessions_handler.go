@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +17,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
 
-// SyncPushBotUpdates
-// sync.pushBotUpdates user_id:long updates:Updates = Void;
-func (c *SyncCore) SyncPushBotUpdates(in *sync.TLSyncPushBotUpdates) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.pushBotUpdates - error: method SyncPushBotUpdates not impl")
-
-	return nil, tg.ErrMethodNotImpl
+// PresenceGetGatewaySessions
+// presence.getGatewaySessions gateway_id:string = Vector<OnlineSession>;
+func (c *PresenceCore) PresenceGetGatewaySessions(in *presence.TLPresenceGetGatewaySessions) (*presence.VectorOnlineSession, error) {
+	return nil, presence.ErrPresenceMethodNotImplemented
 }

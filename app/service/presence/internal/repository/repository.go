@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +15,26 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package core
+package repository
 
-import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/presence/internal/config"
+)
 
-// SyncUpdatesNotMe
-// sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
-func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*sync.Void, error) {
-	return nil, sync.ErrSyncMethodNotImplemented
+// Repository is the dependency container for repository instances.
+type Repository struct {
+}
+
+// NewRepository creates a new Repository.
+func NewRepository(c config.Config) *Repository {
+	return &Repository{}
+}
+
+// Close releases repository-owned clients.
+func (r *Repository) Close() error {
+	if r == nil {
+		return nil
+	}
+
+	return nil
 }

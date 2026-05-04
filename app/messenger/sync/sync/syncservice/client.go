@@ -29,9 +29,7 @@ type Client interface {
 	SyncUpdatesNotMe(ctx context.Context, req *sync.TLSyncUpdatesNotMe, callOptions ...callopt.Option) (r *tg.Void, err error)
 	SyncPushUpdates(ctx context.Context, req *sync.TLSyncPushUpdates, callOptions ...callopt.Option) (r *tg.Void, err error)
 	SyncPushUpdatesIfNot(ctx context.Context, req *sync.TLSyncPushUpdatesIfNot, callOptions ...callopt.Option) (r *tg.Void, err error)
-	SyncPushBotUpdates(ctx context.Context, req *sync.TLSyncPushBotUpdates, callOptions ...callopt.Option) (r *tg.Void, err error)
 	SyncPushRpcResult(ctx context.Context, req *sync.TLSyncPushRpcResult, callOptions ...callopt.Option) (r *tg.Void, err error)
-	SyncBroadcastUpdates(ctx context.Context, req *sync.TLSyncBroadcastUpdates, callOptions ...callopt.Option) (r *tg.Void, err error)
 }
 
 // Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
@@ -91,17 +89,7 @@ func (p *kSyncClient) SyncPushUpdatesIfNot(ctx context.Context, req *sync.TLSync
 	return p.kClient.SyncPushUpdatesIfNot(ctx, req)
 }
 
-func (p *kSyncClient) SyncPushBotUpdates(ctx context.Context, req *sync.TLSyncPushBotUpdates, callOptions ...callopt.Option) (r *tg.Void, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SyncPushBotUpdates(ctx, req)
-}
-
 func (p *kSyncClient) SyncPushRpcResult(ctx context.Context, req *sync.TLSyncPushRpcResult, callOptions ...callopt.Option) (r *tg.Void, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.SyncPushRpcResult(ctx, req)
-}
-
-func (p *kSyncClient) SyncBroadcastUpdates(ctx context.Context, req *sync.TLSyncBroadcastUpdates, callOptions ...callopt.Option) (r *tg.Void, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SyncBroadcastUpdates(ctx, req)
 }

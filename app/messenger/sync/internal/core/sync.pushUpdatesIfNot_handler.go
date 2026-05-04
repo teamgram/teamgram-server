@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 
 // SyncPushUpdatesIfNot
 // sync.pushUpdatesIfNot flags:# user_id:long includes:flags.0?Vector<long> excludes:flags.1?Vector<long> updates:Updates = Void;
-func (c *SyncCore) SyncPushUpdatesIfNot(in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error) {
-	// TODO: not impl
-	c.Logger.Errorf("sync.pushUpdatesIfNot - error: method SyncPushUpdatesIfNot not impl")
-
-	return nil, tg.ErrMethodNotImpl
+func (c *SyncCore) SyncPushUpdatesIfNot(in *sync.TLSyncPushUpdatesIfNot) (*sync.Void, error) {
+	return nil, sync.ErrSyncMethodNotImplemented
 }
