@@ -24,7 +24,14 @@ import (
 // help.getPremiumPromo#b81b93d4 = help.PremiumPromo;
 func (c *PremiumCore) HelpGetPremiumPromo(in *tg.TLHelpGetPremiumPromo) (*tg.HelpPremiumPromo, error) {
 	// TODO: not impl
-	c.Logger.Errorf("help.getPremiumPromo - error: method HelpGetPremiumPromo not impl")
+	// c.Logger.Errorf("help.getPremiumPromo - error: method HelpGetPremiumPromo not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLHelpPremiumPromo(&tg.TLHelpPremiumPromo{
+		StatusText:     "By subscribing to Teamgram Premium you agree to the Teamgram Terms of Service and Privacy Policy.",
+		StatusEntities: []tg.MessageEntityClazz{},
+		VideoSections:  []string{},
+		Videos:         []tg.DocumentClazz{},
+		PeriodOptions:  []tg.PremiumSubscriptionOptionClazz{},
+		Users:          []tg.UserClazz{},
+	}).ToHelpPremiumPromo(), nil
 }
