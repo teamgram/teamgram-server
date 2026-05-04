@@ -58,7 +58,7 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 			Media:       in.Media,
 			Date:        date,
 			Effect:      in.Effect,
-		}).ToDraftMessage()
+		})
 
 		c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
 			UserId:   c.MD.UserId,
