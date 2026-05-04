@@ -19,22 +19,14 @@ package repository
 import (
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
-	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // Type aliases for convenience in the Logic layer.
 type (
-	UserClient               = userclient.UserClient
-	ChatClient               = chatclient.ChatClient
-	GetNotifySettings        = userpb.TLUserGetNotifySettings
-	GetNotifySettingsList    = userpb.TLUserGetNotifySettingsList
-	SetNotifySettings        = userpb.TLUserSetNotifySettings
-	ResetNotifySettings      = userpb.TLUserResetNotifySettings
-	NotifySettingsListResult = userpb.VectorPeerPeerNotifySettings
-	GetMutableChat           = chatpb.TLChatGetMutableChat
-	GetChatListByIdList      = chatpb.TLChatGetChatListByIdList
-	MutableChat              = tg.MutableChat
-	MutableChatClazz         = tg.MutableChatClazz
+	GetNotifySettings     = userpb.TLUserGetNotifySettings
+	GetNotifySettingsList = userpb.TLUserGetNotifySettingsList
+	SetNotifySettings     = userpb.TLUserSetNotifySettings
+	ResetNotifySettings   = userpb.TLUserResetNotifySettings
+	GetMutableChat        = chatpb.TLChatGetMutableChat
+	GetChatListByIdList   = chatpb.TLChatGetChatListByIdList
 )
