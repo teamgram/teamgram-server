@@ -18,13 +18,35 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/config"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	DialogClient dialogclient.DialogClient
+	UserClient   userclient.UserClient
+	ChatClient   chatclient.ChatClient
 }
 
-// NewRepository creates a new Repository.
+// NewRepository creates a new Repository. Clients are created only when their
+// config section is populated, which keeps unit tests lightweight.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.DialogClient) {
+		r.DialogClient = dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
+	}
+	if hasRPCClientConfig(c.UserClient) {
+		r.UserClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+	}
+	if hasRPCClientConfig(c.ChatClient) {
+		r.ChatClient = chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient))
+	}
+	return r
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }
