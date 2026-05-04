@@ -9,7 +9,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
@@ -54,6 +56,15 @@ type dialogsFakeMsgClient struct {
 
 func (f *dialogsFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
 	return f.getHistory(ctx, in)
+}
+
+type dialogsFakeUserupdatesClient struct {
+	userupdatesclient.UserupdatesClient
+	getDifference func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+}
+
+func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
+	return f.getDifference(ctx, in)
 }
 
 func newDialogsGetDialogsCore(repo *repository.Repository, selfID int64) *DialogsCore {
@@ -167,6 +178,172 @@ func TestMessagesGetDialogsFallsBackToCanonicalSelfHistory(t *testing.T) {
 	dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog()
 	if !ok || dialog.TopMessage != 2 || dialog.ReadInboxMaxId != 0 || dialog.ReadOutboxMaxId != 0 {
 		t.Fatalf("dialog = %+v, ok=%v, want top_message=2 and unread fallback read state", dialog, ok)
+	}
+}
+
+func TestMessagesGetDialogsFallsBackToCanonicalUserupdatesDialogs(t *testing.T) {
+	const selfID int64 = 100
+	var gotDifference *userupdates.TLUserupdatesGetDifference
+	var gotUsers *userpb.TLUserGetMutableUsersV2
+
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			getDialogs: func(context.Context, *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error) {
+				return &dialogpb.VectorDialogExt{}, nil
+			},
+		},
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getDifference: func(_ context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
+				gotDifference = in
+				return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
+					NewMessages: []tg.MessageClazz{
+						tg.MakeTLMessage(&tg.TLMessage{
+							Id:      2,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+							FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+							Message: "incoming",
+							Date:    123,
+						}),
+					},
+					OtherUpdates: []tg.UpdateClazz{},
+					State: userupdates.MakeTLUserState(&userupdates.TLUserState{
+						Pts: 2,
+					}),
+				}).ToUserDifference(), nil
+			},
+		},
+		UserClient: &dialogsFakeUserClient{
+			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+				gotUsers = in
+				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
+					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+						User: tg.MakeTLUserData(&tg.TLUserData{
+							Id:        200,
+							FirstName: "Alice",
+						}),
+						KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
+					}),
+				}}).ToMutableUsers(), nil
+			},
+		},
+	}, selfID)
+
+	r, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetPeer: tg.MakeTLInputPeerEmpty(&tg.TLInputPeerEmpty{}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetDialogs error = %v", err)
+	}
+	if gotDifference == nil || gotDifference.UserId != selfID || gotDifference.Pts != 0 || gotDifference.PtsTotalLimit == nil || *gotDifference.PtsTotalLimit != 20 {
+		t.Fatalf("UserupdatesGetDifference request = %+v, want initial diff limit=20", gotDifference)
+	}
+	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 {
+		t.Fatalf("UserGetMutableUsersV2 request = %+v, want peer user 200", gotUsers)
+	}
+	slice, ok := r.ToMessagesDialogsSlice()
+	if !ok {
+		t.Fatalf("MessagesGetDialogs returned %s, want messages.dialogsSlice", r.ClazzName())
+	}
+	if slice.Count != 1 || len(slice.Dialogs) != 1 || len(slice.Messages) != 1 || len(slice.Users) != 1 {
+		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
+	}
+	dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog()
+	if !ok || dialog.TopMessage != 2 || dialog.UnreadCount != 1 {
+		t.Fatalf("dialog = %+v, ok=%v, want top_message=2 unread=1", dialog, ok)
+	}
+}
+
+func TestMessagesGetDialogsMergesCanonicalUserupdatesDialogs(t *testing.T) {
+	const selfID int64 = 100
+
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			getDialogs: func(context.Context, *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error) {
+				return &dialogpb.VectorDialogExt{Datas: []dialogpb.DialogExtClazz{
+					dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
+						Order: 1,
+						Date:  100,
+						Dialog: tg.MakeTLDialog(&tg.TLDialog{
+							Peer:           tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+							TopMessage:     7,
+							NotifySettings: tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
+						}),
+					}),
+				}}, nil
+			},
+		},
+		MessageClient: &dialogsFakeMessageClient{
+			getUserMessageList: func(context.Context, *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
+				return &messagepb.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+					tg.MakeTLMessageBox(&tg.TLMessageBox{
+						UserId:    selfID,
+						MessageId: 7,
+						Message: tg.MakeTLMessage(&tg.TLMessage{
+							Out:     true,
+							Id:      7,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+							Message: "legacy",
+							Date:    100,
+						}),
+					}),
+				}}, nil
+			},
+		},
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getDifference: func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
+				return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
+					NewMessages: []tg.MessageClazz{
+						tg.MakeTLMessage(&tg.TLMessage{
+							Id:      2,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+							FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+							Message: "canonical",
+							Date:    123,
+						}),
+					},
+					OtherUpdates: []tg.UpdateClazz{},
+					State: userupdates.MakeTLUserState(&userupdates.TLUserState{
+						Pts: 2,
+					}),
+				}).ToUserDifference(), nil
+			},
+		},
+		UserClient: &dialogsFakeUserClient{
+			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+				users := make([]tg.ImmutableUserClazz, 0, len(in.Id))
+				for _, id := range in.Id {
+					users = append(users, tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+						User: tg.MakeTLUserData(&tg.TLUserData{
+							Id:        id,
+							FirstName: "User",
+						}),
+						KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
+					}))
+				}
+				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: users}).ToMutableUsers(), nil
+			},
+		},
+	}, selfID)
+
+	r, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetPeer: tg.MakeTLInputPeerEmpty(&tg.TLInputPeerEmpty{}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetDialogs error = %v", err)
+	}
+
+	slice, ok := r.ToMessagesDialogsSlice()
+	if !ok {
+		t.Fatalf("MessagesGetDialogs returned %s, want messages.dialogsSlice", r.ClazzName())
+	}
+	if slice.Count != 2 || len(slice.Dialogs) != 2 || len(slice.Messages) != 2 || len(slice.Users) != 2 {
+		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
+	}
+	first, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog()
+	if !ok || first.TopMessage != 2 {
+		t.Fatalf("first dialog = %+v, ok=%v, want canonical top_message=2", first, ok)
 	}
 }
 
