@@ -60,7 +60,12 @@ func (f *dialogsFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgG
 
 type dialogsFakeUserupdatesClient struct {
 	userupdatesclient.UserupdatesClient
+	getState      func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
 	getDifference func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+}
+
+func (f *dialogsFakeUserupdatesClient) UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
+	return f.getState(ctx, in)
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
@@ -183,6 +188,7 @@ func TestMessagesGetDialogsFallsBackToCanonicalSelfHistory(t *testing.T) {
 
 func TestMessagesGetDialogsFallsBackToCanonicalUserupdatesDialogs(t *testing.T) {
 	const selfID int64 = 100
+	var gotState *userupdates.TLUserupdatesGetState
 	var gotDifference *userupdates.TLUserupdatesGetDifference
 	var gotUsers *userpb.TLUserGetMutableUsersV2
 
@@ -193,6 +199,10 @@ func TestMessagesGetDialogsFallsBackToCanonicalUserupdatesDialogs(t *testing.T) 
 			},
 		},
 		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getState: func(_ context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
+				gotState = in
+				return userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 260}).ToUserState(), nil
+			},
 			getDifference: func(_ context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
 				gotDifference = in
 				return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
@@ -235,8 +245,11 @@ func TestMessagesGetDialogsFallsBackToCanonicalUserupdatesDialogs(t *testing.T) 
 	if err != nil {
 		t.Fatalf("MessagesGetDialogs error = %v", err)
 	}
-	if gotDifference == nil || gotDifference.UserId != selfID || gotDifference.Pts != 0 || gotDifference.PtsTotalLimit == nil || *gotDifference.PtsTotalLimit != 20 {
-		t.Fatalf("UserupdatesGetDifference request = %+v, want initial diff limit=20", gotDifference)
+	if gotState == nil || gotState.UserId != selfID {
+		t.Fatalf("UserupdatesGetState request = %+v, want user_id=%d", gotState, selfID)
+	}
+	if gotDifference == nil || gotDifference.UserId != selfID || gotDifference.Pts != 60 || gotDifference.PtsTotalLimit == nil || *gotDifference.PtsTotalLimit != 200 {
+		t.Fatalf("UserupdatesGetDifference request = %+v, want latest-window diff pts=60 limit=200", gotDifference)
 	}
 	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 {
 		t.Fatalf("UserGetMutableUsersV2 request = %+v, want peer user 200", gotUsers)
@@ -291,6 +304,9 @@ func TestMessagesGetDialogsMergesCanonicalUserupdatesDialogs(t *testing.T) {
 			},
 		},
 		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getState: func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
+				return userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 260}).ToUserState(), nil
+			},
 			getDifference: func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
 				return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
 					NewMessages: []tg.MessageClazz{

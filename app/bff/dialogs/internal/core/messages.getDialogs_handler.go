@@ -334,15 +334,23 @@ func (c *DialogsCore) fetchCanonicalDialogsFromDifference(operation string, limi
 	if limit <= 0 {
 		return nil, nil
 	}
-	if limit > 100 {
-		limit = 100
+
+	resultLimit := limit
+	if resultLimit > 100 {
+		resultLimit = 100
+	}
+
+	scanLimit := canonicalDialogScanLimit(resultLimit)
+	pts, err := c.latestCanonicalDialogScanPts(operation, scanLimit)
+	if err != nil {
+		return nil, err
 	}
 
 	diff, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetDifference(c.ctx, &userupdates.TLUserupdatesGetDifference{
 		UserId:        c.MD.UserId,
 		AuthKeyId:     c.MD.PermAuthKeyId,
-		Pts:           0,
-		PtsTotalLimit: &limit,
+		Pts:           pts,
+		PtsTotalLimit: &scanLimit,
 	})
 	if err != nil {
 		return nil, tg.ErrInternalServerError
@@ -400,8 +408,8 @@ func (c *DialogsCore) fetchCanonicalDialogsFromDifference(operation string, limi
 		return dialogs[i].topDate > dialogs[j].topDate
 	})
 
-	if int(limit) < len(dialogs) {
-		dialogs = dialogs[:limit]
+	if int(resultLimit) < len(dialogs) {
+		dialogs = dialogs[:resultLimit]
 	}
 
 	dialogList := make([]tg.DialogClazz, 0, len(dialogs))
@@ -427,6 +435,39 @@ func (c *DialogsCore) fetchCanonicalDialogsFromDifference(operation string, limi
 		Messages: topMessages,
 		Users:    users,
 	}, nil
+}
+
+func (c *DialogsCore) latestCanonicalDialogScanPts(operation string, scanLimit int32) (int64, error) {
+	state, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetState(c.ctx, &userupdates.TLUserupdatesGetState{
+		UserId:    c.MD.UserId,
+		AuthKeyId: c.MD.PermAuthKeyId,
+	})
+	if err != nil {
+		c.Logger.Errorf("%s - userupdates.getState failed: user_id: %d, err: %v", operation, c.MD.UserId, err)
+		return 0, tg.ErrInternalServerError
+	}
+	if state == nil || state.Pts <= 0 {
+		return 0, nil
+	}
+	pts := state.Pts - int64(scanLimit)
+	if pts < 0 {
+		return 0, nil
+	}
+	return pts, nil
+}
+
+func canonicalDialogScanLimit(resultLimit int32) int32 {
+	if resultLimit <= 0 {
+		return 0
+	}
+	scanLimit := resultLimit * 10
+	if scanLimit < 100 {
+		scanLimit = 100
+	}
+	if scanLimit > 500 {
+		scanLimit = 500
+	}
+	return scanLimit
 }
 
 func (c *DialogsCore) fetchCanonicalUserDialog(operation string, peerUserID int64) (*canonicalDialogResult, error) {
