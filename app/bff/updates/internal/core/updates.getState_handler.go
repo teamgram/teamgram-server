@@ -26,8 +26,9 @@ import (
 // UpdatesGetState
 // updates.getState#edd4882a = updates.State;
 func (c *UpdatesCore) UpdatesGetState(in *tg.TLUpdatesGetState) (*tg.UpdatesState, error) {
-	if c.MD == nil || c.MD.UserId <= 0 {
-		return nil, tg.ErrUserIdInvalid
+	userID, permAuthKeyID, err := c.requireUserAndPermAuthKey()
+	if err != nil {
+		return nil, err
 	}
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
@@ -37,8 +38,8 @@ func (c *UpdatesCore) UpdatesGetState(in *tg.TLUpdatesGetState) (*tg.UpdatesStat
 		return nil, fmt.Errorf("updates.getState: userupdates client is nil")
 	}
 	state, err := client.UserupdatesGetState(c.ctx, &userupdates.TLUserupdatesGetState{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.PermAuthKeyId,
+		UserId:    userID,
+		AuthKeyId: permAuthKeyID,
 	})
 	if err != nil {
 		return nil, err

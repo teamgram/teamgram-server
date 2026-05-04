@@ -27,8 +27,9 @@ import (
 // UpdatesGetDifference
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
-	if c.MD == nil || c.MD.UserId <= 0 {
-		return nil, tg.ErrUserIdInvalid
+	userID, permAuthKeyID, err := c.requireUserAndPermAuthKey()
+	if err != nil {
+		return nil, err
 	}
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
@@ -38,8 +39,8 @@ func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.U
 		return nil, fmt.Errorf("updates.getDifference: userupdates client is nil")
 	}
 	diff, err := client.UserupdatesGetDifference(c.ctx, &userupdates.TLUserupdatesGetDifference{
-		UserId:        c.MD.UserId,
-		AuthKeyId:     c.MD.PermAuthKeyId,
+		UserId:        userID,
+		AuthKeyId:     permAuthKeyID,
 		Pts:           int64(in.Pts),
 		PtsTotalLimit: in.PtsTotalLimit,
 		Date:          int64Ptr(int64(in.Date)),
@@ -48,6 +49,16 @@ func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.U
 		return nil, err
 	}
 	return userDifferenceToUpdatesDifference(diff)
+}
+
+func (c *UpdatesCore) requireUserAndPermAuthKey() (int64, int64, error) {
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return 0, 0, tg.ErrUserIdInvalid
+	}
+	if c.MD.PermAuthKeyId <= 0 {
+		return 0, 0, tg.ErrAuthKeyPermEmpty
+	}
+	return c.MD.UserId, c.MD.PermAuthKeyId, nil
 }
 
 func userDifferenceToUpdatesDifference(diff *userupdates.UserDifference) (*tg.UpdatesDifference, error) {

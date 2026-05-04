@@ -192,6 +192,34 @@ func TestUpdatesGetDifferenceRejectsOutOfRangeTooLongPts(t *testing.T) {
 	}
 }
 
+func TestUpdatesGetStateRejectsMissingPermAuthKeyID(t *testing.T) {
+	client := &fakeUserupdatesClient{}
+	core := newUpdatesCore(client)
+	core.MD.PermAuthKeyId = 0
+
+	_, err := core.UpdatesGetState(&tg.TLUpdatesGetState{})
+	if err != tg.ErrAuthKeyPermEmpty {
+		t.Fatalf("UpdatesGetState() error = %v, want ErrAuthKeyPermEmpty", err)
+	}
+	if client.gotState != nil {
+		t.Fatalf("userupdates must not be called when perm auth key is missing: %#v", client.gotState)
+	}
+}
+
+func TestUpdatesGetDifferenceRejectsMissingPermAuthKeyID(t *testing.T) {
+	client := &fakeUserupdatesClient{}
+	core := newUpdatesCore(client)
+	core.MD.PermAuthKeyId = 0
+
+	_, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 1, Date: 100, Qts: 0})
+	if err != tg.ErrAuthKeyPermEmpty {
+		t.Fatalf("UpdatesGetDifference() error = %v, want ErrAuthKeyPermEmpty", err)
+	}
+	if client.gotDifference != nil {
+		t.Fatalf("userupdates must not be called when perm auth key is missing: %#v", client.gotDifference)
+	}
+}
+
 func int32Ptr(v int32) *int32 {
 	return &v
 }
