@@ -67,6 +67,7 @@ type handshakeState struct {
 	newNonce    bin.Int256
 	a           []byte
 	gA          []byte
+	authKeyType int32
 	expiresIn   int32
 	expiresAt   time.Time
 }
@@ -78,6 +79,7 @@ type pqInnerData struct {
 	nonce       bin.Int128
 	serverNonce bin.Int128
 	newNonce    bin.Int256
+	authKeyType int32
 	expiresIn   int32
 }
 
@@ -181,6 +183,7 @@ func (m *HandshakeManager) handleReqDHParams(req *mt.TLReqDHParams) (iface.TLObj
 	state.newNonce = pqInner.newNonce
 	state.a = a
 	state.gA = gA
+	state.authKeyType = pqInner.authKeyType
 	state.expiresIn = pqInner.expiresIn
 	m.setHandshakeState(state)
 
@@ -241,7 +244,7 @@ func (m *HandshakeManager) handleSetClientDHParams(ctx context.Context, req *mt.
 		Salt:       calcServerSalt(state.newNonce, state.serverNonce),
 	})
 	if m.store != nil {
-		if err := m.store.SetAuthKey(ctx, tg.NewAuthKeyInfo(authKeyID, authKey, tg.AuthKeyTypePerm), futureSalt, state.expiresIn); err != nil {
+		if err := m.store.SetAuthKey(ctx, tg.NewAuthKeyInfo(authKeyID, authKey, int(state.authKeyType)), futureSalt, state.expiresIn); err != nil {
 			return nil, fmt.Errorf("auth handshake set_client_DH_params: save auth key: %w", err)
 		}
 	}
@@ -329,6 +332,7 @@ func normalizePQInnerData(obj iface.TLObject) (*pqInnerData, error) {
 			nonce:       inner.Nonce,
 			serverNonce: inner.ServerNonce,
 			newNonce:    inner.NewNonce,
+			authKeyType: tg.AuthKeyTypePerm,
 		}, nil
 	case *mt.TLPQInnerDataDc:
 		return &pqInnerData{
@@ -338,6 +342,7 @@ func normalizePQInnerData(obj iface.TLObject) (*pqInnerData, error) {
 			nonce:       inner.Nonce,
 			serverNonce: inner.ServerNonce,
 			newNonce:    inner.NewNonce,
+			authKeyType: tg.AuthKeyTypePerm,
 		}, nil
 	case *mt.TLPQInnerDataTemp:
 		return &pqInnerData{
@@ -347,9 +352,14 @@ func normalizePQInnerData(obj iface.TLObject) (*pqInnerData, error) {
 			nonce:       inner.Nonce,
 			serverNonce: inner.ServerNonce,
 			newNonce:    inner.NewNonce,
+			authKeyType: tg.AuthKeyTypeTemp,
 			expiresIn:   inner.ExpiresIn,
 		}, nil
 	case *mt.TLPQInnerDataTempDc:
+		authKeyType := int32(tg.AuthKeyTypeTemp)
+		if inner.Dc < 0 {
+			authKeyType = tg.AuthKeyTypeMediaTemp
+		}
 		return &pqInnerData{
 			pq:          inner.Pq,
 			p:           inner.P,
@@ -357,6 +367,7 @@ func normalizePQInnerData(obj iface.TLObject) (*pqInnerData, error) {
 			nonce:       inner.Nonce,
 			serverNonce: inner.ServerNonce,
 			newNonce:    inner.NewNonce,
+			authKeyType: authKeyType,
 			expiresIn:   inner.ExpiresIn,
 		}, nil
 	default:

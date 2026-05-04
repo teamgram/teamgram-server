@@ -127,6 +127,107 @@ func TestAuthHandshakeFullFlow(t *testing.T) {
 	}
 }
 
+func TestAuthHandshakeSavesTempAuthKeyType(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce := testInt128(11)
+
+	resPQMsg := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPqMulti{Nonce: nonce}))
+	resPQ := decodeBodyAs[*mt.TLResPQ](t, resPQMsg.Body)
+	newNonce := testInt256(12)
+	const expiresIn = int32(86400)
+	reqDH := &mt.TLReqDHParams{
+		Nonce:                nonce,
+		ServerNonce:          resPQ.ServerNonce,
+		P:                    string(handshakeP),
+		Q:                    string(handshakeQ),
+		PublicKeyFingerprint: resPQ.ServerPublicKeyFingerprints[0],
+		EncryptedData: string(encryptPQInnerObjectForTest(t, manager, &mt.TLPQInnerDataTemp{
+			Pq:          string(handshakePQ),
+			P:           string(handshakeP),
+			Q:           string(handshakeQ),
+			Nonce:       nonce,
+			ServerNonce: resPQ.ServerNonce,
+			NewNonce:    newNonce,
+			ExpiresIn:   expiresIn,
+		})),
+	}
+
+	serverDHMsg := handlePlainForTest(t, manager, 200, encodeTL(t, reqDH))
+	serverDH := decodeBodyAs[*mt.TLServerDHParamsOk](t, serverDHMsg.Body)
+	serverInner := decryptServerDHForTest(t, newNonce, resPQ.ServerNonce, []byte(serverDH.EncryptedAnswer))
+
+	clientB := big.NewInt(19)
+	gB := new(big.Int).Exp(big.NewInt(int64(serverInner.G)), clientB, new(big.Int).SetBytes([]byte(serverInner.DhPrime))).Bytes()
+	setClient := &mt.TLSetClientDHParams{
+		Nonce:         nonce,
+		ServerNonce:   resPQ.ServerNonce,
+		EncryptedData: string(encryptClientDHForTest(t, nonce, resPQ.ServerNonce, newNonce, gB)),
+	}
+	_ = handlePlainForTest(t, manager, 300, encodeTL(t, setClient))
+
+	if store.key == nil {
+		t.Fatal("saved key is nil")
+	}
+	if store.key.AuthKeyType != tg.AuthKeyTypeTemp {
+		t.Fatalf("auth key type = %d, want temp %d", store.key.AuthKeyType, tg.AuthKeyTypeTemp)
+	}
+	if store.expiresIn != expiresIn {
+		t.Fatalf("expires_in = %d, want %d", store.expiresIn, expiresIn)
+	}
+}
+
+func TestAuthHandshakeSavesMediaTempAuthKeyType(t *testing.T) {
+	store := &fakeAuthKeyStore{}
+	manager := NewHandshakeManager(store)
+	nonce := testInt128(13)
+
+	resPQMsg := handlePlainForTest(t, manager, 100, encodeTL(t, &mt.TLReqPqMulti{Nonce: nonce}))
+	resPQ := decodeBodyAs[*mt.TLResPQ](t, resPQMsg.Body)
+	newNonce := testInt256(14)
+	const expiresIn = int32(86400)
+	reqDH := &mt.TLReqDHParams{
+		Nonce:                nonce,
+		ServerNonce:          resPQ.ServerNonce,
+		P:                    string(handshakeP),
+		Q:                    string(handshakeQ),
+		PublicKeyFingerprint: resPQ.ServerPublicKeyFingerprints[0],
+		EncryptedData: string(encryptPQInnerObjectForTest(t, manager, &mt.TLPQInnerDataTempDc{
+			Pq:          string(handshakePQ),
+			P:           string(handshakeP),
+			Q:           string(handshakeQ),
+			Nonce:       nonce,
+			ServerNonce: resPQ.ServerNonce,
+			NewNonce:    newNonce,
+			Dc:          -1,
+			ExpiresIn:   expiresIn,
+		})),
+	}
+
+	serverDHMsg := handlePlainForTest(t, manager, 200, encodeTL(t, reqDH))
+	serverDH := decodeBodyAs[*mt.TLServerDHParamsOk](t, serverDHMsg.Body)
+	serverInner := decryptServerDHForTest(t, newNonce, resPQ.ServerNonce, []byte(serverDH.EncryptedAnswer))
+
+	clientB := big.NewInt(23)
+	gB := new(big.Int).Exp(big.NewInt(int64(serverInner.G)), clientB, new(big.Int).SetBytes([]byte(serverInner.DhPrime))).Bytes()
+	setClient := &mt.TLSetClientDHParams{
+		Nonce:         nonce,
+		ServerNonce:   resPQ.ServerNonce,
+		EncryptedData: string(encryptClientDHForTest(t, nonce, resPQ.ServerNonce, newNonce, gB)),
+	}
+	_ = handlePlainForTest(t, manager, 300, encodeTL(t, setClient))
+
+	if store.key == nil {
+		t.Fatal("saved key is nil")
+	}
+	if store.key.AuthKeyType != tg.AuthKeyTypeMediaTemp {
+		t.Fatalf("auth key type = %d, want media temp %d", store.key.AuthKeyType, tg.AuthKeyTypeMediaTemp)
+	}
+	if store.expiresIn != expiresIn {
+		t.Fatalf("expires_in = %d, want %d", store.expiresIn, expiresIn)
+	}
+}
+
 func TestAuthHandshakeAcceptsLegacyReqPq(t *testing.T) {
 	store := &fakeAuthKeyStore{}
 	manager := NewHandshakeManager(store)
