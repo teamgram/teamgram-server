@@ -17,14 +17,25 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UploadSaveBigFilePart
 // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
 func (c *FilesCore) UploadSaveBigFilePart(in *tg.TLUploadSaveBigFilePart) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("upload.saveBigFilePart - error: method UploadSaveBigFilePart not impl")
+	fileTotalParts := in.FileTotalParts
+	_, err := c.svcCtx.Repo.DfsClient.DfsWriteFilePartData(c.ctx, &dfs.TLDfsWriteFilePartData{
+		Creator:        c.MD.PermAuthKeyId,
+		FileId:         in.FileId,
+		FilePart:       in.FilePart,
+		Bytes:          in.Bytes,
+		Big:            true,
+		FileTotalParts: &fileTotalParts,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }
