@@ -215,7 +215,7 @@ func userFromModel(do *model.Users, self bool, contact bool, mutual bool, contac
 		Username:          stringPtr(do.Username),
 		Phone:             stringPtr(do.Phone),
 		RestrictionReason: []tg.RestrictionReasonClazz{},
-		Usernames:         []tg.UsernameClazz{},
+		Usernames:         tgUsernameList(do.Username, self),
 	})
 	if contactDO != nil {
 		user.CloseFriend = contactDO.CloseFriend

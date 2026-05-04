@@ -558,6 +558,19 @@ func userDataFromModel(do *model.Users) tg.UserDataClazz {
 	}).ToUserData()
 }
 
+func tgUsernameList(username string, editable bool) []tg.UsernameClazz {
+	if username == "" {
+		return []tg.UsernameClazz{}
+	}
+	return []tg.UsernameClazz{
+		tg.MakeTLUsername(&tg.TLUsername{
+			Username: username,
+			Active:   true,
+			Editable: editable,
+		}),
+	}
+}
+
 func lastSeenDataFromModel(do *model.UserPresences) userpb.LastSeenDataClazz {
 	if do == nil {
 		return nil

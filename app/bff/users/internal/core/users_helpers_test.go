@@ -50,8 +50,32 @@ func TestProjectImmutableUser(t *testing.T) {
 	if user.Username == nil || *user.Username != "ada" {
 		t.Fatalf("username = %v, want ada", user.Username)
 	}
+	if len(user.Usernames) != 1 {
+		t.Fatalf("usernames len = %d, want 1", len(user.Usernames))
+	}
+	username := user.Usernames[0]
+	if username.Username != "ada" || !username.Active {
+		t.Fatalf("usernames[0] = %+v, want active ada", username)
+	}
 	if user.Status == nil {
 		t.Fatal("status is nil")
+	}
+}
+
+func TestProjectSelfImmutableUserMarksUsernameEditable(t *testing.T) {
+	immutable := immutableUserFixture(2002, "Ada", "Lovelace", "ada")
+
+	projected := projectSelfImmutableUser(immutable)
+	user, ok := projected.(*tg.TLUser)
+	if !ok {
+		t.Fatalf("projected user = %T, want *tg.TLUser", projected)
+	}
+	if len(user.Usernames) != 1 {
+		t.Fatalf("usernames len = %d, want 1", len(user.Usernames))
+	}
+	username := user.Usernames[0]
+	if username.Username != "ada" || !username.Active || !username.Editable {
+		t.Fatalf("usernames[0] = %+v, want active editable ada", username)
 	}
 }
 

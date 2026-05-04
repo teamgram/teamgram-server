@@ -22,6 +22,7 @@ func projectImmutableUser(immutableUser tg.ImmutableUserClazz) tg.UserClazz {
 		FirstName:          nonEmptyStringPtr(data.FirstName),
 		LastName:           nonEmptyStringPtr(data.LastName),
 		Username:           nonEmptyStringPtr(data.Username),
+		Usernames:          usernameList(data.Username, false),
 		Phone:              nonEmptyStringPtr(data.Phone),
 		Photo:              projectUserProfilePhoto(data.ProfilePhoto),
 		Status:             tg.MakeTLUserStatusEmpty(&tg.TLUserStatusEmpty{}),
@@ -45,6 +46,7 @@ func projectSelfImmutableUser(immutableUser tg.ImmutableUserClazz) tg.UserClazz 
 	user := projectImmutableUser(immutableUser)
 	if full, ok := user.(*tg.TLUser); ok {
 		full.Self = true
+		markUsernamesEditable(full.Usernames)
 	}
 	return user
 }
@@ -75,6 +77,27 @@ func nonEmptyStringPtr(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func usernameList(username string, editable bool) []tg.UsernameClazz {
+	if username == "" {
+		return []tg.UsernameClazz{}
+	}
+	return []tg.UsernameClazz{
+		tg.MakeTLUsername(&tg.TLUsername{
+			Username: username,
+			Active:   true,
+			Editable: editable,
+		}),
+	}
+}
+
+func markUsernamesEditable(usernames []tg.UsernameClazz) {
+	for _, username := range usernames {
+		if username != nil {
+			username.Editable = true
+		}
+	}
 }
 
 func recentStoryIDPtr(id int32) tg.RecentStoryClazz {
