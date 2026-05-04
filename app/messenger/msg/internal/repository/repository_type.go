@@ -88,6 +88,7 @@ type CanonicalMessageResult struct {
 }
 
 type ListHistoryMessagesInput struct {
+	UserID   int64
 	PeerType int32
 	PeerID   int64
 	OffsetID int32

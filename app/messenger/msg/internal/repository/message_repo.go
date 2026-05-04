@@ -101,38 +101,40 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	}
 
 	conditions := []string{
-		"`peer_type` = ?",
-		"`peer_id` = ?",
-		"`message_status` = ?",
+		"v.`user_id` = ?",
+		"v.`peer_type` = ?",
+		"v.`peer_id` = ?",
+		"v.`message_status` = ?",
 	}
-	args := []any{in.PeerType, in.PeerID, MessageStatusLive}
+	args := []any{in.UserID, in.PeerType, in.PeerID, MessageStatusLive}
 	if in.OffsetID > 0 {
-		conditions = append(conditions, "`peer_seq` < ?")
+		conditions = append(conditions, "v.`peer_seq` < ?")
 		args = append(args, int64(in.OffsetID))
 	}
 	if in.MaxID > 0 {
-		conditions = append(conditions, "`peer_seq` < ?")
+		conditions = append(conditions, "v.`peer_seq` < ?")
 		args = append(args, int64(in.MaxID))
 	}
 	if in.MinID > 0 {
-		conditions = append(conditions, "`peer_seq` > ?")
+		conditions = append(conditions, "v.`peer_seq` > ?")
 		args = append(args, int64(in.MinID))
 	}
 	args = append(args, limit)
 
 	query := fmt.Sprintf(`
 SELECT
-	`+"`canonical_message_id`"+`,
-	`+"`peer_seq`"+`,
-	`+"`from_user_id`"+`,
-	`+"`peer_type`"+`,
-	`+"`peer_id`"+`,
-	`+"`message_kind`"+`,
-	`+"`message_text`"+`,
-	`+"`date`"+`
-FROM `+"`canonical_messages`"+`
+	v.`+"`canonical_message_id`"+`,
+	v.`+"`peer_seq`"+`,
+	v.`+"`from_user_id`"+`,
+	v.`+"`peer_type`"+`,
+	v.`+"`peer_id`"+`,
+	v.`+"`message_kind`"+`,
+	c.`+"`message_text`"+`,
+	v.`+"`date`"+`
+FROM `+"`user_message_views`"+` AS v
+JOIN `+"`canonical_messages`"+` AS c ON c.`+"`canonical_message_id`"+` = v.`+"`canonical_message_id`"+`
 WHERE %s
-ORDER BY `+"`peer_seq`"+` DESC
+ORDER BY v.`+"`peer_seq`"+` DESC
 LIMIT ?`, strings.Join(conditions, " AND "))
 
 	var rows []historyMessageRow

@@ -303,10 +303,30 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		t.Fatalf("unexpected newest message: %+v", newest)
 	}
 	if repo.historyInput.PeerType != payload.PeerTypeUser ||
+		repo.historyInput.UserID != 1001 ||
 		repo.historyInput.PeerID != 1002 ||
 		repo.historyInput.OffsetID != 3 ||
 		repo.historyInput.Limit != 20 {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
+	}
+}
+
+func TestMsgGetHistoryPassesViewerUserID(t *testing.T) {
+	repo := &fakeMsgRepository{}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:    1003,
+		AuthKeyId: 9003,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Limit:     30,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	if repo.historyInput.UserID != 1003 {
+		t.Fatalf("history input user_id = %d, want viewer user_id 1003", repo.historyInput.UserID)
 	}
 }
 

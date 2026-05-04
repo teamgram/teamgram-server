@@ -170,6 +170,7 @@ func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	second := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+404, "second", secondDate)
 
 	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   senderID,
 		PeerType: payload.PeerTypeUser,
 		PeerID:   receiverID,
 		Limit:    10,
@@ -196,6 +197,7 @@ func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	}
 
 	beforeSecond, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   senderID,
 		PeerType: payload.PeerTypeUser,
 		PeerID:   receiverID,
 		OffsetID: int32(second.PeerSeq),
@@ -206,6 +208,38 @@ func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	}
 	if len(beforeSecond) != 1 || beforeSecond[0].CanonicalMessageID != first.CanonicalMessageID {
 		t.Fatalf("ListHistoryMessages() offset = %+v, want first canonical id %d", beforeSecond, first.CanonicalMessageID)
+	}
+}
+
+func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 50_000})
+
+	peerID := base + 501
+	viewerID := base + 502
+	peerSelf := createCanonicalMessageForTest(t, ctx, repo, peerID, peerID, base+503, "peer self", int32(time.Now().Unix()))
+	direct := createCanonicalMessageForTest(t, ctx, repo, peerID, viewerID, base+504, "direct to viewer", int32(time.Now().Unix())+1)
+	insertUserMessageViewForTest(t, ctx, db, viewerID, payload.PeerTypeUser, peerID, direct, peerID, false)
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   viewerID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   peerID,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) != 1 {
+		t.Fatalf("ListHistoryMessages() len = %d, want 1: %+v", len(history), history)
+	}
+	if history[0].CanonicalMessageID != direct.CanonicalMessageID || history[0].MessageText != "direct to viewer" {
+		t.Fatalf("ListHistoryMessages() = %+v, want direct message %+v", history[0], direct)
+	}
+	if history[0].CanonicalMessageID == peerSelf.CanonicalMessageID || history[0].MessageText == "peer self" {
+		t.Fatalf("viewer history leaked peer self message: %+v", history[0])
 	}
 }
 
@@ -277,7 +311,50 @@ func createCanonicalMessageForTest(
 	if err != nil {
 		t.Fatalf("CreateOrGetByClientRandom(%q) error = %v", text, err)
 	}
+	insertUserMessageViewForTest(t, ctx, repo.db, senderID, payload.PeerTypeUser, receiverID, canonical, senderID, true)
 	return canonical
+}
+
+func insertUserMessageViewForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	canonical *CanonicalMessageResult,
+	fromUserID int64,
+	outgoing bool,
+) {
+	t.Helper()
+	if db == nil {
+		t.Fatal("test db is nil")
+	}
+	if canonical == nil {
+		t.Fatal("canonical is nil")
+	}
+	_, err := db.Exec(ctx, `
+INSERT INTO user_message_views
+	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID,
+		peerType,
+		peerID,
+		canonical.PeerSeq,
+		canonical.CanonicalMessageID,
+		fromUserID,
+		outgoing,
+		MessageKindText,
+		MessageStatusLive,
+		0,
+		mysqlDate(canonical.MessageDate),
+		1,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("insert user_message_views user_id=%d peer_id=%d canonical=%d: %v", userID, peerID, canonical.CanonicalMessageID, err)
+	}
 }
 
 func openIntegrationDB(t *testing.T) *sqlx.DB {

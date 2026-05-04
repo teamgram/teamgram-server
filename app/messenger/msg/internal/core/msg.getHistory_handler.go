@@ -31,6 +31,7 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 	}
 
 	history, err := c.svcCtx.Repo.ListHistoryMessages(c.ctx, repository.ListHistoryMessagesInput{
+		UserID:   in.UserId,
 		PeerType: in.PeerType,
 		PeerID:   in.PeerId,
 		OffsetID: in.OffsetId,
