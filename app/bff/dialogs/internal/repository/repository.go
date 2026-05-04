@@ -17,13 +17,19 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/config"
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
+	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
+	syncpb "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/identity"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // Repository is the dependency container for repository instances.
@@ -32,6 +38,7 @@ type Repository struct {
 	DialogClient      dialogclient.DialogClient
 	MessageClient     messageclient.MessageClient
 	MsgClient         msgclient.MsgClient
+	SyncClient        syncclient.SyncClient
 	UserupdatesClient userupdatesclient.UserupdatesClient
 	UserClient        userclient.UserClient
 }
@@ -43,7 +50,18 @@ func NewRepository(c config.Config) *Repository {
 		DialogClient:      dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient)),
 		MessageClient:     messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient)),
 		MsgClient:         msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient)),
+		SyncClient:        syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient)),
 		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
 		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
 	}
+}
+
+// PushTypingUpdates sends a realtime-only typing update to the sync service.
+func (r *Repository) PushTypingUpdates(ctx context.Context, userID int64, updates tg.UpdatesClazz) error {
+	ctx = identity.WithCallerService(ctx, "bff.dialogs")
+	_, err := r.SyncClient.SyncPushUpdates(ctx, &syncpb.TLSyncPushUpdates{
+		UserId:  userID,
+		Updates: updates,
+	})
+	return err
 }
